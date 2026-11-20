@@ -61,6 +61,10 @@ public:
 	int startScript(Character &who, const char *block, const char *label, byte *variables);
 	int startScript(InteractiveObject &who, const char *block, const char *label, byte *variables);
 
+
+	bool jimEntered() { return _jimEntered; }
+	void setJimEntered(bool entered) { _jimEntered = entered; }
+
 	/** Reads a level file and builds its objects, hosted by this world. */
 	Level *loadLevelFile(const char *name, int mode, int index = -1);
 	/** The level at a place of the game's list, loaded on first use (null when it cannot be read). */
@@ -123,12 +127,14 @@ public:
 
 	Object *findObject(int level, const char *name);
 	Object *findObjectByKey(int level, uint64 key);
+	/** The object is switched on (for the interface items: the player has them). A missing object warns and counts as off. */
+	bool isActive(int level, const char *name);
 
+	Level *levelAt(int index) { return level(index); }
 	/** The level Jim is in, or null. */
 	Level *jimLevel();
 	void playMusicTrack(byte track);
 	void jimShow(bool visible);
-
 	/** The pointer lets go of its item and shows the arrow */
 	void clearPointerItem();
 
@@ -136,8 +142,19 @@ public:
 	void jimMoveTo(int32 x, int32 y);
 	void jimRemoveFromMainList();
 	void resetRenderQueue();
+	void drawRooms(Level *level);
+	void composeFrame();
+	void clearScreens();
 	void fadeOut(int effect, int speed);
 	void wait(int milliseconds);
+	void setJimStepKeep(byte step) { _jimStep = step; }
+	/** Plays frames first to last of an object's first animation. */
+	void playFrames(Object &object, int first, int last);
+	/** The parts of a level's walk area: the floor, and the route round obstacles that the floor names. */
+	enum WalkPart { kFloor, kRoute };
+	/** Switches a level's walk area to other frames, which changes where Jim can walk. */
+	void setWalkAreaFrames(Level *level, WalkPart part, int first, int last);
+	void startMovie(int number);
 
 	void walkJimToPointer(int32 mouseX, int32 mouseY);
 
@@ -177,6 +194,7 @@ private:
 	CdAudio _music;
 	Scripts *_scripts = nullptr;
 	byte _jimPhase = 0, _jimStep = 0, _jimExtra = 0;
+	bool _jimEntered = false;
 };
 
 } // End of namespace Tesoro

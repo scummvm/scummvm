@@ -176,7 +176,7 @@ int Cursor::processCandidates(byte buttons, int verb) {
 			if (buttons & 8)
 				result = object->setVerbAndClick(verb);
 			else if (buttons & 0x10)
-				result = object->rightClick(verb);
+				result = object->doubleClick(verb);
 			else
 				result = object->showHoverText();
 

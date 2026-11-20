@@ -110,7 +110,8 @@ public:
 
 	virtual int exitArrival() { return 0; }
 
-	virtual int rightClick(int verb) { return 0; }
+
+	virtual int doubleClick(int verb) { return 0; }
 	virtual bool acceptsPointer() { return false; }
 	virtual int showHoverText() { return 0; }
 	virtual int clearHoverText() { return 0; }

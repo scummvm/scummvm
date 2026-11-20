@@ -50,7 +50,7 @@ public:
 
 	int update() override;
 	int setVerbAndClick(int verb) override;
-	int rightClick(int verb) override;
+	int doubleClick(int verb) override;
 	int clearHoverText() override;
 
 private:

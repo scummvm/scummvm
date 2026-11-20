@@ -42,7 +42,7 @@ public:
 
 	int update() override;
 	int setVerbAndClick(int verb) override;
-	int rightClick(int verb) override { return setVerbAndClick(verb); }
+	int doubleClick(int verb) override { return setVerbAndClick(verb); }
 	bool acceptsPointer() override { return true; }
 	int showHoverText() override;
 	int clearHoverText() override;

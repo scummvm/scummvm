@@ -62,9 +62,6 @@ public:
 	int32 anchorX() const { return _anchorX; }
 	int32 anchorY() const { return _anchorY; }
 
-protected:
-	World *_world = nullptr;
-
 private:
 	/** What the speaking rules ask of the character. A separate class, so its methods do not clash with InteractiveObject's. */
 	class SpeakingAdapter : public SpeakingObject {

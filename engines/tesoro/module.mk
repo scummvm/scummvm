@@ -18,6 +18,7 @@ MODULE_OBJS = \
 	core/collision.o \
 	core/cursor.o \
 	core/display.o \
+	core/exitdoor.o \
 	core/hovertext.o \
 	core/interactive.o \
 	core/jim.o \

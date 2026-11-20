@@ -26,6 +26,7 @@
 #include "tesoro/world.h"
 #include "tesoro/core/cameraframe.h"
 #include "tesoro/core/cursor.h"
+#include "tesoro/core/exitdoor.h"
 #include "tesoro/core/interactive.h"
 #include "tesoro/core/jim.h"
 #include "tesoro/core/level.h"
@@ -263,6 +264,11 @@ Object *World::createObject(Level &level, const ObjectRecord &record, Room &room
 			object->init(record.dataByte(5), record, sort, levelPlayers, loadTime, *this);
 			return object;
 		}
+		case 6: {
+			ExitDoor *object = new ExitDoor();
+			object->init(record.dataByte(1), record, sort, levelPlayers, loadTime, *this);
+			return object;
+		}
 		case 9: {
 			InteractiveObject *object = new InteractiveObject();
 			object->init(record, sort, levelPlayers, loadTime, *this, 0);
@@ -410,10 +416,36 @@ Object *World::findObjectByKey(int index, uint64 key) {
 }
 
 Object *World::findObject(int index, const char *name) { return findObjectByKey(index, nameKey64(name)); }
+
+bool World::isActive(int index, const char *name) {
+	Object *object = findObject(index, name);
+	if (!object) {
+		warning("Tesoro: no object %s", name);
+		return false;
+	}
+	return (object->flags() & Object::kActive) != 0;
+}
 void World::jimShow(bool visible) { jim()->setVisible(visible); }
 
 void World::jimMoveTo(int32 x, int32 y) { jim()->setPosition(x, y); }
 void World::jimRemoveFromMainList() { removeFromMainList(jim()); }
+void World::playFrames(Object &object, int first, int last) { object.animation().selectBank(0, first, last, false, false, now()); }
+
+void World::setWalkAreaFrames(Level *where, WalkPart part, int first, int last) {
+
+	const CameraFrame *frame = where ? where->cameraFrame() : nullptr;
+	Object *floor = frame ? frame->target() : nullptr;
+	Object *object = floor;
+	if (part == kRoute)
+		object = floor && floor->kindId() == 7 ? static_cast<WalkFloor *>(floor)->path() : nullptr;
+	if (!object) {
+		warning("Tesoro: the level has no %s to set frames on", part == kRoute ? "route" : "floor");
+		return;
+	}
+	playFrames(*object, first, last);
+}
+
+void World::startMovie(int number) { _engine._video.playVideo(number); }
 
 int World::startScript(Character &who, const char *block, const char *label, byte *variables) {
 	return startScript(static_cast<InteractiveObject &>(who), block, label, variables);
@@ -433,6 +465,17 @@ int World::startScriptAt(Level *where, const char *block, const char *label, byt
 	return _scripts ? _scripts->start(where, block, label, variables) : 0;
 }
 void World::resetRenderQueue() { _engine._display.startFrame(); }
+
+void World::drawRooms(Level *level) {
+	if (level)
+		level->drawRooms(now(), _engine._display);
+}
+void World::composeFrame() { _engine._display.compose(); }
+
+void World::clearScreens() {
+	_engine._screen->clear();
+	_engine._screen->update();
+}
 void World::fadeOut(int effect, int speed) { _engine.fadeOut(effect, speed); }
 void World::wait(int milliseconds) { _engine._system->delayMillis(milliseconds); }
 

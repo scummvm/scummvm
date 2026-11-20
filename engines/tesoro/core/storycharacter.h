@@ -54,7 +54,6 @@ private:
 	int run(const char *block, const char *label, bool withState);
 	/** The byte of the state of another object. */
 	byte stateOf(int level, const char *name, uint index);
-	bool activeOf(int level, const char *name);
 
 	int _subtype = 0;
 };

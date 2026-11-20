@@ -85,7 +85,7 @@ int MenuItem::setVerbAndClick(int verb) {
 	}
 }
 
-int MenuItem::rightClick(int verb) {
+int MenuItem::doubleClick(int verb) {
 	return setVerbAndClick(verb);
 }
 

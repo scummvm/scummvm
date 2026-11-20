@@ -79,7 +79,7 @@ public:
 	int showHoverText() override;
 	int clearHoverText() override;
 	int setVerbAndClick(int verb) override;
-	int rightClick(int verb) override;
+	int doubleClick(int verb) override;
 
 	void updateAnimation(int32 now) override { _anim.tickClearMovement(now); }
 	void updateBounds(int32 now) override;
