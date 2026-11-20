@@ -134,18 +134,19 @@ struct GlkDetectionEntry {
 	size_t _filesize;
 	Common::Language _language;
 	Common::Platform _platform;
+	bool _unofficial;
 };
 
-#define DT_ENTRY0(ID, MD5, FILESIZE) { ID, "", MD5, FILESIZE, Common::EN_ANY, Common::kPlatformUnknown }
-#define DT_ENTRY1(ID, EXTRA, MD5, FILESIZE) { ID, EXTRA, MD5, FILESIZE, Common::EN_ANY, Common::kPlatformUnknown }
-#define DT_ENTRYL0(ID, LANG, MD5, FILESIZE) { ID, "", MD5, FILESIZE, LANG, Common::kPlatformUnknown }
-#define DT_ENTRYL1(ID, LANG, EXTRA, MD5, FILESIZE) { ID, EXTRA, MD5, FILESIZE, LANG, Common::kPlatformUnknown }
-#define DT_ENTRYP0(ID, MD5, FILESIZE, PLATFORM) { ID, "", MD5, FILESIZE, Common::EN_ANY, PLATFORM}
-#define DT_ENTRYP1(ID, EXTRA, MD5, FILESIZE, PLATFORM) { ID, EXTRA, MD5, FILESIZE, Common::EN_ANY, PLATFORM }
-#define DT_ENTRYLP0(ID, LANG, MD5, FILESIZE, PLATFORM) { ID, "", MD5, FILESIZE, LANG, PLATFORM}
-#define DT_ENTRYLP1(ID, LANG, EXTRA, MD5, FILESIZE, PLATFORM) { ID, EXTRA, MD5, FILESIZE, LANG, PLATFORM }
+#define DT_ENTRY0(ID, MD5, FILESIZE) { ID, "", MD5, FILESIZE, Common::EN_ANY, Common::kPlatformUnknown, false }
+#define DT_ENTRY1(ID, EXTRA, MD5, FILESIZE) { ID, EXTRA, MD5, FILESIZE, Common::EN_ANY, Common::kPlatformUnknown, false }
+#define DT_ENTRYL0(ID, LANG, MD5, FILESIZE) { ID, "", MD5, FILESIZE, LANG, Common::kPlatformUnknown, false }
+#define DT_ENTRYL1(ID, LANG, EXTRA, MD5, FILESIZE) { ID, EXTRA, MD5, FILESIZE, LANG, Common::kPlatformUnknown, false }
+#define DT_ENTRYP0(ID, MD5, FILESIZE, PLATFORM) { ID, "", MD5, FILESIZE, Common::EN_ANY, PLATFORM, false }
+#define DT_ENTRYP1(ID, EXTRA, MD5, FILESIZE, PLATFORM) { ID, EXTRA, MD5, FILESIZE, Common::EN_ANY, PLATFORM, false }
+#define DT_ENTRYLP0(ID, LANG, MD5, FILESIZE, PLATFORM) { ID, "", MD5, FILESIZE, LANG, PLATFORM, false }
+#define DT_ENTRYLP1(ID, LANG, EXTRA, MD5, FILESIZE, PLATFORM) { ID, EXTRA, MD5, FILESIZE, LANG, PLATFORM, false }
 
-#define DT_END_MARKER { nullptr, nullptr, nullptr, 0, Common::EN_ANY, Common::kPlatformUnknown }
+#define DT_END_MARKER { nullptr, nullptr, nullptr, 0, Common::EN_ANY, Common::kPlatformUnknown, false }
 
 } // End of namespace Glk
 
