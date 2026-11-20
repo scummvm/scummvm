@@ -123,8 +123,10 @@ void GraphicsManager::init() {
 					  (bsum->bTrans << format.bShift);
 	}
 
+	// The screen has no color key: blitFrom would treat its pixels of that color
+	// as transparent too, and draw partly transparent pixels onto them at full
+	// strength, e.g. the lenses of Dossier1 over dark parts of a scene
 	initGraphics(_screen.w, _screen.h, &getScreenPixelFormat());
-	_screen.setTransparentColor(getTransColor());
 	_screen.clear();
 
 	// Nancy16 runs at a higher resolution than the game was made for. The
@@ -134,7 +136,6 @@ void GraphicsManager::init() {
 	if (g_nancy->getGameType() >= kGameTypeNancy16 && viewportData &&
 			(viewportData->bounds.width() != _screen.w || viewportData->bounds.height() != _screen.h)) {
 		_gameSurface.create(viewportData->bounds.width(), viewportData->bounds.height(), getScreenPixelFormat());
-		_gameSurface.setTransparentColor(getTransColor());
 		_gameSurface.clear();
 	}
 
@@ -879,87 +880,6 @@ static bool hasByteChannels(const Graphics::PixelFormat &format) {
 		(format.aBits() == 8 || format.aBits() == 0);
 }
 
-// Blends a 32 bit picture with an alpha channel onto a 32 bit target, giving
-// the same pixels as ManagedSurface::blitFrom. That one turns every pixel into
-// its components and back, which made the canvases of Nancy32's snow, as large
-// as the viewport and nearly all transparent, slow to draw; this one skips the
-// transparent pixels at once.
-// The pixels of a color key get left out too. blitFrom would treat the black
-// pixels of the target as transparent as well, as black is its color key from
-// Nancy16 on, and draw partly transparent pixels onto them at full strength.
-static bool blitAlpha32(Graphics::ManagedSurface &target, const Graphics::ManagedSurface &src, const Common::Rect &source, const Common::Rect &dest) {
-	const Graphics::PixelFormat &srcFormat = src.format;
-	const Graphics::PixelFormat &destFormat = target.format;
-	if (!hasByteChannels(srcFormat) || srcFormat.aBits() != 8 || !hasByteChannels(destFormat) ||
-			source.width() != dest.width() || source.height() != dest.height()) {
-		return false;
-	}
-
-	// The key is matched by its color alone, whatever its alpha, as blitFrom does.
-	// A key of 0 is a black that is fully transparent, which the alpha leaves out.
-	const uint32 colorMask = srcFormat.ARGBToColor(0, 0xFF, 0xFF, 0xFF);
-	const bool hasKey = src.hasTransparentColor() && src.getTransparentColor() != 0;
-	const uint32 key = src.getTransparentColor() & colorMask;
-
-	Common::Rect clipped = dest.findIntersectingRect(Common::Rect(target.w, target.h));
-	if (clipped.isEmpty()) {
-		return true;
-	}
-
-	const int offsetX = source.left - dest.left;
-	const int offsetY = source.top - dest.top;
-	const bool isSameFormat = srcFormat == destFormat;
-	const bool hasDestAlpha = destFormat.aBits() == 8;
-
-	for (int y = clipped.top; y < clipped.bottom; ++y) {
-		const uint32 *srcRow = (const uint32 *)src.getBasePtr(clipped.left + offsetX, y + offsetY);
-		uint32 *destRow = (uint32 *)target.getBasePtr(clipped.left, y);
-
-		for (int x = 0; x < clipped.width(); ++x) {
-			const uint32 color = srcRow[x];
-			const uint32 alpha = (color >> srcFormat.aShift) & 0xFF;
-			if (alpha == 0 || (hasKey && (color & colorMask) == key)) {
-				continue;
-			}
-
-			const uint32 r = (color >> srcFormat.rShift) & 0xFF;
-			const uint32 g = (color >> srcFormat.gShift) & 0xFF;
-			const uint32 b = (color >> srcFormat.bShift) & 0xFF;
-
-			if (alpha == 0xFF) {
-				destRow[x] = isSameFormat ? color : destFormat.ARGBToColor(0xFF, r, g, b);
-				continue;
-			}
-
-			const uint32 destColor = destRow[x];
-			const uint32 destAlpha = hasDestAlpha ? (destColor >> destFormat.aShift) & 0xFF : 0xFF;
-			uint32 dr = (destColor >> destFormat.rShift) & 0xFF;
-			uint32 dg = (destColor >> destFormat.gShift) & 0xFF;
-			uint32 db = (destColor >> destFormat.bShift) & 0xFF;
-			uint32 da = destAlpha;
-
-			if (destAlpha == 0xFF) {
-				// x * 257 * 257 >> 24 is about x / 255, rounded as ManagedSurface::blitFrom does
-				dr = (((dr * (255U - alpha) + r * alpha) * (257U * 257U)) >> 24) & 0xFF;
-				dg = (((dg * (255U - alpha) + g * alpha) * (257U * 257U)) >> 24) & 0xFF;
-				db = (((db * (255U - alpha) + b * alpha) * (257U * 257U)) >> 24) & 0xFF;
-			} else {
-				const double sAlpha = alpha / 255.0;
-				const double dAlpha = destAlpha / 255.0 * (1.0 - sAlpha);
-				dr = (uint32)((r * sAlpha + dr * dAlpha) / (sAlpha + dAlpha));
-				dg = (uint32)((g * sAlpha + dg * dAlpha) / (sAlpha + dAlpha));
-				db = (uint32)((b * sAlpha + db * dAlpha) / (sAlpha + dAlpha));
-				da = (uint32)(255. * (sAlpha + dAlpha));
-			}
-
-			destRow[x] = destFormat.ARGBToColor(da, dr, dg, db);
-		}
-	}
-
-	target.addDirtyRect(clipped);
-	return true;
-}
-
 // The channels of every pixel get multiplied by those of the color, through
 // tables, with no conversions of the pixel formats. A picture without alpha
 // leaves out its pixels of the color key.
@@ -1015,10 +935,7 @@ void GraphicsManager::blitObject(Graphics::ManagedSurface &target, const RenderO
 
 	if (!src.isZoomed()) {
 		const Common::Rect source = src._drawSurface.getBounds().findIntersectingRect(src.convertToLocal(screenRect));
-		if (!blitAlpha32(target, src._drawSurface, source, screenRect)) {
-			target.blitFrom(src._drawSurface, source, screenRect);
-		}
-
+		target.blitFrom(src._drawSurface, source, screenRect);
 		return;
 	}
 
@@ -1090,9 +1007,7 @@ void GraphicsManager::blitMaskedObject(Graphics::ManagedSurface &target, const R
 		}
 	}
 
-	if (!blitAlpha32(target, part, part.getBounds(), screenRect)) {
-		target.blitFrom(part, part.getBounds(), screenRect);
-	}
+	target.blitFrom(part, part.getBounds(), screenRect);
 }
 
 Common::Rect GraphicsManager::getDrawnPosition(const RenderObject &object) const {
