@@ -24,7 +24,6 @@
 #include "common/array.h"
 #include "common/endian.h"
 
-#include "scooby/common/make_unique.h"
 #include "scooby/common/span.h"
 #include "scooby/compression/ring_lz_decoder.h"
 #include "scooby/graphics/genesis_asset_decoder.h"
@@ -193,8 +192,8 @@ void RoomSceneLoader::loadRoomScene() {
 								 static_cast<int>(_rom.readUInt32(foregroundSectionOffset));
 	Common::Array<uint8> collisionCells = decompressRingLz(
 		_rom, collisionSectionOffset + static_cast<int>(sizeof(uint32)));
-	_state.activeRoomScene = makeUnique<RoomSceneData>(
-		makeSpan(backgroundCells), makeSpan(foregroundCells), makeSpan(collisionCells));
+	_state.activeRoomScene.reset(new RoomSceneData(
+		makeSpan(backgroundCells), makeSpan(foregroundCells), makeSpan(collisionCells)));
 	_state.roomCoordinateDataOffset = collisionSectionOffset + static_cast<int>(sizeof(uint32)) +
 									  static_cast<int>(_rom.readUInt32(collisionSectionOffset));
 

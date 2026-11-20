@@ -23,8 +23,6 @@
 #include "common/file.h"
 #include "common/util.h"
 
-#include "scooby/common/make_unique.h"
-
 namespace Scooby {
 
 namespace {
@@ -61,9 +59,6 @@ Common::ScopedPtr<ScoobyDooRom> ScoobyDooRom::load(const Common::Path &path, Com
 		return nullptr;
 	}
 
-	// ScoobyDooRom's constructor is private (this is its only caller), so it
-	// is constructed directly here rather than through MakeUnique,
-	// which as a free function has no access to a private constructor.
 	return Common::ScopedPtr<ScoobyDooRom>(new ScoobyDooRom(Common::move(bytes)));
 }
 
