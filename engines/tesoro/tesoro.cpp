@@ -30,6 +30,7 @@
 #include "graphics/managed_surface.h"
 
 #include "tesoro/console.h"
+#include "tesoro/metaengine.h"
 #include "tesoro/tesoro.h"
 #include "tesoro/detection.h"
 #include "tesoro/core/cursor.h"
@@ -149,6 +150,10 @@ void TesoroEngine::setButton(PointerState::Button button, bool down) {
 
 void TesoroEngine::handleEvent(const Common::Event &e) {
 	switch (e.type) {
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		if (e.customType == kActionFastMode)
+			_clock.setSpeed(_clock.speed() == 1 ? kFastModeSpeed : 1);
+		break;
 	case Common::EVENT_MOUSEMOVE:
 		// The original's mouse counts from the middle of the window.
 		_pointer.x = e.mouse.x - 320;

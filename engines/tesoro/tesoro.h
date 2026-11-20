@@ -102,6 +102,9 @@ private:
 	void hookMenuItems(Level *level);
 
 	void handleEvent(const Common::Event &e);
+
+	// Ctrl+F toggles this many times the normal game speed, for playtesting.
+	static const int kFastModeSpeed = 4;
 	void setButton(PointerState::Button button, bool down);
 
 	/** One frame: events, then drawing. False when the game should end. */

@@ -21,6 +21,9 @@
 
 #include "common/translation.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+
 #include "tesoro/metaengine.h"
 #include "tesoro/detection.h"
 #include "tesoro/tesoro.h"
@@ -60,6 +63,17 @@ Common::Error TesoroMetaEngine::createInstance(OSystem *syst, Engine **engine, c
 bool TesoroMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return checkExtendedSaves(f) ||
 		(f == kSupportsLoadingDuringStartup);
+}
+
+Common::KeymapArray TesoroMetaEngine::initKeymaps(const char *target) const {
+	Common::Keymap *keymap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "tesoro-default", _("Default keymappings"));
+
+	Common::Action *act = new Common::Action("FAST_MODE", _("Fast mode"));
+	act->setCustomEngineActionEvent(Tesoro::kActionFastMode);
+	act->addDefaultInputMapping("C+f");
+	keymap->addAction(act);
+
+	return Common::Keymap::arrayOf(keymap);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TESORO)

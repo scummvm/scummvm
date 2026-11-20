@@ -24,6 +24,10 @@
 
 #include "engines/advancedDetector.h"
 
+namespace Tesoro {
+enum TesoroAction { kActionNone, kActionFastMode };
+}
+
 class TesoroMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override;
@@ -38,6 +42,8 @@ public:
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 #endif // TESORO_METAENGINE_H
