@@ -137,49 +137,56 @@ public:
 		return true;
 	}
 
-	bool applyPalette(bool forcePalette) {
+	bool applyPalette(bool forcePalette, const MediaSequenceCallback *paletteCallback = nullptr) {
 		const bool dirtyPalette = _decoder.hasDirtyPalette();
-		if (forcePalette || dirtyPalette) {
-			if (dirtyPalette) {
-				const byte *decoderPalette = _decoder.getPalette();
-				if (!decoderPalette) {
-					warning("Ripper: Smacker '%s' reported a dirty palette without data",
-						_name.c_str());
-					return false;
-				}
-				memcpy(_paletteBase, decoderPalette,
-					sizeof(_paletteBase));
-				_paletteBaseValid = true;
-			} else if (!_paletteBaseValid) {
-				// Packetized branches may omit an initial palette record and retain
-				// the palette installed by the preceding branch. Cache that inherited
-				// base before a callback applies temporary interface or combat colors.
-				g_system->getPaletteManager()->grabPalette(_paletteBase, 0, 256);
-				_paletteBaseValid = true;
-				debugC(3, kDebugVideo,
-					"Ripper: Smacker '%s' inherited display palette for callback base",
+		if (!forcePalette && !dirtyPalette && !paletteCallback)
+			return true;
+
+		if (dirtyPalette) {
+			const byte *decoderPalette = _decoder.getPalette();
+			if (!decoderPalette) {
+				warning("Ripper: Smacker '%s' reported a dirty palette without data",
 					_name.c_str());
+				return false;
 			}
-			byte palette[256 * 3];
-			if (_plan.palette.sourcePalette) {
-				_plan.palette.sourcePalette->resize(sizeof(palette));
-				memcpy(_plan.palette.sourcePalette->data(), _paletteBase, sizeof(palette));
-			}
-			if (_plan.palette.preserveDisplayPalette)
-				return true;
-			if (_plan.palette.patchWacMediaPalette) {
-				g_system->getPaletteManager()->grabPalette(palette, 0, 256);
-				memcpy(palette + 10 * 3, _paletteBase + 10 * 3, 140 * 3);
-			} else {
-				memcpy(palette, _paletteBase, sizeof(palette));
-			}
-			if (_plan.palette.patchInterfacePalette && !_plan.palette.patchWacMediaPalette)
-				_engine->applySharedPalettePatch(palette, 256);
-			if (!_plan.palette.patchWacMediaPalette)
-				_engine->getSettings()->applyVideoPalette(palette, 256,
-					_plan.palette.rememberVideoPalette);
-			g_system->getPaletteManager()->setPalette(palette, 0, 256);
+			memcpy(_paletteBase, decoderPalette, sizeof(_paletteBase));
+			_paletteBaseValid = true;
+		} else if (!_paletteBaseValid) {
+			// Packetized branches may omit an initial palette record and retain
+			// the palette installed by the preceding branch. Cache that inherited
+			// base before a callback applies temporary interface or combat colors.
+			g_system->getPaletteManager()->grabPalette(_paletteBase, 0, kRipperPaletteColorCount);
+			_paletteBaseValid = true;
+			debugC(3, kDebugVideo,
+				"Ripper: Smacker '%s' inherited display palette for callback base",
+				_name.c_str());
 		}
+		if (_plan.palette.sourcePalette) {
+			_plan.palette.sourcePalette->resize(sizeof(_paletteBase));
+			memcpy(_plan.palette.sourcePalette->data(), _paletteBase, sizeof(_paletteBase));
+		}
+
+		byte palette[kRipperPaletteByteCount];
+		if (_plan.palette.preserveDisplayPalette) {
+			if (!paletteCallback)
+				return true;
+			g_system->getPaletteManager()->grabPalette(palette, 0, kRipperPaletteColorCount);
+		} else if (_plan.palette.patchWacMediaPalette) {
+			g_system->getPaletteManager()->grabPalette(palette, 0, kRipperPaletteColorCount);
+			memcpy(palette + 10 * 3, _paletteBase + 10 * 3, 140 * 3);
+		} else {
+			memcpy(palette, _paletteBase, sizeof(palette));
+			if (_plan.palette.patchInterfacePalette)
+				_engine->applySharedPalettePatch(palette, kRipperPaletteColorCount);
+			_engine->getSettings()->applyVideoPalette(palette, kRipperPaletteColorCount,
+				_plan.palette.rememberVideoPalette);
+		}
+		if (paletteCallback)
+			paletteCallback->transformPalette(palette, kRipperPaletteColorCount);
+		if (paletteCallback && !forcePalette)
+			setIndexedPaletteIfChanged(palette);
+		else
+			g_system->getPaletteManager()->setPalette(palette, 0, kRipperPaletteColorCount);
 		return true;
 	}
 
@@ -254,7 +261,7 @@ private:
 	uint _scale;
 	uint _width;
 	uint _height;
-	byte _paletteBase[256 * 3];
+	byte _paletteBase[kRipperPaletteByteCount];
 	bool _paletteBaseValid;
 	Common::Array<byte> _backing;
 };
@@ -549,21 +556,12 @@ SmackerPlaybackResult MediaPlayer::playSmacker(Common::SeekableReadStream *strea
 	auto finishSequenceFramePresentation = [&](uint frame) {
 		const bool stopSequence = serviceSequenceCallback(frame);
 		const bool refreshedPalette = sequencePaletteRefresh;
-		if (sequencePaletteRefresh) {
-			if (!renderer.applyPalette(true))
-				result.completed = false;
-			sequencePaletteRefresh = false;
-		}
-		if (sequenceCallback && sequenceCallback->managesPalette()) {
-			byte palette[256 * 3];
-			// Combat transforms the active Smacker palette each frame; restore that
-			// base before applying the next callback transform.
-			if (!renderer.applyPalette(true))
-				result.completed = false;
-			g_system->getPaletteManager()->grabPalette(palette, 0, 256);
-			sequenceCallback->transformPalette(palette, 256);
-			g_system->getPaletteManager()->setPalette(palette, 0, 256);
-		}
+		sequencePaletteRefresh = false;
+		const MediaSequenceCallback *paletteCallback =
+			sequenceCallback && sequenceCallback->managesPalette() ? sequenceCallback : nullptr;
+		if ((refreshedPalette || paletteCallback) &&
+				!renderer.applyPalette(refreshedPalette, paletteCallback))
+			result.completed = false;
 		presentScreen();
 		debugC(11, kDebugVideo,
 			"Ripper: presented interactive Smacker '%s' after callback frame=%u paletteRefresh=%d stop=%d",
