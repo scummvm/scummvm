@@ -25,9 +25,13 @@
 #include "tesoro/tesoro.h"
 #include "tesoro/world.h"
 #include "tesoro/core/cameraframe.h"
+#include "tesoro/core/clickcatcher.h"
 #include "tesoro/core/cursor.h"
 #include "tesoro/core/exitdoor.h"
 #include "tesoro/core/interactive.h"
+#include "tesoro/core/actionstrip.h"
+#include "tesoro/core/inventoryitem.h"
+#include "tesoro/core/objectgroup.h"
 #include "tesoro/core/jim.h"
 #include "tesoro/core/level.h"
 #include "tesoro/core/namekey.h"
@@ -125,6 +129,22 @@ World::~World() {
 }
 
 bool World::loadGameData() {
+	// The font the texts are drawn with
+	const uint32 fontOffset = _engine._archive.findEntry("FUENTES.ANM");
+	if (!fontOffset || !_font.load(*_engine._archive.seekEntry(fontOffset), fontOffset, AnimBank::kLoadNow)) {
+		warning("Tesoro: the font FUENTES.ANM cannot be read");
+		return false;
+	}
+	_engine._display.setFont(_font.bank());
+
+	// The table that darkens the picture through shadows
+	const uint32 tableOffset = _engine._archive.findEntry("TABLA1.TBL");
+	byte table[0x8000];
+	if (tableOffset && _engine._archive.seekEntry(tableOffset)->read(table, sizeof table) == sizeof table)
+		_engine._display.setShadeTable(table);
+	else
+		warning("Tesoro: the shade table TABLA1.TBL cannot be read");
+
 	for (uint i = 0; i < SpeechTables::kCount; ++i) {
 		const uint32 offset = _engine._archive.findEntry(kSpeechFiles[i]);
 		if (!offset) {
@@ -260,6 +280,11 @@ Object *World::createObject(Level &level, const ObjectRecord &record, Room &room
 	const int16 sort = room.sortOffset();
 	const Common::Array<AnimPlayer> &levelPlayers = level.levelPlayers();
 	switch (record.kind) {
+		case 2: {
+			ObjectGroup *object = new ObjectGroup();
+			object->init(record, sort, levelPlayers);
+			return object;
+		}
 		case 5: {
 			StoryCharacter *object = new StoryCharacter();
 			object->init(record.dataByte(5), record, sort, levelPlayers, loadTime, *this);
@@ -285,6 +310,21 @@ Object *World::createObject(Level &level, const ObjectRecord &record, Room &room
 			}
 			StoryProp *object = new StoryProp();
 			object->init(record.kind, sub, record, sort, levelPlayers, loadTime, *this);
+			return object;
+		}
+		case 15: {
+			ClickCatcher *object = new ClickCatcher();
+			object->init(record, sort, levelPlayers, loadTime, *this);
+			return object;
+		}
+		case 11: {
+			ActionStrip *object = new ActionStrip();
+			object->init(record, sort, levelPlayers, loadTime, *this);
+			return object;
+		}
+		case 13: {
+			InventoryItem *object = new InventoryItem();
+			object->init(record, sort, levelPlayers, loadTime, *this);
 			return object;
 		}
 		default:
@@ -319,9 +359,19 @@ void World::insertInMainList(Object *object, int priority) {
 void World::insertInMainListFront(Object *object, int priority) {
 	_main.insertByPriorityFront(object, priority);
 }
-bool World::pointerHasItem() { return false; }
+
+bool World::pointerHasItem() { return pointerItem() != nullptr; }
 
 bool World::combinationReply(uint64 objectKey, const SpeechTable::Line *&line) {
+	InventoryItem *held = pointerItem();
+	if (!held)
+		return false;
+	for (uint i = 0; i < held->combinationCount(); ++i) {
+		if (held->combinationKey(i) == objectKey) {
+			line = held->combinationLine(i);
+			return true;
+		}
+	}
 	return false;
 }
 
@@ -363,12 +413,18 @@ void World::stopVoice(uint32 id) {
 }
 
 void World::returnPointerItem() {
+	if (InventoryItem *held = pointerItem())
+		held->setVisible(true);
 	clearPointerItem();
 }
 
 void World::clearPointerItem() {
-	if (_engine._cursor)
-		_engine._cursor->animation().selectBank(0, 0, 0, false, false, now());
+	setPointerItem(nullptr);
+	cursorFrame(0, 0);
+}
+
+bool World::actionStripAvailable() {
+	return place() == Cursor::kGame;
 }
 
 uint32 World::randomNumber(uint32 lo, uint32 hi) { return _engine.randomBetween(lo, hi); }
@@ -442,6 +498,26 @@ void World::jimShow(bool visible) { jim()->setVisible(visible); }
 
 void World::jimMoveTo(int32 x, int32 y) { jim()->setPosition(x, y); }
 void World::jimRemoveFromMainList() { removeFromMainList(jim()); }
+
+InventoryItem *World::pointerItem() { return _cursor ? static_cast<InventoryItem *>(_cursor->heldItem()) : nullptr; }
+
+void World::setPointerItem(InventoryItem *item) {
+	if (_cursor)
+		_cursor->setHeldItem(item);
+}
+
+void World::cursorFrame(int first, int last) {
+	if (_cursor)
+		_cursor->animation().selectBank(0, first, last, false, false, now());
+}
+
+int32 World::interfaceCameraX() { return _interface ? _interface->camera().x() : 0; }
+
+void World::hideInventory() {
+	if (_cursor)
+		_cursor->hideInventory();
+}
+
 void World::playFrames(Object &object, int first, int last) { object.animation().selectBank(0, first, last, false, false, now()); }
 
 void World::setWalkAreaFrames(Level *where, WalkPart part, int first, int last) {
@@ -494,6 +570,12 @@ void World::wait(int milliseconds) { _engine._system->delayMillis(milliseconds);
 
 Common::SeekableReadStream &World::archiveStream() { return *_engine._archive.seekEntry(0); }
 
+int World::useItemOnInterface() {
+	// Item 37 is forwarded to the bucket in the interface, which is used with the "no item" value.
+	Object *bucket = findObject(-1, "ICUBOMAR");
+	return bucket ? static_cast<InteractiveObject *>(bucket)->useItem(0xff) : 0;
+}
+
 bool World::hasWalkArea() {
 	Level *level = jimLevel();
 	const WalkFloor *floor = level ? level->floor() : nullptr;
@@ -542,6 +624,20 @@ int World::jimRunVerb() {
 	_jimClickPending = true;
 	insertInMainList(jim(), 5);
 	return 3;
+}
+
+bool World::menuKeyPressed() { return (_engine._escape & PointerState::kPressed) != 0; }
+
+void World::acknowledgeKeys() { _engine.resetKeys(); }
+
+Object *World::interfaceObject(const char *name) { return _interface ? _interface->findObject(nameKey64(name)) : nullptr; }
+
+void World::enterMainMenu() { _engine.enterMainMenu(); }
+
+Cursor::Place World::place() {
+	if (_engine._inMenu)
+		return _engine._level == _engine._mainMenu ? Cursor::kMainMenu : Cursor::kNewGameMenu;
+	return jimLevelIndex() == 14 ? Cursor::kBoard : Cursor::kGame;
 }
 
 } // End of namespace Tesoro

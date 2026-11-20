@@ -160,6 +160,8 @@ public:
 	void setRoom(Room *room) { _room = room; }
 
 	void setPosition(int32 x, int32 y) { _x = x; _y = y; }
+	void shiftX(int32 dx) { _x += dx; }
+	void shiftY(int32 dy) { _y += dy; }
 
 	/**
 	 * Moves the object to (x, y): the position it is heading to always changes, the current one only with setCurrent.

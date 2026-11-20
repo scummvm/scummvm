@@ -14,6 +14,7 @@ MODULE_OBJS = \
 	core/camera.o \
 	core/cameraframe.o \
 	core/character.o \
+	core/clickcatcher.o \
 	core/clock.o \
 	core/collision.o \
 	core/cursor.o \
@@ -21,6 +22,9 @@ MODULE_OBJS = \
 	core/exitdoor.o \
 	core/hovertext.o \
 	core/interactive.o \
+	core/actionstrip.o \
+	core/inventoryitem.o \
+	core/objectgroup.o \
 	core/jim.o \
 	core/level.o \
 	core/menuitem.o \

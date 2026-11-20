@@ -107,10 +107,10 @@ Common::Error TesoroEngine::run() {
 				_cursor = static_cast<Cursor *>(objects[i]);
 		}
 	}
-	if (_cursor) {
+	_world.setInterface(_interface);
+	_world.setCursor(_cursor);
+	if (_cursor)
 		_cursor->setSurroundings(&_pointer, _level);
-		_cursor->setHost(&_world);
-	}
 
 	// The pointer, the interface level and the level the player is in take their turns in this order.
 	if (_cursor)
@@ -118,12 +118,6 @@ Common::Error TesoroEngine::run() {
 	if (_interface)
 		_world.mainList().insertByPriority(_interface, 0x13);
 	_world.mainList().insertByPriority(_level, 0x14);
-
-	const uint32 fontOffset = _archive.findEntry("FUENTES.ANM");
-	if (!fontOffset || !_font.load(*_archive.seekEntry(fontOffset), fontOffset, AnimBank::kLoadNow)) {
-		warning("Tesoro: the font FUENTES.ANM cannot be read");
-	}
-	_display.setFont(_font.bank());
 
 	while (runFrame()) {
 		limiter.delayBeforeSwap();

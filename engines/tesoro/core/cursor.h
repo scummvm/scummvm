@@ -23,6 +23,7 @@
 #define TESORO_CORE_CURSOR_H
 
 #include "tesoro/core/hovertext.h"
+#include "tesoro/core/actionstrip.h"
 #include "tesoro/core/pointerstate.h"
 #include "tesoro/core/spriteobject.h"
 
@@ -37,6 +38,9 @@ class Level;
  */
 class Cursor : public SpriteObject {
 public:
+	// Where the game stands, as far as the pointer goes.
+	enum Place { kGame, kMainMenu, kNewGameMenu, kBoard };
+
 	~Cursor() override { delete _companion; }
 
 	/** Builds the plain companion: an object that follows the mouse in the level the player is in. */
@@ -56,6 +60,10 @@ public:
 	void setSurroundings(const PointerState *mouse, Level *playerLevel) { _mouse = mouse; _playerLevel = playerLevel; }
 
 	void setHost(World *host) { _host = host; }
+	void setActionStrip(ActionStrip *strip) { _actionStrip = strip; }
+
+	void closeSaveLoadMenu();
+	void hideInventory();
 
 	int update() override;
 
@@ -72,7 +80,6 @@ public:
 
 	/**
 	 * Walks through the objects touched this frame, checking for hover and click actions.
-	 * Returns what the last object returned: 0 for none, 3 asks the frame to stop.
 	 */
 	int processCandidates(byte buttons, int verb);
 
@@ -81,19 +88,27 @@ public:
 
 	HoverText &label() { return _label; }
 
+	Object *heldItem() const { return _heldItem; }
+	void setHeldItem(Object *item) { _heldItem = item; }
 	/** The objects under the pointer after the last collision pass. The companion has its own list. */
 	const ObjectList &touched() const { return _touched; }
 	const Cursor *companion() const { return _companion; }
 
+	void openSaveLoadMenu();
+
 private:
+	void showInventory();
+	void shiftActionStrip(int32 dx);
 	HoverText _label;
 	ObjectList _hovered;	// objects that keep the label or the click
 	ObjectList _touched;	// objects under the pointer this frame
+	Object *_heldItem;
 	Cursor *_companion = nullptr;
 	Cursor *_owner = nullptr;		// for the companion: the main pointer
 	const PointerState *_mouse = nullptr;
 	Level *_playerLevel = nullptr;
 	World *_host = nullptr;
+	ActionStrip *_actionStrip = nullptr;
 };
 
 } // End of namespace Tesoro

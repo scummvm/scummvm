@@ -79,29 +79,91 @@ void Cursor::draw(const Camera &camera, Display &display) {
 	}
 }
 
+void Cursor::openSaveLoadMenu() {
+	// The menu does not open on the board game's level.
+	const Cursor::Place place = _host->place();
+	if (place == Cursor::kBoard)
+		return;
+
+	// The pointer lets go of what it carries and shows its first picture.
+	if (_heldItem)
+		_heldItem->setVisible(true);
+	_heldItem = nullptr;
+	_anim.selectBank(0, 0, 0, false, false, _host->now());
+
+	// The save button works in the first levels of the game only; the subtitle switch shows its setting.
+	const bool savable = _host->levelIndex() < 0x17 && place == Cursor::kGame;
+	if (Object *save = _host->interfaceObject("SALVAR"))
+		save->setActive(savable);
+	if (Object *texts = _host->interfaceObject("TEXTOS")) {
+		const int8 page = (int8)_host->menuPage();
+		texts->animation().selectBank(0, (uint16)page, page, false, false, _host->now());
+	}
+
+	_host->jimResumeFacing();
+	_label.set(nullptr, 0);
+
+	// The interface slides to the save screen.
+	_level->camera().shift(-645, 0);
+}
+
 int Cursor::update() {
 	// The companion has no step of its own: the main pointer moves it.
 	if (!_companion)
 		return 0;
 
-	if (!_mouse || !_level) {
-		warning("Cursor: no mouse or level to follow");
+	if (!_mouse || !_level || !_playerLevel || !_host) {
+		warning("Cursor: no mouse, levels or host to follow");
 		return 0;
 	}
 
-	// What was touched is kept until the next frame's step, so it can be looked at in between.
-	_touched.clear();
-	if (_companion)
-		_companion->_touched.clear();
+	// The interface is on one of three pages: the action strip (0 to 639), the inventory (beyond 640) and
+	// the saved-game screen (before 0). The menu key and the right button move between them.
+	const int32 page = _level->camera().x();
+	const bool right = (_mouse->buttonState(PointerState::kRight) & (PointerState::kPressed | PointerState::kDoublePress)) != 0;
+
+	if (page >= 0 && page < 640) {
+		if (_host->menuKeyPressed()) {
+			_host->acknowledgeKeys();
+			const Cursor::Place place = _host->place();
+			if (place == Cursor::kMainMenu) {
+				_host->fadeOut(4, 100);
+				_host->clearMainList();
+				return 3;
+			}
+			if (place == Cursor::kNewGameMenu) {
+				_host->enterMainMenu();
+				_host->fadeOut(4, 100);
+				return 1;
+			}
+			openSaveLoadMenu();
+		} else if (right) {
+			showInventory();
+		}
+	} else if (page <= 640) {
+		if (_host->menuKeyPressed()) {
+			_host->acknowledgeKeys();
+			closeSaveLoadMenu();
+		}
+	} else {
+		if (_host->menuKeyPressed()) {
+			_host->acknowledgeKeys();
+			hideInventory();
+			openSaveLoadMenu();
+		}
+		if (right)
+			hideInventory();
+	}
+
 
 	moveTo(_mouse->x + _level->camera().x(), _level->camera().y() - _mouse->y, true);
 
-	if (_playerLevel && _playerLevel->roomCount() != 0) {
-		const Camera &playerCamera = _playerLevel->camera();
-		_companion->_level = _playerLevel;
-		_companion->_room = &_playerLevel->room(0);
-		_companion->moveTo(_mouse->x + playerCamera.x(), playerCamera.y() - _mouse->y, true);
-	}
+
+	const Camera &playerCamera = _playerLevel->camera();
+	_companion->_level = _playerLevel;
+	_companion->_room = &_playerLevel->room(0);
+	_companion->moveTo(_mouse->x + playerCamera.x(), playerCamera.y() - _mouse->y, true);
+
 	return 1;
 }
 
@@ -193,6 +255,46 @@ int Cursor::processCandidates(byte buttons, int verb) {
 		previous[i]->clearHoverText();
 
 	return result;
+}
+
+void Cursor::shiftActionStrip(int32 dx) {
+	// The action strip, its highlight square and every verb picture slide with the interface.
+	if (!_actionStrip)
+		return;
+	_actionStrip->shiftX(dx);
+	if (Object *square = _actionStrip->square())
+		square->shiftX(dx);
+	if (Object *group = _actionStrip->group()) {
+		const Common::Array<Object *> &members = static_cast<ObjectGroup *>(group)->members();
+		for (uint i = 0; i < members.size(); ++i) {
+			if (members[i])
+				members[i]->shiftX(dx);
+		}
+	}
+}
+
+void Cursor::hideInventory() {
+	_level->camera().shift(-640, 0);
+	shiftActionStrip(-640);
+	if (_heldItem)
+		_heldItem->setVisible(true);
+}
+
+void Cursor::closeSaveLoadMenu() {
+	_level->camera().shift(645, 0);
+	_host->fadeOut(4, 100);
+}
+
+void Cursor::showInventory() {
+	if (_host->place() != Cursor::kGame)
+		return;
+
+	if (_heldItem)
+		_heldItem->setVisible(false);
+	_host->jimResumeFacing();
+	_level->camera().shift(640, 0);
+	_label.set(nullptr, 0);
+	shiftActionStrip(640);
 }
 
 } // End of namespace Tesoro

@@ -24,6 +24,12 @@
 
 #include "common/scummsys.h"
 
+#include "tesoro/core/clickcatcher.h"
+#include "tesoro/core/cursor.h"
+#include "tesoro/core/actionstrip.h"
+#include "tesoro/core/inventoryitem.h"
+#include "tesoro/core/objectgroup.h"
+#include "tesoro/core/jim.h"
 #include "tesoro/core/character.h"
 #include "tesoro/core/objectlist.h"
 #include "tesoro/core/sounddevice.h"
@@ -110,13 +116,13 @@ public:
 	void insertInMainListFront(Object *object, int priority);
 	void removeFromMainList(Object *object);
 	void clearMainList() { _main.clear(); }
-	bool pointerHasItem();
 	bool combinationReply(uint64 objectKey, const SpeechTable::Line *&line);
 	/** The item's picture shows in the strip again, then the pointer lets go of it. */
 	void returnPointerItem();
 
 	Common::SeekableReadStream &archiveStream();
 
+	int useItemOnInterface();
 	bool hasWalkArea();
 	/** The size of things at a point (0x100 is life size; 0x100 too without a floor). */
 	int32 scaleAt(int32 x, int32 y);
@@ -129,6 +135,12 @@ public:
 	Object *findObjectByKey(int level, uint64 key);
 	/** The object is switched on (for the interface items: the player has them). A missing object warns and counts as off. */
 	bool isActive(int level, const char *name);
+	InventoryItem *pointerItem();
+	void setPointerItem(InventoryItem *item);
+	void cursorFrame(int first, int last);
+	int32 interfaceCameraX();
+	void hideInventory();
+	bool pointerHasItem();
 
 	Level *levelAt(int index) { return level(index); }
 	/** The level Jim is in, or null. */
@@ -162,6 +174,23 @@ public:
 	uint32 playVoice(uint32 archiveOffset);
 	bool voiceActive(uint32 id);
 	void stopVoice(uint32 id);
+
+	/** Makes the pointer and the interface level known (they are loaded by the engine). */
+	void setCursor(Cursor *cursor) {
+		_cursor = cursor;
+		if (_cursor) {
+			_cursor->setHost(this);
+			if (_actionStrip)
+				_cursor->setActionStrip(static_cast<ActionStrip *>(_actionStrip));
+		}
+	}
+	void setInterface(Level *level) { _interface = level; }
+	bool actionStripAvailable();
+	void actionStripReady(Object *strip) {
+		_actionStrip = strip;
+		if (_cursor)
+			_cursor->setActionStrip(static_cast<ActionStrip *>(strip));
+	}
 	uint32 randomNumber(uint32 lo, uint32 hi);
 	bool skipPressed();
 	bool subtitlesOn();
@@ -170,6 +199,15 @@ public:
 	void queueText(const byte *text, uint32 colour, int32 centreX, int32 y, int32 maxWidth);
 	void drawSubtitle(Jim &jim, const SpeechTable::Line &line);
 	int interactiveUpdate(Jim &jim);
+
+	bool menuKeyPressed();
+	void acknowledgeKeys();
+	Cursor::Place place();
+	void enterMainMenu();
+	int levelIndex() { return jimLevelIndex(); }
+	Object *interfaceObject(const char *name);
+	int menuPage() { return _subtitles ? 1 : 0; }
+	void jimResumeFacing() { jim()->resumeFacing(); }
 
 private:
 	friend class WorldLevel;
@@ -184,8 +222,12 @@ private:
 	TesoroEngine &_engine;
 	SpeechTables _speech;
 	Common::Array<byte> _speechText[SpeechTables::kCount];
+	AnimPlayer _font;
 	Level *_levels[kLevelCount] = {};
 	Jim *_jim = nullptr;
+	Cursor *_cursor = nullptr;
+	Level *_interface = nullptr;
+	Object *_actionStrip = nullptr;
 	bool _subtitles = true;
 	int _jimVerb = 0;					// what the pointer carried when it clicked Jim
 	bool _jimClickPending = false;		// Jim is saying his answer to that click

@@ -66,6 +66,8 @@ public:
 	/** Moves Jim into a room of a level and puts him at (x, y), the camera following him. */
 	void enterLevel(Level *level, Room *room, int32 x, int32 y);
 
+	void resumeFacing() { if (_walking) setFacing(_facing); }
+
 	/** Takes Jim out of his level, for when the level is thrown away. */
 	void leaveLevel();
 

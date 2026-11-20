@@ -79,7 +79,6 @@ private:
 	bool _inMenu = true;
 	byte _escape = 0;
 
-	AnimPlayer _font;
 	World _world;
 	VideoPlayer _video;
 	bool _showOutlines = false;
