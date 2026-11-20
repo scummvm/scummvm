@@ -113,26 +113,31 @@ void Scene6263::prepareCustomGameplayLoop() {
 		return;
 	}
 	if (_entryScene == 6264) {
-		beginRoomAnimation(401, 26, 64, kSteamLeverFrames + 40, ARRAYSIZE(kSteamLeverFrames) - 40, true, 60);
+		animateSteamLever(401, true);
 	} else {
 		beginRoomAnimation(400, 24, 24, nullptr, 0, true, 60);
 	}
 }
 
 void Scene6263::advanceCustomGameplayLoop(uint32 delta) {
-	if (_town.boiler < 2 || _now - _boilerTick < 80) {
-		return;
-	}
-	_boilerTick = _now;
-	_boilerFrame = _boilerFrame < 40 ? _boilerFrame + 1 : 41 + _random.getRandomNumber(59);
-	for (uint i = 0; i < 4; i += 3) {
-		const int step = _random.getRandomBit() ? 1 : -1;
-		_locomotiveGaugeFrames[i] = CLIP<int>(_locomotiveGaugeFrames[i] + step, 0, 30);
+	if (_town.boiler >= 2 && advanceBoiler()) {
+		for (uint i = 0; i < 4; i += 3) {
+			const int step = _random.getRandomBit() ? 1 : -1;
+			_locomotiveGaugeFrames[i] = CLIP<int>(_locomotiveGaugeFrames[i] + step, 0, 30);
+		}
 	}
 }
 
+bool Scene6263::advanceBoiler() {
+	if (_now - _boilerTick < 80) {
+		return false;
+	}
+	_boilerTick = _now;
+	_boilerFrame = _boilerFrame < 40 ? _boilerFrame + 1 : 41 + _random.getRandomNumber(59);
+	return true;
+}
+
 void Scene6263::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
-	_boilerAnimation.draw(viewport, _boilerFrame, 0, 0);
 	_locomotiveGaugeFrames[1] = _town.boiler == 3 ? 30 : _town.boiler == 2 ? 15 : 0;
 	_locomotiveGaugeFrames[2] = _town.waterTank * 6;
 	if (drawingRoomAnimation()) {
@@ -142,12 +147,23 @@ void Scene6263::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport
 			_locomotiveGaugeFrames[1] = CLIP<int>((int)_actionStep - 23 + 15, 15, 30);
 		}
 	}
+	drawBoiler(viewport, !drawingRoomAnimation() || (_roomAction != 306 && _roomAction != 308 && _roomAction != 401));
+}
+
+void Scene6263::drawBoiler(Graphics::ManagedSurface &viewport, bool drawLever) {
+	_boilerAnimation.draw(viewport, _boilerFrame, 0, 0);
 	for (uint i = 0; i < ARRAYSIZE(_locomotiveGauges); ++i) {
 		_locomotiveGauges[i].draw(viewport, _locomotiveGaugeFrames[i], 0, 0);
 	}
-	if (!drawingRoomAnimation() || (_roomAction != 306 && _roomAction != 308 && _roomAction != 401)) {
+	if (drawLever) {
 		_leverAnimation.draw(viewport, 0, 0, 0);
 	}
+}
+
+void Scene6263::animateSteamLever(uint16 action, bool returning, bool blast) {
+	const uint first = returning ? 40 : 0;
+	const uint count = blast ? 41 : ARRAYSIZE(kSteamLeverFrames) - first;
+	beginRoomAnimation(action, 26, 64, kSteamLeverFrames + first, count, true, 60);
 }
 
 float Scene6263::actorHeight() const {
@@ -196,8 +212,7 @@ RunawayRoomScene::ActionResult Scene6263::dispatchCustomSceneAction(uint16 actio
 		if (!_town.steamLever) {
 			dispatchCustomSceneAction(305);
 		}
-		beginRoomAnimation(306, 26, 64, kSteamLeverFrames,
-			_town.boiler == 3 && !_town.locomotiveKey ? 41 : ARRAYSIZE(kSteamLeverFrames), true, 60);
+		animateSteamLever(306, false, _town.boiler == 3 && !_town.locomotiveKey);
 		break;
 	case 1306: // Show the steam burst outside, or explain why it did not dislodge the key.
 		if (_town.boiler == 3 && !_town.locomotiveKey) {

@@ -45,6 +45,11 @@ private:
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 	void handleAnimationFrameHook() override;
 
+protected:
+	bool advanceBoiler();
+	void drawBoiler(Graphics::ManagedSurface &viewport, bool drawLever);
+	void animateSteamLever(uint16 action, bool returning, bool blast = false);
+
 	RunawayAnimation _boilerAnimation, _leverAnimation;
 	RunawayAnimation _locomotiveGauges[4];
 	byte _locomotiveGaugeFrames[4] = {};

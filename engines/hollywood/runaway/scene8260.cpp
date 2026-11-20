@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "common/util.h"
 #include "hollywood/runaway/scene8260.h"
 
@@ -120,10 +119,6 @@ RunawayRoomScene::ActionResult Scene8260::dispatchCustomSceneAction(uint16 actio
 		leaveRoom(8225);
 		break;
 	case 304: // Climb through the cab's broken window.
-		if (!findRunawayRoom(8263)) {
-			warning("Runaway scene 8263 is not implemented yet");
-			break;
-		}
 		beginRoomAnimation(304, 4, 131, nullptr, 0, true, 60);
 		break;
 	case 1304: // Enter the driver's cab after climbing through the window.
