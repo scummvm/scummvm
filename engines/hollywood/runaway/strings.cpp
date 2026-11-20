@@ -143,6 +143,17 @@ Common::U32String RunawayStrings::hotspotName(uint16 scene, byte hotspot) const 
 	return lookup(Common::String::format("hotspot.%u.%u", scene, hotspot));
 }
 
+Common::U32String RunawayStrings::sceneActionCaption(uint16 scene, byte hotspot, byte item, bool look) const {
+	if (item) {
+		Common::U32String caption = lookup(Common::String::format("action.%u.item.%u.%u", scene, item, hotspot));
+		if (caption.empty()) {
+			caption = lookup(Common::String::format("action.%u.item.0.%u", scene, hotspot));
+		}
+		return caption;
+	}
+	return lookup(Common::String::format("action.%u.%s.%u", scene, look ? "look" : "use", hotspot));
+}
+
 Common::U32String RunawayStrings::shackHotspotName(byte hotspot) const {
 	return hotspotName(5030, hotspot);
 }

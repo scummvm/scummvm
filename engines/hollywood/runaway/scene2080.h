@@ -36,6 +36,7 @@ private:
 	bool applyCustomBackgroundPatches() override;
 	void applyCustomHotspotState() override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
+	byte defaultItemAction(byte item, byte id) const override;
 	void runCustomEntrySequence() override;
 	bool updateCustomSequence() override;
 	void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) override;

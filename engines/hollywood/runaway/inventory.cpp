@@ -27,6 +27,29 @@
 namespace Hollywood {
 namespace {
 
+// Selected item followed by target item; the original combinations are directional.
+const byte kHospitalItemActions[19][19] = {
+	{ 0,  5,  5,  5, 20,  3,  5,  5,  5,  5,  5, 20, 17,  5,  3,  3,  3, 20,  5}, // 1: Wallet.
+	{ 5,  0, 15, 20, 20,  5,  5,  3,  5, 20,  3, 20, 17,  5,  3,  5, 20, 15,  5}, // 2: Car keys.
+	{ 5, 15,  0,  5, 20, 17,  5,  5, 15,  5, 15,  5, 17,  5,  5,  3,  5,  5,  3}, // 3: Order form.
+	{ 5,  5,  5,  0, 20,  3,  5,  3, 20, 17,  5, 20, 17, 15,  5,  3,  5, 20,  3}, // 4: Amber.
+	{ 5,  5,  5,  5,  0,  5,  5,  5,  5,  5,  5,  5, 17,  5,  5,  5,  5,  5,  5}, // 5: Gina's bag.
+	{ 3,  3,  3,  3,  5,  0,  5,  3,  5,  3,  3,  5,  5,  5,  5,  3,  3,  5,  3}, // 6: Gina's chart.
+	{ 5,  5,  5,  5,  5,  5,  0,  5,  5,  5,  5,  5, 17,  5,  5,  5,  5, 20,  5}, // 7: Sheet.
+	{ 5,  5,  5,  5,  5,  3,  5,  0, 20,  3,  5,  5, 17,  5,  3,  3,  3,  5, 17}, // 8: Pills.
+	{29, 29, 29, 29, 29, 29, 29, 29,  0, 29, 29, 15, 29, 29, 29, 29, 29, 29, 29}, // 9: Matches.
+	{ 5,  5,  5,  5,  5,  5,  5,  5,  5,  0,  5,  5,  5,  5,  5,  5, 73,  5,  5}, // 10: Wig.
+	{ 5,  5, 15,  5,  5, 75,  5,  5,  5,  5,  0, 70,  5,  5, 76, 74,  5,  5,  5}, // 11: Marker.
+	{ 5,  5,  5,  5,  5,  5,  5,  5,  5,  5, 70,  0, 72,  5, 71,  5,  5,  5,  5}, // 12: Alcohol.
+	{ 5,  3, 17,  5,  5,  3,  5,  3,  5,  5,  5,  5,  0,  5,  5,  3,  5,  5,  3}, // 13: Glass.
+	{ 3,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  0,  5,  5,  5,  5,  5}, // 14: Pillows.
+	{ 5,  5, 15,  5,  5,  5,  5,  5,  5,  5, 76, 69, 17,  5,  0,  5,  5, 15,  5}, // 15: Syringe.
+	{ 5,  5,  3,  3,  5, 17,  5,  5,  5,  5, 74,  5, 17,  5,  5,  0,  5,  5,  3}, // 16: Blank chart.
+	{ 3,  5,  5,  3,  5,  3,  5,  3,  5, 73,  5,  5, 17,  5,  5,  3,  0,  5,  3}, // 17: Head.
+	{15,  5,  5, 15,  5,  5, 15,  5, 15,  5,  5, 15, 17,  5,  5,  5,  5,  0,  5}, // 18: Spray.
+	{ 5,  3,  3,  3,  5,  5,  5,  3,  5,  3,  5,  5, 17,  5,  5,  5,  5,  5,  0}, // 19: Medical reference book.
+};
+
 const uint kMuseumItemCount = 19;
 const uint kTownItemCount = 32;
 const uint kHopiItemCount = 16;
@@ -509,9 +532,60 @@ RunawayInventory::Reply RunawayInventory::examine(byte item) const {
 	return Reply(item && item <= kItemCount ? kExamineCues[item] : 1, variation);
 }
 
+RunawayInventory::Reply RunawayInventory::combineHospitalItems(byte first, byte second) {
+	assert(first && first <= ARRAYSIZE(kHospitalItemActions) && second && second <= ARRAYSIZE(kHospitalItemActions[0]));
+	const byte action = kHospitalItemActions[first - 1][second - 1];
+	switch (action) {
+	case 69: { // Fill the syringe from the alcohol bottle.
+		const byte previous = _syringeFilled;
+		_syringeFilled = 1;
+		return Reply(69, previous);
+	}
+	case 70: // Try to pour alcohol into the marker.
+		return Reply(70);
+	case 71: // Pouring alcohol onto the syringe does not fill it.
+		return Reply(70, 1);
+	case 72: // Try to pour alcohol into the glass.
+		return Reply(70, 2);
+	case 73: // Put the wig on the model head.
+		_headWig = 1;
+		remove(10);
+		return Reply(71);
+	case 74: // Write on the blank medical chart.
+		if (_markerInk < 2) {
+			const byte previous = _markerInk;
+			_markerInk = 1;
+			return Reply(72, previous);
+		}
+		if (_chartWritten) {
+			return Reply(72, 3);
+		}
+		_chartWritten = 1;
+		_markerInk = 3;
+		return Reply(72, 2);
+	case 75: // Try to write on Gina's medical chart.
+		return Reply(72, 4);
+	case 76: // Restore the marker using the filled syringe.
+		if (!_syringeFilled) {
+			return Reply(73);
+		}
+		if (_markerInk >= 2) {
+			return Reply(73, 2);
+		}
+		_markerInk = 2;
+		_syringeFilled = 0;
+		return Reply(73, 1);
+	default:
+		return Reply::fromAction(action);
+	}
+}
+
 RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 	if (!contains(first) || !contains(second) || first == second)
 		return Reply();
+	if (_chapter == 1) {
+		return combineHospitalItems(first, second);
+	}
 	if (_chapter == 4) {
 		return combineTownItems(first, second);
 	}
@@ -535,48 +609,6 @@ RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 			_finale.heatNeeded = 1;
 			return Reply(313, variation);
 		}
-		return Reply();
-	}
-	if (_chapter == 1) {
-		if (first == 10 && second == 17) {
-			_headWig = 1;
-			remove(10);
-			return Reply(71);
-		}
-		if (first == 11 && second == 16) {
-			if (_markerInk < 2) {
-				const byte previous = _markerInk;
-				_markerInk = 1;
-				return Reply(72, previous);
-			}
-			if (_chartWritten)
-				return Reply(72, 3);
-			_chartWritten = 1;
-			_markerInk = 3;
-			return Reply(72, 2);
-		}
-		if (first == 12 && second == 15) {
-			const byte previous = _syringeFilled;
-			_syringeFilled = 1;
-			return Reply(69, previous);
-		}
-		if (first == 11 && second == 15) {
-			if (!_syringeFilled)
-				return Reply(73);
-			if (_markerInk >= 2)
-				return Reply(73, 2);
-			_markerInk = 2;
-			_syringeFilled = 0;
-			return Reply(73, 1);
-		}
-		if (first == 11 && second == 12)
-			return Reply(70);
-		if (first == 12 && second == 13)
-			return Reply(70, 2);
-		if (first == 13 && second == 15)
-			return Reply(70, 1);
-		if (first == 6 && second == 11)
-			return Reply(72, 4);
 		return Reply();
 	}
 	if (_chapter == 2) {

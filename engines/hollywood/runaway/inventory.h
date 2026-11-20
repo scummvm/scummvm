@@ -40,7 +40,13 @@ public:
 	struct Reply {
 		uint16 cue;
 		byte variation;
+		uint16 action = 0;
 		Reply(uint16 c = 1, byte v = 0) : cue(c), variation(v) {}
+		static Reply fromAction(uint16 action) {
+			Reply reply;
+			reply.action = action;
+			return reply;
+		}
 	};
 	RunawayInventory(const RunawayStrings &strings, RunawayGameType game) :
 		_strings(strings), _museumDemo(game == kRunawayMuseumDemo), _chapter(game == kRunawayFullGame ? 1 : game == kRunawayMuseumDemo ? 2 : 3) {}
@@ -74,6 +80,7 @@ public:
 	void restoreState(const RunawaySaveState &state);
 
 private:
+	Reply combineHospitalItems(byte first, byte second);
 	Reply combineTownItems(byte first, byte second);
 	Reply combineHopiItems(byte first, byte second);
 	const RunawayStrings &_strings;

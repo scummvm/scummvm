@@ -57,6 +57,29 @@ const RunawayHotspot kHotspots[] = {
 	{313, 532, 5, {351, 352}, {0, 0}}, // 23: Hallway door.
 };
 
+// Item IDs 1-19, then hotspot IDs in kHotspots order. Zero uses kItemActions.
+const byte kItemResponses[19][19] = {
+	{ 3, 17,  3,  3,  3,  5,  5, 19,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5}, // 1: Wallet.
+	{ 3, 17,  3,  3,  3, 17,  5, 19,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5}, // 2: Car keys.
+	{ 3, 17,  3,  3,  3,  5,  5, 19,  5,  5,  4,  5,  5,  5,  5,  5,  5,  5,  5}, // 3: Order form.
+	{ 3, 17,  3,  3,  3,  5,  5, 19,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5}, // 4: Amber.
+	{ 3, 15,  3,  3,  3,  0,  5, 19,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5}, // 5: Gina's bag.
+	{ 3, 17,  3,  3,  3,  5,  5, 19,  0,  0,  5,  5,  3,  3,  5,  5,  5,  5,  1}, // 6: Gina's chart.
+	{ 3, 15,  3,  3,  3,  1,  1, 19,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, 31}, // 7: Sheet.
+	{ 3, 17,  3,  3,  3,  1,  1, 19,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1}, // 8: Pills.
+	{29, 15, 29, 29, 29,  5, 29, 19, 29, 29, 29,  0, 29, 29, 29, 29, 29, 29, 29}, // 9: Matches.
+	{ 3,  0,  3,  3,  3,  5,  5, 19,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5, 17}, // 10: Wig.
+	{ 5, 17,  3,  3, 15,  5,  5, 19, 17, 17,  5,  5,  5,  5,  5,  5,  5,  5,  5}, // 11: Marker.
+	{ 5, 17, 17,  3,  3,  5,  5, 19,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5}, // 12: Alcohol.
+	{17,  0,  3,  3,  3,  5,  5, 19, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17}, // 13: Glass.
+	{ 5, 17,  3,  3,  3,  5,  5, 19,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  0}, // 14: Pillows.
+	{ 5,  0, 15,  3,  3,  5,  5, 19,  1,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5}, // 15: Syringe.
+	{ 5, 17,  3,  3,  3,  5,  5, 19,  0,  0,  5,  5,  5,  5,  5,  5,  5,  5, 24}, // 16: Blank chart.
+	{ 5, 17,  3,  3,  3,  5,  5, 19,  3,  3,  5,  5,  3,  3,  5,  3,  3,  3,  0}, // 17: Head.
+	{ 5, 15,  3,  3, 15,  5,  5, 19,  5,  5,  5,  0,  5,  5,  5,  5,  5,  5,  5}, // 18: Spray.
+	{ 3, 17,  3,  3,  3,  5,  5, 19,  3,  3,  5,  5,  3,  3,  5,  5,  5,  5,  5}, // 19: Medical reference book.
+};
+
 const RunawayResponse kResponses[] = {
 	{kHospitalBedroom, 301, 1, 0}, // Look at the bathroom door.
 	{kHospitalBedroom, 304, 4, 0}, // Look at the glass.
@@ -330,6 +353,13 @@ bool Scene2020::loadCustomResources() {
 		loadForeground(3, 15) && _chartAnimation.load(_archive, 5, 1) &&
 		_ginaAnimation.load(_archive, 22, 19) && _chartOverlay.load(_archive, 17, 1) &&
 		_archive.readVariableChunk(20, _monitorPatches[0]) && _archive.readVariableChunk(21, _monitorPatches[1]);
+}
+
+byte Scene2020::defaultItemAction(byte item, byte id) const {
+	if (!item || item > ARRAYSIZE(kItemResponses) || !id || id > ARRAYSIZE(kItemResponses[0])) {
+		return 1;
+	}
+	return kItemResponses[item - 1][id - 1];
 }
 
 bool Scene2020::applyCustomBackgroundPatches() {

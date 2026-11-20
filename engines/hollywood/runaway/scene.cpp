@@ -314,6 +314,22 @@ Common::U32String RunawayRoomScene::hotspotName(byte id) const {
 
 Common::U32String RunawayRoomScene::actionCaption(byte id, RunawayVerb verb, byte item) const {
 	const Common::U32String name = hotspotName(id);
+	if (hospitalChapter() && id) {
+		const Common::U32String pattern = _strings.sceneActionCaption(_room, id, item, verb == kVerbLook);
+		if (!pattern.empty()) {
+			Common::U32String caption;
+			for (uint i = 0; i < pattern.size(); ++i) {
+				if (pattern[i] == '#') {
+					caption += _inventory.name(item);
+				} else if (pattern[i] == '@') {
+					caption += name;
+				} else {
+					caption += pattern[i];
+				}
+			}
+			return caption;
+		}
+	}
 	if (item)
 		return _strings.text(RunawayStrings::kUse) + _inventory.name(item) +
 			(id ? _strings.text(RunawayStrings::kWith) + name : Common::U32String());
@@ -428,6 +444,10 @@ void RunawayRoomScene::sayInventory(const RunawayInventory::Reply &reply) {
 	_walkPath.clear();
 	_pendingHotspot = 0;
 	_caption.clear();
+	if (reply.action) {
+		executeItemAction(reply.action);
+		return;
+	}
 	if (townChapter() && sayTownInventory(reply)) {
 		return;
 	}
@@ -465,11 +485,15 @@ void RunawayRoomScene::useItem(byte item, byte id) {
 	for (uint i = 0; i < room->itemActionCount; ++i) {
 		const RunawayItemAction &action = room->itemActions[i];
 		if (action.hotspot == id && (!action.item || action.item == item)) {
-			execute(action.action);
+			executeItemAction(action.action);
 			return;
 		}
 	}
-	say(1, 0, true);
+	if (hospitalChapter()) {
+		executeItemAction(defaultItemAction(item, id));
+	} else {
+		say(1, 0, true);
+	}
 }
 
 void RunawayRoomScene::execute(uint16 action) {

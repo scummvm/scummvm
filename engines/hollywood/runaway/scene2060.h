@@ -35,6 +35,7 @@ private:
 	bool applyCustomBackgroundPatches() override;
 	void applyCustomHotspotState() override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
+	byte defaultItemAction(byte item, byte id) const override;
 	void runCustomEntrySequence() override;
 	void finishCustomAnimation(uint16 action) override;
 	void handleAnimationFrameHook() override;

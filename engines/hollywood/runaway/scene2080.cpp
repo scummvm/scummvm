@@ -41,6 +41,29 @@ const RunawayHotspot kHotspots[] = {
 	{295, 327, 0, {319, 320}, {0, 0}} // 9: Toilet bowl.
 };
 
+// Item IDs 1-19, then hotspot IDs in kHotspots order. Zero uses kItemActions.
+const byte kItemResponses[19][9] = {
+	{19, 20,  1,  5,  1,  0,  1,  1, 19}, // 1: Wallet.
+	{19,  5,  1,  5,  1,  0,  1,  1, 19}, // 2: Car keys.
+	{19,  5,  1,  5,  1,  0,  1,  1, 19}, // 3: Order form.
+	{19,  5,  1,  5,  1,  0,  1,  1, 19}, // 4: Amber.
+	{19,  5,  1,  5,  1,  0,  1,  1, 19}, // 5: Gina's bag.
+	{19,  5,  1,  5,  1,  0,  1,  1, 19}, // 6: Gina's chart.
+	{19,  5,  1,  5,  1,  0,  1,  1, 19}, // 7: Sheet.
+	{19,  5,  1,  5,  1,  0,  1,  1, 19}, // 8: Pills.
+	{19,  5,  1, 20,  1,  0,  1,  1, 19}, // 9: Matches.
+	{19,  5,  1,  5,  1,  0,  1,  1, 19}, // 10: Wig.
+	{19, 17,  1, 24,  1,  0,  1,  1, 19}, // 11: Marker.
+	{19,  5,  1,  1,  1,  0,  1,  1, 19}, // 12: Alcohol.
+	{19,  0,  1, 17,  1,  0,  1,  1, 19}, // 13: Glass.
+	{19,  5,  1,  5,  1,  0,  1,  1, 19}, // 14: Pillows.
+	{19, 17,  1, 24,  1,  0,  1,  1, 19}, // 15: Syringe.
+	{19, 20,  1,  5,  1,  0,  1,  1, 19}, // 16: Blank chart.
+	{19, 20,  1,  5,  1,  0,  1,  1, 19}, // 17: Head.
+	{19, 20,  1,  5,  1,  0,  1,  1, 19}, // 18: Spray.
+	{19, 20,  1,  5,  1,  0,  1,  1, 19}, // 19: Medical reference book.
+};
+
 const RunawayResponse kResponses[] = {
 	{kHospitalBathroom, 301, 1, 0}, // Look at the wastebasket.
 	{kHospitalBathroom, 309, 5, 0}, // Look at the faucet.
@@ -79,6 +102,13 @@ namespace Runaway {
 
 Scene2080::Scene2080(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
+
+byte Scene2080::defaultItemAction(byte item, byte id) const {
+	if (!item || item > ARRAYSIZE(kItemResponses) || !id || id > ARRAYSIZE(kItemResponses[0])) {
+		return 1;
+	}
+	return kItemResponses[item - 1][id - 1];
+}
 
 bool Scene2080::loadCustomResources() {
 	return _wastebasketAnimation.load(_archive, 6, 43) && loadForeground(0, 7) && loadForeground(1, 8);

@@ -23,6 +23,41 @@
 
 namespace Hollywood {
 
+void RunawayRoomScene::executeItemAction(uint16 action) {
+	if (hospitalChapter()) {
+		// Native 0x410000 replaces generic item failures with weighted refusals.
+		if (action == 1 || action == 5) {
+			static const byte actions[] = {15, 17, 3, 24, 2, 31, 32, 5};
+			static const byte limits[] = {10, 20, 25, 28, 30, 32, 34, 35};
+			const uint roll = _random.getRandomNumber(34);
+			for (uint i = 0; i < ARRAYSIZE(actions); ++i) {
+				if (roll < limits[i]) {
+					action = actions[i];
+					break;
+				}
+			}
+		}
+		switch (action) {
+		case 2: // A variation of "That won't work."
+			say(1, _random.getRandomNumber(2), true);
+			return;
+		case 24: // Think before rejecting the combination.
+			say(20, 0, true);
+			say(20, 1 + _random.getRandomNumber(2), true);
+			return;
+		case 29: // Refuse to burn the object.
+			say(_random.getRandomNumber(4) ? 23 : 14, 0, true);
+			return;
+		case 32: // "I don't get it."
+			say(26, 0, true);
+			return;
+		default:
+			break;
+		}
+	}
+	execute(action);
+}
+
 void RunawayRoomScene::resumeHospital() {
 	if (_sequence.active()) {
 		return;

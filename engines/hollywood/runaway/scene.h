@@ -134,6 +134,7 @@ protected:
 	virtual void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {}
 	virtual void drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) {}
 	virtual ActionResult dispatchCustomSceneAction(uint16 action) { return kUnhandled; }
+	virtual byte defaultItemAction(byte item, byte hotspot) const { return 1; }
 	// Return true when the scene handles the reply after Brian's dialogue choice.
 	virtual bool handleCustomDialogueReply() { return false; }
 	virtual void handleCustomDialogueChoice(byte effect) {}
@@ -178,6 +179,7 @@ protected:
 	void walkTo(Common::Point target, byte facing = 0xff, bool scripted = false, bool reserved = false);
 	void arrive();
 	void execute(uint16 action);
+	void executeItemAction(uint16 action);
 	void useItem(byte item, byte hotspot);
 	void say(uint16 cue, byte variation = 0, bool global = false, byte speaker = 0);
 	void showLine();

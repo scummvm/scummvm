@@ -46,6 +46,29 @@ const RunawayHotspot kHotspots[] = {
 	{347, 563, 5, {327, 328}, {0, 1}} // 15: Pillows.
 };
 
+// Item IDs 1-19, then hotspot IDs in kHotspots order. Zero uses kItemActions.
+const byte kItemResponses[19][15] = {
+	{19,  5,  5, 20,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5}, // 1: Wallet.
+	{19,  5,  5, 20,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5}, // 2: Car keys.
+	{19,  5,  5, 20,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5}, // 3: Order form.
+	{19,  5,  5, 20,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5}, // 4: Amber.
+	{19,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5}, // 5: Gina's bag.
+	{19,  5,  5,  5,  5,  1,  5,  5,  5,  3,  5,  5,  5,  3,  5}, // 6: Gina's chart.
+	{19,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5}, // 7: Sheet.
+	{19,  5,  5,  5, 24,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5}, // 8: Pills.
+	{19,  5, 29, 20, 29, 29, 29,  5,  5,  5, 29, 29,  5, 29, 29}, // 9: Matches.
+	{19,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5}, // 10: Wig.
+	{19,  5,  5, 15,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5}, // 11: Marker.
+	{19,  5,  5, 20,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5}, // 12: Alcohol.
+	{19,  5,  5, 17, 17, 17, 17,  5,  5, 17,  5,  5, 17, 17,  5}, // 13: Glass.
+	{19,  5,  5,  5,  3,  3,  5,  5,  5,  5,  5,  5,  5,  3,  1}, // 14: Pillows.
+	{19,  5,  5, 20,  3,  3,  5,  5,  5,  5,  5,  5,  5, 17,  5}, // 15: Syringe.
+	{19,  5,  5,  5,  5,  1,  5,  5,  5,  5,  5,  5,  5,  5,  5}, // 16: Blank chart.
+	{19,  5,  5,  5,  3,  3, 20,  5,  5,  5,  5,  5,  5,  5,  5}, // 17: Head.
+	{19,  5,  5,  5, 20, 20, 20,  5,  5,  5,  5,  5,  5,  5,  5}, // 18: Spray.
+	{19,  5,  5,  5,  1,  1,  1,  3,  5,  5,  5,  5,  5,  5,  5}, // 19: Medical reference book.
+};
+
 const RunawayResponse kResponses[] = {
 	{kHospitalStoreroom, 301, 1, 0}, // Look at the window.
 	{kHospitalStoreroom, 304, 2, 0}, // Look at the radiator.
@@ -77,6 +100,13 @@ namespace Runaway {
 
 Scene2060::Scene2060(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
+
+byte Scene2060::defaultItemAction(byte item, byte id) const {
+	if (!item || item > ARRAYSIZE(kItemResponses) || !id || id > ARRAYSIZE(kItemResponses[0])) {
+		return 1;
+	}
+	return kItemResponses[item - 1][id - 1];
+}
 
 bool Scene2060::applyCustomBackgroundPatches() {
 	return (!_hospital.headTaken || applyPatch(5)) && (_hospital.blankChart != 2 || applyPatch(6)) &&

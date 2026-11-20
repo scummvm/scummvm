@@ -41,6 +41,7 @@ private:
 	bool applyCustomBackgroundPatches() override;
 	void applyCustomHotspotState() override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
+	byte defaultItemAction(byte item, byte id) const override;
 	float actorHeight() const override;
 	byte initialActorFacing() const override;
 	void resumeAmbientAudio(bool entering) override;

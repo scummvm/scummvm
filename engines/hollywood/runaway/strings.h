@@ -63,6 +63,7 @@ public:
 	Common::U32String text(TextId id) const;
 	Common::U32String itemName(byte chapter, byte item) const;
 	Common::U32String hotspotName(uint16 scene, byte hotspot) const;
+	Common::U32String sceneActionCaption(uint16 scene, byte hotspot, byte item, bool look) const;
 	Common::U32String shackHotspotName(byte hotspot) const;
 
 private:
