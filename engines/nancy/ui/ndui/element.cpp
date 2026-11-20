@@ -172,7 +172,39 @@ bool Element::hasReached(ControlState state) const {
 	return current == _colors[state];
 }
 
-// The texture is stretched to fill the destination, and tinted by the current color
+// Samples a texture between its four nearest pixels, like a Direct3D sampler with
+// linear filtering does, at a position in pixels where pixel centers are at .5
+static void sampleBilinear(const Graphics::ManagedSurface &texture, double x, double y, byte &a, byte &r, byte &g, byte &b) {
+	x -= 0.5;
+	y -= 0.5;
+	const int x0 = (int)floor(x);
+	const int y0 = (int)floor(y);
+	const double fx = x - x0;
+	const double fy = y - y0;
+
+	double channels[4] = { 0.0, 0.0, 0.0, 0.0 };
+	for (int i = 0; i < 4; ++i) {
+		const int px = CLIP<int>(x0 + (i & 1), 0, texture.w - 1);
+		const int py = CLIP<int>(y0 + (i >> 1), 0, texture.h - 1);
+		const double weight = ((i & 1) ? fx : 1.0 - fx) * ((i >> 1) ? fy : 1.0 - fy);
+
+		byte pa, pr, pg, pb;
+		texture.format.colorToARGB(texture.getPixel(px, py), pa, pr, pg, pb);
+		channels[0] += pa * weight;
+		channels[1] += pr * weight;
+		channels[2] += pg * weight;
+		channels[3] += pb * weight;
+	}
+
+	a = (byte)CLIP<int>((int)(channels[0] + 0.5), 0, 255);
+	r = (byte)CLIP<int>((int)(channels[1] + 0.5), 0, 255);
+	g = (byte)CLIP<int>((int)(channels[2] + 0.5), 0, 255);
+	b = (byte)CLIP<int>((int)(channels[3] + 0.5), 0, 255);
+}
+
+// The texture is stretched to fill the destination, and tinted by the current color.
+// Nancy16 to Nancy21 draw it through a D3DX sprite, whose Begin sets linear
+// filtering, so a texture drawn at another size is smoothed.
 void Element::drawSprite(Graphics::ManagedSurface &surface, const Common::Rect &src, const Common::Rect &dest, const Graphics::ManagedSurface &texture) const {
 	byte tintA = colorChannelToByte(_current[0]);
 	if (tintA == 0 || src.isEmpty() || dest.isEmpty()) {
@@ -184,6 +216,29 @@ void Element::drawSprite(Graphics::ManagedSurface &surface, const Common::Rect &
 	byte tintB = colorChannelToByte(_current[3]);
 
 	Common::Rect clipped = dest.findIntersectingRect(Common::Rect(surface.w, surface.h));
+
+	const bool isFiltered = g_nancy->getGameType() <= kGameTypeNancy21 &&
+		(src.width() != dest.width() || src.height() != dest.height());
+	if (isFiltered) {
+		const double scaleX = (double)src.width() / dest.width();
+		const double scaleY = (double)src.height() / dest.height();
+		for (int y = clipped.top; y < clipped.bottom; ++y) {
+			const double srcY = src.top + (y - dest.top + 0.5) * scaleY;
+			for (int x = clipped.left; x < clipped.right; ++x) {
+				const double srcX = src.left + (x - dest.left + 0.5) * scaleX;
+
+				byte a, r, g, b;
+				sampleBilinear(texture, srcX, srcY, a, r, g, b);
+				a = a * tintA / 255;
+				if (a != 0) {
+					blendPixel(surface, x, y, a, r * tintR / 255, g * tintG / 255, b * tintB / 255);
+				}
+			}
+		}
+
+		return;
+	}
+
 	for (int y = clipped.top; y < clipped.bottom; ++y) {
 		int srcY = src.top + (y - dest.top) * src.height() / dest.height();
 		for (int x = clipped.left; x < clipped.right; ++x) {
