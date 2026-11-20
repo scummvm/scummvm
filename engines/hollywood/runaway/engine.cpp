@@ -165,7 +165,7 @@ Common::Error RunawayEngine::loadGameStream(Common::SeekableReadStream *stream) 
 RunawayScene *RunawayEngine::createScene(uint16 entryScene) {
 	const RunawayRoom *room = findRunawayRoom(entryScene);
 	if (room && ((_museum && entryScene >= 4000) ||
-			(_game == kRunawayFullGame && (entryScene / 1000 == 2 || entryScene / 1000 == 4 || entryScene / 1000 == 5 || entryScene / 1000 == 6)))) {
+			(_game == kRunawayFullGame && (entryScene / 1000 == 2 || entryScene / 1000 == 4 || entryScene / 1000 == 5 || entryScene / 1000 == 6 || entryScene / 1000 == 7)))) {
 		return createRunawayRoomScene(*room, _audio, *_inventory, _strings, _game);
 	}
 	if ((_game == kRunawayCabinDemo && entryScene == 5030) ||
@@ -305,7 +305,7 @@ Common::Error RunawayEngine::playIntro(RunawayMenu &menu, byte chapter) {
 }
 
 Common::Error RunawayEngine::startChapter(RunawayMenu &menu, byte chapter) {
-	const uint16 entry = chapter == 2 ? 4010 : chapter == 4 ? 6350 : 5030;
+	const uint16 entry = chapter == 2 ? 4010 : chapter == 4 ? 6350 : chapter == 5 ? 7010 : 5030;
 	Common::ScopedPtr<RunawayScene> scene(createScene(entry));
 	if (!scene || !scene->load(entry) || !_ui->loadChapter(chapter))
 		return Common::Error(Common::kReadingFailed, "Cannot load Runaway chapter resources");
@@ -339,6 +339,8 @@ Common::Error RunawayEngine::run() {
 			_state.scene = 4010;
 		else if (scene == 6000)
 			_state.scene = 6350;
+		else if (scene == 7000)
+			_state.scene = 7010;
 		else if (scene == 5030 || findRunawayRoom(scene))
 			_state.scene = scene;
 	}
@@ -369,7 +371,7 @@ Common::Error RunawayEngine::run() {
 		const Common::Error result = playIntro(menu);
 		if (result.getCode() != Common::kNoError || shouldQuit())
 			return result;
-	} else if (_game == kRunawayFullGame && (_state.scene == 4010 || _state.scene == 6350)) {
+	} else if (_game == kRunawayFullGame && (_state.scene == 4010 || _state.scene == 6350 || _state.scene == 7010)) {
 		const Common::Error result = playIntro(menu, _state.chapter());
 		if (result.getCode() != Common::kNoError || shouldQuit())
 			return result;
@@ -512,7 +514,7 @@ Common::Error RunawayEngine::run() {
 		}
 		if (_scene->escaped()) {
 			if (_game == kRunawayFullGame) {
-				if (_state.chapter() >= 4)
+				if (_state.chapter() >= 5)
 					return Common::kNoError;
 				const Common::Error result = startChapter(menu, _state.chapter() + 1);
 				if (result.getCode() != Common::kNoError || shouldQuit())

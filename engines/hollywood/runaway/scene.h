@@ -231,10 +231,17 @@ protected:
 	bool townChapter() const { return _game == kRunawayFullGame && _room / 1000 == 6; }
 	void resumeTown();
 	bool sayTownInventory(const RunawayInventory::Reply &reply);
-	void updateTown(uint32 delta);
 	void leaveTownRoom(uint16 scene);
 	void deferTownAction(uint16 action);
 	void walkTown(Common::Point target);
+
+	bool hopiChapter() const { return _game == kRunawayFullGame && _room / 1000 == 7; }
+	bool sayHopiInventory(const RunawayInventory::Reply &reply);
+	void updateHopiMusic();
+	void updateGameplay(uint32 delta);
+	void findGameplayWalkPath(Common::Point target);
+	void deferAction(uint16 action);
+	void leaveRoom(uint16 scene);
 
 	RunawayAudio &_audio;
 	RunawaySequence _sequence;
@@ -279,6 +286,7 @@ protected:
 	RunawaySaveState::Museum _museum;
 	RunawaySaveState::Desert _desert;
 	RunawaySaveState::Town _town;
+	RunawaySaveState::Hopi _hopi;
 	MuseumFilm _museumFilm = kArrivalFilm;
 	SceneTextStore _filmText;
 	Common::Array<RunawaySequence::Command> _filmCommands;

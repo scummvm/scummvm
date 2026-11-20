@@ -225,6 +225,9 @@ void RunawayOpening::enter(Step step, uint32 now) {
 			const byte heads[] = {3, 1, 5, 1};
 			_bodyFrame = poses[_chapterVariation];
 			_headBank = heads[_chapterVariation];
+		} else if (_chapter == 5) {
+			_bodyFrame = _chapterVariation ? 20 : 50;
+			_headBank = _chapterVariation ? 1 : 2;
 		}
 		speak(_chapter, _chapterVariation);
 		break;
@@ -236,6 +239,15 @@ void RunawayOpening::enter(Step step, uint32 now) {
 		} else if (_chapter == 2) {
 			_firstFrame = 128;
 			_lastFrame = 160;
+		} else if (_chapter == 5) {
+			if (_chapterVariation == 1) {
+				_firstFrame = 51;
+				_lastFrame = 75;
+			} else {
+				_headBank = 1;
+				_firstFrame = _chapterVariation == 2 ? 7 : 17;
+				_lastFrame = _chapterVariation == 2 ? 10 : 20;
+			}
 		} else if (_chapterVariation == 1) {
 			_firstFrame = 177;
 			_lastFrame = 161;
@@ -259,7 +271,7 @@ void RunawayOpening::enter(Step step, uint32 now) {
 
 void RunawayOpening::advance() {
 	if (_step == kChapter) {
-		const uint variations = _chapter == 2 ? 2 : _chapter == 3 ? 5 : _chapter == 4 ? 4 : 1;
+		const uint variations = _chapter == 2 ? 2 : _chapter == 3 ? 5 : _chapter == 4 || _chapter == 5 ? 4 : 1;
 		if (++_chapterVariation < variations)
 			enter(_chapterVariation < 4 ? kChapterGesture : kChapter, _now);
 		else
@@ -345,7 +357,10 @@ void RunawayOpening::update(uint32 now) {
 	case kChapterGesture: {
 		const uint distance = ABS((int)_lastFrame - (int)_firstFrame);
 		const uint offset = MIN(distance, elapsed / 80);
-		_bodyFrame = _lastFrame >= _firstFrame ? _firstFrame + offset : _firstFrame - offset;
+		_frame = _lastFrame >= _firstFrame ? _firstFrame + offset : _firstFrame - offset;
+		if (!_headBank) {
+			_bodyFrame = _frame;
+		}
 		if (elapsed >= (distance + 1) * 80)
 			advance();
 		break;
@@ -473,8 +488,15 @@ void RunawayOpening::skip(uint32 now) {
 void RunawayOpening::drawNarrator(Graphics::ManagedSurface &screen) {
 	screen.blitFrom(_narratorBackground, Common::Point(0, kRunawayViewportTop));
 	_narrator[0].draw(screen, _bodyFrame, 0, kRunawayViewportTop);
-	if (_headBank)
-		_narrator[_headBank].draw(screen, _speech.frame(_now) % 6, 0, kRunawayViewportTop);
+	if (_headBank) {
+		uint frame = _speech.frame(_now) % 6;
+		if (_chapter == 5 && _step == kChapter && _chapterVariation == 2) {
+			frame += 10;
+		} else if (_chapter == 5 && _step == kChapterGesture && _chapterVariation >= 2) {
+			frame = _frame == 20 ? 0 : _frame;
+		}
+		_narrator[_headBank].draw(screen, frame, 0, kRunawayViewportTop);
+	}
 	if (_step == kMontage)
 		_video.draw(screen, Common::Rect(256, 232, 656, 466));
 	if (_step == kChapter || _step == kChapterGesture)
@@ -560,7 +582,7 @@ void RunawayOpening::draw(Graphics::ManagedSurface &screen) {
 	const uint elapsed = _now - _started;
 	if ((_step == kSitDown || _step == kCity || (_step == kChapter && !_chapterVariation)) && elapsed < 500)
 		dimRunawayViewport(screen, elapsed * 2);
-	else if ((_step == kLastNarration || (_step == kChapter && _chapterVariation + 1 == (_chapter == 2 ? 2 : _chapter == 3 ? 5 : _chapter == 4 ? 4 : 1))) && _events)
+	else if ((_step == kLastNarration || (_step == kChapter && _chapterVariation + 1 == (_chapter == 2 ? 2 : _chapter == 3 ? 5 : _chapter == 4 || _chapter == 5 ? 4 : 1))) && _events)
 		dimRunawayViewport(screen, MIN<uint>(500, _deadline - _now) * 2);
 	else if (_step == kCityExit && elapsed > 3280)
 		dimRunawayViewport(screen, (3780 - MIN<uint>(3780, elapsed)) * 2);

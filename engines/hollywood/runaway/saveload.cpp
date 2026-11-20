@@ -306,6 +306,18 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(townItems.tube50, 14);
 	s.syncAsByte(townItems.mortar, 14);
 	s.syncAsByte(townItems.mortarIdea, 14);
+	s.syncAsByte(hopi.cliffVisited, 15);
+	s.syncAsByte(hopi.skeletonSeen, 15);
+	s.syncAsByte(hopi.nail, 15);
+	s.syncAsByte(hopi.timber, 15);
+	s.syncAsByte(hopi.femurTaken, 15);
+	s.syncAsByte(hopi.rockTried, 15);
+	s.syncAsByte(hopi.ginaFound, 15);
+	s.syncAsByte(hopi.villageLevel, 15);
+	s.syncAsByte(hopi.rope, 15);
+	s.syncAsByte(hopi.legSplinted, 15);
+	s.syncAsByte(hopi.cryptVisited, 15);
+	s.syncAsByte(hopiItems.toolHandle, 15);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -330,7 +342,7 @@ bool RunawaySaveState::valid() const {
 	if ((game == kRunawayCabinDemo || (game == kRunawayFullGame && scene >= 5030 && scene <= 5032)) &&
 			(scene < 5030 || scene > (game == kRunawayCabinDemo ? 5030 : 5032) || x >= 1376 || y >= 600 || camera > 352 || cameraY))
 		return false;
-	if (game == kRunawayFullGame && ((chapter() == 3 && (scene < 5030 || scene > 5032)) || chapter() == 4)) {
+	if (game == kRunawayFullGame && ((chapter() == 3 && (scene < 5030 || scene > 5032)) || chapter() == 4 || chapter() == 5)) {
 		const RunawayRoom *room = findRunawayRoom(scene);
 		if (!room || x >= room->width || y >= room->height || camera > room->width - 1024 || cameraY > room->height - 600)
 			return false;
@@ -450,9 +462,14 @@ bool RunawaySaveState::valid() const {
 			town.safeSeen > 1 || town.oscarTobacco > 2 || town.stethoscopeTaken > 1 || town.linimentTaken > 1) {
 		return false;
 	}
+	if (hopi.cliffVisited > 1 || hopi.skeletonSeen > 1 || hopi.nail > 2 || hopi.timber > 3 ||
+			hopi.femurTaken > 1 || hopi.rockTried > 1 || hopi.ginaFound > 1 || hopi.villageLevel > 4 ||
+			hopi.rope > 2 || hopi.legSplinted > 1 || hopi.cryptVisited > 1 || hopiItems.toolHandle > 1) {
+		return false;
+	}
 	for (uint i = 0; i < itemCount; ++i) {
 		if (!items[i] || items[i] >= sizeof(owned) || owned[items[i]] ||
-				items[i] > (chapter() == 4 ? 32 : chapter() == 3 ? 26 : 19))
+				items[i] > (chapter() == 5 ? 16 : chapter() == 4 ? 32 : chapter() == 3 ? 26 : 19))
 			return false;
 		owned[items[i]] = true;
 	}
@@ -464,7 +481,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 14)
+	if (version < 1 || version > 15)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -476,9 +493,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(14);
+	stream.writeUint16LE(15);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(14);
+	s.setVersion(15);
 	sync(s);
 	return !s.err();
 }

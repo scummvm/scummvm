@@ -112,54 +112,16 @@ void RunawayRoomScene::resumeTown() {
 	runCustomEntrySequence();
 }
 
-void RunawayRoomScene::updateTown(uint32 delta) {
-	advanceCustomGameplayLoop(delta);
-	if (updateCustomSequence()) {
-		return;
-	}
-	updateRoomAnimation();
-	updateConversation();
-	if (_roomAction && _actionFrames.empty() && !speaking() && !_walkPath.active()) {
-		const uint16 action = _roomAction;
-		_roomAction = 0;
-		execute(action);
-	}
-	if (_hospitalExit.scene && !speaking() && !_roomAction && !_walkPath.active()) {
-		_transition = _hospitalExit;
-	}
-}
-
 void RunawayRoomScene::walkTown(Common::Point target) {
-	if (!_pendingHotspot) {
-		// Clicks stay on the ground; hotspot approaches may use the reserved zones.
-		target.x = CLIP<int>(target.x, 0, _background.w - 1);
-		target.y = CLIP<int>(target.y, 0, _background.h - 1);
-		if (!adjustCustomWalkTargetToFloorMask(target)) {
-			while (target.y < _background.h - 1 && !_maps[_mask[target.y * _background.w + target.x]]) {
-				++target.y;
-			}
-			while (target.y > 0 && !_maps[_mask[target.y * _background.w + target.x]]) {
-				--target.y;
-			}
-		}
-	}
-	_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _originalMaps), target);
+	findGameplayWalkPath(target);
 }
 
 void RunawayRoomScene::deferTownAction(uint16 action) {
-	_roomAction = action;
-	_actionFrames.clear();
+	deferAction(action);
 }
 
 void RunawayRoomScene::leaveTownRoom(uint16 scene) {
-	const RunawayRoom *room = findRunawayRoom(scene);
-	if (!room) {
-		warning("Runaway: scene %u is not implemented yet", scene);
-		return;
-	}
-	_hospitalExit.scene = scene;
-	_hospitalExit.position = room->entry;
-	_hospitalExit.facing = 3;
+	leaveRoom(scene);
 }
 
 } // End of namespace Hollywood

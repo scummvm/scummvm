@@ -147,6 +147,7 @@ MODULE_OBJS = \
 	runaway/graphics.o \
 	runaway/intro.o \
 	runaway/hospital.o \
+	runaway/hopi.o \
 	runaway/inventory.o \
 	runaway/inventory_town.o \
 	runaway/menu.o \
@@ -202,6 +203,8 @@ MODULE_OBJS = \
 	runaway/scene6350.o \
 	runaway/scene6370.o \
 	runaway/scene6390.o \
+	runaway/scene7010.o \
+	runaway/scene7020.o \
 	runaway/sequence.o \
 	runaway/speech.o \
 	runaway/strings.o \

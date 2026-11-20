@@ -125,6 +125,17 @@ struct RunawaySaveState {
 		byte mortar = 0, mortarIdea = 0;
 	} townItems;
 
+	struct Hopi {
+		byte cliffVisited = 0, skeletonSeen = 0, nail = 0, timber = 0;
+		byte femurTaken = 0, rockTried = 0;
+		byte ginaFound = 0, villageLevel = 0, rope = 0, legSplinted = 0;
+		byte cryptVisited = 0;
+	} hopi;
+
+	struct HopiItems {
+		byte toolHandle = 0;
+	} hopiItems;
+
 	uint16 scene = 5030, x = 623, y = 447, camera = 111;
 	byte facing = 3, lidOpen = 0, unplugged = 0, windowClean = 0;
 	byte coolerMoved = 0, coolerInspected = 0, peeked = 0, ice = 0, hatch = 0;

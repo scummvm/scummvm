@@ -79,8 +79,8 @@ bool RunawayRoomScene::load(uint16 entryScene) {
 void RunawayRoomScene::start(uint32 now) {
 	_now = _lastUpdate = now;
 	_idleHead.reset(now);
-	if (townChapter()) {
-		_inventory.startChapter(4);
+	if (townChapter() || hopiChapter()) {
+		_inventory.startChapter(hopiChapter() ? 5 : 4);
 		_entering = true;
 		resume();
 		return;
@@ -101,6 +101,15 @@ void RunawayRoomScene::start(uint32 now) {
 }
 
 void RunawayRoomScene::resume() {
+	if (hopiChapter()) {
+		prepareCustomGameplayLoop();
+		resumeAmbientAudio(_entering);
+		if (_entering) {
+			_entering = false;
+			runCustomEntrySequence();
+		}
+		return;
+	}
 	if (townChapter()) {
 		resumeTown();
 		return;
@@ -156,6 +165,7 @@ void RunawayRoomScene::captureState(RunawaySaveState &state) const {
 	state.museum = _museum;
 	state.desert = _desert;
 	state.town = _town;
+	state.hopi = _hopi;
 	state.randomSeed = _random.getSeed();
 }
 
@@ -166,6 +176,7 @@ bool RunawayRoomScene::restoreState(const RunawaySaveState &state, uint32 now, b
 	_museum = state.museum;
 	_desert = state.desert;
 	_town = state.town;
+	_hopi = state.hopi;
 	_entering = entering;
 	_upperFloor = state.upperFloor;
 	_books = (ObjectState)state.books;
@@ -417,7 +428,10 @@ void RunawayRoomScene::sayInventory(const RunawayInventory::Reply &reply) {
 	if (townChapter() && sayTownInventory(reply)) {
 		return;
 	}
-	if (_game == kRunawayFullGame && !desertChapter() && !townChapter() &&
+	if (hopiChapter() && sayHopiInventory(reply)) {
+		return;
+	}
+	if (_game == kRunawayFullGame && !desertChapter() && !townChapter() && !hopiChapter() &&
 			(museumChapter() ? sayMuseumInventory(reply) : sayHospitalInventory(reply)))
 		return;
 	say(reply.cue, reply.variation, true);
@@ -540,8 +554,8 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 	}
 	if (speaking() && _speech.finished(now))
 		skipSpeech();
-	if (townChapter()) {
-		updateTown(elapsed);
+	if (townChapter() || hopiChapter()) {
+		updateGameplay(elapsed);
 		if (_sequence.active() || _transition.scene)
 			return;
 	} else if (desertChapter()) {
@@ -559,6 +573,56 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 		}
 	}
 	updateActor(elapsed, scrollDirection, inventoryOpen);
+}
+
+void RunawayRoomScene::updateGameplay(uint32 delta) {
+	advanceCustomGameplayLoop(delta);
+	if (updateCustomSequence()) {
+		return;
+	}
+	updateRoomAnimation();
+	updateConversation();
+	if (_roomAction && _actionFrames.empty() && !speaking() && !_walkPath.active()) {
+		const uint16 action = _roomAction;
+		_roomAction = 0;
+		execute(action);
+	}
+	if (_hospitalExit.scene && !speaking() && !_roomAction && !_walkPath.active()) {
+		_transition = _hospitalExit;
+	}
+}
+
+void RunawayRoomScene::findGameplayWalkPath(Common::Point target) {
+	if (!_pendingHotspot) {
+		// Clicks stay on the ground; hotspot approaches may use the reserved zones.
+		target.x = CLIP<int>(target.x, 0, _background.w - 1);
+		target.y = CLIP<int>(target.y, 0, _background.h - 1);
+		if (!adjustCustomWalkTargetToFloorMask(target)) {
+			while (target.y < _background.h - 1 && !_maps[_mask[target.y * _background.w + target.x]]) {
+				++target.y;
+			}
+			while (target.y > 0 && !_maps[_mask[target.y * _background.w + target.x]]) {
+				--target.y;
+			}
+		}
+	}
+	_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _originalMaps), target);
+}
+
+void RunawayRoomScene::deferAction(uint16 action) {
+	_roomAction = action;
+	_actionFrames.clear();
+}
+
+void RunawayRoomScene::leaveRoom(uint16 scene) {
+	const RunawayRoom *room = findRunawayRoom(scene);
+	if (!room) {
+		warning("Runaway: scene %u is not implemented yet", scene);
+		return;
+	}
+	_hospitalExit.scene = scene;
+	_hospitalExit.position = room->entry;
+	_hospitalExit.facing = 3;
 }
 
 void RunawayRoomScene::updateActor(uint elapsed, int scrollDirection, bool inventoryOpen) {
@@ -715,7 +779,7 @@ void RunawayRoomScene::updateRoomAnimation() {
 			const uint16 action = _roomAction;
 			_roomAction = 0;
 			_actionFrames.clear();
-			if (townChapter() || desertChapter()) {
+			if (townChapter() || desertChapter() || hopiChapter()) {
 				execute(action + 1000);
 			} else {
 				finishCustomAnimation(action);

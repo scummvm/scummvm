@@ -49,6 +49,12 @@ const char *const kTownItemNames[] = {
 	"Stone", "Sanding block", "Vessel", "Bank stamp"
 };
 
+const char *const kHopiItemNames[] = {
+	"", "Wallet", "Car keys", "Receipt", "Crucifix", "Flashlight", "Rope", "Map of the mine",
+	"Branch from the bush", "Bottle holding the finger", "Long piece of wood", "Tomahawk",
+	"Piece of rope", "Two small pieces of wood", "Femur", "Head of mining tool", "Large nail"
+};
+
 const byte kItemCursors[] = {
 	0, 41, 43, 45, 47, 49, 51, 55, 57, 59, 61, 63, 65, 67, 69,
 	75, 79, 81, 83, 85, 87, 91, 93, 95, 103, 105, 111
@@ -74,6 +80,7 @@ void RunawayInventory::captureState(RunawaySaveState &state) const {
 	state.museumItems = _museum;
 	state.desertItems = _desert;
 	state.townItems = _town;
+	state.hopiItems = _hopi;
 }
 
 void RunawayInventory::restoreState(const RunawaySaveState &state) {
@@ -92,6 +99,7 @@ void RunawayInventory::restoreState(const RunawaySaveState &state) {
 	_museum = state.museumItems;
 	_desert = state.desertItems;
 	_town = state.townItems;
+	_hopi = state.hopiItems;
 	_newItem = 0;
 }
 
@@ -115,6 +123,12 @@ void RunawayInventory::startChapter(byte chapter) {
 			add(i);
 		}
 	}
+	if (chapter == 5) {
+		_hopi = RunawaySaveState::HopiItems();
+		for (uint i = 1; i <= 7; ++i) {
+			add(i);
+		}
+	}
 	_newItem = 0;
 }
 
@@ -127,7 +141,8 @@ bool RunawayInventory::contains(byte item) const {
 }
 
 bool RunawayInventory::add(byte item) {
-	const uint maxItem = _chapter == 4 ? ARRAYSIZE(kTownItemNames) - 1 : _chapter == 3 ? kItemCount : 19;
+	const uint maxItem = _chapter == 5 ? ARRAYSIZE(kHopiItemNames) - 1 :
+		_chapter == 4 ? ARRAYSIZE(kTownItemNames) - 1 : _chapter == 3 ? kItemCount : 19;
 	if (!item || item > maxItem || contains(item))
 		return false;
 	_items.push_back(item);
@@ -149,6 +164,12 @@ void RunawayInventory::remove(byte item) {
 }
 
 Common::U32String RunawayInventory::name(byte item) const {
+	if (_chapter == 5) {
+		if (item == 15 && _hopi.toolHandle) {
+			return Common::U32String("Makeshift mining tool");
+		}
+		return Common::U32String(item < ARRAYSIZE(kHopiItemNames) ? kHopiItemNames[item] : "");
+	}
 	if (_chapter == 4 && item == 11 && _town.strap == 2) {
 		return Common::U32String("Strap with joined ends");
 	}
@@ -203,6 +224,9 @@ Common::U32String RunawayInventory::name(byte item) const {
 }
 
 uint RunawayInventory::icon(byte item) const {
+	if (_chapter == 5) {
+		return item == 15 && _hopi.toolHandle ? 17 : item;
+	}
 	if (_chapter == 4) {
 		if (item == 11 && _town.strap == 2) {
 			return 33;
@@ -276,6 +300,9 @@ uint RunawayInventory::icon(byte item) const {
 }
 
 uint RunawayInventory::cursor(byte item) const {
+	if (_chapter == 5) {
+		return item && item < ARRAYSIZE(kHopiItemNames) ? 39 + icon(item) * 2 : 0;
+	}
 	if (_chapter == 4) {
 		return item && item < ARRAYSIZE(kTownItemNames) ? 39 + icon(item) * 2 : 0;
 	}
@@ -315,6 +342,10 @@ uint RunawayInventory::cursor(byte item) const {
 }
 
 RunawayInventory::Reply RunawayInventory::examine(byte item) const {
+	if (_chapter == 5) {
+		static const uint16 cues[] = {1, 50, 51, 74, 200, 250, 251, 252, 253, 254, 255, 256, 251, 257, 258, 259, 260};
+		return Reply(item < ARRAYSIZE(cues) ? cues[item] : 1, item == 12 ? 1 : item == 15 ? _hopi.toolHandle : 0);
+	}
 	if (_chapter == 4) {
 		const uint16 cues[] = {1, 50, 51, 74, 53, 200};
 		if (item < ARRAYSIZE(cues)) {
@@ -453,6 +484,9 @@ RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 	}
 	if (first > second)
 		SWAP(first, second);
+	if (_chapter == 5) {
+		return combineHopiItems(first, second);
+	}
 	if (_chapter == 1) {
 		if (first == 10 && second == 17) {
 			_headWig = 1;
