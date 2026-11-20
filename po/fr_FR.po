@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-11-20 01:49+0000\n"
-"PO-Revision-Date: 2026-11-17 22:39+0000\n"
+"PO-Revision-Date: 2026-11-20 21:44+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -3203,10 +3203,8 @@ msgstr ""
 
 #. I18N: Spoken by text-to-speech to name an unlabelled button
 #: gui/widget.cpp:492
-#, fuzzy
-#| msgid "Katton"
 msgid "button"
-msgstr "Katton"
+msgstr "bouton"
 
 #: gui/widget.cpp:521 gui/widget.cpp:523 gui/widget.cpp:528 gui/widget.cpp:530
 msgid "Clear value"
@@ -3215,41 +3213,35 @@ msgstr "Effacer la valeur"
 #. I18N: Spoken by text-to-speech to name an unlabelled checkbox
 #: gui/widget.cpp:826
 msgid "checkbox"
-msgstr ""
+msgstr "case à cocher"
 
 #. I18N: Spoken by text-to-speech for the state of a checkbox
 #: gui/widget.cpp:828
 msgid "checked"
-msgstr ""
+msgstr "cochée"
 
 #: gui/widget.cpp:828
 msgid "not checked"
-msgstr ""
+msgstr "décochée"
 
 #. I18N: Spoken by text-to-speech to name an unlabelled radio button
 #: gui/widget.cpp:909
-#, fuzzy
-#| msgid "Directional button:"
 msgid "radio button"
-msgstr "Bouton de direction :"
+msgstr "bouton radio"
 
 #. I18N: Spoken by text-to-speech for the state of a radio button
 #: gui/widget.cpp:911
-#, fuzzy
-#| msgid "Select"
 msgid "selected"
-msgstr "Select"
+msgstr "sélectionné"
 
 #: gui/widget.cpp:911
-#, fuzzy
-#| msgid "Start selected game"
 msgid "not selected"
-msgstr "Démarre le jeu sélectionné"
+msgstr "non sélectionné"
 
 #. I18N: Spoken by text-to-speech to name an unlabelled slider
 #: gui/widget.cpp:998
 msgid "slider"
-msgstr ""
+msgstr "curseur de défilement"
 
 #: gui/widgets/grid.cpp:337
 msgid "Play"
@@ -10730,6 +10722,8 @@ msgid ""
 "Select a text translation package. Original language is used when no package "
 "is selected."
 msgstr ""
+"Sélectionne un pack de traduction des textes. Si aucun pack n'est "
+"sélectionné, la langue d'origine est utilisée."
 
 #: engines/harold/bcb/options.cpp:68 engines/macs2/dialogs.cpp:39
 msgid "Original"
@@ -12080,8 +12074,6 @@ msgid "Help / map"
 msgstr "Aide / carte"
 
 #: engines/made/detection_tables.h:142
-#, fuzzy
-#| msgid "The game is using unsupported engine"
 msgid "The game is using an unsupported engine"
 msgstr "Le jeu utilise un moteur non pris en charge"
 
@@ -17192,91 +17184,98 @@ msgstr ""
 
 #: engines/ultima/metaengine.cpp:180
 msgid "Choose the attribute to boost"
-msgstr ""
+msgstr "Choisir la caractéristique à augmenter"
 
 #: engines/ultima/metaengine.cpp:181
 msgid ""
 "Lets you choose which attribute is raised by the \"ALAKAZAM!\" gift from the "
 "Offer command, as the Ultima II Upgrade does, instead of it being random"
 msgstr ""
+"Vous permet de choisir quelle caractéristique est améliorée par le cadeau "
+"\"ALAKAZAM!\" de la commande Offrir, comme le fait la version Upgrade "
+"d'Ultima II, au lieu que ce soit aléatoire"
 
 #: engines/ultima/metaengine.cpp:191
 msgid "Mixed case, colored text"
-msgstr ""
+msgstr "Majuscules et minuscules, texte en couleur"
 
 #: engines/ultima/metaengine.cpp:192
 msgid ""
 "Shows text in mixed case, and in color with the EGA graphics, as the Ultima "
 "II Upgrade does, instead of in capitals"
 msgstr ""
+"Affiche le texte en majuscules et minuscules, et en couleur avec les "
+"graphismes EGA, comme le fait la version Upgrade d'Ultima II, au lieu de "
+"l'afficher en majuscules"
 
 #: engines/ultima/metaengine.cpp:202
-#, fuzzy
-#| msgid "Increase step size"
 msgid "Increase monster generation"
-msgstr "Augmenter la taille des pas"
+msgstr "Augmenter la génération de monstres"
 
 #: engines/ultima/metaengine.cpp:203
 msgid ""
 "Doubles the rate monsters and ships appear in the world, and increases it in "
 "dungeons, as in the Ultima III Upgrade"
 msgstr ""
+"Double la fréquence d'apparition des monstres et des navires dans le monde, "
+"et l'augmente dans les donjons, comme dans la version Upgrade d'Ultima III"
 
 #: engines/ultima/metaengine.cpp:213
-#, fuzzy
-#| msgid "Show memory consumption"
 msgid "Halve food consumption"
-msgstr "Afficher la consommation de mémoire"
+msgstr "Demi-consommation de la nourriture"
 
 #: engines/ultima/metaengine.cpp:214
 msgid ""
 "Food is eaten at half the original rate. The Ultima III Upgrade does this"
 msgstr ""
+"La nourriture est consommée deux fois plus lentement qu'à l'origine. C'est "
+"l'effet de la version Upgrade d'Ultima III"
 
 #: engines/ultima/metaengine.cpp:224
-#, fuzzy
-#| msgid "Show options"
 msgid "Show moon phase icons"
-msgstr "Afficher les options"
+msgstr "Afficher les icônes des phase lunaire"
 
 #: engines/ultima/metaengine.cpp:225
 msgid ""
 "Shows the phases of the moons as pictures rather than numbers, as in the "
 "Ultima III Upgrade"
 msgstr ""
+"Affiche les phases de la lune en images plutôt qu'en nombres, comme dans la "
+"version Upgrade d'Ultima III"
 
 #: engines/ultima/metaengine.cpp:235
-#, fuzzy
-#| msgid "Play simplified music"
 msgid "Play MIDI music"
-msgstr "Jouer la musique simplifiée"
+msgstr "Jouer la musique MIDI"
 
 #: engines/ultima/metaengine.cpp:236
 msgid "Plays the music that the Ultima III Upgrade adds to the game"
-msgstr ""
+msgstr "Joue la musique que la version Upgrade d'Ultima III ajoute au jeu"
 
 #: engines/ultima/metaengine.cpp:246
-#, fuzzy
-#| msgid "Toggle sound effects"
 msgid "Use Upgrade sound effects"
-msgstr "Act./Désact. les effets sonores"
+msgstr "Utiliser les effets sonores améliorés"
 
 #: engines/ultima/metaengine.cpp:247
 msgid ""
 "Plays the sound effects with the timing of the Ultima III Upgrade, which "
 "doesn't depend on the speed of the computer"
 msgstr ""
+"Joue les effets sonores selon le timing de la version Upgrade d'Ultima III, "
+"qui ne dépend pas de la vitesse de l'ordinateur"
 
 #: engines/ultima/metaengine.cpp:257 engines/ultima/metaengine.cpp:268
 #: engines/ultima/metaengine.cpp:279
 msgid "Use textured dungeon walls"
-msgstr ""
+msgstr "Utiliser les murs de donjons texturés"
 
 #: engines/ultima/metaengine.cpp:258
 msgid ""
 "Draws the view in dungeons using pictures of stone walls, doors, ladders and "
 "chests rather than lines. Only used with VGA graphics"
 msgstr ""
+"Affiche la vue dans les donjons à l'aide d'images de murs en pierre, de "
+"portes, d'échelles et de coffres plutôt qu'à l'aide de lignes. Utilisé "
+"uniquement avec les graphismes VGA"
 
 #: engines/ultima/metaengine.cpp:269
 msgid ""
@@ -17284,6 +17283,9 @@ msgid ""
 "chests, coffins and monsters rather than lines. Only used with the EGA "
 "graphics"
 msgstr ""
+"Affiche la vue dans les donjons à l'aide d'images de murs en pierre, de "
+"portes, d'échelles, de coffres, de cercueils et de monstres plutôt qu'à "
+"l'aide de lignes. Utilisé uniquement avec les graphismes EGA"
 
 #: engines/ultima/metaengine.cpp:280
 msgid ""
@@ -17291,6 +17293,9 @@ msgid ""
 "chests and monsters rather than lines. Only used with the EGA graphics, "
 "other than Commodore 64"
 msgstr ""
+"Affiche la vue dans les donjons à l'aide d'images de murs en pierre, de "
+"portes, d'échelles, de coffres et de monstres plutôt qu'à l'aide de lignes. "
+"Utilisé uniquement avec les graphismes EGA, sauf sur Commodore 64"
 
 #: engines/ultima/metaengine.cpp:290
 msgid "Always enable Christmas easter-egg"
@@ -17305,10 +17310,12 @@ msgid ""
 "Which of the game's renderers to use. This can also be changed from the "
 "game's title screen."
 msgstr ""
+"Quel moteur de rendu utiliser dans le jeu. Peut également être modifié "
+"depuis l'écran titre du jeu."
 
 #: engines/ultima/shared/engine/graphics_options.cpp:48
 msgid "Which of the game's renderers to use."
-msgstr ""
+msgstr "Quel moteur de rendu utiliser dans le jeu."
 
 #: engines/ultima/ultima0/metaengine.cpp:49
 msgid "Swing"
@@ -17427,48 +17434,34 @@ msgid "Dungeon keys"
 msgstr "Touches des donjons"
 
 #: engines/ultima/ultima1/gfx/render_mode.cpp:34
-#, fuzzy
-#| msgid "PC-9801 (8 Colors)"
 msgid "CGA (4 colors)"
-msgstr "PC-9801 (8 couleurs)"
+msgstr "CGA (4 couleurs)"
 
 #: engines/ultima/ultima1/gfx/render_mode.cpp:34
-#, fuzzy
-#| msgid "Windows (16 Colors)"
 msgid "EGA / Tandy (16 colors)"
-msgstr "Windows (16 couleurs)"
+msgstr "EGA / Tandy (16 couleurs)"
 
 #: engines/ultima/ultima1/metaengine.cpp:43
 #: engines/ultima/ultima2/metaengine.cpp:43
 #: engines/ultima/ultima3/metaengine.cpp:43
-#, fuzzy
-#| msgid "Quit game"
 msgid "Exit game"
 msgstr "Quitter le jeu"
 
 #: engines/ultima/ultima1/metaengine.cpp:53
-#, fuzzy
-#| msgid "Attack 1"
 msgid "Attack Up"
-msgstr "Attaque 1"
+msgstr "Attaque Haut"
 
 #: engines/ultima/ultima1/metaengine.cpp:54
-#, fuzzy
-#| msgid "Attack 1"
 msgid "Attack Down"
-msgstr "Attaque 1"
+msgstr "Attaque Bas"
 
 #: engines/ultima/ultima1/metaengine.cpp:55
-#, fuzzy
-#| msgid "Attack 1"
 msgid "Attack Left"
-msgstr "Attaque 1"
+msgstr "Attaque Gauche"
 
 #: engines/ultima/ultima1/metaengine.cpp:56
-#, fuzzy
-#| msgid "Attack 1"
 msgid "Attack Right"
-msgstr "Attaque 1"
+msgstr "Attaque Droite"
 
 #: engines/ultima/ultima1/metaengine.cpp:58
 #: engines/ultima/ultima1/metaengine.cpp:89
@@ -17481,74 +17474,62 @@ msgstr "Monter à bord"
 #: engines/ultima/ultima1/metaengine.cpp:64
 #: engines/ultima/ultima1/metaengine.cpp:95
 msgid "Hyperjump"
-msgstr ""
+msgstr "Hyper saut"
 
 #: engines/ultima/ultima1/metaengine.cpp:65
 #: engines/ultima/ultima1/metaengine.cpp:96
-#, fuzzy
-#| msgid "Info"
 msgid "Inform"
-msgstr "Info"
+msgstr "Informer"
 
 #: engines/ultima/ultima1/metaengine.cpp:66
 #: engines/ultima/ultima1/metaengine.cpp:97
 #: engines/ultima/ultima2/metaengine.cpp:63
 #: engines/ultima/ultima3/metaengine.cpp:63
-#, fuzzy
-#| msgid "Climb"
 msgid "Klimb"
 msgstr "Grimper"
 
 #: engines/ultima/ultima1/metaengine.cpp:67
 #: engines/ultima/ultima1/metaengine.cpp:98
 msgid "Noise"
-msgstr ""
+msgstr "Son"
 
 #: engines/ultima/ultima1/metaengine.cpp:70
 #: engines/ultima/ultima1/metaengine.cpp:101
 #: engines/ultima/ultima2/metaengine.cpp:70
 #: engines/ultima/ultima3/metaengine.cpp:70
-#, fuzzy
-#| msgid "Read"
 msgid "Ready"
-msgstr "Lire"
+msgstr "Préparer"
 
 #: engines/ultima/ultima1/metaengine.cpp:71
 #: engines/ultima/ultima1/metaengine.cpp:102
 #: engines/ultima/ultima2/metaengine.cpp:71
 #: engines/ultima/ultima3/metaengine.cpp:71
 msgid "Steal"
-msgstr ""
+msgstr "Voler"
 
 #: engines/ultima/ultima1/metaengine.cpp:72
 #: engines/ultima/ultima1/metaengine.cpp:103
 #: engines/ultima/ultima2/metaengine.cpp:72
 #: engines/ultima/ultima3/metaengine.cpp:72
-#, fuzzy
-#| msgid "Translation"
 msgid "Transact"
-msgstr "Traduction"
+msgstr "Négocier"
 
 #: engines/ultima/ultima1/metaengine.cpp:74
 #: engines/ultima/ultima1/metaengine.cpp:105
-#, fuzzy
-#| msgid "Mode change"
 msgid "View change"
-msgstr "Changement de mode"
+msgstr "Changer la vue"
 
 #: engines/ultima/ultima1/metaengine.cpp:75
 #: engines/ultima/ultima1/metaengine.cpp:106
 #: engines/ultima/ultima2/metaengine.cpp:76
 #: engines/ultima/ultima3/metaengine.cpp:76
 msgid "eXit"
-msgstr ""
+msgstr "Sortir"
 
 #: engines/ultima/ultima1/metaengine.cpp:76
 #: engines/ultima/ultima1/metaengine.cpp:107
 #: engines/ultima/ultima2/metaengine.cpp:78
 #: engines/ultima/ultima3/metaengine.cpp:78
-#, fuzzy
-#| msgid "Stats"
 msgid "Ztats"
 msgstr "Statistiques"
 
@@ -17568,40 +17549,34 @@ msgstr "Passer"
 #: engines/ultima/ultima2/metaengine.cpp:101
 #: engines/ultima/ultima3/metaengine.cpp:90
 #: engines/ultima/ultima3/metaengine.cpp:101
-#, fuzzy
-#| msgid "Gameplay"
 msgid "Gameplay keys"
-msgstr "Gameplay"
+msgstr "Touches de gameplay"
 
 #: engines/ultima/ultima2/data/data.cpp:45
 #: engines/ultima/ultima3/data/data.cpp:41
-#, fuzzy
-#| msgid "Original"
 msgid "Original (CGA)"
-msgstr "D'origine"
+msgstr "D'origine (CGA)"
 
 #: engines/ultima/ultima2/data/data.cpp:45
 #: engines/ultima/ultima3/data/data.cpp:41
 msgid "Composite monitor (CGA)"
-msgstr ""
+msgstr "Moniteur Composite (CGA)"
 
 #: engines/ultima/ultima2/data/data.cpp:45
-#, fuzzy
-#| msgid "Standard"
 msgid "Standard EGA"
-msgstr "Standard"
+msgstr "EGA standard"
 
 #: engines/ultima/ultima2/data/data.cpp:46
 msgid "Classic EGA (v1.0)"
-msgstr ""
+msgstr "EGA classique (v1.0)"
 
 #: engines/ultima/ultima2/data/data.cpp:46
 msgid "Alternate EGA (Wiltshire Dragon)"
-msgstr ""
+msgstr "EGA alternatif (Wiltshire Dragon)"
 
 #: engines/ultima/ultima2/data/data.cpp:46
 msgid "Commodore 64"
-msgstr ""
+msgstr "Commodore 64"
 
 #: engines/ultima/ultima2/metaengine.cpp:56
 #: engines/ultima/ultima3/metaengine.cpp:56
@@ -17613,33 +17588,27 @@ msgstr "Descendre"
 #: engines/ultima/ultima2/metaengine.cpp:60
 #: engines/ultima/ultima3/metaengine.cpp:60
 msgid "Hyper"
-msgstr ""
+msgstr "Hyper"
 
 #: engines/ultima/ultima2/metaengine.cpp:61
 #: engines/ultima/ultima3/metaengine.cpp:61
-#, fuzzy
-#| msgid "Ignite"
 msgid "Ignite torch"
-msgstr "Enflammer"
+msgstr "Enflammer la torche"
 
 #: engines/ultima/ultima2/metaengine.cpp:64
 #: engines/ultima/ultima3/metaengine.cpp:64
-#, fuzzy
-#| msgid "Launcher"
 msgid "Launch"
-msgstr "Lanceur"
+msgstr "Décoller"
 
 #: engines/ultima/ultima2/metaengine.cpp:66
 #: engines/ultima/ultima3/metaengine.cpp:66
-#, fuzzy
-#| msgid "Pause game anytime"
 msgid "Negate time"
-msgstr "Mettre en pause à tout moment"
+msgstr "Temps négatif"
 
 #: engines/ultima/ultima2/metaengine.cpp:67
 #: engines/ultima/ultima3/metaengine.cpp:67
 msgid "Offer"
-msgstr ""
+msgstr "Offrir"
 
 #: engines/ultima/ultima2/metaengine.cpp:75
 #: engines/ultima/ultima3/metaengine.cpp:75
@@ -17654,16 +17623,12 @@ msgid "Yell"
 msgstr "Huer"
 
 #: engines/ultima/ultima3/data/data.cpp:41
-#, fuzzy
-#| msgid "PC-9801 (16 Colors)"
 msgid "EGA (16 colors)"
-msgstr "PC-9801 (16 couleurs)"
+msgstr "EGA (16 couleurs)"
 
 #: engines/ultima/ultima3/data/data.cpp:41
-#, fuzzy
-#| msgid "PC-9821 (256 Colors)"
 msgid "VGA (256 colors)"
-msgstr "PC-9821 (256 couleurs)"
+msgstr "VGA (256 couleurs)"
 
 #: engines/ultima/ultima4/metaengine.cpp:43
 #: engines/ultima/ultima4/metaengine.cpp:133
