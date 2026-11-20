@@ -272,7 +272,16 @@ void BoyzEngine::drawAmmo() {
 
 	Common::Rect ammoBarBox(320 - int(_ammo * w), 0, 320, _ammoBar[_currentActor].h / 2);
 	uint32 c = kHypnoColorGreen; // green
-	_compositeSurface->fillRect(ammoBarBox, c);
+	bool visible = true;
+
+	// Last bullet: red and blinking
+	if (_ammo == 1) {
+		c = kHypnoColorRed;
+		visible = (g_system->getMillis() / 150) % 2 == 0;
+	}
+
+	if (visible)
+		_compositeSurface->fillRect(ammoBarBox, c);
 
 	drawImage(_ammoBar[_currentActor], 320 - _ammoBar[_currentActor].w, 0, true);
 	for (int i = 1; i < _weaponMaxAmmo[_currentWeapon]; i++) {
