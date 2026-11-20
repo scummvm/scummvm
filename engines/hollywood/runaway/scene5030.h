@@ -58,6 +58,7 @@ public:
 	void update(uint32 now, int scrollDirection, bool inventoryOpen) override;
 	void draw() override;
 	void setCameraX(int x) override;
+	int cameraX() const override { return _cameraX; }
 	int roomWidth() const override { return kRoomWidth; }
 	Graphics::ManagedSurface &screen() override { return _screen; }
 	byte hotspotAt(Common::Point mouse) const override;

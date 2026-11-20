@@ -665,7 +665,7 @@ void RunawayRoomScene::updateActor(uint elapsed, int scrollDirection, bool inven
 			const byte surface = _maps[1280 + _mask[_position.y * _background.w + _position.x]];
 			const byte volume = CLIP<int>((int)(actorHeight() * 255 / 455), 0, 255);
 			if (surface >= 1 && surface <= 7) {
-				_audio.playFootstep(surface, _random.getRandomBit(), volume);
+				_audio.playFootstep(surface, _random.getRandomBit(), volume, _position.x);
 			}
 			_lastFootstep = _walkElapsed;
 		}

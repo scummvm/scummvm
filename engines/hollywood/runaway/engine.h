@@ -80,6 +80,7 @@ private:
 	RunawayMenu::Settings readSettings() const;
 	void applySettings(const RunawayMenu::Settings &settings, bool restoreDefaults = false);
 	void present(const Graphics::ManagedSurface &screen);
+	void updateSoundListener();
 	Common::Language _language;
 	const RunawayGameType _game;
 	const bool _museum;

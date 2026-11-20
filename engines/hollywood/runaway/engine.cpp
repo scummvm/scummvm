@@ -114,6 +114,12 @@ void RunawayEngine::present(const Graphics::ManagedSurface &screen) {
 	_system->updateScreen();
 }
 
+void RunawayEngine::updateSoundListener() {
+	// Full-screen films have their own coordinates; room sounds use the
+	// same horizontal camera position as the original DirectSound listener.
+	_audio.setListenerPosition((_scene->playingVideo() ? 0 : _scene->cameraX()) + kRunawayScreenWidth / 2);
+}
+
 bool RunawayEngine::canSaveGameStateCurrently(Common::U32String *) {
 	return _gameStarted && !_inPresentation && !_pendingDoorClose && _scene && _ui && _scene->canSave() && !_ui->busy();
 }
@@ -158,7 +164,9 @@ Common::Error RunawayEngine::loadGameStream(Common::SeekableReadStream *stream) 
 	_pendingDoorClose = false;
 	_loadedGame = _gameStarted = true;
 	syncSoundSettings();
+	updateSoundListener();
 	_scene->resume();
+	updateSoundListener();
 	_scene->draw();
 	unlockChapter(state.chapter());
 	return Common::kNoError;
@@ -209,7 +217,9 @@ Common::Error RunawayEngine::changeScene() {
 	_inventory->setChapter(state.chapter());
 	_scene.reset(scene.release());
 	syncSoundSettings();
+	updateSoundListener();
 	_scene->resume();
+	updateSoundListener();
 	_pendingDoorClose = transition.door;
 	if (transition.door)
 		_audio.playEffect(3);
@@ -329,6 +339,7 @@ Common::Error RunawayEngine::startChapter(RunawayMenu &menu, byte chapter) {
 	syncSoundSettings();
 	const Common::Error result = playIntro(menu, fromBeginning ? 0 : chapter, RunawayIntro::kOpeningOnly);
 	if (result.getCode() == Common::kNoError && !_loadedGame && !shouldQuit()) {
+		updateSoundListener();
 		_scene->start(getTotalPlayTime());
 		_gameStarted = true;
 		unlockChapter(chapter);
@@ -425,6 +436,7 @@ Common::Error RunawayEngine::run() {
 			return result;
 	}
 	if (!_gameStarted) {
+		updateSoundListener();
 		_scene->start(getTotalPlayTime());
 		unlockChapter(_state.chapter());
 	}
@@ -554,7 +566,9 @@ Common::Error RunawayEngine::run() {
 		}
 		// The engine clock excludes time spent in ScummVM dialogs, keeping
 		// animation frames and subtitle deadlines in sync with paused audio.
+		updateSoundListener();
 		_scene->update(now, _ui->inventoryOpen() || sceneBusy() ? 0 : direction, _ui->inventoryOpen());
+		updateSoundListener();
 		if (_scene->transition().scene) {
 			// Brian brings Gina to Oscar before the chapter-six narration (8000).
 			const Common::Error result = _state.scene == 8092 ? startChapter(menu, 6) : changeScene();

@@ -28,6 +28,9 @@
 namespace Hollywood {
 
 void RunawaySequence::start(const Command *commands, const SceneTextStore &text, uint32 now, char chapter, bool keepEffects) {
+	if (!active()) {
+		_listenerX = _audio.listenerPosition();
+	}
 	_background.free();
 	_destination = Common::Rect(0, kRunawayViewportTop, kRunawayScreenWidth, kRunawayViewportTop + kRunawayViewportHeight);
 	_chapter = chapter;
@@ -37,6 +40,7 @@ void RunawaySequence::start(const Command *commands, const SceneTextStore &text,
 	if (!_keepEffects) {
 		_audio.stopEffect();
 	}
+	_audio.setListenerPosition(kRunawayScreenWidth / 2);
 	_lines.clear();
 	_line = 0;
 	_commands = commands;
@@ -232,6 +236,7 @@ void RunawaySequence::update(uint32 now) {
 			}
 			_lines.clear();
 			_commands = nullptr;
+			_audio.setListenerPosition(_listenerX);
 			return;
 		default:
 			break;

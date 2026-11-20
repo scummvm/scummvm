@@ -95,6 +95,7 @@ private:
 	bool _entered = false, _showPortrait = false, _silentPortrait = false;
 	bool _skipFilm = false;
 	bool _keepEffects = false;
+	int _listenerX = 512;
 	struct Line {
 		Common::U32String text;
 		uint16 sample;

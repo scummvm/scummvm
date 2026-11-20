@@ -22,7 +22,7 @@
 #ifndef HOLLYWOOD_RUNAWAY_AUDIO_H
 #define HOLLYWOOD_RUNAWAY_AUDIO_H
 
-#include "audio/mixer.h"
+#include "hollywood/sound.h"
 
 namespace Hollywood {
 
@@ -36,10 +36,13 @@ public:
 	uint32 playMusic(uint16 cue, bool loop = true);
 	void playMusicEffect(uint16 cue, byte volume = Audio::Mixer::kMaxChannelVolume, byte channel = 0, bool loop = false);
 	void setMusicVolume(byte volume);
+	void setListenerPosition(int x);
+	int listenerPosition() const { return _listenerX; }
 	uint32 playSpeech(uint16 sample, bool global = false);
 	void playBackgroundSpeech(uint16 sample, byte channel);
 	void playEffect(uint16 cue, byte volume = Audio::Mixer::kMaxChannelVolume, byte channel = 0, bool loop = false);
-	void playFootstep(byte surface, byte variant, byte volume = Audio::Mixer::kMaxChannelVolume);
+	void playEffectAt(uint16 cue, Common::Point position, byte volume = Audio::Mixer::kMaxChannelVolume, byte channel = 0, bool loop = false);
+	void playFootstep(byte surface, byte variant, byte volume = Audio::Mixer::kMaxChannelVolume, int x = -1);
 	void playPointer();
 	void playMenuMusic();
 	void stopMusic();
@@ -51,12 +54,15 @@ public:
 	bool effectPlaying(byte channel = 0) const;
 
 private:
+	void playEffect(uint16 cue, byte volume, byte channel, bool loop, const Common::Point *position);
 	uint32 play(const char *archive, uint16 cue, uint tableCount, bool pairedTables,
-		byte flags, Audio::Mixer::SoundType type, Audio::SoundHandle &handle, byte volume, bool loop, uint rate);
+		byte flags, Audio::Mixer::SoundType type, SoundChannel &channel, byte volume, bool loop, uint rate,
+		const Common::Point *position = nullptr);
 	bool _museum = false;
 	byte _chapter = 3;
 	Audio::Mixer *_mixer;
-	Audio::SoundHandle _music, _speech, _effects[3], _footstep, _pointer;
+	SoundChannel _music, _speech, _effects[3], _footstep, _pointer;
+	int _listenerX = 512;
 };
 
 } // End of namespace Hollywood

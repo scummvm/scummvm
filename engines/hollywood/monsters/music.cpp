@@ -118,8 +118,8 @@ bool MusicPlayer::playMusicCue(uint16 cueId, byte volumePercent, bool loop) {
 	}
 
 	Audio::AudioStream *playbackStream = loop ? Audio::makeLoopingAudioStream(audioStream, 0) : audioStream;
-	g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, playbackStream,
-		-1, percentToMixerVolume(volumePercent), 0, DisposeAfterUse::YES);
+	_musicChannel.play(g_system->getMixer(), Audio::Mixer::kMusicSoundType, playbackStream,
+		percentToMixerVolume(volumePercent));
 
 	_currentCueId = cueId;
 	_currentVolumePercent = volumePercent;
@@ -140,17 +140,15 @@ bool MusicPlayer::resumeLastCue() {
 
 void MusicPlayer::setVolume(byte volumePercent) {
 	_currentVolumePercent = volumePercent;
-	if (isPlaying())
-		g_system->getMixer()->setChannelVolume(_musicHandle, percentToMixerVolume(volumePercent));
+	_musicChannel.setVolume(percentToMixerVolume(volumePercent));
 }
 
 void MusicPlayer::stop() {
-	if (isPlaying())
-		g_system->getMixer()->stopHandle(_musicHandle);
+	_musicChannel.stop();
 }
 
 bool MusicPlayer::isPlaying() const {
-	return g_system && g_system->getMixer() && g_system->getMixer()->isSoundHandleActive(_musicHandle);
+	return _musicChannel.isPlaying();
 }
 
 bool MusicPlayer::readCueSpan(const Common::Path &fileName, uint16 cueId, uint32 &start, uint32 &size) const {
@@ -233,8 +231,8 @@ bool SpeechPlayer::playSample(uint16 sampleId, byte volumePercent, bool loop) {
 
 	_lastSampleDurationMillis = (uint32)(((uint64)size * 1000) / (_sampleRate * _bytesPerSample));
 	Audio::AudioStream *playbackStream = loop ? Audio::makeLoopingAudioStream(audioStream, 0) : audioStream;
-	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, playbackStream,
-		-1, percentToMixerVolume(volumePercent), 0, DisposeAfterUse::YES);
+	_speechChannel.play(g_system->getMixer(), Audio::Mixer::kSpeechSoundType, playbackStream,
+		percentToMixerVolume(volumePercent));
 
 	debugC(1, kDebugResources,
 		"Started speech %s sample %u: offset=%u size=%u format=%u-bit/%uHz duration=%u ms loop=%u",
@@ -244,17 +242,15 @@ bool SpeechPlayer::playSample(uint16 sampleId, byte volumePercent, bool loop) {
 }
 
 void SpeechPlayer::setVolume(byte volumePercent) {
-	if (isPlaying())
-		g_system->getMixer()->setChannelVolume(_speechHandle, percentToMixerVolume(volumePercent));
+	_speechChannel.setVolume(percentToMixerVolume(volumePercent));
 }
 
 void SpeechPlayer::stop() {
-	if (isPlaying())
-		g_system->getMixer()->stopHandle(_speechHandle);
+	_speechChannel.stop();
 }
 
 bool SpeechPlayer::isPlaying() const {
-	return g_system && g_system->getMixer() && g_system->getMixer()->isSoundHandleActive(_speechHandle);
+	return _speechChannel.isPlaying();
 }
 
 bool SpeechPlayer::readSampleSpan(uint16 sampleId, uint32 &start, uint32 &size) const {
@@ -329,8 +325,8 @@ bool SoundBank0Player::playSample(uint16 sampleId, byte volumePercent, bool loop
 	}
 
 	Audio::AudioStream *playbackStream = loop ? Audio::makeLoopingAudioStream(audioStream, 0) : audioStream;
-	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, playbackStream,
-		-1, percentToMixerVolume(volumePercent), 0, DisposeAfterUse::YES);
+	_soundChannel.play(g_system->getMixer(), Audio::Mixer::kSFXSoundType, playbackStream,
+		percentToMixerVolume(volumePercent));
 
 	debugC(1, kDebugResources, "Started sound %s sample %u: offset=%u size=%u loop=%u",
 		_archiveName.toString().c_str(), sampleId, start, size, loop ? 1 : 0);
@@ -342,17 +338,15 @@ bool SoundBank0Player::playSampleLooping(uint16 sampleId, byte volumePercent) {
 }
 
 void SoundBank0Player::setVolume(byte volumePercent) {
-	if (isPlaying())
-		g_system->getMixer()->setChannelVolume(_soundHandle, percentToMixerVolume(volumePercent));
+	_soundChannel.setVolume(percentToMixerVolume(volumePercent));
 }
 
 void SoundBank0Player::stop() {
-	if (isPlaying())
-		g_system->getMixer()->stopHandle(_soundHandle);
+	_soundChannel.stop();
 }
 
 bool SoundBank0Player::isPlaying() const {
-	return g_system && g_system->getMixer() && g_system->getMixer()->isSoundHandleActive(_soundHandle);
+	return _soundChannel.isPlaying();
 }
 
 bool SoundBank0Player::readSampleSpan(uint16 sampleId, uint32 &start, uint32 &size) const {
@@ -421,9 +415,8 @@ bool ResidentSoundEffectPlayer::playSample(byte soundEffectId, byte volumePercen
 	}
 
 	stopSample(soundEffectId);
-	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType,
-		&_soundHandles[soundEffectId - 1], audioStream, -1,
-		percentToMixerVolume(volumePercent), 0, DisposeAfterUse::YES);
+	_soundChannels[soundEffectId - 1].play(g_system->getMixer(), Audio::Mixer::kSFXSoundType,
+		audioStream, percentToMixerVolume(volumePercent));
 
 	debugC(1, kDebugResources, "Started resident sound %s effect %u: offset=%u size=%u",
 		kResidentSoundArchiveName, soundEffectId, start, size);
@@ -436,13 +429,9 @@ void ResidentSoundEffectPlayer::stop() {
 }
 
 void ResidentSoundEffectPlayer::stopSample(byte soundEffectId) {
-	if (!g_system || !g_system->getMixer() || soundEffectId == 0 ||
-			soundEffectId > kSoundEffectCount)
-		return;
-
-	Audio::SoundHandle &handle = _soundHandles[soundEffectId - 1];
-	if (g_system->getMixer()->isSoundHandleActive(handle))
-		g_system->getMixer()->stopHandle(handle);
+	if (soundEffectId > 0 && soundEffectId <= kSoundEffectCount) {
+		_soundChannels[soundEffectId - 1].stop();
+	}
 }
 
 bool ResidentSoundEffectPlayer::readSampleSpan(byte soundEffectId,

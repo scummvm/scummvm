@@ -53,6 +53,7 @@ public:
 	virtual void update(uint32 now, int scrollDirection, bool inventoryOpen) = 0;
 	virtual void draw() = 0;
 	virtual void setCameraX(int x) = 0;
+	virtual int cameraX() const { return 0; }
 	virtual int roomWidth() const = 0;
 	virtual Graphics::ManagedSurface &screen() = 0;
 	virtual byte hotspotAt(Common::Point mouse) const = 0;
@@ -96,6 +97,7 @@ public:
 	void update(uint32 now, int scrollDirection, bool inventoryOpen) override;
 	void draw() override;
 	void setCameraX(int x) override;
+	int cameraX() const override { return _camera.x; }
 	int roomWidth() const override { return _background.w; }
 	Graphics::ManagedSurface &screen() override { return _screen; }
 	byte hotspotAt(Common::Point mouse) const override;

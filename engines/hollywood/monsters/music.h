@@ -22,9 +22,9 @@
 #ifndef HOLLYWOOD_MONSTERS_MUSIC_H
 #define HOLLYWOOD_MONSTERS_MUSIC_H
 
-#include "audio/mixer.h"
 #include "common/language.h"
 #include "common/path.h"
+#include "hollywood/sound.h"
 
 namespace Hollywood {
 
@@ -45,7 +45,7 @@ public:
 private:
 	bool readCueSpan(const Common::Path &fileName, uint16 cueId, uint32 &start, uint32 &size) const;
 
-	Audio::SoundHandle _musicHandle;
+	SoundChannel _musicChannel;
 	Common::Path _archiveName;
 	uint16 _currentCueId;
 	byte _currentVolumePercent;
@@ -68,7 +68,7 @@ public:
 private:
 	bool readSampleSpan(uint16 sampleId, uint32 &start, uint32 &size) const;
 
-	Audio::SoundHandle _speechHandle;
+	SoundChannel _speechChannel;
 	int _sampleRate;
 	byte _rawFlags;
 	byte _bytesPerSample;
@@ -92,7 +92,7 @@ public:
 private:
 	bool readSampleSpan(uint16 sampleId, uint32 &start, uint32 &size) const;
 
-	Audio::SoundHandle _soundHandle;
+	SoundChannel _soundChannel;
 	Common::Path _archiveName;
 };
 
@@ -115,7 +115,7 @@ private:
 	void stopSample(byte soundEffectId);
 
 	const byte *_resourceEntries;
-	Audio::SoundHandle _soundHandles[kSoundEffectCount];
+	SoundChannel _soundChannels[kSoundEffectCount];
 };
 
 } // End of namespace Hollywood

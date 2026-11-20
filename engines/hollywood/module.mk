@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	metaengine.o \
 	resource.o \
 	scene_text_store.o \
+	sound.o \
 	text_translation.o \
 	monsters/console.o \
 	monsters/font.o \

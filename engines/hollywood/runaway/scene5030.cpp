@@ -413,8 +413,9 @@ void Scene5030::playWalkFootstep() {
 	// the native actor-height / 455 ratio, so distant steps are quieter.
 	const byte surface = _maps[1280 + _mask[_position.y * kRoomWidth + _position.x]];
 	const uint volume = CLIP<int>((int)(RunawayActor::perspectiveHeight(_position) * 100 / 455), 0, 100);
-	if (surface >= 1 && surface <= 7)
-		_audio.playFootstep(surface, _random.getRandomBit(), volume * 255 / 100);
+	if (surface >= 1 && surface <= 7) {
+		_audio.playFootstep(surface, _random.getRandomBit(), volume * 255 / 100, _position.x);
+	}
 	_lastFootstep = _walkElapsed;
 }
 
@@ -943,16 +944,18 @@ void Scene5030::updateAction() {
 		case kCloseLid: {
 			length = 33;
 			const uint start = _action == kOpenLid ? 18 : 11;
-			if (previousStep < start && _step >= start)
-				_audio.playEffect(80, 153);
+			if (previousStep < start && _step >= start) {
+				_audio.playEffectAt(80, Common::Point(1238, 200), 153);
+			}
 			if (previousStep < start + 4 && _step >= start + 4)
 				_audio.stopEffect();
 			break;
 		}
 		case kUnplug:
 			length = 83;
-			if (previousStep < 45 && _step >= 45)
-				_audio.playEffect(83);
+			if (previousStep < 45 && _step >= 45) {
+				_audio.playEffectAt(83, Common::Point(1273, 200));
+			}
 			break;
 		case kTryMoveCooler:
 			length = 74;
@@ -973,8 +976,9 @@ void Scene5030::updateAction() {
 			break;
 		case kOpenHatch:
 			length = 47;
-			if (previousStep < 25 && _step >= 25)
-				_audio.playEffect(17);
+			if (previousStep < 25 && _step >= 25) {
+				_audio.playEffectAt(17, Common::Point(1184, 200));
+			}
 			break;
 		case kEscape:
 			length = 37;

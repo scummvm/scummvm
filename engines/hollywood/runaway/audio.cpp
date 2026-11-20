@@ -48,8 +48,8 @@ void RunawayAudio::setChapter(byte chapter) {
 }
 
 uint32 RunawayAudio::play(const char *archive, uint16 cue, uint tableCount, bool pairedTables,
-		byte flags, Audio::Mixer::SoundType type, Audio::SoundHandle &handle, byte volume, bool loop, uint rate) {
-	_mixer->stopHandle(handle);
+		byte flags, Audio::Mixer::SoundType type, SoundChannel &channel, byte volume, bool loop, uint rate, const Common::Point *position) {
+	channel.stop();
 	const uint headerSize = tableCount * (pairedTables ? 8 : 4);
 	Common::File *file = new Common::File();
 	if (cue >= tableCount - (pairedTables ? 0 : 1) || !file->open(archive) || file->size() < headerSize) {
@@ -81,7 +81,9 @@ uint32 RunawayAudio::play(const char *archive, uint16 cue, uint tableCount, bool
 		return 0;
 	}
 	Audio::AudioStream *playback = loop ? Audio::makeLoopingAudioStream(pcm, 0) : pcm;
-	_mixer->playStream(type, &handle, playback, -1, volume, 0, DisposeAfterUse::YES);
+	// Retail 0x408120 sets DirectSound's rolloff to 0.0005, with a
+	// minimum distance of 1. Positions and the listener share world units.
+	channel.play(_mixer, type, playback, volume, _museum ? nullptr : position, _listenerX, 0.0005f);
 	const uint32 duration = (uint64)size * 1000 / (rate * frameSize);
 	debugC(1, kDebugResources, "Runaway audio: %s cue %u, %u Hz, %u-bit %s, %u ms, offset=%u size=%u",
 		archive, cue, rate, (flags & Audio::FLAG_16BITS) ? 16 : 8,
@@ -105,7 +107,16 @@ uint32 RunawayAudio::playMusic(uint16 cue, bool loop) {
 }
 
 void RunawayAudio::setMusicVolume(byte volume) {
-	_mixer->setChannelVolume(_music, volume);
+	_music.setVolume(volume);
+}
+
+void RunawayAudio::setListenerPosition(int x) {
+	_listenerX = x;
+	_speech.setListenerPosition(x);
+	_footstep.setListenerPosition(x);
+	for (uint i = 0; i < ARRAYSIZE(_effects); ++i) {
+		_effects[i].setListenerPosition(x);
+	}
 }
 
 void RunawayAudio::playMusicEffect(uint16 cue, byte volume, byte channel, bool loop) {
@@ -124,8 +135,11 @@ uint32 RunawayAudio::playSpeech(uint16 sample, bool global) {
 	// sample IDs include stale offsets for other chapters, so never derive a
 	// length by subtracting adjacent offsets as with the M/S archives.
 	const Common::String archive = Common::String::format("DATAACA%u.000", global ? 0 : _chapter);
+	// 0x4139b0 / 0x414110 place dialogue at the camera center when it starts,
+	// two units in front of the listener, independently of the speaker.
+	const Common::Point position(_listenerX, 2);
 	return play(archive.c_str(), sample, 6000, true, Audio::FLAG_UNSIGNED,
-		Audio::Mixer::kSpeechSoundType, _speech, Audio::Mixer::kMaxChannelVolume, false, 16000);
+		Audio::Mixer::kSpeechSoundType, _speech, Audio::Mixer::kMaxChannelVolume, false, 16000, &position);
 }
 
 void RunawayAudio::playBackgroundSpeech(uint16 sample, byte channel) {
@@ -136,6 +150,14 @@ void RunawayAudio::playBackgroundSpeech(uint16 sample, byte channel) {
 }
 
 void RunawayAudio::playEffect(uint16 cue, byte volume, byte channel, bool loop) {
+	playEffect(cue, volume, channel, loop, nullptr);
+}
+
+void RunawayAudio::playEffectAt(uint16 cue, Common::Point position, byte volume, byte channel, bool loop) {
+	playEffect(cue, volume, channel, loop, &position);
+}
+
+void RunawayAudio::playEffect(uint16 cue, byte volume, byte channel, bool loop, const Common::Point *position) {
 	assert(channel < ARRAYSIZE(_effects));
 	// Museum effects use unsigned 8-bit PCM (native 0x43ae40).
 	byte flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
@@ -143,21 +165,23 @@ void RunawayAudio::playEffect(uint16 cue, byte volume, byte channel, bool loop) 
 		flags = Audio::FLAG_UNSIGNED;
 	const Common::String archive = Common::String::format("RESOURCE.S%02u", _museum ? 4 : _chapter);
 	play(archive.c_str(), cue, 1000, false, flags,
-		Audio::Mixer::kSFXSoundType, _effects[channel], volume, loop, _museum ? 11025 : 16000);
+		Audio::Mixer::kSFXSoundType, _effects[channel], volume, loop, _museum ? 11025 : 16000, position);
 }
 
-void RunawayAudio::playFootstep(byte surface, byte variant, byte volume) {
+void RunawayAudio::playFootstep(byte surface, byte variant, byte volume, int x) {
 	if (_museum)
 		return;
 	assert(surface >= 1 && surface <= 7 && variant < 2);
-	// Native 0x407410 selects one of two mono samples per surface. These
-	// fourteen effects start at cue 21 in the otherwise shared music archive.
+	// Retail 0x40a370 / cabin demo 0x407410 select one of two mono samples
+	// per surface, starting at cue 21 in the shared music archive.
+	const Common::Point position(x, 200);
 	play("RESOURCE.002", 21 + (surface - 1) * 2 + variant, 100, false,
-		Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, Audio::Mixer::kSFXSoundType, _footstep, volume, false, 16000);
+		Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, Audio::Mixer::kSFXSoundType, _footstep, volume, false, 16000,
+		x >= 0 ? &position : nullptr);
 }
 
 void RunawayAudio::stopMusic() {
-	_mixer->stopHandle(_music);
+	_music.stop();
 }
 
 void RunawayAudio::playPointer() {
@@ -174,10 +198,9 @@ void RunawayAudio::playPointer() {
 		return;
 	}
 	memcpy(samples, data.data(), data.size());
-	_mixer->stopHandle(_pointer);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_pointer,
-		Audio::makeRawStream(samples, data.size(), 16000, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN),
-		-1, 3);
+	_pointer.stop();
+	_pointer.play(_mixer, Audio::Mixer::kSFXSoundType,
+		Audio::makeRawStream(samples, data.size(), 16000, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN), 3);
 }
 
 void RunawayAudio::playMenuMusic() {
@@ -191,32 +214,32 @@ void RunawayAudio::playMenuMusic() {
 }
 
 void RunawayAudio::stopSpeech() {
-	_mixer->stopHandle(_speech);
+	_speech.stop();
 }
 
 void RunawayAudio::stopEffect() {
-	_mixer->stopHandle(_pointer);
-	_mixer->stopHandle(_footstep);
+	_pointer.stop();
+	_footstep.stop();
 	for (uint i = 0; i < ARRAYSIZE(_effects); ++i)
-		_mixer->stopHandle(_effects[i]);
+		_effects[i].stop();
 }
 
 void RunawayAudio::stopEffect(byte channel) {
 	assert(channel < ARRAYSIZE(_effects));
-	_mixer->stopHandle(_effects[channel]);
+	_effects[channel].stop();
 }
 
 bool RunawayAudio::musicPlaying() const {
-	return _mixer->isSoundHandleActive(_music);
+	return _music.isPlaying();
 }
 
 bool RunawayAudio::speechPlaying() const {
-	return _mixer->isSoundHandleActive(_speech);
+	return _speech.isPlaying();
 }
 
 bool RunawayAudio::effectPlaying(byte channel) const {
 	assert(channel < ARRAYSIZE(_effects));
-	return _mixer->isSoundHandleActive(_effects[channel]);
+	return _effects[channel].isPlaying();
 }
 
 } // End of namespace Hollywood

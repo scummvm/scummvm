@@ -26,6 +26,9 @@
 namespace Hollywood {
 namespace {
 
+// 0x4e5bf0 keeps the running motorcycle at a fixed point in the room.
+const Common::Point kMotorcycleSoundPosition(1081, 200);
+
 const RunawayHotspot kHotspots[] = {
 	{"", 0, 0, 0, {0, 0}, {0, 0}},
 	{"Crater", 0, 537, 5, {301, 302}, {0, 3}},
@@ -100,7 +103,7 @@ void Scene6290::prepareCustomGameplayLoop() {
 
 void Scene6290::resumeAmbientAudio(bool entering) {
 	if (_town.machinePowered && !_town.joshuaGone) {
-		_audio.playEffect(78, 178, 1, true);
+		_audio.playEffectAt(78, kMotorcycleSoundPosition, 178, 1, true);
 	}
 	if (entering || !_audio.musicPlaying()) {
 		_audio.playMusic(_town.joshuaGone ? 30 : 19);
@@ -631,7 +634,7 @@ RunawayRoomScene::ActionResult Scene6290::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 1443: // The repaired communication machine is powered.
 		_town.machinePowered = 1;
-		_audio.playEffect(78, 178, 1, true);
+		_audio.playEffectAt(78, kMotorcycleSoundPosition, 178, 1, true);
 		say(25, 10);
 		_joshuaAnimating = true;
 		beginRoomAnimationRange(444, 30, 189, 0, 150, false);
