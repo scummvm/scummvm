@@ -85,8 +85,11 @@ Scene6300::Scene6300(RunawayAudio &audio, RunawayInventory &inventory, const Run
 bool Scene6300::loadCustomResources() {
 	return _catapultAnimation.load(_archive, 6, 48) && _statueAnimation.load(_archive, 7, 2) &&
 		_torchAnimation.load(_archive, 8, 2) && _sculptureAnimation.load(_archive, 9, 1) &&
-		_kevinAnimation.load(_archive, 13, 112) &&
-		_archive.readVariableChunk(4, _foregroundPatches[0]) && _archive.readVariableChunk(5, _foregroundPatches[1]);
+		_kevinAnimation.load(_archive, 13, 112) && loadWorkshopForeground();
+}
+
+bool Scene6300::loadWorkshopForeground() {
+	return _archive.readVariableChunk(4, _foregroundPatches[0]) && _archive.readVariableChunk(5, _foregroundPatches[1]);
 }
 
 bool Scene6300::applyCustomBackgroundPatches() {
@@ -270,6 +273,10 @@ void Scene6300::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport
 	if (_roomAction == 422 && drawingRoomAnimation() && _actionStep >= 53) {
 		_wrenchAnimation.draw(viewport, MIN<uint>(6, _actionStep - 53), _camera.x, 0);
 	}
+	drawWorkshopForeground(viewport);
+}
+
+void Scene6300::drawWorkshopForeground(Graphics::ManagedSurface &viewport) {
 	applyRunawayPatch(_foregroundPatches[0], viewport, 0, 1220 - _camera.x / 3 - _camera.x);
 	applyRunawayPatch(_foregroundPatches[1], viewport, 0, 230 - _camera.x / 5 - _camera.x);
 }

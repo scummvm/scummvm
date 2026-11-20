@@ -357,6 +357,8 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(finale.rutgerBrew, 21);
 	s.syncAsByte(finale.saloonVisited, 22);
 	s.syncAsByte(finale.locomotiveBadge, 22);
+	s.syncAsByte(finale.saturnMet, 23);
+	s.syncAsByte(finale.craterVisited, 23);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -514,7 +516,7 @@ bool RunawaySaveState::valid() const {
 		return false;
 	}
 	if (finale.doritaMet > 1 || finale.mediumDiscussed > 1 || finale.mediumTests > 3 || finale.seanceComplete > 1 ||
-			finale.oscarAway > 1 || finale.gangsters > 2 || finale.trailerFound > 1 || finale.moneyFound > 3 ||
+			finale.oscarAway > 1 || finale.gangsters > 2 || finale.trailerFound > 2 || finale.moneyFound > 3 ||
 			finale.nunsHabit > 2 || finale.recordingPlan > 1 || finale.recordings > 3 || finale.ginaUpdates > 7 ||
 			finale.ginaVisitPending > 1 || finale.gangstersMet > 1 || finale.gangsterBag > 3) {
 		return false;
@@ -525,7 +527,7 @@ bool RunawaySaveState::valid() const {
 	}
 	if (finale.rutgerMet > 1 || finale.rutgerTranceDiscussed > 1 || finale.rutgerBrewDiscussed > 1 ||
 			finale.rutgerPlantHint > 1 || finale.rutgerBrew > 3 || finale.saloonVisited > 1 ||
-			finale.locomotiveBadge > 3) {
+			finale.locomotiveBadge > 3 || finale.saturnMet > 1 || finale.craterVisited > 1) {
 		return false;
 	}
 	for (uint i = 0; i < itemCount; ++i) {
@@ -542,7 +544,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 22)
+	if (version < 1 || version > 23)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -554,9 +556,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(22);
+	stream.writeUint16LE(23);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(22);
+	s.setVersion(23);
 	sync(s);
 	return !s.err();
 }

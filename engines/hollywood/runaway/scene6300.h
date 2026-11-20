@@ -31,6 +31,10 @@ class Scene6300 : public RunawayRoomScene {
 public:
 	Scene6300(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
 
+protected:
+	bool loadWorkshopForeground();
+	void drawWorkshopForeground(Graphics::ManagedSurface &viewport);
+
 private:
 	bool loadCustomResources() override;
 	bool applyCustomBackgroundPatches() override;

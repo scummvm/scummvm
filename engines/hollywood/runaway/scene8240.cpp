@@ -250,10 +250,6 @@ RunawayRoomScene::ActionResult Scene8240::dispatchCustomSceneAction(uint16 actio
 		leaveRoom(8181);
 		break;
 	case 304: // Climb the stairs to Saturn's workshop.
-		if (!findRunawayRoom(8300)) {
-			warning("Runaway scene 8300 is not implemented yet");
-			break;
-		}
 		beginRoomAnimation(304, 5, 19, nullptr, 0, true, 60);
 		break;
 	case 1304: // Enter the workshop after climbing the stairs.
