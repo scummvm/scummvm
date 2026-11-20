@@ -47,7 +47,7 @@ private:
 	void drawScaledFrame(byte *screen, uint pitch,
 		const BitmapAssetFrame &frame, int x, int y, uint scaleNumerator,
 		uint scaleDenominator) const;
-	void render(const Common::Point &mousePosition) const;
+	bool drawCards(const Common::Point &mousePosition) const;
 	void renderDeparture(uint slot, uint step) const;
 	bool animateRemainingCards();
 	int findSlot(const Common::Point &point) const;

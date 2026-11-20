@@ -192,14 +192,14 @@ void TarotCardsPuzzle::drawScaledFrame(byte *screen, uint pitch,
 	}
 }
 
-void TarotCardsPuzzle::render(const Common::Point &mousePosition) const {
+bool TarotCardsPuzzle::drawCards(const Common::Point &mousePosition) const {
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1 ||
 			screen->w != kRipperScreenWidth ||
 			screen->h != kRipperScreenHeight) {
 		if (screen)
 			g_system->unlockScreen();
-		return;
+		return false;
 	}
 	for (int y = 0; y < kSceneHeight; ++y) {
 		memcpy(screen->getBasePtr(0, y + kSceneOriginY),
@@ -222,7 +222,7 @@ void TarotCardsPuzzle::render(const Common::Point &mousePosition) const {
 			mousePosition.y - held.height / 2);
 	}
 	g_system->unlockScreen();
-	presentScreen();
+	return true;
 }
 
 void TarotCardsPuzzle::renderDeparture(uint slot, uint step) const {
@@ -358,9 +358,11 @@ TarotCardsPuzzle::Result TarotCardsPuzzle::run(uint completionFlag) {
 	_engine->getCursor()->setSelectionIndex(kDefaultCursor);
 	_engine->getCursor()->dispatchSelectionIndexChange(kDefaultCursor);
 	_engine->getCursor()->setVisible(true);
-	const Common::Point initialMouse =
+	Common::Point lastDrawPosition =
 		_engine->getInput()->peekMouseState().position;
-	render(initialMouse);
+	bool redrawPending = !drawCards(lastDrawPosition);
+	if (!redrawPending)
+		presentScreen();
 	const bool musicStarted = _engine->getMedia()->playSoundEffectStream(
 		_library.createReadStreamForMember(kMusicName), kMusicName,
 		_musicHandle, 45, true);
@@ -397,33 +399,35 @@ TarotCardsPuzzle::Result TarotCardsPuzzle::run(uint completionFlag) {
 
 		const MouseState mouse = _engine->getInput()->publishMouseState();
 		updateCursor(mouse.position);
-		if ((mouse.pressed & kMouseButtonLeft) != 0) {
-			const int slot = findSlot(mouse.position);
-			if (slot >= 0) {
-				const uint placedCard = _model.heldCard();
-				const uint pickedCard = _model.cardAt(slot);
-				if (placedCard != 0)
-					playSceneCue(0);
-				_model.swap(slot);
-				if (pickedCard != 0)
-					playCardCue(pickedCard);
-				debugC(2, kDebugPuzzles,
-					"Ripper: tarot swapped slot=%d placed=%u picked=%u held=%u state=[%s]",
-					slot, placedCard, pickedCard, _model.heldCard(),
-					stateString().c_str());
-				render(mouse.position);
-				if (_model.solved()) {
-					debugC(1, kDebugPuzzles,
-						"Ripper: solved tarot puzzle milestone=%u held=%u state=[%s]",
-						completionFlag, _model.heldCard(),
-						stateString().c_str());
-					result = markSolved(completionFlag, "tarot-card-puzzle") ?
-						kSolved : kLoadFailed;
-					active = false;
-				}
-			}
-		} else if (_model.heldCard() != 0) {
-			render(mouse.position);
+		const bool pressed = (mouse.pressed & kMouseButtonLeft) != 0;
+		const int slot = pressed ? findSlot(mouse.position) : -1;
+		if (slot >= 0) {
+			const uint placedCard = _model.heldCard();
+			const uint pickedCard = _model.cardAt(slot);
+			if (placedCard != 0)
+				playSceneCue(0);
+			_model.swap(slot);
+			if (pickedCard != 0)
+				playCardCue(pickedCard);
+			debugC(2, kDebugPuzzles,
+				"Ripper: tarot swapped slot=%d placed=%u picked=%u held=%u state=[%s]",
+				slot, placedCard, pickedCard, _model.heldCard(),
+				stateString().c_str());
+			redrawPending = true;
+		} else if (!pressed && _model.heldCard() != 0) {
+			redrawPending |= lastDrawPosition != mouse.position;
+		}
+		if (redrawPending && drawCards(mouse.position)) {
+			lastDrawPosition = mouse.position;
+			redrawPending = false;
+		}
+		if (slot >= 0 && _model.solved()) {
+			debugC(1, kDebugPuzzles,
+				"Ripper: solved tarot puzzle milestone=%u held=%u state=[%s]",
+				completionFlag, _model.heldCard(), stateString().c_str());
+			result = markSolved(completionFlag, "tarot-card-puzzle") ?
+				kSolved : kLoadFailed;
+			active = false;
 		}
 		presentScreen();
 		g_system->delayMillis(10);
