@@ -364,7 +364,7 @@ public class ScummVMEvents implements
 				// This action is not a touch event so it is delivered to
 				// View#onGenericMotionEvent(MotionEvent) rather than View#onTouchEvent(MotionEvent).
 				if (_mouseHelper != null) {
-					return _mouseHelper.onMouseEvent(event, false);
+					return _mouseHelper.onMouseEvent(event, false, false, 0, 0, 0, 0);
 				}
 				break;
 
@@ -423,6 +423,7 @@ public class ScummVMEvents implements
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (_mouseHelper != null) {
 				if (MouseHelper.isMouse(e)) {
+					//Log.d(ScummVM.LOG_TAG, "MOUSE: PHYSICAL - EXTRA BACK BUTTON IGNORED");
 					// right mouse button was just clicked which sends an extra back button press (which should be ignored)
 					return true;
 				}
@@ -712,8 +713,9 @@ public class ScummVMEvents implements
 		if (_mouseHelper != null) {
 			boolean isMouse = MouseHelper.isMouse(event);
 			if (isMouse) {
+				//Log.d(ScummVM.LOG_TAG, "MOUSE PHYSICAL - BUTTON PRESSED");
 				// mouse button is pressed
-				return _mouseHelper.onMouseEvent(event, false);
+				return _mouseHelper.onMouseEvent(event, false, false, 0, 0, 0, 0);
 			}
 		}
 

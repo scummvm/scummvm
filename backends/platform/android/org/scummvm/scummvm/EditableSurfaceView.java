@@ -319,6 +319,14 @@ public class EditableSurfaceView extends SurfaceView {
 		return new MyInputConnection();
 	}
 
+	@RequiresApi(26)
+	@Override
+	public void onPointerCaptureChange(boolean hasCapture) {
+		super.onPointerCaptureChange(hasCapture);
+		_mouseIsInCapturedState = hasCapture;
+		showSystemMouseCursor(!hasCapture);
+	}
+
 	public void showSystemMouseCursor(boolean show) {
 		//Log.d(ScummVM.LOG_TAG, "captureMouse::showSystemMouseCursor2 " + show);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -376,55 +384,26 @@ public class EditableSurfaceView extends SurfaceView {
 			return;
 		}
 
-		_mouseIsInCapturedState = capture;
-		/*
-		if (capture) {
-//			setFocusableInTouchMode(true);
-//			setFocusable(true);
-//			requestFocus();
-			//Log.d(ScummVM.LOG_TAG, "captureMouse::_mouseIsInCapturedState");
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			post(() -> {
+				if (capture) {
+					if (hasWindowFocus() && !hasPointerCapture()) {
+						requestFocus();
+						//Log.d(ScummVM.LOG_TAG, "captureMouse::requestPointerCapture() - capture is true");
+						requestPointerCapture();
+					}
+				} else {
+					if (hasPointerCapture()) {
+						//Log.d(ScummVM.LOG_TAG, "captureMouse::releasingPointerCapture() - capture is false");
+						releasePointerCapture();
+					}
+				}
+			});
 		} else {
-			//Log.d(ScummVM.LOG_TAG, "captureMouse::no _mouseIsInCapturedState");
+			_mouseIsInCapturedState = capture;
+			//Log.d(ScummVM.LOG_TAG, "captureMouse::_mouseIsInCapturedState is " + capture + " and calling showSystemMouseCursor(" + !capture + ")");
+			showSystemMouseCursor(!capture);
 		}
-		*/
 
-		showSystemMouseCursor(!capture);
-
-		// trying capturing the pointer resulted in firing TrackBallEvent instead of HoverEvent for our SurfaceView
-		// also the behavior was inconsistent when resuming to the app from a pause
-//		if (_allowHideSystemMousePointer) {
-//			// for API 26 and above
-//			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-//				Log.d(ScummVM.LOG_TAG, "captureMouse::CODES 0");
-//				if (capture) {
-//					postDelayed( new Runnable() {
-//						public void run()
-//						{
-//							Log.v(ScummVM.LOG_TAG, "captureMouse::requestPointerCapture() delayed");
-////							if (!hasPointerCapture()) {
-//								requestPointerCapture();
-////								showSystemMouseCursor(!capture);
-////							}
-//						}
-//					}, 50 );
-//				} else {
-//					if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-//						postDelayed(new Runnable() {
-//							public void run() {
-//								Log.v(ScummVM.LOG_TAG, "captureMouse::releasePointerCapture()");
-////								if (hasPointerCapture()) {
-//									releasePointerCapture();
-////									showSystemMouseCursor(!capture);
-////								}
-//							}
-//						}, 50);
-//					}
-//				}
-//			} else {
-//				Log.d(ScummVM.LOG_TAG, "captureMouse::NO CODES 0 showSystemMouseCursor " + !capture);
-//				showSystemMouseCursor(!capture);
-//			}
-//		}
 	}
-
 }
