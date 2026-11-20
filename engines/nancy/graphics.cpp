@@ -958,24 +958,44 @@ void GraphicsManager::blitObject(Graphics::ManagedSurface &target, const RenderO
 	}
 }
 
-// Whether a stencil object covers a pixel of the screen: where its picture
-// isn't transparent, as the alpha test of the original lets through. The mask
-// of the flashlight is black where it lights, so its alpha is what counts.
-static bool isStencilPixel(const RenderObject &stencil, int x, int y) {
-	const Common::Rect local = stencil.convertToLocal(Common::Rect(x, y, x + 1, y + 1));
+// Marks the pixels of a part of the screen that a stencil object covers: where
+// its picture isn't transparent, as the alpha test of the original lets through.
+// The mask of the flashlight is black where it lights, so its alpha is what
+// counts. Where a pixel is in the picture goes by its column and its row alone,
+// so they are worked out once for each column and each row.
+static void markStencilPixels(const RenderObject &stencil, const Common::Rect &screenRect, Common::Array<byte> &covered) {
 	const Graphics::ManagedSurface &surface = stencil._drawSurface;
-	if (!surface.getBounds().contains(local.left, local.top)) {
-		return false;
+
+	Common::Array<int> columns(screenRect.width());
+	for (int x = 0; x < screenRect.width(); ++x) {
+		const int sx = screenRect.left + x;
+		columns[x] = stencil.convertToLocal(Common::Rect(sx, screenRect.top, sx + 1, screenRect.top + 1)).left;
 	}
 
-	const uint32 color = surface.getPixel(local.left, local.top);
-	if (surface.format.aBits() == 0) {
-		return !surface.hasTransparentColor() || color != surface.getTransparentColor();
-	}
+	for (int y = 0; y < screenRect.height(); ++y) {
+		const int sy = screenRect.top + y;
+		const int localY = stencil.convertToLocal(Common::Rect(screenRect.left, sy, screenRect.left + 1, sy + 1)).top;
+		if (localY < 0 || localY >= surface.h) {
+			continue;
+		}
 
-	byte a, r, g, b;
-	surface.format.colorToARGB(color, a, r, g, b);
-	return a != 0;
+		byte *coveredRow = &covered[y * screenRect.width()];
+		for (int x = 0; x < screenRect.width(); ++x) {
+			const int localX = columns[x];
+			if (coveredRow[x] || localX < 0 || localX >= surface.w) {
+				continue;
+			}
+
+			const uint32 color = surface.getPixel(localX, localY);
+			if (surface.format.aBits() == 0) {
+				coveredRow[x] = !surface.hasTransparentColor() || color != surface.getTransparentColor();
+			} else {
+				byte a, r, g, b;
+				surface.format.colorToARGB(color, a, r, g, b);
+				coveredRow[x] = a != 0;
+			}
+		}
+	}
 }
 
 // Draws an object without the pixels the stencils cover, through a transparent
@@ -988,19 +1008,18 @@ void GraphicsManager::blitMaskedObject(Graphics::ManagedSurface &target, const R
 		return;
 	}
 
+	Common::Array<byte> covered(screenRect.width() * screenRect.height(), 0);
+	for (const RenderObject *stencil : stencils) {
+		markStencilPixels(*stencil, screenRect, covered);
+	}
+
 	Graphics::ManagedSurface part(source.width(), source.height(), _transparentPixelFormat);
 	for (int y = 0; y < source.height(); ++y) {
 		for (int x = 0; x < source.width(); ++x) {
 			const uint32 color = image.getPixel(source.left + x, source.top + y);
 			byte a = 0, r = 0, g = 0, b = 0;
-			if (!image.hasTransparentColor() || color != image.getTransparentColor()) {
+			if (!covered[y * source.width() + x] && (!image.hasTransparentColor() || color != image.getTransparentColor())) {
 				image.format.colorToARGB(color, a, r, g, b);
-			}
-
-			for (uint i = 0; a != 0 && i < stencils.size(); ++i) {
-				if (isStencilPixel(*stencils[i], screenRect.left + x, screenRect.top + y)) {
-					a = 0;
-				}
 			}
 
 			part.setPixel(x, y, _transparentPixelFormat.ARGBToColor(a, r, g, b));
