@@ -70,11 +70,13 @@ helpdialog.zip:
 This file contains images for Help Dialog.
 
 hollywood.dat:
-This ZIP archive contains the Hollywood Monsters English fan translation and
+This ZIP archive contains Runaway's interface and object names, compiled from
+engines/hollywood/runaway/po/*.po, and is required for all Runaway releases.
+It also contains the Hollywood Monsters English fan translation and
 translated image overlays by Nikos Daskos (ShinjiGR), used with permission.
-The text catalog is compiled from engines/hollywood/monsters/po/*.po.
+The Monsters text catalog is compiled from engines/hollywood/monsters/po/*.po.
 Retain this attribution in derivative works. Rebuild it with 'make hollywood.dat'.
-Select the text language in ScummVM's Edit Game dialog before starting the game,
+For Hollywood Monsters, select the text language in ScummVM's Edit Game dialog,
 or switch it using the language button in the game's options menu. Speech stays
 in the original language; translated images change when their resources reload.
 

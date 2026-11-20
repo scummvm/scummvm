@@ -183,9 +183,12 @@ extract_hollywood_translation.py
     Nikos Daskos (ShinjiGR) into editable PO text and image overlays.
 
     Rebuild dists/engine-data/hollywood.dat (ZIP) from
-    engines/hollywood/monsters/po/*.po and the extracted image assets:
+    engines/hollywood/{monsters,runaway}/po/*.po and the extracted image assets:
 
       make hollywood.dat
+
+    Runaway catalogs use msgctxt for stable interface, item and hotspot IDs.
+    The create_hollywood tool compiles them independently of GUI translations.
 
     To extract sources from the original Spanish game and fan patch:
 

@@ -1,0 +1,631 @@
+# Runaway: A Road Adventure - interface and object names.
+# Original release labels and ScummVM interface messages.
+# This file is distributed under the same license as the ScummVM package.
+# Contexts identify interface labels, chapter/item IDs and scene/hotspot IDs.
+
+msgid ""
+msgstr ""
+"Project-Id-Version: Runaway\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Scene 5030, hotspot 1.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "hotspot.5030.1"
+msgid "DOOR"
+msgstr "PORTE"
+
+#. Scene 5030, hotspot 2.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "hotspot.5030.2"
+msgid "CRACK"
+msgstr "ORIFICE"
+
+#. Scene 5030, hotspot 3.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "hotspot.5030.3"
+msgid "WINDOW"
+msgstr "FENETRE"
+
+#. Scene 5030, hotspot 4.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "hotspot.5030.4"
+msgid "SMALL WINDOW"
+msgstr "PETITE FENETRE"
+
+#. Scene 5030, hotspot 5.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "hotspot.5030.5"
+msgid "ROUND PIECE OF WOOD"
+msgstr "MORCEAU DE BOIS ROND"
+
+#. Scene 5030, hotspot 6.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "hotspot.5030.6"
+msgid "TRAP DOOR"
+msgstr "TRAPPE"
+
+#. Scene 5030, hotspot 7.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "hotspot.5030.7"
+msgid "FABRIC TORN TO SHREDS"
+msgstr "TISSU DECHIRE"
+
+#. Scene 5030, hotspot 8.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "hotspot.5030.8"
+msgid "FREEZER"
+msgstr "CONGELATEUR"
+
+#. Scene 5030, hotspot 9.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "hotspot.5030.9"
+msgid "RAG"
+msgstr "CHIFFON"
+
+#. Scene 5030, hotspot 10.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "hotspot.5030.10"
+msgid "ELECTRIC PLUG"
+msgstr "PRISE ELECTRIQUE"
+
+#. Scene 5030, hotspot 11.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "hotspot.5030.11"
+msgid "FREEZER DRAIN"
+msgstr "TUYAU DE VIDANGE DU CONGELATEUR"
+
+#. Scene 5030, hotspot 12.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "hotspot.5030.12"
+msgid "TELEPHONE"
+msgstr "TELEPHONE"
+
+#. Scene 5030, hotspot 13.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "hotspot.5030.13"
+msgid "SHELVES"
+msgstr "ETAGERES"
+
+#. Scene 5030, hotspot 14.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "hotspot.5030.14"
+msgid "CROWBAR"
+msgstr "PIED-DE-BICHE"
+
+#. Scene 5030, hotspot 15.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "hotspot.5030.15"
+msgid "BROKEN GLASSES"
+msgstr "LUNETTES CASSEES"
+
+#. Scene 5030, hotspot 16.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "hotspot.5030.16"
+msgid "BELLOWS"
+msgstr "SOUFFLET"
+
+#. Scene 5030, hotspot 17.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "hotspot.5030.17"
+msgid "CAN"
+msgstr "BOUTEILLE"
+
+#. Scene 5030, hotspot 18.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "hotspot.5030.18"
+msgid "FREEZER LID"
+msgstr "COUVERCLE DU CONGELATEUR"
+
+#. Scene 5030, hotspot 19.
+#: engines/hollywood/runaway/scene5030.cpp
+msgctxt "hotspot.5030.19"
+msgid "FREEZER DRAIN"
+msgstr "TUYAU DE VIDANGE DU CONGELATEUR"
+
+#. kAntialias
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.antialias"
+msgid "Antialiasing"
+msgstr "Antialiasing des sprites"
+
+#. kBrightness
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.brightness"
+msgid "Brightness"
+msgstr "Luminosité"
+
+#. kClose
+#. Preserve leading and trailing spaces.
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.close"
+msgid "CLOSE "
+msgstr "FERMER "
+
+#. kConfirmQuit
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.confirmQuit"
+msgid "ARE YOU SURE?"
+msgstr "CONFIRMER ?"
+
+#. kCredits
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.credits"
+msgid "Credits"
+msgstr "Générique"
+
+#. kCreditsFailed
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.creditsFailed"
+msgid "COULD NOT LOAD THE CREDITS"
+msgstr "IMPOSSIBLE DE CHARGER LE GENERIQUE"
+
+#. kDefaultSettings
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.defaultSettings"
+msgid "Default settings"
+msgstr "Configuration par défaut"
+
+#. kDefaultsRestored
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.defaultsRestored"
+msgid "DEFAULT SETTINGS RESTORED"
+msgstr "CONFIGURATION PAR DEFAUT RESTAUREE"
+
+#. kDelete
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.delete"
+msgid "DELETE"
+msgstr "EFFACER"
+
+#. kDeleteFailed
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.deleteFailed"
+msgid "COULD NOT DELETE THE SAVE"
+msgstr "IMPOSSIBLE D'EFFACER LA SAUVEGARDE"
+
+#. kDeleteKey
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.deleteKey"
+msgid "D"
+msgstr "E"
+
+#. kDirtyCloth
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.dirtyCloth"
+msgid "FILTHY CHAMOIS"
+msgstr "PEAU DE CHAMOIS SALE"
+
+#. kEnterSaveName
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.enterSaveName"
+msgid "ENTER A NAME FOR THIS SAVE:"
+msgstr "NOM DE LA SAUVEGARDE :"
+
+#. kFast
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.fast"
+msgid "FAST"
+msgstr "RAPIDE"
+
+#. kGameSaved
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.gameSaved"
+msgid "GAME SAVED"
+msgstr "PARTIE SAUVEGARDEE"
+
+#. kInventory
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.inventory"
+msgid "INVENTORY"
+msgstr "INVENTAIRE"
+
+#. kLeaveHatch
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.leaveHatch"
+msgid "LEAVE THROUGH THE HATCH"
+msgstr "SORTIR PAR LA TRAPPE"
+
+#. kLoad
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.load"
+msgid "LOAD"
+msgstr "CHARGER"
+
+#. kLoadFailed
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.loadFailed"
+msgid "COULD NOT LOAD THE GAME"
+msgstr "IMPOSSIBLE DE CHARGER LA PARTIE"
+
+#. kLook
+#. Preserve leading and trailing spaces.
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.look"
+msgid "LOOK AT "
+msgstr "REGARDER "
+
+#. kLookThrough
+#. Preserve leading and trailing spaces.
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.lookThrough"
+msgid "LOOK THROUGH "
+msgstr "REGARDER A TRAVERS "
+
+#. kMove
+#. Preserve leading and trailing spaces.
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.move"
+msgid "MOVE "
+msgstr "DEPLACER "
+
+#. kMusic
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.music"
+msgid "Music"
+msgstr "Musique"
+
+#. kNewSave
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.newSave"
+msgid "NEW SAVE"
+msgstr "NOUVELLE SAUVEGARDE"
+
+#. kNo
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.no"
+msgid "NO"
+msgstr "NON"
+
+#. kNoFreeSlots
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.noFreeSlots"
+msgid "NO FREE SAVE SLOTS"
+msgstr "AUCUN EMPLACEMENT LIBRE"
+
+#. kNoSaves
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.noSaves"
+msgid "NO SAVED GAMES"
+msgstr "AUCUNE SAUVEGARDE"
+
+#. kOff
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.off"
+msgid "OFF"
+msgstr "NON"
+
+#. kOn
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.on"
+msgid "ON"
+msgstr "OUI"
+
+#. kOpen
+#. Preserve leading and trailing spaces.
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.open"
+msgid "OPEN "
+msgstr "OUVRIR "
+
+#. kOptions
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.options"
+msgid "OPTIONS"
+msgstr "OPTIONS"
+
+#. kPlay
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.play"
+msgid "PLAY"
+msgstr "JOUER"
+
+#. kPlayBeginning
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.playBeginning"
+msgid "PLAY RUNAWAY FROM THE VERY BEGINNING"
+msgstr "JOUER A RUNAWAY DEPUIS LE DEBUT"
+
+#. kPlayChapter
+#: engines/hollywood/runaway/strings.h
+#, c-format
+msgctxt "interface.playChapter"
+msgid "PLAY CHAPTER %d"
+msgstr "JOUER AU CHAPITRE %d"
+
+#. kPointerSound
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.pointerSound"
+msgid "Pointer sound"
+msgstr "Bruitage des icônes"
+
+#. kPutAway
+#. Preserve leading and trailing spaces.
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.putAway"
+msgid "PUT AWAY "
+msgstr "DEPOSER "
+
+#. kQuit
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.quit"
+msgid "QUIT"
+msgstr "QUITTER"
+
+#. kQuitKey
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.quitKey"
+msgid "Q"
+msgstr "Q"
+
+#. kResume
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.resume"
+msgid "RESUME GAME"
+msgstr "CONTINUER LA PARTIE"
+
+#. kSave
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.save"
+msgid "SAVE"
+msgstr "SAUVEGARDER"
+
+#. kSaveFailed
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.saveFailed"
+msgid "COULD NOT SAVE THE GAME"
+msgstr "IMPOSSIBLE DE SAUVEGARDER LA PARTIE"
+
+#. kSaveSettings
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.saveSettings"
+msgid "Save settings"
+msgstr "Sauvegarder la configuration"
+
+#. kScrolling
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.scrolling"
+msgid "Scrolling"
+msgstr "Mode de défilement"
+
+#. kSettingsSaved
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.settingsSaved"
+msgid "SETTINGS SAVED"
+msgstr "CONFIGURATION SAUVEGARDEE"
+
+#. kShirt
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.shirt"
+msgid "SHIRT"
+msgstr "CHEMISE"
+
+#. kSlow
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.slow"
+msgid "SLOW"
+msgstr "FLUIDE"
+
+#. kSubtitles
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.subtitles"
+msgid "Subtitles"
+msgstr "Sous-titres"
+
+#. kTake
+#. Preserve leading and trailing spaces.
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.take"
+msgid "TAKE "
+msgstr "PRENDRE "
+
+#. kTakeFromShelf
+#. Preserve leading and trailing spaces.
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.takeFromShelf"
+msgid "TAKE FROM "
+msgstr "PRENDRE QUELQUE CHOSE DANS "
+
+#. kUnplugCooler
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.unplugCooler"
+msgid "UNPLUG COOLER"
+msgstr "DEBRANCHER CONGELATEUR"
+
+#. kUse
+#. Preserve leading and trailing spaces.
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.use"
+msgid "USE "
+msgstr "UTILISER "
+
+#. kUsePhone
+#. Preserve leading and trailing spaces.
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.usePhone"
+msgid "USE "
+msgstr "APPELER AVEC "
+
+#. kVolume
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.volume"
+msgid "Volume"
+msgstr "Volume"
+
+#. kWetCloth
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.wetCloth"
+msgid "WET CHAMOIS"
+msgstr "PEAU DE CHAMOIS HUMIDE"
+
+#. kWith
+#. Preserve leading and trailing spaces.
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.with"
+msgid " WITH "
+msgstr " AVEC "
+
+#. kYes
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.yes"
+msgid "YES"
+msgstr "OUI"
+
+#. Chapter 3, inventory item 1.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.1"
+msgid "CHAMOIS"
+msgstr "PEAU DE CHAMOIS"
+
+#. Chapter 3, inventory item 2.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.2"
+msgid "CROWBAR"
+msgstr "PIED DE BICHE"
+
+#. Chapter 3, inventory item 3.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.3"
+msgid "BOTTLE OF CLEANSER"
+msgstr "PRODUIT NETTOYANT"
+
+#. Chapter 3, inventory item 4.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.4"
+msgid "TUB OF BUTTER"
+msgstr "TABLETTE DE BEURRE"
+
+#. Chapter 3, inventory item 5.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.5"
+msgid "DYNAMITE AND DETONATION EQUIPMENT"
+msgstr "DYNAMITE ET DETONATEUR"
+
+#. Chapter 3, inventory item 6.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.6"
+msgid "WORLD WAR II HELMET"
+msgstr "CASQUE DE LA SECONDE GUERRE MONDIALE"
+
+#. Chapter 3, inventory item 7.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.7"
+msgid "SCREW"
+msgstr "VIS"
+
+#. Chapter 3, inventory item 8.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.8"
+msgid "COAT RACK PEG"
+msgstr "PORTE-MANTEAUX"
+
+#. Chapter 3, inventory item 9.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.9"
+msgid "PILL"
+msgstr "PILLULE"
+
+#. Chapter 3, inventory item 10.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.10"
+msgid "LIPSTICK"
+msgstr "ROUGE A LEVRES"
+
+#. Chapter 3, inventory item 11.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.11"
+msgid "PILE OF LIPSTICK"
+msgstr "STOCK DE ROUGE A LEVRES"
+
+#. Chapter 3, inventory item 12.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.12"
+msgid "TANNING OIL"
+msgstr "HUILE SOLAIRE"
+
+#. Chapter 3, inventory item 13.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.13"
+msgid "WALKIE-TALKIE"
+msgstr "TALKIE-WALKIE"
+
+#. Chapter 3, inventory item 14.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.14"
+msgid "BULLET BELT"
+msgstr "BANDE DE MUNITIONS"
+
+#. Chapter 3, inventory item 15.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.15"
+msgid "BASKETBALL"
+msgstr "BALLON DE BASKET"
+
+#. Chapter 3, inventory item 16.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.16"
+msgid "NEEDLE AND THREAD"
+msgstr "FIL A COUDRE ET AIGUILLE"
+
+#. Chapter 3, inventory item 17.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.17"
+msgid "MAKESHIFT CORKSCREW"
+msgstr "TOURNEVIS ARTISANAL"
+
+#. Chapter 3, inventory item 18.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.18"
+msgid "PACKAGE OF SHELLED PEANUTS"
+msgstr "SAC DE CACAHOUETES ENTIERES"
+
+#. Chapter 3, inventory item 19.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.19"
+msgid "JAR OF PEANUT BUTTER"
+msgstr "POT DE BEURRE DE CACAHOUETES"
+
+#. Chapter 3, inventory item 20.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.20"
+msgid "SUNGLASSES"
+msgstr "LUNETTES DE SOLEIL"
+
+#. Chapter 3, inventory item 21.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.21"
+msgid "MOTORCYCLE FOOT REST"
+msgstr "REPOSE-PIED DE MOTO"
+
+#. Chapter 3, inventory item 22.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.22"
+msgid "HANDHELD VACUUM CLEANER"
+msgstr "ASPIRATEUR A MAIN"
+
+#. Chapter 3, inventory item 23.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.23"
+msgid "PLAN"
+msgstr "PLAN GENIAL"
+
+#. Chapter 3, inventory item 24.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.24"
+msgid "BELLOWS"
+msgstr "SOUFFLET"
+
+#. Chapter 3, inventory item 25.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.25"
+msgid "BUCKET"
+msgstr "SEAU"
+
+#. Chapter 3, inventory item 26.
+#: engines/hollywood/runaway/inventory.cpp
+msgctxt "item.3.26"
+msgid "REFRIGERATOR KEY"
+msgstr "CLE DU REFRIGERATEUR"

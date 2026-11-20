@@ -368,7 +368,9 @@ def extract_translation(patch_directory, original_text_archive, output):
     print(f"Extracted {len(image_files) // 2} image overlays, including the diary palette")
 
 
-def pack_translation(source, output, compiler, po=None):
+def pack_translation(source, output, compiler, po=None, runaway_po=None, runaway_compiler=None):
+    if not runaway_po or not any(path.stem == "en" for path in runaway_po):
+        raise ValueError("Runaway's English fallback catalog is required")
     files = {name: (source / name).read_bytes() for name in ("monsters.en.idx", "credits.txt")}
     if files["monsters.en.idx"][:6] != b"HMTI\x01\x00":
         raise ValueError("Unsupported image index")
@@ -391,6 +393,10 @@ def pack_translation(source, output, compiler, po=None):
         catalog = directory / "monsters.dat"
         subprocess.run([str(compiler.resolve()), str(catalog), *catalogs], check=True)
         files["monsters.dat"] = catalog.read_bytes()
+        for path in sorted(runaway_po or []):
+            catalog = directory / f"runaway-{path.stem}.dat"
+            subprocess.run([str(runaway_compiler.resolve()), str(catalog), str(path)], check=True)
+            files[f"runaway/{path.stem}.dat"] = catalog.read_bytes()
     with zipfile.ZipFile(output, "w") as destination:
         for name, data in sorted(files.items()):
             destination.writestr(zipfile.ZipInfo(name), data, compress_type=zipfile.ZIP_DEFLATED, compresslevel=9)
@@ -408,6 +414,11 @@ def main():
     pack.add_argument("source", type=Path, help="Directory produced by extract")
     pack.add_argument("output", type=Path, help="Output hollywood.dat (replaced if it exists)")
     pack.add_argument("--po", type=Path, nargs="+", help="PO files to compile instead of SOURCE/*.po")
+    pack.add_argument("--runaway-po", type=Path, nargs="+",
+                      default=sorted((Path(__file__).resolve().parent.parent / "engines/hollywood/runaway/po").glob("*.po")),
+                      help="Runaway interface PO files to include")
+    pack.add_argument("--runaway-compiler", type=Path,
+                      default=Path(__file__).resolve().parent / "create_hollywood/create_hollywood")
     pack.add_argument("--compiler", type=Path,
                       default=Path(__file__).resolve().parent / "create_translations/create_translations")
     args = parser.parse_args()
@@ -415,7 +426,7 @@ def main():
         if args.command == "extract":
             extract_translation(args.patch_directory, args.original_text_archive, args.output)
         else:
-            pack_translation(args.source, args.output, args.compiler, args.po)
+            pack_translation(args.source, args.output, args.compiler, args.po, args.runaway_po, args.runaway_compiler)
     except (OSError, ValueError, struct.error, subprocess.CalledProcessError) as error:
         parser.exit(1, f"{error}\n")
 

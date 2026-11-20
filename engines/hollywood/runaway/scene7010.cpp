@@ -21,6 +21,7 @@
 
 #include "common/util.h"
 #include "hollywood/runaway/scene7010.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 namespace {
@@ -197,7 +198,7 @@ byte Scene7010::customizeSceneActionFacing(byte id, byte facing) const {
 
 Common::U32String Scene7010::hotspotName(byte id) const {
 	if (id == 9 && _hopi.timber == 2) {
-		return _inventory.name(15);
+		return _strings.hotspotName(_room, 15, "Head of mining tool");
 	}
 	return RunawayRoomScene::hotspotName(id);
 }

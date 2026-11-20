@@ -374,6 +374,9 @@ Common::Error RunawayEngine::selectChapter(RunawayMenu &menu) {
 }
 
 Common::Error RunawayEngine::run() {
+	if (!_strings.load()) {
+		return Common::Error(Common::kReadingFailed, "Cannot load Runaway text. Please use the matching hollywood.dat file.");
+	}
 	_inventory.reset(new RunawayInventory(_strings, _game));
 	if (_museum && ConfMan.hasKey("boot_param") && ConfMan.getInt("boot_param") >= 4000 &&
 			findRunawayRoom(ConfMan.getInt("boot_param")))

@@ -29,19 +29,8 @@ namespace {
 
 const uint kMuseumItemCount = 19;
 const uint kTownItemCount = 32;
-
-const char *const kHopiItemNames[] = {
-	"", "Wallet", "Car keys", "Receipt", "Crucifix", "Flashlight", "Rope", "Map of the mine",
-	"Branch from the bush", "Bottle holding the finger", "Long piece of wood", "Tomahawk",
-	"Piece of rope", "Two small pieces of wood", "Femur", "Head of mining tool", "Large nail"
-};
-
-const char *const kFinaleItemNames[] = {
-	"", "Wallet", "Car keys", "Receipt", "Crucifix", "Flashlight", "Map of the mine",
-	"Piece of bush", "Bottle holding the finger", "Tomahawk", "Seeds", "Rifle", "Sheriff's badge",
-	"Bag holding Gustav and Feodor's stuff", "Bank brochure", "Nun's habit", "MP3 recorder",
-	"List of phrases", "Swiss bank internet receipt", "Scalpel", "Pods", "Poker"
-};
+const uint kHopiItemCount = 16;
+const uint kFinaleItemCount = 21;
 
 const byte kItemCursors[] = {
 	0, 41, 43, 45, 47, 49, 51, 55, 57, 59, 61, 63, 65, 67, 69,
@@ -141,7 +130,7 @@ bool RunawayInventory::contains(byte item) const {
 }
 
 bool RunawayInventory::add(byte item) {
-	const uint maxItem = _chapter == 6 ? ARRAYSIZE(kFinaleItemNames) - 1 : _chapter == 5 ? ARRAYSIZE(kHopiItemNames) - 1 :
+	const uint maxItem = _chapter == 6 ? kFinaleItemCount : _chapter == 5 ? kHopiItemCount :
 		_chapter == 4 ? kTownItemCount : _chapter == 3 ? kItemCount : 19;
 	if (!item || item > maxItem || contains(item))
 		return false;
@@ -166,18 +155,18 @@ void RunawayInventory::remove(byte item) {
 Common::U32String RunawayInventory::name(byte item) const {
 	if (_chapter == 6) {
 		if (item == 19 && _finale.scalpel == 1) {
-			return Common::U32String("Hot scalpel");
+			return _strings.text(RunawayStrings::kHotScalpel);
 		}
 		if (item == 20 && _finale.podsOpened) {
-			return Common::U32String("Open pods");
+			return _strings.text(RunawayStrings::kOpenPods);
 		}
-		return Common::U32String(item < ARRAYSIZE(kFinaleItemNames) ? kFinaleItemNames[item] : "");
+		return _strings.itemName(_chapter, item);
 	}
 	if (_chapter == 5) {
 		if (item == 15 && _hopi.toolHandle) {
-			return Common::U32String("Makeshift mining tool");
+			return _strings.text(RunawayStrings::kMakeshiftMiningTool);
 		}
-		return Common::U32String(item < ARRAYSIZE(kHopiItemNames) ? kHopiItemNames[item] : "");
+		return _strings.itemName(_chapter, item);
 	}
 	if (_chapter == 4) {
 		if (item == 11 && _town.strap == 2) {
@@ -330,10 +319,10 @@ uint RunawayInventory::icon(byte item) const {
 
 uint RunawayInventory::cursor(byte item) const {
 	if (_chapter == 6) {
-		return item && item < ARRAYSIZE(kFinaleItemNames) ? 39 + icon(item) * 2 : 0;
+		return item && item <= kFinaleItemCount ? 39 + icon(item) * 2 : 0;
 	}
 	if (_chapter == 5) {
-		return item && item < ARRAYSIZE(kHopiItemNames) ? 39 + icon(item) * 2 : 0;
+		return item && item <= kHopiItemCount ? 39 + icon(item) * 2 : 0;
 	}
 	if (_chapter == 4) {
 		return item && item <= kTownItemCount ? 39 + icon(item) * 2 : 0;

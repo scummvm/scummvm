@@ -22,13 +22,18 @@
 #ifndef HOLLYWOOD_RUNAWAY_STRINGS_H
 #define HOLLYWOOD_RUNAWAY_STRINGS_H
 
+#include "common/hash-str.h"
 #include "common/language.h"
 #include "common/ustr.h"
 
+namespace Common {
+class Archive;
+}
+
 namespace Hollywood {
 
-// Interface labels are embedded in the original executables. Dialogue and
-// subtitles remain in RESOURCE.003. Use the detected game's language here.
+// Original executable labels are compiled from PO catalogs into hollywood.dat.
+// Dialogue and subtitles remain in RESOURCE.003.
 class RunawayStrings {
 public:
 	enum TextId {
@@ -50,18 +55,21 @@ public:
 		kThermalChamber, kKey, kNitrogenTank, kElectronMicroscope,
 		kMakeshiftBullet, kPileOfMakeshiftBullets,
 		kMendedStrap, kBottleWithWater, kBottleWithGasoline, kFilledMeasuringTube,
-		kPolishedStone, kStoneOfLight, kMakeshiftMortar, kSteamOutletLever, kPressureWheel, kTextCount
+		kPolishedStone, kStoneOfLight, kMakeshiftMortar, kSteamOutletLever, kPressureWheel,
+		kMakeshiftMiningTool, kHotScalpel, kOpenPods, kTextCount
 	};
-	explicit RunawayStrings(Common::Language language) :
-		_languageIndex(language == Common::DE_DEU ? 0 : language == Common::FR_FRA ? 1 : language == Common::ES_ESP ? 2 : 3) {}
+	explicit RunawayStrings(Common::Language language) : _language(language) {}
+	bool load();
 	Common::U32String text(TextId id) const;
 	Common::U32String itemName(byte chapter, byte item) const;
 	Common::U32String hotspotName(uint16 scene, byte hotspot, const char *fallback) const;
 	Common::U32String shackHotspotName(byte hotspot) const;
 
 private:
-	Common::U32String localize(const char *const *strings) const;
-	uint _languageIndex;
+	bool loadCatalog(const Common::Archive &archive, const char *language);
+	Common::U32String lookup(const Common::String &key, const char *fallback = "") const;
+	Common::Language _language;
+	Common::HashMap<Common::String, Common::U32String> _text;
 };
 
 } // End of namespace Hollywood
