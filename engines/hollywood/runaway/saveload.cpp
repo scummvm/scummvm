@@ -340,6 +340,8 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(finale.recordings, 18);
 	s.syncAsByte(finale.ginaUpdates, 18);
 	s.syncAsByte(finale.ginaVisitPending, 18);
+	s.syncAsByte(finale.gangstersMet, 19);
+	s.syncAsByte(finale.gangsterBag, 19);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -499,7 +501,7 @@ bool RunawaySaveState::valid() const {
 	if (finale.doritaMet > 1 || finale.mediumDiscussed > 1 || finale.mediumTests > 3 || finale.seanceComplete > 1 ||
 			finale.oscarAway > 1 || finale.gangsters > 2 || finale.trailerFound > 1 || finale.moneyFound > 3 ||
 			finale.nunsHabit > 2 || finale.recordingPlan > 1 || finale.recordings > 3 || finale.ginaUpdates > 7 ||
-			finale.ginaVisitPending > 1) {
+			finale.ginaVisitPending > 1 || finale.gangstersMet > 1 || finale.gangsterBag > 3) {
 		return false;
 	}
 	for (uint i = 0; i < itemCount; ++i) {
@@ -516,7 +518,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 18)
+	if (version < 1 || version > 19)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -528,9 +530,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(18);
+	stream.writeUint16LE(19);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(18);
+	s.setVersion(19);
 	sync(s);
 	return !s.err();
 }

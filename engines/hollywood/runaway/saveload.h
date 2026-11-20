@@ -143,6 +143,7 @@ struct RunawaySaveState {
 		byte doritaMet = 0, mediumDiscussed = 0, mediumTests = 0, seanceComplete = 0;
 		byte oscarAway = 0, gangsters = 0, trailerFound = 0, moneyFound = 0, nunsHabit = 0;
 		byte recordingPlan = 0, recordings = 0, ginaUpdates = 0, ginaVisitPending = 0;
+		byte gangstersMet = 0, gangsterBag = 0; // Bag: absent, present, examined, taken.
 	} finale;
 
 	uint16 scene = 5030, x = 623, y = 447, camera = 111;
