@@ -350,6 +350,11 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(finale.voicePlanPending, 20);
 	s.syncAsByte(finale.voiceEditing, 20);
 	s.syncAsByte(finale.departure, 20);
+	s.syncAsByte(finale.rutgerMet, 21);
+	s.syncAsByte(finale.rutgerTranceDiscussed, 21);
+	s.syncAsByte(finale.rutgerBrewDiscussed, 21);
+	s.syncAsByte(finale.rutgerPlantHint, 21);
+	s.syncAsByte(finale.rutgerBrew, 21);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -516,6 +521,10 @@ bool RunawaySaveState::valid() const {
 			finale.bankResearch > 3 || finale.voicePlanPending > 1 || finale.voiceEditing > 2 || finale.departure > 2) {
 		return false;
 	}
+	if (finale.rutgerMet > 1 || finale.rutgerTranceDiscussed > 1 || finale.rutgerBrewDiscussed > 1 ||
+			finale.rutgerPlantHint > 1 || finale.rutgerBrew > 3) {
+		return false;
+	}
 	for (uint i = 0; i < itemCount; ++i) {
 		if (!items[i] || items[i] >= sizeof(owned) || owned[items[i]] ||
 				items[i] > (chapter() == 6 ? 21 : chapter() == 5 ? 16 : chapter() == 4 ? 32 : chapter() == 3 ? 26 : 19))
@@ -530,7 +539,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 20)
+	if (version < 1 || version > 21)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -542,9 +551,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(20);
+	stream.writeUint16LE(21);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(20);
+	s.setVersion(21);
 	sync(s);
 	return !s.err();
 }
