@@ -22,6 +22,7 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "hollywood/runaway/scene4100.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 namespace {
@@ -504,6 +505,22 @@ float Scene4100::actorHeight() const {
 		return MIN(y, 545) * 0.73333335f + 55.333332f;
 	}
 	return MIN(y, 545) * 0.9381443f - 56.288658f;
+}
+
+Common::U32String Scene4100::hotspotName(byte id) const {
+	if (id == 3 && _museum.cabinetSeen) {
+		return _strings.text(RunawayStrings::kThermalChamber);
+	}
+	if (id == 7 && _museum.nitrogenSeen) {
+		return _strings.text(RunawayStrings::kNitrogenTank);
+	}
+	if (id == 8 && _museum.keySeen) {
+		return _strings.text(RunawayStrings::kKey);
+	}
+	if (id == 9 && _museum.microscopeSeen) {
+		return _strings.text(RunawayStrings::kElectronMicroscope);
+	}
+	return RunawayRoomScene::hotspotName(id);
 }
 
 void Scene4100::setupActorDepth(RunawayActor::RenderParams &params) const {

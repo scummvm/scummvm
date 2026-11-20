@@ -27,12 +27,7 @@
 namespace Hollywood {
 namespace {
 
-const char *const kMuseumItemNames[] = {
-	"", "Wallet", "Car keys", "Condom", "Piece of amber", "Tape recorder", "Battery",
-	"Crucifix", "Strange Mayan object", "Colorless varnish", "Talcum powder", "Mayan mask",
-	"Ruby", "Willy's business card", "Bowl with coffee beans", "Cup of coffee",
-	"Pair of books", "Strange key", "Ladle", "Package of coffee"
-};
+const uint kMuseumItemCount = 19;
 
 const char *const kTownItemNames[] = {
 	"", "Wallet", "Car keys", "Receipt", "Piece of amber", "Crucifix", "Doctor's bag",
@@ -229,17 +224,23 @@ Common::U32String RunawayInventory::name(byte item) const {
 		return _strings.itemName(_chapter, item);
 	}
 	if (_chapter == 2) {
-		if (item == 6 && _museum.frozenBattery)
-			return Common::U32String("Frozen battery");
-		if (item == 11 && _museum.rubyRemoved)
-			return Common::U32String("Mayan mask without ruby");
-		if (item == 14 && _museum.coffee)
-			return Common::U32String(_museum.coffee == 1 ? "Bowl with ground coffee" : "Empty bowl");
-		if (item == 18 && _museum.batteryInLadle)
-			return Common::U32String("Ladle with battery");
+		if (item == 3 && _museumDemo) {
+			return _strings.text(RunawayStrings::kMuseumDemoCondom);
+		}
+		if (item == 6 && _museum.frozenBattery) {
+			return _strings.text(RunawayStrings::kFrozenBattery);
+		}
+		if (item == 8 && _museum.rubyRemoved) {
+			return _strings.text(RunawayStrings::kMayanPryingTool);
+		}
+		if (item == 14 && _museum.coffee) {
+			return _strings.text(_museum.coffee == 1 ? RunawayStrings::kGroundCoffeeBowl : RunawayStrings::kEmptyBowl);
+		}
+		if (item == 18 && _museum.batteryInLadle) {
+			return _strings.text(RunawayStrings::kLadleWithBattery);
+		}
+		return _strings.itemName(_chapter, item);
 	}
-	if (_chapter == 2)
-		return item < ARRAYSIZE(kMuseumItemNames) ? Common::U32String(kMuseumItemNames[item]) : Common::U32String();
 	if (item == 1 && _clothState)
 		return _strings.text(_clothState == 1 ? RunawayStrings::kWetCloth : RunawayStrings::kDirtyCloth);
 	if ((item == 10 && _desert.lipstick) || (item == 11 && _desert.lipsticks))
@@ -354,8 +355,9 @@ uint RunawayInventory::cursor(byte item) const {
 	}
 	if (_chapter == 1 && item == 13 && _water == 1)
 		return 85;
-	if (_chapter == 2)
-		return item && item < ARRAYSIZE(kMuseumItemNames) ? (_museumDemo ? 11 + item * 2 : 39 + icon(item) * 2) : 0;
+	if (_chapter == 2) {
+		return item && item <= kMuseumItemCount ? (_museumDemo ? 11 + item * 2 : 39 + icon(item) * 2) : 0;
+	}
 	if (_chapter == 1)
 		return item && item <= 19 ? (item == 16 ? 81 : 39 + item * 2 - (item > 16 ? 2 : 0)) : 0;
 	if (item == 1 && _clothState)
@@ -459,8 +461,9 @@ RunawayInventory::Reply RunawayInventory::examine(byte item) const {
 	if (_chapter == 1 && item == 13)
 		return Reply(62, _water == 1 ? 1 : 0);
 	if (_chapter == 2) {
-		if (!item || item >= ARRAYSIZE(kMuseumItemNames))
+		if (!item || item > kMuseumItemCount) {
 			return Reply();
+		}
 		byte variation = 0;
 		switch (item) {
 		case 5:

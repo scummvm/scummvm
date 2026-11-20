@@ -43,6 +43,7 @@ private:
 	void handleAnimationFrameHook() override;
 	void finishCustomFilm() override;
 	float actorHeight() const override;
+	Common::U32String hotspotName(byte id) const override;
 	void setupActorDepth(RunawayActor::RenderParams &params) const override;
 	bool usesAlternateActor() const override;
 	int sceneViewportYOffset() const override;

@@ -47,6 +47,7 @@ private:
 	void finishCustomConversation() override;
 	void runExitSideEffectsAfterLoop() override;
 	float actorHeight() const override;
+	Common::U32String hotspotName(byte id) const override;
 	void setupActorDepth(RunawayActor::RenderParams &params) const override;
 	Common::Point customizeSceneActionPosition(byte id, byte item, Common::Point position) const override;
 

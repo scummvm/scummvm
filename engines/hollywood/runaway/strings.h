@@ -43,7 +43,11 @@ public:
 		kSaveFailed, kLoadFailed, kDeleteFailed, kNoFreeSlots, kDeleteKey, kCreditsFailed,
 		kPlayBeginning, kPlayChapter,
 		kDryMarkerPen, kSyringeWithAlcohol, kFakeMedicalChart, kHeadWithWig, kGlassWithWater,
-		kBoxOfSyringes, kMedicalChart, kFakeChart, kTextCount
+		kBoxOfSyringes, kMedicalChart, kFakeChart,
+		kMuseumDemoCondom, kFrozenBattery, kMayanPryingTool, kGroundCoffeeBowl, kEmptyBowl, kLadleWithBattery,
+		kAnthropologyBooks, kDocuments, kAlteredLaser, kVarnishBriefcase, kWilly,
+		kMayanBowlsAndJars, kExhibitBucket, kTeapot, kExhibitBowl,
+		kThermalChamber, kKey, kNitrogenTank, kElectronMicroscope, kTextCount
 	};
 	explicit RunawayStrings(Common::Language language) :
 		_languageIndex(language == Common::DE_DEU ? 0 : language == Common::FR_FRA ? 1 : language == Common::ES_ESP ? 2 : 3) {}

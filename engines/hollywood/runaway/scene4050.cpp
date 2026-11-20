@@ -21,6 +21,7 @@
 
 #include "common/util.h"
 #include "hollywood/runaway/scene4050.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 namespace {
@@ -520,6 +521,19 @@ float Scene4050::actorHeight() const {
 		return x * 0.09578544f + 285.643677f;
 	}
 	return MIN(y, 587) * 0.8181818f - 82.272728f;
+}
+
+Common::U32String Scene4050::hotspotName(byte id) const {
+	if (id == 10 && _museum.laserUpgraded) {
+		return _strings.text(RunawayStrings::kAlteredLaser);
+	}
+	if (id == 12 && _museum.varnishSeen) {
+		return _strings.text(RunawayStrings::kVarnishBriefcase);
+	}
+	if (id == 14 && _museum.talcSeen) {
+		return _strings.itemName(2, 10);
+	}
+	return RunawayRoomScene::hotspotName(id);
 }
 
 Common::Point Scene4050::customizeSceneActionPosition(byte id, byte item, Common::Point position) const {

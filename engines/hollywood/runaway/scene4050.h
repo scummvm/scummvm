@@ -46,6 +46,7 @@ private:
 	void handleAnimationFrameHook() override;
 	void finishCustomFilm() override;
 	float actorHeight() const override;
+	Common::U32String hotspotName(byte id) const override;
 	Common::Point customizeSceneActionPosition(byte id, byte item, Common::Point position) const override;
 	byte customizeSceneActionFacing(byte id, byte facing) const override;
 

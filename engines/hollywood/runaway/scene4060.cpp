@@ -21,6 +21,7 @@
 
 #include "common/util.h"
 #include "hollywood/runaway/scene4060.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 namespace {
@@ -464,6 +465,13 @@ float Scene4060::actorHeight() const {
 		return y * 0.29007635f - 33.519085f;
 	}
 	return (y * 0.4347826f - 118.695656f + x * -0.08982036f + 258.263458f) / 2;
+}
+
+Common::U32String Scene4060::hotspotName(byte id) const {
+	if (id == 14 && _museum.willyMet) {
+		return _strings.text(RunawayStrings::kWilly);
+	}
+	return RunawayRoomScene::hotspotName(id);
 }
 
 void Scene4060::setupActorDepth(RunawayActor::RenderParams &params) const {

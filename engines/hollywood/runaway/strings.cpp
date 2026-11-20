@@ -92,7 +92,26 @@ const char *const kText[RunawayStrings::kTextCount][4] = {
 	{nullptr, nullptr, "VASO CON AGUA", "Glass with water"},
 	{nullptr, nullptr, "CAJA DE JERINGUILLAS", "Box of syringes"},
 	{nullptr, nullptr, "FICHA M\303\211DICA", "Medical chart"},
-	{nullptr, nullptr, "FICHA FALSA", "Fake medical chart"}
+	{nullptr, nullptr, "FICHA FALSA", "Fake medical chart"},
+	{nullptr, nullptr, nullptr, "Condom"},
+	{nullptr, nullptr, "PILA CONGELADA", "Frozen battery"},
+	{nullptr, nullptr, "DESENCASTRADOR MAYA", "Mayan prying tool"},
+	{nullptr, nullptr, "CUENCO CON GRANOS MOLIDOS", "Bowl with ground coffee"},
+	{nullptr, nullptr, "CUENCO", "Empty bowl"},
+	{nullptr, nullptr, "CAZO CON PILA", "Ladle with battery"},
+	{nullptr, nullptr, "LIBROS DE ANTROPOLOG\303\215A", "Anthropology books"},
+	{nullptr, nullptr, "DOCUMENTOS", "Documents"},
+	{nullptr, nullptr, "L\303\201SER \"MANIPULADO\"", "Altered laser"},
+	{nullptr, nullptr, "MALET\303\215N DE BARNICES", "Briefcase full of varnish"},
+	{nullptr, nullptr, "WILLY", "Willy"},
+	{nullptr, nullptr, "CUENCOS Y JARRAS MAYAS", "Mayan bowls and jars"},
+	{nullptr, nullptr, "CUBO", "Bucket"},
+	{nullptr, nullptr, "TETERA", "Teapot"},
+	{nullptr, nullptr, "TAZ\303\223N", "Bowl"},
+	{nullptr, nullptr, "C\303\201MARA T\303\211RMICA", "Thermal chamber"},
+	{nullptr, nullptr, "LLAVE", "Key"},
+	{nullptr, nullptr, "BOMBONA DE NITR\303\223GENO", "Liquid nitrogen tank"},
+	{nullptr, nullptr, "MICROSCOPIO ELECTR\303\223NICO", "Electron microscope"}
 };
 
 // Hospital names from the Spanish DVD executable at 0x5c2424..0x5c2598.
@@ -117,6 +136,29 @@ const char *const kHospitalItemNames[][4] = {
 	{nullptr, nullptr, "CABEZA DEL MU\303\221ECO", "Head"},
 	{nullptr, nullptr, "SPRAY", "Flammable spray can"},
 	{nullptr, nullptr, "VADEM\303\211CUM", "Vademecum"}
+};
+
+const char *const kMuseumItemNames[][4] = {
+	{"", "", "", ""},
+	{nullptr, nullptr, "CARTERA", "Wallet"},
+	{nullptr, nullptr, "LLAVES DEL COCHE", "Car keys"},
+	{nullptr, nullptr, "RESGUARDO", "Receipt"},
+	{nullptr, nullptr, "TROZO DE \303\201MBAR", "Piece of amber"},
+	{nullptr, nullptr, "GRABADORA", "Tape recorder"},
+	{nullptr, nullptr, "PILA", "Battery"},
+	{nullptr, nullptr, "CRUCIFIJO", "Crucifix"},
+	{nullptr, nullptr, "EXTRA\303\221O OBJETO MAYA", "Strange Mayan object"},
+	{nullptr, nullptr, "BARNIZ INCOLORO", "Colorless varnish"},
+	{nullptr, nullptr, "POLVOS DE TALCO", "Talcum powder"},
+	{nullptr, nullptr, "CARETA MAYA", "Mayan mask"},
+	{nullptr, nullptr, "RUB\303\215", "Ruby"},
+	{nullptr, nullptr, "TARJETA DE WILLY", "Willy's business card"},
+	{nullptr, nullptr, "CUENCO CON GRANOS", "Bowl with coffee beans"},
+	{nullptr, nullptr, "VASO DE CAF\303\211", "Cup of coffee"},
+	{nullptr, nullptr, "PAR DE LIBROS", "Pair of books"},
+	{nullptr, nullptr, "EXTRA\303\221A LLAVE", "Strange key"},
+	{nullptr, nullptr, "CAZO", "Ladle"},
+	{nullptr, nullptr, "ENVASE DE CAF\303\211", "Package of coffee"}
 };
 
 const char *const kCabinItemNames[][4] = {
@@ -190,6 +232,33 @@ const char *const kBathroomHotspotNamesES[] = {
 	"", "PAPELERA", "GRIFO", "PUERTA", "BOTE", "CARTEL", "TUBER\303\215A", "ALCACHOFA", "ARMARIO", "TAZA DEL WATER"
 };
 
+const char *const kMuseumOfficeHotspotNamesES[] = {
+	"", "PUERTA", "PAR DE LIBROS", "HENDIDURA", "DINERO", "PAPELES", "APARATO",
+	"ESTANTER\303\215A", "CAJA FUERTE SECRETA", "ESTANTER\303\215A", "VENTANA"
+};
+
+const char *const kMuseumLaboratoryHotspotNamesES[] = {
+	"", "PUERTA", "ESTANTER\303\215A", "SUSAN", "TORNO EL\303\211CTRICO", "MICROSCOPIO",
+	"M\303\201QUINA DE AGUA", "PAPELERA", "BOMBONA", "M\303\201QUINA", "L\303\201SER",
+	"ESTANTER\303\215A", "MALET\303\215N", "ESQUELETO", "EXTRA\303\221A BROCHA"
+};
+
+const char *const kMuseumHallHotspotNamesES[] = {
+	"", "ESCALERA", "M\303\201QUINA DE CAF\303\211", "PUERTA DEL DESPACHO DE CLIVE", "EXTINTOR", "PAPELERA",
+	"PUERTA DEL LABORATORIO DE RESTAURACI\303\223N", "PUERTA", "PANEL", "ESCALERA", "TEL\303\211FONO",
+	"VITRINA", "ESCALERA", "ESCALERA", "EMPLEADO DE LIMPIEZA", "EXPOSICI\303\223N MAYA", "PLACA", "PLACA"
+};
+
+const char *const kMuseumExhibitionHotspotNamesES[] = {
+	"", "VEST\303\215BULO", "ESTATUA", "ESTATUA", "OBJETOS MAYAS", "CONSTRUCCI\303\223N MAYA",
+	"CONSTRUCCI\303\223N MAYA", "OBJETO MAYA", "OBJETO MAYA", "OBJETO MAYA"
+};
+
+const char *const kMuseumSecurityHotspotNamesES[] = {
+	"", "PUERTA", "BOTIQU\303\215N", "ARMARIO ACRISTALADO", "BOT\303\223N", "CARETA MAYA",
+	"ESC\303\201NER", "BOMBONA", "OBJETO DORADO", "APARATO", "CAZO"
+};
+
 const struct {
 	uint16 scene;
 	const char *const *names[4];
@@ -197,7 +266,12 @@ const struct {
 } kHotspotNames[] = {
 	{kHospitalBedroom, {nullptr, nullptr, kBedroomHotspotNamesES, nullptr}, ARRAYSIZE(kBedroomHotspotNamesES)},
 	{kHospitalStoreroom, {nullptr, nullptr, kStoreroomHotspotNamesES, nullptr}, ARRAYSIZE(kStoreroomHotspotNamesES)},
-	{kHospitalBathroom, {nullptr, nullptr, kBathroomHotspotNamesES, nullptr}, ARRAYSIZE(kBathroomHotspotNamesES)}
+	{kHospitalBathroom, {nullptr, nullptr, kBathroomHotspotNamesES, nullptr}, ARRAYSIZE(kBathroomHotspotNamesES)},
+	{kMuseumOffice, {nullptr, nullptr, kMuseumOfficeHotspotNamesES, nullptr}, ARRAYSIZE(kMuseumOfficeHotspotNamesES)},
+	{kMuseumLaboratory, {nullptr, nullptr, kMuseumLaboratoryHotspotNamesES, nullptr}, ARRAYSIZE(kMuseumLaboratoryHotspotNamesES)},
+	{kMuseumHall, {nullptr, nullptr, kMuseumHallHotspotNamesES, nullptr}, ARRAYSIZE(kMuseumHallHotspotNamesES)},
+	{kMuseumExhibition, {nullptr, nullptr, kMuseumExhibitionHotspotNamesES, nullptr}, ARRAYSIZE(kMuseumExhibitionHotspotNamesES)},
+	{kMuseumSecurity, {nullptr, nullptr, kMuseumSecurityHotspotNamesES, nullptr}, ARRAYSIZE(kMuseumSecurityHotspotNamesES)}
 };
 
 } // End of anonymous namespace
@@ -214,6 +288,9 @@ Common::U32String RunawayStrings::text(TextId id) const {
 Common::U32String RunawayStrings::itemName(byte chapter, byte item) const {
 	if (chapter == 1 && item < ARRAYSIZE(kHospitalItemNames)) {
 		return localize(kHospitalItemNames[item]);
+	}
+	if (chapter == 2 && item < ARRAYSIZE(kMuseumItemNames)) {
+		return localize(kMuseumItemNames[item]);
 	}
 	if (chapter == 3 && item < ARRAYSIZE(kCabinItemNames)) {
 		return localize(kCabinItemNames[item]);

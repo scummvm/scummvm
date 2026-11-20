@@ -21,6 +21,7 @@
 
 #include "common/util.h"
 #include "hollywood/runaway/scene4090.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 namespace {
@@ -118,6 +119,19 @@ RunawayRoomScene::ActionResult Scene4090::dispatchCustomSceneAction(uint16 actio
 float Scene4090::actorHeight() const {
 	const int y = _position.y;
 	return MIN(y, 390) * 0.2f + 122;
+}
+
+Common::U32String Scene4090::hotspotName(byte id) const {
+	if (id == 4 && _museum.mayanObjectsSeen) {
+		return _strings.text(RunawayStrings::kMayanBowlsAndJars);
+	}
+	if (id >= 7 && id <= 9 && _museum.exhibitSeen[id - 7]) {
+		static const RunawayStrings::TextId kIdentifiedNames[] = {
+			RunawayStrings::kExhibitBucket, RunawayStrings::kTeapot, RunawayStrings::kExhibitBowl
+		};
+		return _strings.text(kIdentifiedNames[id - 7]);
+	}
+	return RunawayRoomScene::hotspotName(id);
 }
 
 void Scene4090::setupActorDepth(RunawayActor::RenderParams &params) const {

@@ -21,6 +21,7 @@
 
 #include "common/util.h"
 #include "hollywood/runaway/scene4030.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 namespace {
@@ -238,13 +239,13 @@ float Scene4030::actorHeight() const {
 
 Common::U32String Scene4030::hotspotName(byte id) const {
 	if (id == 2 && _books != kUnexamined) {
-		return _inventory.name(16);
+		return _strings.text(RunawayStrings::kAnthropologyBooks);
 	}
-	if (id == 5) {
-		return _moneyIdentified ? Common::U32String("Money") : Common::U32String("Papers");
+	if (id == 5 && _moneyIdentified) {
+		return _strings.text(RunawayStrings::kDocuments);
 	}
-	if (id == 6) {
-		return _recorder != kUnexamined ? _inventory.name(5) : Common::U32String("Device");
+	if (id == 6 && _recorder != kUnexamined) {
+		return _inventory.name(5);
 	}
 	return RunawayRoomScene::hotspotName(id);
 }
