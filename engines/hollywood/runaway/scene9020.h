@@ -43,7 +43,6 @@ public:
 	bool speaking() const override { return !subtitle().empty(); }
 	bool busy() const override { return true; }
 	bool playingVideo() const override { return true; }
-	bool escaped() const override { return _step == kFinished; }
 	void captureState(RunawaySaveState &state) const override;
 	bool restoreState(const RunawaySaveState &state, uint32 now, bool entering = false) override;
 	Graphics::ManagedSurface &screen() override { return _screen; }

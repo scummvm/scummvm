@@ -231,7 +231,9 @@ MODULE_OBJS = \
 	runaway/scene8400.o \
 	runaway/scene8410.o \
 	runaway/scene8420.o \
+	runaway/scene9010.o \
 	runaway/scene9020.o \
+	runaway/scene9030.o \
 	runaway/sequence.o \
 	runaway/speech.o \
 	runaway/strings.o \

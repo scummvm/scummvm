@@ -27,13 +27,16 @@
 
 namespace Hollywood {
 
-void RunawaySequence::start(const Command *commands, const SceneTextStore &text, uint32 now, char chapter) {
+void RunawaySequence::start(const Command *commands, const SceneTextStore &text, uint32 now, char chapter, bool keepEffects) {
 	_background.free();
 	_destination = Common::Rect(0, kRunawayViewportTop, kRunawayScreenWidth, kRunawayViewportTop + kRunawayViewportHeight);
 	_chapter = chapter;
 	_text = &text;
 	_speech.stop();
-	_audio.stopEffect();
+	_keepEffects = keepEffects;
+	if (!_keepEffects) {
+		_audio.stopEffect();
+	}
 	_lines.clear();
 	_line = 0;
 	_commands = commands;
@@ -96,7 +99,7 @@ void RunawaySequence::update(uint32 now) {
 	while (active()) {
 		const Command &command = _commands[_index];
 		// Preserve the final music cue and normal cleanup when skipping a film.
-		if (_skipFilm && command.operation != kMusic && command.operation != kEnd) {
+		if (_skipFilm && command.operation != kMusic && command.operation != kMusicVolume && command.operation != kEnd) {
 			advance();
 			continue;
 		}
@@ -165,8 +168,15 @@ void RunawaySequence::update(uint32 now) {
 			case kEffect:
 				_audio.playEffect(command.a, command.b, command.c, command.d != 0);
 				break;
+			case kMusicVolume:
+				_audio.setMusicVolume(command.a);
+				break;
 			case kStopEffects:
-				_audio.stopEffect();
+				if (command.a) {
+					_audio.stopEffect(command.a - 1);
+				} else {
+					_audio.stopEffect();
+				}
 				break;
 			default:
 				break;
@@ -217,7 +227,9 @@ void RunawaySequence::update(uint32 now) {
 			_video.close();
 			_stills.close();
 			_speech.stop();
-			_audio.stopEffect();
+			if (!_keepEffects) {
+				_audio.stopEffect();
+			}
 			_lines.clear();
 			_commands = nullptr;
 			return;

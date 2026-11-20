@@ -137,7 +137,7 @@ void Scene9020::update(uint32 now, int scrollDirection, bool inventoryOpen) {
 			return;
 		}
 	}
-	// Native 0x57fa40 interleaves these five sequences before the airport (9010).
+	// Native 0x57fa40 interleaves these five sequences before Berkeley (9010).
 	switch (_step) {
 	case kBankNarration: // Brian introduces the trip to the bank.
 		_step = kBankFilm;
@@ -155,18 +155,11 @@ void Scene9020::update(uint32 now, int scrollDirection, bool inventoryOpen) {
 		_step = kDepartureNarration;
 		startNarration(9);
 		break;
-	case kDepartureNarration: { // Continue to the airport when that scene is available.
-		const RunawayRoom *next = findRunawayRoom(9010);
-		if (next) {
-			_transition.scene = next->number;
-			_transition.position = next->entry;
-		} else {
-			warning("Runaway: airport scene 9010 is not implemented yet");
-		}
+	case kDepartureNarration: // Continue to Brian and Gina's farewell at Berkeley.
+		_transition.scene = 9010;
 		_step = kFinished;
 		break;
-	}
-	case kFinished: // The engine consumes the pending transition or ends the preview.
+	case kFinished: // The engine consumes the pending transition.
 		break;
 	}
 }

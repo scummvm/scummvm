@@ -46,9 +46,10 @@ public:
 		kWaitSpeech,  // Optional portrait and offscreen speaker, as in kTalk.
 		kWaitInput,
 		kMusic,       // Cue, volume, loop.
+		kMusicVolume, // Change volume without restarting the current music.
 		kEffect,      // Cue, volume, channel, loop.
 		kWaitEffect,  // Maximum wait in milliseconds (channel 0).
-		kStopEffects,
+		kStopEffects, // Optional channel + 1; zero stops all effects.
 		kDelay,       // Milliseconds.
 		kEnd
 	};
@@ -61,7 +62,7 @@ public:
 		byte c, d;
 	};
 	explicit RunawaySequence(RunawayAudio &audio) : _audio(audio), _random("runawaySequence"), _speech(audio, _random) {}
-	void start(const Command *commands, const SceneTextStore &text, uint32 now, char chapter = 'B');
+	void start(const Command *commands, const SceneTextStore &text, uint32 now, char chapter = 'B', bool keepEffects = false);
 	void setBackground(const Graphics::ManagedSurface &background, const Common::Rect &destination);
 	void update(uint32 now);
 	void skip();
@@ -93,6 +94,7 @@ private:
 	uint32 _repeatAt = 0;
 	bool _entered = false, _showPortrait = false, _silentPortrait = false;
 	bool _skipFilm = false;
+	bool _keepEffects = false;
 	struct Line {
 		Common::U32String text;
 		uint16 sample;
