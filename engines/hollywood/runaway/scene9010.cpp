@@ -254,7 +254,7 @@ void Scene9010::draw() {
 	if (_step == kArrival) {
 		dimRunawayViewport(_screen, MIN<uint>(1000, _now - _started));
 	} else if (_step == kDeparture && _now - _started > kDepartureFadeStart) {
-		dimRunawayViewport(_screen, kDepartureDuration - MIN(kDepartureDuration, _now - _started), 2000);
+		dimRunawayViewport(_screen, kDepartureDuration - MIN<uint32>(kDepartureDuration, _now - _started), 2000);
 	}
 }
 
