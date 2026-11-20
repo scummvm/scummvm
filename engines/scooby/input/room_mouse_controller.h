@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_ROOM_MOUSE_CONTROLLER_H
-#define SCOOBY_ROOM_MOUSE_CONTROLLER_H
+#ifndef SCOOBY_INPUT_ROOM_MOUSE_CONTROLLER_H
+#define SCOOBY_INPUT_ROOM_MOUSE_CONTROLLER_H
 
 #include "common/array.h"
 #include "common/rect.h"
@@ -158,4 +158,4 @@ private:
 
 } // namespace Scooby
 
-#endif // SCOOBY_ROOM_MOUSE_CONTROLLER_H
+#endif // SCOOBY_INPUT_ROOM_MOUSE_CONTROLLER_H

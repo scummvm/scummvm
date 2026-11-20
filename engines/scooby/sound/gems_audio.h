@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_GEMS_AUDIO_H
-#define SCOOBY_GEMS_AUDIO_H
+#ifndef SCOOBY_SOUND_GEMS_AUDIO_H
+#define SCOOBY_SOUND_GEMS_AUDIO_H
 
 #include "common/scummsys.h"
 
@@ -49,4 +49,4 @@ void gemsResumeAll();
 
 } // namespace Scooby
 
-#endif // SCOOBY_GEMS_AUDIO_H
+#endif // SCOOBY_SOUND_GEMS_AUDIO_H

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_OPTIONAL_H
-#define SCOOBY_OPTIONAL_H
+#ifndef SCOOBY_COMMON_OPTIONAL_H
+#define SCOOBY_COMMON_OPTIONAL_H
 
 // A tiny replacement for the standard library optional<T> for C++11 (it is C++17).
 
@@ -70,4 +70,4 @@ private:
 };
 } // namespace Scooby
 
-#endif // SCOOBY_OPTIONAL_H
+#endif // SCOOBY_COMMON_OPTIONAL_H

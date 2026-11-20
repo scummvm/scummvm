@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_ROM_H
-#define SCOOBY_ROM_H
+#ifndef SCOOBY_ASSETS_ROM_H
+#define SCOOBY_ASSETS_ROM_H
 
 #include "common/scummsys.h"
 #include "common/ptr.h"
@@ -88,4 +88,4 @@ private:
 
 } // namespace Scooby
 
-#endif // SCOOBY_ROM_H
+#endif // SCOOBY_ASSETS_ROM_H

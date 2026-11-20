@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_SPRITE_LAYER_H
-#define SCOOBY_SPRITE_LAYER_H
+#ifndef SCOOBY_GRAPHICS_SPRITE_LAYER_H
+#define SCOOBY_GRAPHICS_SPRITE_LAYER_H
 
 #include "common/scummsys.h"
 
@@ -69,4 +69,4 @@ private:
 };
 } // namespace Scooby
 
-#endif // SCOOBY_SPRITE_LAYER_H
+#endif // SCOOBY_GRAPHICS_SPRITE_LAYER_H

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_ROOM_OBJECT_H
-#define SCOOBY_ROOM_OBJECT_H
+#ifndef SCOOBY_ROOMS_ROOM_OBJECT_H
+#define SCOOBY_ROOMS_ROOM_OBJECT_H
 
 #include "common/scummsys.h"
 #include "common/algorithm.h"
@@ -195,4 +195,4 @@ public:
 };
 } // namespace Scooby
 
-#endif // SCOOBY_ROOM_OBJECT_H
+#endif // SCOOBY_ROOMS_ROOM_OBJECT_H

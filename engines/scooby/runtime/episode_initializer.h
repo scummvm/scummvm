@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_EPISODE_INITIALIZER_H
-#define SCOOBY_EPISODE_INITIALIZER_H
+#ifndef SCOOBY_RUNTIME_EPISODE_INITIALIZER_H
+#define SCOOBY_RUNTIME_EPISODE_INITIALIZER_H
 
 #include "scooby/assets/rom.h"
 #include "scooby/runtime/runtime_state.h"
@@ -55,4 +55,4 @@ private:
 };
 } // namespace Scooby
 
-#endif // SCOOBY_EPISODE_INITIALIZER_H
+#endif // SCOOBY_RUNTIME_EPISODE_INITIALIZER_H

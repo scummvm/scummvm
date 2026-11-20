@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_SESSION_CONTROLLER_H
-#define SCOOBY_SESSION_CONTROLLER_H
+#ifndef SCOOBY_RUNTIME_SESSION_CONTROLLER_H
+#define SCOOBY_RUNTIME_SESSION_CONTROLLER_H
 
 #include "common/scummsys.h"
 #include "graphics/framelimiter.h"
@@ -200,4 +200,4 @@ private:
 };
 } // namespace Scooby
 
-#endif // SCOOBY_SESSION_CONTROLLER_H
+#endif // SCOOBY_RUNTIME_SESSION_CONTROLLER_H

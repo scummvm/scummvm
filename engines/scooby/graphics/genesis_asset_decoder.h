@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_GENESIS_ASSET_DECODER_H
-#define SCOOBY_GENESIS_ASSET_DECODER_H
+#ifndef SCOOBY_GRAPHICS_GENESIS_ASSET_DECODER_H
+#define SCOOBY_GRAPHICS_GENESIS_ASSET_DECODER_H
 
 #include "common/scummsys.h"
 
@@ -59,4 +59,4 @@ Common::Array<uint8> colorise4bppMaskTiles(const ScoobyDooRom &rom, uint8 nonzer
 							  uint8 zeroPaletteIndex);
 } // namespace Scooby
 
-#endif // SCOOBY_GENESIS_ASSET_DECODER_H
+#endif // SCOOBY_GRAPHICS_GENESIS_ASSET_DECODER_H

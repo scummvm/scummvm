@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_ACTOR_FACING_ANIMATION_H
-#define SCOOBY_ACTOR_FACING_ANIMATION_H
+#ifndef SCOOBY_ROOMS_ACTOR_FACING_ANIMATION_H
+#define SCOOBY_ROOMS_ACTOR_FACING_ANIMATION_H
 
 #include "common/scummsys.h"
 
@@ -47,4 +47,4 @@ int16 resolveShaggyTurnAnimation(int16 previousPositionIndex, int16 nextPosition
 int16 resolveScoobyTurnAnimation(int16 previousPositionIndex, int16 nextPositionIndex);
 } // namespace Scooby
 
-#endif // SCOOBY_ACTOR_FACING_ANIMATION_H
+#endif // SCOOBY_ROOMS_ACTOR_FACING_ANIMATION_H

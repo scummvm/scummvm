@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_RING_LZ_DECODER_H
-#define SCOOBY_RING_LZ_DECODER_H
+#ifndef SCOOBY_COMPRESSION_RING_LZ_DECODER_H
+#define SCOOBY_COMPRESSION_RING_LZ_DECODER_H
 
 #include "common/scummsys.h"
 
@@ -42,4 +42,4 @@ namespace Scooby {
 Common::Array<uint8> decompressRingLz(const ScoobyDooRom &rom, int sourceOffset);
 } // namespace Scooby
 
-#endif // SCOOBY_RING_LZ_DECODER_H
+#endif // SCOOBY_COMPRESSION_RING_LZ_DECODER_H

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_SPRITE_INSTANCE_H
-#define SCOOBY_SPRITE_INSTANCE_H
+#ifndef SCOOBY_GRAPHICS_SPRITE_INSTANCE_H
+#define SCOOBY_GRAPHICS_SPRITE_INSTANCE_H
 
 #include "common/scummsys.h"
 
@@ -53,4 +53,4 @@ struct SpriteInstance {
 };
 } // namespace Scooby
 
-#endif // SCOOBY_SPRITE_INSTANCE_H
+#endif // SCOOBY_GRAPHICS_SPRITE_INSTANCE_H

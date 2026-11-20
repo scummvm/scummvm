@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_INTRO_SEQUENCE_H
-#define SCOOBY_INTRO_SEQUENCE_H
+#ifndef SCOOBY_STARTUP_INTRO_SEQUENCE_H
+#define SCOOBY_STARTUP_INTRO_SEQUENCE_H
 
 #include "common/array.h"
 #include "common/func.h"
@@ -109,4 +109,4 @@ private:
 };
 } // namespace Scooby
 
-#endif // SCOOBY_INTRO_SEQUENCE_H
+#endif // SCOOBY_STARTUP_INTRO_SEQUENCE_H

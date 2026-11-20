@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_ACTION_MENU_CONTROLLER_H
-#define SCOOBY_ACTION_MENU_CONTROLLER_H
+#ifndef SCOOBY_INTERACTIONS_ACTION_MENU_CONTROLLER_H
+#define SCOOBY_INTERACTIONS_ACTION_MENU_CONTROLLER_H
 
 #include "common/algorithm.h"
 #include "common/scummsys.h"
@@ -177,4 +177,4 @@ private:
 };
 } // namespace Scooby
 
-#endif // SCOOBY_ACTION_MENU_CONTROLLER_H
+#endif // SCOOBY_INTERACTIONS_ACTION_MENU_CONTROLLER_H

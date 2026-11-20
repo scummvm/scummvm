@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_APPLICATION_LOOP_H
-#define SCOOBY_APPLICATION_LOOP_H
+#ifndef SCOOBY_STARTUP_APPLICATION_LOOP_H
+#define SCOOBY_STARTUP_APPLICATION_LOOP_H
 
 #include "common/error.h"
 #include "common/serializer.h"
@@ -77,4 +77,4 @@ private:
 };
 } // namespace Scooby
 
-#endif // SCOOBY_APPLICATION_LOOP_H
+#endif // SCOOBY_STARTUP_APPLICATION_LOOP_H

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_SAVE_GAME_DATA_H
-#define SCOOBY_SAVE_GAME_DATA_H
+#ifndef SCOOBY_RUNTIME_SAVE_GAME_DATA_H
+#define SCOOBY_RUNTIME_SAVE_GAME_DATA_H
 
 #include "common/array.h"
 #include "common/scummsys.h"
@@ -100,4 +100,4 @@ struct SaveGameData {
 
 } // namespace Scooby
 
-#endif // SCOOBY_SAVE_GAME_DATA_H
+#endif // SCOOBY_RUNTIME_SAVE_GAME_DATA_H

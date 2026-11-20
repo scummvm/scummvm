@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_INDEXED_FRAME_H
-#define SCOOBY_INDEXED_FRAME_H
+#ifndef SCOOBY_GRAPHICS_INDEXED_FRAME_H
+#define SCOOBY_GRAPHICS_INDEXED_FRAME_H
 
 #include "common/scummsys.h"
 #include "common/algorithm.h"
@@ -62,4 +62,4 @@ private:
 };
 } // namespace Scooby
 
-#endif // SCOOBY_INDEXED_FRAME_H
+#endif // SCOOBY_GRAPHICS_INDEXED_FRAME_H

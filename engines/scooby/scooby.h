@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_H
-#define SCOOBY_H
+#ifndef SCOOBY_SCOOBY_H
+#define SCOOBY_SCOOBY_H
 
 #include "common/error.h"
 #include "common/fs.h"
@@ -141,4 +141,4 @@ extern ScoobyEngine *g_engine;
 
 } // End of namespace Scooby
 
-#endif // SCOOBY_H
+#endif // SCOOBY_SCOOBY_H

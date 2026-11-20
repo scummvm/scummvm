@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_RESTART_SEQUENCE_H
-#define SCOOBY_RESTART_SEQUENCE_H
+#ifndef SCOOBY_STARTUP_RESTART_SEQUENCE_H
+#define SCOOBY_STARTUP_RESTART_SEQUENCE_H
 
 #include "common/func.h"
 
@@ -67,4 +67,4 @@ private:
 };
 } // namespace Scooby
 
-#endif // SCOOBY_RESTART_SEQUENCE_H
+#endif // SCOOBY_STARTUP_RESTART_SEQUENCE_H

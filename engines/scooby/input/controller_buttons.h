@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_CONTROLLER_BUTTONS_H
-#define SCOOBY_CONTROLLER_BUTTONS_H
+#ifndef SCOOBY_INPUT_CONTROLLER_BUTTONS_H
+#define SCOOBY_INPUT_CONTROLLER_BUTTONS_H
 
 #include "common/scummsys.h"
 
@@ -67,4 +67,4 @@ inline ControllerButtons &operator&=(ControllerButtons &a, ControllerButtons b) 
 inline bool any(ControllerButtons value) { return static_cast<uint8>(value) != 0; }
 } // namespace Scooby
 
-#endif // SCOOBY_CONTROLLER_BUTTONS_H
+#endif // SCOOBY_INPUT_CONTROLLER_BUTTONS_H

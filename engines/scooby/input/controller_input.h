@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_CONTROLLER_INPUT_H
-#define SCOOBY_CONTROLLER_INPUT_H
+#ifndef SCOOBY_INPUT_CONTROLLER_INPUT_H
+#define SCOOBY_INPUT_CONTROLLER_INPUT_H
 
 #include "common/keyboard.h"
 #include "scooby/input/controller_buttons.h"
@@ -86,4 +86,4 @@ private:
 };
 } // namespace Scooby
 
-#endif // SCOOBY_CONTROLLER_INPUT_H
+#endif // SCOOBY_INPUT_CONTROLLER_INPUT_H

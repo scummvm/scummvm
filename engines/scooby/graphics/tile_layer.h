@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_TILE_LAYER_H
-#define SCOOBY_TILE_LAYER_H
+#ifndef SCOOBY_GRAPHICS_TILE_LAYER_H
+#define SCOOBY_GRAPHICS_TILE_LAYER_H
 
 // Identifies one logical layer in a decoded tile scene.
 
@@ -38,4 +38,4 @@ enum class TileLayer {
 };
 } // namespace Scooby
 
-#endif // SCOOBY_TILE_LAYER_H
+#endif // SCOOBY_GRAPHICS_TILE_LAYER_H

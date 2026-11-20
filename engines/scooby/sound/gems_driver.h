@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_GEMS_DRIVER_H
-#define SCOOBY_GEMS_DRIVER_H
+#ifndef SCOOBY_SOUND_GEMS_DRIVER_H
+#define SCOOBY_SOUND_GEMS_DRIVER_H
 
 #include "common/scummsys.h"
 
@@ -222,4 +222,4 @@ private:
 
 } // namespace Scooby
 
-#endif // SCOOBY_GEMS_DRIVER_H
+#endif // SCOOBY_SOUND_GEMS_DRIVER_H

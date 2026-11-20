@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_FRAME_PRESENTER_H
-#define SCOOBY_FRAME_PRESENTER_H
+#ifndef SCOOBY_PRESENTATION_FRAME_PRESENTER_H
+#define SCOOBY_PRESENTATION_FRAME_PRESENTER_H
 
 #include "common/func.h"
 #include "graphics/framelimiter.h"
@@ -74,4 +74,4 @@ private:
 };
 } // namespace Scooby
 
-#endif // SCOOBY_FRAME_PRESENTER_H
+#endif // SCOOBY_PRESENTATION_FRAME_PRESENTER_H

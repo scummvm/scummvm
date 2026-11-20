@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_SPAN_H
-#define SCOOBY_SPAN_H
+#ifndef SCOOBY_COMMON_SPAN_H
+#define SCOOBY_COMMON_SPAN_H
 
 #include "common/scummsys.h"
 #include "common/type_traits.h"
@@ -128,4 +128,4 @@ inline Span<T> makeSpan(T (&a)[N]) {
 }
 } // namespace Scooby
 
-#endif // SCOOBY_SPAN_H
+#endif // SCOOBY_COMMON_SPAN_H

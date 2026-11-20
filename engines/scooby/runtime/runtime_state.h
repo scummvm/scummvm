@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_RUNTIME_STATE_H
-#define SCOOBY_RUNTIME_STATE_H
+#ifndef SCOOBY_RUNTIME_RUNTIME_STATE_H
+#define SCOOBY_RUNTIME_RUNTIME_STATE_H
 
 #include "common/scummsys.h"
 #include "common/ptr.h"
@@ -1067,4 +1067,4 @@ public:
 };
 } // namespace Scooby
 
-#endif // SCOOBY_RUNTIME_STATE_H
+#endif // SCOOBY_RUNTIME_RUNTIME_STATE_H

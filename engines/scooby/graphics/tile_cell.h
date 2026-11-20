@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_TILE_CELL_H
-#define SCOOBY_TILE_CELL_H
+#ifndef SCOOBY_GRAPHICS_TILE_CELL_H
+#define SCOOBY_GRAPHICS_TILE_CELL_H
 
 #include "common/scummsys.h"
 
@@ -48,4 +48,4 @@ struct TileCell {
 };
 } // namespace Scooby
 
-#endif // SCOOBY_TILE_CELL_H
+#endif // SCOOBY_GRAPHICS_TILE_CELL_H

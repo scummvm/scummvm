@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_CONTRACTS_H
-#define SCOOBY_CONTRACTS_H
+#ifndef SCOOBY_COMMON_CONTRACTS_H
+#define SCOOBY_COMMON_CONTRACTS_H
 
 #include "common/error.h"
 
@@ -31,4 +31,4 @@
 		}                                                                                           \
 	} while (false)
 
-#endif // SCOOBY_CONTRACTS_H
+#endif // SCOOBY_COMMON_CONTRACTS_H

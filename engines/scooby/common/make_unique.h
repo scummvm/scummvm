@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_MAKE_UNIQUE_H
-#define SCOOBY_MAKE_UNIQUE_H
+#ifndef SCOOBY_COMMON_MAKE_UNIQUE_H
+#define SCOOBY_COMMON_MAKE_UNIQUE_H
 
 #include "common/ptr.h"
 #include "common/util.h"
@@ -36,4 +36,4 @@ Common::ScopedPtr<T> makeUnique(Args &&...args) {
 }
 } // namespace Scooby
 
-#endif // SCOOBY_MAKE_UNIQUE_H
+#endif // SCOOBY_COMMON_MAKE_UNIQUE_H

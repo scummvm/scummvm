@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCOOBY_TILE_SCENE_H
-#define SCOOBY_TILE_SCENE_H
+#ifndef SCOOBY_GRAPHICS_TILE_SCENE_H
+#define SCOOBY_GRAPHICS_TILE_SCENE_H
 
 #include "common/array.h"
 #include "common/scummsys.h"
@@ -254,4 +254,4 @@ private:
 };
 } // namespace Scooby
 
-#endif // SCOOBY_TILE_SCENE_H
+#endif // SCOOBY_GRAPHICS_TILE_SCENE_H
