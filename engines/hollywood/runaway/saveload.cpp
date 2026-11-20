@@ -359,6 +359,19 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(finale.locomotiveBadge, 22);
 	s.syncAsByte(finale.saturnMet, 23);
 	s.syncAsByte(finale.craterVisited, 23);
+	s.syncAsByte(finale.hotelVisited, 24);
+	s.syncAsByte(finale.rifle, 24);
+	s.syncAsByte(finale.pokerTaken, 24);
+	s.syncAsByte(finale.bellRings, 24);
+	s.syncAsByte(finale.sushiTruthTold, 24);
+	s.syncAsByte(finale.hackerKnown, 24);
+	s.syncAsByte(finale.trailerDiscussed, 24);
+	s.syncAsByte(finale.gangstersDiscussed, 24);
+	s.syncAsByte(finale.bagDelivered, 24);
+	s.syncAsByte(finale.movieFanKnown, 24);
+	s.syncAsByte(finaleItems.scalpel, 24);
+	s.syncAsByte(finaleItems.heatNeeded, 24);
+	s.syncAsByte(finaleItems.podsOpened, 24);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -530,6 +543,12 @@ bool RunawaySaveState::valid() const {
 			finale.locomotiveBadge > 3 || finale.saturnMet > 1 || finale.craterVisited > 1) {
 		return false;
 	}
+	if (finale.hotelVisited > 1 || finale.rifle > 2 || finale.pokerTaken > 1 || finale.bellRings > 4 ||
+			finale.sushiTruthTold > 1 || finale.hackerKnown > 1 || finale.trailerDiscussed > 1 ||
+			finale.gangstersDiscussed > 1 || finale.bagDelivered > 2 || finale.movieFanKnown > 1 ||
+			finaleItems.scalpel > 2 || finaleItems.heatNeeded > 1 || finaleItems.podsOpened > 1) {
+		return false;
+	}
 	for (uint i = 0; i < itemCount; ++i) {
 		if (!items[i] || items[i] >= sizeof(owned) || owned[items[i]] ||
 				items[i] > (chapter() == 6 ? 21 : chapter() == 5 ? 16 : chapter() == 4 ? 32 : chapter() == 3 ? 26 : 19))
@@ -544,7 +563,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 23)
+	if (version < 1 || version > 24)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -556,9 +575,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(23);
+	stream.writeUint16LE(24);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(23);
+	s.setVersion(24);
 	sync(s);
 	return !s.err();
 }

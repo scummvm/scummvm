@@ -31,13 +31,15 @@ class Scene6370 : public RunawayRoomScene {
 public:
 	Scene6370(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
 
+protected:
+	float actorHeight() const override;
+	void setupActorDepth(RunawayActor::RenderParams &params) const override;
+
 private:
 	bool usesAlternateActor() const override;
 	bool loadCustomResources() override;
 	void runCustomEntrySequence() override;
 	void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) override;
-	float actorHeight() const override;
-	void setupActorDepth(RunawayActor::RenderParams &params) const override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 	void handleAnimationFrameHook() override;
 	void handleCustomDialogueChoice(byte effect) override;

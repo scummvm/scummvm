@@ -96,6 +96,9 @@ const FilmOverlay kFilmOverlays[] = {
 	{'H', 4, 0, 0, 12, 144, 118, 862, 600},
 	{'H', 4, 1, 12, 6, 396, 206, 767, 600},
 	{'H', 4, 2, 18, 12, 333, 128, 799, 600},
+	{'H', 7, 0, 0, 12, 0, 0, 288, 288},
+	{'H', 7, 1, 12, 12, 0, 0, 288, 288},
+	{'H', 7, 2, 24, 12, 0, 0, 288, 288},
 	{'H', 9, 0, 0, 6, 456, 190, 608, 356},
 	{'H', 9, 1, 6, 6, 752, 190, 936, 376},
 	{'H', 9, 2, 12, 6, 112, 120, 280, 352},
@@ -289,7 +292,7 @@ bool RunawayFilmPortrait::draw(Graphics::ManagedSurface &surface, const Common::
 	}
 	if (_loadedPortrait != (int)portrait) {
 		Common::Array<byte> patch;
-		const bool phone = _chapter == 'D' && _movie == 8;
+		const bool phone = (_chapter == 'D' && _movie == 8) || (_chapter == 'H' && _movie == 7);
 		_portrait.create(phone ? 288 : 512, phone ? 288 : 300, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 		_talking.create(_portrait.w, _portrait.h, _portrait.format);
 		if (!_archive.readVariableChunk(portrait * 2, patch) || !applyRunawayPatch(patch, _portrait) ||

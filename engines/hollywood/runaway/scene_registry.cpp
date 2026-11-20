@@ -85,6 +85,8 @@
 #include "hollywood/runaway/scene8290.h"
 #include "hollywood/runaway/scene8300.h"
 #include "hollywood/runaway/scene8350.h"
+#include "hollywood/runaway/scene8370.h"
+#include "hollywood/runaway/scene8380.h"
 
 namespace Hollywood {
 namespace {
@@ -165,7 +167,9 @@ const SceneDefinition kSceneDefinitions[] = {
 	{&kRunawayScene8263, createScene<Runaway::Scene8263>},
 	{&kRunawayScene8290, createScene<Runaway::Scene8290>},
 	{&kRunawayScene8300, createScene<Runaway::Scene8300>},
-	{&kRunawayScene8350, createScene<Runaway::Scene8350>}
+	{&kRunawayScene8350, createScene<Runaway::Scene8350>},
+	{&kRunawayScene8370, createScene<Runaway::Scene8370>},
+	{&kRunawayScene8380, createScene<Runaway::Scene8380>}
 };
 
 } // End of anonymous namespace
@@ -246,6 +250,10 @@ const RunawayRoom *findRunawayRoom(uint16 number) {
 		number = 8263;
 	} else if (number >= 8301 && number <= 8303) {
 		number = 8300;
+	} else if (number >= 8371 && number <= 8375) {
+		number = 8370;
+	} else if (number >= 8381 && number <= 8385) {
+		number = 8380;
 	}
 	for (uint i = 0; i < ARRAYSIZE(kSceneDefinitions); ++i) {
 		if (kSceneDefinitions[i].room->number == number) {

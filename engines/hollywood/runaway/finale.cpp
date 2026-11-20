@@ -86,6 +86,12 @@ bool RunawayRoomScene::sayFinaleInventory(const RunawayInventory::Reply &reply) 
 		say(309, _finale.recordings, true);
 		return true;
 	}
+	if (reply.cue == 313 && reply.variation < 6) {
+		say(313, reply.variation, true);
+		_audio.playEffect(reply.variation == 4 ? 40 : 41);
+		say(313, reply.variation + 1, true);
+		return true;
+	}
 	return false;
 }
 

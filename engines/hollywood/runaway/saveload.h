@@ -153,7 +153,16 @@ struct RunawaySaveState {
 		byte saloonVisited = 0;
 		byte locomotiveBadge = 0; // In the boiler, on the ground, examined, taken.
 		byte saturnMet = 0, craterVisited = 0;
+		byte hotelVisited = 0, rifle = 0, pokerTaken = 0, bellRings = 0;
+		byte sushiTruthTold = 0, hackerKnown = 0, trailerDiscussed = 0, gangstersDiscussed = 0;
+		byte bagDelivered = 0; // Not delivered, waiting for Sushi, examined.
+		byte movieFanKnown = 0;
 	} finale;
+
+	struct FinaleItems {
+		byte scalpel = 0; // Cold, hot, cooled after cutting the pods.
+		byte heatNeeded = 0, podsOpened = 0;
+	} finaleItems;
 
 	uint16 scene = 5030, x = 623, y = 447, camera = 111;
 	byte facing = 3, lidOpen = 0, unplugged = 0, windowClean = 0;

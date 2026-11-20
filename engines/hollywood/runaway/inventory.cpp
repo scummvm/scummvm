@@ -88,6 +88,7 @@ void RunawayInventory::captureState(RunawaySaveState &state) const {
 	state.desertItems = _desert;
 	state.townItems = _town;
 	state.hopiItems = _hopi;
+	state.finaleItems = _finale;
 }
 
 void RunawayInventory::restoreState(const RunawaySaveState &state) {
@@ -107,6 +108,7 @@ void RunawayInventory::restoreState(const RunawaySaveState &state) {
 	_desert = state.desertItems;
 	_town = state.townItems;
 	_hopi = state.hopiItems;
+	_finale = state.finaleItems;
 	_newItem = 0;
 }
 
@@ -137,6 +139,7 @@ void RunawayInventory::startChapter(byte chapter) {
 		}
 	}
 	if (chapter == 6) {
+		_finale = RunawaySaveState::FinaleItems();
 		const byte initial[] = {1, 2, 3, 5, 6, 7, 8, 9};
 		for (uint i = 0; i < ARRAYSIZE(initial); ++i) {
 			add(initial[i]);
@@ -178,6 +181,12 @@ void RunawayInventory::remove(byte item) {
 
 Common::U32String RunawayInventory::name(byte item) const {
 	if (_chapter == 6) {
+		if (item == 19 && _finale.scalpel == 1) {
+			return Common::U32String("Hot scalpel");
+		}
+		if (item == 20 && _finale.podsOpened) {
+			return Common::U32String("Open pods");
+		}
 		return Common::U32String(item < ARRAYSIZE(kFinaleItemNames) ? kFinaleItemNames[item] : "");
 	}
 	if (_chapter == 5) {
@@ -240,6 +249,15 @@ Common::U32String RunawayInventory::name(byte item) const {
 }
 
 uint RunawayInventory::icon(byte item) const {
+	if (_chapter == 6) {
+		if (item == 19 && _finale.scalpel == 1) {
+			return 22;
+		}
+		if (item == 20 && _finale.podsOpened) {
+			return 23;
+		}
+		return item;
+	}
 	if (_chapter == 5) {
 		return item == 15 && _hopi.toolHandle ? 17 : item;
 	}
@@ -362,6 +380,12 @@ uint RunawayInventory::cursor(byte item) const {
 
 RunawayInventory::Reply RunawayInventory::examine(byte item) const {
 	if (_chapter == 6) {
+		if (item == 19) {
+			return Reply(310, _finale.scalpel ? _finale.scalpel + 1 : _finale.heatNeeded);
+		}
+		if (item == 20) {
+			return Reply(311, _finale.podsOpened);
+		}
 		static const uint16 cues[] = {1, 50, 51, 74, 200, 300, 301, 253, 303, 256, 304, 1, 305, 306, 307, 308, 309, 1, 1, 310, 311, 312};
 		return Reply(item < ARRAYSIZE(cues) ? cues[item] : 1);
 	}
@@ -511,6 +535,20 @@ RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 		return combineHopiItems(first, second);
 	}
 	if (_chapter == 6) {
+		if (first == 19 && second == 20) {
+			if (_finale.podsOpened) {
+				return Reply(313, 6);
+			}
+			if (_finale.scalpel) {
+				_finale.scalpel = 2;
+				_finale.podsOpened = 1;
+				add(10);
+				return Reply(313, 4);
+			}
+			const byte variation = _finale.heatNeeded ? 2 : 0;
+			_finale.heatNeeded = 1;
+			return Reply(313, variation);
+		}
 		return Reply();
 	}
 	if (_chapter == 1) {

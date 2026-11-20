@@ -50,6 +50,7 @@ public:
 	RunawaySaveState::DesertItems &desert() { return _desert; }
 	RunawaySaveState::TownItems &town() { return _town; }
 	RunawaySaveState::HopiItems &hopi() { return _hopi; }
+	RunawaySaveState::FinaleItems &finale() { return _finale; }
 	bool contains(byte item) const;
 	bool add(byte item);
 	void remove(byte item);
@@ -82,6 +83,7 @@ private:
 	RunawaySaveState::DesertItems _desert;
 	RunawaySaveState::TownItems _town;
 	RunawaySaveState::HopiItems _hopi;
+	RunawaySaveState::FinaleItems _finale;
 	Common::Array<byte> _items;
 	byte _selected = 0, _newItem = 0, _clothState = 0;
 	byte _water = 0;
