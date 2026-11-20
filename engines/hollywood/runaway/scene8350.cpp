@@ -89,11 +89,7 @@ RunawayRoomScene::ActionResult Scene8350::dispatchCustomSceneAction(uint16 actio
 		}
 		break;
 	case 305: { // Follow Saturn's directions, or check whether the gangsters are still there.
-		const uint16 destination = _finale.gangsters == 2 && !_finale.oscarAway ? 8403 : 8400;
-		if (!findRunawayRoom(destination)) {
-			leaveRoom(destination);
-			break;
-		}
+		const uint16 destination = _finale.nunsHabit == 2 && !_finale.oscarAway ? 8403 : 8400;
 		if (_finale.trailerFound == 1) {
 			say(5);
 			_finale.trailerFound = 2;

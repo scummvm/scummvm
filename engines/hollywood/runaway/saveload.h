@@ -157,6 +157,8 @@ struct RunawaySaveState {
 		byte sushiTruthTold = 0, hackerKnown = 0, trailerDiscussed = 0, gangstersDiscussed = 0;
 		byte bagDelivered = 0; // Not delivered, waiting for Sushi, examined.
 		byte movieFanKnown = 0;
+		byte trailerVisited = 0, trailerDoor = 0, trailerDoorTried = 0, bankBrochureTaken = 0;
+		byte trailerWarnings = 0, trailerInteriorVisited = 0;
 	} finale;
 
 	struct FinaleItems {
