@@ -1,0 +1,53 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef SCOOBY_INTERACTIONS_ACTION_H
+#define SCOOBY_INTERACTIONS_ACTION_H
+
+#include "common/scummsys.h"
+
+// Preserves one registered interaction-action menu choice as a coherent value.
+
+namespace Scooby {
+
+struct InteractionAction {
+	int32 labelTextOffset;
+	int32 responseDialogueOffset;
+	int16 roomObjectStateValue;
+	int16 scriptLength;
+	int32 scriptStartOffset;
+
+	InteractionAction()
+		: labelTextOffset(0), responseDialogueOffset(0), roomObjectStateValue(0), scriptLength(0),
+		  scriptStartOffset(0) {
+	}
+
+	InteractionAction(int32 newLabelTextOffset, int32 newResponseDialogueOffset,
+					  int16 newRoomObjectStateValue, int16 newScriptLength,
+					  int32 newScriptStartOffset)
+		: labelTextOffset(newLabelTextOffset), responseDialogueOffset(newResponseDialogueOffset),
+		  roomObjectStateValue(newRoomObjectStateValue), scriptLength(newScriptLength),
+		  scriptStartOffset(newScriptStartOffset) {
+	}
+};
+} // namespace Scooby
+
+#endif // SCOOBY_INTERACTIONS_ACTION_H
