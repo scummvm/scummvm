@@ -130,7 +130,7 @@ byte *SoundManager::abtDecomp(Common::File *fd, int *size, int *freq) {
 		} else if (ctrl & 0x40) { // Mode 2: RLE Fill
 			uint16 run = ctrl & 0x3F;
 			memset(destBuffer, last_out, run);
-			*destBuffer += run;
+			destBuffer += run;
 			cx -= run;
 		} else { // Mode 3: Delta Unpacking
 			int16 mode_type = (ctrl >> 4);
