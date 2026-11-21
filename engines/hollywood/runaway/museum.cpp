@@ -105,8 +105,11 @@ void RunawayRoomScene::startMuseumFilm(MuseumFilm film) {
 	}
 	switch (film) {
 	case kArrivalFilm:
+		// The original blanks the screen during dialing and waits for the
+		// effect, with a limit of 28 quarter-second ticks.
 		_filmCommands = {{S::kMusic, 17, 255}, {S::kOpen, 5}, {S::kEffect, 52, 255},
-			{S::kPlay, 0, 889}, {S::kStill, (uint16)(gog ? 900 : 889)}, {S::kTalk, 30, 0, 1}, {S::kDelay, 1000},
+			{S::kPlay, 0, 62}, {S::kSpeech, 40, 0}, {S::kPlay, 63, 889},
+			{S::kStill, (uint16)(gog ? 900 : 890)}, {S::kWaitEffect, 7000, 1}, {S::kTalk, 30, 0, 1}, {S::kDelay, 1000},
 			{S::kTalk, 30, 1, 1}, {S::kPlay, (uint16)(gog ? 912 : 919), (uint16)(gog ? 919 : 930)},
 			{S::kTalk, 30, 2, 3}, {S::kDelay, 2000}, {S::kTalk, 30, 3, 3}, {S::kDelay, 3000}, {S::kTalk, 30, 4, 3}};
 		break;

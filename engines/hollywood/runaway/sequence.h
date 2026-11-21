@@ -49,7 +49,7 @@ public:
 		kMusic,       // Cue, volume, loop.
 		kMusicVolume, // Change volume without restarting the current music.
 		kEffect,      // Cue, volume, channel, loop.
-		kWaitEffect,  // Maximum wait in milliseconds (channel 0).
+		kWaitEffect,  // Maximum wait in milliseconds (channel 0); second argument blanks the screen.
 		kStopEffects, // Optional channel + 1; zero stops all effects.
 		kDelay,       // Milliseconds.
 		kEnd

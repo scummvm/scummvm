@@ -438,6 +438,9 @@ void RunawaySequence::draw(Graphics::ManagedSurface &screen) {
 		return;
 	}
 	screen.clear();
+	if (_commands[_index].operation == kWaitEffect && _commands[_index].b) {
+		return;
+	}
 	const Common::Rect &viewport = _destination;
 	if (_background.w)
 		screen.blitFrom(_background);
