@@ -33,12 +33,12 @@
 #include "tesoro/metaengine.h"
 #include "tesoro/tesoro.h"
 #include "tesoro/detection.h"
-#include "tesoro/core/cursor.h"
-#include "tesoro/core/jim.h"
+#include "tesoro/kinds/cursor.h"
+#include "tesoro/kinds/jim.h"
 #include "tesoro/core/level.h"
-#include "tesoro/core/menuitem.h"
+#include "tesoro/kinds/menuitem.h"
 #include "tesoro/core/namekey.h"
-#include "tesoro/core/spriteobject.h"
+#include "tesoro/kinds/spriteobject.h"
 
 namespace Tesoro {
 

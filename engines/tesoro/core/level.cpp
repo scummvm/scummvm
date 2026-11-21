@@ -20,13 +20,13 @@
  */
 
 #include "tesoro/core/level.h"
-#include "tesoro/core/cameraframe.h"
+#include "tesoro/kinds/cameraframe.h"
 #include "tesoro/core/collision.h"
-#include "tesoro/core/cursor.h"
-#include "tesoro/core/menuitem.h"
-#include "tesoro/core/pathobject.h"
-#include "tesoro/core/spriteobject.h"
-#include "tesoro/core/walkfloor.h"
+#include "tesoro/kinds/cursor.h"
+#include "tesoro/kinds/menuitem.h"
+#include "tesoro/kinds/pathobject.h"
+#include "tesoro/kinds/spriteobject.h"
+#include "tesoro/kinds/walkfloor.h"
 
 #include "common/endian.h"
 #include "common/textconsole.h"

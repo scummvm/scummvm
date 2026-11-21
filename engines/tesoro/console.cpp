@@ -21,11 +21,11 @@
 
 #include "tesoro/console.h"
 #include "tesoro/core/animbank.h"
-#include "tesoro/core/cursor.h"
-#include "tesoro/core/jim.h"
+#include "tesoro/kinds/cursor.h"
+#include "tesoro/kinds/jim.h"
 #include "tesoro/core/level.h"
 #include "tesoro/core/namekey.h"
-#include "tesoro/core/walkfloor.h"
+#include "tesoro/kinds/walkfloor.h"
 #include "tesoro/scripts.h"
 #include "tesoro/world.h"
 

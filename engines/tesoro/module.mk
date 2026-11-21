@@ -12,26 +12,26 @@ MODULE_OBJS = \
 	core/archive.o \
 	core/archiveindex.o \
 	core/camera.o \
-	core/cameraframe.o \
-	core/character.o \
-	core/clickcatcher.o \
+	kinds/cameraframe.o \
+	kinds/character.o \
+	kinds/clickcatcher.o \
 	core/clock.o \
 	core/collision.o \
-	core/cursor.o \
+	kinds/cursor.o \
 	core/display.o \
-	core/exitdoor.o \
+	kinds/exitdoor.o \
 	core/hovertext.o \
-	core/interactive.o \
-	core/actionstrip.o \
-	core/inventoryitem.o \
-	core/objectgroup.o \
-	core/jim.o \
+	kinds/interactive.o \
+	kinds/actionstrip.o \
+	kinds/inventoryitem.o \
+	kinds/objectgroup.o \
+	kinds/jim.o \
 	core/level.o \
-	core/menuitem.o \
+	kinds/menuitem.o \
 	core/namekey.o \
 	core/object.o \
 	core/objectlist.o \
-	core/pathobject.o \
+	kinds/pathobject.o \
 	core/renderqueue.o \
 	core/room.o \
 	core/scenes.o \
@@ -40,13 +40,13 @@ MODULE_OBJS = \
 	core/sounddevice.o \
 	core/speaker.o \
 	core/speechtable.o \
-	core/spriteobject.o \
+	kinds/spriteobject.o \
 	core/stdiotext.o \
-	core/storycharacter.o \
-	core/storyprop.o \
+	kinds/storycharacter.o \
+	kinds/storyprop.o \
 	core/textqueue.o \
 	core/walkarea.o \
-	core/walkfloor.o
+	kinds/walkfloor.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TESORO), DYNAMIC_PLUGIN)

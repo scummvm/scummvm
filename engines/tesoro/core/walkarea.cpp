@@ -20,7 +20,7 @@
  */
 
 #include "tesoro/core/walkarea.h"
-#include "tesoro/core/jim.h"
+#include "tesoro/kinds/jim.h"
 
 #include "tesoro/core/animbank.h"
 
