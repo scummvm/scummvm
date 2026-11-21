@@ -22,6 +22,7 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "hollywood/runaway/scene4140.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 
@@ -81,7 +82,7 @@ void Scene4140::click(Common::Point mouse, RunawayVerb verb, byte item) {
 }
 
 Common::U32String Scene4140::actionCaption(byte id, RunawayVerb verb, byte item) const {
-	return Common::U32String();
+	return _strings.sceneActionCaption(_room, id, 0, false);
 }
 
 void Scene4140::update(uint32 now, int scrollDirection, bool inventoryOpen) {

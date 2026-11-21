@@ -322,14 +322,17 @@ byte Scene6290::hotspotAt(Common::Point mouse) const {
 	const byte id = _keyboardMaps[256 + _keyboardMask[y * _background.w + x]];
 	for (uint i = 0; i < _noteCount; ++i) {
 		if (id == 20 + _notes[i]) {
-			return 0;
+			return 29; // The note is labelled but cannot be pressed again.
 		}
 	}
 	return id;
 }
 
 Common::U32String Scene6290::actionCaption(byte id, RunawayVerb verb, byte item) const {
-	return _keyboard ? Common::U32String() : RunawayRoomScene::actionCaption(id, verb, item);
+	if (_keyboard) {
+		return _strings.sceneActionCaption(_room, id, 0, false);
+	}
+	return RunawayRoomScene::actionCaption(id, verb, item);
 }
 
 void Scene6290::click(Common::Point mouse, RunawayVerb verb, byte item) {

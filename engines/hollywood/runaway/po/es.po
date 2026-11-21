@@ -1512,6 +1512,84 @@ msgctxt "action.4100.use.9"
 msgid "USE @"
 msgstr "USAR @"
 
+#. Museum security keypad, control 0 (0 exits the close-up).
+#: engines/hollywood/runaway/scene4140.cpp
+msgctxt "action.4140.use.0"
+msgid "EXIT"
+msgstr "SALIR"
+
+#. Museum security keypad, control 1 (0 exits the close-up).
+#: engines/hollywood/runaway/scene4140.cpp
+msgctxt "action.4140.use.1"
+msgid "PRESS KEY <1>"
+msgstr "PULSAR TECLA <1>"
+
+#. Museum security keypad, control 2 (0 exits the close-up).
+#: engines/hollywood/runaway/scene4140.cpp
+msgctxt "action.4140.use.2"
+msgid "PRESS KEY <2>"
+msgstr "PULSAR TECLA <2>"
+
+#. Museum security keypad, control 3 (0 exits the close-up).
+#: engines/hollywood/runaway/scene4140.cpp
+msgctxt "action.4140.use.3"
+msgid "PRESS KEY <3>"
+msgstr "PULSAR TECLA <3>"
+
+#. Museum security keypad, control 4 (0 exits the close-up).
+#: engines/hollywood/runaway/scene4140.cpp
+msgctxt "action.4140.use.4"
+msgid "PRESS KEY <4>"
+msgstr "PULSAR TECLA <4>"
+
+#. Museum security keypad, control 5 (0 exits the close-up).
+#: engines/hollywood/runaway/scene4140.cpp
+msgctxt "action.4140.use.5"
+msgid "PRESS KEY <5>"
+msgstr "PULSAR TECLA <5>"
+
+#. Museum security keypad, control 6 (0 exits the close-up).
+#: engines/hollywood/runaway/scene4140.cpp
+msgctxt "action.4140.use.6"
+msgid "PRESS KEY <6>"
+msgstr "PULSAR TECLA <6>"
+
+#. Museum security keypad, control 7 (0 exits the close-up).
+#: engines/hollywood/runaway/scene4140.cpp
+msgctxt "action.4140.use.7"
+msgid "PRESS KEY <7>"
+msgstr "PULSAR TECLA <7>"
+
+#. Museum security keypad, control 8 (0 exits the close-up).
+#: engines/hollywood/runaway/scene4140.cpp
+msgctxt "action.4140.use.8"
+msgid "PRESS KEY <8>"
+msgstr "PULSAR TECLA <8>"
+
+#. Museum security keypad, control 9 (0 exits the close-up).
+#: engines/hollywood/runaway/scene4140.cpp
+msgctxt "action.4140.use.9"
+msgid "PRESS KEY <9>"
+msgstr "PULSAR TECLA <9>"
+
+#. Museum security keypad, control 10 (0 exits the close-up).
+#: engines/hollywood/runaway/scene4140.cpp
+msgctxt "action.4140.use.10"
+msgid "PRESS THE <RESET> KEY"
+msgstr "PULSAR TECLA <RESET>"
+
+#. Museum security keypad, control 11 (0 exits the close-up).
+#: engines/hollywood/runaway/scene4140.cpp
+msgctxt "action.4140.use.11"
+msgid "PRESS KEY <0>"
+msgstr "PULSAR TECLA <0>"
+
+#. Museum security keypad, control 12 (0 exits the close-up).
+#: engines/hollywood/runaway/scene4140.cpp
+msgctxt "action.4140.use.12"
+msgid "PRESS THE <ENTER> KEY"
+msgstr "PULSAR TECLA <ENTER>"
+
 #. Scene 5010, look at hotspot 1. @ is the current hotspot name.
 #: engines/hollywood/runaway/scene5010.cpp
 msgctxt "action.5010.look.1"
@@ -4404,6 +4482,60 @@ msgctxt "action.6290.use.9"
 msgid "GET @"
 msgstr "COGER @"
 
+#. Musical keyboard, control 20 (27 exits; 29 is an already played note).
+#: engines/hollywood/runaway/scene6290.cpp
+msgctxt "action.6290.use.20"
+msgid "PRESS C"
+msgstr "PULSAR DO"
+
+#. Musical keyboard, control 21 (27 exits; 29 is an already played note).
+#: engines/hollywood/runaway/scene6290.cpp
+msgctxt "action.6290.use.21"
+msgid "PRESS D"
+msgstr "PULSAR RE"
+
+#. Musical keyboard, control 22 (27 exits; 29 is an already played note).
+#: engines/hollywood/runaway/scene6290.cpp
+msgctxt "action.6290.use.22"
+msgid "PRESS E"
+msgstr "PULSAR MI"
+
+#. Musical keyboard, control 23 (27 exits; 29 is an already played note).
+#: engines/hollywood/runaway/scene6290.cpp
+msgctxt "action.6290.use.23"
+msgid "PRESS F"
+msgstr "PULSAR FA"
+
+#. Musical keyboard, control 24 (27 exits; 29 is an already played note).
+#: engines/hollywood/runaway/scene6290.cpp
+msgctxt "action.6290.use.24"
+msgid "PRESS G"
+msgstr "PULSAR SOL"
+
+#. Musical keyboard, control 25 (27 exits; 29 is an already played note).
+#: engines/hollywood/runaway/scene6290.cpp
+msgctxt "action.6290.use.25"
+msgid "PRESS A"
+msgstr "PULSAR LA"
+
+#. Musical keyboard, control 26 (27 exits; 29 is an already played note).
+#: engines/hollywood/runaway/scene6290.cpp
+msgctxt "action.6290.use.26"
+msgid "PRESS B"
+msgstr "PULSAR SI"
+
+#. Musical keyboard, control 27 (27 exits; 29 is an already played note).
+#: engines/hollywood/runaway/scene6290.cpp
+msgctxt "action.6290.use.27"
+msgid "LEAVE THE PANEL"
+msgstr "ABANDONAR PANEL"
+
+#. Musical keyboard, control 29 (27 exits; 29 is an already played note).
+#: engines/hollywood/runaway/scene6290.cpp
+msgctxt "action.6290.use.29"
+msgid "NOTE ALREADY PRESSED"
+msgstr "NOTA YA PULSADA"
+
 #. Scene 6300, item any on hotspot 13. # is the selected item; @ is the current hotspot name.
 #: engines/hollywood/runaway/scene6300.cpp
 msgctxt "action.6300.item.0.13"
@@ -4721,6 +4853,56 @@ msgstr "IR A @"
 msgctxt "action.6350.use.6"
 msgid "GO TO @"
 msgstr "IR A @"
+
+#. Safe dial, control 0 (0 exits; 8 leaves the dial unchanged).
+#: engines/hollywood/runaway/scene6390.cpp
+msgctxt "action.6390.use.0"
+msgid "EXIT"
+msgstr "SALIR"
+
+#. Safe dial, control 1 (0 exits; 8 leaves the dial unchanged).
+#: engines/hollywood/runaway/scene6390.cpp
+msgctxt "action.6390.use.1"
+msgid "TURN ONE NUMBER TO THE RIGHT"
+msgstr "GIRAR UN PUNTO A LA DERECHA"
+
+#. Safe dial, control 2 (0 exits; 8 leaves the dial unchanged).
+#: engines/hollywood/runaway/scene6390.cpp
+msgctxt "action.6390.use.2"
+msgid "TURN ONE NUMBER TO THE LEFT"
+msgstr "GIRAR UN PUNTO A LA IZQUIERDA"
+
+#. Safe dial, control 3 (0 exits; 8 leaves the dial unchanged).
+#: engines/hollywood/runaway/scene6390.cpp
+msgctxt "action.6390.use.3"
+msgid "CHOOSE A NUMBER"
+msgstr "COLOCAR UN NÚMERO"
+
+#. Safe dial, control 4 (0 exits; 8 leaves the dial unchanged).
+#: engines/hollywood/runaway/scene6390.cpp
+msgctxt "action.6390.use.4"
+msgid "CHOOSE A NUMBER"
+msgstr "COLOCAR UN NÚMERO"
+
+#. Safe dial, control 8 (0 exits; 8 leaves the dial unchanged).
+#: engines/hollywood/runaway/scene6390.cpp
+msgctxt "action.6390.use.8"
+msgid "DO NOT MOVE"
+msgstr "NO MOVER"
+
+#. Safe dial: select a number by turning left. %u is the number (0-99).
+#: engines/hollywood/runaway/scene6390.cpp
+#, c-format
+msgctxt "action.6390.use.5.left"
+msgid "CHOOSE %u LEFT"
+msgstr "COLOCAR EL %u A LA IZQUIERDA"
+
+#. Safe dial: select a number by turning right. %u is the number (0-99).
+#: engines/hollywood/runaway/scene6390.cpp
+#, c-format
+msgctxt "action.6390.use.5.right"
+msgid "CHOOSE %u RIGHT"
+msgstr "COLOCAR EL %u A LA DERECHA"
 
 #. Scene 7010, item 6 on hotspot 4. # is the selected item; @ is the current hotspot name.
 #: engines/hollywood/runaway/scene7010.cpp

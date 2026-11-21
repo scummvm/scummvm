@@ -23,6 +23,7 @@
 #include "common/system.h"
 #include "common/util.h"
 #include "hollywood/runaway/scene6390.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 
@@ -55,7 +56,14 @@ void Scene6390::runCustomEntrySequence() {
 }
 
 Common::U32String Scene6390::actionCaption(byte id, RunawayVerb verb, byte item) const {
-	return Common::U32String();
+	if (_sliderOpen) {
+		if (_dialTarget < 0) {
+			return _strings.sceneActionCaption(_room, 8, 0, false);
+		}
+		return Common::U32String::format(_strings.sceneActionCaption(_room, 5, 0, false,
+			_heldDirection == 1 ? "right" : "left"), (uint)_dialTarget);
+	}
+	return _strings.sceneActionCaption(_room, id, 0, false);
 }
 
 bool Scene6390::busy() const {
@@ -89,6 +97,7 @@ void Scene6390::updateSlider(Common::Point mouse) {
 		_dialTarget = (mouse.x - 552) / 4;
 		_heldDirection = 1;
 	}
+	_caption = actionCaption(0, kVerbUse, 0);
 }
 
 void Scene6390::turnDial(byte direction) {
@@ -130,6 +139,7 @@ void Scene6390::advanceCustomGameplayLoop(uint32 delta) {
 		updateSlider(events->getMousePos());
 		if (!pressed) {
 			_sliderOpen = false;
+			_caption.clear();
 			_autoTurn = _dialTarget >= 0 && _dialTarget != _town.safeDial;
 			_repeatAt = _now;
 		}
