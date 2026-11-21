@@ -2377,15 +2377,6 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	// Adapt the real hotspot according to the scale factor.
 	int rW = fracToInt(w * cursorScaleX);
 	int rH = fracToInt(h * cursorScaleY);
-	_mouseCurState.rHotX = fracToInt(_mouseCurState.hotX * cursorScaleX);
-	_mouseCurState.rHotY = fracToInt(_mouseCurState.hotY * cursorScaleY);
-
-	// The virtual dimensions will be the same as the original.
-
-	_mouseCurState.vW = w;
-	_mouseCurState.vH = h;
-	_mouseCurState.vHotX = _mouseCurState.hotX;
-	_mouseCurState.vHotY = _mouseCurState.hotY;
 
 #ifdef USE_ASPECT
 	// store original to pass to aspect-correction function later
@@ -2394,7 +2385,6 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 
 	if (!(_cursorScaleX == 0 && _cursorScaleY == 0) && _videoMode.aspectRatioCorrection) {
 		rH = real2Aspect(rH - 1) + 1;
-		_mouseCurState.rHotY = real2Aspect(_mouseCurState.rHotY);
 	}
 
 	bool sizeChanged = false;
