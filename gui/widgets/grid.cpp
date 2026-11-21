@@ -71,6 +71,17 @@ void GridItemWidget::move(int x, int y) {
 
 void GridItemWidget::drawWidget() {
 	if (_activeEntry->isHeader) {
+		// Highlight the header under the keyboard cursor as a selected game
+		const int kMarginX = _grid->_gridXSpacing / 3;
+		const int kMarginY = _grid->_gridYSpacing / 3;
+		if (_grid->isKeyboardCursorOnHeader(_activeEntry->entryID)) {
+			g_gui.theme()->drawWidgetBackground(Common::Rect(_x - kMarginX, _y - kMarginY, _x + _w + kMarginX, _y + _h + kMarginY),
+												ThemeEngine::kGridItemHighlight);
+		} else {
+			g_gui.theme()->drawWidgetBackground(Common::Rect(_x - 2 * kMarginX, _y - 2 * kMarginY, _x + _w + 2 * kMarginX, _y + _h + 2 * kMarginY),
+												ThemeEngine::kGridItemBackground);
+		}
+
 		const int indicatorSize = MIN(MIN((int)_h, _grid->_gridXSpacing), (int)_w);
 		g_gui.theme()->drawFoldIndicator(Common::Rect(_x, _y, _x + indicatorSize, _y + indicatorSize), _grid->groupExpanded(_activeEntry->entryID));
 		g_gui.theme()->drawText(Common::Rect(_x + indicatorSize, _y, _x + _w, _y + _h), Common::U32String(_activeEntry->title),
@@ -219,9 +230,11 @@ void GridItemWidget::handleMouseMoved(int x, int y, int button) {
 void GridItemWidget::doSelection() {
 	if (_activeEntry->isHeader) {
 		_grid->_selectedEntry = nullptr;
+		_grid->_cursorHeaderID = _activeEntry->entryID;
 		_grid->toggleGroup(_activeEntry->entryID);
 	} else if (_isHighlighted && isVisible()) {
 		_grid->_selectedEntry = _activeEntry;
+		_grid->_cursorHeaderID = -1;
 
 		if (!_grid->isMultiSelectEnabled()) {
 			_grid->clearSelection();
@@ -322,6 +335,7 @@ GridItemTray::GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entr
 	_entryID = entryID;
 	_boss = boss;
 	_grid = grid;
+	_openedByKeyboard = false;
 
 	// TODO: Currently, the tray has a hardcoded layout. Theme file may
 	//		provide a different layout of buttons.
@@ -341,6 +355,16 @@ GridItemTray::GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entr
 	_editButton = new PicButtonWidget(this, trayPaddingX + buttonWidth + buttonSpacingX, trayPaddingY + buttonHeight + buttonSpacingY,
 									  buttonWidth, buttonHeight,
 									  _("Edit"), kEditButtonCmd);
+}
+
+void GridItemTray::open() {
+	Dialog::open();
+
+	if (_openedByKeyboard) {
+		setFocusWidget(_playButton);
+		// Only close when the mouse leaves the tray after entering it
+		_mouseOutside = true;
+	}
 }
 
 void GridItemTray::reflowLayout() {
@@ -901,24 +925,32 @@ void GridWidget::move(int x, int y) {
 // Scroll to entry id. Optional parameter to decide if the entry should be forced to be on the top, or merely
 // scrolled into view.
 void GridWidget::scrollToEntry(int id, bool forceToTop) {
-	float newScrollPos = _scrollPos;
+	const GridItemInfo *entry = nullptr;
 	for (uint i = 0; i < _sortedEntryList.size(); ++i) {
 		if ((!_sortedEntryList[i]->isHeader) && (_sortedEntryList[i]->entryID == id)) {
-			if (forceToTop) {
-				newScrollPos = _sortedEntryList[i]->y + _scrollWindowPaddingY + _gridYSpacing;
-			} else {
-				if (_sortedEntryList[i]->y < (int)_scrollPos) {
-					// Item is above the visible view
-					newScrollPos = _sortedEntryList[i]->y - _scrollWindowPaddingY - _gridYSpacing;
-				} else if (_sortedEntryList[i]->y > (int)_scrollPos + _scrollWindowHeight - _gridItemHeight - _trayHeight) {
-					// Item is below the visible view
-					newScrollPos = _sortedEntryList[i]->y - _scrollWindowHeight + _gridItemHeight + _trayHeight;
-				} else {
-					// Item already in view, do nothing
-					newScrollPos = _scrollPos;
-				}
-			}
+			entry = _sortedEntryList[i];
 			break;
+		}
+	}
+	scrollToEntryInfo(entry, forceToTop);
+}
+
+void GridWidget::scrollToEntryInfo(const GridItemInfo *entry, bool forceToTop) {
+	float newScrollPos = _scrollPos;
+	if (entry) {
+		if (forceToTop) {
+			newScrollPos = entry->y + _scrollWindowPaddingY + _gridYSpacing;
+		} else {
+			if (entry->y < (int)_scrollPos) {
+				// Item is above the visible view
+				newScrollPos = entry->y - _scrollWindowPaddingY - _gridYSpacing;
+			} else if (entry->y > (int)_scrollPos + _scrollWindowHeight - _gridItemHeight - _trayHeight) {
+				// Item is below the visible view
+				newScrollPos = entry->y - _scrollWindowHeight + _gridItemHeight + _trayHeight;
+			} else {
+				// Item already in view, do nothing
+				newScrollPos = _scrollPos;
+			}
 		}
 	}
 	handleCommand(this, kSetPositionCmd, newScrollPos);
@@ -1313,11 +1345,12 @@ void GridWidget::reflowLayout() {
 	markAsDirty();
 }
 
-void GridWidget::openTrayAtSelected() {
+void GridWidget::openTrayAtSelected(bool byKeyboard) {
 	if (_selectedEntry) {
 		GridItemTray *tray = new GridItemTray(this, _x + _selectedEntry->x - _gridXSpacing / 3, _y + _selectedEntry->y + _selectedEntry->h - (int)_scrollPos,
 								_gridItemWidth + 2 * (_gridXSpacing / 3), _trayHeight, _selectedEntry->entryID, this);
 		tray->enableLoadButton(_selectedEntry->canLoadGame);
+		tray->setOpenedByKeyboard(byKeyboard);
 
 		tray->runModal();
 		delete tray;
@@ -1368,6 +1401,176 @@ void GridWidget::setSelected(int id) {
 			break;
 		}
 	}
+}
+
+int GridWidget::findCursorIndex() const {
+	const int selected = getSelected();
+	for (uint i = 0; i < _sortedEntryList.size(); ++i) {
+		const GridItemInfo *entry = _sortedEntryList[i];
+		if (entry->isHeader) {
+			if (entry->entryID == _cursorHeaderID)
+				return i;
+		} else if (_cursorHeaderID < 0 && entry->entryID == selected) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+int GridWidget::findVerticalNeighbour(int index, int direction) const {
+	// Entries are in reading order, so the next row is the next different y
+	const GridItemInfo *current = _sortedEntryList[index];
+	int rowY = -1;
+	int best = -1;
+	int bestDistance = 0;
+
+	for (int i = index + direction; i >= 0 && i < (int)_sortedEntryList.size(); i += direction) {
+		const GridItemInfo *entry = _sortedEntryList[i];
+		if (entry->y == current->y)
+			continue;
+		if (rowY == -1)
+			rowY = entry->y;
+		else if (entry->y != rowY)
+			break;
+
+		const int distance = ABS(entry->x - current->x);
+		if (best == -1 || distance < bestDistance) {
+			best = i;
+			bestDistance = distance;
+		}
+	}
+	return best;
+}
+
+void GridWidget::moveCursorTo(int index) {
+	GridItemInfo *entry = _sortedEntryList[index];
+
+	if (entry->isHeader) {
+		// Headers are not selectable, so the selection stays as it is
+		_cursorHeaderID = entry->entryID;
+	} else {
+		_cursorHeaderID = -1;
+		_selectedEntry = entry;
+		clearSelection();
+		markSelectedItem(entry->entryID, true);
+		_lastSelectedEntryID = entry->entryID;
+	}
+
+	scrollToEntryInfo(entry, false);
+	markAsDirty();
+	readEntry(entry);
+}
+
+Common::U32String GridWidget::getSpokenDescription() const {
+	Common::U32String entryText;
+	const int index = findCursorIndex();
+	if (index >= 0) {
+		const GridItemInfo *entry = _sortedEntryList[index];
+		entryText = Common::U32String(entry->title);
+		if (entry->isHeader) {
+			// I18N: Spoken by text-to-speech for the state of a group of games
+			const Common::U32String state = _groupExpanded[entry->entryID] ? _c("expanded", "text-to-speech") : _c("collapsed", "text-to-speech");
+			entryText += Common::U32String(", ") + state;
+		}
+	}
+
+	// I18N: Spoken by text-to-speech for the kind of control a grid of games is
+	return composeSpokenDescription(findSpokenLabel(), _c("grid", "text-to-speech"), entryText);
+}
+
+void GridWidget::readEntry(const GridItemInfo *entry) {
+	if (!entry->isHeader) {
+		read(Common::U32String(entry->title));
+		return;
+	}
+
+	// I18N: Spoken by text-to-speech for the state of a group of games
+	const Common::U32String state = _groupExpanded[entry->entryID] ? _c("expanded", "text-to-speech") : _c("collapsed", "text-to-speech");
+	read(Common::U32String(entry->title) + Common::U32String(", ") + state);
+}
+
+bool GridWidget::handleKeyDown(Common::KeyState state) {
+	if (!isEnabled() || _sortedEntryList.empty() ||
+			(state.flags & (Common::KBD_CTRL | Common::KBD_ALT | Common::KBD_META)))
+		return false;
+
+	const int count = _sortedEntryList.size();
+	const int current = findCursorIndex();
+	int target = current;
+
+	switch (state.keycode) {
+	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_RIGHT: {
+		// The reading order is mirrored in RTL layouts
+		const bool forwards = (state.keycode == Common::KEYCODE_RIGHT) != (g_gui.useRTL() && _useRTL);
+		if (current < 0)
+			target = 0;
+		else
+			target = CLIP(current + (forwards ? 1 : -1), 0, count - 1);
+		break;
+	}
+
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_PAGEUP:
+	case Common::KEYCODE_PAGEDOWN: {
+		if (current < 0) {
+			target = 0;
+			break;
+		}
+
+		const int direction = (state.keycode == Common::KEYCODE_UP || state.keycode == Common::KEYCODE_PAGEUP) ? -1 : 1;
+		// Page Up and Page Down move by as many rows as fit in the view
+		int rows = 1;
+		if (state.keycode == Common::KEYCODE_PAGEUP || state.keycode == Common::KEYCODE_PAGEDOWN)
+			rows = MAX(1, _scrollWindowHeight / MAX(1, _gridItemHeight + _gridYSpacing));
+
+		for (int i = 0; i < rows; ++i) {
+			const int next = findVerticalNeighbour(target, direction);
+			if (next < 0)
+				break;
+			target = next;
+		}
+		break;
+	}
+
+	case Common::KEYCODE_HOME:
+		target = 0;
+		break;
+
+	case Common::KEYCODE_END:
+		target = count - 1;
+		break;
+
+	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_KP_ENTER:
+	case Common::KEYCODE_SPACE:
+		// Toggle a group, or open the tray of a game, as a click would
+		if (current >= 0) {
+			GridItemInfo *entry = _sortedEntryList[current];
+			if (entry->isHeader) {
+				const int groupID = entry->entryID;
+				toggleGroup(groupID);
+				// Toggling rebuilds the entries, so find the header again
+				const int index = findCursorIndex();
+				if (index >= 0)
+					readEntry(_sortedEntryList[index]);
+			} else {
+				scrollToEntryInfo(entry, false);
+				draw();
+				openTrayAtSelected(true);
+				sendCommand(kItemClicked, 0);
+			}
+		}
+		return true;
+
+	default:
+		return false;
+	}
+
+	if (target >= 0 && target != current)
+		moveCursorTo(target);
+	return true;
 }
 
 void GridWidget::markSelectedItem(int entryID, bool state) {

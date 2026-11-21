@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/translation.h"
 #include "common/util.h"
 #include "gui/widgets/tab.h"
 #include "gui/gui-manager.h"
@@ -185,7 +186,11 @@ void TabWidget::setActiveTab(int tabID) {
 		// Exchange the widget lists, and switch to the new tab
 		if (_activeTab != -1) {
 			_tabs[_activeTab].firstWidget = _firstWidget;
-			releaseFocus();
+
+			// Only release the focus if it is on the page being hidden
+			Widget *focused = getFocusWidget();
+			if (focused && containsWidgetInChain(_firstWidget, focused))
+				releaseFocus();
 		}
 		_activeTab = tabID;
 		_firstWidget = _tabs[tabID].firstWidget;
@@ -284,10 +289,35 @@ void TabWidget::handleMouseMoved(int x, int y, int button) {
 }
 
 bool TabWidget::handleKeyDown(Common::KeyState state) {
-	if (state.hasFlags(Common::KBD_SHIFT) && state.keycode == Common::KEYCODE_TAB)
-		adjustTabs(kTabBackwards);
-	else if (state.keycode == Common::KEYCODE_TAB)
-		adjustTabs(kTabForwards);
+	// Plain Tab is left to the dialog, which moves the focus with it
+	if (state.keycode == Common::KEYCODE_TAB && state.hasFlags(Common::KBD_CTRL)) {
+		adjustTabs(state.hasFlags(Common::KBD_SHIFT) ? kTabBackwards : kTabForwards);
+		return true;
+	}
+
+	// With the focus on the tab bar, the arrows and Home and End switch tabs
+	if (_hasFocus && !_tabs.empty() && !(state.flags & (Common::KBD_CTRL | Common::KBD_ALT | Common::KBD_META))) {
+		const bool rtl = g_gui.useRTL() && _useRTL;
+
+		switch (state.keycode) {
+		case Common::KEYCODE_LEFT:
+			adjustTabs(rtl ? kTabForwards : kTabBackwards);
+			return true;
+		case Common::KEYCODE_RIGHT:
+			adjustTabs(rtl ? kTabBackwards : kTabForwards);
+			return true;
+		case Common::KEYCODE_HOME:
+			if (_activeTab != 0)
+				adjustTabs(-_activeTab);
+			return true;
+		case Common::KEYCODE_END:
+			if (_activeTab != (int)_tabs.size() - 1)
+				adjustTabs((int)_tabs.size() - 1 - _activeTab);
+			return true;
+		default:
+			break;
+		}
+	}
 
 	return Widget::handleKeyDown(state);
 }
@@ -312,9 +342,7 @@ void TabWidget::adjustTabs(int value) {
 
 	setActiveTab(tabID);
 
-	// Announce the tab we moved to. This is only reached when the user cycles
-	// tabs, not while the dialog is being built, so it will not recite every
-	// tab title on open.
+	// Only reached when switching tabs, not while building the dialog
 	if (tabID != _lastRead) {
 		read(_tabs[tabID].title);
 		_lastRead = tabID;
@@ -422,7 +450,7 @@ void TabWidget::drawWidget() {
 			_bodyBackgroundType);
 
 	g_gui.theme()->drawTab(Common::Rect(_x, _y, _x + _w, _y + _h), _tabHeight, widths, tabs,
-				_activeTab - _firstVisibleTab, (g_gui.useRTL() && _useRTL), _alignV);
+				_activeTab - _firstVisibleTab, (g_gui.useRTL() && _useRTL), _alignV, _hasFocus);
 }
 
 void TabWidget::draw() {
@@ -499,10 +527,12 @@ void TabWidget::computeLastVisibleTab(bool adjustFirstIfRoom) {
 }
 
 Common::U32String TabWidget::getSpokenDescription() const {
-	// The tab bar is named by its active tab, as hovering a tab reads its title
+	Common::U32String title;
 	if (_activeTab >= 0 && _activeTab < (int)_tabs.size())
-		return _tabs[_activeTab].title;
-	return _tooltip;
+		title = _tabs[_activeTab].title;
+
+	// I18N: Spoken by text-to-speech for the kind of control a tab is
+	return composeSpokenDescription(title, _c("tab", "text-to-speech"));
 }
 
 } // End of namespace GUI

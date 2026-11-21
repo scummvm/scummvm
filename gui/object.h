@@ -106,6 +106,8 @@ public:
 protected:
 	virtual void handleMouseWheel(int x, int y, int direction) = 0;
 	virtual void releaseFocus() = 0;
+	/** The widget with the focus in the dialog holding this object, if any */
+	virtual Widget *getFocusWidget() { return nullptr; }
 	virtual void registerTickleWidget(Widget *widget) = 0;
 	// As this function can be called from a widget destructor, don't make it pure virtual to avoid it
 	// being called when GuiObject destroys its widgets chain

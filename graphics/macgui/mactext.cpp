@@ -1872,6 +1872,57 @@ Common::U32String MacText::getMouseLink(int x, int y) {
 	return Common::U32String();
 }
 
+Common::Array<MacTextLink> MacText::getLinks() {
+	Common::Array<MacTextLink> links;
+	// Whether the previous chunk was part of the last link, which may go on
+	bool inLink = false;
+
+	for (uint row = 0; row < _canvas._text.size(); row++) {
+		MacTextLine &line = _canvas._text[row];
+		if (line.table || !line.picfname.empty()) {
+			inLink = false;
+			continue;
+		}
+
+		const int alignOffset = _canvas.getAlignOffset(row);
+		const int top = line.y;
+		const int bottom = line.y + getLineHeight(row);
+		int col = 0;
+
+		for (uint i = 0; i < line.chunks.size(); i++) {
+			const MacFontRun &chunk = line.chunks[i];
+			const int len = chunk.text.size();
+			if (len == 0)
+				continue;
+
+			if (chunk.link.empty()) {
+				inLink = false;
+			} else {
+				// getLineWidth() measures the characters before the given column
+				const int left = _canvas.getLineWidth(row, false, col) + alignOffset;
+				const int right = _canvas.getLineWidth(row, false, col + len) + alignOffset;
+				const Common::Rect bounds(left, top, MAX(left + 1, right), bottom);
+				const Common::U32String target(chunk.link);
+
+				if (inLink && links.back().link == target) {
+					links.back().text += chunk.text;
+					links.back().bounds.extend(bounds);
+				} else {
+					MacTextLink link;
+					link.link = target;
+					link.text = chunk.text;
+					link.bounds = bounds;
+					links.push_back(link);
+				}
+				inLink = true;
+			}
+			col += len;
+		}
+	}
+
+	return links;
+}
+
 void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col, int *chunk_) {
 	int nsx = 0, nsy = 0, nrow = 0, ncol = 0;
 

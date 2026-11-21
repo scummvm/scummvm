@@ -1107,8 +1107,20 @@ void ThemeEngine::drawLineSeparator(const Common::Rect &r) {
 	drawDD(kDDSeparator, r);
 }
 
+void ThemeEngine::drawToggleLabel(DrawData dd, TextColor color, const Common::Rect &r, const Common::U32String &str,
+								  bool rtl, bool focused) {
+	// Themes have no focused look for these, so use the focused selection one
+	if (focused) {
+		drawDD(kDDTextSelectionFocusBackground, r);
+		color = kTextColorNormalInverted;
+	}
+
+	drawDDText(getTextData(dd), color, r, str, !focused, false, convertTextAlignH(_widgets[dd]->_textAlignH, rtl),
+	           _widgets[dd]->_textAlignV);
+}
+
 void ThemeEngine::drawCheckbox(const Common::Rect &r, int spacing, const Common::U32String &str, bool checked,
-							   WidgetStateInfo state, bool overrideText, bool rtl) {
+							   WidgetStateInfo state, bool overrideText, bool rtl, bool focused) {
 	if (!ready())
 		return;
 
@@ -1139,12 +1151,11 @@ void ThemeEngine::drawCheckbox(const Common::Rect &r, int spacing, const Common:
 
 	if (r2.right > r2.left) {
 		TextColor color = overrideText ? GUI::TextColor::kTextColorOverride : getTextColor(dd);
-		drawDDText(getTextData(dd), color, r2, str, true, false, convertTextAlignH(_widgets[dd]->_textAlignH, rtl),
-		           _widgets[dd]->_textAlignV);
+		drawToggleLabel(dd, color, r2, str, rtl, focused);
 	}
 }
 
-void ThemeEngine::drawRadiobutton(const Common::Rect &r, int spacing, const Common::U32String &str, bool checked, WidgetStateInfo state, bool rtl) {
+void ThemeEngine::drawRadiobutton(const Common::Rect &r, int spacing, const Common::U32String &str, bool checked, WidgetStateInfo state, bool rtl, bool focused) {
 	if (!ready())
 		return;
 
@@ -1173,8 +1184,7 @@ void ThemeEngine::drawRadiobutton(const Common::Rect &r, int spacing, const Comm
 		r2.right = MAX(r2.left, r.right);
 	}
 
-	drawDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, convertTextAlignH(_widgets[dd]->_textAlignH, rtl),
-		_widgets[dd]->_textAlignV);
+	drawToggleLabel(dd, getTextColor(dd), r2, str, rtl, focused);
 }
 
 void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state, bool rtl) {
@@ -1359,7 +1369,7 @@ void ThemeEngine::drawWidgetBackground(const Common::Rect &r, WidgetBackground b
 
 void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, const Common::Array<int> &tabWidths,
 						  const Common::Array<Common::U32String> &tabs, int active, bool rtl,
-						  ThemeEngine::TextAlignVertical alignV) {
+						  ThemeEngine::TextAlignVertical alignV, bool focused) {
 	if (!ready())
 		return;
 
@@ -1415,7 +1425,18 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, const Common::Ar
 		const uint16 tabLeft = activePos & 0x7FFF; // Keep only 15 bits
 		const uint16 tabRight = MAX(r.right - tabRect.right, 0);
 		drawDD(kDDTabActive, tabRect, (vFlag << 31) | (tabLeft << 16) | (tabRight & 0xFFFF));
-		drawDDText(getTextData(kDDTabActive), getTextColor(kDDTabActive), tabRect, tabs[active], false, false,
+
+		// Themes have no focused look for tabs, so use the focused selection one
+		TextColor color = getTextColor(kDDTabActive);
+		if (focused) {
+			Common::Rect focusRect = tabRect;
+			focusRect.grow(-2);
+			if (focusRect.isValidRect())
+				drawDD(kDDTextSelectionFocusBackground, focusRect);
+			color = kTextColorNormalInverted;
+		}
+
+		drawDDText(getTextData(kDDTabActive), color, tabRect, tabs[active], false, false,
 		           convertTextAlignH(_widgets[kDDTabActive]->_textAlignH, rtl), _widgets[kDDTabActive]->_textAlignV);
 	}
 }

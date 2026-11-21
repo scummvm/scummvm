@@ -329,9 +329,7 @@ void PopUpDialog::setSelection(int item) {
 		if (item >= 0)
 			drawMenuEntry(item, true);
 
-		// Announce the new selection, so that it is not only the mouse that
-		// speaks. Updating _lastRead keeps handleMouseMoved() from repeating
-		// what was just said.
+		// Updating _lastRead keeps handleMouseMoved() from repeating it
 		if (item >= 0 && item < (int)_entries.size() && _lastRead != item) {
 			read(_entries[item]);
 			_lastRead = item;
@@ -460,44 +458,77 @@ PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const Comm
 }
 
 void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
-	if (isEnabled()) {
-		PopUpDialog popupDialog(this, "", x + getAbsX(), y + getAbsY());
-		popupDialog.setPosition(getAbsX(), getAbsY() - _selectedItem * kLineHeight);
-		popupDialog.setPadding(_leftPadding, _rightPadding);
-		popupDialog.setWidth(getWidth() - kLineHeight + 2);
+	if (isEnabled())
+		openPopup(x + getAbsX(), y + getAbsY());
+}
+
+void PopUpWidget::openPopup(int clickX, int clickY) {
+	PopUpDialog popupDialog(this, "", clickX, clickY);
+	popupDialog.setPosition(getAbsX(), getAbsY() - _selectedItem * kLineHeight);
+	popupDialog.setPadding(_leftPadding, _rightPadding);
+	popupDialog.setWidth(getWidth() - kLineHeight + 2);
 
 
-		for (uint i = 0; i < _entries.size(); i++) {
-			popupDialog.appendEntry(_entries[i].name);
-		}
-		popupDialog.setSelection(_selectedItem);
+	for (uint i = 0; i < _entries.size(); i++) {
+		popupDialog.appendEntry(_entries[i].name);
+	}
+	popupDialog.setSelection(_selectedItem);
 
-		int newSel = popupDialog.runModal();
-		if (newSel != -1 && _selectedItem != newSel) {
-			_selectedItem = newSel;
-			sendCommand(_cmd, _entries[_selectedItem].tag);
-			markAsDirty();
-		}
+	int newSel = popupDialog.runModal();
+	if (newSel != -1 && _selectedItem != newSel) {
+		_selectedItem = newSel;
+		sendCommand(_cmd, _entries[_selectedItem].tag);
+		markAsDirty();
+	}
+}
+
+bool PopUpWidget::handleKeyDown(Common::KeyState state) {
+	if (!isEnabled() || (state.flags & (Common::KBD_CTRL | Common::KBD_META)))
+		return false;
+
+	// Space and Alt+Up/Down open the list, Up and Down change the selection.
+	// Return is left to the dialog, which usually confirms with it.
+	const bool alt = state.flags & Common::KBD_ALT;
+	switch (state.keycode) {
+	case Common::KEYCODE_SPACE:
+		if (alt)
+			return false;
+		openPopup(-1, -1);
+		return true;
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_UP:
+		if (alt)
+			openPopup(-1, -1);
+		else
+			moveSelection(state.keycode == Common::KEYCODE_DOWN ? 1 : -1);
+		return true;
+	default:
+		return false;
 	}
 }
 
 void PopUpWidget::handleMouseWheel(int x, int y, int direction) {
-	if (isEnabled()) {
-		int newSelection = _selectedItem + direction;
+	if (isEnabled())
+		moveSelection(direction);
+}
 
-		// Skip separator entries
-		while ((newSelection >= 0) && (newSelection < (int)_entries.size()) &&
-		       _entries[newSelection].name.empty()) {
-			newSelection += direction;
-		}
+void PopUpWidget::moveSelection(int direction) {
+	int newSelection = _selectedItem + direction;
 
-		// Just update the selected item when we're in range
-		if ((newSelection >= 0) && (newSelection < (int)_entries.size()) &&
-			(newSelection != _selectedItem)) {
-			_selectedItem = newSelection;
-			sendCommand(_cmd, _entries[_selectedItem].tag);
-			markAsDirty();
-		}
+	// Skip separator entries
+	while ((newSelection >= 0) && (newSelection < (int)_entries.size()) &&
+	       _entries[newSelection].name.empty()) {
+		newSelection += direction;
+	}
+
+	// Just update the selected item when we're in range
+	if ((newSelection >= 0) && (newSelection < (int)_entries.size()) &&
+		(newSelection != _selectedItem)) {
+		_selectedItem = newSelection;
+		// Read first, as the command may rebuild the dialog
+		read(_entries[_selectedItem].name);
+		sendCommand(_cmd, _entries[_selectedItem].tag);
+		markAsDirty();
 	}
 }
 
@@ -558,15 +589,12 @@ void PopUpWidget::drawWidget() {
 }
 
 Common::U32String PopUpWidget::getSpokenDescription() const {
-	// Popups are labelled by the text before them. Follow the name with the
-	// current entry, which hovering reads.
-	// I18N: Spoken by text-to-speech to name an unlabelled drop-down list
-	Common::U32String description = findSpokenName(_("drop-down list"));
-
+	Common::U32String entry;
 	if (_selectedItem >= 0 && _selectedItem < (int)_entries.size())
-		description += Common::U32String(", ") + _entries[_selectedItem].name;
+		entry = _entries[_selectedItem].name;
 
-	return description;
+	// I18N: Spoken by text-to-speech for the kind of control a drop-down list is
+	return composeSpokenDescription(findSpokenLabel(), _c("drop-down list", "text-to-speech"), entry);
 }
 
 } // End of namespace GUI

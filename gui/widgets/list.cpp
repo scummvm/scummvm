@@ -856,18 +856,12 @@ bool ListWidget::handleKeyUp(Common::KeyState state) {
 }
 
 Common::U32String ListWidget::getSpokenDescription() const {
-	// Name the list by the text before it, or its tooltip. Fall back on
-	// naming the kind of control only when there is neither, so that an
-	// unlabelled list is still audible rather than silent. Follow it with
-	// the current selection, so that arriving here says what is under the
-	// cursor.
-	// I18N: Spoken by text-to-speech to name an unlabelled list of items
-	Common::U32String description = findSpokenName(_("list"));
-
+	Common::U32String selection;
 	if (_selectedItem >= 0 && _selectedItem < (int)_list.size())
-		description += Common::U32String(", ") + stripGUIformatting(_list[_selectedItem]);
+		selection = stripGUIformatting(_list[_selectedItem]);
 
-	return description;
+	// I18N: Spoken by text-to-speech for the kind of control a list of items is
+	return composeSpokenDescription(findSpokenLabel(), _c("list", "text-to-speech"), selection);
 }
 
 void ListWidget::receivedFocusWidget() {
@@ -1031,14 +1025,14 @@ void ListWidget::checkBounds() {
 		_currentPos = _list.size() - _entriesPerPage;
 }
 
-void ListWidget::scrollToCurrent() {
-	// Only do something if the current item is not in our view port
-	if (_selectedItem != -1 && _selectedItem < _currentPos) {
+void ListWidget::scrollToItem(int item) {
+	// Only do something if the item is not in our view port
+	if (item != -1 && item < _currentPos) {
 		// it's above our view
-		_currentPos = _selectedItem;
-	} else if (_selectedItem >= _currentPos + _entriesPerPage ) {
+		_currentPos = item;
+	} else if (item >= _currentPos + _entriesPerPage ) {
 		// it's below our view
-		_currentPos = _selectedItem - _entriesPerPage + 1;
+		_currentPos = item - _entriesPerPage + 1;
 	}
 
 	checkBounds();

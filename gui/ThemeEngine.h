@@ -481,14 +481,15 @@ public:
 	void drawSlider(const Common::Rect &r, int width, WidgetStateInfo state = kStateEnabled, bool rtl = false);
 
 	void drawCheckbox(const Common::Rect &r, int spacing, const Common::U32String &str, bool checked,
-	                  WidgetStateInfo state = kStateEnabled, bool override = false, bool rtl = false);
+	                  WidgetStateInfo state = kStateEnabled, bool override = false, bool rtl = false,
+	                  bool focused = false);
 
 	void drawRadiobutton(const Common::Rect &r, int spacing, const Common::U32String &str, bool checked,
-	                     WidgetStateInfo state = kStateEnabled, bool rtl = false);
+	                     WidgetStateInfo state = kStateEnabled, bool rtl = false, bool focused = false);
 
 	void drawTab(const Common::Rect &r, int tabHeight, const Common::Array<int> &tabWidths,
 	             const Common::Array<Common::U32String> &tabs, int active, bool rtl,
-				 ThemeEngine::TextAlignVertical alignV);
+				 ThemeEngine::TextAlignVertical alignV, bool focused = false);
 
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState scrollState);
 
@@ -750,6 +751,10 @@ protected:
 	                bool elipsis, Graphics::TextAlign alignH = Graphics::kTextAlignLeft,
 	                TextAlignVertical alignV = kTextAlignVTop, int deltax = 0,
 	                const Common::Rect &drawableTextArea = Common::Rect(0, 0, 0, 0));
+
+	/** Draw the label of a checkbox or radio button, highlighted if focused */
+	void drawToggleLabel(DrawData dd, TextColor color, const Common::Rect &r, const Common::U32String &str,
+	                     bool rtl, bool focused);
 
 	/**
 	 * Compute the extended (dirty) rectangle for a given draw data type applied

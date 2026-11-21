@@ -113,6 +113,7 @@ public:
 	void handleMouseLeft(int button) override { _lastRead = -1; };
 	Common::U32String getSpokenDescription() const override;
 	bool handleKeyDown(Common::KeyState state) override;
+	bool wantsKeyboardFocus() override { return !_tabs.empty(); }
 	void handleMouseWheel(int x, int y, int direction) override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	virtual int getFirstVisible() const;
