@@ -590,7 +590,7 @@ Common::SeekableReadStream *WMACodec::decodeSuperFrame(Common::SeekableReadStrea
 
 		// PCM output data
 		outputDataSize = frameCount * _channels * _frameLen;
-		outputData     = new int16[outputDataSize]();
+		outputData     = static_cast<int16*>(calloc(outputDataSize, sizeof(int16)));
 
 
 		// Number of bits data that completes the last superframe's overhang.
@@ -636,7 +636,7 @@ Common::SeekableReadStream *WMACodec::decodeSuperFrame(Common::SeekableReadStrea
 		// Decode the frames
 		for (int i = 0; i < newFrameCount; i++, _curFrame++)
 			if (!decodeFrame(bits, outputData)) {
-				delete[] outputData;
+				free(outputData);
 				return nullptr;
 			}
 
@@ -665,12 +665,11 @@ Common::SeekableReadStream *WMACodec::decodeSuperFrame(Common::SeekableReadStrea
 
 		// PCM output data
 		outputDataSize = _channels * _frameLen;
-		outputData     = new int16[outputDataSize]();
-
+		outputData     = static_cast<int16*>(calloc(outputDataSize, sizeof(int16)));
 
 		// Decode the frame
 		if (!decodeFrame(bits, outputData)) {
-			delete[] outputData;
+			free(outputData);
 			return nullptr;
 		}
 	}
