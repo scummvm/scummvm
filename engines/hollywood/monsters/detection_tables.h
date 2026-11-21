@@ -107,6 +107,20 @@
 		GUIO3(GAMEOPTION_RESTORED_CONTENT, GAMEOPTION_POSITIONAL_AUDIO, GUIO_NOMIDI)
 	},
 
+	// Italian Windows covermount release.
+	{
+		"hollywood",
+		nullptr,
+		AD_ENTRY4s("MONSTERS.EXE", "53de9f73b971d3d605bfa2392345df72", 1167360,
+			"RESOURCE.000", "b16a8300ca1af75a0322e443a8971159", 3662162,
+			"RESOURCE.003", "72475bb0eff3f4920452342537584569", 9444153,
+			"RESOURCE.004", "fb9f09029e73eb5ee708b995db9823d0", 256474138),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_TESTING,
+		GUIO3(GAMEOPTION_RESTORED_CONTENT, GAMEOPTION_POSITIONAL_AUDIO, GUIO_NOMIDI)
+	},
+
 	// Spanish Windows full game, installed MONSTERS directory.
 	{
 		"hollywood",
