@@ -469,13 +469,7 @@ private:
 							 y * getOverlayHeight() / getHeight());
 	}
 
-	/**
-	 * Special case for scalers that use the useOldSrc feature (currently
-	 * only the Edge scalers). The variable is checked after closing the
-	 * overlay, so that the creation of a new output buffer for the scaler
-	 * can be triggered.
-	 */
-	bool _needRestoreAfterOverlay;
+	bool _prevOverlayVisible;
 	bool _prevForceRedraw;
 	bool _prevCursorNeedsRedraw;
 };
