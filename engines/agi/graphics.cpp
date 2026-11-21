@@ -127,6 +127,10 @@ void GfxMgr::initVideo() {
 	case Common::kRenderAtariST:
 		initPalette(_paletteGfxMode, PALETTE_ATARI_ST, 16, 3);
 		break;
+	case Common::kRenderMacintoshBW:
+		initPalette(_paletteGfxMode, PALETTE_MACINTOSH_BW, 2, 8);
+		forceHires = true;
+		break;
 	case Common::kRenderMacintosh:
 		switch (_vm->getGameID()) {
 		case GID_KQ3:
@@ -187,6 +191,7 @@ void GfxMgr::initVideo() {
 		initMouseCursor(&_mouseCursorBusy, MOUSECURSOR_SCI_BUSY, 15, 16, 7, 8);
 		break;
 	case Common::kRenderMacintosh:
+	case Common::kRenderMacintoshBW:
 		// It looks like Atari ST + Macintosh used the same standard mouse cursor
 		// TODO: Verify by checking actual hardware
 		initMouseCursor(&_mouseCursor, MOUSECURSOR_ATARI_ST, 11, 16, 0, 0);
@@ -502,6 +507,8 @@ void GfxMgr::putFontPixelOnDisplay(int16 baseX, int16 baseY, int16 addX, int16 a
 byte GfxMgr::getColor(int16 x, int16 y) const {
 	int offset = y * SCRIPT_WIDTH + x;
 
+	if (_vm->_renderMode == Common::kRenderMacintoshBW)
+		return _gameScreen[offset] & ~MACINTOSH_BW_CEL_PHASE_MASK;
 	return _gameScreen[offset];
 }
 
@@ -561,6 +568,9 @@ void GfxMgr::render_Block(int16 x, int16 y, int16 width, int16 height, bool copy
 	case Common::kRenderHercG:
 	case Common::kRenderHercA:
 		render_BlockHercules(x, y, width, height);
+		break;
+	case Common::kRenderMacintoshBW:
+		render_BlockMacintoshBW(x, y, width, height);
 		break;
 	case Common::kRenderCGA:
 		render_BlockCGA(x, y, width, height);
@@ -796,6 +806,59 @@ void GfxMgr::render_BlockHercules(int16 x, int16 y, int16 width, int16 height) {
 		offsetDisplay += _displayScreenWidth;
 
 		remainingHeight--;
+	}
+}
+
+// Sierra dropped the 4th pattern column of every pixel, we stretch the other 3 to 4
+static const uint8 macintoshBWDisplayToPatternColumn[4] = { 0, 0, 1, 2 };
+
+// Patterns taken from the black and white Macintosh interpreter (PAT# 1001)
+static const uint8 macintoshBWPatterns[16 * 8] = {
+	0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE,
+	0x66, 0xEE, 0xEE, 0xEE, 0xAA, 0xEE, 0xEE, 0xEE,
+	0x6E, 0xCE, 0xEA, 0xAE, 0xEC, 0xE6, 0xAE, 0xEA,
+	0xAA, 0xEE, 0xAA, 0xEE, 0xAA, 0xEE, 0xAA, 0xEE,
+	0xAA, 0x66, 0xAA, 0x66, 0xAA, 0x66, 0xAA, 0x66,
+	0x66, 0xEE, 0x66, 0xEE, 0x66, 0xEE, 0x66, 0xEE,
+	0xCC, 0xAA, 0xCC, 0x66, 0xCC, 0x66, 0xAA, 0x66,
+	0xAA, 0x44, 0xAA, 0x44, 0xAA, 0x44, 0xAA, 0x44,
+	0xAA, 0xEE, 0x66, 0xEE, 0xAA, 0xEE, 0x66, 0xEE,
+	0x44, 0x00, 0x88, 0x00, 0x44, 0x00, 0x88, 0x00,
+	0x80, 0x20, 0x04, 0x40, 0x02, 0x08, 0x40, 0x04,
+	0xA4, 0x4A, 0xA4, 0x4A, 0xA4, 0x4A, 0xA4, 0x4A,
+	0xA4, 0x00, 0x4A, 0x00, 0xA4, 0x00, 0x4A, 0x00,
+	0x88, 0x44, 0x22, 0x88, 0x44, 0x22, 0x88, 0x44,
+	0x88, 0x00, 0x00, 0x00, 0x44, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+void GfxMgr::render_BlockMacintoshBW(int16 x, int16 y, int16 width, int16 height) {
+	assert(_upscaledHires == DISPLAY_UPSCALED_640x400);
+
+	for (int16 row = y; row < y + height; row++) {
+		uint32 offsetVisual = SCRIPT_WIDTH * row + x;
+		uint32 offsetDisplay = getDisplayOffsetToGameScreenPos(x, row);
+
+		for (int16 column = x; column < x + width; column++) {
+			byte value = _activeScreen[offsetVisual++];
+			const uint8 *pattern = &macintoshBWPatterns[(value & ~MACINTOSH_BW_CEL_PHASE_MASK) * 8];
+			uint16 patternRowPair = row & 3;
+			bool patternRightHalf = column & 1;
+
+			if (value & MACINTOSH_BW_CEL_PIXEL) {
+				patternRowPair = (value & MACINTOSH_BW_CEL_ROW_MASK) >> MACINTOSH_BW_CEL_ROW_SHIFT;
+				patternRightHalf = value & MACINTOSH_BW_CEL_ODD_COLUMN;
+			}
+
+			for (int16 line = 0; line < 2; line++) {
+				byte bits = pattern[patternRowPair * 2 + line];
+				bits = patternRightHalf ? (bits & 0x0F) : (bits >> 4);
+				byte *dest = &_displayScreen[offsetDisplay + line * _displayScreenWidth];
+				for (int16 displayColumn = 0; displayColumn < 4; displayColumn++)
+					dest[displayColumn] = (bits & (0x08 >> macintoshBWDisplayToPatternColumn[displayColumn])) ? 0 : 1;
+			}
+			offsetDisplay += 4;
+		}
 	}
 }
 
@@ -1053,6 +1116,7 @@ void GfxMgr::drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroun
 		drawDisplayRect(x, +2, y, +2, 0, 1, height, -4, lineColor);
 		break;
 	case Common::kRenderMacintosh:
+	case Common::kRenderMacintoshBW:
 		// 1 pixel between box and frame lines. Frame lines were black
 		drawDisplayRect(x, +1, y, +1, width, -2, 0, 1, 0);
 		drawDisplayRect(x + width, -2, y, +1, 0, 1, height, -2, 0);
@@ -1086,8 +1150,9 @@ void GfxMgr::drawDisplayRect(int16 x, int16 y, int16 width, int16 height, byte c
 		break;
 	case Common::kRenderHercG:
 	case Common::kRenderHercA:
+	case Common::kRenderMacintoshBW:
 		if (color)
-			color = 1; // change any color except black to green/amber
+			color = 1; // change any color except black to green/amber/white
 		// fall through
 	case Common::kRenderEGA:
 	default:

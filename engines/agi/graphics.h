@@ -46,6 +46,14 @@ enum GfxScreenMasks {
 	GFX_SCREEN_MASK_ALL         = GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY
 };
 
+enum MacintoshBWCelPhase {
+	MACINTOSH_BW_CEL_PHASE_MASK = 0xF0,
+	MACINTOSH_BW_CEL_PIXEL      = 0x80,
+	MACINTOSH_BW_CEL_ODD_COLUMN = 0x40,
+	MACINTOSH_BW_CEL_ROW_MASK   = 0x30,
+	MACINTOSH_BW_CEL_ROW_SHIFT  = 4
+};
+
 struct MouseCursorData {
 	const byte *bitmapData;
 	byte *bitmapDataAllocated;
@@ -179,6 +187,7 @@ private:
 	void render_BlockEGA(int16 x, int16 y, int16 width, int16 height);
 	void render_BlockCGA(int16 x, int16 y, int16 width, int16 height);
 	void render_BlockHercules(int16 x, int16 y, int16 width, int16 height);
+	void render_BlockMacintoshBW(int16 x, int16 y, int16 width, int16 height);
 
 public:
 	void transition_Amiga();

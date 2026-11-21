@@ -395,6 +395,7 @@ void AgiBase::initRenderMode() {
 	case Common::kRenderApple2GS:
 	case Common::kRenderAtariST:
 	case Common::kRenderMacintosh:
+	case Common::kRenderMacintoshBW:
 		_renderMode = configRenderMode;
 		break;
 	default:
