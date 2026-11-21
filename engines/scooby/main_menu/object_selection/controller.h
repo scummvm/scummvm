@@ -28,7 +28,7 @@
 
 #include "scooby/main_menu/object_selection/catalog.h"
 #include "scooby/common/optional.h"
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 #include "scooby/input/controller_buttons.h"
 #include "scooby/main_menu/presentation.h"
 #include "scooby/runtime/runtime_state.h"

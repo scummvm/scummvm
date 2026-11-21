@@ -233,7 +233,7 @@ void TileScene::replaceSprites(Span<const SpriteInstance> sprites) {
 }
 
 void TileScene::setDynamicSprites(Span<const SpriteInstance> sprites) {
-	_dynamicSprites = sprites.toArray();
+	_dynamicSprites = toArray(sprites);
 }
 
 void TileScene::setSpriteVerticalOffset(int offset) { _spriteVerticalOffset = offset; }
@@ -381,8 +381,8 @@ void TileScene::setHorizontalOffsets(int foreground, int background) {
 
 void TileScene::setLineHorizontalOffsets(Span<const int16> foreground,
 										 Span<const int16> background) {
-	_foregroundLineHorizontalOffsets = foreground.toArray();
-	_backgroundLineHorizontalOffsets = background.toArray();
+	_foregroundLineHorizontalOffsets = toArray(foreground);
+	_backgroundLineHorizontalOffsets = toArray(background);
 }
 
 void TileScene::setVerticalOffsets(int foreground, int background) {
@@ -531,7 +531,7 @@ void TileScene::drawLayer(IndexedFrame &frame, const Common::Array<TileCell> &la
 		int sourceY = mod(y + verticalOffset, layerHeight);
 		int cellY = sourceY / kTileSize;
 		int pixelY = sourceY % kTileSize;
-		int lineHorizontalOffset = lineHorizontalOffsets.isEmpty()
+		int lineHorizontalOffset = lineHorizontalOffsets.size() == 0
 									   ? horizontalOffset
 									   : lineHorizontalOffsets[static_cast<size_t>(y)];
 		for (int x = 0; x < contentWidth; ++x) {

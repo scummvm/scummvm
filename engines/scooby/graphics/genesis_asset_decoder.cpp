@@ -87,7 +87,7 @@ Common::Array<uint8> colorise4bppMaskTiles(const ScoobyDooRom &rom, uint8 nonzer
 							  uint8 zeroPaletteIndex) {
 	Span<const uint8> source =
 		rom.readBytes(kMaskTilesSourceOffset, kMaskTilesSourceWordCount * static_cast<int>(sizeof(uint16)));
-	Common::Array<uint8> output = source.toArray();
+	Common::Array<uint8> output = toArray(source);
 	for (size_t index = 0; index < output.size(); ++index) {
 		uint8 packedPixels = output[index];
 		uint8 highPaletteIndex = (packedPixels & 0xF0) == 0 ? zeroPaletteIndex : nonzeroPaletteIndex;

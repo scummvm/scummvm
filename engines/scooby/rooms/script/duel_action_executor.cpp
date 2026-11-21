@@ -27,7 +27,7 @@
 
 #include "common/array.h"
 
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 #include "scooby/graphics/genesis_asset_decoder.h"
 #include "scooby/graphics/tile_layer.h"
 #include "scooby/sound/gems_audio.h"
@@ -451,7 +451,7 @@ void DuelRoomScriptActionExecutor::initializeDuelPresentation() {
 	}
 
 	WRITE_BE_UINT32(&firstTiles[destinationOffset], 0xFFFFFFFFu);
-	_scene.loadTilesAt(firstTiles.slice(0, 0x40), 0x7F8);
+	_scene.loadTilesAt(firstTiles.subspan(0, 0x40), 0x7F8);
 
 	destinationOffset = 0;
 	for (int group = 0; group < 2; group++) {
@@ -471,7 +471,7 @@ void DuelRoomScriptActionExecutor::initializeDuelPresentation() {
 	}
 
 	int columnBank = (_state.displayFlags & 0x10) != 0 ? 32 : 0;
-	_scene.loadLayerRows(firstTiles.slice(0, 0x30), TileLayer::Foreground, columnBank + 5, 22, 24, 1);
+	_scene.loadLayerRows(firstTiles.subspan(0, 0x30), TileLayer::Foreground, columnBank + 5, 22, 24, 1);
 	_scene.loadTilesAt(_rom.readBytes(kDuelPatternTilesOffset, 0x380), kDuelPatternTileIndex);
 	for (int row = 0; row < 5; row++) {
 		writeDuelFrameCells(kDuelFrameTileOffsetsOffset + row * 0x10, columnBank + 1, row + 22);
@@ -573,8 +573,8 @@ void DuelRoomScriptActionExecutor::buildDuelHealthTiles(Span<uint8> tiles, int16
 			health--;
 		}
 
-		Span<uint8> tile = tiles.slice(static_cast<size_t>(tileIndex * 0x20), 0x20);
-		tile.fill(0);
+		Span<uint8> tile = tiles.subspan(static_cast<size_t>(tileIndex * 0x20), 0x20);
+		fillSpan(tile, 0);
 		for (int row = 2; row < 6; row++) {
 			WRITE_BE_UINT32(&tile[row * sizeof(uint32)], packedRow);
 		}

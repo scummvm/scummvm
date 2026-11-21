@@ -27,7 +27,7 @@
 namespace Scooby {
 ActorSpriteTransformer::ActorSpriteTransformer(const ScoobyDooRom &rom)
 	: _scaleSelectionMasks(
-		  rom.readBytes(kScaleMaskTableOffset, kScaleMaskRecordCount * kScaleMaskRecordSize).toArray()) {
+		  toArray(rom.readBytes(kScaleMaskTableOffset, kScaleMaskRecordCount * kScaleMaskRecordSize))) {
 }
 
 Common::Array<uint8> ActorSpriteTransformer::expandCompactSprite48UsingPrimaryLayout(

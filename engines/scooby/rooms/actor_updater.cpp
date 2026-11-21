@@ -25,7 +25,7 @@
 #include "common/endian.h"
 
 #include "scooby/common/contracts.h"
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 #include "scooby/rooms/actor_facing_animation.h"
 #include "scooby/rooms/collision_probe_result.h"
 #include "scooby/rooms/room_object.h"

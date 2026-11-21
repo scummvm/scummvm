@@ -27,7 +27,7 @@
 
 #include "common/array.h"
 
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 
 // Preserves the overlapping recovered lifetimes that consume the shared
 // graphics workspace prefix.

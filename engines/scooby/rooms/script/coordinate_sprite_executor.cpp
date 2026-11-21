@@ -25,7 +25,7 @@
 
 #include "common/array.h"
 
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 
 namespace Scooby {
 

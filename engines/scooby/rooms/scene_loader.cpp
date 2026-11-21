@@ -24,7 +24,7 @@
 #include "common/array.h"
 #include "common/endian.h"
 
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 #include "scooby/compression/ring_lz_decoder.h"
 #include "scooby/graphics/genesis_asset_decoder.h"
 #include "scooby/rooms/room_object.h"
@@ -105,7 +105,7 @@ void RoomSceneLoader::loadRoomScene() {
 		static_cast<uint16>(static_cast<int>(actionPromptTiles.size()) >> 1);
 	int actionPromptByteCount = actionPromptWordCount * static_cast<int>(sizeof(uint16));
 	_scene.overwritePackedPatternBytes(
-		makeSpan(actionPromptTiles).slice(0, static_cast<size_t>(actionPromptByteCount)),
+		makeSpan(actionPromptTiles).subspan(0, static_cast<size_t>(actionPromptByteCount)),
 		patternByteOffset);
 	patternByteOffset += actionPromptWordCount + actionPromptWordCount;
 	_state.cursorSpriteTileAttributes = static_cast<uint16>((patternByteOffset >> 5) |

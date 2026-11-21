@@ -215,15 +215,15 @@ void EpisodeOpeningSequence::updateEpisodeOpeningScene() {
 		scrollAccumulators[4] -= 0x20000;
 		scrollAccumulators[5] -= 0x30000;
 		scrollAccumulators[6] -= 0x40000;
-		background.slice(0, 104).fill(_sequenceState.scrollBandBase);
-		background.slice(104, 32).fill(static_cast<int16>(scrollAccumulators[7] >> 16));
-		background.slice(136, 25).fill(static_cast<int16>(scrollAccumulators[1] >> 16));
-		background.slice(161, 15).fill(static_cast<int16>(scrollAccumulators[4] >> 16));
-		background.slice(176).fill(static_cast<int16>(scrollAccumulators[5] >> 16));
-		foreground.slice(0, 40).fill(static_cast<int16>(scrollAccumulators[0] >> 16));
-		foreground.slice(40, 16).fill(static_cast<int16>(scrollAccumulators[2] >> 16));
-		foreground.slice(56, 16).fill(static_cast<int16>(scrollAccumulators[3] >> 16));
-		foreground.slice(72).fill(static_cast<int16>(scrollAccumulators[6] >> 16));
+		fillSpan(background.subspan(0, 104), _sequenceState.scrollBandBase);
+		fillSpan(background.subspan(104, 32), static_cast<int16>(scrollAccumulators[7] >> 16));
+		fillSpan(background.subspan(136, 25), static_cast<int16>(scrollAccumulators[1] >> 16));
+		fillSpan(background.subspan(161, 15), static_cast<int16>(scrollAccumulators[4] >> 16));
+		fillSpan(background.subspan(176), static_cast<int16>(scrollAccumulators[5] >> 16));
+		fillSpan(foreground.subspan(0, 40), static_cast<int16>(scrollAccumulators[0] >> 16));
+		fillSpan(foreground.subspan(40, 16), static_cast<int16>(scrollAccumulators[2] >> 16));
+		fillSpan(foreground.subspan(56, 16), static_cast<int16>(scrollAccumulators[3] >> 16));
+		fillSpan(foreground.subspan(72), static_cast<int16>(scrollAccumulators[6] >> 16));
 		return;
 	}
 
@@ -233,11 +233,11 @@ void EpisodeOpeningSequence::updateEpisodeOpeningScene() {
 	scrollAccumulators[1] -= 0x10000;
 	scrollAccumulators[2] -= 0x20000;
 	scrollAccumulators[3] -= 0x40000;
-	background.slice(0, 80).fill(_sequenceState.scrollBandBase);
-	background.slice(80).fill(static_cast<int16>(scrollAccumulators[2] >> 16));
-	foreground.slice(0, 96).fill(static_cast<int16>(scrollAccumulators[0] >> 16));
-	foreground.slice(96, 48).fill(static_cast<int16>(scrollAccumulators[1] >> 16));
-	foreground.slice(144).fill(static_cast<int16>(scrollAccumulators[3] >> 16));
+	fillSpan(background.subspan(0, 80), _sequenceState.scrollBandBase);
+	fillSpan(background.subspan(80), static_cast<int16>(scrollAccumulators[2] >> 16));
+	fillSpan(foreground.subspan(0, 96), static_cast<int16>(scrollAccumulators[0] >> 16));
+	fillSpan(foreground.subspan(96, 48), static_cast<int16>(scrollAccumulators[1] >> 16));
+	fillSpan(foreground.subspan(144), static_cast<int16>(scrollAccumulators[3] >> 16));
 }
 
 bool EpisodeOpeningSequence::waitForOpeningVerticalBlank() {
@@ -251,17 +251,17 @@ void EpisodeOpeningSequence::writeEpisodeOpeningSpriteTable() {
 	Common::Array<SpriteInstance> sprites(kSpriteTableSize);
 	Span<SpriteInstance> spriteSpan = makeSpan(sprites);
 	writeEpisodeOpeningSpriteGroup(
-		spriteSpan.slice(0, kSpriteGroupSize),
+		spriteSpan.subspan(0, kSpriteGroupSize),
 		static_cast<int16>(_sequenceState.leadingSpriteXOffset + 0x7C + _sequenceState.horizontalOffset),
 		static_cast<int16>(_sequenceState.verticalPhase + 0x6F + _sequenceState.spriteYBase),
 		kSpriteTileBankStart);
 	writeEpisodeOpeningSpriteGroup(
-		spriteSpan.slice(static_cast<size_t>(kSpriteGroupSize), kSpriteGroupSize),
+		spriteSpan.subspan(static_cast<size_t>(kSpriteGroupSize), kSpriteGroupSize),
 		static_cast<int16>(_sequenceState.horizontalOffset + 0x80),
 		static_cast<int16>(_sequenceState.spriteYBase + 0x80),
 		kSpriteTileBankStart + kAnimationTileBankStride + _sequenceState.animationTileOffset);
 	writeEpisodeOpeningSpriteGroup(
-		spriteSpan.slice(static_cast<size_t>(kSpriteGroupSize) * 2, kSpriteGroupSize),
+		spriteSpan.subspan(static_cast<size_t>(kSpriteGroupSize) * 2, kSpriteGroupSize),
 		static_cast<int16>(_sequenceState.horizontalOffset + 0xCA),
 		static_cast<int16>(_sequenceState.spriteYBase + 0x79),
 		kSpriteTileBankStart + kAnimationTileBankStride * (3 + _sequenceState.verticalPhase));

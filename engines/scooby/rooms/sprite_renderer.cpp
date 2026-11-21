@@ -25,7 +25,7 @@
 
 #include "common/array.h"
 
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 
 namespace Scooby {
 
@@ -83,7 +83,7 @@ void RoomSpriteRenderer::refreshRoomSprites() {
 		size_t transferByteCount = static_cast<size_t>(
 			_state.actorTileTransferWordCounts[static_cast<size_t>(actor)] * sizeof(uint16));
 		Common::Array<uint8> &actorTileData = _state.actorTileData[static_cast<size_t>(actor)];
-		_scene.loadTilesAt(makeSpan(actorTileData).slice(0, transferByteCount),
+		_scene.loadTilesAt(makeSpan(actorTileData).subspan(0, transferByteCount),
 						   kActorTileDestinationIndices[static_cast<size_t>(actor)]);
 		pendingFlags &= static_cast<uint8>(~actorMask);
 		_state.actorFramePublicationLatchFlags &= static_cast<uint8>(~actorMask);

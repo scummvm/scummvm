@@ -27,7 +27,7 @@
 #include "common/array.h"
 
 #include "scooby/assets/rom.h"
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 
 // Reconstructs packed sprite tiles from the two masked pixel planes consumed by the main-menu
 // reveal. The menu keeps row shifting enabled while its mask axes and wave phase change

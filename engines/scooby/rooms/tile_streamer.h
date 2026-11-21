@@ -25,7 +25,7 @@
 #include "common/scummsys.h"
 
 #include "scooby/assets/rom.h"
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 #include "scooby/graphics/tile_layer.h"
 #include "scooby/graphics/tile_scene.h"
 #include "scooby/runtime/runtime_state.h"

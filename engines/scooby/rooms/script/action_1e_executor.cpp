@@ -26,7 +26,7 @@
 #include "common/array.h"
 #include "common/endian.h"
 
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 #include "scooby/compression/ring_lz_decoder.h"
 #include "scooby/graphics/tile_layer.h"
 #include "scooby/types.h"
@@ -86,7 +86,7 @@ void RoomScriptAction1EExecutor::executeRoomScriptAction1E() {
 
 		destinationRow = (destinationRow + 1) & kLayerRowMask;
 		_scene.loadLayerRows(
-			makeSpan(packedRows).slice(sourceByteOffset, static_cast<size_t>(kRowByteCount)),
+			makeSpan(packedRows).subspan(sourceByteOffset, static_cast<size_t>(kRowByteCount)),
 			TileLayer::Foreground, 0, destinationRow, kCellsPerRow, 1);
 		sourceByteOffset += static_cast<size_t>(kRowByteCount);
 	}

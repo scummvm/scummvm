@@ -23,7 +23,7 @@
 
 #include "common/scummsys.h"
 
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 #include "scooby/graphics/genesis_asset_decoder.h"
 
 namespace Scooby {
@@ -108,7 +108,7 @@ void RoomScriptAction05Or0CExecutor::executeRoomScriptAction05Or0C() {
 			_rom.readBytes(kBackgroundHalfMapOffset, kBackgroundHalfRowBytes * kBackgroundMapRows);
 		for (int row = 0; row < kBackgroundMapRows; row++) {
 			Span<const uint8> sourceRow =
-				backgroundHalfMap.slice(static_cast<size_t>(row * kBackgroundHalfRowBytes),
+				backgroundHalfMap.subspan(static_cast<size_t>(row * kBackgroundHalfRowBytes),
 										static_cast<size_t>(kBackgroundHalfRowBytes));
 			size_t destinationOffset = static_cast<size_t>((row + 1) * kPlaneRowBytes);
 			for (size_t i = 0; i < sourceRow.size(); ++i) {

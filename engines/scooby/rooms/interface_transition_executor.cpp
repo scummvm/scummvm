@@ -21,7 +21,7 @@
 
 #include "scooby/rooms/interface_transition_executor.h"
 
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 #include "scooby/graphics/genesis_asset_decoder.h"
 
 namespace Scooby {
@@ -89,7 +89,7 @@ void RoomInterfaceTransitionExecutor::finishRoomStartup() {
 	} else {
 		for (int row = 0; row < kInterfaceBlockRowCount; ++row) {
 			_scene.overwritePackedPatternBytes(
-				_graphicsWorkspace.interfaceTileBlock().slice(row * kInterfaceBlockRowByteCount,
+				_graphicsWorkspace.interfaceTileBlock().subspan(row * kInterfaceBlockRowByteCount,
 															  kInterfaceBlockRowByteCount),
 				row * kPatternDestinationRowByteStride);
 		}

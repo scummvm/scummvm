@@ -25,7 +25,7 @@
 
 #include "common/endian.h"
 
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 #include "scooby/graphics/tile_cell.h"
 #include "scooby/graphics/tile_layer.h"
 #include "scooby/rooms/room_object.h"
@@ -201,7 +201,7 @@ void ActionMenuController::composeInventoryGrid() {
 					uint16 graphicAttributes = _rom.readUInt16(graphicRecordOffset);
 					copyBytes(_rom.readBytes(graphicRecordOffset + static_cast<int>(sizeof(uint16)),
 											 kInventoryGraphicTileByteCount),
-							  _graphicsWorkspace.inventoryPatterns().slice(
+							  _graphicsWorkspace.inventoryPatterns().subspan(
 								  static_cast<size_t>(patternDestinationOffset),
 								  static_cast<size_t>(kInventoryGraphicTileByteCount)));
 					patternDestinationOffset += kInventoryGraphicTileByteCount;

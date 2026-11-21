@@ -28,7 +28,7 @@
 #include "common/str.h"
 
 #include "scooby/assets/rom.h"
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 
 // Decodes the two authored room-name catalogs consumed by the hidden menu selector.
 //

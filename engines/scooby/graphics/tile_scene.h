@@ -25,7 +25,7 @@
 #include "common/array.h"
 #include "common/scummsys.h"
 
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 #include "scooby/graphics/indexed_frame.h"
 #include "scooby/graphics/sprite_instance.h"
 #include "scooby/graphics/sprite_layer.h"

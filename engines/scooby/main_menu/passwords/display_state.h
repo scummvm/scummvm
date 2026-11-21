@@ -27,7 +27,7 @@
 #include "common/array.h"
 #include "common/str.h"
 
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 #include "scooby/runtime/runtime_state.h"
 
 // Owns the two grouped password rows retained across title-menu phases.

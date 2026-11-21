@@ -32,7 +32,7 @@
 #include "scooby/main_menu/animation/state.h"
 #include "scooby/assets/rom.h"
 #include "scooby/common/optional.h"
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 #include "scooby/graphics/sprite_instance.h"
 #include "scooby/graphics/tile_scene.h"
 #include "scooby/presentation/frame_presenter.h"

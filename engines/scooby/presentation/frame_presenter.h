@@ -25,7 +25,7 @@
 #include "common/func.h"
 #include "graphics/framelimiter.h"
 
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 #include "scooby/graphics/indexed_frame.h"
 #include "scooby/types.h"
 #include "scooby/graphics/tile_scene.h"

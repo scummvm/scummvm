@@ -26,7 +26,7 @@
 #include "common/array.h"
 #include "common/endian.h"
 
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 #include "scooby/compression/ring_lz_decoder.h"
 #include "scooby/graphics/genesis_asset_decoder.h"
 #include "scooby/graphics/tile_layer.h"
@@ -61,9 +61,8 @@ void RoomScriptForegroundOverrideExecutor::scriptAction07FlashlightModeOn() { //
 	// Ghidra 0x0000450A-0x00004531: retain both 11-iteration DBF branches. Add the packed base with 16-bit
 	// wrapping, then place the complete 11x11 map at row zero, column zero with a 64-cell stride.
 	Common::Array<uint8> packedForeground =
-		_rom.readBytes(kForegroundMapOffset, kForegroundMapColumnCount * kForegroundMapRowCount *
-												 static_cast<int>(sizeof(uint16)))
-			.toArray();
+		toArray(_rom.readBytes(kForegroundMapOffset, kForegroundMapColumnCount * kForegroundMapRowCount *
+												 static_cast<int>(sizeof(uint16))));
 	for (size_t byteOffset = 0; byteOffset < packedForeground.size(); byteOffset += sizeof(uint16)) {
 		WRITE_BE_UINT16(&packedForeground[byteOffset],
 			static_cast<uint16>(READ_BE_UINT16(&packedForeground[byteOffset]) +

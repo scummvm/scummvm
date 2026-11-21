@@ -23,7 +23,7 @@
 
 #include "common/scummsys.h"
 
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 
 // Owns command 0x1A's animated palette-range configuration and publication.
 
@@ -51,7 +51,7 @@ void RoomScriptCommandExecutor::executeRoomScriptCommand1A(int mode) {
 				uint16 colorCount =
 					static_cast<uint16>(_rom.readUInt16(commandOffset + 6) - startIndex);
 				_scene.replacePaletteRange(makeSpan(_state.targetPalette)
-											   .slice(static_cast<size_t>(paletteIndex),
+											   .subspan(static_cast<size_t>(paletteIndex),
 													  static_cast<size_t>(colorCount)),
 										   paletteIndex);
 			} else {

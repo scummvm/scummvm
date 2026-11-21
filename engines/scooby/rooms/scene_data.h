@@ -26,7 +26,7 @@
 
 #include "common/array.h"
 
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 
 // Owns the decoded cell and collision resources retained for the active room
 // between loading, viewport drawing, tile streaming, patching, and collision probes.
@@ -39,9 +39,9 @@ public:
 	RoomSceneData(Span<const uint8> newBackgroundCells,
 				  Span<const uint8> newForegroundCells,
 				  Span<const uint8> newCollisionCells)
-		: backgroundCells(newBackgroundCells.toArray()), backgroundCellSnapshot(newBackgroundCells.toArray()),
-		  foregroundCells(newForegroundCells.toArray()), foregroundCellSnapshot(newForegroundCells.toArray()),
-		  collisionCells(newCollisionCells.toArray()) {
+		: backgroundCells(toArray(newBackgroundCells)), backgroundCellSnapshot(toArray(newBackgroundCells)),
+		  foregroundCells(toArray(newForegroundCells)), foregroundCellSnapshot(toArray(newForegroundCells)),
+		  collisionCells(toArray(newCollisionCells)) {
 	}
 
 	// Ghidra g_awRoomBackgroundCells at 0xFF7000. Positive room-object tile

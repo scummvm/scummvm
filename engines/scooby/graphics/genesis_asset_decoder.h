@@ -27,7 +27,7 @@
 #include "common/array.h"
 
 #include "scooby/assets/rom.h"
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 #include "scooby/graphics/tile_cell.h"
 #include "scooby/types.h"
 

@@ -46,8 +46,8 @@ int MainMenuPresentation::loadInitialAssets() {
 															 _rom.decompressByteRle(0x16E6A),
 															 _rom.decompressByteRle(0x16F76)};
 
-	_fixedBackgroundMap = _rom.readBytes(0x165B8, 0x700).toArray();
-	_menuLayout = _rom.readBytes(0x85F8, 0x68).toArray();
+	_fixedBackgroundMap = toArray(_rom.readBytes(0x165B8, 0x700));
+	_menuLayout = toArray(_rom.readBytes(0x85F8, 0x68));
 
 	int assetTableBase = 0x10136;
 	uint16 selector = _rom.readUInt16(assetTableBase + 4);
@@ -109,7 +109,7 @@ void MainMenuPresentation::restoreLightningPatch(int column, int row, int width,
 																				  uint16));
 		Span<const uint8> patch =
 			makeSpan(_fixedBackgroundMap)
-				.slice(static_cast<size_t>(sourceOffset),
+				.subspan(static_cast<size_t>(sourceOffset),
 					   static_cast<size_t>(width * static_cast<int>(sizeof(uint16))));
 		_scene.loadLayerRows(patch, TileLayer::Background, column, row + rowOffset, width, 1);
 	}
@@ -212,7 +212,7 @@ void MainMenuPresentation::writeIndexedTileRow(const Common::String &text, int c
 	while (sourceOffset < static_cast<int>(cells.size())) {
 		int rowLength = MIN(static_cast<int>(cells.size()) - sourceOffset,
 							kMenuPlaneColumns - columnIndex);
-		Span<const TileCell> rowCells = makeSpan(cells).slice(
+		Span<const TileCell> rowCells = makeSpan(cells).subspan(
 			static_cast<size_t>(sourceOffset), static_cast<size_t>(rowLength));
 		_scene.replaceLayerRow(rowCells, TileLayer::Foreground, columnIndex, rowIndex);
 		sourceOffset += rowLength;

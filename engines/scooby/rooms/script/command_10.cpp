@@ -23,7 +23,7 @@
 
 #include "scooby/rooms/actor_facing_animation.h"
 #include "scooby/common/optional.h"
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 #include "scooby/graphics/genesis_asset_decoder.h"
 #include "scooby/interactions/dialogue_text_source.h"
 

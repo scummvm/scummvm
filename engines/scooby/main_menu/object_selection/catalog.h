@@ -28,7 +28,7 @@
 #include "common/str.h"
 
 #include "scooby/assets/rom.h"
-#include "scooby/common/span.h"
+#include "scooby/common/span_utils.h"
 
 // Decodes the episode-authored room-object labels consumed by the hidden catalog selector.
 //

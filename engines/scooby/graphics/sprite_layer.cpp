@@ -52,7 +52,7 @@ Common::Array<SpriteInstance> decodePackedSpriteTableData(const Span<const uint8
 	int entryIndex = 0;
 	while (true) {
 		Span<const uint8> entry =
-			packedEntries.slice(
+			packedEntries.subspan(
 				static_cast<size_t>(entryIndex) * static_cast<size_t>(kEntryByteCount),
 				static_cast<size_t>(kEntryByteCount));
 		uint16 packedY = READ_BE_UINT16(&entry[0]);
@@ -88,7 +88,7 @@ void SpriteLayer::load(const Span<const uint8> packedEntries) {
 	_sprites = decodePackedSpriteTableData(packedEntries);
 }
 
-void SpriteLayer::replace(Span<const SpriteInstance> sprites) { _sprites = sprites.toArray(); }
+void SpriteLayer::replace(Span<const SpriteInstance> sprites) { _sprites = toArray(sprites); }
 
 void SpriteLayer::compose(Span<const uint8> tilePixels, int contentWidth, int verticalOffset,
 						  Span<const SpriteInstance> dynamicSprites) {
