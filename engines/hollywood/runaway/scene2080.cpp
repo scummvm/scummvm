@@ -29,16 +29,16 @@ namespace {
 
 // RESOURCE.B08; interaction points and actions from native 0x44a430.
 const RunawayHotspot kHotspots[] = {
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{526, 441, 1, {301, 302}, {0, 1}}, // 1: Wastebasket.
-	{587, 471, 1, {309, 310}, {0, 0}}, // 2: Faucet.
-	{50, 586, 5, {308, 303}, {0, 2}}, // 3: Door.
-	{577, 466, 1, {305, 306}, {1, 1}}, // 4: Bottle.
-	{442, 377, 0, {311, 312}, {0, 0}}, // 5: Sign.
-	{490, 372, 0, {313, 314}, {0, 0}}, // 6: Pipe.
-	{442, 377, 0, {315, 316}, {0, 0}}, // 7: Shower nozzle.
-	{595, 423, 0, {317, 318}, {0, 0}}, // 8: Medicine cabinet.
-	{295, 327, 0, {319, 320}, {0, 0}} // 9: Toilet bowl.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{526, 441, 1, {301, 302}, {0, 1}, {595, 423}}, // 1: Wastebasket.
+	{587, 471, 1, {309, 310}, {0, 0}, {682, 439}}, // 2: Faucet.
+	{50, 586, 5, {308, 303}, {0, 2}, {0, 580}}, // 3: Door.
+	{577, 466, 1, {305, 306}, {1, 1}, {647, 429}}, // 4: Bottle.
+	{442, 377, 0, {311, 312}, {0, 0}, {442, 377}}, // 5: Sign.
+	{490, 372, 0, {313, 314}, {0, 0}, {490, 372}}, // 6: Pipe.
+	{442, 377, 0, {315, 316}, {0, 0}, {442, 377}}, // 7: Shower nozzle.
+	{595, 423, 0, {317, 318}, {0, 0}, {595, 423}}, // 8: Medicine cabinet.
+	{295, 327, 0, {319, 320}, {0, 0}, {295, 327}} // 9: Toilet bowl.
 };
 
 // Item IDs 1-19, then hotspot IDs in kHotspots order. Zero uses kItemActions.
@@ -151,7 +151,6 @@ RunawayRoomScene::ActionResult Scene2080::dispatchCustomSceneAction(uint16 actio
 	case 306: // Take the alcohol bottle.
 		_hospital.alcohol = 1;
 		_inventory.add(12);
-		_facing = 3;
 		say(18, _random.getRandomNumber(2), true);
 		return kBackgroundChanged;
 	case 307: // Fill the glass at the faucet.
@@ -237,7 +236,6 @@ bool Scene2080::updateCustomSequence() {
 			_inventory.setWater(1);
 			_inventory.remove(13);
 			_inventory.add(13);
-			_facing = 3;
 			say(4);
 		}
 	} else if ((_roomAction == 311 || _roomAction == 320) && !speaking()) {
@@ -279,7 +277,7 @@ bool Scene2080::shouldDrawActor() const {
 	return _roomAction != 302 && _roomAction != 307;
 }
 
-bool Scene2080::shouldApproachHotspot(byte id, bool use, byte item, bool approach) const {
+int8 Scene2080::customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const {
 	if (id == 4 && !use && !item && _hospital.alcohol == 2) {
 		return false;
 	}

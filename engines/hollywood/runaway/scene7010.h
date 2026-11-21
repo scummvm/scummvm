@@ -50,9 +50,10 @@ private:
 	void findWalkPath(Common::Point target) override;
 	int sceneViewportYOffset() const override { return 0; }
 	bool adjustCustomWalkTargetToFloorMask(Common::Point &target) const override;
-	bool shouldApproachHotspot(byte id, bool use, byte item, bool approach) const override;
+	int8 customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const override;
 	Common::Point customizeSceneActionPosition(byte id, byte item, Common::Point position) const override;
 	byte customizeSceneActionFacing(byte id, byte facing) const override;
+	Common::Point sceneActionLookPosition(byte id) const override;
 	Common::U32String hotspotName(byte id) const override;
 
 	RunawayAnimation _bats, _nail, _anchor, _lowerRope;

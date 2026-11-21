@@ -26,14 +26,14 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{1472, 495, 0, {302, 301}, {0, 1}}, // 1: Path.
-	{0, 0, 7, {1, 1}, {0, 0}}, // 2: Mariola.
-	{1122, 509, 7, {305, 306}, {0, 0}}, // 3: Detonator.
-	{301, 264, 7, {307, 308}, {0, 0}}, // 4: Oil Well.
-	{0, 0, 0, {309, 310}, {0, 0}}, // 5: Tree.
-	{0, 0, 7, {313, 314}, {0, 0}}, // 6: Rock.
-	{287, 312, 7, {315, 316}, {1, 0}}, // 7: Puddle Of Oil.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{1472, 495, 0, {302, 301}, {0, 1}, {1472, 495}}, // 1: Path.
+	{0, 0, 7, {1, 1}, {0, 0}, {0, 0}}, // 2: Mariola.
+	{1122, 509, 7, {305, 306}, {0, 0}, {1076, 456}}, // 3: Detonator.
+	{301, 264, 7, {307, 308}, {0, 0}, {230, 253}}, // 4: Oil Well.
+	{0, 0, 0, {309, 310}, {0, 0}, {620, 268}}, // 5: Tree.
+	{0, 0, 7, {313, 314}, {0, 0}, {957, 459}}, // 6: Rock.
+	{287, 312, 7, {315, 316}, {1, 0}, {270, 302}}, // 7: Puddle Of Oil.
 };
 
 const RunawayResponse kResponses[] = {
@@ -83,6 +83,13 @@ void Scene5070::applyCustomHotspotState() {
 
 float Scene5070::actorHeight() const {
 	return _position.y * 1.171428561f - 226.085709f;
+}
+
+int8 Scene5070::customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const {
+	if (id == 7 && !use && !item) {
+		return !_desert.oilSeen;
+	}
+	return approach;
 }
 
 RunawayRoomScene::ActionResult Scene5070::dispatchCustomSceneAction(uint16 action) {

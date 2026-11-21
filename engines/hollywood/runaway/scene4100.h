@@ -50,7 +50,9 @@ private:
 	float actorHeight() const override;
 	Common::U32String hotspotName(byte id) const override;
 	void setupActorDepth(RunawayActor::RenderParams &params) const override;
+	int8 customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const override;
 	Common::Point customizeSceneActionPosition(byte id, byte item, Common::Point position) const override;
+	byte customizeSceneActionFacing(byte id, byte facing) const override;
 
 	void closeChamber();
 	void startComputerConversation();

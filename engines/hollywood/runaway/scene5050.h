@@ -40,6 +40,7 @@ private:
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 	void runCustomEntrySequence() override;
 	Common::U32String hotspotName(byte id) const override;
+	int8 customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const override;
 	void drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) override;
 };
 

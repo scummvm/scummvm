@@ -45,21 +45,21 @@ const byte kGrindCoffee[] = {
 };
 
 const RunawayHotspot kHotspots[] = {
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{227, 503, 7, {301, 339}, {0, 1}}, // 1: Door.
-	{311, 493, 7, {302, 303}, {0, 0}}, // 2: Shelves.
-	{382, 529, 1, {304, 305}, {0, 1}}, // 3: Susan.
-	{395, 529, 1, {306, 307}, {0, 0}}, // 4: Electric lathe.
-	{460, 543, 1, {308, 309}, {0, 0}}, // 5: Microscope.
-	{637, 570, 1, {310, 311}, {0, 0}}, // 6: Water dispenser.
-	{703, 575, 1, {312, 313}, {1, 0}}, // 7: Wastepaper basket.
-	{844, 505, 1, {314, 315}, {0, 0}}, // 8: Tank.
-	{884, 580, 1, {316, 317}, {0, 0}}, // 9: Machine.
-	{992, 556, 1, {318, 319}, {1, 0}}, // 10: Laser.
-	{1327, 521, 1, {320, 321}, {0, 0}}, // 11: Shelves.
-	{1277, 514, 7, {322, 323}, {1, 1}}, // 12: Briefcase.
-	{1211, 510, 7, {324, 325}, {0, 0}}, // 13: Skeleton.
-	{824, 531, 7, {337, 338}, {1, 1}}, // 14: Strange brush.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{227, 503, 7, {301, 339}, {0, 1}, {192, 484}}, // 1: Door.
+	{311, 493, 7, {302, 303}, {0, 0}, {291, 470}}, // 2: Shelves.
+	{382, 529, 1, {304, 305}, {0, 1}, {490, 508}}, // 3: Susan.
+	{395, 529, 1, {306, 307}, {0, 0}, {406, 493}}, // 4: Electric lathe.
+	{460, 543, 1, {308, 309}, {0, 0}, {527, 501}}, // 5: Microscope.
+	{637, 570, 1, {310, 311}, {0, 0}, {692, 530}}, // 6: Water dispenser.
+	{703, 575, 1, {312, 313}, {1, 0}, {747, 534}}, // 7: Wastepaper basket.
+	{844, 505, 1, {314, 315}, {0, 0}, {862, 481}}, // 8: Tank.
+	{884, 580, 1, {316, 317}, {0, 0}, {919, 531}}, // 9: Machine.
+	{992, 556, 1, {318, 319}, {1, 0}, {1020, 519}}, // 10: Laser.
+	{1327, 521, 1, {320, 321}, {0, 0}, {1376, 495}}, // 11: Shelves.
+	{1277, 514, 7, {322, 323}, {1, 1}, {1245, 489}}, // 12: Briefcase.
+	{1211, 510, 7, {324, 325}, {0, 0}, {1100, 443}}, // 13: Skeleton.
+	{824, 531, 7, {337, 338}, {1, 1}, {794, 503}}, // 14: Strange brush.
 };
 
 const RunawayResponse kResponses[] = {
@@ -560,6 +560,13 @@ Common::Point Scene4050::customizeSceneActionPosition(byte id, byte item, Common
 
 byte Scene4050::customizeSceneActionFacing(byte id, byte facing) const {
 	return museumChapter() && id == 3 && _museum.susan == 1 ? 1 : facing;
+}
+
+Common::Point Scene4050::sceneActionLookPosition(byte id) const {
+	if (museumChapter() && id == 3) {
+		return _museum.susan == 1 ? Common::Point(1063, 563) : Common::Point(490, 481);
+	}
+	return RunawayRoomScene::sceneActionLookPosition(id);
 }
 
 void Scene4050::startSusanConversation() {

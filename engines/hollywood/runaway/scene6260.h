@@ -39,7 +39,7 @@ private:
 	void runCustomEntrySequence() override;
 	void drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) override;
 	float actorHeight() const override;
-	bool shouldApproachHotspot(byte id, bool use, byte item, bool approach) const override;
+	int8 customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const override;
 	void findWalkPath(Common::Point target) override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 	void handleAnimationFrameHook() override;

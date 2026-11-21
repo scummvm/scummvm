@@ -27,6 +27,8 @@
 
 namespace Hollywood {
 
+byte runawayFacingTo(Common::Point position, Common::Point target);
+
 class RunawayWalkMap {
 public:
 	RunawayWalkMap(int width, int height, const Common::Array<byte> &mask, const Common::Array<byte> &maps) :

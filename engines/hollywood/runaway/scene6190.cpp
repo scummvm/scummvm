@@ -27,15 +27,15 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{1250, 347, 3, {301, 302}, {0, 3}}, // 1: Town.
-	{560, 282, 0, {303, 304}, {1, 0}}, // 2: Bucket of paint.
-	{757, 446, 5, {306, 307}, {1, 0}}, // 3: Hole.
-	{778, 314, 7, {308, 309}, {1, 1}}, // 4: Shelves.
-	{778, 314, 7, {310, 311}, {0, 1}}, // 5: Metal object.
-	{479, 232, 5, {312, 313}, {1, 1}}, // 6: Desk.
-	{759, 334, 4, {314, 315}, {0, 1}}, // 7: Cash register.
-	{601, 391, 5, {316, 317}, {1, 0}} // 8: Couch.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{1250, 347, 3, {301, 302}, {0, 3}, {1459, 435}}, // 1: Town.
+	{560, 282, 0, {303, 304}, {1, 0}, {550, 255}}, // 2: Bucket of paint.
+	{757, 446, 5, {306, 307}, {1, 0}, {656, 528}}, // 3: Hole.
+	{778, 314, 7, {308, 309}, {1, 1}, {747, 290}}, // 4: Shelves.
+	{778, 314, 7, {310, 311}, {0, 1}, {747, 290}}, // 5: Metal object.
+	{479, 232, 5, {312, 313}, {1, 1}, {450, 251}}, // 6: Desk.
+	{759, 334, 4, {314, 315}, {0, 1}, {763, 334}}, // 7: Cash register.
+	{601, 391, 5, {316, 317}, {1, 0}, {508, 480}} // 8: Couch.
 };
 
 const RunawayResponse kResponses[] = {
@@ -116,8 +116,11 @@ Common::U32String Scene6190::hotspotName(byte id) const {
 	return RunawayRoomScene::hotspotName(id);
 }
 
-bool Scene6190::shouldApproachHotspot(byte id, bool use, byte item, bool approach) const {
-	return approach || (id == 2 && use && _town.catapult == 3);
+int8 Scene6190::customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const {
+	if (id == 2 && use && _town.catapult == 3) {
+		return 1;
+	}
+	return approach;
 }
 
 float Scene6190::actorHeight() const {

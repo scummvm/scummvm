@@ -27,16 +27,16 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{0, 0, 7, {301, 302}, {0, 0}}, // 1: Entrance.
-	{249, 411, 1, {303, 304}, {0, 1}}, // 2: Skeleton.
-	{0, 0, 1, {305, 306}, {0, 0}}, // 3: Drawings.
-	{1180, 307, 1, {307, 308}, {0, 0}}, // 4: Rock.
-	{1180, 308, 1, {309, 310}, {1, 0}}, // 5: Edge of the cliff.
-	{189, 505, 7, {311, 312}, {1, 0}}, // 6: Nail.
-	{0, 0, 0, {313, 314}, {0, 0}}, // 7: Rope.
-	{507, 444, 3, {318, 319}, {1, 1}}, // 8: Long piece of wood.
-	{507, 444, 3, {320, 321}, {1, 1}} // 9: Metal object.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{0, 0, 7, {301, 302}, {0, 0}, {153, 397}}, // 1: Entrance.
+	{249, 411, 1, {303, 304}, {0, 1}, {282, 366}}, // 2: Skeleton.
+	{0, 0, 1, {305, 306}, {0, 0}, {281, 360}}, // 3: Drawings.
+	{1180, 307, 1, {307, 308}, {0, 0}, {1193, 299}}, // 4: Rock.
+	{1180, 308, 1, {309, 310}, {1, 0}, {1193, 299}}, // 5: Edge of the cliff.
+	{189, 505, 7, {311, 312}, {1, 0}, {130, 468}}, // 6: Nail.
+	{0, 0, 0, {313, 314}, {0, 0}, {0, 0}}, // 7: Rope.
+	{507, 444, 3, {318, 319}, {1, 1}, {629, 485}}, // 8: Long piece of wood.
+	{507, 444, 3, {320, 321}, {1, 1}, {629, 485}} // 9: Metal object.
 };
 
 const RunawayResponse kResponses[] = {
@@ -187,7 +187,7 @@ void Scene7010::findWalkPath(Common::Point target) {
 	findGameplayWalkPath(target);
 }
 
-bool Scene7010::shouldApproachHotspot(byte id, bool use, byte item, bool approach) const {
+int8 Scene7010::customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const {
 	if (id == 2 && use && !item) {
 		return _hopi.timber == 3;
 	}
@@ -206,6 +206,13 @@ Common::Point Scene7010::customizeSceneActionPosition(byte id, byte item, Common
 
 byte Scene7010::customizeSceneActionFacing(byte id, byte facing) const {
 	return id == 6 && _hopi.nail == 2 ? 1 : facing;
+}
+
+Common::Point Scene7010::sceneActionLookPosition(byte id) const {
+	if (id == 6 && _hopi.nail == 2) {
+		return Common::Point(1193, 299);
+	}
+	return RunawayRoomScene::sceneActionLookPosition(id);
 }
 
 Common::U32String Scene7010::hotspotName(byte id) const {

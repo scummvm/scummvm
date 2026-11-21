@@ -32,12 +32,12 @@ const Common::Point kTrailEnd(2445, 318);
 const Common::Point kDoor(1104, 377);
 
 const RunawayHotspot kHotspots[] = {
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{2591, 229, 0, {301, 302}, {0, 0}}, // 1: Path to the trailer.
-	{0, 0, 0, {303, 304}, {0, 0}}, // 2: Trailer.
-	{1104, 377, 7, {305, 306}, {0, 0}}, // 3: Door.
-	{1138, 373, 0, {308, 309}, {1, 1}}, // 4: Tray.
-	{0, 0, 0, {310, 311}, {0, 0}} // 5: Wooden bridge.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{2591, 229, 0, {301, 302}, {0, 0}, {2662, 186}}, // 1: Path to the trailer.
+	{0, 0, 0, {303, 304}, {0, 0}, {1063, 351}}, // 2: Trailer.
+	{1104, 377, 7, {305, 306}, {0, -1}, {1063, 351}}, // 3: Door.
+	{1138, 373, 0, {308, 309}, {1, 1}, {1138, 357}}, // 4: Tray.
+	{0, 0, 0, {310, 311}, {0, 0}, {0, 0}} // 5: Wooden bridge.
 };
 
 const RunawayResponse kResponses[] = {
@@ -49,7 +49,7 @@ const RunawayResponse kResponses[] = {
 };
 
 const RunawayItemAction kItemActions[] = {
-	{8400, 21, 3, 316, false}, // Force the trailer door with the poker.
+	{8400, 21, 3, 316, -1}, // Force the trailer door with the poker.
 	{8400, 0, 3, 317, false}   // Refuse other tools for opening the door.
 };
 

@@ -28,15 +28,15 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{910, 599, 3, {301, 302}, {0, 3}}, // 1: Oil well area.
-	{696, 510, 0, {303, 304}, {0, 0}}, // 2: Entrance to the house.
-	{846, 509, 0, {305, 306}, {0, 0}}, // 3: Sign.
-	{676, 510, 7, {307, 308}, {0, 1}}, // 4: Oscar.
-	{244, 416, 7, {309, 310}, {0, 0}}, // 5: Ladder.
-	{696, 510, 0, {312, 313}, {0, 1}}, // 6: Entrance to the house.
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{50, 599, 5, {326, 327}, {0, 3}} // 8: Path.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{910, 599, 3, {301, 302}, {0, 3}, {1023, 599}}, // 1: Oil well area.
+	{696, 510, 0, {303, 304}, {0, 0}, {668, 390}}, // 2: Entrance to the house.
+	{846, 509, 0, {305, 306}, {0, 0}, {837, 455}}, // 3: Sign.
+	{676, 510, 7, {307, 308}, {0, 1}, {517, 463}}, // 4: Oscar.
+	{244, 416, 7, {309, 310}, {0, 0}, {216, 394}}, // 5: Ladder.
+	{696, 510, 0, {312, 313}, {0, 1}, {668, 390}}, // 6: Entrance to the house.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{50, 599, 5, {326, 327}, {0, 3}, {0, 599}} // 8: Path.
 };
 
 const RunawayResponse kResponses[] = {
@@ -263,7 +263,7 @@ void Scene8090::findWalkPath(Common::Point target) {
 	findGameplayWalkPath(target);
 }
 
-bool Scene8090::shouldApproachHotspot(byte id, bool use, byte item, bool approach) const {
+int8 Scene8090::customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const {
 	if (id == 2 && use && !item && _finale.oscarAway) {
 		return true;
 	}

@@ -31,21 +31,21 @@ namespace {
 const Common::Point kMotorcycleSoundPosition(1081, 200);
 
 const RunawayHotspot kHotspots[] = {
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{0, 537, 5, {301, 302}, {0, 3}}, // 1: Crater.
-	{1739, 442, 3, {303, 304}, {0, 3}}, // 2: Trail.
-	{440, 556, 7, {305, 306}, {0, 1}}, // 3: Panel of buttons.
-	{607, 549, 7, {307, 308}, {0, 0}}, // 4: Switch.
-	{1133, 434, 0, {309, 310}, {0, 0}}, // 5: Motorcycle.
-	{1396, 293, 3, {311, 312}, {0, 0}}, // 6: Camping tent.
-	{0, 0, 7, {313, 314}, {0, 0}}, // 7: Lighting panel.
-	{440, 556, 7, {315, 316}, {0, 1}}, // 8: Joshua.
-	{0, 0, 7, {317, 318}, {0, 0}}, // 9: Strap.
-	{0, 0, 7, {319, 320}, {0, 0}}, // 10: Wrench.
-	{0, 0, 0, {321, 322}, {0, 0}}, // 11: Machine.
-	{0, 0, 0, {1, 1}, {0, 0}},
-	{0, 0, 7, {330, 331}, {0, 0}}, // 13: Rotor.
-	{0, 0, 0, {1, 1}, {0, 0}}
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{0, 537, 5, {301, 302}, {0, 3}, {-100, 537}}, // 1: Crater.
+	{1739, 442, 3, {303, 304}, {0, 3}, {1839, 442}}, // 2: Trail.
+	{440, 556, 7, {305, 306}, {0, 1}, {479, 468}}, // 3: Panel of buttons.
+	{607, 549, 7, {307, 308}, {0, 0}, {612, 506}}, // 4: Switch.
+	{1133, 434, 0, {309, 310}, {0, 0}, {1068, 422}}, // 5: Motorcycle.
+	{1396, 293, 3, {311, 312}, {0, 0}, {1485, 336}}, // 6: Camping tent.
+	{0, 0, 7, {313, 314}, {0, 0}, {201, 442}}, // 7: Lighting panel.
+	{440, 556, 7, {315, 316}, {0, 1}, {293, 508}}, // 8: Joshua.
+	{0, 0, 7, {317, 318}, {0, 0}, {1068, 422}}, // 9: Strap.
+	{0, 0, 7, {319, 320}, {0, 0}, {1095, 395}}, // 10: Wrench.
+	{0, 0, 0, {321, 322}, {0, 0}, {547, 500}}, // 11: Machine.
+	{0, 0, 0, {1, 1}, {0, 0}, {0, 0}},
+	{0, 0, 7, {330, 331}, {0, 0}, {669, 500}}, // 13: Rotor.
+	{0, 0, 0, {1, 1}, {0, 0}, {0, 0}}
 };
 
 const RunawayResponse kResponses[] = {
@@ -426,6 +426,18 @@ uint16 Scene6290::dialogueResponseCue() const {
 
 void Scene6290::finishCustomConversation() {
 	_joshuaTalking = false;
+}
+
+int8 Scene6290::customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const {
+	if (use && !item) {
+		if (id == 3) {
+			return !_town.joshuaGone;
+		}
+		if (id == 6) {
+			return _town.joshuaGone != 0;
+		}
+	}
+	return approach;
 }
 
 RunawayRoomScene::ActionResult Scene6290::dispatchCustomSceneAction(uint16 action) {

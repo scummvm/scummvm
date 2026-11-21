@@ -27,17 +27,17 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{1165, 594, 2, {322, 301}, {0, 0}}, // 1: Door.
-	{355, 595, 1, {302, 303}, {0, 1}}, // 2: Pair of books.
-	{355, 595, 1, {304, 305}, {1, 0}}, // 3: Crack.
-	{550, 647, 7, {306, 307}, {1, 0}}, // 4: Money.
-	{550, 647, 7, {308, 319}, {1, 0}}, // 5: Papers.
-	{550, 647, 7, {309, 310}, {1, 1}}, // 6: Device.
-	{815, 508, 1, {311, 312}, {0, 0}}, // 7: Shelves.
-	{550, 647, 7, {313, 314}, {0, 0}}, // 8: Secret safe.
-	{104, 536, 7, {315, 316}, {0, 0}}, // 9: Shelves.
-	{369, 499, 7, {317, 318}, {1, 0}}, // 10: Window.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{1165, 594, 2, {322, 301}, {0, 0}, {1165, 594}}, // 1: Door.
+	{355, 595, 1, {302, 303}, {0, 1}, {430, 546}}, // 2: Pair of books.
+	{355, 595, 1, {304, 305}, {1, 0}, {430, 546}}, // 3: Crack.
+	{550, 647, 7, {306, 307}, {1, 0}, {492, 600}}, // 4: Money.
+	{550, 647, 7, {308, 319}, {1, 0}, {492, 600}}, // 5: Papers.
+	{550, 647, 7, {309, 310}, {1, 1}, {492, 600}}, // 6: Device.
+	{815, 508, 1, {311, 312}, {0, 0}, {867, 464}}, // 7: Shelves.
+	{550, 647, 7, {313, 314}, {0, 0}, {492, 600}}, // 8: Secret safe.
+	{104, 536, 7, {315, 316}, {0, 0}, {70, 507}}, // 9: Shelves.
+	{369, 499, 7, {317, 318}, {1, 0}, {342, 470}}, // 10: Window.
 };
 
 const RunawayResponse kResponses[] = {
@@ -131,6 +131,18 @@ void Scene4030::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport
 	if (zone == 4 && _books != kUnexamined) {
 		drawForeground(viewport, 4);
 	}
+}
+
+int8 Scene4030::customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const {
+	if (museumChapter() && !item) {
+		if (id == 1 && use) {
+			return _safeOpen ? 0 : 3;
+		}
+		if (id == 2 && !use) {
+			return _books == kUnexamined;
+		}
+	}
+	return approach;
 }
 
 RunawayRoomScene::ActionResult Scene4030::dispatchCustomSceneAction(uint16 action) {

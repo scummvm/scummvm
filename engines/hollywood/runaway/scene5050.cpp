@@ -26,15 +26,15 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{-100, 510, 0, {302, 301}, {0, 1}}, // 1: Path.
-	{303, 534, 1, {303, 304}, {0, 1}}, // 2: Helmet.
-	{251, 420, 1, {305, 306}, {0, 1}}, // 3: Hanging Bullet Belt.
-	{251, 420, 1, {307, 308}, {0, 1}}, // 4: Machine Gun.
-	{200, 450, 1, {309, 310}, {0, 0}}, // 5: Bullet Hole.
-	{200, 450, 7, {311, 312}, {0, 0}}, // 6: Pilot'S Seat.
-	{200, 450, 1, {313, 314}, {0, 0}}, // 7: Gunner'S Seat.
-	{0, 0, 0, {0, 0}, {0, 0}}, // 8: String Of Bullets.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{-100, 510, 0, {302, 301}, {0, 1}, {0, 495}}, // 1: Path.
+	{303, 534, 1, {303, 304}, {0, 1}, {341, 510}}, // 2: Helmet.
+	{251, 420, 1, {305, 306}, {0, 1}, {276, 406}}, // 3: Hanging Bullet Belt.
+	{251, 420, 1, {307, 308}, {0, 1}, {336, 337}}, // 4: Machine Gun.
+	{200, 450, 1, {309, 310}, {0, 0}, {559, 486}}, // 5: Bullet Hole.
+	{200, 450, 7, {311, 312}, {0, 0}, {497, 428}}, // 6: Pilot'S Seat.
+	{200, 450, 1, {313, 314}, {0, 0}, {283, 291}}, // 7: Gunner'S Seat.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}}, // 8: String Of Bullets.
 };
 
 const RunawayResponse kResponses[] = {
@@ -101,6 +101,13 @@ void Scene5050::applyCustomHotspotState() {
 
 float Scene5050::actorHeight() const {
 	return _position.y * 0.128865972f + 197.809280f;
+}
+
+int8 Scene5050::customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const {
+	if (id == 3 && !use && !item) {
+		return !_desert.beltSeen;
+	}
+	return approach;
 }
 
 RunawayRoomScene::ActionResult Scene5050::dispatchCustomSceneAction(uint16 action) {

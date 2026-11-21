@@ -43,16 +43,17 @@ struct RunawayHotspot {
 	int16 x, y;
 	byte facing;
 	uint16 action[2]; // Look, use; IDs from the original room's action table.
-	byte approach[2];
+	int8 approach[2]; // -1: keep facing; 0: face lookPosition; 1: walk and turn; 2/3: walk without turning.
+	Common::Point lookPosition;
 };
 
 struct RunawayItemAction {
-	constexpr RunawayItemAction(uint16 roomId, byte itemId, byte hotspotId, uint16 actionId, bool walk = true) :
+	constexpr RunawayItemAction(uint16 roomId, byte itemId, byte hotspotId, uint16 actionId, int8 walk = 1) :
 		room(roomId), item(itemId), hotspot(hotspotId), action(actionId), approach(walk) {}
 	uint16 room;
 	byte item, hotspot;
 	uint16 action;
-	bool approach;
+	int8 approach;
 };
 
 struct RunawayResponse {

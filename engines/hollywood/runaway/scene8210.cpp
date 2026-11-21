@@ -26,15 +26,15 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{430, 540, 4, {301, 302}, {0, 3}}, // 1: Door.
-	{430, 540, 4, {301, 302}, {0, 3}}, // 2: Door.
-	{294, 513, 0, {303, 304}, {1, 1}}, // 3: Doctor's bag.
-	{449, 504, 0, {305, 306}, {0, 0}}, // 4: Dead body.
-	{757, 508, 1, {307, 308}, {1, 0}}, // 5: Bucket.
-	{660, 507, 0, {309, 310}, {0, 0}}, // 6: Plate.
-	{449, 504, 0, {311, 312}, {0, 0}}, // 7: Pitcher.
-	{341, 502, 0, {313, 314}, {1, 0}} // 8: Bottle.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{430, 540, 4, {301, 302}, {0, 3}, {430, 599}}, // 1: Door.
+	{430, 540, 4, {301, 302}, {0, 3}, {430, 599}}, // 2: Door.
+	{294, 513, 0, {303, 304}, {1, 1}, {288, 471}}, // 3: Doctor's bag.
+	{449, 504, 0, {305, 306}, {0, 0}, {449, 467}}, // 4: Dead body.
+	{757, 508, 1, {307, 308}, {1, 0}, {794, 450}}, // 5: Bucket.
+	{660, 507, 0, {309, 310}, {0, 0}, {660, 465}}, // 6: Plate.
+	{449, 504, 0, {311, 312}, {0, 0}, {449, 467}}, // 7: Pitcher.
+	{341, 502, 0, {313, 314}, {1, 0}, {341, 471}} // 8: Bottle.
 };
 
 const RunawayResponse kResponses[] = {
@@ -100,7 +100,7 @@ bool Scene8210::adjustCustomWalkTargetToFloorMask(Common::Point &target) const {
 	return false;
 }
 
-bool Scene8210::shouldApproachHotspot(byte id, bool use, byte item, bool approach) const {
+int8 Scene8210::customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const {
 	if (!item && !use && ((id == 5 && _town.bucketSeen) || (id == 8 && _town.bottleSeen))) {
 		return false;
 	}

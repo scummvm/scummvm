@@ -46,6 +46,7 @@ private:
 	float actorHeight() const override;
 	void setupActorDepth(RunawayActor::RenderParams &params) const override;
 	Common::U32String hotspotName(byte id) const override;
+	int8 customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const override;
 	void findWalkPath(Common::Point target) override;
 	bool adjustCustomWalkTargetToFloorMask(Common::Point &target) const override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;

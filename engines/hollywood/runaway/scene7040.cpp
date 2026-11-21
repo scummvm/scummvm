@@ -29,12 +29,12 @@ namespace {
 enum CryptDoorState { kBlocked, kCleared, kOpen, kSealed };
 
 const RunawayHotspot kHotspots[] = {
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{446, 486, 1, {301, 302}, {0, 0}}, // 1: Monolith.
-	{446, 486, 1, {303, 304}, {0, 1}}, // 2: Monolith's mouth.
-	{0, 599, 5, {305, 306}, {0, 3}}, // 3: Path.
-	{705, 340, 1, {307, 308}, {0, 0}}, // 4: Cave in the rock.
-	{109, 491, 0, {309, 310}, {0, 1}} // 5: Bush.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{446, 486, 1, {301, 302}, {0, 0}, {510, 451}}, // 1: Monolith.
+	{446, 486, 1, {303, 304}, {0, 1}, {510, 451}}, // 2: Monolith's mouth.
+	{0, 599, 5, {305, 306}, {0, 3}, {-100, 650}}, // 3: Path.
+	{705, 340, 1, {307, 308}, {0, 0}, {524, 438}}, // 4: Cave in the rock.
+	{109, 491, 0, {309, 310}, {0, 1}, {109, 450}} // 5: Bush.
 };
 
 const RunawayResponse kResponses[] = {
@@ -192,11 +192,18 @@ bool Scene7040::adjustCustomWalkTargetToFloorMask(Common::Point &target) const {
 	return false;
 }
 
-bool Scene7040::shouldApproachHotspot(byte id, bool use, byte item, bool approach) const {
+int8 Scene7040::customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const {
 	if (id == 5 && use && !item) {
 		return _hopi.keyholeBlockedKnown && !_inventory.contains(8);
 	}
 	return approach;
+}
+
+Common::Point Scene7040::sceneActionLookPosition(byte id) const {
+	if (id == 1 && _hopi.cryptDoor == kOpen) {
+		return Common::Point(323, 427);
+	}
+	return RunawayRoomScene::sceneActionLookPosition(id);
 }
 
 void Scene7040::handleAnimationFrameHook() {

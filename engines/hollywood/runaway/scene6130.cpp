@@ -26,12 +26,12 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{0, 599, 5, {301, 302}, {0, 3}}, // 1: Path.
-	{402, 374, 1, {303, 304}, {0, 3}}, // 2: House.
-	{491, 495, 3, {305, 306}, {0, 0}}, // 3: Well.
-	{486, 519, 3, {307, 308}, {1, 1}}, // 4: Stone.
-	{0, 0, 0, {309, 310}, {0, 0}} // 5: Skull.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{0, 599, 5, {301, 302}, {0, 3}, {-100, 599}}, // 1: Path.
+	{402, 374, 1, {303, 304}, {0, 3}, {637, 237}}, // 2: House.
+	{491, 495, 3, {305, 306}, {0, 0}, {715, 540}}, // 3: Well.
+	{486, 519, 3, {307, 308}, {1, 1}, {527, 550}}, // 4: Stone.
+	{0, 0, 0, {309, 310}, {0, 0}, {323, 544}} // 5: Skull.
 };
 
 const RunawayResponse kResponses[] = {
@@ -105,7 +105,7 @@ void Scene6130::setupActorDepth(RunawayActor::RenderParams &params) const {
 	params.depthY[2] = 599;
 }
 
-bool Scene6130::shouldApproachHotspot(byte id, bool use, byte item, bool approach) const {
+int8 Scene6130::customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const {
 	if (!item && id == 4 && !use && _town.stone) {
 		return false;
 	}

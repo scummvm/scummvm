@@ -355,7 +355,6 @@ void RunawayRoomScene::arrive() {
 	const byte id = _pendingHotspot;
 	_pendingHotspot = 0;
 	if (id) {
-		_facing = customizeSceneActionFacing(id, hotspot(id)->facing);
 		if (_pendingItem)
 			useItem(_pendingItem, id);
 		else
@@ -376,7 +375,7 @@ void RunawayRoomScene::click(Common::Point mouse, RunawayVerb verb, byte item) {
 		const uint index = verb == kVerbLook && !item ? 0 : 1;
 		_pendingHotspot = id;
 		_pendingAction = spot->action[index];
-		bool approach = spot->approach[index] != 0;
+		int8 approach = spot->approach[index];
 		if (item) {
 			approach = _game != kRunawayFullGame;
 			const RunawayRoom *room = findRunawayRoom(_room);
@@ -388,11 +387,13 @@ void RunawayRoomScene::click(Common::Point mouse, RunawayVerb verb, byte item) {
 				}
 			}
 		}
-		approach = shouldApproachHotspot(id, index != 0, item, approach);
-		if (approach) {
+		approach = customizeSceneActionApproach(id, index != 0, item, approach);
+		if (approach > 0) {
 			const Common::Point position(spot->x, spot->y);
-			walkTo(customizeSceneActionPosition(id, item, position));
+			const byte facing = approach > 1 ? 0xff : customizeSceneActionFacing(id, spot->facing);
+			walkTo(customizeSceneActionPosition(id, item, position), facing);
 		} else {
+			_arrivalFacing = approach < 0 ? 0xff : runawayFacingTo(_position, sceneActionLookPosition(id));
 			_walkPath.clear();
 			arrive();
 		}

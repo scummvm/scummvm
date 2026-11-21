@@ -26,6 +26,16 @@
 
 namespace Hollywood {
 
+byte runawayFacingTo(Common::Point position, Common::Point target) {
+	const int dx = target.x - position.x;
+	const int dy = target.y - position.y;
+	// Native 0x433480 uses six standing directions, with a 50-degree slope boundary.
+	if (!dx || ABS(dy) > ABS(dx) * 1.191754) {
+		return dy > 0 ? 4 : 0;
+	}
+	return dy < 0 ? (dx > 0 ? 1 : 7) : (dx > 0 ? 3 : 5);
+}
+
 bool RunawayWalkMap::walkable(int x, int y) const {
 	return x >= 0 && x < _width && y >= 0 && y < _height && _maps[_mask[y * _width + x]] != 0;
 }

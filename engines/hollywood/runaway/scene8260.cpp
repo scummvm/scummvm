@@ -27,14 +27,14 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{0, 510, 5, {301, 302}, {0, 3}}, // 1: Town.
-	{363, 395, 7, {303, 304}, {0, 1}}, // 2: Driver's cab.
-	{495, 433, 1, {305, 306}, {0, 1}}, // 3: Smokestack.
-	{432, 411, 0, {307, 308}, {0, 0}}, // 4: Water tank opening.
-	{413, 485, 7, {309, 310}, {1, 1}}, // 5: Object.
-	{257, 430, 1, {311, 312}, {0, 0}}, // 6: Whistle.
-	{1023, 437, 0, {315, 316}, {0, 3}} // 7: Outskirts of town.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{0, 510, 5, {301, 302}, {0, 3}, {0, 510}}, // 1: Town.
+	{363, 395, 7, {303, 304}, {0, 1}, {273, 286}}, // 2: Driver's cab.
+	{495, 433, 1, {305, 306}, {0, 1}, {582, 344}}, // 3: Smokestack.
+	{432, 411, 0, {307, 308}, {0, 0}, {435, 351}}, // 4: Water tank opening.
+	{413, 485, 7, {309, 310}, {1, 1}, {392, 465}}, // 5: Object.
+	{257, 430, 1, {311, 312}, {0, 0}, {257, 397}}, // 6: Whistle.
+	{1023, 437, 0, {315, 316}, {0, 3}, {1100, 400}} // 7: Outskirts of town.
 };
 
 const RunawayResponse kResponses[] = {
@@ -107,7 +107,7 @@ Common::U32String Scene8260::hotspotName(byte id) const {
 	return RunawayRoomScene::hotspotName(id);
 }
 
-bool Scene8260::shouldApproachHotspot(byte id, bool use, byte item, bool approach) const {
+int8 Scene8260::customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const {
 	if (id == 5 && !item && !use && _finale.locomotiveBadge == 2) {
 		return false;
 	}

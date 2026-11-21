@@ -30,31 +30,31 @@ namespace {
 
 // RESOURCE.B02; approach points and action IDs from the retail room at 0x444aa0.
 const RunawayHotspot kHotspots[] = {
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{1265, 546, 1, {301, 346}, {0, 1}}, // 1: Bathroom door.
-	{1075, 534, 7, {302, 303}, {0, 0}}, // 2: Gina.
-	{846, 453, 1, {304, 305}, {1, 1}}, // 3: Glass.
-	{858, 453, 1, {306, 307}, {1, 1}}, // 4: Package of pills.
-	{622, 457, 7, {308, 309}, {0, 1}}, // 5: Sheet.
-	{417, 444, 7, {310, 311}, {0, 0}}, // 6: Locker.
-	{417, 444, 7, {312, 313}, {0, 1}}, // 7: Gina's bag.
-	{265, 456, 7, {314, 332}, {1, 1}}, // 8: Window.
-	{690, 540, 1, {315, 316}, {1, 1}}, // 9: Gina's medical chart.
-	{453, 455, 1, {317, 318}, {1, 1}}, // 10: Chart.
-	{687, 448, 7, {319, 320}, {0, 1}}, // 11: Fake patient.
-	{459, 473, 7, {321, 322}, {0, 0}}, // 12: Fire sprinkler.
-	{846, 453, 7, {323, 324}, {0, 0}}, // 13: Buzzer.
-	{712, 445, 3, {323, 324}, {0, 0}}, // 14: Buzzer.
-	{265, 456, 7, {325, 326}, {0, 0}}, // 15: Radiator.
-	{713, 533, 1, {327, 328}, {0, 0}}, // 16: Poster.
-	{454, 455, 1, {329, 328}, {0, 0}}, // 17: Poster.
-	{1265, 546, 1, {330, 331}, {1, 0}}, // 18: Emergency exit map.
-	{404, 456, 1, {344, 345}, {0, 0}}, // 19: Bed.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{1265, 546, 1, {301, 346}, {0, 1}, {1324, 530}}, // 1: Bathroom door.
+	{1075, 534, 7, {302, 303}, {0, 0}, {1040, 463}}, // 2: Gina.
+	{846, 453, 1, {304, 305}, {1, 1}, {902, 421}}, // 3: Glass.
+	{858, 453, 1, {306, 307}, {1, 1}, {902, 421}}, // 4: Package of pills.
+	{622, 457, 7, {308, 309}, {0, 1}, {620, 436}}, // 5: Sheet.
+	{417, 444, 7, {310, 311}, {0, 0}, {401, 432}}, // 6: Locker.
+	{417, 444, 7, {312, 313}, {0, 1}, {401, 432}}, // 7: Gina's bag.
+	{265, 456, 7, {314, 332}, {1, 1}, {237, 438}}, // 8: Window.
+	{690, 540, 1, {315, 316}, {1, 1}, {748, 517}}, // 9: Gina's medical chart.
+	{453, 455, 1, {317, 318}, {1, 1}, {650, 420}}, // 10: Chart.
+	{687, 448, 7, {319, 320}, {0, 1}, {650, 420}}, // 11: Fake patient.
+	{459, 473, 7, {321, 322}, {0, 0}, {459, 473}}, // 12: Fire sprinkler.
+	{846, 453, 7, {323, 324}, {0, 0}, {982, 412}}, // 13: Buzzer.
+	{712, 445, 3, {323, 324}, {0, 0}, {666, 407}}, // 14: Buzzer.
+	{265, 456, 7, {325, 326}, {0, 0}, {237, 438}}, // 15: Radiator.
+	{713, 533, 1, {327, 328}, {0, 0}, {1046, 489}}, // 16: Poster.
+	{454, 455, 1, {329, 328}, {0, 0}, {696, 424}}, // 17: Poster.
+	{1265, 546, 1, {330, 331}, {1, 0}, {1324, 530}}, // 18: Emergency exit map.
+	{404, 456, 1, {344, 345}, {0, 0}, {650, 420}}, // 19: Bed.
 	// IDs 20-22 hold alternate bed/chart shapes and names in the original.
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{313, 532, 5, {351, 352}, {0, 0}}, // 23: Hallway door.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{313, 532, 5, {351, 352}, {-1, 0}, {40, 599}}, // 23: Hallway door.
 };
 
 // Item IDs 1-19, then hotspot IDs in kHotspots order. Zero uses kItemActions.
@@ -402,25 +402,21 @@ RunawayRoomScene::ActionResult Scene2020::dispatchCustomSceneAction(uint16 actio
 	case 305: // Take the glass.
 		_hospital.glassTaken = 1;
 		_inventory.add(13);
-		_facing = 4;
 		say(62, 0, true);
 		return kBackgroundChanged;
 	case 307: // Take the sleeping pills.
 		_hospital.pillsTaken = 1;
 		_inventory.add(8);
-		_facing = 4;
 		say(57, 0, true);
 		return kBackgroundChanged;
 	case 309: // Take the sheet.
 		_hospital.sheetTaken = 1;
 		_inventory.add(7);
-		_facing = 4;
 		say(18, _random.getRandomNumber(2), true);
 		return kBackgroundChanged;
 	case 313: // Take Gina's bag.
 		_hospital.bagTaken = 1;
 		_inventory.add(5);
-		_facing = 6;
 		say(9, 1);
 		return kBackgroundChanged;
 	case 330: // Read the emergency exit map.

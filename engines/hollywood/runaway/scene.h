@@ -161,7 +161,7 @@ protected:
 	virtual bool shouldDrawActor() const { return true; }
 	virtual bool shouldUpdateActor() const { return true; }
 	virtual bool shouldPlayGameplayClickPath() const { return true; }
-	virtual bool shouldApproachHotspot(byte id, bool use, byte item, bool approach) const { return approach; }
+	virtual int8 customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const { return approach; }
 	// Accept the adjusted target without the shared floor-mask adjustment.
 	virtual bool adjustCustomWalkTargetToFloorMask(Common::Point &target) const { return false; }
 	// Return true when a scene sequence owns this frame's action updates.
@@ -204,6 +204,7 @@ protected:
 	virtual bool isValidHotspot(byte id) const { return hotspot(id) != nullptr; }
 	virtual Common::Point customizeSceneActionPosition(byte id, byte item, Common::Point position) const { return position; }
 	virtual byte customizeSceneActionFacing(byte id, byte facing) const { return facing; }
+	virtual Common::Point sceneActionLookPosition(byte id) const { return hotspot(id)->lookPosition; }
 
 	byte walkZone() const { return _originalMaps[_mask[_position.y * _background.w + _position.x]]; }
 

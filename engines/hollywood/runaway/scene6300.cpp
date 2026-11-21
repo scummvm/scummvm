@@ -28,23 +28,23 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{1397, 456, 1, {301, 302}, {0, 3}}, // 1: Stairs.
-	{40, 436, 7, {303, 304}, {0, 1}}, // 2: Door.
-	{389, 381, 7, {303, 305}, {0, 1}}, // 3: Door.
-	{644, 342, 7, {303, 306}, {0, 1}}, // 4: Door.
-	{741, 518, 7, {307, 308}, {0, 0}}, // 5: Crane controls.
-	{0, 0, 0, {309, 310}, {0, 0}}, // 6: Statue.
-	{862, 438, 7, {311, 312}, {0, 0}}, // 7: Apparatus.
-	{862, 438, 7, {313, 314}, {0, 1}}, // 8: Lever.
-	{0, 0, 0, {315, 316}, {0, 0}}, // 9: Bucket of paint.
-	{400, 452, 7, {317, 318}, {0, 0}}, // 10: Water tank.
-	{274, 489, 7, {319, 320}, {1, 1}}, // 11: Tools.
-	{0, 0, 1, {321, 322}, {0, 0}}, // 12: Bed.
-	{687, 525, 5, {323, 324}, {0, 1}}, // 13: Saturn.
-	{211, 507, 7, {331, 332}, {0, 0}}, // 14: Sculpture.
-	{216, 505, 7, {327, 328}, {0, 1}}, // 15: Container.
-	{642, 568, 7, {329, 330}, {0, 1}} // 16: Blowtorch.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{1397, 456, 1, {301, 302}, {0, 3}, {1397, 456}}, // 1: Stairs.
+	{40, 436, 7, {303, 304}, {0, 1}, {40, 436}}, // 2: Door.
+	{389, 381, 7, {303, 305}, {0, 1}, {389, 381}}, // 3: Door.
+	{644, 342, 7, {303, 306}, {0, 1}, {644, 342}}, // 4: Door.
+	{741, 518, 7, {307, 308}, {0, 0}, {726, 495}}, // 5: Crane controls.
+	{0, 0, 0, {309, 310}, {0, 0}, {778, 599}}, // 6: Statue.
+	{862, 438, 7, {311, 312}, {0, 0}, {930, 417}}, // 7: Apparatus.
+	{862, 438, 7, {313, 314}, {0, 1}, {849, 423}}, // 8: Lever.
+	{0, 0, 0, {315, 316}, {0, 0}, {996, 402}}, // 9: Bucket of paint.
+	{400, 452, 7, {317, 318}, {0, 0}, {400, 452}}, // 10: Water tank.
+	{274, 489, 7, {319, 320}, {1, 1}, {233, 457}}, // 11: Tools.
+	{0, 0, 1, {321, 322}, {0, 0}, {788, 341}}, // 12: Bed.
+	{687, 525, 5, {323, 324}, {0, 1}, {494, 548}}, // 13: Saturn.
+	{211, 507, 7, {331, 332}, {0, 0}, {169, 502}}, // 14: Sculpture.
+	{216, 505, 7, {327, 328}, {0, 1}, {179, 475}}, // 15: Container.
+	{642, 568, 7, {329, 330}, {0, 1}, {602, 540}} // 16: Blowtorch.
 };
 
 const RunawayResponse kResponses[] = {
@@ -66,7 +66,7 @@ const RunawayItemAction kItemActions[] = {
 	{6300, 10, 11, 338, false}, {6300, 21, 10, 334, false},
 	{6300, 23, 10, 333}, {6300, 24, 10, 337},
 	{6300, 25, 10, 334, false}, {6300, 26, 10, 334, false},
-	{6300, 29, 13, 336}, {6300, 30, 13, 339, false},
+	{6300, 29, 13, 336, -1}, {6300, 30, 13, 339, false},
 	{6300, 31, 10, 334, false}
 };
 
@@ -338,6 +338,20 @@ Common::U32String Scene6300::hotspotName(byte id) const {
 	return RunawayRoomScene::hotspotName(id);
 }
 
+int8 Scene6300::customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const {
+	if (_room == 6300 && id == 8 && use && !item) {
+		return _town.catapult != 1;
+	}
+	return approach;
+}
+
+Common::Point Scene6300::sceneActionLookPosition(byte id) const {
+	if (_room == 6300 && id == 6 && _town.statueLowered) {
+		return Common::Point(996, 402);
+	}
+	return RunawayRoomScene::sceneActionLookPosition(id);
+}
+
 RunawayRoomScene::ActionResult Scene6300::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 302: // Return downstairs to the saloon.
@@ -468,6 +482,7 @@ RunawayRoomScene::ActionResult Scene6300::dispatchCustomSceneAction(uint16 actio
 		} else if ((!sculpture && _town.roughSculptureRefused) || (sculpture == 1 && _town.polishedSculptureRefused)) {
 			say(29, 36);
 		} else {
+			_facing = 4;
 			_kevinTalking = true;
 			say(29, !sculpture ? 1 : sculpture == 1 ? 11 : 19);
 			say(28);

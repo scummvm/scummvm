@@ -27,15 +27,15 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{0, 453, 5, {301, 302}, {0, 3}}, // 1: Door.
-	{782, 408, 7, {303, 304}, {0, 1}}, // 2: Stairs.
-	{504, 452, 1, {305, 306}, {1, 1}}, // 3: Flower pot.
-	{1286, 435, 0, {307, 308}, {0, 0}}, // 4: Watering can.
-	{742, 332, 5, {309, 310}, {0, 0}}, // 5: Small room.
-	{610, 467, 1, {311, 312}, {0, 0}}, // 6: Door knob.
-	{1393, 427, 0, {313, 314}, {0, 0}}, // 7: Plant.
-	{955, 396, 1, {315, 316}, {0, 0}} // 8: Bonsai tree.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{0, 453, 5, {301, 302}, {0, 3}, {0, 453}}, // 1: Door.
+	{782, 408, 7, {303, 304}, {0, 1}, {625, 391}}, // 2: Stairs.
+	{504, 452, 1, {305, 306}, {1, 1}, {567, 418}}, // 3: Flower pot.
+	{1286, 435, 0, {307, 308}, {0, 0}, {1286, 405}}, // 4: Watering can.
+	{742, 332, 5, {309, 310}, {0, 0}, {821, 340}}, // 5: Small room.
+	{610, 467, 1, {311, 312}, {0, 0}, {669, 431}}, // 6: Door knob.
+	{1393, 427, 0, {313, 314}, {0, 0}, {1393, 386}}, // 7: Plant.
+	{955, 396, 1, {315, 316}, {0, 0}, {1009, 366}} // 8: Bonsai tree.
 };
 
 const RunawayResponse kResponses[] = {
@@ -155,6 +155,13 @@ void Scene6240::findWalkPath(Common::Point target) {
 bool Scene6240::adjustCustomWalkTargetToFloorMask(Common::Point &target) const {
 	target.x = MIN<int>(target.x, 1510);
 	return false;
+}
+
+int8 Scene6240::customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const {
+	if (id == 5 && use && !item && _town.gardeningShed) {
+		return -1;
+	}
+	return approach;
 }
 
 RunawayRoomScene::ActionResult Scene6240::dispatchCustomSceneAction(uint16 action) {

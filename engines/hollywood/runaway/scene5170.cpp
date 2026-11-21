@@ -26,25 +26,25 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{339, 512, 7, {301, 302}, {0, 0}}, // 1: Outside Of The Bus.
-	{666, 303, 0, {303, 304}, {0, 1}}, // 2: Back Of The Bus.
-	{727, 436, 1, {305, 306}, {1, 1}}, // 3: Right-Hand Shelf.
-	{649, 499, 4, {307, 308}, {0, 1}}, // 4: Axle.
-	{113, 540, 5, {309, 310}, {1, 1}}, // 5: Pocket.
-	{727, 436, 1, {311, 312}, {0, 1}}, // 6: Sunglasses.
-	{462, 448, 7, {313, 314}, {1, 1}}, // 7: Item Under Bed.
-	{727, 436, 1, {315, 316}, {1, 0}}, // 8: Middle Shelf.
-	{727, 436, 1, {317, 318}, {1, 0}}, // 9: Left-Hand Shelf.
-	{666, 303, 0, {303, 304}, {0, 1}}, // 10: Back Of The Bus.
-	{0, 0, 0, {0, 0}, {0, 0}}, // 11: Door.
-	{0, 0, 0, {0, 0}, {0, 0}}, // 12: Pile Of Lipstick.
-	{0, 0, 0, {0, 0}, {0, 0}}, // 13: Makeshift Crank.
-	{0, 0, 0, {0, 0}, {0, 0}}, // 14: Handle.
-	{0, 0, 0, {0, 0}, {0, 0}}, // 15: Necklaces.
-	{0, 0, 0, {0, 0}, {0, 0}}, // 16: Rings And Earrings.
-	{0, 0, 0, {0, 0}, {0, 0}}, // 17: Outside Of The Bus.
-	{0, 0, 0, {0, 0}, {0, 0}}, // 18: Right-Hand Shelf.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{339, 512, 7, {301, 302}, {0, 0}, {113, 540}}, // 1: Outside Of The Bus.
+	{666, 303, 0, {303, 304}, {0, 1}, {679, 290}}, // 2: Back Of The Bus.
+	{727, 436, 1, {305, 306}, {1, 1}, {800, 400}}, // 3: Right-Hand Shelf.
+	{649, 499, 4, {307, 308}, {0, 1}, {649, 500}}, // 4: Axle.
+	{113, 540, 5, {309, 310}, {-1, 1}, {71, 552}}, // 5: Pocket.
+	{727, 436, 1, {311, 312}, {0, 1}, {800, 400}}, // 6: Sunglasses.
+	{462, 448, 7, {313, 314}, {1, 1}, {424, 414}}, // 7: Item Under Bed.
+	{727, 436, 1, {315, 316}, {1, 0}, {800, 400}}, // 8: Middle Shelf.
+	{727, 436, 1, {317, 318}, {1, 0}, {800, 400}}, // 9: Left-Hand Shelf.
+	{666, 303, 0, {303, 304}, {0, 1}, {679, 290}}, // 10: Back Of The Bus.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}}, // 11: Door.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}}, // 12: Pile Of Lipstick.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}}, // 13: Makeshift Crank.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}}, // 14: Handle.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}}, // 15: Necklaces.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}}, // 16: Rings And Earrings.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}}, // 17: Outside Of The Bus.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}}, // 18: Right-Hand Shelf.
 };
 
 const RunawayResponse kResponses[] = {
@@ -123,6 +123,29 @@ float Scene5170::actorHeight() const {
 
 void Scene5170::setupActorDepth(RunawayActor::RenderParams &params) const {
 	params.depthY[4] = 599;
+}
+
+int8 Scene5170::customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const {
+	if (!item) {
+		if (id == 5 && use && _desert.keyTaken) {
+			return 0;
+		}
+		if (!use) {
+			switch (id) {
+			case 3:
+				return !_desert.lipstickShelf;
+			case 7:
+				return !_desert.vacuum;
+			case 8:
+				return !_desert.necklacesSeen;
+			case 9:
+				return !_desert.ringsSeen;
+			default:
+				break;
+			}
+		}
+	}
+	return approach;
 }
 
 RunawayRoomScene::ActionResult Scene5170::dispatchCustomSceneAction(uint16 action) {

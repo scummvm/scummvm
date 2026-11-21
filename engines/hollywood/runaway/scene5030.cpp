@@ -38,31 +38,32 @@ struct SceneHotspot {
 	int x, y;
 	byte facing;
 	bool approach[2];
+	Common::Point lookPosition;
 };
 
 // Approach points and facings from demo initializer 0x439e40, with approach
-// flags from retail 0x479ea0. The hit regions are decoded from E03.
+// flags and look targets from retail 0x479ea0. The hit regions are decoded from E03.
 const SceneHotspot kHotspots[] = {
-	{0, 0, 0, {false, false}},
-	{101, 507, 7, {true, false}},
-	{101, 507, 7, {true, true}},
-	{406, 383, 0, {false, false}},
-	{1062, 473, 1, {false, false}},
-	{942, 407, 0, {true, true}},
-	{1215, 542, 7, {true, true}},
-	{406, 383, 7, {true, false}},
-	{1062, 473, 7, {false, false}},
-	{1019, 405, 0, {true, true}},
-	{1215, 542, 7, {true, true}},
-	{1215, 542, 7, {true, true}},
-	{495, 381, 7, {false, false}},
-	{873, 409, 1, {false, false}},
-	{974, 406, 7, {false, true}},
-	{262, 426, 0, {true, false}},
-	{262, 426, 7, {false, true}},
-	{609, 379, 1, {true, true}},
-	{1062, 473, 1, {false, true}},
-	{1215, 542, 7, {false, false}}
+	{0, 0, 0, {false, false}, {0, 0}},
+	{101, 507, 7, {true, false}, {42, 451}},
+	{101, 507, 7, {true, true}, {42, 451}},
+	{406, 383, 0, {false, false}, {406, 360}},
+	{1062, 473, 1, {false, false}, {1212, 459}},
+	{942, 407, 0, {true, true}, {942, 385}},
+	{1215, 542, 7, {true, true}, {1169, 479}},
+	{406, 383, 7, {true, false}, {371, 336}},
+	{1062, 473, 7, {false, false}, {1100, 450}},
+	{1019, 405, 0, {true, true}, {1019, 375}},
+	{1215, 542, 7, {true, true}, {1271, 477}},
+	{1215, 542, 7, {true, true}, {1100, 427}},
+	{495, 381, 7, {false, false}, {545, 362}},
+	{873, 409, 1, {false, false}, {844, 385}},
+	{974, 406, 7, {false, true}, {974, 380}},
+	{262, 426, 0, {true, false}, {253, 399}},
+	{262, 426, 7, {false, true}, {208, 400}},
+	{609, 379, 1, {true, true}, {652, 360}},
+	{1062, 473, 1, {false, true}, {1100, 450}},
+	{1215, 542, 7, {false, false}, {0, 0}}
 };
 
 } // End of anonymous namespace
@@ -462,8 +463,10 @@ void Scene5030::click(Common::Point mouse, RunawayVerb verb, byte item) {
 			approach = !_examined[id];
 		}
 		if (!approach) {
+			const Common::Point target = id == 8 && _coolerMoved ? Common::Point(1128, 406) : kHotspots[id].lookPosition;
+			_facing = runawayFacingTo(_position, target);
 			_walkPath.clear();
-			arrive();
+			arrive(false);
 			return;
 		}
 	}
@@ -640,7 +643,7 @@ void Scene5030::setPosition(Common::Point position, byte facing) {
 	_facing = facing;
 }
 
-void Scene5030::arrive() {
+void Scene5030::arrive(bool faceHotspot) {
 	if (_action == kWalkingAction) {
 		_facing = _actionFacing;
 		startAction(_afterWalk);
@@ -651,7 +654,9 @@ void Scene5030::arrive() {
 	_committedCaption.clear();
 	if (!id)
 		return;
-	_facing = kHotspots[id].facing;
+	if (faceHotspot) {
+		_facing = kHotspots[id].facing;
+	}
 	if (item) {
 		useItem(item, id);
 	} else if (_pendingVerb == kVerbLook) {

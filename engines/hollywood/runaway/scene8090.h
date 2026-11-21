@@ -53,7 +53,7 @@ private:
 	float actorHeight() const override;
 	byte initialActorFacing() const override;
 	void findWalkPath(Common::Point target) override;
-	bool shouldApproachHotspot(byte id, bool use, byte item, bool approach) const override;
+	int8 customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const override;
 	const char *actionCaptionVariant(byte id, bool look, byte item) const override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 	uint16 dialogueCue(byte choice, bool response) const override;

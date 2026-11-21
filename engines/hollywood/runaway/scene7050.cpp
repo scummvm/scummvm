@@ -26,13 +26,13 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{428, 518, 1, {301, 302}, {1, 1}}, // 1: Statue.
-	{717, 541, 0, {303, 304}, {1, 1}}, // 2: Object resting on the stone.
-	{60, 599, 5, {305, 306}, {0, 0}}, // 3: Inside of the cave.
-	{356, 501, 7, {307, 308}, {1, 0}}, // 4: Cross.
-	{664, 536, 1, {309, 310}, {1, 0}}, // 5: Cross.
-	{467, 445, 1, {311, 312}, {0, 3}} // 6: Village.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{428, 518, 1, {301, 302}, {1, 1}, {531, 472}}, // 1: Statue.
+	{717, 541, 0, {303, 304}, {1, 1}, {717, 517}}, // 2: Object resting on the stone.
+	{60, 599, 5, {305, 306}, {0, 0}, {0, 650}}, // 3: Inside of the cave.
+	{356, 501, 7, {307, 308}, {1, 0}, {321, 470}}, // 4: Cross.
+	{664, 536, 1, {309, 310}, {1, 0}, {715, 477}}, // 5: Cross.
+	{467, 445, 1, {311, 312}, {0, 3}, {453, 424}} // 6: Village.
 };
 
 const RunawayResponse kResponses[] = {
@@ -121,7 +121,7 @@ bool Scene7050::adjustCustomWalkTargetToFloorMask(Common::Point &target) const {
 	return false;
 }
 
-bool Scene7050::shouldApproachHotspot(byte id, bool use, byte item, bool approach) const {
+int8 Scene7050::customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const {
 	if (!use && !item) {
 		switch (id) {
 		case 2:

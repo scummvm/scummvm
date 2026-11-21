@@ -26,7 +26,7 @@ namespace Hollywood {
 namespace {
 
 const RunawayHotspot kHotspots[] = {
-	{0, 0, 0, {0, 0}, {0, 0}},
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
 };
 
 enum Speaker { kBrian, kLula, kMariola, kCarla };

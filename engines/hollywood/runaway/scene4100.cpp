@@ -41,17 +41,17 @@ const byte kFreezeBatteryFrames[] = {
 };
 
 const RunawayHotspot kHotspots[] = {
-	{0, 0, 0, {0, 0}, {0, 0}},
-	{141, 468, 7, {301, 302}, {0, 1}}, // 1: Door.
-	{196, 451, 1, {303, 304}, {0, 0}}, // 2: First aid kit.
-	{310, 457, 0, {305, 306}, {1, 1}}, // 3: Glass display case.
-	{204, 448, 1, {307, 308}, {1, 1}}, // 4: Button.
-	{310, 457, 0, {309, 310}, {1, 1}}, // 5: Mayan mask.
-	{906, 470, 0, {311, 312}, {1, 1}}, // 6: Scanner.
-	{1352, 431, 1, {315, 316}, {0, 0}}, // 7: Tank.
-	{111, 446, 1, {313, 314}, {1, 1}}, // 8: Golden object.
-	{539, 439, 1, {317, 318}, {0, 0}}, // 9: Device.
-	{1329, 409, 1, {328, 329}, {1, 1}}, // 10: Ladle.
+	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
+	{141, 468, 7, {301, 302}, {0, 1}, {43, 471}}, // 1: Door.
+	{196, 451, 1, {303, 304}, {0, 0}, {220, 420}}, // 2: First aid kit.
+	{310, 457, 0, {305, 306}, {1, 1}, {337, 425}}, // 3: Glass display case.
+	{204, 448, 1, {307, 308}, {1, 1}, {270, 421}}, // 4: Button.
+	{310, 457, 0, {309, 310}, {1, 0}, {327, 425}}, // 5: Mayan mask.
+	{906, 470, 0, {311, 312}, {1, 1}, {912, 400}}, // 6: Scanner.
+	{1352, 431, 1, {315, 316}, {0, 0}, {1400, 395}}, // 7: Tank.
+	{111, 446, 1, {313, 314}, {1, 1}, {136, 421}}, // 8: Golden object.
+	{539, 439, 1, {317, 318}, {0, 0}, {576, 400}}, // 9: Device.
+	{1329, 409, 1, {328, 329}, {1, 1}, {1381, 381}}, // 10: Ladle.
 };
 
 const RunawayResponse kResponses[] = {
@@ -535,11 +535,26 @@ void Scene4100::setupActorDepth(RunawayActor::RenderParams &params) const {
 	params.depthY[2] = 477;
 }
 
+int8 Scene4100::customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const {
+	if (museumChapter() && id == 6 && !use && !item) {
+		return !_museum.scannerSeen;
+	}
+	// Native 0x469870 only approaches the mask while the chamber is open.
+	if (id == 5 && use && !item) {
+		return !museumChapter() || _museum.chamberOpen;
+	}
+	return approach;
+}
+
 Common::Point Scene4100::customizeSceneActionPosition(byte id, byte item, Common::Point position) const {
 	if (museumChapter() && item == 5 && (id == 3 || id == 4)) {
 		return Common::Point(204, 448);
 	}
 	return position;
+}
+
+byte Scene4100::customizeSceneActionFacing(byte id, byte facing) const {
+	return !museumChapter() && (id == 3 || id == 5) ? 1 : facing;
 }
 
 void Scene4100::closeChamber() {

@@ -56,6 +56,8 @@ private:
 	void findWalkPath(Common::Point target) override;
 	bool adjustCustomWalkTargetToFloorMask(Common::Point &target) const override;
 	Common::U32String hotspotName(byte id) const override;
+	Common::Point sceneActionLookPosition(byte id) const override;
+	int8 customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const override;
 
 	void startKevinConversation(bool introduction);
 	void updateKevinTopics();

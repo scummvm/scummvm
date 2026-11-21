@@ -48,7 +48,7 @@ private:
 	float actorHeight() const override;
 	void findWalkPath(Common::Point target) override;
 	bool adjustCustomWalkTargetToFloorMask(Common::Point &target) const override;
-	bool shouldApproachHotspot(byte id, bool use, byte item, bool approach) const override;
+	int8 customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const override;
 	Common::U32String hotspotName(byte id) const override;
 
 	Graphics::ManagedSurface _statue;

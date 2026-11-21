@@ -97,7 +97,7 @@ private:
 	enum HatchState { kHidden, kLocked, kUnlocked, kOpen };
 	bool loadRoomGraphics();
 	void walkTo(Common::Point target);
-	void arrive();
+	void arrive(bool faceHotspot = true);
 	void say(uint16 row);
 	void sayCue(uint16 cue, byte variation);
 	void pickUp(byte hotspot, byte item, uint patch);
