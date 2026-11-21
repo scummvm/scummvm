@@ -114,6 +114,7 @@ class FileSystem(Enum):
     hfs = "hfs"
     iso9660 = "iso9660"
     threedo = "3do"
+    twogs = "2gs"
 
 
 class Extension(Enum):
@@ -490,11 +491,15 @@ def extract_prodos_image(image: bytes, destination_dir: Path) -> None:
 
     walk(2, destination_dir)  # block 2 = volume directory key block
 
+def extract_twogs(args: argparse.Namespace) -> None:
+    data = args.src.read_bytes()
+
+    extract_prodos_image(data, args.dir)
 
 def check_fs(iso: str) -> FileSystem:
     disk_formats = []
     f = open(iso, "rb")
-    # 3do 
+    # 3do
     f_size = f.seek(0, 2)
     blocks = f_size // SIZE_OF_BLOCK
     for block in range(min(16, blocks)):
@@ -510,6 +515,8 @@ def check_fs(iso: str) -> FileSystem:
 
     f.seek(0)
     mac_1 = f.read(2)
+    f.seek(0)
+    four_cc = f.read(4)
     f.seek(1 * SECTOR_SIZE)
     mac_2 = f.read(2)
     f.seek(2 * SECTOR_SIZE)
@@ -536,6 +543,10 @@ def check_fs(iso: str) -> FileSystem:
     elif mac_3 == b"BD" or mac_1 == b"ER":
         # (mac_1 == b"LK" and mac_3 == b"BD") is only for bootable volumes
         disk_formats.append(FileSystem.hfs)
+    # Mac-only disc
+    elif four_cc == b"2IMG":
+        # 2gs image
+        disk_formats.append(FileSystem.twogs)
 
     if len(set(disk_formats)) > 1:
         return FileSystem.hybrid
@@ -576,7 +587,7 @@ def convert_ccd_to_iso(img_path: Path, iso_path: Path) -> None:
                 raise ValueError(
                     f"Unsupported sector mode {mode}"
                 )
-            
+
 SECTOR_SIZES = {
     "AUDIO": 2352, "CDG": 2448, "MODE1_RAW": 2352,
     "MODE1/2048": 2048, "MODE1/2352": 2352, "MODE2_RAW": 2352,
@@ -648,7 +659,7 @@ def parse_cue_sheet(cue_path: Path) -> List[CueTrack]:
             except (ValueError, IndexError) as e:
                 logging.warning(f"Line {line_num}: Malformed line '{line}' - {e}")
 
-    return tracks      
+    return tracks
 
 def convert_cue_to_iso(cue_path: Path, iso_path: Path) -> None:
     """
@@ -1107,21 +1118,21 @@ def extract_iso(args: argparse.Namespace) -> None:
             args.src = temp_iso
         elif args.src.suffix.lower() == ".cue":
             temp_iso = args.dir / f"{args.src.stem}.iso"
-            
+
             convert_cue_to_iso(
                 args.src,
                 temp_iso
             )
-            
+
             args.src = temp_iso
         elif args.src.suffix.lower() == ".mds":
             temp_iso = args.dir / f"{args.src.stem}.iso"
-            
+
             convert_mds_to_iso(
                 args.src,
                 temp_iso
             )
-            
+
             args.src = temp_iso
         loglevel: str = args.log
 
@@ -1158,9 +1169,11 @@ def extract_iso(args: argparse.Namespace) -> None:
             extract_volume_hfs(args)
         elif args.fs == FileSystem.threedo:
             extract3do(args)
+        elif args.fs == FileSystem.twogs:
+            extract_twogs(args)
         else:
             extract_volume_hybrid(args)
-            
+
     finally:
         if (
             temp_iso is not None
