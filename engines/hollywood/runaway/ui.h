@@ -60,7 +60,7 @@ public:
 	void setPointerSound(bool enabled) { _pointerSound = enabled; }
 	void drawSubtitle(Graphics::ManagedSurface &screen, const Common::U32String &text) const;
 	void draw(Graphics::ManagedSurface &screen, const Common::U32String &roomCaption,
-		const Common::U32String &committedCaption, const Common::U32String &subtitle, bool showSubtitles, bool hideInventory = false);
+		const Common::U32String &committedCaption, const Common::U32String &subtitle, bool showSubtitles);
 
 private:
 	Common::Rect itemRect(uint slot) const;

@@ -19,14 +19,79 @@
  *
  */
 
+#include "common/events.h"
 #include "common/file.h"
-#include "common/util.h"
 #include "common/str-enc.h"
+#include "common/system.h"
+#include "common/util.h"
+#include "graphics/cursorman.h"
 #include "image/bmp.h"
 #include "hollywood/resource.h"
+#include "hollywood/runaway/engine.h"
 #include "hollywood/runaway/presentation.h"
 
 namespace Hollywood {
+
+bool RunawayPresentation::handlePresentationEvent(const Common::Event &event) {
+	if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
+		if (clickSkipsPresentation()) {
+			_skipRequested = true;
+		} else {
+			_skipSpeechRequested = true;
+		}
+	} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+		switch (event.customType) {
+		case RunawayEngine::kCancelAction:
+			_skipRequested = true;
+			break;
+		case RunawayEngine::kSkip:
+			_skipSpeechRequested = true;
+			break;
+		case RunawayEngine::kPauseMenu:
+			_skipRequested = _skipSpeechRequested = false;
+			return true;
+		default:
+			break;
+		}
+	}
+	return false;
+}
+
+void RunawayPresentation::processPresentationInput(uint32 now) {
+	const bool skip = _skipRequested, skipSpeech = _skipSpeechRequested;
+	_skipRequested = _skipSpeechRequested = false;
+	if (skip) {
+		skipPresentation(now);
+	} else if (skipSpeech) {
+		skipPresentationSpeech(now);
+	}
+}
+
+RunawayPresentation::MouseState::~MouseState() {
+	if (_active) {
+		update(false);
+	}
+}
+
+Common::Point RunawayPresentation::MouseState::update(bool active) {
+	const Common::Point mouse = g_system->getEventManager()->getMousePos();
+	if (active && !_active) {
+		_position = mouse;
+		_wasVisible = CursorMan.showMouse(false);
+	}
+	if (_active && mouse != _position) {
+		// Warp outside event polling so generated motion cannot prolong the input loop.
+		g_system->warpMouse(_position.x, _position.y);
+	}
+	if (active) {
+		CursorMan.showMouse(false);
+	} else if (_active) {
+		CursorMan.showMouse(_wasVisible);
+	}
+	const Common::Point position = active || _active ? _position : mouse;
+	_active = active;
+	return position;
+}
 
 static const uint kInterrogationSpeakerActor[] = {1, 2, 0};
 static const uint kInterrogationMouthBase[] = {67, 40, 20};

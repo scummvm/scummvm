@@ -30,9 +30,41 @@
 #include "hollywood/runaway/speech.h"
 #include "hollywood/scene_text_store.h"
 
+namespace Common {
+struct Event;
+}
+
 namespace Hollywood {
 
 void dimRunawayViewport(Graphics::ManagedSurface &screen, uint brightness, uint maximum = 1000);
+
+// Shared input policy for full-screen sequences, including films hosted by rooms.
+class RunawayPresentation {
+public:
+	virtual ~RunawayPresentation() {}
+	// Returns true when the pause menu is requested.
+	bool handlePresentationEvent(const Common::Event &event);
+	void processPresentationInput(uint32 now);
+
+	// The engine owns one mouse state across consecutive and nested presentations.
+	class MouseState {
+	public:
+		~MouseState();
+		Common::Point update(bool active);
+
+	private:
+		Common::Point _position;
+		bool _active = false, _wasVisible = false;
+	};
+
+protected:
+	virtual void skipPresentation(uint32 now) = 0;
+	virtual void skipPresentationSpeech(uint32 now) {}
+	virtual bool clickSkipsPresentation() const { return false; }
+
+private:
+	bool _skipRequested = false, _skipSpeechRequested = false;
+};
 
 class RunawayCredits {
 public:
@@ -77,7 +109,7 @@ private:
 	uint32 _now = 0, _lastTick[3] = {};
 };
 
-class RunawayEnding {
+class RunawayEnding : public RunawayPresentation {
 public:
 	RunawayEnding(Audio::Mixer *mixer, Common::Language language) : _audio(mixer), _random("runawayEnding"), _language(language) {}
 	bool load();
@@ -88,6 +120,9 @@ public:
 	bool finished() const { return _stage == kFinished; }
 
 private:
+	void skipPresentation(uint32 now) override { skip(now); }
+	bool clickSkipsPresentation() const override { return true; }
+
 	enum Stage { kOutside, kSlideshow, kCard, kFinished };
 	void nextSlide(uint32 now);
 	RunawayAudio _audio;

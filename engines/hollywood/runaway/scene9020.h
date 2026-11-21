@@ -22,14 +22,14 @@
 #ifndef HOLLYWOOD_RUNAWAY_SCENE9020_H
 #define HOLLYWOOD_RUNAWAY_SCENE9020_H
 
-#include "hollywood/runaway/scene.h"
+#include "hollywood/runaway/presentation_scene.h"
 #include "hollywood/runaway/scene2010.h"
 
 namespace Hollywood {
 namespace Runaway {
 
 // The bank robbery and the Sandrettis' revenge alternate films with Brian's narration.
-class Scene9020 : public RunawayScene {
+class Scene9020 : public RunawayPresentationScene {
 public:
 	Scene9020(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
 	bool load(uint16 entryScene) override;
@@ -40,20 +40,8 @@ public:
 	const Common::U32String &subtitle() const override;
 	void skipSpeech() override;
 	void skipVideo() override;
-	bool speaking() const override { return !subtitle().empty(); }
-	bool busy() const override { return true; }
-	bool playingVideo() const override { return true; }
 	void captureState(RunawaySaveState &state) const override;
 	bool restoreState(const RunawaySaveState &state, uint32 now, bool entering = false) override;
-	Graphics::ManagedSurface &screen() override { return _screen; }
-	int roomWidth() const override { return kRunawayScreenWidth; }
-	byte hotspotAt(Common::Point mouse) const override { return 0; }
-	Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const override { return Common::U32String(); }
-	const Common::U32String &committedCaption() const override { return _empty; }
-	void click(Common::Point mouse, RunawayVerb verb, byte item) override {}
-	void sayInventory(const RunawayInventory::Reply &reply) override {}
-	void setCameraX(int x) override {}
-	void setOptions(bool antialias, bool fastScrolling) override {}
 
 private:
 	enum Step { kBankNarration, kBankFilm, kGangstersNarration, kGangstersFilm, kDepartureNarration, kFinished };
@@ -64,9 +52,7 @@ private:
 	RunawaySequence _sequence;
 	RunawayOpening _narrator;
 	SceneTextStore _text;
-	Graphics::ManagedSurface _screen;
 	Common::Array<RunawaySequence::Command> _commands;
-	Common::U32String _empty;
 	Step _step = kBankNarration;
 	uint32 _now = 0;
 };

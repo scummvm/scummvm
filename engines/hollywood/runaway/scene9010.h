@@ -23,12 +23,12 @@
 #define HOLLYWOOD_RUNAWAY_SCENE9010_H
 
 #include "hollywood/runaway/presentation.h"
-#include "hollywood/runaway/scene.h"
+#include "hollywood/runaway/presentation_scene.h"
 
 namespace Hollywood {
 namespace Runaway {
 
-class Scene9010 : public RunawayScene {
+class Scene9010 : public RunawayPresentationScene {
 public:
 	Scene9010(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
 	bool load(uint16 entryScene) override;
@@ -39,20 +39,8 @@ public:
 	const Common::U32String &subtitle() const override { return _sequence.subtitle(); }
 	void skipSpeech() override { _sequence.skipSpeech(); }
 	void skipVideo() override;
-	bool speaking() const override { return !subtitle().empty(); }
-	bool busy() const override { return true; }
-	bool playingVideo() const override { return true; }
 	void captureState(RunawaySaveState &state) const override;
 	bool restoreState(const RunawaySaveState &state, uint32 now, bool entering = false) override;
-	Graphics::ManagedSurface &screen() override { return _screen; }
-	int roomWidth() const override { return kRunawayScreenWidth; }
-	byte hotspotAt(Common::Point mouse) const override { return 0; }
-	Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const override { return Common::U32String(); }
-	const Common::U32String &committedCaption() const override { return _empty; }
-	void click(Common::Point mouse, RunawayVerb verb, byte item) override {}
-	void sayInventory(const RunawayInventory::Reply &reply) override {}
-	void setCameraX(int x) override {}
-	void setOptions(bool antialias, bool fastScrolling) override {}
 
 private:
 	enum Step { kArrival, kCarDoor, kFarewell, kDeparture, kFlight, kCredits, kMusicTail, kFinished };
@@ -64,10 +52,9 @@ private:
 	RunawayCredits _credits;
 	SceneTextStore _text;
 	RunawayAnimation _car;
-	Graphics::ManagedSurface _background, _screen;
+	Graphics::ManagedSurface _background;
 	Common::Array<byte> _parallax;
 	Common::Array<RunawaySequence::Command> _commands;
-	Common::U32String _empty;
 	Step _step = kArrival;
 	uint32 _now = 0, _started = 0;
 	Common::Point _camera;

@@ -28,6 +28,7 @@
 #include "hollywood/runaway/graphics.h"
 #include "hollywood/runaway/inventory.h"
 #include "hollywood/runaway/navigation.h"
+#include "hollywood/runaway/presentation.h"
 #include "hollywood/runaway/saveload.h"
 #include "hollywood/runaway/scene_data.h"
 #include "hollywood/runaway/sequence.h"
@@ -36,7 +37,7 @@
 
 namespace Hollywood {
 
-class RunawayScene {
+class RunawayScene : public RunawayPresentation {
 public:
 	struct Transition {
 		uint16 scene = 0; // Preserve entry substates, e.g. 2020..2023, until dispatch.
@@ -78,6 +79,9 @@ public:
 	virtual void setOptions(bool antialias, bool fastScrolling) = 0;
 
 protected:
+	void skipPresentation(uint32 now) override final { skipVideo(); }
+	void skipPresentationSpeech(uint32 now) override final { skipSpeech(); }
+
 	Common::Array<Common::U32String> _noChoices;
 	uint16 _entryScene = 0;
 	Transition _transition;

@@ -484,8 +484,8 @@ void RunawayUI::drawSubtitle(Graphics::ManagedSurface &screen, const Common::U32
 }
 
 void RunawayUI::draw(Graphics::ManagedSurface &screen, const Common::U32String &roomCaption,
-		const Common::U32String &committedCaption, const Common::U32String &subtitle, bool showSubtitles, bool hideInventory) {
-	if (_inventoryOpen && !hideInventory) {
+		const Common::U32String &committedCaption, const Common::U32String &subtitle, bool showSubtitles) {
+	if (_inventoryOpen) {
 		drawInventory(screen);
 	}
 	const Graphics::ManagedSurface &button = _inventoryOpen ? _returnButton : _inventoryButton;

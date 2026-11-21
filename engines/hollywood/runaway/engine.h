@@ -50,6 +50,18 @@ class RunawayUI;
 // has its own RGB565 renderer, scene state and audio formats.
 class RunawayEngine : public Engine {
 public:
+	enum RunawayAction {
+		kScrollLeft,
+		kScrollRight,
+		kScrollStart,
+		kScrollEnd,
+		kCancelAction,
+		kSkip,
+		kToggleInventory,
+		kCycleAction,
+		kPauseMenu
+	};
+
 	RunawayEngine(OSystem *syst, Common::Language language, RunawayGameType game);
 	~RunawayEngine() override;
 
@@ -81,6 +93,7 @@ private:
 	void applySettings(const RunawayMenu::Settings &settings, bool restoreDefaults = false);
 	void present(const Graphics::ManagedSurface &screen);
 	void updateSoundListener();
+	Common::Point updateUI(uint32 now);
 	Common::Language _language;
 	const RunawayGameType _game;
 	const bool _museum;
@@ -90,6 +103,7 @@ private:
 	Common::ScopedPtr<RunawayInventory> _inventory;
 	Common::ScopedPtr<RunawayScene> _scene;
 	Common::ScopedPtr<RunawayUI> _ui;
+	RunawayPresentation::MouseState _presentationMouse;
 	bool _inPresentation = false, _gameStarted = false, _loadedGame = false;
 	bool _pendingDoorClose = false;
 };
