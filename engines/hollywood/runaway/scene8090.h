@@ -50,6 +50,7 @@ private:
 	void handleAnimationFrameHook() override;
 	void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) override;
 	void drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) override;
+	bool roomAnimationInForeground() const override;
 	float actorHeight() const override;
 	byte initialActorFacing() const override;
 	void findWalkPath(Common::Point target) override;

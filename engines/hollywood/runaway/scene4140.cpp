@@ -44,6 +44,9 @@ void Scene4140::click(Common::Point mouse, RunawayVerb verb, byte item) {
 		return;
 	}
 	const byte id = hotspotAt(mouse);
+	if (id == 16) { // The keypad casing is not an exit or a button.
+		return;
+	}
 	_pressedKey = id;
 	_keyUntil = _now + 180;
 	_keyResult = 0;
@@ -154,7 +157,7 @@ bool Scene4140::shouldUpdateActor() const {
 }
 
 bool Scene4140::isValidHotspot(byte id) const {
-	return id <= 12;
+	return id <= 12 || id == 16;
 }
 
 } // End of namespace Runaway

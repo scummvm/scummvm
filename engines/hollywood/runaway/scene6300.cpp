@@ -289,6 +289,11 @@ void Scene6300::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport
 	drawWorkshopForeground(viewport);
 }
 
+bool Scene6300::roomAnimationInForeground() const {
+	// Keep the catapult and Saturn at the same depth as their idle frames.
+	return _position.y < (_roomAction == 415 ? 406 : 526);
+}
+
 void Scene6300::drawWorkshopForeground(Graphics::ManagedSurface &viewport) {
 	applyRunawayPatch(_foregroundPatches[0], viewport, 0, 1220 - _camera.x / 3 - _camera.x);
 	applyRunawayPatch(_foregroundPatches[1], viewport, 0, 230 - _camera.x / 5 - _camera.x);

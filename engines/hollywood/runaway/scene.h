@@ -165,6 +165,7 @@ protected:
 	virtual void setupActorDepth(RunawayActor::RenderParams &params) const {}
 	virtual bool drawCustomComposite(Graphics::ManagedSurface &viewport) { return false; }
 	virtual bool shouldDrawActor() const { return true; }
+	virtual bool roomAnimationInForeground() const { return false; }
 	virtual bool shouldUpdateActor() const { return true; }
 	virtual bool shouldPlayGameplayClickPath() const { return true; }
 	virtual int8 customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const { return approach; }
@@ -182,6 +183,7 @@ protected:
 	bool enterRoom(uint16 room, Common::Point position, byte facing);
 	bool loadForeground(uint layer, uint chunk, bool pixels = false);
 	void drawForeground(Graphics::ManagedSurface &viewport, uint layer);
+	void drawRoomAnimation(Graphics::ManagedSurface &viewport);
 	void drawAmbientAnimations(Graphics::ManagedSurface &viewport, const RunawayAnimation *animations, uint count);
 	bool rebuildBackground();
 	bool applyPatch(uint chunk);

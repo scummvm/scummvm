@@ -773,15 +773,25 @@ void RunawayRoomScene::draw() {
 	const byte light = MIN<byte>(9, findRunawayLight(_position, _background.w, _mask, _maps));
 	memcpy(params.light, findRunawayRoom(_room)->light[light], sizeof(params.light));
 	const bool roomAnimation = drawingRoomAnimation();
+	const bool foregroundAnimation = roomAnimation && roomAnimationInForeground();
+	// NPC animations normally remain behind Brian, just like their idle poses.
+	if (roomAnimation && !foregroundAnimation) {
+		drawRoomAnimation(viewport);
+	}
 	if ((!roomAnimation || !_actionHidesActor) && shouldDrawActor()) {
 		_actor.draw(_screen, params, _mask, _maps);
 	}
-	if (roomAnimation) {
-		_actionAnimation.draw(viewport, _actionFrames[MIN<uint>(_actionStep, _actionFrames.size() - 1)], _camera.x, -_camera.y);
-		if (!_secondaryFrames.empty())
-			_secondaryAnimation.draw(viewport, _secondaryFrames[MIN<uint>(_actionStep, _secondaryFrames.size() - 1)], _camera.x, -_camera.y);
+	if (foregroundAnimation) {
+		drawRoomAnimation(viewport);
 	}
 	drawCustomForegroundComposite(viewport);
+}
+
+void RunawayRoomScene::drawRoomAnimation(Graphics::ManagedSurface &viewport) {
+	_actionAnimation.draw(viewport, _actionFrames[MIN<uint>(_actionStep, _actionFrames.size() - 1)], _camera.x, -_camera.y);
+	if (!_secondaryFrames.empty()) {
+		_secondaryAnimation.draw(viewport, _secondaryFrames[MIN<uint>(_actionStep, _secondaryFrames.size() - 1)], _camera.x, -_camera.y);
+	}
 }
 
 void RunawayRoomScene::drawAmbientAnimations(Graphics::ManagedSurface &viewport, const RunawayAnimation *animations, uint count) {

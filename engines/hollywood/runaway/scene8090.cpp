@@ -238,6 +238,10 @@ void Scene8090::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport
 	drawForeground(viewport, 0);
 }
 
+bool Scene8090::roomAnimationInForeground() const {
+	return _position.y < 460;
+}
+
 void Scene8090::drawOscar(Graphics::ManagedSurface &viewport, bool foreground) {
 	if (_finale.oscarAway || (_position.y < 460) != foreground || (_animatesOscar && drawingRoomAnimation())) {
 		return;

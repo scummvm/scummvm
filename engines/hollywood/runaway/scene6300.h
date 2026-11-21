@@ -47,6 +47,7 @@ private:
 	bool drawCustomComposite(Graphics::ManagedSurface &viewport) override;
 	void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) override;
 	void drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) override;
+	bool roomAnimationInForeground() const override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 	void handleCustomDialogueChoice(byte effect) override;
 	void handleAnimationFrameHook() override;
