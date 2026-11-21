@@ -415,7 +415,7 @@ protected:
 	Common::Rect _focusRect;
 #endif
 
-	virtual void addDirtyRect(int x, int y, int w, int h, bool inOverlay, bool realCoordinates = false);
+	virtual void addDirtyRect(int x, int y, int w, int h, bool inOverlay);
 
 	virtual void drawMouse();
 	virtual void undrawMouse();

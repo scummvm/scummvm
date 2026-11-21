@@ -1800,7 +1800,7 @@ void SurfaceSdlGraphicsManager::fillScreen(const Common::Rect &r, uint32 col) {
 	unlockScreen();
 }
 
-void SurfaceSdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool inOverlay, bool realCoordinates) {
+void SurfaceSdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool inOverlay) {
 	if (_forceRedraw)
 		return;
 
@@ -1811,23 +1811,22 @@ void SurfaceSdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool in
 
 	int height, width;
 
-	if (!inOverlay && !realCoordinates) {
+	if (!inOverlay) {
 		width = _videoMode.screenWidth;
 		height = _videoMode.screenHeight;
-	} else {
-		width = _videoMode.overlayWidth;
-		height = _videoMode.overlayHeight;
-	}
 
-	// Extend the dirty region for scalers
-	// that "smear" the screen, e.g. 2xSAI
-	if (!realCoordinates) {
+		// Extend the dirty region for scalers
+		// that "smear" the screen, e.g. 2xSAI
 		// Aspect ratio correction requires this to be at least one
 		int adjust = MAX(_extraPixels, (uint)1);
 		x -= adjust;
 		y -= adjust;
 		w += adjust * 2;
 		h += adjust * 2;
+	} else {
+		width = _videoMode.overlayWidth;
+		height = _videoMode.overlayHeight;
+		// Overlay has no scaling so no extension
 	}
 
 	// clip
@@ -1850,7 +1849,7 @@ void SurfaceSdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool in
 	}
 
 #ifdef USE_ASPECT
-	if (_videoMode.aspectRatioCorrection && !inOverlay && !realCoordinates)
+	if (_videoMode.aspectRatioCorrection && !inOverlay)
 		makeRectStretchable(x, y, w, h, _videoMode.filtering);
 #endif
 
