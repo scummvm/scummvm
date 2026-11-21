@@ -346,6 +346,8 @@ void ScreenText::sync(PrisonerEngine *vm, Common::Serializer &s) {
 		s.syncAsUint16LE(chunkCount);
 		s.syncAsUint16LE(chunkIndex);
 		s.syncAsByte(inventoryActive);
+		if (s.isLoading())
+			inventoryActive = false;
 		s.syncAsUint16LE(textIndex);
 		s.syncAsUint16LE(fontIndex);
 		s.syncAsUint16LE(fontOutlineColor);

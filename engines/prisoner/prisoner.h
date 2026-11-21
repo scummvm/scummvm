@@ -95,18 +95,24 @@ struct Script {
 	int16 actorIndex2;
 	int16 altAnimationIndex;
 	int16 frameIndex;
+	Script() { clear(); }
 	byte readByte();
 	int16 readInt16();
 	Common::String readString();
 	void clear() {
 		status = kScriptStatusPaused;
 		ip = nullptr;
+		code = nullptr;
 		soundIndex = -1;
 		zoneIndex = -1;
+		zoneEnterLeaveFlag = false;
 		screenTextIndex = -1;
+		sleepCounter = 0;
 		syncScriptNumber = -1;
 		actorIndex = -1;
 		actorIndex2 = -1;
+		altAnimationIndex = -1;
+		frameIndex = -1;
 	}
 };
 
@@ -137,17 +143,17 @@ struct Zone {
 };
 
 struct ZoneAction {
-	int16 used;
-	int16 zoneActionIndex;
-	int16 zoneIndex;
-	int16 type;
-	int16 inventoryItemIndex;
-	int16 pathNodeIndex;
-	int16 scriptIndex1;
-	int16 scriptProgIndex;
-	int16 scriptIndex2;
-	int16 moduleIndex;
-	int16 sceneIndex;
+	int16 used = 0;
+	int16 zoneActionIndex = -1;
+	int16 zoneIndex = -1;
+	int16 type = 0;
+	int16 inventoryItemIndex = -1;
+	int16 pathNodeIndex = -1;
+	int16 scriptIndex1 = -1;
+	int16 scriptProgIndex = -1;
+	int16 scriptIndex2 = -1;
+	int16 moduleIndex = -1;
+	int16 sceneIndex = -1;
 	bool isEmpty() const { return used == 0; }
 	void clear() { used = 0; }
 	void sync(PrisonerEngine *vm, Common::Serializer &s);
@@ -462,12 +468,12 @@ const int16 kMaxClickBoxes = 110;
 /* Palette task */
 
 struct PaletteTask {
-	bool active;
-	int16 value1;
-	int16 value2;
-	int16 value3;
-	int16 positionIncr;
-	int16 updateTicks;
+	bool active = false;
+	int16 value1 = -1;
+	int16 value2 = 0;
+	int16 value3 = 0;
+	int16 positionIncr = 0;
+	int16 updateTicks = 0;
 	void sync(PrisonerEngine *vm, Common::Serializer &s);
 };
 
@@ -561,11 +567,11 @@ public:
 	PrisonerResourceLoader *_resLoader;
 	ResourceManager *_res;
 
-	int _mouseX, _mouseY;
+	int _mouseX = 0, _mouseY = 0;
 
 	Common::KeyCode _keyState;
 	// The character of the pressed key, for typing save descriptions
-	uint16 _keyAscii;
+	uint16 _keyAscii = 0;
 	uint16 _buttonState;
 	bool _keyReleasePending;
 	uint16 _buttonReleasePending;
@@ -584,15 +590,15 @@ public:
 	bool _optionsOpenedFromGame;
 
 	/* Display settings screen, edited copies of the settings */
-	bool _displayScrolling;
-	int16 _displayStandbyMinutes;
-	int16 _displaySpeedIndex;
-	int8 _displayRow;
+	bool _displayScrolling = false;
+	int16 _displayStandbyMinutes = 0;
+	int16 _displaySpeedIndex = 0;
+	int8 _displayRow = 0;
 
 
 	Common::String _muxFilename;
 	bool _muxClearScreenAfter, _muxClearScreenBefore;
-	Common::KeyCode _muxEasterEggKey;
+	Common::KeyCode _muxEasterEggKey = Common::KEYCODE_INVALID;
 	uint _muxEasterEggCount;
 
 	int16 _textFont, _menuFont;
@@ -620,7 +626,7 @@ public:
 	/* AutoSave */
 	bool _autoSaveRequested;
 	Common::String _autoSavePakName, _autoSaveIdentifier;
-	int16 _autoSavePakSlot;
+	int16 _autoSavePakSlot = 0;
 
 	int16 _globalTextResourceCacheSlot;
 
@@ -629,26 +635,26 @@ public:
 	bool _screensaverAborted;
 	bool _bootMenuShowing;
 	int32 _screensaverTime;
-	int32 _lastInputTicks;
+	int32 _lastInputTicks = 0;
 
 	/* Frame time */
-	uint32 _lastFrameTime;
-	int16 _frameTicks;
+	uint32 _lastFrameTime = 0;
+	int16 _frameTicks = 0;
 	bool _animationFrameTimeFlag;
-	int16 _animationFrameTicks;
+	int16 _animationFrameTicks = 0;
 
 	/* Input low-level */
 	bool _inpMouseWaitRelease, _inpMousePulseRelease;
-	uint32 _inpMousePulseTime;
-	int16 _inpMousePulseTicks;
+	uint32 _inpMousePulseTime = 0;
+	int16 _inpMousePulseTicks = 0;
 	bool _inpKeybWaitRelease, _inpKeybPulseRelease;
-	uint32 _inpKeybPulseTime;
-	uint16 _inpKeybPulseTicks;
+	uint32 _inpKeybPulseTime = 0;
+	uint16 _inpKeybPulseTicks = 0;
 
 	/* Input */
-	int16 _optionsTextTicksCounter;
-	uint32 _optionsTextTicks;
-	bool _inputFlag;
+	int16 _optionsTextTicksCounter = -1;
+	uint32 _optionsTextTicks = 0;
+	bool _inputFlag = false;
 	// Shift+arrow walking (original: the key fields next to the input flag). The key stays set
 	// until the walk it starts has been given; the first press starts a new walk.
 	Common::KeyCode _walkKey;
@@ -657,7 +663,7 @@ public:
 	/* Scene control */
 	int16 _currModuleIndex, _currSceneIndex;
 	int16 _newModuleIndex, _newSceneIndex;
-	int16 _prevModuleIndex, _prevSceneIndex;
+	int16 _prevModuleIndex = -1, _prevSceneIndex = -1;
 	int16 _enterSceneScriptProgramIndex, _enterSceneScriptIndex;
 	int16 _leaveSceneScriptProgramIndex, _leaveSceneScriptIndex;
 	bool _inScene;
@@ -665,10 +671,10 @@ public:
 	/* Script */
 	ScriptProgram _scriptPrograms[2];
 	ScriptOpcodes *_scriptOpcodes;
-	int16 _currScriptProgramIndex;
-	Script *_currScript;
-	int16 _currScriptIndex;
-	bool _scriptContinueFlag;
+	int16 _currScriptProgramIndex = 0;
+	Script *_currScript = nullptr;
+	int16 _currScriptIndex = 0;
+	bool _scriptContinueFlag = false;
 	bool _needToPlayMux;
 	bool _moduleScriptCalled;
 	int16 _globalScriptVars[250];
@@ -679,17 +685,17 @@ public:
 	PictureResource *_backgroundResource;
 	int16 _backgroundWidth, _backgroundHeight;
 	bool _backgroundNoScrollFlag1, _backgroundNoScrollFlag2;
-	int16 _backgroundDrawX, _backgroundDrawY;
-	int16 _backgroundDrawWidth, _backgroundDrawHeight;
+	int16 _backgroundDrawX = 0, _backgroundDrawY = 0;
+	int16 _backgroundDrawWidth = 0, _backgroundDrawHeight = 0;
 	// The "Scrolling" display option: the camera jumps by half screens when true (the
 	// default), and follows the actor smoothly when false
 	bool _halfScreenScrolling;
 	int16 _cameraX, _cameraY;
-	int16 _cameraDeltaX, _cameraDeltaY;
+	int16 _cameraDeltaX = 0, _cameraDeltaY = 0;
 	bool _cameraFocusActor;
 	int16 _cameraFollowsActorIndex;
-	bool _backgroundCameraLocked;
-	int16 _backgroundFlag;
+	bool _backgroundCameraLocked = false;
+	int16 _backgroundFlag = 0;
 
 	/* Palette */
 	bool _needToUpdatePalette;
@@ -706,14 +712,14 @@ public:
 	ObjectStorage<Actor, kMaxActors> _actors;
 	ObjectStorage<ActorSprite, kMaxActors> _actorSprites;
 	ObjectStorage<AltActorAnimation, kMaxAltActorAnimations> _altActorAnimations;
-	int16 _mainActorIndex;
-	bool _mainActorValid;
-	bool _actorsCleared;
+	int16 _mainActorIndex = -1;
+	bool _mainActorValid = false;
+	bool _actorsCleared = false;
 
-	bool _actorPathFlag;
+	bool _actorPathFlag = false;
 	ZoneAction _zoneActionItem;
-	int16 _actorPathX, _actorPathY;
-	int16 _actorPathDeltaX, _actorPathDeltaY;
+	int16 _actorPathX = 0, _actorPathY = 0;
+	int16 _actorPathDeltaX = 0, _actorPathDeltaY = 0;
 
 	/* BackgroundObject */
 	int16 _backgroundObjectsResourceCacheSlot;
@@ -730,102 +736,102 @@ public:
 
 	/* Zones */
 	ObjectStorage<Zone, kMaxZones> _zones;
-	bool _zoneTextActive;
+	bool _zoneTextActive = false;
 	bool _zoneMouseCursorActive;
-	int16 _zoneMouseCursor;
-	bool _exitZoneActionFlag;
+	int16 _zoneMouseCursor = -1;
+	bool _exitZoneActionFlag = false;
 
 	/* ZoneActions */
 	ObjectStorage<ZoneAction, kMaxZoneActions> _zoneActions;
-	int16 _currZoneActionIndex;
-	int16 _inventoryItemIndex2;
-	int16 _zoneIndexAtMouse;
+	int16 _currZoneActionIndex = -1;
+	int16 _inventoryItemIndex2 = -1;
+	int16 _zoneIndexAtMouse = -1;
 	ZoneAction _queuedZoneAction;
 
 	/* Dialog */
 	ObjectStorage<Dialog, kMaxDialogs> _dialogs;
-	int16 _currDialogIndex;
+	int16 _currDialogIndex = -1;
 	int16 _selectedDialogIndex; // UNUSED?
-	int16 _dialogXAdd, _dialogYAdd;
-	int16 _dialogRectX1, _dialogRectY1, _dialogRectX2, _dialogRectY2;
+	int16 _dialogXAdd = 0, _dialogYAdd = 0;
+	int16 _dialogRectX1 = 0, _dialogRectY1 = 0, _dialogRectX2 = 0, _dialogRectY2 = 0;
 	int16 _dialogPanelResourceCacheSlot;
 
 	/* Active dialog */
-	int16 _currDialogKeywordIndices[50];
-	int16 _dialogActiveKeywordsCount;
-	int16 _dialogMaxKeywordTextWidth;
-	int16 _dialogFontHeight;
+	int16 _currDialogKeywordIndices[50] = {};
+	int16 _dialogActiveKeywordsCount = 0;
+	int16 _dialogMaxKeywordTextWidth = 0;
+	int16 _dialogFontHeight = 0;
 	bool _dialogRunning;
-	int16 _selectedDialogKeywordIndex;
-	bool _dialogFlag;
+	int16 _selectedDialogKeywordIndex = -1;
+	bool _dialogFlag = false;
 
 	/* ActorFrameSounds */
-	int16 _actorFrameSoundItemsCount;
+	int16 _actorFrameSoundItemsCount = 0;
 	ObjectStorage<ActorFrameSound, kMaxActorFrameSounds> _actorFrameSounds;
 
 	/* Inventory */
 	ObjectStorage<InventoryItem, kMaxInventoryItems> _inventoryItems;
 	ObjectStorage<InventoryItemCombination, kMaxInventoryItemCombinations> _inventoryItemCombinations;
-	int16 _inventoryItemsCount;
-	int16 _inventoryItemSlotBaseIndex;
+	int16 _inventoryItemsCount = 0;
+	int16 _inventoryItemSlotBaseIndex = 0;
 	int16 _inventoryItemsResourceCacheIndex;
 
 	/* Inventory bar */
 	bool _inventoryBarEnabled, _inventoryBarFlag;
-	bool _buildInventoryClickBoxes;
+	bool _buildInventoryClickBoxes = false;
 	bool _inventoryWarpMouse;
-	int16 _selectedInventoryItemIndex;
-	int16 _inventoryClickBoxIndex;
-	int16 _currInventoryItemSlotBaseIndex;
-	bool _inventoryActive;
+	int16 _selectedInventoryItemIndex = 0;
+	int16 _inventoryClickBoxIndex = 0;
+	int16 _currInventoryItemSlotBaseIndex = 0;
+	bool _inventoryActive = false;
 	int16 _inventoryBoxResourceCacheSlot;
 
 	/* Fonts */
 	ObjectStorage<Font, 4> _fonts;
-	int16 _activeFontIndex;
+	int16 _activeFontIndex = 0;
 
 	/* Screen text */
 	ObjectStorage<ScreenText, kMaxScreenTexts> _screenTexts;
 	bool _screenTextShowing;
-	bool _screenTextHasSpeech;
+	bool _screenTextHasSpeech = false;
 	bool _autoAdvanceScreenTexts;
-	bool _screenTextActive;
+	bool _screenTextActive = false;
 
 	/* Talkie */
 	bool _talkieSpeechActive;
 	Audio::SoundHandle _talkieSoundHandle;
 	int16 _talkieDataResourceCacheSlot;
 	bool _talkieSpeechPlayNow;
-	Audio::AudioStream *_talkieSpeechAudioStream;
+	Audio::AudioStream *_talkieSpeechAudioStream = nullptr;
 	void setVoicesMuted(bool muted);
 
 	/* LipSync */
 	int16 _lipSyncScriptNumber;
 	int16 _lipSyncResourceCacheSlot;
-	int16 _lipSyncX, _lipSyncY;
+	int16 _lipSyncX = 0, _lipSyncY = 0;
 	int16 _lipSyncActorIndex;
-	uint32 _lipSyncTicks;
-	int16 _lipSyncTime;
-	AnimationResource *_lipSyncAnimationResource;
+	uint32 _lipSyncTicks = 0;
+	int16 _lipSyncTime = 0;
+	AnimationResource *_lipSyncAnimationResource = nullptr;
 	Common::Array<LipSyncChannelStatus> _lipSyncChannelStatus;
 	bool _lipSyncChannelStatusRestored;
 
 	/* Mouse cursors */
 	MouseCursor _mouseCursors[kMouseCursors];
-	int16 _mouseCursorAnimationResourceCacheSlot;
-	int16 _mouseCursorAnimationFrameListIndex;
+	int16 _mouseCursorAnimationResourceCacheSlot = -1;
+	int16 _mouseCursorAnimationFrameListIndex = 0;
 	int16 _currAnimatedMouseCursor;
-	int16 _mouseCursorAnimationFrameCount;
-	int16 _mouseCursorAnimationCurrFrame;
-	uint32 _mouseCursorAnimationLastUpdate;
-	int16 _mouseCursorAnimationUpdateTicks;
+	int16 _mouseCursorAnimationFrameCount = 0;
+	int16 _mouseCursorAnimationCurrFrame = 0;
+	uint32 _mouseCursorAnimationLastUpdate = 0;
+	int16 _mouseCursorAnimationUpdateTicks = 0;
 
 	/* ClickBox */
 	ObjectStorage<ClickBox, kMaxClickBoxes> _clickBoxes;
 
 	/* Palette task */
 	PaletteTask _paletteTasks[kMaxPaletteTasks];
-	int16 _fadeInOutColorUpdateTicks, _fadeInOutColorPosition;
+	int16 _fadeInOutColorUpdateTicks = 0, _fadeInOutColorPosition = 0;
 	int16 _alarmPaletteSub, _alarmPaletteSubDelta;
 
 	/* Music */
@@ -846,19 +852,19 @@ public:
 
 	/* Text and music settings screen, edited copies of the settings */
 	Common::StringArray _textMusicMenuItems;
-	int8 _textMusicRow;
-	int16 _textMusicDialogType;
-	bool _textMusicAutoEnd;
-	bool _textMusicDigital;
+	int8 _textMusicRow = 0;
+	int16 _textMusicDialogType = 0;
+	bool _textMusicAutoEnd = false;
+	bool _textMusicDigital = false;
 	/* "End of dialogs" setting : spoken text ends by itself */
 	bool _dialogAutoEnd;
 
 	/* Sound volume settings screen: sound effects, music and voices, 0 to 100 */
 	Common::StringArray _volumeMenuItems;
-	int8 _volumeRow;
-	int16 _volumeValues[3];
-	bool _volumeEnabled[3];
-	int16 _volumeTestSlots[3];
+	int8 _volumeRow = 0;
+	int16 _volumeValues[3] = {};
+	bool _volumeEnabled[3] = {};
+	int16 _volumeTestSlots[3] = {};
 	Audio::SoundHandle _volumeTestHandles[3];
 	typedef void (PrisonerEngine::*MenuFunction)(int16, int16);
 	MenuFunction _menuFunctionArray[MenuPanel::kMenuPanelCount];
@@ -868,11 +874,11 @@ public:
 	Common::StringArray _dialogLines;
 	Common::StringArray _dialogButtonLabels;
 	MenuPanel _dialogPanelIndex;
-	AnimationResource *_dialogPanel;
+	AnimationResource *_dialogPanel = nullptr;
 	bool _isDialogMenuShowing;
-	int8 _dialogMenuFocus;
+	int8 _dialogMenuFocus = 0;
 	typedef void (PrisonerEngine::*DialogAction)();
-	PrisonerEngine::DialogAction _dialogActionCallback;
+	PrisonerEngine::DialogAction _dialogActionCallback = nullptr;
 
 	/* Original save/load screens */
 	struct SaveLoadEntry {
@@ -883,21 +889,21 @@ public:
 	};
 	Common::Array<SaveLoadEntry> _saveLoadEntries;
 	Common::StringArray _saveLoadMenuItems;
-	bool _saveLoadSaving;
+	bool _saveLoadSaving = false;
 	// Opened with F2/F3 in the game, which closes the menu when leaving the screen
-	bool _saveLoadFromGame;
-	int16 _saveLoadSelected;
-	int16 _saveLoadTop;
-	bool _saveLoadEditing;
+	bool _saveLoadFromGame = false;
+	int16 _saveLoadSelected = 0;
+	int16 _saveLoadTop = 0;
+	bool _saveLoadEditing = false;
 	Common::String _saveLoadEditText;
 	// First shown character of the selected description, for descriptions wider than the line
-	int16 _saveLoadTextScroll;
-	int16 _saveLoadCursorTimer;
-	bool _saveLoadCursorShown;
-	int16 _saveLoadThumbnailEntry;
+	int16 _saveLoadTextScroll = 0;
+	int16 _saveLoadCursorTimer = 0;
+	bool _saveLoadCursorShown = false;
+	int16 _saveLoadThumbnailEntry = -1;
 	Common::Array<byte> _saveLoadThumbnail;
-	uint32 _saveLoadLastClickTicks;
-	int16 _saveLoadLastClickRow;
+	uint32 _saveLoadLastClickTicks = 0;
+	int16 _saveLoadLastClickRow = -1;
 
 
 public:
