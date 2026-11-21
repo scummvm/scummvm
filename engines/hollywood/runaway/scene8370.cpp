@@ -82,6 +82,11 @@ namespace Runaway {
 Scene8370::Scene8370(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	Scene6370(audio, inventory, strings, game) {}
 
+int Scene8370::sceneViewportYOffset() const {
+	// Each floor has a fixed view, including when Brian enters on the stairs.
+	return _upperFloor ? 0 : 200;
+}
+
 bool Scene8370::loadCustomResources() {
 	return _sushi.load(_archive, 4, 94) && _fire.load(_archive, 5, 20) && _monitor.load(_archive, 6, 97);
 }

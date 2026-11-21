@@ -30,6 +30,7 @@ namespace Runaway {
 class Scene4030 : public RunawayRoomScene {
 public:
 	Scene4030(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
+	void setCameraX(int x) override;
 
 private:
 	bool loadCustomResources() override;
@@ -40,6 +41,7 @@ private:
 	void finishCustomAnimation(uint16 action) override;
 	void handleAnimationFrameHook() override;
 	float actorHeight() const override;
+	int sceneViewportYOffset() const override;
 	Common::U32String hotspotName(byte id) const override;
 	int8 customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const override;
 

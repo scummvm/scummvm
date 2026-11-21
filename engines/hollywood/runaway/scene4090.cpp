@@ -77,6 +77,11 @@ namespace Runaway {
 Scene4090::Scene4090(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
 
+void Scene4090::setCameraX(int x) {
+	// The extra 100 columns are for the exit path, beyond the fixed view.
+	_camera.x = 0;
+}
+
 bool Scene4090::applyCustomBackgroundPatches() {
 	return !museumChapter() || !_museum.coffeeBeansTaken || applyPatch(4);
 }

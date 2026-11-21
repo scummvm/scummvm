@@ -81,6 +81,16 @@ namespace Runaway {
 Scene4030::Scene4030(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
 
+void Scene4030::setCameraX(int x) {
+	// The original fixes the camera at (0, 0): the 1200x670 walk area extends
+	// beyond the 1024x600 artwork so Brian can walk off screen.
+	_camera.x = 0;
+}
+
+int Scene4030::sceneViewportYOffset() const {
+	return 0;
+}
+
 bool Scene4030::loadCustomResources() {
 	return loadForeground(0, 4) && loadForeground(1, 5) && loadForeground(2, 6) &&
 		loadForeground(3, 7) && loadForeground(4, 12);

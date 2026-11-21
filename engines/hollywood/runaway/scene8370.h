@@ -41,6 +41,7 @@ private:
 	void advanceCustomGameplayLoop(uint32 delta) override;
 	void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) override;
 	float actorHeight() const override;
+	int sceneViewportYOffset() const override;
 	void setupActorDepth(RunawayActor::RenderParams &params) const override;
 	void findWalkPath(Common::Point target) override;
 	bool adjustCustomWalkTargetToFloorMask(Common::Point &target) const override;

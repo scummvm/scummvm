@@ -134,6 +134,11 @@ float Scene5100::actorHeight() const {
 	return _position.y * 0.668016195f + 87.591095f;
 }
 
+int Scene5100::sceneViewportYOffset() const {
+	// The walk area extends 100 pixels below the painted hangar exterior.
+	return 0;
+}
+
 void Scene5100::setupActorDepth(RunawayActor::RenderParams &params) const {
 	params.depthY[1] = 599;
 	params.depthY[2] = 303;

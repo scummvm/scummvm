@@ -45,6 +45,11 @@ namespace Runaway {
 Scene8290::Scene8290(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
 
+void Scene8290::setCameraX(int x) {
+	// The return to the empty campsite keeps the rightmost view throughout.
+	_camera.x = _background.w - kRunawayScreenWidth;
+}
+
 bool Scene8290::loadCustomResources() {
 	// RESOURCE.001 bank 187 is Brian's front-facing shrug in the alternate outfit.
 	return loadForeground(0, 4) && _actor.loadAction(187, 13);

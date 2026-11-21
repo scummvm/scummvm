@@ -30,6 +30,7 @@ namespace Runaway {
 class Scene4090 : public RunawayRoomScene {
 public:
 	Scene4090(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
+	void setCameraX(int x) override;
 
 private:
 	bool applyCustomBackgroundPatches() override;
