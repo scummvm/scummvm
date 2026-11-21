@@ -92,6 +92,10 @@ public:
 	void setDepthRange(float nearVal, float farVal) override {
 		glDepthRange(nearVal, farVal);
 	}
+	void setColorMask(bool enabled) override {
+		const GLboolean mask = enabled ? GL_TRUE : GL_FALSE;
+		glColorMask(mask, mask, mask, mask);
+	}
 
 	void applyScissorRect(const Common::Rect &logical) {
 		const float scaleX = (float)_screenViewport.width() / (float)_width;
@@ -552,6 +556,7 @@ void OpenGLRenderer::end3D() {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glDepthRange(0.0, 1.0);
 	glDisable(GL_SCISSOR_TEST);
 	

@@ -80,6 +80,7 @@ public:
 	void setMacColors(uint32 fg, uint32 bg) override;
 	void setDepthState(bool testEnabled, bool writeEnabled) override;
 	void setDepthRange(float nearVal, float farVal) override;
+	void setColorMask(bool enabled) override;
 	void setFeatureClipX(int left, int right) override;
 	void clearFeatureClipX() override;
 	void applyScissorRect(const Common::Rect &logical);
@@ -723,6 +724,11 @@ void OpenGLShaderRenderer::setDepthRange(float nearVal, float farVal) {
 	setGLDepthRange(nearVal, farVal);
 }
 
+void OpenGLShaderRenderer::setColorMask(bool enabled) {
+	const GLboolean mask = enabled ? GL_TRUE : GL_FALSE;
+	glColorMask(mask, mask, mask, mask);
+}
+
 void OpenGLShaderRenderer::applyScissorRect(const Common::Rect &logical) {
 	const float scaleX = (float)_screenViewport.width() / (float)_width;
 	const float scaleY = (float)_screenViewport.height() / (float)_height;
@@ -819,6 +825,7 @@ void OpenGLShaderRenderer::begin3D(int camX, int camY, int camZ, int angle, int 
 void OpenGLShaderRenderer::end3D() {
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	setGLDepthRange(0.0f, 1.0f);
 	glDisable(GL_SCISSOR_TEST);
 
