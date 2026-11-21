@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-20 01:49+0000\n"
+"POT-Creation-Date: 2026-11-21 00:05+0000\n"
 "PO-Revision-Date: 2026-10-10 14:55+0000\n"
 "Last-Translator: НеСкажу НеСкажувич Нескажувов <j4rik.228@yandex.ru>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -4159,7 +4159,7 @@ msgid "Pause"
 msgstr "Пауза"
 
 #: engines/metaengine.cpp:120 engines/harvester/metaengine.cpp:93
-#: engines/hollywood/runaway/engine.cpp:741 engines/igor/metaengine.cpp:98
+#: engines/hollywood/runaway/engine.cpp:817 engines/igor/metaengine.cpp:98
 #: engines/parallaction/metaengine.cpp:163
 #: engines/scumm/insane/mortimer/mortimer.cpp:79
 #: engines/ultima/ultima8/metaengine.cpp:47
@@ -6767,7 +6767,7 @@ msgstr "Поднять"
 #: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
 #: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:542
 #: engines/grim/grim.cpp:642 engines/harvester/metaengine.cpp:92
-#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:752
+#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:828
 #: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
 #: engines/icb/icb.cpp:179 engines/macs2/metaengine.cpp:64
 #: engines/petka/metaengine.cpp:173 engines/phoenixvr/metaengine.cpp:82
@@ -10778,46 +10778,56 @@ msgid ""
 "release"
 msgstr ""
 
-#: engines/hollywood/runaway/engine.cpp:709
+#: engines/hollywood/monsters/metaengine.cpp:48
+#, fuzzy
+#| msgid "Enable studio audience"
+msgid "Enable positional audio"
+msgstr "Включить звуки аудитории в студии"
+
+#: engines/hollywood/monsters/metaengine.cpp:49
+msgid "Pan voices and footsteps according to their positions on screen"
+msgstr ""
+
+#: engines/hollywood/runaway/engine.cpp:785
 #, fuzzy
 #| msgid "Perform default action"
 msgid "Perform action"
 msgstr "Выполнить действие по умолчанию"
 
-#: engines/hollywood/runaway/engine.cpp:715
-#: engines/hollywood/runaway/engine.cpp:758
+#: engines/hollywood/runaway/engine.cpp:791
+#: engines/hollywood/runaway/engine.cpp:834
 #, fuzzy
 #| msgid "Next action"
 msgid "Next action / Cancel"
 msgstr "Следующее действие"
 
-#: engines/hollywood/runaway/engine.cpp:721 engines/sherlock/metaengine.cpp:578
+#: engines/hollywood/runaway/engine.cpp:797 engines/sherlock/metaengine.cpp:578
 msgid "Scroll left"
 msgstr "Прокрутить влево"
 
-#: engines/hollywood/runaway/engine.cpp:726 engines/sherlock/metaengine.cpp:584
+#: engines/hollywood/runaway/engine.cpp:802 engines/sherlock/metaengine.cpp:584
 msgid "Scroll right"
 msgstr "Прокрутить вправо"
 
-#: engines/hollywood/runaway/engine.cpp:731
+#: engines/hollywood/runaway/engine.cpp:807
 #, fuzzy
 #| msgid "Scroll to top left"
 msgid "Scroll to the left edge"
 msgstr "Прокрутить до верха-влево"
 
-#: engines/hollywood/runaway/engine.cpp:736
+#: engines/hollywood/runaway/engine.cpp:812
 #, fuzzy
 #| msgid "Scroll to bottom right"
 msgid "Scroll to the right edge"
 msgstr "Прокрутить до низа-направо"
 
-#: engines/hollywood/runaway/engine.cpp:747
+#: engines/hollywood/runaway/engine.cpp:823
 #, fuzzy
 #| msgid "Cancel action"
 msgid "Cancel action / Menu"
 msgstr "Отменить действие"
 
-#: engines/hollywood/runaway/engine.cpp:763
+#: engines/hollywood/runaway/engine.cpp:839
 #, fuzzy
 #| msgid "Skip intro / Exit map or inventory"
 msgid "Skip intro / Skip line"
