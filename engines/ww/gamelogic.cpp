@@ -6369,7 +6369,7 @@ void GameLogic::r24_handleRoomEvent(int wayneLadderX, int wayneX, int wayneLadde
 		} else {
 			workBackground->drawSurfaceTransparent(getladSprites[40 - climbCtr], wayneX, ladderBottomY);
 		}
-		workBackground->drawSurfaceTransparent(ceilingSprite, ceilingX, 0);
+		workBackground->drawSurface(ceilingSprite, ceilingX, 0);
 		_vm->_screen->drawSurface(workBackground, 0, 0);
 		_vm->waitMillis(200);
 		climbCtr++;
