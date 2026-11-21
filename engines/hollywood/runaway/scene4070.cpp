@@ -26,7 +26,7 @@
 namespace Hollywood {
 
 const RunawayRoom kRunawayScene4070 = {
-	kMuseumWilly, 1024, 600, nullptr, 0, {{100, 100, 100}}, Common::Point(548, 580),
+	kMuseumWilly, 1024, 600, nullptr, 0, {{100, 100, 100}, {70, 70, 70}}, Common::Point(548, 580),
 	nullptr, 0, nullptr, 0, nullptr, 0
 };
 

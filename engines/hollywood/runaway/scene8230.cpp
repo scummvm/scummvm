@@ -173,7 +173,7 @@ bool Scene8230::drawCustomComposite(Graphics::ManagedSurface &viewport) {
 		params.roomWidth = _background.w;
 		params.height = actorHeight();
 		params.antialias = _antialias;
-		const byte light = MIN<byte>(4, _maps[768 + _mask[_position.y * _background.w + _position.x]]);
+		const byte light = MIN<byte>(4, findRunawayLight(_position, _background.w, _mask, _maps));
 		memcpy(params.light, kRunawayScene8230.light[light], sizeof(params.light));
 		_actor.draw(_screen, params, _mask, _maps);
 	}

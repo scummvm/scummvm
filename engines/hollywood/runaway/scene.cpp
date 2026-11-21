@@ -761,7 +761,7 @@ void RunawayRoomScene::draw() {
 	params.roomWidth = _background.w;
 	params.height = actorHeight();
 	params.antialias = _antialias;
-	const byte light = MIN<byte>(9, _maps[768 + _mask[_position.y * _background.w + _position.x]]);
+	const byte light = MIN<byte>(9, findRunawayLight(_position, _background.w, _mask, _maps));
 	memcpy(params.light, findRunawayRoom(_room)->light[light], sizeof(params.light));
 	const bool roomAnimation = drawingRoomAnimation();
 	if ((!roomAnimation || !_actionHidesActor) && shouldDrawActor()) {

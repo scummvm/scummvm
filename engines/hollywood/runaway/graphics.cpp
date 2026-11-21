@@ -83,6 +83,43 @@ bool loadRunawayMask(ChunkArchive &archive, int width, int height, Common::Array
 	return offset == mask.size();
 }
 
+byte findRunawayLight(Common::Point position, int width, const Common::Array<byte> &mask, const Common::Array<byte> &maps) {
+	if (width <= 0 || mask.size() % width || maps.size() != 1536) {
+		return 0;
+	}
+	const int height = mask.size() / width;
+	if (position.x < 0 || position.x >= width || position.y < 0 || position.y >= height) {
+		return 0;
+	}
+	// Match the original fallback for gaps in the lighting map: search the
+	// column down/up, then the top row right/left.
+	for (int y = position.y; y < height; ++y) {
+		const byte light = maps[768 + mask[y * width + position.x]];
+		if (light) {
+			return light;
+		}
+	}
+	for (int y = position.y - 1; y >= 0; --y) {
+		const byte light = maps[768 + mask[y * width + position.x]];
+		if (light) {
+			return light;
+		}
+	}
+	for (int x = position.x + 1; x < width; ++x) {
+		const byte light = maps[768 + mask[x]];
+		if (light) {
+			return light;
+		}
+	}
+	for (int x = position.x - 1; x >= 0; --x) {
+		const byte light = maps[768 + mask[x]];
+		if (light) {
+			return light;
+		}
+	}
+	return 0;
+}
+
 bool applyRunawayPatch(const Common::Array<byte> &patch, Graphics::ManagedSurface &surface, int yOffset, int xOffset) {
 	if (patch.size() < 2 || surface.format.bytesPerPixel != 2)
 		return false;
@@ -422,7 +459,7 @@ float RunawayActor::perspectiveHeight(Common::Point position) {
 void RunawayActor::draw(Graphics::ManagedSurface &surface, Common::Point position, int cameraX,
 		int roomTop, const Common::Array<byte> &mask, const Common::Array<byte> &maps, bool sunlit, bool antialias) const {
 	// Scene lighting and occlusion come from the same pixel lookup as hotspots.
-	const byte light = MIN<byte>(5, maps[768 + mask[position.y * 1376 + position.x]]);
+	const byte light = MIN<byte>(5, findRunawayLight(position, 1376, mask, maps));
 	byte lights[6][3] = { {100,100,100}, {55,50,45}, {55,50,45},
 		{85,80,75}, {75,70,65}, {70,65,60} };
 	if (sunlit) {
