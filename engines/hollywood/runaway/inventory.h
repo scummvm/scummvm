@@ -63,6 +63,7 @@ public:
 	RunawaySaveState::HopiItems &hopi() { return _hopi; }
 	RunawaySaveState::FinaleItems &finale() { return _finale; }
 	bool contains(byte item) const;
+	uint maxItemId() const;
 	bool add(byte item);
 	void remove(byte item);
 	uint size() const { return _items.size(); }

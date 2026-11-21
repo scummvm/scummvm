@@ -49,6 +49,8 @@ class RunawayUI;
 // Runaway shares the archive and text formats with Hollywood Monsters, but
 // has its own RGB565 renderer, scene state and audio formats.
 class RunawayEngine : public Engine {
+	friend class RunawayConsole;
+
 public:
 	enum RunawayAction {
 		kScrollLeft,

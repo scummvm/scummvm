@@ -153,11 +153,15 @@ bool RunawayInventory::contains(byte item) const {
 	return false;
 }
 
-bool RunawayInventory::add(byte item) {
-	const uint maxItem = _chapter == 6 ? kFinaleItemCount : _chapter == 5 ? kHopiItemCount :
+uint RunawayInventory::maxItemId() const {
+	return _chapter == 6 ? kFinaleItemCount : _chapter == 5 ? kHopiItemCount :
 		_chapter == 4 ? kTownItemCount : _chapter == 3 ? kItemCount : 19;
-	if (!item || item > maxItem || contains(item))
+}
+
+bool RunawayInventory::add(byte item) {
+	if (!item || item > maxItemId() || contains(item)) {
 		return false;
+	}
 	_items.push_back(item);
 	_newItem = item;
 	return true;

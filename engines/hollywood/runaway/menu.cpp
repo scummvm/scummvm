@@ -117,6 +117,14 @@ void RunawayMenu::open(const Graphics::ManagedSurface &screen, const Settings &s
 	CursorMan.showMouse(true);
 }
 
+void RunawayMenu::setChapterCount(byte chapters) {
+	chapters = MIN<byte>(chapters, 6);
+	if (_chapterCount != chapters) {
+		_chapterCount = chapters;
+		_selectedChapter = _chapterCount ? chapterAt(_mouse) : -1;
+	}
+}
+
 void RunawayMenu::captureThumbnail(const Graphics::ManagedSurface &screen) {
 	// The original options screen samples every fifth room pixel.
 	for (int y = 0; y < _thumbnail.h; ++y) {

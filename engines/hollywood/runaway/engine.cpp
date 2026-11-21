@@ -33,8 +33,8 @@
 #include "engines/util.h"
 #include "engines/metaengine.h"
 #include "graphics/cursorman.h"
-#include "gui/debugger.h"
 
+#include "hollywood/runaway/console.h"
 #include "hollywood/runaway/engine.h"
 #include "hollywood/runaway/intro.h"
 #include "hollywood/runaway/menu.h"
@@ -394,7 +394,7 @@ Common::Error RunawayEngine::run() {
 	initGraphics(kRunawayScreenWidth, kRunawayScreenHeight, &format);
 	if (_system->getScreenFormat() != format)
 		return Common::kUnsupportedColorMode;
-	setDebugger(new GUI::Debugger());
+	setDebugger(new RunawayConsole(this));
 	syncSoundSettings();
 	RunawayMenu menu(_mixer, _strings);
 	if (!menu.load(_game))
@@ -662,6 +662,9 @@ int RunawayEngine::pauseMenu(RunawayMenu &menu, Graphics::ManagedSurface &screen
 	bool finished = false, changed = false;
 	int chapter = -1;
 	while (!shouldQuit() && !finished) {
+		if (chapters) {
+			menu.setChapterCount(MAX<byte>(1, unlockedChapter()));
+		}
 		menu.tick(_system->getMillis());
 		Common::Event event;
 		while (!finished && _eventMan->pollEvent(event)) {

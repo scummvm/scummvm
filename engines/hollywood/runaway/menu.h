@@ -63,6 +63,7 @@ public:
 	void operationDone(bool success);
 	int selectedSlot() const { return _selectedSlot; }
 	int selectedChapter() const { return _selectedChapter; }
+	void setChapterCount(byte chapters);
 	Common::String saveDescription() const;
 	bool enteringName() const { return _page == kName; }
 	void draw(Graphics::ManagedSurface &screen);
