@@ -1013,6 +1013,8 @@ TestExitStatus GFXtests::mouseMovements() {
 		return kTestSkipped;
 	}
 
+	GFXtests::drawCursor(false, FRAC_ONE, FRAC_ONE);
+
 	// Draw Rectangle
 	// Ensure that 2 represents red in current palette
 	GFXTestSuite::setCustomColor(255, 0, 0);
