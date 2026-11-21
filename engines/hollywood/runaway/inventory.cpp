@@ -474,6 +474,9 @@ RunawayInventory::Reply RunawayInventory::examine(byte item) const {
 		if (!item || item > kMuseumItemCount) {
 			return Reply();
 		}
+		if (_fullGame && item == 3) {
+			return Reply(74);
+		}
 		byte variation = 0;
 		switch (item) {
 		case 5:

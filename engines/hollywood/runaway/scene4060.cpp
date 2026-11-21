@@ -92,7 +92,7 @@ const RunawayItemAction kItemActions[] = {
 	{kMuseumHall, 10, 8, 338}, // Dust the keypad with talcum powder.
 	{kMuseumHall, 1, 14, 11, false}, // Use wallet with maintenance worker.
 	{kMuseumHall, 2, 14, 11, false}, // Use car keys with maintenance worker.
-	{kMuseumHall, 3, 14, 11, false}, // Use condom with maintenance worker.
+	{kMuseumHall, 3, 14, 11, false}, // Show Willy the receipt (condom in the demo).
 	{kMuseumHall, 4, 14, 11, false}, // Use piece of amber with maintenance worker.
 	{kMuseumHall, 5, 14, 334, false}, // Show the tape recorder to Willy.
 	{kMuseumHall, 6, 14, 335, false}, // Show the battery to Willy.
