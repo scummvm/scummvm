@@ -44,10 +44,9 @@
 namespace Prisoner {
 
 // Version history:
-// 0 - Development format
-// 1 - Common::Serializer, save date and play time in the header, music playing and loop state
-//     Version 0 saves have the same layout without these fields and still load.
-static const Common::Serializer::Version kSavegameVersion = 1;
+// 0, 1 - Development formats with an own header, no longer supported
+// 2 - ScummVM extended save header
+static const Common::Serializer::Version kSavegameVersion = 2;
 
 // Strings are stored as a length byte followed by the characters
 static void syncString(Common::Serializer &s, Common::String &str) {
@@ -361,104 +360,32 @@ void ScreenText::sync(PrisonerEngine *vm, Common::Serializer &s) {
 	}
 }
 
-PrisonerEngine::kReadSaveHeaderError PrisonerEngine::readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header) {
-	Common::Serializer s(in, nullptr);
-
-	header.thumbnail = nullptr;
-	header.saveDate = 0;
-	header.saveTime = 0;
-	header.playTime = 0;
-
-	if (!s.syncVersion(kSavegameVersion))
-		return kRSHEInvalidVersion;
-	header.version = s.getVersion();
-
-	syncString(s, header.description);
-
-	if (!Graphics::loadThumbnail(*in, header.thumbnail, !loadThumbnail))
-		return kRSHEIoError;
-
-	// Not used yet, reserved for future usage
-	s.syncAsByte(header.gameID);
-	s.syncAsUint32LE(header.flags);
-
-	s.syncAsUint32LE(header.saveDate, 1);
-	s.syncAsUint16LE(header.saveTime, 1);
-	s.syncAsUint32LE(header.playTime, 1);
-
-	return (in->eos() || in->err()) ? kRSHEIoError : kRSHENoError;
-}
-
-Common::Error PrisonerEngine::savegame(const char *filename, const char *description) {
-	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(filename);
-	if (!out) {
-		warning("Can't create file '%s', game not saved", filename);
-		return Common::Error(Common::kCreatingFileFailed, filename);
-	}
-
-	Common::Serializer s(nullptr, out);
-	s.syncVersion(kSavegameVersion);
-
-	Common::String descriptionStr = description;
-	syncString(s, descriptionStr);
-
+// Saving from the main menu takes the thumbnail from the game screen behind the menu
+void PrisonerEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	if (_menuBackgroundSaved) {
-		// Saving from the main menu: take the thumbnail from the game screen behind the menu
 		byte palette[256 * 3];
 		g_system->getPaletteManager()->grabPalette(palette, 0, 256);
-		Graphics::Surface thumbnail;
-		::createThumbnail(&thumbnail, (const byte *)_menuBackgroundSurface->getPixels(),
+		::createThumbnail(&thumb, (const byte *)_menuBackgroundSurface->getPixels(),
 			_menuBackgroundSurface->w, _menuBackgroundSurface->h, palette);
-		Graphics::saveThumbnail(*out, thumbnail);
-		thumbnail.free();
 	} else {
-		Graphics::saveThumbnail(*out);
+		::createThumbnailFromScreen(&thumb);
 	}
-
-	// Not used yet, reserved for future usage
-	byte gameID = 0;
-	uint32 flags = 0;
-	s.syncAsByte(gameID);
-	s.syncAsUint32LE(flags);
-
-	TimeDate now;
-	g_system->getTimeAndDate(now);
-	uint32 saveDate = ((now.tm_mday & 0xFF) << 24) | (((now.tm_mon + 1) & 0xFF) << 16) | ((now.tm_year + 1900) & 0xFFFF);
-	uint16 saveTime = ((now.tm_hour & 0xFF) << 8) | (now.tm_min & 0xFF);
-	uint32 playTime = getTotalPlayTime();
-	s.syncAsUint32LE(saveDate);
-	s.syncAsUint16LE(saveTime);
-	s.syncAsUint32LE(playTime);
-
-	syncGameState(s);
-
-	out->finalize();
-	bool failed = out->err();
-	delete out;
-
-	if (failed) {
-		warning("Error writing file '%s', game not saved", filename);
-		return Common::Error(Common::kWritingFailed, filename);
-	}
-	return Common::kNoError;
 }
 
-Common::Error PrisonerEngine::loadgame(const char *filename) {
-	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
-	if (!in) {
-		warning("Can't open file '%s', game not loaded", filename);
-		return Common::Error(Common::kReadingFailed, filename);
-	}
+Common::Error PrisonerEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	Common::Serializer s(nullptr, stream);
+	s.syncVersion(kSavegameVersion);
+	syncGameState(s);
 
-	SaveHeader header;
-	kReadSaveHeaderError errorCode = readSaveHeader(in, false, header);
-	if (errorCode != kRSHENoError) {
-		warning("Error loading savegame '%s'", filename);
-		delete in;
-		if (errorCode == kRSHEInvalidVersion)
-			return Common::Error(Common::kReadingFailed, "This saved game was made with a newer version of the engine");
-		return Common::Error(Common::kReadingFailed, filename);
-	}
+	return stream->err() ? Common::kWritingFailed : Common::kNoError;
+}
+
+Common::Error PrisonerEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	Common::Serializer s(stream, nullptr);
+	if (!s.syncVersion(kSavegameVersion))
+		return Common::Error(Common::kReadingFailed, "This saved game was made with a newer version of the engine");
+	if (s.getVersion() < 2)
+		return Common::Error(Common::kReadingFailed, "This saved game was made with a development version of the engine");
 
 	_updateDirtyRectsFlag = true;
 	_needToUpdatePalette = false;
@@ -478,36 +405,31 @@ Common::Error PrisonerEngine::loadgame(const char *filename) {
 
 	clearActors();
 
-	Common::Serializer s(in, nullptr);
-	s.setVersion(header.version);
 	syncGameState(s);
 
-	bool failed = in->err();
-	delete in;
-
-	if (header.version >= 1)
-		setTotalPlayTime(header.playTime);
+	bool failed = stream->err();
 
 	_inScene = true;
 	initFrameTime();
 	updateScreen(true, _cameraX + _mouseX, _cameraY + _mouseY);
 	_backgroundFlag = 4;
 	_updateDirtyRectsFlag = true;
+	// Loading from the main menu opened during the game (which paused it) closes the menu
+	if (_mainMenuRequested && _menuBackgroundSaved) {
+		_pauseToken.clear();
+		_selectedMenuIndex = kMainPanel;
+	}
 	_mainMenuRequested = false;
 	_inGame = true;
 	_menuMouseCursorActive = false;
 	_menuMouseCursor = -1;
 	_moduleScriptCalled = false;
 
-	if (failed) {
-		warning("Error reading savegame '%s'", filename);
-		return Common::Error(Common::kReadingFailed, filename);
-	}
-	return Common::kNoError;
+	return failed ? Common::kReadingFailed : Common::kNoError;
 }
 
-// Syncs everything after the header. When loading, the state is restored in the same
-// order the data is read, since later parts depend on resources loaded earlier.
+// Syncs everything after the version. When loading, the state is restored in the same order the
+// data is read, since later parts depend on resources loaded earlier.
 void PrisonerEngine::syncGameState(Common::Serializer &s) {
 	// Module & Background
 	s.syncAsUint16LE(_currModuleIndex);
@@ -726,18 +648,14 @@ void PrisonerEngine::syncGameState(Common::Serializer &s) {
 					musicSlot.resourceCacheSlot = _res->load<SoundResource>(pakName, pakSlot, 12);
 				else
 					musicSlot.resourceCacheSlot = _res->load<MidiResource>(pakName, pakSlot, 13);
-				// Version 0 saves don't know whether the music was playing, restart it
-				musicSlot.isPlaying = true;
-				musicSlot.loop = false;
-				musicSlot.loopCount = 0;
 			}
 			s.syncAsByte(musicSlot.volumeFlag);
 			s.syncAsUint16LE(musicSlot.volume);
 			s.syncAsByte(musicSlot.shouldResume);
 			s.syncAsByte(musicSlot.moduleWide);
-			s.syncAsByte(musicSlot.isPlaying, 1);
-			s.syncAsByte(musicSlot.loop, 1);
-			s.syncAsUint16LE(musicSlot.loopCount, 1);
+			s.syncAsByte(musicSlot.isPlaying);
+			s.syncAsByte(musicSlot.loop);
+			s.syncAsUint16LE(musicSlot.loopCount);
 			if (s.isLoading() && musicSlot.isPlaying) {
 				setMusicVolume(musicIndex, musicSlot.volume);
 				playMusic(musicIndex, musicSlot.loop, musicSlot.loopCount);
@@ -778,27 +696,6 @@ bool PrisonerEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 bool PrisonerEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return !_isPlayingMux && !_needToPlayMux && !_screensaverRunning &&
 		!_inventoryInputRunning && !_isDialogMenuShowing;
-}
-
-Common::Error PrisonerEngine::loadGameState(int slot) {
-	return loadgame(getSavegameFilename(slot).c_str());
-}
-
-Common::Error PrisonerEngine::saveGameState(int slot, const Common::String &description, bool isAutosave) {
-	return savegame(getSavegameFilename(slot).c_str(), description.c_str());
-}
-
-Common::String PrisonerEngine::getSavegameFilename(int num) const {
-	return getSavegameFilename(_targetName, num);
-}
-
-Common::String PrisonerEngine::getSavegameFilename(const Common::String &target, int num) {
-	assert(num >= 0 && num <= 999);
-
-	char extension[5];
-	snprintf(extension, 5, "%03d", num);
-
-	return target + "." + extension;
 }
 
 } // End of namespace Prisoner

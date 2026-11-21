@@ -21,8 +21,10 @@
 
 #include "common/config-manager.h"
 #include "common/hashmap.h"
+#include "common/ptr.h"
 
 #include "engines/dialogs.h"
+#include "engines/metaengine.h"
 
 #include "graphics/paletteman.h"
 
@@ -1460,15 +1462,10 @@ static bool compareSaveLoadEntries(const PrisonerEngine::SaveLoadEntry &a, const
 	return a.slot > b.slot;
 }
 
-// Reads the header of the save in a slot. The caller frees the thumbnail.
-static bool readSaveSlotHeader(const Common::String &target, int slot, bool loadThumbnail, PrisonerEngine::SaveHeader &header) {
-	header.thumbnail = nullptr;
-	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(PrisonerEngine::getSavegameFilename(target, slot));
-	if (!in)
-		return false;
-	bool result = PrisonerEngine::readSaveHeader(in, loadThumbnail, header) == PrisonerEngine::kRSHENoError;
-	delete in;
-	return result;
+// Reads the header of a save. The caller frees the thumbnail.
+static bool readSaveFileHeader(const Common::String &filename, bool loadThumbnail, ExtendedSavegameHeader &header) {
+	Common::ScopedPtr<Common::InSaveFile> in(g_system->getSavefileManager()->openForLoading(filename));
+	return in && MetaEngine::readSavegameHeader(in.get(), &header, !loadThumbnail);
 }
 
 static bool isOriginalSaveLoadEnabled() {
@@ -1519,8 +1516,8 @@ void PrisonerEngine::loadSaveLoadEntries() {
 		if (_saveLoadSaving && saves[i].getSaveSlot() == getAutosaveSlot())
 			continue;
 		// The description as stored, in the game's character set
-		SaveHeader header;
-		if (!readSaveSlotHeader(_targetName, saves[i].getSaveSlot(), false, header))
+		ExtendedSavegameHeader header;
+		if (!readSaveFileHeader(getSaveStateName(saves[i].getSaveSlot()), false, header))
 			continue;
 		SaveStateDescriptor desc = metaEngine->querySaveMetaInfos(_targetName.c_str(), saves[i].getSaveSlot());
 		SaveLoadEntry entry;
@@ -1592,8 +1589,8 @@ void PrisonerEngine::updateSaveLoadThumbnail() {
 
 	// ScummVM thumbnails are true color and show the whole screen: take the game area and
 	// use the nearest colors of the current palette
-	SaveHeader header;
-	readSaveSlotHeader(_targetName, entry.slot, true, header);
+	ExtendedSavegameHeader header;
+	readSaveFileHeader(getSaveStateName(entry.slot), true, header);
 	Graphics::Surface *thumbnail = header.thumbnail;
 	if (!thumbnail)
 		return;
@@ -1648,8 +1645,6 @@ void PrisonerEngine::confirmSaveLoadEntry() {
 		_saveLoadFromGame = true;
 		closeSaveLoadScreen();
 	} else {
-		if (isPaused())
-			_pauseToken.clear();
 		_selectedMenuIndex = kMainPanel;
 		loadGameState(entry.slot);
 	}

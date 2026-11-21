@@ -39,10 +39,8 @@ public:
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
 
-	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	bool removeSaveState(const char *target, int slot) const override;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 };
 
 #endif // PRISONER_METAENGINE_H

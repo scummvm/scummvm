@@ -1304,24 +1304,6 @@ public:
 
 	/* Save/load */
 
-	enum kReadSaveHeaderError {
-		kRSHENoError = 0,
-		kRSHEInvalidType = 1,
-		kRSHEInvalidVersion = 2,
-		kRSHEIoError = 3
-	};
-
-	struct SaveHeader {
-		Common::String description;
-		uint32 version;
-		byte gameID;
-		uint32 flags;
-		uint32 saveDate;
-		uint16 saveTime;
-		uint32 playTime;
-		Graphics::Surface *thumbnail;
-	};
-
 	// Set while a video plays or the inventory runs its own input loop, when the ScummVM
 	// menu can still be opened but saving or loading would leave the engine in a bad state
 	bool _isPlayingMux;
@@ -1331,14 +1313,10 @@ public:
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 	// Both the game's own autosaves and ScummVM's periodic autosave use ScummVM's default slot 0
 	int getAutosaveSlot() const override { return 0; }
-	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &description, bool isAutosave = false) override;
-	Common::Error savegame(const char *filename, const char *description);
-	Common::Error loadgame(const char *filename);
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	void syncGameState(Common::Serializer &s);
-	Common::String getSavegameFilename(int num) const;
-	static Common::String getSavegameFilename(const Common::String &target, int num);
-	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header);
+	void getSavegameThumbnail(Graphics::Surface &thumb);
 
 public:
 

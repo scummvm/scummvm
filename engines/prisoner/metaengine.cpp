@@ -76,7 +76,9 @@ bool PrisonerMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime);
+		(f == kSavesSupportPlayTime) ||
+		(f == kSimpleSavesNames) ||
+		(f == kSavesUseExtendedFormat);
 }
 
 bool Prisoner::PrisonerEngine::hasFeature(EngineFeature f) const {
@@ -87,78 +89,13 @@ bool Prisoner::PrisonerEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSubtitleOptions);
 }
 
-SaveStateList PrisonerMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Prisoner::PrisonerEngine::SaveHeader header;
-	Common::String pattern = target;
-	pattern += ".???";
-
-	Common::StringArray filenames;
-	filenames = saveFileMan->listSavefiles(pattern.c_str());
-	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
-
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
-		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 3);
-
-		if (slotNum >= 0 && slotNum <= 999) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
-			if (in) {
-				if (Prisoner::PrisonerEngine::readSaveHeader(in, false, header) == Prisoner::PrisonerEngine::kRSHENoError) {
-					SaveStateDescriptor desc(this, slotNum, header.description);
-					desc.setAutosave(slotNum == getAutosaveSlot());
-					saveList.push_back(desc);
-				}
-				delete in;
-			}
-		}
-	}
-
-	return saveList;
-}
-
 int PrisonerMetaEngine::getMaximumSaveSlot() const {
 	return 999;
 }
 
-bool PrisonerMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String filename = Prisoner::PrisonerEngine::getSavegameFilename(target, slot);
-	return g_system->getSavefileManager()->removeSavefile(filename);
+void PrisonerMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	((Prisoner::PrisonerEngine *)g_engine)->getSavegameThumbnail(thumb);
 }
-
-SaveStateDescriptor PrisonerMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String filename = Prisoner::PrisonerEngine::getSavegameFilename(target, slot);
-	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
-
-	if (in) {
-		Prisoner::PrisonerEngine::SaveHeader header;
-		Prisoner::PrisonerEngine::kReadSaveHeaderError error;
-
-		error = Prisoner::PrisonerEngine::readSaveHeader(in, true, header);
-		delete in;
-
-		if (error == Prisoner::PrisonerEngine::kRSHENoError) {
-			SaveStateDescriptor desc(this, slot, header.description);
-
-			// The constructor already protects the autosave slot from being overwritten or deleted
-			desc.setAutosave(slot == getAutosaveSlot());
-			desc.setThumbnail(header.thumbnail);
-
-			// Version 0 saves have no date or play time
-			if (header.version >= 1) {
-				desc.setSaveDate(header.saveDate & 0xFFFF, (header.saveDate >> 16) & 0xFF, (header.saveDate >> 24) & 0xFF);
-				desc.setSaveTime((header.saveTime >> 8) & 0xFF, header.saveTime & 0xFF);
-				desc.setPlayTime(header.playTime);
-			}
-
-			return desc;
-		}
-	}
-
-	return SaveStateDescriptor();
-}
-
 
 #if PLUGIN_ENABLED_DYNAMIC(PRISONER)
 REGISTER_PLUGIN_DYNAMIC(PRISONER, PLUGIN_TYPE_ENGINE, PrisonerMetaEngine);
