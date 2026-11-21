@@ -20,6 +20,8 @@
  */
 
 #include "common/textconsole.h"
+#include "graphics/managed_surface.h"
+#include "graphics/scaler.h"
 
 #include "tesoro/scripts.h"
 #include "tesoro/tesoro.h"
@@ -728,6 +730,25 @@ Cursor::Place World::place() {
 	if (_engine._inMenu)
 		return _engine._level == _engine._mainMenu ? Cursor::kMainMenu : Cursor::kNewGameMenu;
 	return jimLevelIndex() == 14 ? Cursor::kBoard : Cursor::kGame;
+}
+
+void World::captureThumbnail() {
+
+	Display &display = _engine._display;
+	display.startFrame();
+	if (Level *where = jimLevel())
+		where->drawRooms(now(), display);
+	display.compose();
+
+	_thumbnail.resize(Cursor::kThumbWidth * Cursor::kThumbHeight);
+	Cursor::sampleScene(display.frame(), &_thumbnail[0]);
+
+	// Saved the composed scene also for the scummvm save
+	Graphics::ManagedSurface composed(640, 480, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+	memcpy(composed.getPixels(), display.frame(), 640 * 480 * 2);
+	_sceneThumb.free();
+	::createThumbnail(&_sceneThumb, &composed);
+	display.startFrame();
 }
 
 } // End of namespace Tesoro

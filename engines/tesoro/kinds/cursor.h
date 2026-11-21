@@ -62,6 +62,9 @@ public:
 	void setHost(World *host) { _host = host; }
 	void setActionStrip(ActionStrip *strip) { _actionStrip = strip; }
 
+	enum { kThumbWidth = 213, kThumbHeight = 160 };
+	static void sampleScene(const uint16 *frame, uint16 *out);
+
 	void closeSaveLoadMenu();
 	void hideInventory();
 

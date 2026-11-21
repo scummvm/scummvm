@@ -102,6 +102,13 @@ void Cursor::openSaveLoadMenu() {
 	_host->jimResumeFacing();
 	_label.set(nullptr, 0);
 
+	// move the pointer and the camera far out of the way to capture the scene for the save thumbnail, then restore them.
+	shiftY(-5000);
+	_level->camera().shift(0, -5000);
+	_host->captureThumbnail();
+	_level->camera().shift(0, 5000);
+	shiftY(5000);
+
 	// The interface slides to the save screen.
 	_level->camera().shift(-645, 0);
 }
@@ -254,6 +261,14 @@ int Cursor::processCandidates(byte buttons, int verb) {
 		previous[i]->clearHoverText();
 
 	return result;
+}
+
+/** takes every third pixel of every third row of the frame, used as a thumbnail for the save file */
+void Cursor::sampleScene(const uint16 *frame, uint16 *out) {
+	for (uint y = 0; y < kThumbHeight; ++y) {
+		for (uint x = 0; x < kThumbWidth; ++x)
+			out[y * kThumbWidth + x] = frame[(y * 3) * 640 + x * 3];
+	}
 }
 
 void Cursor::shiftActionStrip(int32 dx) {

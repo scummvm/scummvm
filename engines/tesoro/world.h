@@ -23,6 +23,7 @@
 #define TESORO_WORLD_H
 
 #include "common/scummsys.h"
+#include "graphics/surface.h"
 
 #include "tesoro/kinds/clickcatcher.h"
 #include "tesoro/kinds/cursor.h"
@@ -168,7 +169,7 @@ public:
 	/** Switches a level's walk area to other frames, which changes where Jim can walk. */
 	void setWalkAreaFrames(Level *level, WalkPart part, int first, int last);
 	void startMovie(int number);
-
+	void captureThumbnail();
 	void walkJimToPointer(int32 mouseX, int32 mouseY);
 
 	uint32 playVoice(uint32 archiveOffset);
@@ -239,6 +240,8 @@ private:
 	Level *_interface = nullptr;
 	Object *_actionStrip = nullptr;
 	bool _subtitles = true;
+	Graphics::Surface _sceneThumb;		// the same scene in ScummVM's thumbnail format
+	Common::Array<uint16> _thumbnail;	// the scene taken when the save screen opened
 	int _slotChoice = 0;				// the saved game chosen on the save screen (0 none)
 	int _jimVerb = 0;					// what the pointer carried when it clicked Jim
 	bool _jimClickPending = false;		// Jim is saying his answer to that click
