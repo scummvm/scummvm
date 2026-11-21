@@ -38,6 +38,7 @@ public:
 	bool busy() const override;
 
 private:
+	const char *actionCaptionVariant(byte id, bool look, byte item) const override;
 	bool loadCustomResources() override;
 	bool applyCustomBackgroundPatches() override;
 	void applyCustomHotspotState() override;

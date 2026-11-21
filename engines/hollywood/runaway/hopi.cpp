@@ -44,7 +44,7 @@ RunawayInventory::Reply RunawayInventory::combineHopiItems(byte first, byte seco
 	if (first == 13 && second == 15) {
 		return Reply(265);
 	}
-	return Reply();
+	return Reply::fromAction(1);
 }
 
 bool RunawayRoomScene::sayHopiInventory(const RunawayInventory::Reply &reply) {

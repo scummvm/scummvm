@@ -70,8 +70,8 @@ const RunawayItemAction kItemActions[] = {
 	{6290, 10, 5, 332, false}, {6290, 10, 8, 324},
 	{6290, 11, 5, 323, false}, {6290, 11, 8, 325}, {6290, 11, 13, 323, false},
 	{6290, 12, 5, 327, false}, {6290, 12, 8, 326, false},
-	{6290, 24, 5, 328, false}, {6290, 24, 8, 326, false},
-	{6290, 25, 5, 329, false}, {6290, 26, 5, 333, false}
+	{6290, 24, 5, 328}, {6290, 24, 8, 326, false},
+	{6290, 25, 5, 329, false}, {6290, 26, 13, 333, false}
 };
 
 } // End of anonymous namespace
@@ -86,6 +86,18 @@ namespace Runaway {
 
 Scene6290::Scene6290(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
+
+const char *Scene6290::actionCaptionVariant(byte id, bool look, byte item) const {
+	if (!look && !item) {
+		if (id == 4 && _town.joshuaGone) {
+			return "raised";
+		}
+		if (id == 5 && _town.machinePowered && !_town.joshuaGone) {
+			return "running";
+		}
+	}
+	return nullptr;
+}
 
 bool Scene6290::loadCustomResources() {
 	return _joshuaAnimation.load(_archive, 10, 131) && _machineAnimation.load(_archive, 5, 52) &&
@@ -491,7 +503,7 @@ RunawayRoomScene::ActionResult Scene6290::dispatchCustomSceneAction(uint16 actio
 		say(11, _town.melodyTried);
 		break;
 	case 329: // The thirty-CC tube cannot fuel the motorcycle directly.
-	case 333: // The fifty-CC tube cannot fuel the motorcycle directly.
+	case 333: // Do not pour the fifty-CC tube's concentrate into the rotor.
 		if (action == 329 ? !_inventory.town().tube30 : !_inventory.town().tube50) {
 			say(19, 0, true);
 		} else {

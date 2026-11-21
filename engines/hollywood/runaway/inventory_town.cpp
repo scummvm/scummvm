@@ -46,18 +46,6 @@ RunawayInventory::Reply RunawayInventory::combineTownItems(byte first, byte seco
 		_selected = 0;
 		return Reply(_town.tube50 == 4 ? 236 : 234, 2);
 	}
-	if (first > second) {
-		SWAP(first, second);
-	}
-	if (first == 11 && second == 20) { // Staple the ends of the drive belt together.
-		if (_town.strap != 1) {
-			return Reply(227, _town.strap == 2 ? 3 : 0);
-		}
-		_town.strap = 2;
-		_selected = 0;
-		_newItem = 11;
-		return Reply(227, 1);
-	}
 	if (first == 12 && (second == 25 || second == 26)) { // Fill a measuring tube from the concentrate.
 		byte &contents = second == 25 ? _town.tube30 : _town.tube50;
 		const byte capacity = second == 25 ? 3 : 5;
@@ -71,7 +59,7 @@ RunawayInventory::Reply RunawayInventory::combineTownItems(byte first, byte seco
 		_selected = 0;
 		return Reply(228, second == 25 ? 2 : 3);
 	}
-	if ((first == 25 || first == 26) && second == 31) { // Empty a tube into the vessel.
+	if ((first == 25 || first == 26) && second == 12) { // Empty a tube back into the concentrate.
 		byte &contents = first == 25 ? _town.tube30 : _town.tube50;
 		if (!contents) {
 			return Reply(first == 25 ? 234 : 236);
@@ -80,17 +68,26 @@ RunawayInventory::Reply RunawayInventory::combineTownItems(byte first, byte seco
 		_selected = 0;
 		return Reply(228);
 	}
-	if (first == 24 && (second == 25 || second == 26)) { // Add the measured concentrate to one liter of water.
+	if (first == 25 && second == 24) { // The small tube cannot measure the required forty cc.
+		if (!_town.tube30) {
+			return Reply(235);
+		}
+		return Reply(237, _town.bottleContents == 2 ? 4 : 0);
+	}
+	if ((first == 12 || first == 26) && second == 24) { // Add measured concentrate to one liter of water.
 		if (_town.bottleContents == 2) {
 			return Reply(237, 4);
 		}
 		if (!_town.bottleContents) {
 			return Reply(237, 1);
 		}
-		if (!(second == 25 ? _town.tube30 : _town.tube50)) {
+		if (first == 12) {
+			return Reply(237);
+		}
+		if (!_town.tube50) {
 			return Reply(235);
 		}
-		if (second != 26 || _town.tube50 != 4) {
+		if (_town.tube50 != 4) {
 			return Reply(237);
 		}
 		_town.tube50 = 0;
@@ -110,8 +107,45 @@ RunawayInventory::Reply RunawayInventory::combineTownItems(byte first, byte seco
 		_selected = 0;
 		return Reply(231, 2);
 	}
-	if (first == 24 && second == 31) { // Preserve the bottle's exact measure or prepared fuel.
+	if (first == 12 && (second == 8 || second == 13 || second == 16 || second == 21 || second == 23 || second == 31)) {
+		// Concentrate belongs in the measuring tubes.
+		return Reply(229);
+	}
+	if (first == 23 && (second == 8 || second == 12 || second == 13 || second == 21 ||
+			second == 25 || second == 26 || second == 31)) {
+		// Pouring the oil can into anything other than the bottle wastes its water.
+		return Reply(_town.oilCanFull ? 232 : 231);
+	}
+	if (first == 24 && (second == 25 || second == 26)) { // Do not put water or prepared gasoline into a measuring tube.
+		return _town.bottleContents == 1 ? Reply(238) : Reply(233, _town.bottleContents);
+	}
+	if (first == 24 && (second == 8 || second == 12 || second == 13 || second == 21 || second == 23 || second == 31)) {
+		// Preserve the bottle's exact measure or prepared fuel.
 		return Reply(233, _town.bottleContents);
+	}
+	if ((first == 25 || first == 26) && (second == 8 || second == 21 || second == 23 || second == 31 ||
+			(first == 26 && second == 13))) {
+		// Do not waste measured concentrate in an unsuitable container.
+		return Reply(235, (first == 25 ? _town.tube30 : _town.tube50) != 0);
+	}
+	if (first == 8 && second == 28) { // The chewing tobacco already contains liniment.
+		return Reply(226);
+	}
+	if (first == 8 && second == 31) { // The liniment must be combined with the leaves.
+		return Reply(243);
+	}
+	// The remaining combinations work in either direction.
+	if (first > second) {
+		SWAP(first, second);
+	}
+	if (first == 11 && second == 20) { // Staple the ends of the drive belt together.
+		if (_town.strap != 1) {
+			return Reply(227, _town.strap == 2 ? 3 : 0);
+		}
+		_town.strap = 2;
+		_selected = 0;
+		_newItem = 11;
+		return Reply(227, 1);
 	}
 	if (first == 8 && second == 27) { // Make menthol chewing tobacco using the improvised mortar.
 		if (!_town.mortar) {
@@ -142,22 +176,7 @@ RunawayInventory::Reply RunawayInventory::combineTownItems(byte first, byte seco
 	if (first == 29 && second == 30) { // The room supplies Saturn's prerequisite for sanding the stone.
 		return Reply(240);
 	}
-	if (first == 8 && second == 28) {
-		return Reply(226);
-	}
-	if (first == 28 && second == 31) {
-		return Reply(242);
-	}
-	if (first == 8 && second == 24) {
-		return Reply(243);
-	}
-	if (first == 12 && (second == 23 || second == 24 || second == 31)) {
-		return Reply(229);
-	}
-	if (first == 23 && (second == 25 || second == 26)) {
-		return Reply(238);
-	}
-	return Reply();
+	return Reply::fromAction(1);
 }
 
 } // End of namespace Hollywood

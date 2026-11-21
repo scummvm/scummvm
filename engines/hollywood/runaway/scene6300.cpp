@@ -83,6 +83,18 @@ namespace Runaway {
 Scene6300::Scene6300(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
 
+const char *Scene6300::actionCaptionVariant(byte id, bool look, byte item) const {
+	if (!look && !item) {
+		if (id == 8 && _town.catapult) {
+			return "catapult";
+		}
+		if (id == 11 && _town.wrenchPermission) {
+			return _town.wrenchPermission == 1 ? "wrench" : "tool";
+		}
+	}
+	return nullptr;
+}
+
 bool Scene6300::loadCustomResources() {
 	return _catapultAnimation.load(_archive, 6, 48) && _statueAnimation.load(_archive, 7, 2) &&
 		_torchAnimation.load(_archive, 8, 2) && _sculptureAnimation.load(_archive, 9, 1) &&

@@ -77,6 +77,18 @@ namespace Runaway {
 Scene7010::Scene7010(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
 
+const char *Scene7010::actionCaptionVariant(byte id, bool look, byte item) const {
+	if (!look && !item && id == 2) {
+		if (_hopi.femurTaken) {
+			return "more_bones";
+		}
+		if (_hopi.timber > 2) {
+			return "bone";
+		}
+	}
+	return nullptr;
+}
+
 bool Scene7010::loadCustomResources() {
 	return _bats.load(_archive, 4, 50) && _nail.load(_archive, 5, 2) &&
 		_anchor.load(_archive, 8, 1) && _lowerRope.load(_archive, 10, 56) && loadForeground(0, 11);

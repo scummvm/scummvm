@@ -49,7 +49,7 @@ const RunawayResponse kResponses[] = {
 
 const RunawayItemAction kItemActions[] = {
 	{6260, 23, 4, 313}, // Pour water from the oil can into the tank.
-	{6260, 24, 4, 314}  // Try to pour from the bottle.
+	{6260, 24, 4, 314, false}  // Try to pour from the bottle.
 };
 
 } // End of anonymous namespace

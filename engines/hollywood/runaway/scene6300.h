@@ -36,6 +36,7 @@ protected:
 	void drawWorkshopForeground(Graphics::ManagedSurface &viewport);
 
 private:
+	const char *actionCaptionVariant(byte id, bool look, byte item) const override;
 	bool loadCustomResources() override;
 	bool applyCustomBackgroundPatches() override;
 	void applyCustomHotspotState() override;

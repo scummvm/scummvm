@@ -69,6 +69,13 @@ namespace Runaway {
 Scene6220::Scene6220(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
 
+const char *Scene6220::actionCaptionVariant(byte id, bool look, byte item) const {
+	if (id == 8 && _town.strapSeen == 1 && (!item || item == 22)) {
+		return "strap";
+	}
+	return nullptr;
+}
+
 bool Scene6220::loadCustomResources() {
 	return _sushiAnimation.load(_archive, 7, 170) && _brianAnimation.load(_archive, 8, 45) && _shotAnimation.load(_archive, 9, 60);
 }
@@ -162,13 +169,6 @@ void Scene6220::setupActorDepth(RunawayActor::RenderParams &params) const {
 	params.depthY[7] = 599;
 	params.depthY[8] = 322;
 	params.depthY[9] = 599;
-}
-
-Common::U32String Scene6220::hotspotName(byte id) const {
-	if (id == 8 && _town.strapSeen == 1) {
-		return _strings.itemName(4, 11);
-	}
-	return RunawayRoomScene::hotspotName(id);
 }
 
 bool Scene6220::shouldApproachHotspot(byte id, bool use, byte item, bool approach) const {

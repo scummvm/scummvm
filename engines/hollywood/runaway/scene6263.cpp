@@ -80,6 +80,13 @@ namespace Runaway {
 Scene6263::Scene6263(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
 
+const char *Scene6263::actionCaptionVariant(byte id, bool look, byte item) const {
+	if (!look && !item && ((id == 3 && _town.steamLever) || (id == 4 && _town.pressureWheel))) {
+		return "identified";
+	}
+	return nullptr;
+}
+
 bool Scene6263::usesAlternateActor() const {
 	return false;
 }

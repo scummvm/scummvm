@@ -36,6 +36,7 @@ protected:
 	RunawayAnimation _plantAnimation;
 
 private:
+	const char *actionCaptionVariant(byte id, bool look, byte item) const override;
 	bool usesAlternateActor() const override;
 	bool applyCustomBackgroundPatches() override;
 	void applyCustomHotspotState() override;

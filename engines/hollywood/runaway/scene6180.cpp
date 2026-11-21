@@ -64,6 +64,13 @@ namespace Runaway {
 Scene6180::Scene6180(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
 
+const char *Scene6180::actionCaptionVariant(byte id, bool look, byte item) const {
+	if (!look && !item && id == 3 && _town.wrenchThrown) {
+		return _town.wrenchThrown == 1 ? "wrench" : "pot";
+	}
+	return nullptr;
+}
+
 bool Scene6180::loadCustomResources() {
 	return _doors.load(_archive) && loadForeground(0, 4) && loadForeground(1, 5);
 }
@@ -163,7 +170,7 @@ RunawayRoomScene::ActionResult Scene6180::dispatchCustomSceneAction(uint16 actio
 	case 305: // Examine the trough before or after the wrench lands in it.
 		say(4, _town.wrenchThrown);
 		break;
-	case 306: // The muddy trough is too heavy to overturn.
+	case 306: // Try to overturn the trough, retrieve the buried wrench, or take the flower pot.
 		say(5, _town.wrenchThrown);
 		break;
 	case 308: // Step on the board, or point out that Brian is already on it.

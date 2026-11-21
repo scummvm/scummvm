@@ -60,6 +60,10 @@ namespace Runaway {
 Scene6210::Scene6210(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
 
+const char *Scene6210::actionCaptionVariant(byte id, bool look, byte item) const {
+	return !look && !item && id == 3 && _town.bagSearched ? "searched" : nullptr;
+}
+
 void Scene6210::resumeAmbientAudio(bool entering) {
 	if (!_audio.musicPlaying()) {
 		_audio.playMusic(18);

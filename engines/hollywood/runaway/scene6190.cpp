@@ -63,6 +63,10 @@ namespace Runaway {
 Scene6190::Scene6190(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
 
+const char *Scene6190::actionCaptionVariant(byte id, bool look, byte item) const {
+	return !look && !item && id == 2 && _town.catapult == 3 ? "basement" : nullptr;
+}
+
 bool Scene6190::usesAlternateActor() const {
 	return false;
 }

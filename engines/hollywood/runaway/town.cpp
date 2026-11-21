@@ -53,6 +53,27 @@ bool RunawayRoomScene::sayTownInventory(const RunawayInventory::Reply &reply) {
 			say(219, 4, true);
 		}
 		return true;
+	case 228: // Empty a measuring tube back into the concentrate.
+		if (reply.variation) {
+			break;
+		}
+		_audio.playEffect(34);
+		say(228, 0, true);
+		return true;
+	case 233: // Once Joshua is gone, there is no reason to save another liter of water.
+		if (reply.variation == 1 && _town.joshuaGone) {
+			say(1, 2, true);
+			return true;
+		}
+		return false;
+	case 234: // Pour concentrate between the measuring tubes.
+	case 236:
+		if (reply.variation != 2) {
+			return false;
+		}
+		_audio.playEffect(34);
+		say(reply.cue, reply.variation, true);
+		return true;
 	case 240: // Polish the rough stone after Saturn explains what is wrong with it.
 		if (_inventory.town().sculpture) {
 			say(240, 3, true);
