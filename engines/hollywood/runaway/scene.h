@@ -240,6 +240,7 @@ protected:
 	void resumeMuseum();
 	void updateMuseum(uint elapsed);
 	bool sayMuseumInventory(const RunawayInventory::Reply &reply);
+	bool updateMuseumInventory();
 	void deferMuseumAction(uint16 action);
 	void refreshMuseum();
 	void leaveMuseumRoom(uint16 scene, Common::Point position, byte facing = 3, bool door = false);

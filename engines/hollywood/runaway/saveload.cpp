@@ -186,7 +186,7 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(desert.needle, 7);
 	s.syncAsByte(desert.fridgeSeen, 7);
 	s.syncAsByte(desert.carlaMet, 7);
-	s.syncAsByte(desert.carlaStory, 7);
+	s.syncAsByte(desert.carlaDrank, 7);
 	s.syncAsByte(desert.planKnown, 7);
 	s.syncAsUint32LE(desert.carlaTopics, 7);
 	s.syncAsUint32LE(desert.lulaTopics, 7);
@@ -469,7 +469,7 @@ bool RunawaySaveState::valid() const {
 			desert.busDoor > 3 || desert.lipstickShelf > 3 || desert.keyTaken > 1 || desert.glassesTaken > 1 ||
 			desert.vacuum > 2 || desert.crank > 2 || desert.necklacesSeen > 1 || desert.ringsSeen > 1 ||
 			desert.fridgeOpened > 1 || desert.ventCleaned > 1 || desert.ventSeen > 1 || desert.needle > 2 || desert.fridgeSeen > 1 ||
-			desert.carlaMet > 1 || desert.carlaStory > 1 || desert.planKnown > 1 ||
+			desert.carlaMet > 1 || desert.carlaDrank > 1 || desert.planKnown > 1 ||
 			desertItems.antTrickKnown > 1 || desertItems.helmet > 4 || desertItems.lipstick > 1 || desertItems.lipsticks > 1 ||
 			desertItems.belt > 2 || desertItems.ball > 2 || desertItems.glasses > 2 || desertItems.pill > 1 ||
 			desertItems.bucket > 2 || desertItems.gunReady > 1 || desertItems.bombReady > 1 || desertItems.helicopterReady > 1)

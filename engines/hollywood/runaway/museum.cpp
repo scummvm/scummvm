@@ -74,6 +74,9 @@ void RunawayRoomScene::updateMuseum(uint elapsed) {
 	}
 	updateConversation();
 	if (_roomAction && _actionFrames.empty() && !speaking() && !_conversation && !_walkPath.active()) {
+		if (updateMuseumInventory()) {
+			return;
+		}
 		const uint16 action = _roomAction;
 		_roomAction = 0;
 		finishCustomAnimation(action);
@@ -84,13 +87,58 @@ bool RunawayRoomScene::sayMuseumInventory(const RunawayInventory::Reply &reply) 
 	if (reply.cue == 108) {
 		_inventory.museum().businessCardExamined = 1;
 	}
+	if (reply.cue == 115 && reply.variation == 1) {
+		// Inserting the battery precedes Brian's response.
+		deferMuseumAction(reply.cue);
+		return true;
+	}
 	say(reply.cue, reply.cue == 112 ? _museum.safeUsed : reply.variation, true);
-	if ((reply.cue == 116 && !reply.variation) || (reply.cue == 117 && !reply.variation)) {
-		say(reply.cue, 1, true);
+	if (((reply.cue == 116 || reply.cue == 117) && !reply.variation) ||
+			(reply.cue == 121 && reply.variation == 1)) {
+		deferMuseumAction(reply.cue);
 	}
-	if (reply.cue == 121 && reply.variation == 1) {
-		say(121, 2, true);
+	return true;
+}
+
+bool RunawayRoomScene::updateMuseumInventory() {
+	uint16 effect;
+	byte volume;
+	switch (_roomAction) {
+	case 115: // Insert the frozen battery into the recorder.
+		effect = 60;
+		volume = 230;
+		break;
+	case 116: // Put the battery in the ladle.
+		effect = 40;
+		volume = 179;
+		break;
+	case 117: // Pry the ruby out of the mask.
+		effect = 56;
+		volume = 230;
+		break;
+	case 121: // Fill the packet with ground coffee.
+		effect = 45;
+		volume = 255;
+		break;
+	default:
+		return false;
 	}
+	if (!_actionStage) {
+		_audio.playEffect(effect, volume);
+		_actionStarted = _now;
+		_actionStage = 1;
+		return true;
+	}
+	// Native inventory actions wait for the effect, up to six quarter-second ticks.
+	if (_audio.effectPlaying() && _now - _actionStarted < 1500) {
+		return true;
+	}
+	const uint16 cue = _roomAction;
+	_roomAction = 0;
+	if (cue == 117) {
+		_inventory.add(12);
+	}
+	say(cue, cue == 121 ? 2 : 1, true);
 	return true;
 }
 

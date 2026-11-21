@@ -614,7 +614,8 @@ void Scene5030::examine(byte id) {
 		sayCue(25, 0);
 		break;
 	case 15: // Look at Brian's broken glasses.
-		sayCue(40, 0);
+		// The original mistakenly repeats the first description after examining them.
+		sayCue(40, examined ? 1 : 0);
 		break;
 	case 16: // Look at the bellows.
 		sayCue(29, 0);

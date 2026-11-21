@@ -62,12 +62,14 @@ public:
 	void update(uint32 now, bool talking, Common::RandomSource &random);
 	uint frame(byte mouth = 0) const;
 	bool holdsGlass() const { return _state == kDrinking && _step >= 15 && _step < 44; }
+	bool hasDrunk() const { return _hasDrunk; }
 
 private:
 	enum State { kBreathing, kWaiting, kDrinking, kTurning, kTalking, kReturning };
 	State _state = kBreathing;
 	uint32 _tick = 0;
 	uint _step = 0, _wait = 0;
+	bool _hasDrunk = false;
 };
 
 } // End of namespace Hollywood

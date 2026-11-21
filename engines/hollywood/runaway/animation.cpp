@@ -214,6 +214,7 @@ void RunawayCarlaAnimation::update(uint32 now, bool talking, Common::RandomSourc
 		break;
 	case kDrinking:
 		if (++_step == 60) {
+			_hasDrunk = true;
 			_state = kBreathing;
 			_step = 0;
 		}

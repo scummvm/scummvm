@@ -124,7 +124,7 @@ bool Scene4100::applyCustomBackgroundPatches() {
 	if (!applyPatch((_museum.chamberOpen ? 15 : 13) + (_museum.maskTaken ? 1 : 0))) {
 		return false;
 	}
-	if (_museum.keyTaken && !applyPatch(6)) {
+	if (_museum.keyTaken && !applyPatch(7)) {
 		return false;
 	}
 	if (_museum.ladleTaken && !applyPatch(8)) {

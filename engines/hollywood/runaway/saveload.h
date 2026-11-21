@@ -74,7 +74,7 @@ struct RunawaySaveState {
 		byte busDoor = 0, lipstickShelf = 0, keyTaken = 0, glassesTaken = 0;
 		byte vacuum = 0, crank = 0, necklacesSeen = 0, ringsSeen = 0;
 		byte fridgeOpened = 0, ventCleaned = 0, ventSeen = 0, needle = 0, fridgeSeen = 0;
-		byte carlaMet = 0, carlaStory = 0, planKnown = 0;
+		byte carlaMet = 0, carlaDrank = 0, planKnown = 0;
 		uint32 carlaTopics = 0, lulaTopics = 0;
 	} desert;
 

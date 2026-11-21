@@ -122,7 +122,7 @@ RunawayRoomScene::ActionResult Scene5160::dispatchCustomSceneAction(uint16 actio
 		say(3, _inventory.contains(26));
 		break;
 	case 305: // Look at Carla.
-		say(4, _random.getRandomNumber(_desert.carlaStory ? 3 : 2));
+		say(4, _random.getRandomNumber(_desert.carlaDrank ? 2 : 1));
 		break;
 	case 306: // Talk to Carla.
 		startCarlaConversation();
@@ -251,6 +251,9 @@ void Scene5160::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport
 
 void Scene5160::advanceCustomGameplayLoop(uint32 delta) {
 	_carla.update(_now, _conversation == 4 || speaker(), _random);
+	if (_carla.hasDrunk()) {
+		_desert.carlaDrank = 1;
+	}
 	for (uint i = 0; i < 256; ++i) {
 		if (_originalMaps[256 + i] == 4) {
 			_maps[256 + i] = _carla.holdsGlass() ? 0 : 4;

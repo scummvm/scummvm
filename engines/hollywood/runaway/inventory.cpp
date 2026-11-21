@@ -656,7 +656,9 @@ RunawayInventory::Reply RunawayInventory::combineMuseumItems(byte first, byte se
 			return Reply(117, 2);
 		}
 		_museum.rubyRemoved = 1;
-		add(12);
+		if (!_fullGame) {
+			add(12);
+		}
 		return Reply(117);
 	}
 	if (first == 14 && second == 19) {
