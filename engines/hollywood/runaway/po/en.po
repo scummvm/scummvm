@@ -5828,6 +5828,12 @@ msgctxt "action.8200.use.2"
 msgid "GO INTO THE @"
 msgstr "GO INTO THE @"
 
+#. Scene 8200, use at hotspot 2 (locked cell). @ is the current hotspot name.
+#: engines/hollywood/runaway/scene8200.cpp
+msgctxt "action.8200.use.2.locked"
+msgid "OPEN DOOR TO THE @"
+msgstr "OPEN DOOR TO THE @"
+
 #. Scene 8200, use at hotspot 3. @ is the current hotspot name.
 #: engines/hollywood/runaway/scene8200.cpp
 msgctxt "action.8200.use.3"

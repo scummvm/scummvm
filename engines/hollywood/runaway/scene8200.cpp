@@ -386,6 +386,13 @@ byte Scene8200::customizeSceneActionFacing(byte id, byte facing) const {
 	return id == 2 && !_finale.oscarAway ? 4 : facing;
 }
 
+const char *Scene8200::actionCaptionVariant(byte id, bool look, byte item) const {
+	if (id == 2 && !look && !item && _finale.oscarAway) {
+		return "locked";
+	}
+	return nullptr;
+}
+
 RunawayRoomScene::ActionResult Scene8200::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 302: // Return to the street.

@@ -62,6 +62,7 @@ private:
 	void findWalkPath(Common::Point target) override;
 	Common::Point customizeSceneActionPosition(byte id, byte item, Common::Point position) const override;
 	byte customizeSceneActionFacing(byte id, byte facing) const override;
+	const char *actionCaptionVariant(byte id, bool look, byte item) const override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 	void handleAnimationFrameHook() override;
 
