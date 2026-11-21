@@ -350,12 +350,9 @@ void RunawayEnding::update(uint32 now) {
 
 void RunawayEnding::skip(uint32 now) {
 	_now = now;
-	if (_stage == kOutside) {
-		nextSlide(now);
-	} else if ((_stage == kSlideshow || _stage == kCard) && !_fadeDuration && now - _started >= 500) {
-		_fadeStarted = now;
-		_fadeDuration = _stage == kCard ? 250 : 500;
-	}
+	_stage = kFinished;
+	_audio.stopEffect();
+	_audio.stopMusic();
 }
 
 void RunawayEnding::draw(Graphics::ManagedSurface &screen) const {

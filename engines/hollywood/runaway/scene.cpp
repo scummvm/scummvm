@@ -456,7 +456,7 @@ void RunawayRoomScene::sayInventory(const RunawayInventory::Reply &reply) {
 
 void RunawayRoomScene::skipSpeech() {
 	if (_sequence.active()) {
-		_sequence.skip();
+		_sequence.skipSpeech();
 		return;
 	}
 	if (!speaking())

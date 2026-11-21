@@ -218,7 +218,12 @@ void Scene8090::handleAnimationFrameHook() {
 
 void Scene8090::skipVideo() {
 	if (_entryScene == 8092) {
-		skipSpeech();
+		_speech.stop();
+		_audio.stopEffect();
+		_arrivalPhase = kNoArrival;
+		_roomAction = 0;
+		_actionFrames.clear();
+		_transition.scene = 8100;
 	} else {
 		RunawayRoomScene::skipVideo();
 	}

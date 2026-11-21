@@ -504,19 +504,13 @@ void RunawayOpening::update(uint32 now) {
 }
 
 void RunawayOpening::skip(uint32 now) {
+	enter(kFinished, now);
+}
+
+void RunawayOpening::skipSpeech(uint32 now) {
 	_now = now;
 	if (speaking()) {
 		nextLine();
-	} else if (_step == kMontage) {
-		_video.close();
-		enter(kTurnBack, now);
-	} else if (_step >= kCity && _step < kFilm) {
-		_audio.stopEffect();
-		enter(kFilm, now);
-	} else if (_step >= kFilm && _step < kChapter) {
-		enter(kChapter, now);
-	} else if (!finished()) {
-		advance();
 	}
 }
 

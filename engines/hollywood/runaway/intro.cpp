@@ -45,7 +45,6 @@ const uint kLogoAnimationDuration = kLogoTrackStarts[2] + (kLogoFrameCounts[2] -
 const uint kLogoHoldDuration = 2000;
 const uint kLogoFadeDuration = 1000;
 const uint kStoryFadeDuration = 500;
-const uint kStorySkipFadeDuration = 250;
 const uint kStoryHoldDuration = 40000;
 
 } // End of anonymous namespace
@@ -118,17 +117,18 @@ void RunawayIntro::startStory(uint32 now) {
 }
 
 void RunawayIntro::skip(uint32 now) {
-	if (_phase == kLogo || _phase == kLogoAudio) {
-		startStory(now);
-	} else if (_phase == kStory) {
-		_phase = kStoryFadeOut;
-		_phaseStarted = now;
-		_storyFadeDuration = kStorySkipFadeDuration;
-	} else if (_phase == kOpening) {
+	if (_phase == kOpening) {
 		_opening.skip(now);
 	}
-	// The original clears pending input after the card's fade-in. Ignoring
-	// input during its fades also keeps one press from skipping both stages.
+	_audio.stopMusic();
+	_phase = kFinished;
+	_brightness = 0;
+}
+
+void RunawayIntro::skipSpeech(uint32 now) {
+	if (_phase == kOpening) {
+		_opening.skipSpeech(now);
+	}
 }
 
 void RunawayIntro::update(uint32 now) {

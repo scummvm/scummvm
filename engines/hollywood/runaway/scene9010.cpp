@@ -219,17 +219,10 @@ void Scene9010::update(uint32 now, int scrollDirection, bool inventoryOpen) {
 }
 
 void Scene9010::skipVideo() {
-	if (_sequence.active()) {
-		_sequence.skip();
-	} else if (_step == kArrival || _step == kCarDoor) {
-		enter(kFarewell);
-	} else if (_step == kDeparture) {
-		enter(kFlight);
-	} else if (_step == kCredits) {
-		enter(kMusicTail);
-	} else if (_step == kMusicTail) {
-		enter(kFinished);
-	}
+	_sequence.skip();
+	_sequence.update(_now);
+	_audio.stopMusic();
+	enter(kFinished);
 }
 
 void Scene9010::draw() {

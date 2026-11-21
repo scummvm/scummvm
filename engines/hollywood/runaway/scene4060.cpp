@@ -434,8 +434,12 @@ void Scene4060::handleAnimationFrameHook() {
 void Scene4060::finishCustomFilm() {
 	switch (_museumFilm) {
 	case kArrivalFilm:
-		startMuseumFilm(kCliveFilm);
-		return;
+		if (!_sequence.skipped()) {
+			startMuseumFilm(kCliveFilm);
+			return;
+		}
+		// Escape also skips the conversation following the museum arrival.
+		// fall through
 	case kCliveFilm:
 		_entryScene = 4060;
 		changeFloor(true, Common::Point(607, 323));

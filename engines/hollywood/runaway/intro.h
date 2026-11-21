@@ -37,6 +37,7 @@ public:
 	bool load(bool fullGame = false, byte chapter = 0, Mode mode = kCompleteIntro);
 	void start(uint32 now);
 	void skip(uint32 now);
+	void skipSpeech(uint32 now);
 	void update(uint32 now);
 	void draw();
 	bool finished() const { return _phase == kFinished; }

@@ -99,10 +99,18 @@ const Common::U32String &Scene9020::subtitle() const {
 }
 
 void Scene9020::skipVideo() {
+	_sequence.skip();
+	_sequence.update(_now);
+	_narrator.skip(_now);
+	_step = kFinished;
+	_transition.scene = 9010;
+}
+
+void Scene9020::skipSpeech() {
 	if (narrating()) {
-		_narrator.skip(_now);
+		_narrator.skipSpeech(_now);
 	} else {
-		_sequence.skip();
+		_sequence.skipSpeech();
 	}
 }
 

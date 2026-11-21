@@ -269,25 +269,7 @@ void Scene9030::skipSpeech() {
 }
 
 void Scene9030::skipVideo() {
-	if (speaking()) {
-		skipSpeech();
-		return;
-	}
-	switch (_step) {
-	case kCloseupExit:
-	case kFadeOut:
-		enter(kBeachFadeIn);
-		break;
-	case kPause:
-		enter(kGinaRequest);
-		break;
-	case kLastWords:
-	case kMusicTail:
-		enter(kFinished);
-		break;
-	default:
-		break;
-	}
+	enter(kFinished);
 }
 
 void Scene9030::draw() {

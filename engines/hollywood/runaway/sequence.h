@@ -23,6 +23,7 @@
 #define HOLLYWOOD_RUNAWAY_SEQUENCE_H
 
 #include "common/random.h"
+#include "engines/engine.h"
 #include "hollywood/resource.h"
 #include "hollywood/runaway/audio.h"
 #include "hollywood/runaway/graphics.h"
@@ -66,8 +67,10 @@ public:
 	void setBackground(const Graphics::ManagedSurface &background, const Common::Rect &destination);
 	void update(uint32 now);
 	void skip();
+	void skipSpeech();
 	void draw(Graphics::ManagedSurface &screen);
 	bool active() const { return _commands != nullptr; }
+	bool skipped() const { return _skipFilm; }
 	const Common::U32String &subtitle() const { return _speech.subtitle(); }
 	byte speechFrame() const { return _speech.frame(_now); }
 
@@ -75,6 +78,9 @@ private:
 	void advance();
 	void speak(uint cue, uint variation, uint lastVariation = 0, bool global = false);
 	void nextLine();
+	void finishPreparation();
+	void cacheRevisitedFrames();
+	void prefetch();
 
 	RunawayAudio &_audio;
 	Common::RandomSource _random;
@@ -94,6 +100,8 @@ private:
 	uint32 _repeatAt = 0;
 	bool _entered = false, _showPortrait = false, _silentPortrait = false;
 	bool _skipFilm = false;
+	PauseToken _preparePause;
+	bool _skipSpeechPending = false;
 	bool _keepEffects = false;
 	int _listenerX = 512;
 	struct Line {

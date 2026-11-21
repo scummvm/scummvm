@@ -41,6 +41,7 @@ public:
 	void start(uint32 now);
 	void update(uint32 now);
 	void skip(uint32 now);
+	void skipSpeech(uint32 now);
 	void draw(Graphics::ManagedSurface &screen);
 	bool finished() const { return _step == kFinished || _failed; }
 	bool failed() const { return _failed; }

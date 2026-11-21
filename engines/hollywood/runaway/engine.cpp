@@ -280,16 +280,19 @@ Common::Error RunawayEngine::playIntro(RunawayMenu &menu, byte chapter, RunawayI
 	intro.start(getTotalPlayTime());
 	intro.draw();
 	while (!shouldQuit() && !intro.finished() && !_loadedGame) {
-		bool skip = false, openMenu = false;
+		bool skip = false, skipSpeech = false, openMenu = false;
 		Common::Event event;
 		while (!openMenu && _eventMan->pollEvent(event)) {
 			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
-				skip = true;
+				skipSpeech = true;
 			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
-				if (event.customType == kSkip || event.customType == kCancelAction)
+				if (event.customType == kCancelAction) {
 					skip = true;
-				else if (event.customType == kPauseMenu)
+				} else if (event.customType == kSkip) {
+					skipSpeech = true;
+				} else if (event.customType == kPauseMenu) {
 					openMenu = true;
+				}
 			}
 		}
 		if (shouldQuit() || _loadedGame)
@@ -299,9 +302,12 @@ Common::Error RunawayEngine::playIntro(RunawayMenu &menu, byte chapter, RunawayI
 			continue;
 		}
 		const uint32 now = getTotalPlayTime();
-		intro.update(now);
-		if (skip)
+		if (skip) {
 			intro.skip(now);
+		} else if (skipSpeech) {
+			intro.skipSpeech(now);
+		}
+		intro.update(now);
 		intro.draw();
 		if (!ConfMan.hasKey("subtitles") || ConfMan.getBool("subtitles") || ConfMan.getBool("speech_mute"))
 			_ui->drawSubtitle(intro.screen(), intro.subtitle());
@@ -488,8 +494,9 @@ Common::Error RunawayEngine::run() {
 					_scene->skipSpeech();
 					break;
 				default:
-					if (_scene->playingVideo())
-						_scene->skipVideo();
+					if (_scene->playingVideo()) {
+						_scene->skipSpeech();
+					}
 					break;
 				}
 			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START || event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
@@ -535,10 +542,7 @@ Common::Error RunawayEngine::run() {
 					break;
 				case kSkip:
 					if (pressed) {
-						if (_scene->playingVideo())
-							_scene->skipVideo();
-						else
-							_scene->skipSpeech();
+						_scene->skipSpeech();
 					}
 					break;
 				}
@@ -599,6 +603,11 @@ Common::Error RunawayEngine::run() {
 			leftPressed = rightPressed = false;
 			continue;
 		}
+		if (isPaused()) {
+			// Movie preparation freezes the clock and audio, but still accepts input.
+			_system->delayMillis(1);
+			continue;
+		}
 		_ui->setDialogueChoices(_scene->dialogueChoices());
 		_ui->update(now, mouse, _scene->hotspotAt(mouse), sceneBusy(), _scene->speaking(), _scene->inventoryPresentation(), _scene->speechFrame());
 		_scene->draw();
@@ -629,7 +638,7 @@ Common::Error RunawayEngine::playEnding(RunawayMenu &menu) {
 			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN)
 				skip = true;
 			else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
-				if (event.customType == kSkip || event.customType == kCancelAction)
+				if (event.customType == kCancelAction)
 					skip = true;
 				else if (event.customType == kPauseMenu)
 					openMenu = true;
@@ -642,9 +651,10 @@ Common::Error RunawayEngine::playEnding(RunawayMenu &menu) {
 			continue;
 		}
 		const uint32 now = getTotalPlayTime();
-		ending.update(now);
-		if (skip)
+		if (skip) {
 			ending.skip(now);
+		}
+		ending.update(now);
 		ending.draw(screen);
 		present(screen);
 		_system->delayMillis(16);
@@ -820,7 +830,7 @@ Common::Array<Common::Keymap *> RunawayEngine::initKeymaps() {
 	action->addDefaultInputMapping("JOY_START");
 	keymap->addAction(action);
 
-	action = new Action("CANCEL_ACTION", _("Cancel action / Menu"));
+	action = new Action("CANCEL_ACTION", _("Skip cutscene / Cancel action / Menu"));
 	action->setCustomEngineActionEvent(kCancelAction);
 	action->addDefaultInputMapping("ESCAPE");
 	keymap->addAction(action);
@@ -836,7 +846,7 @@ Common::Array<Common::Keymap *> RunawayEngine::initKeymaps() {
 	action->addDefaultInputMapping("TAB");
 	keymap->addAction(action);
 
-	action = new Action(kStandardActionSkip, _("Skip intro / Skip line"));
+	action = new Action(kStandardActionSkip, _("Skip line"));
 	action->setCustomEngineActionEvent(kSkip);
 	action->addDefaultInputMapping("SPACE");
 	action->addDefaultInputMapping("RETURN");
