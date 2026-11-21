@@ -33,6 +33,8 @@
 #include "tesoro/kinds/inventoryitem.h"
 #include "tesoro/kinds/objectgroup.h"
 #include "tesoro/kinds/jim.h"
+#include "tesoro/kinds/mapplace.h"
+#include "tesoro/kinds/noteobject.h"
 #include "tesoro/core/level.h"
 #include "tesoro/core/namekey.h"
 #include "tesoro/kinds/walkfloor.h"
@@ -77,6 +79,9 @@ protected:
 	Level *sharedFloorLevel() override { return index() == kSharedFloorLevel ? nullptr : _world.level(kSharedFloorLevel); }
 
 	int picturesReloaded() override {
+		// The island map has a step of its own that replaces the usual one: no music, no collision pass.
+		if (index() == kMapLevel)
+			return mapEvents();
 		// The music of the level starts first, then the level's usual step runs.
 		if (Level *where = _world.jimLevel()) {
 			const CameraFrame *frame = where->cameraFrame();
@@ -90,7 +95,31 @@ protected:
 private:
 	enum { kDeckLevel = 3, kMapLevel = 8, kPlayaLevel = 7, kPoblado = 9, kPantano = 10, kVolcan = 12, kSharedFloorLevel = 42 };
 
-	/** What the ship's deck adds: its music changes once the story moves on, the mutiny scene starts after step 2. */
+	/** The state record of an object of another level. */
+	byte *stateOf(int level, const char *name, uint size) {
+		Object *object = _world.findObject(level, name);
+		return object && object->stateBlob().size() >= size ? object->stateBlob().begin() : nullptr;
+	}
+
+	/** The story flags that open places on the island map. */
+	int mapEvents() {
+		byte *orzoguei = stateOf(kPoblado, "ORZOGUEI", 0xf);
+		if (orzoguei && orzoguei[0xb] && orzoguei[0xc] && orzoguei[0xd] && orzoguei[0xe])
+			orzoguei[1] = 5;
+		Object *canoa = _world.findObject(kPlayaLevel, "CANOA");
+		if (canoa && !(canoa->flags() & 2) && orzoguei && (int8)orzoguei[1] > 4) {
+			canoa->setActive(true);
+			if (Object *justino = _world.findObject(kVolcan, "JUSTINO"))
+				justino->setActive(false);
+		}
+		Object *fernan = _world.findObject(kPantano, "FERNAN");
+		const byte *justino = stateOf(kVolcan, "JUSTINO", 1);
+		const byte *fernanState = stateOf(kPantano, "FERNAN", 1);
+		if (fernan && fernanState && fernanState[0] == 0 && justino && justino[0] == 2)
+			fernan->setActive(true);
+		return 1;
+	}
+	/** The ship's deck events: music changes and the mutiny scene. */
 	int deckEvents(int result) {
 		CameraFrame *own = cameraFrame();
 		if (_world._jimStep != 0 && own && own->flag() == 8) {
@@ -324,6 +353,16 @@ Object *World::createObject(Level &level, const ObjectRecord &record, Room &room
 		}
 		case 13: {
 			InventoryItem *object = new InventoryItem();
+			object->init(record, sort, levelPlayers, loadTime, *this);
+			return object;
+		}
+		case 19: {
+			MapPlace *object = new MapPlace();
+			object->init(record, sort, levelPlayers, loadTime, *this);
+			return object;
+		}
+		case 24: {
+			NoteObject *object = new NoteObject();
 			object->init(record, sort, levelPlayers, loadTime, *this);
 			return object;
 		}

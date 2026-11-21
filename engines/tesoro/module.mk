@@ -27,8 +27,10 @@ MODULE_OBJS = \
 	kinds/objectgroup.o \
 	kinds/jim.o \
 	core/level.o \
+	kinds/mapplace.o \
 	kinds/menuitem.o \
 	core/namekey.o \
+	kinds/noteobject.o \
 	core/object.o \
 	core/objectlist.o \
 	kinds/pathobject.o \
