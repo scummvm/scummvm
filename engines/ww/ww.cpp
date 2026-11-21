@@ -553,13 +553,14 @@ void WWEngine::rememberFirstObjectName(int objectId) {
 		_firstObjectName = "Wayne";
 	} else if (objectId == -3) {
 		_firstObjectName = "Garth";
-	} else if (objectId <= kLastInventoryObjectId) {
-		int inventoryItemQuantity = 0;
+	} else if (objectId <= kLastInventoryObjectId && objectId >= kFirstInventoryObjectId) {
+		int inventoryItemQuantity;
 		if (isActorWayne()) {
 			inventoryItemQuantity = getWayneInventoryItemQuantity(objectId);
 		} else {
 			inventoryItemQuantity = getGarthInventoryItemQuantity(objectId);
 		}
+
 		if (inventoryItemQuantity == 1) {
 			_firstObjectName = getRoomObjectName(objectId);
 		} else {
@@ -1030,7 +1031,7 @@ void WWEngine::loadRoomMask(int roomNum) {
 
 void WWEngine::moveObjectToRoom(int objectId, int roomNum) {
 	_roomObjects[objectId].roomNumber = roomNum;
-	if (objectId <= kLastInventoryObjectId) {
+	if (objectId <= kLastInventoryObjectId && objectId >= kFirstInventoryObjectId) {
 		const int inventoryIndex = objectId - kFirstInventoryObjectId;
 		if (isActorWayne()) {
 			_wayneInventory[inventoryIndex]++;
