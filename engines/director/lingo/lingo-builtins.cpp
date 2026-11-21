@@ -3585,9 +3585,6 @@ void LB::b_spriteBox(int nargs) {
 	if (!channel)
 		return;
 
-	// This automatically sets the stretch mode
-	channel->_sprite->_stretch = true;
-
 	channel->setDirty();
 	channel->setBbox(
 		l < r ? l : r,
@@ -3712,6 +3709,9 @@ void LB::b_updateStage(int nargs) {
 	}
 
 	score->updateWidgets(movie->_videoPlayback);
+	// The sprites are drawn now: Lingo reads their new rects from here on
+	for (auto &it : score->_channels)
+		it->_hasLingoBbox = false;
 	if (window->_puppetTransition) {
 		window->playTransition(score->getCurrentFrameNum(), kRenderModeNormal, window->_puppetTransition->duration, window->_puppetTransition->area, window->_puppetTransition->chunkSize, window->_puppetTransition->type, score->_currentFrame->_mainChannels.scoreCachedPaletteId);
 		delete window->_puppetTransition;

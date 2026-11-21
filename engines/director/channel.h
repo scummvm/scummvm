@@ -47,6 +47,7 @@ public:
 	DirectorPlotData getPlotData();
 	const Graphics::Surface *getMask(bool forceMatte = false);
 
+	// The stored size, which is not always the size drawn; see getBbox()
 	inline int getWidth() { return _sprite->_width; };
 	inline int getHeight() { return _sprite->_height; };
 	inline Common::Point getPosition() { return _sprite->getPosition(); };
@@ -65,9 +66,12 @@ public:
 	bool isActiveVideo();
 	bool isVideoDirectToStage();
 
-	inline void setWidth(int w) { _sprite->setWidth(w); replaceWidget(); setNeedsDraw(); };
-	inline void setHeight(int h) { _sprite->setHeight(h); replaceWidget(); setNeedsDraw(); };
-	inline void setBbox(int l, int t, int r, int b) { _sprite->setBbox(l, t, r, b); replaceWidget(); setNeedsDraw(); };
+	void setWidth(int w);
+	void setHeight(int h);
+	void setBbox(int l, int t, int r, int b);
+	// The rect Lingo reads, which follows a new size only once it is drawn
+	Common::Rect getLingoBbox() { return _hasLingoBbox ? _lingoBbox : getBbox(); }
+	void keepLingoBbox();
 	void setDirty();
 	void setNeedsDraw() { _needsDraw = true; }
 	void setPosition(int x, int y, bool force = false);
@@ -128,6 +132,8 @@ public:
 
 	Common::Rect _rollOverBbox;
 	Common::Rect _lastRenderedBbox;
+	bool _hasLingoBbox;
+	Common::Rect _lingoBbox;
 	bool _lastTrail;
 
 	int _startFrame;

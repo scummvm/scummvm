@@ -156,8 +156,10 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, u
 		if (needToScale) {
 			src._startPoint.x = widgetDelta.x * scaleX + bbox.left;
 			src._startPoint.y = widgetDelta.y * scaleY + bbox.top;
-			src._width = src._width * scaleX;
-			src._height = src._height * scaleY;
+			int width = src.getDrawnWidth() * scaleX;
+			int height = src.getDrawnHeight() * scaleY;
+			src._width = width;
+			src._height = height;
 			src._stretch = true;
 
 			debugC(5, kDebugImages, ", scaled: %d,%d %dx%d", src._startPoint.x, src._startPoint.y, src._width, src._height);

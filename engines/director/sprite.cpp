@@ -509,12 +509,38 @@ void Sprite::setHeight(int h) {
 	setAutoPuppet(kAPHeight, true);
 }
 
+// An unstretched sprite is drawn at the size of
+// its member, no matter what size the channel stores.
+bool Sprite::usesMemberSize() {
+	if (!_cast || _stretch)
+		return false;
+
+	switch (_cast->_type) {
+	case kCastShape:
+	case kCastText:
+	case kCastButton:
+		return false;
+	default:
+		return true;
+	}
+}
+
+int Sprite::getDrawnWidth() {
+	return usesMemberSize() ? _cast->getInitialRect().width() : _width;
+}
+
+int Sprite::getDrawnHeight() {
+	return usesMemberSize() ? _cast->getInitialRect().height() : _height;
+}
+
 Common::Rect Sprite::getBbox(bool unstretched) {
-	Common::Rect result(_width, _height);
+	int16 width = getDrawnWidth();
+	int16 height = getDrawnHeight();
+	Common::Rect result(width, height);
 	// If this is a cast member, use the cast member's getBbox function
 	// so we start with a rect containing the correct registration offset.
 	if (_cast)
-		result = _cast->getBbox(_width, _height);
+		result = _cast->getBbox(width, height);
 
 	// The origin of the rect should be at the registration offset,
 	// e.g. for bitmap sprites this defaults to the centre.
@@ -566,7 +592,7 @@ bool Sprite::checkSpriteType() {
 	return true;
 }
 
-void Sprite::setCast(CastMemberID memberID, bool replaceDims) {
+void Sprite::setCast(CastMemberID memberID) {
 	/**
 	 * There are two things we need to take into account here:
 	 *   1. The cast member's type
@@ -624,18 +650,13 @@ void Sprite::setCast(CastMemberID memberID, bool replaceDims) {
 			}
 		}
 
-		if (replaceDims) {
+		// The size of the sprite stays as stored: getBbox() takes the
+		// size of the member where it applies. Only a button is sized
+		// through the sprite.
+		if (!_stretch && _cast->_type == kCastButton) {
 			Common::Rect dims = _cast->getInitialRect();
-			switch (_cast->_type) {
-			case kCastShape:
-			case kCastText:
-				break;
-			case kCastBitmap:
-			default:
-				_width = dims.width();
-				_height = dims.height();
-				break;
-			}
+			_width = dims.width();
+			_height = dims.height();
 		}
 
 	} else {

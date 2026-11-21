@@ -120,7 +120,7 @@ public:
 	uint16 getPattern();
 	void setPattern(uint16 pattern);
 
-	void setCast(CastMemberID memberID, bool replaceDims = true);
+	void setCast(CastMemberID memberID);
 	bool isQDShape();
 	Graphics::Surface *getQDMatte();
 	void createQDMatte();
@@ -136,6 +136,9 @@ public:
 	inline int getHeight() { return _height; }
 	void setHeight(int h);
 
+	bool usesMemberSize();
+	int getDrawnWidth();
+	int getDrawnHeight();
 	Common::Rect getBbox(bool unstretched);
 	void setBbox(int l, int t, int r, int b);
 
@@ -175,6 +178,8 @@ public:
 	// as received from the score frame data.
 	// Don't change these; instead adjust the equivalent properties in Channel.
 	Common::Point _startPoint;
+	// The size the score or Lingo stored, which is the one Lingo reads.
+	// The size drawn is a different matter: see getDrawnWidth()
 	int16 _width;
 	int16 _height;
 

@@ -876,16 +876,15 @@ void DigitalVideoCastMember::setField(int field, const Datum &d) {
 		return;
 	case kTheFileName:
 		// Update the filename, then force the video to be replaced.
-		// Channel dimensions are replaced by the video.
+		// An unstretched sprite is drawn at the size of the new video.
 		CastMember::setField(field, d);
 		if (_needsReload) {
 			_needsReload = false;
 			_useLinkedPath = true;
 			reloadVideo();
 			if (_channel) {
-				Common::Rect rect = getInitialRect();
-				_channel->setWidth(rect.width());
-				_channel->setHeight(rect.height());
+				_channel->replaceWidget();
+				_channel->setNeedsDraw();
 			}
 		}
 		return;
@@ -910,9 +909,8 @@ void DigitalVideoCastMember::setField(int field, const Datum &d) {
 			_scaleX = d.u.farr->arr[0].asInt();
 			_scaleY = d.u.farr->arr[1].asInt();
 			if (_channel) {
-				Common::Rect rect = getInitialRect();
-				_channel->setWidth(rect.width());
-				_channel->setHeight(rect.height());
+				_channel->replaceWidget();
+				_channel->setNeedsDraw();
 			}
 		} else {
 			warning("DigitalVideoCastMember::setField(): scale expects an [x, y] percentage list, got %s", d.type2str());
