@@ -34,6 +34,7 @@ public:
 
 private:
 	bool applyCustomBackgroundPatches() override;
+	void runCustomEntrySequence() override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 	float actorHeight() const override;
 	Common::U32String hotspotName(byte id) const override;

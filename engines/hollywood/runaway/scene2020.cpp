@@ -31,7 +31,7 @@ namespace {
 // RESOURCE.B02; approach points and action IDs from the retail room at 0x444aa0.
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{1265, 546, 1, {301, 346}, {0, 1}, {1324, 530}}, // 1: Bathroom door.
+	{1265, 546, 1, {301, 346}, {0, 1}, {1324, 530}, 5}, // 1: Bathroom door.
 	{1075, 534, 7, {302, 303}, {0, 0}, {1040, 463}}, // 2: Gina.
 	{846, 453, 1, {304, 305}, {1, 1}, {902, 421}}, // 3: Glass.
 	{858, 453, 1, {306, 307}, {1, 1}, {902, 421}}, // 4: Package of pills.
@@ -54,7 +54,7 @@ const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{313, 532, 5, {351, 352}, {-1, 0}, {40, 599}}, // 23: Hallway door.
+	{313, 532, 5, {351, 352}, {-1, 0}, {40, 599}, 7}, // 23: Hallway door.
 };
 
 // Item IDs 1-19, then hotspot IDs in kHotspots order. Zero uses kItemActions.

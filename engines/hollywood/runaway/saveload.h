@@ -40,6 +40,7 @@ struct RunawaySaveState {
 	struct Museum {
 		byte susan = 0, restoration = 0, laserUpgraded = 0, laserSeen = 0, shelvesSeen = 0;
 		byte susanMet = 0, labVisited = 0, shelfBooksSeen = 0, safeUsed = 0;
+		byte officeVisited = 0, exhibitionVisited = 0, phonePlanExplained = 0;
 		byte willyMet = 0, batteryRequested = 0, coffeeMachine = 0, coffeeSeen = 0;
 		byte basketSeen = 0, needsPackage = 0, needsGroundCoffee = 0, willyInLab = 0;
 		byte keypad = 0, sawCode = 0, phoneUsed = 0, voiceLockSeen = 0;

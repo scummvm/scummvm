@@ -37,21 +37,21 @@ const byte kCoffeeCupFrames[] = {
 
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{-25, 319, 7, {301, 302}, {0, 1}, {68, 371}}, // 1: Stairs.
+	{-25, 319, 7, {301, 302}, {0, 1}, {68, 371}, 7}, // 1: Stairs.
 	{218, 379, 7, {321, 322}, {1, 1}, {180, 245}}, // 2: Coffee machines.
-	{607, 323, 7, {311, 312}, {0, 1}, {606, 322}}, // 3: Clive's office door.
+	{607, 323, 7, {311, 312}, {0, 1}, {606, 322}, 4}, // 3: Clive's office door.
 	{696, 319, 7, {332, 333}, {0, 0}, {676, 164}}, // 4: Fire extinguisher.
 	{696, 319, 7, {313, 314}, {1, 1}, {668, 280}}, // 5: Wastepaper basket.
-	{873, 311, 7, {315, 316}, {0, 1}, {872, 310}}, // 6: Door to the restoration laboratory.
+	{873, 311, 7, {315, 316}, {0, 1}, {872, 310}, 4}, // 6: Door to the restoration laboratory.
 	{1118, 309, 7, {317, 318}, {1, 1}, {1094, 299}}, // 7: Security door.
 	{1153, 297, 7, {319, 320}, {1, 1}, {1152, 296}}, // 8: Panel.
-	{1220, 280, 7, {301, 303}, {0, 1}, {1279, 290}}, // 9: Stairs.
+	{1220, 280, 7, {301, 303}, {0, 1}, {1279, 290}, 7}, // 9: Stairs.
 	{1473, 312, 7, {324, 325}, {0, 1}, {1440, 188}}, // 10: Telephone.
 	{1596, 351, 1, {326, 327}, {0, 0}, {1694, 186}}, // 11: Display case.
-	{140, 504, 7, {304, 305}, {0, 1}, {206, 618}}, // 12: Stairs.
-	{1085, 411, 7, {304, 306}, {0, 1}, {1140, 446}}, // 13: Stairs.
+	{140, 504, 7, {304, 305}, {0, 1}, {206, 618}, 4}, // 12: Stairs.
+	{1085, 411, 7, {304, 306}, {0, 1}, {1140, 446}, 4}, // 13: Stairs.
 	{921, 813, 7, {307, 308}, {0, 1}, {840, 730}}, // 14: Maintenance worker.
-	{1588, 506, 7, {309, 310}, {0, 1}, {1610, 450}}, // 15: Mayan exhibition.
+	{1588, 506, 7, {309, 310}, {0, 1}, {1610, 450}, 5}, // 15: Mayan exhibition.
 	{711, 797, 7, {328, 329}, {1, 0}, {670, 726}}, // 16: Plaque.
 	{1060, 730, 7, {330, 331}, {1, 0}, {984, 638}}, // 17: Plaque.
 };
@@ -137,6 +137,13 @@ namespace Runaway {
 Scene4060::Scene4060(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
 
+byte Scene4060::exitCursor(byte id) const {
+	if (id == 7) {
+		return _museum.keypad == 4 ? 4 : 0;
+	}
+	return RunawayRoomScene::exitCursor(id);
+}
+
 const char *Scene4060::actionCaptionVariant(byte id, bool look, byte item) const {
 	if (!look && !item) {
 		if (id == 1 || id == 9 || id == 12 || id == 13) {
@@ -196,8 +203,14 @@ void Scene4060::runCustomEntrySequence() {
 		if (_museum.keypad == 1) {
 			say(26, 2);
 		} else if (_museum.keypad == 4) {
-			leaveMuseumRoom(4100, Common::Point(141, 468), 3);
+			finishCustomAnimation(470);
 		}
+	} else if (_entryScene == 4062) {
+		beginRoomAnimationRange(473, 4, 13, 12, 0, false);
+		_audio.playEffectAt(32, Common::Point(1138, 200), 204);
+	} else if (_entryScene == 4061 && _museum.susan == 2) {
+		say(40);
+		deferMuseumAction(316);
 	}
 }
 
@@ -227,6 +240,11 @@ RunawayRoomScene::ActionResult Scene4060::dispatchCustomSceneAction(uint16 actio
 		case 308: // Talk to Willy.
 			leaveMuseumRoom(4070, Common::Point(548, 580), 7);
 			return kHandled;
+		case 312: // Open Clive's office door.
+		case 316: // Open the restoration laboratory door.
+			// RESOURCE.001 bank 64: reach for the handle, facing northwest.
+			beginActorAnimation(action, 64, 11, 6);
+			return kHandled;
 		case 313: // Look in the wastepaper basket.
 			if (!_museum.basketSeen) {
 				say(6);
@@ -252,15 +270,18 @@ RunawayRoomScene::ActionResult Scene4060::dispatchCustomSceneAction(uint16 actio
 			say(9, _museum.analysisDoorSeen);
 			_museum.analysisDoorSeen = 1;
 			return kHandled;
-		case 318: // Enter the analysis laboratory.
+		case 318: { // Enter the code to open the analysis laboratory.
 			if (_museum.keypad != 4) {
 				say(13);
-			} else if (_inventory.museum().restoredCrucifix) {
-				startMuseumFilm(kMuseumExitFilm);
 			} else {
-				leaveMuseumRoom(4100, Common::Point(141, 468));
+				static const byte frames[] = {
+					0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+					15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17
+				};
+				beginRoomAnimation(470, 10, 19, frames, ARRAYSIZE(frames));
 			}
 			return kHandled;
+		}
 		case 320: // Examine the keypad close up.
 			if (_museum.willyInLab == 1) {
 				say(15, 5);
@@ -288,6 +309,11 @@ RunawayRoomScene::ActionResult Scene4060::dispatchCustomSceneAction(uint16 actio
 			if (!_inventory.contains(13)) {
 				say(15);
 			} else if (_museum.willyInLab == 1) {
+				if (!_museum.phoneUsed && !_museum.phonePlanExplained) {
+					_museum.phonePlanExplained = 1;
+					say(15, 1);
+					say(15, 8);
+				}
 				say(15, 7);
 			} else if (_museum.keypad > 1) {
 				say(15, 6);
@@ -368,6 +394,28 @@ RunawayRoomScene::ActionResult Scene4060::dispatchCustomSceneAction(uint16 actio
 
 void Scene4060::finishCustomAnimation(uint16 action) {
 	switch (action) {
+	case 312: // Enter Clive's office after opening the door.
+		leaveMuseumRoom(4030, Common::Point(934, 563), 3, true);
+		break;
+	case 316: // Enter the restoration laboratory after opening the door.
+		leaveMuseumRoom(4050, Common::Point(382, 529), 3, true);
+		break;
+	case 470: // Open the unlocked security door.
+		beginRoomAnimation(471, 4, 13, nullptr, 0, false);
+		_audio.playEffectAt(32, Common::Point(1138, 200), 204);
+		break;
+	case 471: // Keep the door open while Brian walks through it.
+		_actionAnimation.draw(_background, 12, 0, 0);
+		walkTo(Common::Point(980, 275), 7, true);
+		deferMuseumAction(472);
+		break;
+	case 472: // Enter the analysis laboratory or start the museum escape.
+		if (_inventory.museum().restoredCrucifix) {
+			startMuseumFilm(kMuseumExitFilm);
+		} else {
+			leaveMuseumRoom(4100, Common::Point(141, 468));
+		}
+		break;
 	case 460: // Willy approaches the security door.
 		_camera.y = 0;
 		beginRoomAnimationRange(461, 16, 216, 0, 178, false);
@@ -391,8 +439,16 @@ void Scene4060::finishCustomAnimation(uint16 action) {
 		break;
 	case 466: // React to Willy entering the code.
 		updateCamera();
-		say(_museum.sawCode == 1 ? 38 : 15, _museum.sawCode == 1 ? 2 : 5);
+		if (_museum.sawCode == 1) {
+			say(38, 2);
+		} else {
+			walkTo(Common::Point(1474, 312), 5, true);
+			deferMuseumAction(475);
+		}
 		updateMaps();
+		break;
+	case 475: // Come out of hiding after the telephone distraction.
+		say(15, 5);
 		break;
 	case 462: // Follow Willy to the coffee machine.
 		say(36, 4);
@@ -414,6 +470,11 @@ void Scene4060::finishCustomAnimation(uint16 action) {
 	case 325: // Start the telephone conversation.
 		startMuseumFilm(kPhoneFilm);
 		break;
+	case 474: // Hide after putting down the telephone.
+		say(15, 4);
+		walkTo(Common::Point(1440, 271), 7, true);
+		deferMuseumAction(460);
+		break;
 	case 337: // Show the varnished keypad.
 		_museum.keypad = 1;
 		leaveMuseumRoom(4141, Common::Point(382, 529));
@@ -428,6 +489,8 @@ void Scene4060::finishCustomAnimation(uint16 action) {
 void Scene4060::handleAnimationFrameHook() {
 	if (_roomAction == 461 && _actionStep == 156) {
 		_audio.playEffect(29);
+	} else if (_roomAction == 470 && _actionStep == 7) {
+		_audio.playEffectAt(29, Common::Point(1138, 200));
 	}
 }
 
@@ -452,7 +515,7 @@ void Scene4060::finishCustomFilm() {
 		if (_museum.keypad == 1) {
 			_museum.keypad = 2;
 		}
-		beginRoomAnimationRange(460, 13, 27, 26, 0);
+		beginRoomAnimationRange(474, 13, 27, 26, 0);
 		break;
 	case kMuseumExitFilm:
 		leaveMuseumRoom(4100, Common::Point(141, 468));

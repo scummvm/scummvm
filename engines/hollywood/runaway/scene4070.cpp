@@ -137,7 +137,11 @@ void Scene4070::finishCustomAnimation(uint16 action) {
 		deferMuseumAction(448);
 		break;
 	case 448: // Willy leaves the close-up.
-		beginRoomAnimation(409, 6, 72, nullptr, 0, false);
+		beginRoomAnimation(458, 6, 72, nullptr, 0, false);
+		break;
+	case 458: // Comment after Willy leaves to fetch stock or refill the coffee machine.
+		holdRoomAnimation(409, 6, 72, 71, false);
+		say(_museum.willyInLab == 1 ? 38 : 36, _museum.willyInLab == 1 ? 0 : 2);
 		break;
 	case 409: // Return to the exhibition hall.
 		_upperFloor = false;

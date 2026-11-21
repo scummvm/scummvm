@@ -145,15 +145,18 @@ bool RunawayUI::inViewport() const {
 		_mouse.y >= kRunawayViewportTop && _mouse.y < kRunawayViewportTop + kRunawayViewportHeight;
 }
 
-void RunawayUI::setVerb(RunawayVerb verb) {
-	if (_verb != verb) {
+void RunawayUI::setVerb(RunawayVerb verb, byte exitCursor) {
+	const byte cursor = verb == kVerbUse && exitCursor ? exitCursor : (byte)verb;
+	if (_verb != verb || _cursorType != cursor) {
 		if (_pointerSound && (_inventoryOpen || _roomHasVerbs) && !_blocked && !_speaking && !busy()) {
 			_audio.playPointer();
 		}
-		_previousVerb = _verb;
+		_previousCursor = _cursorType;
+		_cursorType = cursor;
 		_verb = verb;
 		_verbStarted = _now;
 	}
+	_exitCursor = exitCursor;
 }
 
 void RunawayUI::captureState(RunawaySaveState &state) const {
@@ -169,7 +172,9 @@ void RunawayUI::restoreState(const RunawaySaveState &state, uint32 now) {
 	_blocked = _speaking = _inventoryPresentation = _returnAfterPickup = _pickupSoundPlayed = false;
 	_inventoryOpen = state.inventoryOpen;
 	_enteredInventory = false;
-	_verb = _previousVerb = (RunawayVerb)state.verb;
+	_verb = (RunawayVerb)state.verb;
+	_cursorType = _previousCursor = state.verb;
+	_exitCursor = 0;
 	_cursorKey = -1;
 	// The options cursor may still be on top of the stack. Rebuild ours
 	// on the next gameplay update, after the menu has popped its cursor.
@@ -204,7 +209,7 @@ bool RunawayUI::cancel() {
 }
 
 void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool blocked, bool speaking,
-		bool inventoryPresentation, byte speechFrame, bool roomHasVerbs) {
+		bool inventoryPresentation, byte speechFrame, bool roomHasVerbs, byte exitCursor) {
 	_now = now;
 	_mouse = mouse;
 	_blocked = blocked;
@@ -248,10 +253,14 @@ void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool b
 			setInventoryOpen(false);
 	}
 	const byte hovered = _inventoryOpen ? itemAt(mouse) : roomHotspot;
-	if (_hovered != hovered || _roomHasVerbs != roomHasVerbs) {
+	if (_inventoryOpen || !roomHasVerbs || _museum) {
+		exitCursor = 0;
+	}
+	if (_hovered != hovered || _roomHasVerbs != roomHasVerbs || _exitCursor != exitCursor) {
 		_hovered = hovered;
 		_roomHasVerbs = roomHasVerbs;
-		setVerb(hovered && (_inventoryOpen || _roomHasVerbs) ? (_inventoryOpen ? kVerbUse : kVerbLook) : kVerbWalk);
+		setVerb(hovered && (_inventoryOpen || _roomHasVerbs) ?
+			(_inventoryOpen || exitCursor ? kVerbUse : kVerbLook) : kVerbWalk, exitCursor);
 	}
 	if (now - _buttonTick >= 20) {
 		const uint steps = MIN<uint>(6, (now - _buttonTick) / 20);
@@ -320,7 +329,7 @@ RunawayUI::Command RunawayUI::click(bool right) {
 		if (_inventory.selected()) {
 			_inventory.select(0);
 		} else if (_hovered && (_inventoryOpen || _roomHasVerbs)) {
-			setVerb(_verb == kVerbLook ? kVerbUse : kVerbLook);
+			setVerb(_verb == kVerbLook ? kVerbUse : kVerbLook, _exitCursor);
 		}
 		return command;
 	}
@@ -366,7 +375,7 @@ void RunawayUI::updateCursor() {
 	const bool useVerbs = _inventoryOpen || _roomHasVerbs;
 	const byte item = _choices.empty() && useVerbs ? _inventory.selected() : 0;
 	const RunawayVerb verb = useVerbs ? _verb : kVerbWalk;
-	uint tile = _museum ? (verb == kVerbWalk ? 0 : verb == kVerbLook ? 6 : 7) : (uint)verb;
+	uint tile = _museum ? (verb == kVerbWalk ? 0 : verb == kVerbLook ? 6 : 7) : useVerbs ? _cursorType : 0;
 	uint shade = 0;
 	if (item) {
 		tile = _inventory.cursor(item) + (_hovered != 0);
@@ -375,8 +384,8 @@ void RunawayUI::updateCursor() {
 		// Close-ups such as the keypad keep the plain pointer, without verb morphs.
 		if (useVerbs && !_museum && phase < 10) {
 			// Four cels collapse the old verb to a ball; four expand the new one.
-			tile = !phase ? (uint)_previousVerb : phase < 5 ? _previousVerb * 4 + 8 + phase :
-				phase == 5 ? 8 : _verb * 4 + 18 - phase;
+			tile = !phase ? _previousCursor : phase < 5 ? _previousCursor * 4 + 8 + phase :
+				phase == 5 ? 8 : _cursorType * 4 + 18 - phase;
 		} else {
 			const byte pulse[] = {0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 8, 7, 6, 5, 4, 3, 2, 1};
 			shade = pulse[(_now / 50) % ARRAYSIZE(pulse)];

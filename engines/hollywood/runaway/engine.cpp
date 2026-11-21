@@ -123,9 +123,10 @@ Common::Point RunawayEngine::updateUI(uint32 now) {
 	const bool presentation = _scene->playingVideo();
 	const Common::Point mouse = _presentationMouse.update(presentation);
 	if (!presentation) {
+		const byte hotspot = _scene->hotspotAt(mouse);
 		_ui->setDialogueChoices(_scene->dialogueChoices());
-		_ui->update(now, mouse, _scene->hotspotAt(mouse), sceneBusy(), _scene->speaking(),
-			_scene->inventoryPresentation(), _scene->speechFrame(), _scene->hasVerbControls());
+		_ui->update(now, mouse, hotspot, sceneBusy(), _scene->speaking(),
+			_scene->inventoryPresentation(), _scene->speechFrame(), _scene->hasVerbControls(), _scene->exitCursor(hotspot));
 	}
 	return mouse;
 }
@@ -231,8 +232,9 @@ Common::Error RunawayEngine::changeScene() {
 	_scene->resume();
 	updateSoundListener();
 	_pendingDoorClose = transition.door;
-	if (transition.door)
-		_audio.playEffect(3);
+	if (transition.door) {
+		_audio.playEffect(_museum ? 3 : 58);
+	}
 	return Common::kNoError;
 }
 
@@ -458,7 +460,7 @@ Common::Error RunawayEngine::run() {
 		// Museum doors close once the opening sound finishes, across the room change.
 		if (_pendingDoorClose && !_audio.effectPlaying()) {
 			_pendingDoorClose = false;
-			_audio.playEffect(4);
+			_audio.playEffect(_museum ? 4 : 59);
 		}
 		updateUI(now);
 		if (_scene->playingVideo()) {

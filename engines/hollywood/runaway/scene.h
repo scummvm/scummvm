@@ -60,6 +60,8 @@ public:
 	virtual Graphics::ManagedSurface &screen() = 0;
 	byte hotspotAt(Common::Point mouse) const override = 0;
 	virtual bool hasVerbControls() const { return true; }
+	// Cursor tiles 4..7 are the four exit arrows; zero keeps the usual verbs.
+	virtual byte exitCursor(byte hotspot) const { return 0; }
 	virtual Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const = 0;
 	virtual const Common::U32String &committedCaption() const = 0;
 	virtual const Common::U32String &subtitle() const = 0;
@@ -108,6 +110,7 @@ public:
 	int roomWidth() const override { return _background.w; }
 	Graphics::ManagedSurface &screen() override { return _screen; }
 	byte hotspotAt(Common::Point mouse) const override;
+	byte exitCursor(byte id) const override;
 	Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const override;
 	const Common::U32String &committedCaption() const override { return _caption; }
 	const Common::U32String &subtitle() const override;
@@ -193,11 +196,13 @@ protected:
 	void changeFloor(bool upper, Common::Point position);
 	void updateCamera();
 	void beginRoomAnimation(uint16 action, uint chunk, uint frames, const byte *order = nullptr, uint count = 0, bool hideActor = true, uint frameDuration = 80);
+	void beginActorAnimation(uint16 action, uint bank, uint frames, uint count = 0, uint frameDuration = 60);
+	void beginAnimation(uint16 action, uint frames, const byte *order, uint count, bool hideActor, uint frameDuration);
 	void beginRoomAnimationRange(uint16 action, uint chunk, uint frames, uint first, uint last, bool hideActor = true, uint frameDuration = 80);
 	void holdRoomAnimation(uint16 action, uint chunk, uint frames, uint frame, bool hideActor = true);
 	void loopRoomAnimationDuringSpeech(uint16 action, uint chunk, uint frames, uint first, uint last, bool hideActor = true);
 	void setRoomAnimationOverlay(uint chunk, uint frames, const byte *order, uint count);
-	bool drawingRoomAnimation() const { return _roomAction && !_actionFrames.empty() && (_actionHoldSpeech || !speaking()) && !_walkPath.active(); }
+	bool drawingRoomAnimation() const { return !_actionUsesActor && _roomAction && !_actionFrames.empty() && (_actionHoldSpeech || !speaking()) && !_walkPath.active(); }
 	void updateRoomAnimation();
 	virtual float actorHeight() const { return 455; }
 	virtual float actorWalkSpeed() const { return 0.18f * actorHeight() / 455; }
@@ -329,6 +334,7 @@ protected:
 	bool _entering = false;
 	uint16 _roomAction = 0;
 	bool _actionHidesActor = true;
+	bool _actionUsesActor = false;
 	bool _actionHoldSpeech = false;
 	bool _actionLoopSpeech = false;
 	byte _actionStage = 0;

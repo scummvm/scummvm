@@ -294,6 +294,11 @@ const RunawayHotspot *RunawayRoomScene::hotspot(byte id) const {
 	return _roomData && id && id < _roomData->hotspotCount ? &_roomData->hotspots[id] : nullptr;
 }
 
+byte RunawayRoomScene::exitCursor(byte id) const {
+	const RunawayHotspot *target = hotspot(id);
+	return target ? target->exitCursor : 0;
+}
+
 byte RunawayRoomScene::hotspotAt(Common::Point mouse) const {
 	if (mouse.x < 0 || mouse.x >= kRunawayScreenWidth || mouse.y < kRunawayViewportTop ||
 			mouse.y >= kRunawayViewportTop + kRunawayViewportHeight)
@@ -729,7 +734,11 @@ void RunawayRoomScene::updateActor(uint elapsed, int scrollDirection, bool inven
 			headFrame = speaking() && !speaker() ? speechFrame() : idle ? _idleHead.frame() : -1;
 		}
 	}
-	_actor.setFrame(_facing, walking ? 1 + (_walkElapsed / 60) % 12 : 0, headFrame);
+	if (_actionUsesActor && _roomAction && !_actionFrames.empty() && !walking && !speaking()) {
+		_actor.setActionFrame(_actionFrames[_actionStep]);
+	} else {
+		_actor.setFrame(_facing, walking ? 1 + (_walkElapsed / 60) % 12 : 0, headFrame);
+	}
 	if (scrollDirection) {
 		setCameraX(_camera.x + scrollDirection * MAX<int>(1, elapsed / (_fastScrolling ? 2 : 4)));
 	} else if (walking) {
@@ -793,11 +802,26 @@ void RunawayRoomScene::drawForeground(Graphics::ManagedSurface &viewport, uint l
 }
 
 void RunawayRoomScene::beginRoomAnimation(uint16 action, uint chunk, uint frames, const byte *order, uint count, bool hideActor, uint frameDuration) {
-	assert(frameDuration);
 	if (!_actionAnimation.load(_archive, chunk, frames))
 		error("Cannot load Runaway room %u animation %u", _room, chunk);
+	beginAnimation(action, frames, order, count, hideActor, frameDuration);
+}
+
+void RunawayRoomScene::beginActorAnimation(uint16 action, uint bank, uint frames, uint count, uint frameDuration) {
+	assert(count <= frames);
+	if (!_actor.loadAction(bank, frames)) {
+		error("Cannot load Runaway actor animation %u", bank);
+	}
+	beginAnimation(action, count ? count : frames, nullptr, 0, false, frameDuration);
+	_actionUsesActor = true;
+	_actor.setActionFrame(0);
+}
+
+void RunawayRoomScene::beginAnimation(uint16 action, uint frames, const byte *order, uint count, bool hideActor, uint frameDuration) {
+	assert(frameDuration);
 	_actionFrames.clear();
 	_secondaryFrames.clear();
+	_actionUsesActor = false;
 	_actionHoldSpeech = false;
 	_actionLoopSpeech = false;
 	for (uint i = 0; i < (order ? count : frames); ++i)

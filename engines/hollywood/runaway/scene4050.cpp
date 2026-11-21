@@ -46,7 +46,7 @@ const byte kGrindCoffee[] = {
 
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{227, 503, 7, {301, 339}, {0, 1}, {192, 484}}, // 1: Door.
+	{227, 503, 7, {301, 339}, {0, 1}, {192, 484}, 4}, // 1: Door.
 	{311, 493, 7, {302, 303}, {0, 0}, {291, 470}}, // 2: Shelves.
 	{382, 529, 1, {304, 305}, {0, 1}, {490, 508}}, // 3: Susan.
 	{395, 529, 1, {306, 307}, {0, 0}, {406, 493}}, // 4: Electric lathe.
@@ -120,7 +120,7 @@ const RunawayRoom kRunawayScene4050 = {
 namespace Runaway {
 
 Scene4050::Scene4050(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
-	RunawayRoomScene(audio, inventory, strings, game) {}
+	RunawayRoomScene(audio, inventory, strings, game), _susanSpeech(audio, _random, RunawaySpeech::kRecordedLipSync) {}
 
 const char *Scene4050::actionCaptionVariant(byte id, bool look, byte item) const {
 	if (item == 14 && id == 4) {
@@ -216,10 +216,14 @@ void Scene4050::resumeAmbientAudio(bool entering) {
 }
 
 void Scene4050::advanceCustomGameplayLoop(uint32 delta) {
+	if (_susanSpeech.finished(_now) || busy() || _inventoryOpen || _museum.susan != 1) {
+		stopAmbientSpeech();
+	}
+	const bool complaining = !_susanSpeech.subtitle().empty();
 	if (_museum.susan >= 2) {
 		_susanFrame = 1;
-	} else if (speaker()) {
-		_susanFrame = (_museum.susan == 1 ? 52 : 45) + speechFrame();
+	} else if (speaker() || complaining) {
+		_susanFrame = (_museum.susan == 1 ? 52 : 45) + (complaining ? _susanSpeech.frame(_now) : speechFrame());
 		_susanTalking = true;
 		_susanTick = _now;
 	} else if (_susanTalking) {
@@ -238,10 +242,23 @@ void Scene4050::advanceCustomGameplayLoop(uint32 delta) {
 
 void Scene4050::advanceSusanIdle() {
 	if (_museum.susan == 1) {
-		if (_susanFrame == 33 || _susanFrame == 83) {
-			_susanFrame = _random.getRandomBit() ? 0 : 84;
-		} else if (_susanFrame == 101) {
-			_susanFrame = 0;
+		const bool idle = !busy() && !_walkPath.active() && !_inventoryOpen;
+		if (_susanFrame == 33 || _susanFrame == 83 || _susanFrame == 101) {
+			if (idle && _camera.x > 22 && !_random.getRandomNumber(7)) {
+				_susanFrame = 34;
+			} else {
+				_susanFrame = _susanFrame == 101 || _random.getRandomBit() ? 0 : 84;
+			}
+		} else if (_susanFrame == 51) {
+			_susanFrame = 79;
+			if (idle) {
+				const SceneSpeechCue cue = _text.stageCue(33, _random.getRandomNumber(3));
+				if (cue.valid()) {
+					_susanSpeech.start(Common::U32String(_text.largeTextRecord(cue.textRecordId), Common::kDos850), cue.voiceSampleId, false, _now);
+					_susanFrame = 52;
+					_susanTalking = true;
+				}
+			}
 		} else {
 			++_susanFrame;
 		}
@@ -265,6 +282,19 @@ void Scene4050::advanceSusanIdle() {
 	} else {
 		++_susanFrame;
 	}
+}
+
+void Scene4050::stopAmbientSpeech() {
+	if (!_susanSpeech.subtitle().empty()) {
+		_susanSpeech.stop();
+	}
+}
+
+const Common::U32String &Scene4050::subtitle() const {
+	if (!_sequence.active() && !speaking() && !_susanSpeech.subtitle().empty()) {
+		return _susanSpeech.subtitle();
+	}
+	return RunawayRoomScene::subtitle();
 }
 
 void Scene4050::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
@@ -421,8 +451,8 @@ RunawayRoomScene::ActionResult Scene4050::dispatchCustomSceneAction(uint16 actio
 			_museum.talcSeen = 1;
 			return kHandled;
 		case 339: // Leave the laboratory.
-			_museum.leftLabOnce = 1;
-			leaveMuseumRoom(4061, Common::Point(873, 311), 3, true);
+			// Alternate actor bank for the northwest-facing door handle gesture.
+			beginActorAnimation(339, 70, 11, 6);
 			return kHandled;
 		default:
 			break;
@@ -463,6 +493,10 @@ RunawayRoomScene::ActionResult Scene4050::dispatchCustomSceneAction(uint16 actio
 
 void Scene4050::finishCustomAnimation(uint16 action) {
 	switch (action) {
+	case 339: // Return to the hall after opening the door.
+		_museum.leftLabOnce = 1;
+		leaveMuseumRoom(4061, Common::Point(873, 311), 3, true);
+		break;
 	case 326: // Leave the crucifix and collect the Mayan object.
 		_inventory.remove(7);
 		_inventory.add(8);

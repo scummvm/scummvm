@@ -380,6 +380,9 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(finale.trailerInteriorVisited, 25);
 	s.syncAsByte(finale.ginaVisited, 26);
 	s.syncAsByte(finale.ginaMediumDiscussed, 26);
+	s.syncAsByte(museum.officeVisited, 27);
+	s.syncAsByte(museum.exhibitionVisited, 27);
+	s.syncAsByte(museum.phonePlanExplained, 27);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -437,6 +440,7 @@ bool RunawaySaveState::valid() const {
 	if (museum.susan > 3 || museum.restoration > 2 || museum.laserUpgraded > 1 ||
 			museum.laserSeen > 1 || museum.shelvesSeen > 1 || museum.susanMet > 1 ||
 			museum.labVisited > 1 || museum.shelfBooksSeen > 1 || museum.safeUsed > 1 ||
+			museum.officeVisited > 1 || museum.exhibitionVisited > 1 || museum.phonePlanExplained > 1 ||
 			museum.willyMet > 2 || museum.batteryRequested > 1 || museum.coffeeMachine > 2 ||
 			museum.coffeeSeen > 1 || museum.basketSeen > 1 || museum.needsPackage > 1 ||
 			museum.needsGroundCoffee > 1 || museum.willyInLab > 2 || museum.keypad > 4 ||
@@ -578,7 +582,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 26)
+	if (version < 1 || version > 27)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -590,9 +594,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(26);
+	stream.writeUint16LE(27);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(26);
+	s.setVersion(27);
 	sync(s);
 	return !s.err();
 }

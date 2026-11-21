@@ -30,6 +30,7 @@ namespace Runaway {
 class Scene4050 : public RunawayRoomScene {
 public:
 	Scene4050(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
+	const Common::U32String &subtitle() const override;
 
 private:
 	const char *actionCaptionVariant(byte id, bool look, byte item) const override;
@@ -39,6 +40,7 @@ private:
 	void prepareCustomGameplayLoop() override;
 	void runCustomEntrySequence() override;
 	void resumeAmbientAudio(bool entering) override;
+	void stopAmbientSpeech() override;
 	void advanceCustomGameplayLoop(uint32 delta) override;
 	void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) override;
 	void drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) override;
@@ -56,6 +58,7 @@ private:
 	void advanceSusanIdle();
 
 	RunawayAnimation _susanAnimation, _susanLegsAnimation, _susanBenchPatch;
+	RunawaySpeech _susanSpeech;
 	byte _susanFrame = 0;
 	byte _susanWorkCycles = 0;
 	bool _susanTalking = false;

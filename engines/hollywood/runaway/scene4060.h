@@ -30,6 +30,7 @@ namespace Runaway {
 class Scene4060 : public RunawayRoomScene {
 public:
 	Scene4060(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
+	byte exitCursor(byte id) const override;
 
 private:
 	const char *actionCaptionVariant(byte id, bool look, byte item) const override;

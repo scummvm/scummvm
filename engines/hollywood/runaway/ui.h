@@ -46,7 +46,7 @@ public:
 	bool load(RunawayGameType game, byte chapter);
 	bool loadChapter(byte chapter);
 	void update(uint32 now, Common::Point mouse, byte roomHotspot, bool blocked, bool speaking,
-		bool inventoryPresentation = false, byte speechFrame = 0, bool roomHasVerbs = true);
+		bool inventoryPresentation = false, byte speechFrame = 0, bool roomHasVerbs = true, byte exitCursor = 0);
 	void setDialogueChoices(const Common::Array<Common::U32String> &choices);
 	Command click(bool right);
 	void toggleInventory();
@@ -69,7 +69,7 @@ private:
 	bool overOptions() const;
 	bool inViewport() const;
 	void setInventoryOpen(bool open);
-	void setVerb(RunawayVerb verb);
+	void setVerb(RunawayVerb verb, byte exitCursor = 0);
 	void updateCursor();
 	Common::U32String inventoryCaption() const;
 	void drawInventory(Graphics::ManagedSurface &screen);
@@ -86,7 +86,8 @@ private:
 	Common::Point _mouse;
 	Common::Array<Common::Array<Common::U32String> > _choices;
 	Common::Array<Common::Rect> _choiceRects;
-	RunawayVerb _verb = kVerbWalk, _previousVerb = kVerbWalk;
+	RunawayVerb _verb = kVerbWalk;
+	byte _cursorType = 0, _previousCursor = 0, _exitCursor = 0;
 	byte _hovered = 0, _buttonFrame = 0, _optionsFrame = 0, _pickupItem = 0;
 	bool _inventoryOpen = false, _enteredInventory = false, _returnAfterPickup = false;
 	bool _inventoryPresentation = false;

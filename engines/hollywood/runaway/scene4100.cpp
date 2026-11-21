@@ -42,7 +42,7 @@ const byte kFreezeBatteryFrames[] = {
 
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{141, 468, 7, {301, 302}, {0, 1}, {43, 471}}, // 1: Door.
+	{141, 468, 7, {301, 302}, {0, 1}, {43, 471}, 4}, // 1: Door.
 	{196, 451, 1, {303, 304}, {0, 0}, {220, 420}}, // 2: First aid kit.
 	{310, 457, 0, {305, 306}, {1, 1}, {337, 425}}, // 3: Glass display case.
 	{204, 448, 1, {307, 308}, {1, 1}, {270, 421}}, // 4: Button.
@@ -229,8 +229,9 @@ RunawayRoomScene::ActionResult Scene4100::dispatchCustomSceneAction(uint16 actio
 		return kUnhandled;
 	}
 	switch (action) {
-	case 302: // Return to the exhibition hall.
-		leaveMuseumRoom(4062, Common::Point(1118, 309), 3);
+	case 302: // Open the security door to return to the hall.
+		beginRoomAnimation(450, 21, 13, nullptr, 0, false);
+		_audio.playEffectAt(32, Common::Point(43, 200));
 		return kHandled;
 	case 305: // Look inside the thermal chamber.
 		say(4, !_museum.cabinetSeen ? 0 : _museum.maskTaken ? 2 : 1);
@@ -330,6 +331,14 @@ RunawayRoomScene::ActionResult Scene4100::dispatchCustomSceneAction(uint16 actio
 
 void Scene4100::finishCustomAnimation(uint16 action) {
 	switch (action) {
+	case 450: // Keep the security door open while Brian leaves.
+		_actionAnimation.draw(_background, 12, 0, 0);
+		walkTo(Common::Point(0, 465), 0xff, true);
+		deferMuseumAction(451);
+		break;
+	case 451: // Close the door from the hall side.
+		leaveMuseumRoom(4062, Common::Point(1095, 300), 3);
+		break;
 	case 340: // The voice lock asks for identification.
 		say(90, 0, false, 1);
 		deferMuseumAction(341);

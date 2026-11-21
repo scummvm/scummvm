@@ -36,6 +36,7 @@ private:
 	bool loadCustomResources() override;
 	bool applyCustomBackgroundPatches() override;
 	void applyCustomHotspotState() override;
+	void runCustomEntrySequence() override;
 	void drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 	void finishCustomAnimation(uint16 action) override;

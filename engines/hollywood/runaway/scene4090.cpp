@@ -28,7 +28,7 @@ namespace {
 
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{1100, 204, 1, {302, 301}, {0, 3}, {1023, 251}}, // 1: Exhibition hall.
+	{1100, 204, 1, {302, 301}, {0, 3}, {1023, 251}, 5}, // 1: Exhibition hall.
 	{826, 442, 3, {303, 304}, {1, 0}, {838, 513}}, // 2: Statue.
 	{572, 420, 1, {305, 306}, {1, 0}, {657, 380}}, // 3: Statue.
 	{572, 420, 1, {307, 308}, {1, 1}, {657, 380}}, // 4: Mayan objects.
@@ -84,6 +84,13 @@ void Scene4090::setCameraX(int x) {
 
 bool Scene4090::applyCustomBackgroundPatches() {
 	return !museumChapter() || !_museum.coffeeBeansTaken || applyPatch(4);
+}
+
+void Scene4090::runCustomEntrySequence() {
+	if (!_museum.exhibitionVisited) {
+		_museum.exhibitionVisited = 1;
+		say(0);
+	}
 }
 
 RunawayRoomScene::ActionResult Scene4090::dispatchCustomSceneAction(uint16 action) {

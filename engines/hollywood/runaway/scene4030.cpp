@@ -28,7 +28,7 @@ namespace {
 
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{1165, 594, 2, {322, 301}, {0, 0}, {1165, 594}}, // 1: Door.
+	{1165, 594, 2, {322, 301}, {0, 0}, {1165, 594}, 6}, // 1: Door.
 	{355, 595, 1, {302, 303}, {0, 1}, {430, 546}}, // 2: Pair of books.
 	{355, 595, 1, {304, 305}, {1, 0}, {430, 546}}, // 3: Crack.
 	{550, 647, 7, {306, 307}, {1, 0}, {492, 600}}, // 4: Money.
@@ -116,13 +116,20 @@ void Scene4030::applyCustomHotspotState() {
 			id = 0;
 		}
 		if (!_safeOpen && (id == 4 || id == 5 || id == 6 || id == 8)) {
-			id = 0;
+			id = museumChapter() && _museum.safeUsed ? 8 : 0;
 		} else if (_safeOpen && id == 8) {
 			id = 0;
 		}
 		if (_recorder == kTaken && id == 6) {
 			id = 4;
 		}
+	}
+}
+
+void Scene4030::runCustomEntrySequence() {
+	if (!_museum.officeVisited) {
+		_museum.officeVisited = 1;
+		say(0);
 	}
 }
 

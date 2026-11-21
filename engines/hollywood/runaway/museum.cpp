@@ -137,7 +137,8 @@ void RunawayRoomScene::startMuseumFilm(MuseumFilm film) {
 		_filmCommands = {{S::kOpen, 2}, {S::kEffect, 49, 204}, {S::kPlay, 0, 135}};
 		break;
 	case kLaserFilm:
-		_filmCommands = {{S::kOpen, 3}, {S::kMusic, 22, 255}, {S::kEffect, 50, 204}, {S::kPlay, 0, 175}, {S::kMusic, 13, 255}};
+		_filmCommands = {{S::kOpen, 3}, {S::kMusic, 22, 255}, {S::kEffect, 50, 204}, {S::kPlay, 0, 127},
+			{S::kSpeech, 70, 0}, {S::kPlay, 128, 175}, {S::kMusic, 13, 255}};
 		break;
 	case kRubyFilm:
 		_filmCommands = {{S::kOpen, 4}, {S::kEffect, 51, 230}, {S::kPlay, 0, 75}};
