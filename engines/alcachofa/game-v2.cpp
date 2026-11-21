@@ -260,9 +260,30 @@ public:
 				}
 			}
 			return hasChanges ? u32String.encode() : alternativeAnimationName(path, variant + 1);
-		} else if (variant == 2 || variant == 3) {
-			// For the switch filesystem we have to work even harder to restore UTF8 (both upper- and lowercase)
-			const char orMask = variant == 3 ? 0x20 : 0;
+		} else if (variant == 2) {
+			// For switch hardware some special characters might get replaced with _?
+			for (uint i = 0; i < u32String.size(); i++) {
+				const auto ch = u32String[i];
+				switch(ch) {
+					case 0xC1: case 0xE1:
+					case 0xD3: case 0xF3:
+					case 0xCD: case 0xED:
+					case 0xD1: case 0xF1:
+					case 0xC9: case 0xE9:
+					case 0x2561:
+					case 0x03B1:
+					case 0x2553:
+						u32String[i] = '_';
+						hasChanges = true;
+						break;
+					default:
+						break;
+				}
+			}
+			return hasChanges ? u32String.encode() : alternativeAnimationName(path, variant + 1);
+		} else if (variant == 3 || variant == 4) {
+			// For the switch filesystem we try to work even harder to restore UTF8 (both upper- and lowercase)
+			const char orMask = variant == 4 ? 0x20 : 0;
 			char *tempStart = new char[path.size() * 2];
 			char *tempPtr = tempStart;
 			for (uint i = 0; i < path.size(); i++) {
