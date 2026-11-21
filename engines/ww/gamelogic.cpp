@@ -8918,7 +8918,7 @@ void GameLogic::synchronize(Common::Serializer &s) {
 
 	byte dummy = 0;
 	for (int i = 0; i < 404; ++i) {
-		s.syncAsByte(_vm->_roomObjects[i].roomNumber);
+		s.syncAsSByte(_vm->_roomObjects[i].roomNumber);
 		// For some mysterious reason, the original reads the first letter of the object name as well and overwrite it... 404 bytes wasted per savegame :/
 		s.syncAsByte(dummy);
 	}
