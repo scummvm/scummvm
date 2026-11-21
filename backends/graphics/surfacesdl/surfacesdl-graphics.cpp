@@ -2019,12 +2019,20 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 		}
 	}
 
+	// We use a different buffer as a destination so we can't rely on the N-1 image
+	// It would be the same as the last scaled image and make a black screen for scaler making use of it (Edge scaler).
+	if (_useOldSrc) {
+		_scaler->enableSource(false);
+	}
 #if SDL_VERSION_ATLEAST(3, 0, 0)
 	_scaler->scale((byte *)(_tmpscreen->pixels) + _maxExtraPixels * _tmpscreen->pitch + _maxExtraPixels * pixelFormatDetails->bytes_per_pixel, _tmpscreen->pitch,
 #else
 	_scaler->scale((byte *)(_tmpscreen->pixels) + _maxExtraPixels * _tmpscreen->pitch + _maxExtraPixels * _tmpscreen->format->BytesPerPixel, _tmpscreen->pitch,
 #endif
 	(byte *)_overlayscreen->pixels, _overlayscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight, 0, 0);
+	if (_useOldSrc) {
+		_scaler->enableSource(true);
+	}
 
 #ifdef USE_ASPECT
 	if (_videoMode.aspectRatioCorrection)
