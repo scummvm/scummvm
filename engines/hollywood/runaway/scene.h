@@ -58,6 +58,7 @@ public:
 	virtual int roomWidth() const = 0;
 	virtual Graphics::ManagedSurface &screen() = 0;
 	virtual byte hotspotAt(Common::Point mouse) const = 0;
+	virtual bool hasVerbControls() const { return true; }
 	virtual Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const = 0;
 	virtual const Common::U32String &committedCaption() const = 0;
 	virtual const Common::U32String &subtitle() const = 0;

@@ -46,7 +46,7 @@ public:
 	bool load(RunawayGameType game, byte chapter);
 	bool loadChapter(byte chapter);
 	void update(uint32 now, Common::Point mouse, byte roomHotspot, bool blocked, bool speaking,
-		bool inventoryPresentation = false, byte speechFrame = 0);
+		bool inventoryPresentation = false, byte speechFrame = 0, bool roomHasVerbs = true);
 	void setDialogueChoices(const Common::Array<Common::U32String> &choices);
 	Command click(bool right);
 	void toggleInventory();
@@ -90,6 +90,7 @@ private:
 	byte _hovered = 0, _buttonFrame = 0, _optionsFrame = 0, _pickupItem = 0;
 	bool _inventoryOpen = false, _enteredInventory = false, _returnAfterPickup = false;
 	bool _inventoryPresentation = false;
+	bool _roomHasVerbs = true;
 	bool _pointerSound = true;
 	bool _pickupSoundPlayed = false;
 	bool _blocked = false, _speaking = false, _cursorPushed = false;

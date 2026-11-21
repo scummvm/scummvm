@@ -32,6 +32,7 @@ public:
 	Scene4140(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
 
 	void click(Common::Point mouse, RunawayVerb verb, byte item) override;
+	bool hasVerbControls() const override { return false; }
 	Common::U32String actionCaption(byte id, RunawayVerb verb, byte item) const override;
 	void update(uint32 now, int scrollDirection, bool inventoryOpen) override;
 	bool canSave() const override;

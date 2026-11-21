@@ -147,8 +147,9 @@ bool RunawayUI::inViewport() const {
 
 void RunawayUI::setVerb(RunawayVerb verb) {
 	if (_verb != verb) {
-		if (_pointerSound && !_blocked && !_speaking && !busy())
+		if (_pointerSound && (_inventoryOpen || _roomHasVerbs) && !_blocked && !_speaking && !busy()) {
 			_audio.playPointer();
+		}
 		_previousVerb = _verb;
 		_verb = verb;
 		_verbStarted = _now;
@@ -203,7 +204,7 @@ bool RunawayUI::cancel() {
 }
 
 void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool blocked, bool speaking,
-		bool inventoryPresentation, byte speechFrame) {
+		bool inventoryPresentation, byte speechFrame, bool roomHasVerbs) {
 	_now = now;
 	_mouse = mouse;
 	_blocked = blocked;
@@ -247,9 +248,10 @@ void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool b
 			setInventoryOpen(false);
 	}
 	const byte hovered = _inventoryOpen ? itemAt(mouse) : roomHotspot;
-	if (_hovered != hovered) {
+	if (_hovered != hovered || _roomHasVerbs != roomHasVerbs) {
 		_hovered = hovered;
-		setVerb(hovered ? (_inventoryOpen ? kVerbUse : kVerbLook) : kVerbWalk);
+		_roomHasVerbs = roomHasVerbs;
+		setVerb(hovered && (_inventoryOpen || _roomHasVerbs) ? (_inventoryOpen ? kVerbUse : kVerbLook) : kVerbWalk);
 	}
 	if (now - _buttonTick >= 20) {
 		const uint steps = MIN<uint>(6, (now - _buttonTick) / 20);
@@ -315,10 +317,11 @@ RunawayUI::Command RunawayUI::click(bool right) {
 	if (_blocked || busy())
 		return command;
 	if (right) {
-		if (_inventory.selected())
+		if (_inventory.selected()) {
 			_inventory.select(0);
-		else if (_hovered)
+		} else if (_hovered && (_inventoryOpen || _roomHasVerbs)) {
 			setVerb(_verb == kVerbLook ? kVerbUse : kVerbLook);
+		}
 		return command;
 	}
 	if (overButton()) {
@@ -329,7 +332,7 @@ RunawayUI::Command RunawayUI::click(bool right) {
 		return command;
 	command.mouse = _mouse;
 	command.verb = _verb;
-	command.item = _inventory.selected();
+	command.item = _inventoryOpen || _roomHasVerbs ? _inventory.selected() : 0;
 	command.target = _hovered;
 	if (!_inventoryOpen) {
 		command.type = Command::kRoom;
@@ -360,14 +363,17 @@ void RunawayUI::updateCursor() {
 	CursorMan.showMouse(!waiting);
 	if (waiting)
 		return;
-	const byte item = _choices.empty() ? _inventory.selected() : 0;
-	uint tile = _museum ? (_verb == kVerbWalk ? 0 : _verb == kVerbLook ? 6 : 7) : (uint)_verb;
+	const bool useVerbs = _inventoryOpen || _roomHasVerbs;
+	const byte item = _choices.empty() && useVerbs ? _inventory.selected() : 0;
+	const RunawayVerb verb = useVerbs ? _verb : kVerbWalk;
+	uint tile = _museum ? (verb == kVerbWalk ? 0 : verb == kVerbLook ? 6 : 7) : (uint)verb;
 	uint shade = 0;
 	if (item) {
 		tile = _inventory.cursor(item) + (_hovered != 0);
 	} else {
 		const uint phase = (_now - _verbStarted) / 20;
-		if (!_museum && phase < 10) {
+		// Close-ups such as the keypad keep the plain pointer, without verb morphs.
+		if (useVerbs && !_museum && phase < 10) {
 			// Four cels collapse the old verb to a ball; four expand the new one.
 			tile = !phase ? (uint)_previousVerb : phase < 5 ? _previousVerb * 4 + 8 + phase :
 				phase == 5 ? 8 : _verb * 4 + 18 - phase;

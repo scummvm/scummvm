@@ -111,7 +111,7 @@ Common::Point RunawayEngine::updateUI(uint32 now) {
 	if (!presentation) {
 		_ui->setDialogueChoices(_scene->dialogueChoices());
 		_ui->update(now, mouse, _scene->hotspotAt(mouse), sceneBusy(), _scene->speaking(),
-			_scene->inventoryPresentation(), _scene->speechFrame());
+			_scene->inventoryPresentation(), _scene->speechFrame(), _scene->hasVerbControls());
 	}
 	return mouse;
 }
