@@ -54,7 +54,7 @@ private:
 	byte customizeSceneActionFacing(byte id, byte facing) const override;
 	Common::Point sceneActionLookPosition(byte id) const override;
 
-	void startSusanConversation();
+	void startSusanConversation(bool introduction);
 	void advanceSusanIdle();
 
 	RunawayAnimation _susanAnimation, _susanLegsAnimation, _susanBenchPatch;

@@ -190,7 +190,7 @@ void Scene4050::applyCustomHotspotState() {
 }
 
 void Scene4050::prepareCustomGameplayLoop() {
-	_nextLaser = _now + 25000 + _random.getRandomNumber(5000);
+	_nextLaser = _now + (15 + _random.getRandomNumber(5)) * 1000;
 }
 
 void Scene4050::runCustomEntrySequence() {
@@ -207,6 +207,7 @@ void Scene4050::runCustomEntrySequence() {
 			say(80, i);
 			say(90, i, false, 1);
 		}
+		startSusanConversation(true);
 	}
 }
 
@@ -235,9 +236,12 @@ void Scene4050::advanceCustomGameplayLoop(uint32 delta) {
 		_susanTick = _now;
 		advanceSusanIdle();
 	}
-	if (!_museum.susan && !busy() && !_inventoryOpen && _position.x < 530 && (int32)(_now - _nextLaser) >= 0) {
-		beginRoomAnimation(450, 23, 95, nullptr, 0, false);
-		_nextLaser = _now + 25000 + _random.getRandomNumber(5000);
+	if (!_museum.susan && (int32)(_now - _nextLaser) >= 0) {
+		if (!busy() && !_walkPath.active() && !_inventoryOpen && _position.x < 530) {
+			beginRoomAnimation(450, 23, 95, nullptr, 0, false);
+		}
+		// A missed attempt is retried later, not as soon as Brian becomes idle.
+		_nextLaser = _now + (25 + _random.getRandomNumber(5)) * 1000;
 	}
 }
 
@@ -348,7 +352,7 @@ RunawayRoomScene::ActionResult Scene4050::dispatchCustomSceneAction(uint16 actio
 				say(5, 1 + _random.getRandomNumber(3));
 				say(5, 5 + _random.getRandomNumber(2), false, 1);
 			} else {
-				startSusanConversation();
+				startSusanConversation(false);
 			}
 			return kHandled;
 		case 312: // Look in the wastepaper basket.
@@ -541,6 +545,9 @@ void Scene4050::finishCustomAnimation(uint16 action) {
 	case 336: // Show the ruby installation film.
 		startMuseumFilm(kRubyFilm);
 		return;
+	case 400: // Susan demonstrates the laser after the introductory conversation.
+		beginRoomAnimation(450, 23, 95, nullptr, 0, false);
+		return;
 	case 405: // Collect the restored crucifix.
 		_inventory.add(7);
 		say(32, 2);
@@ -556,7 +563,7 @@ void Scene4050::finishCustomAnimation(uint16 action) {
 		startMuseumFilm(kDrillingFilm);
 		return;
 	case 451: // Resume the laboratory after drilling.
-		_nextLaser = _now + 25000 + _random.getRandomNumber(5000);
+		_nextLaser = _now + (15 + _random.getRandomNumber(5)) * 1000;
 		break;
 	case 452: // Show the upgraded laser film.
 		startMuseumFilm(kLaserFilm);
@@ -665,7 +672,7 @@ Common::Point Scene4050::sceneActionLookPosition(byte id) const {
 	return RunawayRoomScene::sceneActionLookPosition(id);
 }
 
-void Scene4050::startSusanConversation() {
+void Scene4050::startSusanConversation(bool introduction) {
 	startConversation(1);
 	static const DialogueChoice susan[][8] = {
 		{{1,0,3,3,3,1,255}, {1,0,1,4,4,1,255}, {1,1,1,5,5,1,255}, {1,0,3,6,6,1,255}, {1,0,0,7,7,1,0}},
@@ -683,8 +690,12 @@ void Scene4050::startSusanConversation() {
 		_dialogue[11][0].transition = 1;
 		_dialogue[20][0].node = 1;
 	}
-	say(80, 15);
-	say(90, 15, false, 1);
+	if (introduction) {
+		_afterConversation = 400;
+	} else {
+		say(80, 15);
+		say(90, 15, false, 1);
+	}
 }
 
 } // End of namespace Runaway
