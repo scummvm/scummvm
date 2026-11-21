@@ -201,13 +201,13 @@ void GFTFont::drawWrappedText(Graphics::Surface *surface, const char *text, int 
 		if (textP > text && textP[-1] == 32)
 			lastSpaceP = textP - 1;
 		const int charWidth = getCharWidth(*textP);
-		if (lineWidth + charWidth > maxWidth) {
+		if (lineWidth + charWidth > maxWidth && textP > lineStartP) {
 			const char *lineEndP = lastSpaceP ? lastSpaceP : textP + 1;
+
 			for (const char *p = lineStartP; p < lineEndP; p++) {
 				x += drawChar(surface, (byte)*p, x, y, color);
 			}
-			lineStartP = lastSpaceP + 1;
-			textP = lastSpaceP + 1;
+			lineStartP = textP = lineEndP + 1;
 			lineWidth = 0;
 			x = textX;
 			y += _formHeight;
