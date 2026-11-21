@@ -2021,10 +2021,12 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		if (channel->getPosition() != d.asPoint()) {
 			channel->setNeedsDraw();
 		}
+		channel->keepLingoBbox();
 		channel->setPosition(d.asPoint().x, d.asPoint().y);
 		break;
 	case kTheLocH:
 		if (d.asInt() != channel->getPosition().x) {
+			channel->keepLingoBbox();
 			channel->setPosition(d.asInt(), channel->getPosition().y);
 			channel->setNeedsDraw();
 		}
@@ -2035,6 +2037,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheLocV:
 		if (d.asInt() != channel->getPosition().y) {
+			channel->keepLingoBbox();
 			channel->setPosition(channel->getPosition().x, d.asInt());
 			channel->setNeedsDraw();
 		}
@@ -2081,7 +2084,6 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheRect:
 		if (d.type == RECT || (d.type == ARRAY && d.u.farr->arr.size() >= 4)) {
-			score->updateSprites(kRenderForceUpdate);
 			channel->setBbox(
 				d.u.farr->arr[0].u.i, d.u.farr->arr[1].u.i,
 				d.u.farr->arr[2].u.i, d.u.farr->arr[3].u.i

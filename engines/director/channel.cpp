@@ -300,6 +300,7 @@ bool hasTextCastMember(Sprite *sprite) {
 // sprite will be drawn at the stored size. D2 goes on drawing
 // an unstretched sprite at the size of its member.
 void Channel::setWidth(int w) {
+	keepLingoBbox();
 	_sprite->setWidth(w);
 	if (g_director->getVersion() >= 300)
 		_sprite->_stretch = true;
@@ -308,6 +309,7 @@ void Channel::setWidth(int w) {
 }
 
 void Channel::setHeight(int h) {
+	keepLingoBbox();
 	_sprite->setHeight(h);
 	if (g_director->getVersion() >= 300)
 		_sprite->_stretch = true;
@@ -316,6 +318,7 @@ void Channel::setHeight(int h) {
 }
 
 void Channel::setBbox(int l, int t, int r, int b) {
+	keepLingoBbox();
 	if (g_director->getVersion() >= 300)
 		_sprite->_stretch = true;
 	_sprite->setBbox(l, t, r, b);
@@ -323,10 +326,9 @@ void Channel::setBbox(int l, int t, int r, int b) {
 	setNeedsDraw();
 }
 
-// Lingo is about to change the size the sprite is drawn at,
-// without storing the size. The left, top, right and bottom
-// go on returning the rect that was last drawn, until
-// the sprite is drawn again.
+// Lingo is about to move or resize the sprite. The left, top, right and
+// bottom go on returning the rect that was drawn until the sprite is
+// drawn again.
 void Channel::keepLingoBbox() {
 	if (g_director->getVersion() < 600 && !_hasLingoBbox) {
 		_lingoBbox = getBbox();
