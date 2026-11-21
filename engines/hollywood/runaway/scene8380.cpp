@@ -64,7 +64,8 @@ const RunawayItemAction kItemActions[] = {
 	{8380, 13, 3, 326}, // Give Sushi the gangsters' belongings.
 	{8380, 14, 3, 324}, // Ask Sushi to investigate the bank brochure.
 	{8380, 16, 3, 325}, // Hand over the recorded voices.
-	{8380, 9, 11, 31, false}, {8380, 9, 12, 31, false}
+	{8380, 9, 7, 31, false}, // Refuse to damage the musical equipment with the tomahawk.
+	{8380, 9, 8, 31, false}  // Refuse to damage the robot with the tomahawk.
 };
 
 // RESOURCE.H38 shares a body bank between typing, turning and the microphone.

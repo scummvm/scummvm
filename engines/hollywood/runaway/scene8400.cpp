@@ -222,6 +222,13 @@ Common::U32String Scene8400::hotspotName(byte id) const {
 	return RunawayRoomScene::hotspotName(id);
 }
 
+const char *Scene8400::actionCaptionVariant(byte id, bool look, byte item) const {
+	if (!look && !item && id == 3 && _finale.trailerDoor) {
+		return "open";
+	}
+	return nullptr;
+}
+
 void Scene8400::enterTrailer() {
 	walkTo(kDoor, 7, false, true);
 	beginRoomAnimation(307, 5, 37);

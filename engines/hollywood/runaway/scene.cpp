@@ -480,7 +480,7 @@ void RunawayRoomScene::useItem(byte item, byte id) {
 			return;
 		}
 	}
-	if (hospitalChapter() || museumChapter() || desertChapter() || townChapter() || hopiChapter()) {
+	if (_game == kRunawayFullGame) {
 		executeItemAction(defaultItemAction(item, id));
 	} else {
 		say(1, 0, true);
@@ -488,7 +488,7 @@ void RunawayRoomScene::useItem(byte item, byte id) {
 }
 
 void RunawayRoomScene::executeItemAction(uint16 action) {
-	if (hospitalChapter() || museumChapter() || desertChapter() || townChapter() || hopiChapter()) {
+	if (_game == kRunawayFullGame) {
 		if (action == 1 || action == 5) {
 			const RunawayInventory::Reply reply = RunawayInventory::randomReply(_random);
 			say(reply.cue, reply.variation, true);

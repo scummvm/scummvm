@@ -45,6 +45,7 @@ private:
 	void findWalkPath(Common::Point target) override;
 	bool adjustCustomWalkTargetToFloorMask(Common::Point &target) const override;
 	Common::U32String hotspotName(byte id) const override;
+	const char *actionCaptionVariant(byte id, bool look, byte item) const override;
 	bool shouldDrawActor() const override { return !_cinematic; }
 	bool shouldUpdateActor() const override { return !_cinematic; }
 	bool updateCustomSequence() override;

@@ -64,6 +64,13 @@ namespace Runaway {
 Scene8090::Scene8090(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game), _oscar(true, 6) {}
 
+const char *Scene8090::actionCaptionVariant(byte id, bool look, byte item) const {
+	if (!look && !item && (id == 2 || id == 6) && _finale.oscarAway) {
+		return "oscar_away";
+	}
+	return nullptr;
+}
+
 bool Scene8090::loadCustomResources() {
 	if (_entryScene == 8092 && !_carryingGina.load(_archive, 10, 7)) {
 		return false;

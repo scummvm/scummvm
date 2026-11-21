@@ -695,7 +695,7 @@ RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 			_finale.heatNeeded = 1;
 			return Reply(313, variation);
 		}
-		return Reply();
+		return Reply::fromAction(1);
 	}
 
 	if (_chapter != 3)

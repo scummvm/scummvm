@@ -54,6 +54,7 @@ private:
 	byte initialActorFacing() const override;
 	void findWalkPath(Common::Point target) override;
 	bool shouldApproachHotspot(byte id, bool use, byte item, bool approach) const override;
+	const char *actionCaptionVariant(byte id, bool look, byte item) const override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 	uint16 dialogueCue(byte choice, bool response) const override;
 	void handleCustomDialogueChoice(byte effect) override;
