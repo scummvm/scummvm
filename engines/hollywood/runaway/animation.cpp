@@ -185,4 +185,64 @@ void RunawayIdleHead::update(uint32 now, bool enabled, uint blinkInterval, Commo
 	}
 }
 
+void RunawayCarlaAnimation::update(uint32 now, bool talking, Common::RandomSource &random) {
+	if (talking && (_state == kBreathing || _state == kWaiting)) {
+		_state = kTurning;
+		_step = 50;
+		_tick = now;
+	} else if (!talking && _state == kTalking) {
+		_state = kReturning;
+		_step = 81;
+		_tick = now;
+	}
+	if (now - _tick < 80) {
+		return;
+	}
+	_tick = now;
+	switch (_state) {
+	case kBreathing:
+		if (++_step == 24) {
+			_state = kWaiting;
+			_step = 0;
+			_wait = 12 * (1 + random.getRandomNumber(2));
+		}
+		break;
+	case kWaiting:
+		if (!--_wait) {
+			_state = random.getRandomNumber(9) ? kBreathing : kDrinking;
+		}
+		break;
+	case kDrinking:
+		if (++_step == 60) {
+			_state = kBreathing;
+			_step = 0;
+		}
+		break;
+	case kTurning:
+		if (++_step == 81) {
+			_state = kTalking;
+		}
+		break;
+	case kTalking:
+		break;
+	case kReturning:
+		if (--_step == 49) {
+			_state = kBreathing;
+			_step = 0;
+		}
+		break;
+	}
+}
+
+uint RunawayCarlaAnimation::frame(byte mouth) const {
+	if (_state == kTalking) {
+		return 81 + mouth;
+	}
+	if (_state == kDrinking) {
+		// Both bus views share the drink sequence: raise, hold, then lower.
+		return _step < 25 ? 24 + _step : _step < 35 ? 49 : 83 - _step;
+	}
+	return _step;
+}
+
 } // End of namespace Hollywood

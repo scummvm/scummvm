@@ -53,10 +53,14 @@ private:
 	Common::Point sceneActionLookPosition(byte id) const override;
 
 	void startSusanConversation();
+	void advanceSusanIdle();
 
 	RunawayAnimation _susanAnimation, _susanLegsAnimation, _susanBenchPatch;
 	byte _susanFrame = 0;
+	byte _susanWorkCycles = 0;
+	bool _susanTalking = false;
 	int8 _susanBenchFrame = -1;
+	uint32 _susanTick = 0;
 	uint32 _nextLaser = 0;
 };
 

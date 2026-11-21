@@ -77,7 +77,7 @@ Scene5170::Scene5170(RunawayAudio &audio, RunawayInventory &inventory, const Run
 
 const char *Scene5170::actionCaptionVariant(byte id, bool look, byte item) const {
 	if (!look && !item) {
-		if (id == 1 && _desert.busDoor == 1) {
+		if (id == 1 && doorClosed()) {
 			return "closed";
 		}
 		if (id == 3 && _desert.lipstickShelf && _desert.lipstickShelf < 3) {
@@ -95,24 +95,46 @@ bool Scene5170::loadCustomResources() {
 }
 
 bool Scene5170::applyCustomBackgroundPatches() {
+	_doorFrame = doorClosed() ? 0 : 24;
 	return (_desert.vacuum != 2 || applyPatch(7)) && (!_desert.glassesTaken || applyPatch(8)) &&
 		(_desert.lipstickShelf != 2 || applyPatch(9)) && (_desert.lipstickShelf != 3 || applyPatch(10));
+}
+
+void Scene5170::advanceCustomGameplayLoop(uint32 delta) {
+	_carla.update(_now, false, _random);
+	while (_doorMoving && _now - _doorTick >= 80) {
+		_doorTick += 80;
+		const bool opening = doorClosed();
+		_doorFrame += opening ? 1 : -1;
+		if (_doorFrame == (opening ? 5 : 11)) {
+			_audio.playEffect(opening ? 65 : 64, 255, 1);
+		}
+		_doorMoving = _doorFrame != (opening ? 24 : 0);
+	}
+}
+
+void Scene5170::handleAnimationFrameHook() {
+	if (_roomAction == 308 && _actionStep == (doorClosed() ? 10 : 15)) {
+		_doorMoving = true;
+		_doorTick = _actionStarted;
+		_audio.playEffect(doorClosed() ? 63 : 62);
+	}
 }
 
 void Scene5170::applyCustomHotspotState() {
 	for (uint i = 0; i < 256; ++i) {
 		byte &id = _maps[256 + i];
-		if (id == 5 && (_desert.busDoor == 0 || _desert.busDoor == 2)) {
+		if (id == 5 && !doorClosed()) {
 			id = 1;
 		}
 		if ((_desert.glassesTaken && id == 6) || (_desert.vacuum == 2 && id == 7)) {
 			id = 0;
 		}
 		if (id == 11) {
-			id = _desert.crank == 2 && _desert.busDoor != 1 ? 4 : 10;
+			id = _desert.crank == 2 && !doorClosed() ? 4 : 10;
 		}
 		if (id == 12) {
-			id = _desert.crank == 2 && _desert.busDoor == 1 ? 4 : 2;
+			id = _desert.crank == 2 && doorClosed() ? 4 : 2;
 		}
 	}
 }
@@ -154,7 +176,7 @@ RunawayRoomScene::ActionResult Scene5170::dispatchCustomSceneAction(uint16 actio
 		say(1, _desert.busDoor != 0);
 		break;
 	case 302: // Leave the bus.
-		if (_desert.busDoor == 0 || _desert.busDoor == 2) {
+		if (!doorClosed()) {
 			leaveDesertRoom(5061);
 		} else {
 			say(2);
@@ -198,15 +220,18 @@ RunawayRoomScene::ActionResult Scene5170::dispatchCustomSceneAction(uint16 actio
 		if (_desert.crank < 2) {
 			say(7);
 		} else {
-			beginRoomAnimation(action, 13, 29);
-			_audio.playEffect(_desert.busDoor == 1 ? 65 : 64);
+			beginRoomAnimationRange(action, 13, 29, doorClosed() ? 28 : 0, doorClosed() ? 0 : 28);
 		}
 		break;
 	case 1308: // Finish opening or closing the bus door.
+		if (_doorMoving) {
+			deferDesertAction(1308);
+			break;
+		}
 		if (!_desert.busDoor) {
 			say(7, 1);
 		}
-		_desert.busDoor = _desert.busDoor == 1 ? 2 : 1;
+		_desert.busDoor = doorClosed() ? 2 : 1;
 		return kBackgroundChanged;
 	case 309: // Look in the pocket.
 		say(8);
@@ -292,7 +317,7 @@ void Scene5170::runCustomEntrySequence() {
 }
 
 Common::U32String Scene5170::hotspotName(byte id) const {
-	if (id == 1 && _desert.busDoor == 1) {
+	if (id == 1 && doorClosed()) {
 		return RunawayRoomScene::hotspotName(11);
 	}
 	if (id == 3 && _desert.lipstickShelf && _desert.lipstickShelf < 3) {
@@ -314,22 +339,27 @@ Common::U32String Scene5170::hotspotName(byte id) const {
 }
 
 void Scene5170::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
-	for (uint i = 0; i < ARRAYSIZE(_ambientAnimations); ++i) {
+	for (uint i = 0; i < 3; ++i) {
 		const RunawayAnimation &animation = _ambientAnimations[i];
 		if (!animation.frameCount()) {
 			continue;
 		}
 		uint frame = (_now / 80) % animation.frameCount();
 		if (i == 0) {
-			frame = _desert.busDoor == 0 || _desert.busDoor == 2 ? 24 : 0;
+			frame = _doorFrame;
 		}
 		if (i == 2) {
-			frame = 49;
-		}
-		if (i == 3) {
-			frame = _desert.crank == 2 ? (_desert.busDoor == 1 ? 1 : 2) : 0;
+			frame = _carla.frame();
 		}
 		animation.draw(viewport, frame, _camera.x, -_camera.y);
+	}
+}
+
+void Scene5170::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) {
+	// Brian's assembly and turning animations already include the crank.
+	if (!drawingRoomAnimation()) {
+		const uint frame = _desert.crank == 2 ? (doorClosed() ? 1 : 2) : 0;
+		_ambientAnimations[3].draw(viewport, frame, _camera.x, -_camera.y);
 	}
 }
 

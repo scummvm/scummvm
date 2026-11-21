@@ -153,7 +153,10 @@ bool Scene4050::applyCustomBackgroundPatches() {
 			_museum.susan == 1 ? 170 : _museum.susan == 3 ? 2 : 75)) {
 		return false;
 	}
-	_susanFrame = _museum.susan == 1 ? 79 : _museum.susan == 3 ? 1 : 0;
+	_susanFrame = _museum.susan == 3 ? 1 : 0;
+	_susanTalking = false;
+	_susanWorkCycles = 0;
+	_susanTick = _now;
 	return true;
 }
 
@@ -213,18 +216,54 @@ void Scene4050::resumeAmbientAudio(bool entering) {
 }
 
 void Scene4050::advanceCustomGameplayLoop(uint32 delta) {
-	if (speaker()) {
-		_susanFrame = (_museum.susan == 1 ? 52 : 45) + speechFrame();
-	} else if (_museum.susan == 3) {
+	if (_museum.susan >= 2) {
 		_susanFrame = 1;
-	} else if (_museum.susan == 1) {
-		_susanFrame = 79;
-	} else {
-		_susanFrame = (_now / 80) % 26;
+	} else if (speaker()) {
+		_susanFrame = (_museum.susan == 1 ? 52 : 45) + speechFrame();
+		_susanTalking = true;
+		_susanTick = _now;
+	} else if (_susanTalking) {
+		_susanTalking = false;
+		_susanFrame = _museum.susan == 1 ? 79 : 72;
+		_susanTick = _now;
+	} else if (_now - _susanTick >= 80) {
+		_susanTick = _now;
+		advanceSusanIdle();
 	}
 	if (!_museum.susan && !busy() && !_inventoryOpen && _position.x < 530 && (int32)(_now - _nextLaser) >= 0) {
 		beginRoomAnimation(450, 23, 95, nullptr, 0, false);
 		_nextLaser = _now + 25000 + _random.getRandomNumber(5000);
+	}
+}
+
+void Scene4050::advanceSusanIdle() {
+	if (_museum.susan == 1) {
+		if (_susanFrame == 33 || _susanFrame == 83) {
+			_susanFrame = _random.getRandomBit() ? 0 : 84;
+		} else if (_susanFrame == 101) {
+			_susanFrame = 0;
+		} else {
+			++_susanFrame;
+		}
+		return;
+	}
+
+	// Working, resting and returning to the mask are separate frame ranges.
+	if (_susanFrame == 14 || _susanFrame == 39) {
+		if (++_susanWorkCycles >= 10 + _random.getRandomNumber(4)) {
+			_susanWorkCycles = 0;
+			_susanFrame = 15;
+		} else {
+			_susanFrame = _random.getRandomBit() ? 29 : 0;
+		}
+	} else if (_susanFrame == 23) {
+		if (!_random.getRandomNumber(9)) {
+			++_susanFrame;
+		}
+	} else if (_susanFrame == 27 || _susanFrame == 74) {
+		_susanFrame = _random.getRandomBit() ? 29 : 0;
+	} else {
+		++_susanFrame;
 	}
 }
 

@@ -36,6 +36,8 @@ private:
 	bool loadCustomResources() override;
 	bool applyCustomBackgroundPatches() override;
 	void applyCustomHotspotState() override;
+	void advanceCustomGameplayLoop(uint32 delta) override;
+	void handleAnimationFrameHook() override;
 	float actorHeight() const override;
 	void setupActorDepth(RunawayActor::RenderParams &params) const override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
@@ -43,8 +45,14 @@ private:
 	Common::U32String hotspotName(byte id) const override;
 	int8 customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const override;
 	void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) override;
+	void drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) override;
+	bool doorClosed() const { return _desert.busDoor == 1 || _desert.busDoor == 3; }
 
 	RunawayAnimation _ambientAnimations[4];
+	RunawayCarlaAnimation _carla;
+	byte _doorFrame = 0;
+	bool _doorMoving = false;
+	uint32 _doorTick = 0;
 };
 
 } // End of namespace Runaway
