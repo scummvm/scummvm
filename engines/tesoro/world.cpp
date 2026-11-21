@@ -43,6 +43,7 @@
 #include "tesoro/kinds/slotlabel.h"
 #include "tesoro/kinds/storycharacter.h"
 #include "tesoro/kinds/storyprop.h"
+#include "tesoro/kinds/wanderingsprite.h"
 
 namespace Tesoro {
 
@@ -343,11 +344,6 @@ Object *World::createObject(Level &level, const ObjectRecord &record, Room &room
 			object->init(record.kind, sub, record, sort, levelPlayers, loadTime, *this);
 			return object;
 		}
-		case 15: {
-			ClickCatcher *object = new ClickCatcher();
-			object->init(record, sort, levelPlayers, loadTime, *this);
-			return object;
-		}
 		case 11: {
 			ActionStrip *object = new ActionStrip();
 			object->init(record, sort, levelPlayers, loadTime, *this);
@@ -358,6 +354,18 @@ Object *World::createObject(Level &level, const ObjectRecord &record, Room &room
 			object->init(record, sort, levelPlayers, loadTime, *this);
 			return object;
 		}
+		// kind 14 is unused
+		case 15: {
+			ClickCatcher *object = new ClickCatcher();
+			object->init(record, sort, levelPlayers, loadTime, *this);
+			return object;
+		}
+		case 16: {
+			WanderingSprite *object = new WanderingSprite();
+			object->init(record, sort, levelPlayers, loadTime, *this);
+			return object;
+		}
+		// kind 18 is unused
 		case 19: {
 			MapPlace *object = new MapPlace();
 			object->init(record, sort, levelPlayers, loadTime, *this);

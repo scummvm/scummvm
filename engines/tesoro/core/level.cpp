@@ -148,7 +148,7 @@ Object *Level::createObject(const ObjectRecord &record, Room &room) {
 		object->init(record, room.sortOffset(), _levelPlayers, _loadTime);
 		return object;
 	}
-
+	// kind 4 is unused
 	if (record.kind == 7) {
 		WalkFloor *object = new WalkFloor();
 		object->init(record, room.sortOffset(), _levelPlayers, _loadTime);

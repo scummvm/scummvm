@@ -50,7 +50,8 @@ MODULE_OBJS = \
 	kinds/storyprop.o \
 	core/textqueue.o \
 	core/walkarea.o \
-	kinds/walkfloor.o
+	kinds/walkfloor.o \
+	kinds/wanderingsprite.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TESORO), DYNAMIC_PLUGIN)
