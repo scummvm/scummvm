@@ -90,6 +90,8 @@ public:
 
 	/** Jim touched the level's walk area edge: a straight walk is replaced by a route round the waypoints. */
 	int onTouched(Object *other, int extra) override;
+	void saveState(Common::WriteStream &stream) const override;
+	void loadState(Common::ReadStream &stream) override;
 
 	int32 anchorX() const { return _anchorX; }
 	int32 anchorY() const { return _anchorY; }

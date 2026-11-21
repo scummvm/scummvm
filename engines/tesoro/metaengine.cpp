@@ -76,6 +76,14 @@ Common::KeymapArray TesoroMetaEngine::initKeymaps(const char *target) const {
 	return Common::Keymap::arrayOf(keymap);
 }
 
+void TesoroMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	// The scene kept for the save list; without one (no game running) the screen is taken as usual.
+	if (Tesoro::g_engine && Tesoro::g_engine->sceneThumbnail().getPixels())
+		thumb.copyFrom(Tesoro::g_engine->sceneThumbnail());
+	else
+		AdvancedMetaEngine<ADGameDescription>::getSavegameThumbnail(thumb);
+}
+
 #if PLUGIN_ENABLED_DYNAMIC(TESORO)
 REGISTER_PLUGIN_DYNAMIC(TESORO, PLUGIN_TYPE_ENGINE, TesoroMetaEngine);
 #else

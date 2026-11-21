@@ -79,6 +79,17 @@ public:
 	/** The place of a level file's name in the game's list, -1 if it is not one of them. */
 	int levelIndexOf(const char *name) const;
 
+	/** Saves the state of a game in progress (the level Jim is in, Jim, visited levels with their objects, the interface). */
+	void saveGame(Common::WriteStream &stream);
+	Level *loadGame(Common::ReadStream &stream);
+	/** A load asked by a click on the save screen runs at the start of the next frame. */
+	void runPendingLoad();
+
+	const Graphics::Surface &sceneThumbnail() const { return _sceneThumb; }
+	void setSlotPicture(const uint16 *pixels);
+	void showSlotPicture(int slot);
+	void showChosenSlotPicture();
+
 	MainList &mainList() { return _main; }
 	/** The second step of a level in the frame (its cameras, and for the player's level the picture shown). */
 	int levelSecondStep(Level &level);
@@ -107,6 +118,14 @@ public:
 	void jimWalkTo(int32 x, int32 y, WalkTarget *target);
 	void jimUpdate();
 	int jimPhase() { return _jimPhase; }
+	/** The story progress as four bytes (phase, step, the subtitle setting and an extra one), as the original keeps them together in a save. */
+	uint32 progressBytes() { return _jimPhase | (uint32)_jimStep << 8 | (uint32)(_subtitles ? 1 : 0) << 16 | (uint32)_jimExtra << 24; }
+	void setProgressBytes(uint32 bytes) {
+		_jimPhase = (byte)bytes;
+		_jimStep = (byte)(bytes >> 8);
+		_subtitles = ((bytes >> 16) & 0xff) != 0;
+		_jimExtra = (byte)(bytes >> 24);
+	}
 	int jimStep() { return _jimStep; }
 	int jimExtra() { return _jimExtra; }
 	void setPointerActive(bool active);
@@ -170,6 +189,8 @@ public:
 	void setWalkAreaFrames(Level *level, WalkPart part, int first, int last);
 	void startMovie(int number);
 	void captureThumbnail();
+
+	void menuOpened() { _slotChoice = 0; setSlotPicture(nullptr); }
 	void walkJimToPointer(int32 mouseX, int32 mouseY);
 
 	uint32 playVoice(uint32 archiveOffset);
@@ -242,6 +263,7 @@ private:
 	bool _subtitles = true;
 	Graphics::Surface _sceneThumb;		// the same scene in ScummVM's thumbnail format
 	Common::Array<uint16> _thumbnail;	// the scene taken when the save screen opened
+	int _pendingLoadSlot = -1;			// a load asked by a click, run at the start of the next frame
 	int _slotChoice = 0;				// the saved game chosen on the save screen (0 none)
 	int _jimVerb = 0;					// what the pointer carried when it clicked Jim
 	bool _jimClickPending = false;		// Jim is saying his answer to that click

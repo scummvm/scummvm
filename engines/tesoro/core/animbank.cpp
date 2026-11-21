@@ -301,6 +301,21 @@ void AnimPlayer::advance(int32 now) {
 	}
 }
 
+void AnimPlayer::saveState(Common::WriteStream &stream) const {
+	stream.writeUint16LE(_first);
+	stream.writeUint16LE(_last);
+	stream.writeByte((byte)_current);
+	stream.writeByte((byte)_flags);
+}
+
+void AnimPlayer::loadState(Common::ReadStream &stream) {
+	// Only the low byte of the current step and of the flags is saved; the rest stays as it is.
+	_first = stream.readUint16LE();
+	_last = stream.readUint16LE();
+	_current = (_current & 0xff00) | stream.readByte();
+	_flags = (_flags & ~0xffu) | stream.readByte();
+}
+
 void AnimPlayer::pause(int32 now) {
 	_flags = (_flags & ~(uint32)kPlaying) | kPaused;
 	_pausedAt = now;

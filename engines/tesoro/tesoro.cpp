@@ -179,6 +179,8 @@ void TesoroEngine::handleEvent(const Common::Event &e) {
 }
 
 bool TesoroEngine::runFrame() {
+	_world.runPendingLoad();
+
 	_pointer.buttons[0] = _pointer.buttons[1] = 0;
 	_escape = 0;
 	Common::Event e;
@@ -269,7 +271,8 @@ void TesoroEngine::startGame() {
 }
 
 void TesoroEngine::openSavedGames() {
-	notPorted("the saved games screen");
+	if (_cursor)
+		_cursor->openSaveLoadMenu();
 }
 
 void TesoroEngine::clearHoverText() {
@@ -358,14 +361,26 @@ int TesoroEngine::levelSecondStep(Level &level) {
 	return 1;
 }
 
-Common::Error TesoroEngine::syncGame(Common::Serializer &s) {
-	// The Serializer has methods isLoading() and isSaving()
-	// if you need to specific steps; for example setting
-	// an array size after reading it's length, whereas
-	// for saving it would write the existing array's length
-	int dummy = 0;
-	s.syncAsUint32LE(dummy);
+Common::Error TesoroEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	// Saved from ScummVM's own dialog, the original's save screen never took the scene's picture.
+	if (_world.interfaceCameraX() >= 0)
+		_world.captureThumbnail();
+	_world.saveGame(*stream);
+	return stream->err() ? Common::kWritingFailed : Common::kNoError;
+}
 
+Common::Error TesoroEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	Level *where = _world.loadGame(*stream);
+	if (!where)
+		return Common::kReadingFailed;
+
+	// Jim's entry already put the level in the main list; only a menu that was showing still has to leave it.
+	if (_level != where)
+		_world.removeFromMainList(_level);
+	_level = where;
+	_inMenu = false;
+	if (_cursor)
+		_cursor->setSurroundings(&_pointer, _level);
 	return Common::kNoError;
 }
 

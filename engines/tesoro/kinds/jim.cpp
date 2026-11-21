@@ -337,6 +337,26 @@ void Jim::draw(const Camera &camera, Display &display) {
 	_speaker.drawJim();
 }
 
+void Jim::saveState(Common::WriteStream &stream) const {
+	stream.writeSint32LE(_x);
+	stream.writeSint32LE(_y);
+	stream.writeSint32LE(_facing);
+	stream.writeByte(_anim.selectedBank());
+	stream.writeUint32LE(_world.progressBytes());
+	stream.writeUint32LE(_flags);
+}
+
+void Jim::loadState(Common::ReadStream &stream) {
+	_walking = false;
+	_world.removeFromMainList(this);
+	_x = stream.readSint32LE();
+	_y = stream.readSint32LE();
+	_facing = stream.readSint32LE();
+	_anim.setSelectedBank(stream.readByte());
+	_world.setProgressBytes(stream.readUint32LE());
+	_flags = stream.readUint32LE();
+}
+
 int Jim::useItem(int item) { return 0; }
 int Jim::setVerbAndClick(int verb) { return _world.jimClicked(verb); }
 int Jim::doubleClick(int verb) { return _world.jimClicked(verb); }

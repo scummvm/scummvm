@@ -125,6 +125,16 @@ public:
 	/** Puts the play head on a step without touching anything else. */
 	void setCurrent(uint16 step) { _current = step; }
 
+	/**
+	 * Save-game form: the first and last step (16 bits each), then only the low byte of the step being
+	 * played and of the play flags. Loading leaves the other bytes of those two as they were.
+	 */
+	/** Bytes saveState writes: first and last (2 each), the low byte of the current step and of the flags. */
+	static const uint kSavedStateSize = 6;
+
+	void saveState(Common::WriteStream &stream) const;
+	void loadState(Common::ReadStream &stream);
+
 	/** Forgets the movement computed by advance(). */
 	void clearMovement() { _movementX = _movementY = 0; }
 	void setMovement(int16 x, int16 y) { _movementX = x; _movementY = y; }

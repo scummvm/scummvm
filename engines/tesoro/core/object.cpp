@@ -55,6 +55,33 @@ void Object::initAnimated(const ObjectRecord &record, int16 roomSortOffset, cons
 	_stateBlob.resize(stateSize);
 }
 
+void Object::saveState(Common::WriteStream &stream) const {
+	if (_flags & kHasAnimation)
+		_anim.saveState(stream);
+
+	if (_hasStateBlob) {
+		stream.writeUint16LE(_stateSize);
+		stream.write(_stateBlob.data(), MIN<uint>(_stateSize, _stateBlob.size()));
+	}
+}
+
+void Object::loadState(Common::ReadStream &stream) {
+	if (_flags & kHasAnimation)
+		_anim.loadState(stream);
+
+	if (_hasStateBlob) {
+		byte raw[2] = { (byte)_stateSize, (byte)(_stateSize >> 8) };
+		stream.read(raw, 2);
+		_stateSize = READ_LE_UINT16(raw);
+
+		if (_stateSize > _stateBlob.size()) {
+			warning("Object: saved state of %u bytes is larger than the object's %u", _stateSize, _stateBlob.size());
+			_stateBlob.resize(_stateSize);
+		}
+		stream.read(_stateBlob.data(), _stateSize);
+	}
+}
+
 void Object::updateAnimation(int32 now) {
 	if (_flags & kHasAnimation)
 		_anim.tick(now);

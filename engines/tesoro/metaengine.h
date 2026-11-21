@@ -44,6 +44,9 @@ public:
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
+
+	/** The save list shows the scene, not the save screen that is up when the file is written. */
+	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 };
 
 #endif // TESORO_METAENGINE_H

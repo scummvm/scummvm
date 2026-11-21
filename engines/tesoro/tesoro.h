@@ -145,27 +145,20 @@ public:
 		    (f == kSupportsReturnToLauncher);
 	};
 
+	// The original saves only in the first 23 levels (the lab and the closing scenes cannot be saved), and not on the board game's level.
+	// ScummVM's own load, save and autosave follow it; loading stays open in the menus.
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return true;
+		return _inMenu || !_world.jimLevel() || _world.jimLevelIndex() < 23;
 	}
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return true;
+		return !_inMenu && _world.jimLevel() && _world.jimLevelIndex() < 23 && _world.place() == Cursor::kGame;
 	}
 
-	/**
-	 * Uses a serializer to allow implementing savegame
-	 * loading and saving using a single method
-	 */
-	Common::Error syncGame(Common::Serializer &s);
+	/** The scene taken for the save list; see World::sceneThumbnail. */
+	const Graphics::Surface &sceneThumbnail() const { return _world.sceneThumbnail(); }
 
-	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override {
-		Common::Serializer s(nullptr, stream);
-		return syncGame(s);
-	}
-	Common::Error loadGameStream(Common::SeekableReadStream *stream) override {
-		Common::Serializer s(stream, nullptr);
-		return syncGame(s);
-	}
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
 	/** The camera of the level being shown, else the test object's. */
 	Camera &camera();

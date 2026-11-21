@@ -99,6 +99,13 @@ public:
 	Object *findObject(uint64 key);
 
 	/**
+	 * The save-game form of the level's objects: in list order except skip (Jim): per object its name key, flags and state,
+	 * then an empty key. loadRecords() finds each object by its key and stops at the empty key
+	 */
+	void saveRecords(Common::WriteStream &stream, const Object *skip) const;
+	bool loadRecords(Common::ReadStream &stream);
+
+	/**
 	 * Runs the camera towards each room's focus
 	 * and updates the visible, active objects of that room.
 	 * */

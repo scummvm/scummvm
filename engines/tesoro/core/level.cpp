@@ -402,6 +402,36 @@ Object *Level::findObject(uint64 key) {
 	return nullptr;
 }
 
+void Level::saveRecords(Common::WriteStream &stream, const Object *skip) const {
+	for (uint i = 0; i < _objects.size(); ++i) {
+		const Object *object = _objects[i];
+		if (object == skip)
+			continue;
+		stream.writeUint64LE(object->nameKey());
+		stream.writeUint32LE(object->flags());
+		object->saveState(stream);
+	}
+	stream.writeUint64LE(0);
+}
+
+bool Level::loadRecords(Common::ReadStream &stream) {
+	for (;;) {
+		const uint64 key = stream.readUint64LE();
+		if (stream.eos())
+			return false;
+		if (key == 0)
+			return true;
+
+		Object *object = findObject(key);
+		if (!object) {
+			warning("Level: the saved game names an object this level does not have");
+			return false;
+		}
+		object->setFlags(stream.readUint32LE());
+		object->loadState(stream);
+	}
+}
+
 void Level::drawRooms(int32 now, Display &display) {
 	for (uint r = 0; r < _rooms.size(); ++r) {
 		Room &room = _rooms[r];

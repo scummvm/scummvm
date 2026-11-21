@@ -19,7 +19,9 @@
  *
  */
 
+#include "common/savefile.h"
 #include "common/textconsole.h"
+#include "common/config-manager.h"
 #include "graphics/managed_surface.h"
 #include "graphics/scaler.h"
 
@@ -160,6 +162,7 @@ World::~World() {
 	for (int i = 0; i < kLevelCount; ++i)
 		delete _levels[i];
 	delete _scripts;
+	_sceneThumb.free();
 }
 
 bool World::loadGameData() {
@@ -310,6 +313,117 @@ Level *World::startGame() {
 	startScriptAt(port, "FANPRESENT", "main", nullptr);
 	return port;
 }
+
+void World::saveGame(Common::WriteStream &stream) {
+	Jim *player = jim();
+	Level *where = jimLevel();
+	// The file starts with the small picture of the scene.
+	Common::Array<uint16> picture(Cursor::kThumbWidth * Cursor::kThumbHeight, 0);
+	if (_thumbnail.size() == picture.size())
+		picture = _thumbnail;
+	stream.write(&picture[0], picture.size() * 2);
+	stream.writeSint32LE(where ? where->index() : -1);
+	player->saveState(stream);
+
+	uint32 count = 0;
+	for (int i = 0; i < kLevelCount; ++i)
+		count += _levels[i] ? 1 : 0;
+	stream.writeUint32LE(count);
+	for (int i = 0; i < kLevelCount; ++i) {
+		if (!_levels[i])
+			continue;
+		stream.writeUint32LE((uint32)i);
+		_levels[i]->saveState(stream);
+		_levels[i]->saveRecords(stream, player);
+	}
+	if (_interface)
+		_interface->saveRecords(stream, player);
+}
+
+Level *World::loadGame(Common::ReadStream &stream) {
+	Jim *player = jim();
+	Common::Array<uint16> picture(Cursor::kThumbWidth * Cursor::kThumbHeight);
+	if (stream.read(&picture[0], picture.size() * 2) != picture.size() * 2)
+		return nullptr;
+	setSlotPicture(&picture[0]);
+	const int32 slot = stream.readSint32LE();
+	player->loadState(stream);
+
+	const uint32 count = stream.readUint32LE();
+	for (uint32 n = 0; n < count && !stream.eos(); ++n) {
+		const uint32 index = stream.readUint32LE();
+		Level *visited = index < (uint32)kLevelCount ? level((int)index) : nullptr;
+		if (!visited) {
+			warning("Tesoro: the saved game names level %u, which does not exist", index);
+			return nullptr;
+		}
+		visited->loadState(stream);
+		if (!visited->loadRecords(stream))
+			return nullptr;
+	}
+	if (_interface && !_interface->loadRecords(stream))
+		return nullptr;
+
+	Level *where = level(slot);
+	if (!where || where->roomCount() == 0 || stream.eos())
+		return nullptr;
+	player->enterLevel(where, &where->room(0), player->x(), player->y());
+	player->setFacing(player->facing());
+	return where;
+}
+
+void World::runPendingLoad() {
+	if (_pendingLoadSlot < 0)
+		return;
+	const int slot = _pendingLoadSlot;
+	_pendingLoadSlot = -1;
+	// A load from the save screen ends by sliding the interface out, so the game goes straight on.
+	if (_engine.loadGameState(slot).getCode() == Common::kNoError)
+		closeSaveLoadMenu();
+}
+
+static SaveStateList listSlots(TesoroEngine &engine) {
+	SaveStateList saves = engine.getMetaEngine()->listSaves(ConfMan.getActiveDomainName().c_str());
+	Common::sort(saves.begin(), saves.end(), SaveStateDescriptorSlotComparator());
+	return saves;
+}
+
+void World::setSlotPicture(const uint16 *pixels) {
+	Object *holder = interfaceObject("PLANTILLA1");
+	if (!holder || holder->animation().bankCount() == 0)
+		return;
+	AnimPlayer &player = holder->animation().current();
+	if (!player.bank() || player.bank()->stepCount() == 0 || !player.bank()->step(0).hasImage())
+		return;
+	byte *target = player.bank()->mutableImage((uint)player.bank()->step(0).imageIndex).pixelData();
+	const uint32 bytes = Cursor::kThumbWidth * Cursor::kThumbHeight * 2;
+	if (!target) {
+		warning("Tesoro: the save screen's picture is not loaded");
+		return;
+	}
+	if (pixels)
+		memcpy(target, pixels, bytes);
+	else
+		memset(target, 0, bytes);
+}
+
+void World::showSlotPicture(int slot) {
+	Common::Array<uint16> pixels(Cursor::kThumbWidth * Cursor::kThumbHeight);
+	Common::InSaveFile *file = slot >= 0 ? _engine.getSaveFileManager()->openForLoading(_engine.getSaveStateName(slot)) : nullptr;
+	if (file && file->read(&pixels[0], pixels.size() * 2) == pixels.size() * 2) {
+		delete file;
+		setSlotPicture(&pixels[0]);
+		return;
+	}
+	delete file;
+	setSlotPicture(nullptr);
+}
+
+void World::showChosenSlotPicture() {
+	SaveStateList saves = listSlots(_engine);
+	showSlotPicture(_slotChoice >= 1 && _slotChoice <= (int)saves.size() ? saves[_slotChoice - 1].getSaveSlot() : -1);
+}
+
 Object *World::createObject(Level &level, const ObjectRecord &record, Room &room, int32 loadTime) {
 	const int16 sort = room.sortOffset();
 	const Common::Array<AnimPlayer> &levelPlayers = level.levelPlayers();
@@ -499,24 +613,48 @@ bool World::subtitlesOn() { return _subtitles; }
 
 
 void World::previousSlot() {
-	warning("World::previousSlot not implemented");
+	const int count = (int)listSlots(_engine).size();
+	if (count == 0)
+		return;
+	_slotChoice = _slotChoice == 0 ? count : _slotChoice == 1 ? 0 : _slotChoice - 1;
+	showChosenSlotPicture();
 }
 
 void World::nextSlot() {
-	warning("World::previousSlot not implemented");
+	const int count = (int)listSlots(_engine).size();
+	if (count == 0)
+		return;
+	_slotChoice = _slotChoice >= count ? 0 : _slotChoice + 1;
+	showChosenSlotPicture();
 }
 
 void World::loadSlot() {
-	warning("World::previousSlot not implemented");
+	SaveStateList saves = listSlots(_engine);
+	if (_slotChoice >= 1 && _slotChoice <= (int)saves.size())
+		_pendingLoadSlot = saves[_slotChoice - 1].getSaveSlot();
 }
 
 void World::saveSlot() {
-	warning("World::previousSlot not implemented");
+	SaveStateList saves = listSlots(_engine);
+	int slot = 0;
+	if (_slotChoice >= 1 && _slotChoice <= (int)saves.size()) {
+		slot = saves[_slotChoice - 1].getSaveSlot();
+	} else {
+		for (uint i = 0; i < saves.size(); ++i)
+			slot = MAX(slot, saves[i].getSaveSlot() + 1);
+		_slotChoice = (int)saves.size() + 1;
+	}
+	_engine.saveGameState(slot, Common::String::format("Partida %d", slot + 1), false);
+	showSlotPicture(slot);
 }
 
 const char *World::slotTime() {
-	warning("World::previousSlot not implemented");
-	return nullptr;
+	static Common::String text;
+	SaveStateList saves = listSlots(_engine);
+	if (_slotChoice < 1 || _slotChoice > (int)saves.size())
+		return "";
+	text = Common::String::format("%-10s %s", saves[_slotChoice - 1].getSaveDate().c_str(), saves[_slotChoice - 1].getSaveTime().c_str());
+	return text.c_str();
 }
 
 void World::closeSaveLoadMenu() {

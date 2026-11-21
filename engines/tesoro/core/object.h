@@ -110,7 +110,6 @@ public:
 
 	virtual int exitArrival() { return 0; }
 
-
 	virtual int doubleClick(int verb) { return 0; }
 	virtual bool acceptsPointer() { return false; }
 	virtual int showHoverText() { return 0; }
@@ -121,6 +120,9 @@ public:
 
 	/** Per-frame step of the second pass. Same results as update(). */
 	virtual int update2() { return 0; }
+
+	virtual void saveState(Common::WriteStream &stream) const;
+	virtual void loadState(Common::ReadStream &stream);
 
 	/** Ticks the animation and works out the hit rectangle and the area the object moved through. */
 	virtual void updateBounds(int32 now);

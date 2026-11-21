@@ -111,6 +111,7 @@ void Cursor::openSaveLoadMenu() {
 
 	// The interface slides to the save screen.
 	_level->camera().shift(-645, 0);
+	_host->menuOpened();
 }
 
 int Cursor::update() {
