@@ -92,7 +92,6 @@ private:
 	void openSavedGames();
 	int32 now() { return gameTime(); }
 	void clearHoverText();
-	void notPorted(const char *what);
 
 	/** Makes a menu level the one shown, with its camera on the origin. */
 	void showMenu(Level *menu);

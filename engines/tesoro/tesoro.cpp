@@ -82,11 +82,6 @@ Common::Error TesoroEngine::run() {
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
-	// If a savegame was selected from the launcher, load it
-	int saveSlot = ConfMan.getInt("save_slot");
-	if (saveSlot != -1)
-		(void)loadGameState(saveSlot);
-
 	Graphics::FrameLimiter limiter(g_system, 60);
 
 	_mainMenu = loadLevel("PRINCIPAL.LVL");
@@ -118,6 +113,13 @@ Common::Error TesoroEngine::run() {
 	if (_interface)
 		_world.mainList().insertByPriority(_interface, 0x13);
 	_world.mainList().insertByPriority(_level, 0x14);
+
+	// If a savegame was selected from the launcher, load it
+	int saveSlot = ConfMan.getInt("save_slot");
+	if (saveSlot != -1)
+		(void)loadGameState(saveSlot);
+	else
+		_world.startMovie(0);	// the game opens with the introduction movie, then the main menu
 
 	while (runFrame()) {
 		limiter.delayBeforeSwap();
@@ -253,7 +255,7 @@ void TesoroEngine::showMenu(Level *menu) {
 }
 
 void TesoroEngine::startScript(const char *block, const char *label) {
-	notPorted("starting a script");
+	_world.startScriptAt(_level, block, label, nullptr);
 }
 
 void TesoroEngine::startGame() {
@@ -277,10 +279,6 @@ void TesoroEngine::openSavedGames() {
 
 void TesoroEngine::clearHoverText() {
 	setHoverText(nullptr);
-}
-
-void TesoroEngine::notPorted(const char *what) {
-	warning("Tesoro: %s is not ported yet", what);
 }
 
 uint16 TesoroEngine::screenColour(byte r, byte g, byte b) const {
