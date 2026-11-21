@@ -1248,6 +1248,11 @@ public class ScummVMActivity extends Activity {
 			//mouseHelper.attach(_main_surface);
 		}
 
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mouseHelper != null) {
+			MousePointerCaptureHelper mousePointerCaptureHelper = new MousePointerCaptureHelper(_main_surface, mouseHelper);
+			_main_surface.setOnCapturedPointerListener(mousePointerCaptureHelper);
+		}
+
 		_events = new ScummVMEvents(this, _scummvm, mouseHelper);
 
 		setupTouchModeBtn(_events.getTouchMode());
@@ -1432,7 +1437,6 @@ public class ScummVMActivity extends Activity {
 		showToggleOnScreenBtnIcons(0);
 	}
 
-
 	@Override
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 		if (requestCode == MY_PERMISSION_ALL) {
@@ -1514,6 +1518,31 @@ public class ScummVMActivity extends Activity {
 		if (hasFocus) {
 			CompatHelpers.HideSystemStatusBar.hide(getWindow());
 		}
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			if (_main_surface != null) {
+				if (hasFocus) {
+					_main_surface.post(() -> {
+						if (!_main_surface.hasWindowFocus()) {
+							return; // Pointer capture will fail if the window lacks focus
+						}
+
+						if (!_main_surface.hasPointerCapture()) {
+							_main_surface.requestFocus();
+							_main_surface.requestPointerCapture();
+						}
+					});
+				} else {
+					_main_surface.post(() -> {
+						if (_main_surface.hasPointerCapture()) {
+							_main_surface.releasePointerCapture();
+						}
+					});
+				}
+			}
+		}
+
+
 //			showSystemMouseCursor(false);
 //		} else {
 //			showSystemMouseCursor(true);
