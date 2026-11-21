@@ -309,6 +309,10 @@ const int kSDoorSurf[1][8] = {
 };
 const ColonyEngine::PrismPartDef kSDoorDef = {4, kSDoorPts, 1, kSDoorSurf};
 
+const ColonyEngine::PrismPartDef kEntHostDef = {8, kEntPts, 1, kEntSurf};
+const ColonyEngine::PrismPartDef kEntRestDef = {8, kEntPts, ARRAYSIZE(kEntSurf) - 1, kEntSurf + 1};
+const ColonyEngine::PrismPartDef kSBodyHostDef = {12, kSBodyPts, 1, kSBodySurf};
+const ColonyEngine::PrismPartDef kSBodyRestDef = {12, kSBodyPts, ARRAYSIZE(kSBodySurf) - 1, kSBodySurf + 1};
 // =====================================================================
 // 3D Model Data - Projectile
 // =====================================================================
@@ -806,17 +810,22 @@ void ColonyEngine::battleDrawTanks() {
 				_battleEnter.xloc, _battleEnter.yloc, _battleEnter.ang, -kFloor,
 				_me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
 			_battleEnter.dist = forward;
-			draw3DBattlePrism(kEntDef, _battleEnter.xloc, _battleEnter.yloc,
+			// rest of the body
+			draw3DBattlePrism(kEntRestDef, _battleEnter.xloc, _battleEnter.yloc,
 				_battleEnter.ang, -kFloor);
-			// Draw door with depth test disabled so it renders fully
-			// on top of the coplanar entrance wall (same fill color,
-			// but the black outline becomes clearly visible).
 			_gfx->setDepthState(true, false);
-			_gfx->setDepthRange(0.0f, 0.999f);
+			// host face
+			draw3DBattlePrism(kEntHostDef, _battleEnter.xloc, _battleEnter.yloc,
+				_battleEnter.ang, -kFloor);
+			// door
 			draw3DBattlePrism(kEntDoorDef, _battleEnter.xloc, _battleEnter.yloc,
 				_battleEnter.ang, -kFloor);
-			_gfx->setDepthRange(0.0f, 1.0f);
+			_gfx->setColorMask(false);
 			_gfx->setDepthState(true, true);
+			// host face
+			draw3DBattlePrism(kEntHostDef, _battleEnter.xloc, _battleEnter.yloc,
+				_battleEnter.ang, -kFloor);
+			_gfx->setColorMask(true);
 			if (_battleMaxP < 100) {
 				_battlePwh[_battleMaxP] = &_battleEnter;
 				_battleMaxP++;
@@ -853,25 +862,32 @@ void ColonyEngine::battleDrawTanks() {
 				_battleShip.xloc, _battleShip.yloc, _battleShip.ang, -kFloor,
 				_me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
 			_battleShip.dist = forward;
-			draw3DBattlePrism(kSBodyDef, _battleShip.xloc, _battleShip.yloc,
+			draw3DBattlePrism(kSBodyRestDef, _battleShip.xloc, _battleShip.yloc,
 				_battleShip.ang, -kFloor);
 			draw3DBattlePrism(kSFrontDef, _battleShip.xloc, _battleShip.yloc,
 				_battleShip.ang, -kFloor);
 			draw3DBattlePrism(kSBackDef, _battleShip.xloc, _battleShip.yloc,
 				_battleShip.ang, -kFloor);
-			// Fins: force-draw (no backface cull) — single-sided surfaces
+			// Fins: single-sided surfaces
 			draw3DBattlePrism(kFTopDef, _battleShip.xloc, _battleShip.yloc,
 				_battleShip.ang, -kFloor);
 			draw3DBattlePrism(kFLeftDef, _battleShip.xloc, _battleShip.yloc,
 				_battleShip.ang, -kFloor);
 			draw3DBattlePrism(kFRightDef, _battleShip.xloc, _battleShip.yloc,
 				_battleShip.ang, -kFloor);
+			// host face
 			_gfx->setDepthState(true, false);
-			_gfx->setDepthRange(0.0f, 0.999f);
+			draw3DBattlePrism(kSBodyHostDef, _battleShip.xloc, _battleShip.yloc,
+				_battleShip.ang, -kFloor);
+			// door
 			draw3DBattlePrism(kSDoorDef, _battleShip.xloc, _battleShip.yloc,
 				_battleShip.ang, -kFloor);
-			_gfx->setDepthRange(0.0f, 1.0f);
+			// host face
+			_gfx->setColorMask(false);
 			_gfx->setDepthState(true, true);
+			draw3DBattlePrism(kSBodyHostDef, _battleShip.xloc, _battleShip.yloc,
+				_battleShip.ang, -kFloor);
+			_gfx->setColorMask(true);
 			if (_battleMaxP < 100) {
 				_battlePwh[_battleMaxP] = &_battleShip;
 				_battleMaxP++;

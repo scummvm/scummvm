@@ -74,6 +74,7 @@ public:
 	virtual void setMacColors(uint32 fg, uint32 bg) {}
 	virtual void setDepthState(bool testEnabled, bool writeEnabled) {}
 	virtual void setDepthRange(float nearVal, float farVal) {}
+	virtual void setColorMask(bool enabled) {}
 	// features.c clipped each wall feature to its own wall (ClipRect(&rClip)).
 	virtual void setFeatureClipX(int left, int right) {}
 	virtual void clearFeatureClipX() {}
