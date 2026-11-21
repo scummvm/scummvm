@@ -67,7 +67,7 @@ SourceScaler::~SourceScaler() {
 	_bufferedOutput.free();
 }
 
-void SourceScaler::setSource(const byte *src, uint pitch, int width, int height, int padding) {
+void SourceScaler::setSource(uint pitch, int width, int height, int padding) {
 	if (_oldSrc != NULL)
 		delete[] _oldSrc;
 

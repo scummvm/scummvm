@@ -719,8 +719,8 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 	_useOldSrc = _scalerPlugin->useOldSource();
 	if (_useOldSrc) {
 		_scaler->enableSource(true);
-		_scaler->setSource((byte *)_tmpscreen->pixels, _tmpscreen->pitch,
-									_videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels);
+		_scaler->setSource(_tmpscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight,
+		                   _maxExtraPixels);
 	}
 
 	// Blit everything to the screen
@@ -1057,8 +1057,7 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 
 	if (_useOldSrc) {
 		// Create surface containing previous frame's data to pass to scaler
-		_scaler->setSource((byte *)_tmpscreen->pixels, _tmpscreen->pitch,
-									_videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels);
+		_scaler->setSource(_tmpscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels);
 	}
 
 	_overlayscreen = createSurface(_videoMode.overlayWidth, _videoMode.overlayHeight, _hwScreen);
@@ -1295,10 +1294,8 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 			// This is needed for the Edge scaler which seems to be the only scaler to use the "_useOldSrc" feature.
 			// Otherwise the screen will not be properly restored after removing the overlay. We need to trigger a
 			// regeneration of SourceScaler::_bufferedOutput. The call to _scaler->setFactor() down below could
-			// do that in theory, but it won't unless the factor actually changes (which it doesn't). Now, the code
-			// in SourceScaler::setSource() looks a bit fishy, e. g. the *src argument isn't even used. But otherwise
-			// it does what we want here at least...
-			_scaler->setSource(nullptr, _tmpscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels);
+			// do that in theory, but it won't unless the factor actually changes (which it doesn't).
+			_scaler->setSource(_tmpscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels);
 		}
 
 		origSurf = _screen;
