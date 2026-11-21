@@ -37,6 +37,7 @@ public:
 	bool busy() const override;
 
 private:
+	Common::U32String hotspotName(byte id) const override;
 	bool loadCustomResources() override;
 	bool applyCustomBackgroundPatches() override;
 	uint sceneTextNumber() const override { return 625; }

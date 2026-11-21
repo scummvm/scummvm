@@ -70,6 +70,10 @@ bool Scene6390::busy() const {
 	return _sliderOpen || _autoTurn || RunawayRoomScene::busy();
 }
 
+Common::U32String Scene6390::hotspotName(byte id) const {
+	return actionCaption(id, kVerbUse, 0);
+}
+
 void Scene6390::click(Common::Point mouse, RunawayVerb verb, byte item) {
 	if (busy()) {
 		return;

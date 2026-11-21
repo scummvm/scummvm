@@ -76,6 +76,9 @@ public:
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	bool copySaveThumbnail(Graphics::Surface &thumbnail) const;
+	void getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots) override;
+	Graphics::HotspotRenderer *createHotspotRenderer() override;
+	bool hideCursorForHotspots() const override { return false; }
 
 	static Common::Array<Common::Keymap *> initKeymaps();
 	static void registerDefaultSettings();

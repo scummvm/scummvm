@@ -22,6 +22,7 @@
 #ifndef HOLLYWOOD_RUNAWAY_SCENE_H
 #define HOLLYWOOD_RUNAWAY_SCENE_H
 
+#include "hollywood/hotspots.h"
 #include "hollywood/resource.h"
 #include "hollywood/runaway/animation.h"
 #include "hollywood/runaway/audio.h"
@@ -37,7 +38,7 @@
 
 namespace Hollywood {
 
-class RunawayScene : public RunawayPresentation {
+class RunawayScene : public RunawayPresentation, public HotspotSource {
 public:
 	struct Transition {
 		uint16 scene = 0; // Preserve entry substates, e.g. 2020..2023, until dispatch.
@@ -57,7 +58,7 @@ public:
 	virtual int cameraX() const { return 0; }
 	virtual int roomWidth() const = 0;
 	virtual Graphics::ManagedSurface &screen() = 0;
-	virtual byte hotspotAt(Common::Point mouse) const = 0;
+	byte hotspotAt(Common::Point mouse) const override = 0;
 	virtual bool hasVerbControls() const { return true; }
 	virtual Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const = 0;
 	virtual const Common::U32String &committedCaption() const = 0;
@@ -80,6 +81,7 @@ public:
 	virtual void setOptions(bool antialias, bool fastScrolling) = 0;
 
 protected:
+	Common::U32String hotspotName(byte id) const override { return Common::U32String(); }
 	void skipPresentation(uint32 now) override final { skipVideo(); }
 	void skipPresentationSpeech(uint32 now) override final { skipSpeech(); }
 
@@ -200,7 +202,7 @@ protected:
 	virtual float actorHeight() const { return 455; }
 	virtual float actorWalkSpeed() const { return 0.18f * actorHeight() / 455; }
 	virtual const RunawayHotspot *hotspot(byte id) const;
-	virtual Common::U32String hotspotName(byte id) const;
+	Common::U32String hotspotName(byte id) const override;
 	virtual const char *actionCaptionVariant(byte id, bool look, byte item) const { return nullptr; }
 	virtual bool isValidHotspot(byte id) const { return hotspot(id) != nullptr; }
 	virtual Common::Point customizeSceneActionPosition(byte id, byte item, Common::Point position) const { return position; }
@@ -290,6 +292,7 @@ protected:
 	Common::U32String _caption;
 	Common::Point _position, _camera;
 	uint _lineIndex = 0;
+	const RunawayRoom *_roomData = nullptr;
 	uint16 _room = 0, _pendingAction = 0;
 	byte _facing = 3, _pendingHotspot = 0, _pendingItem = 0;
 	byte _arrivalFacing = 0xff;

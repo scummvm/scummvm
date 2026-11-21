@@ -1,6 +1,7 @@
 MODULE := engines/hollywood
 
 MODULE_OBJS = \
+	hotspots.o \
 	image_translation.o \
 	metaengine.o \
 	resource.o \

@@ -38,6 +38,7 @@ public:
 	bool canSave() const override;
 
 private:
+	Common::U32String hotspotName(byte id) const override;
 	bool loadCustomResources() override;
 	void runCustomEntrySequence() override;
 	bool drawCustomComposite(Graphics::ManagedSurface &viewport) override;

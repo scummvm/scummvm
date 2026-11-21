@@ -85,6 +85,10 @@ Common::U32String Scene4140::actionCaption(byte id, RunawayVerb verb, byte item)
 	return _strings.sceneActionCaption(_room, id, 0, false);
 }
 
+Common::U32String Scene4140::hotspotName(byte id) const {
+	return actionCaption(id, kVerbUse, 0);
+}
+
 void Scene4140::update(uint32 now, int scrollDirection, bool inventoryOpen) {
 	if (_pressedKey && (int32)(now - _keyUntil) >= 0) {
 		_pressedKey = 0;

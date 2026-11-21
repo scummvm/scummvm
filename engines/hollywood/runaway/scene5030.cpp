@@ -324,14 +324,20 @@ void Scene5030::stopSpeech() {
 	_nextInventoryReply = RunawayInventory::Reply(0);
 }
 
-Common::U32String Scene5030::actionCaption(byte id, RunawayVerb verb, byte item) const {
+Common::U32String Scene5030::hotspotName(byte id) const {
 	Common::U32String name = _strings.shackHotspotName(id);
 	if (id < ARRAYSIZE(kHotspots) && _examined[id]) {
-		if (id == 5 || id == 9 || id == 17)
+		if (id == 5 || id == 9 || id == 17) {
 			name = _inventory.name(id == 5 ? 8 : id == 9 ? 1 : 3);
-		else if (id == 7)
+		} else if (id == 7) {
 			name = _strings.text(RunawayStrings::kShirt);
+		}
 	}
+	return name;
+}
+
+Common::U32String Scene5030::actionCaption(byte id, RunawayVerb verb, byte item) const {
+	const Common::U32String name = hotspotName(id);
 	if (_game == kRunawayFullGame && id) {
 		const char *variant = nullptr;
 		if (item == 2 && id == 6 && _hatchState >= kUnlocked) {

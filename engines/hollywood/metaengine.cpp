@@ -85,11 +85,11 @@ void HollywoodMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 }
 
 Common::Array<Common::Keymap *> HollywoodMetaEngine::initKeymaps(const char *target) const {
-	if (getGameId(target) == "runaway")
-		return RunawayEngine::initKeymaps();
-	Common::KeymapArray keymaps = MetaEngine::initKeymaps(target);
-	if (hotspotsEnabled(target))
+	Common::KeymapArray keymaps = getGameId(target) == "runaway" ?
+		RunawayEngine::initKeymaps() : MetaEngine::initKeymaps(target);
+	if (hotspotsEnabled(target)) {
 		keymaps[0]->addAction(createHotspotAction());
+	}
 	return keymaps;
 }
 

@@ -34,6 +34,7 @@
 #include "engines/metaengine.h"
 #include "graphics/cursorman.h"
 
+#include "hollywood/hotspots.h"
 #include "hollywood/runaway/console.h"
 #include "hollywood/runaway/engine.h"
 #include "hollywood/runaway/intro.h"
@@ -96,7 +97,20 @@ void RunawayEngine::applySettings(const RunawayMenu::Settings &settings, bool re
 
 void RunawayEngine::present(const Graphics::ManagedSurface &screen) {
 	_system->copyRectToScreen(screen.getPixels(), screen.pitch, 0, 0, screen.w, screen.h);
+	drawHotspots();
 	_system->updateScreen();
+}
+
+void RunawayEngine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots) {
+	if (_gameStarted && !_inPresentation && _scene && _ui && !sceneBusy() && !_scene->speaking() &&
+			!_ui->busy() && !_ui->inventoryOpen()) {
+		_scene->getHotspotPositions(hotspots, Common::Rect(0, kRunawayViewportTop,
+			kRunawayScreenWidth, kRunawayViewportTop + kRunawayViewportHeight));
+	}
+}
+
+Graphics::HotspotRenderer *RunawayEngine::createHotspotRenderer() {
+	return createHollywoodHotspotRenderer();
 }
 
 void RunawayEngine::updateSoundListener() {

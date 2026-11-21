@@ -232,6 +232,9 @@ void Scene6290::findWalkPath(Common::Point target) {
 }
 
 Common::U32String Scene6290::hotspotName(byte id) const {
+	if (_keyboard) {
+		return actionCaption(id, kVerbUse, 0);
+	}
 	if (id == 11 && _town.machineKnown) {
 		return _strings.hotspotName(_room, 14);
 	}

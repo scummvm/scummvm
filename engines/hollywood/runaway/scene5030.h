@@ -81,6 +81,7 @@ public:
 	void setOptions(bool antialias, bool fastScrolling) override { _antialias = antialias; _fastScrolling = fastScrolling; }
 
 private:
+	Common::U32String hotspotName(byte id) const override;
 	enum Action {
 		kNone, kIntroVideo, kIntro, kIntroLookAround, kIntroInventory,
 		kIntroListen, kIntroWalkToDoor, kIntroExamineDoor,

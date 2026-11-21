@@ -210,6 +210,7 @@ bool RunawayRoomScene::enterRoom(uint16 number, Common::Point position, byte fac
 	const RunawayRoom *room = findRunawayRoom(number);
 	if (!room || position.x < 0 || position.x >= room->width || position.y < 0 || position.y >= room->height)
 		return false;
+	_roomData = room;
 	_room = number;
 	const Common::Path path(Common::String::format("RESOURCE.%c%02u", 'A' + number / 1000 - 1, sceneResourceNumber()));
 	if (!_archive.open(path, 40) ||
@@ -290,8 +291,7 @@ void RunawayRoomScene::updateMaps() {
 }
 
 const RunawayHotspot *RunawayRoomScene::hotspot(byte id) const {
-	const RunawayRoom *room = findRunawayRoom(_room);
-	return room && id && id < room->hotspotCount ? &room->hotspots[id] : nullptr;
+	return _roomData && id && id < _roomData->hotspotCount ? &_roomData->hotspots[id] : nullptr;
 }
 
 byte RunawayRoomScene::hotspotAt(Common::Point mouse) const {
