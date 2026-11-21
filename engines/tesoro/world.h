@@ -175,6 +175,17 @@ public:
 	bool voiceActive(uint32 id);
 	void stopVoice(uint32 id);
 
+	void previousSlot();
+	void nextSlot();
+	void loadSlot();
+	void saveSlot();
+	int subtitleFrame() { return _subtitles ? 1 : 0; }
+	void closeSaveLoadMenu();
+	bool toggleSubtitles() { _subtitles = !_subtitles; return _subtitles; }
+	int selectedSlot() { return _slotChoice; }
+	const char *slotTime();
+	void drawMenuText(const char *text, uint32 colour, int32 x, int32 y, int32 width);
+
 	/** Makes the pointer and the interface level known (they are loaded by the engine). */
 	void setCursor(Cursor *cursor) {
 		_cursor = cursor;
@@ -206,7 +217,6 @@ public:
 	void enterMainMenu();
 	int levelIndex() { return jimLevelIndex(); }
 	Object *interfaceObject(const char *name);
-	int menuPage() { return _subtitles ? 1 : 0; }
 	void jimResumeFacing() { jim()->resumeFacing(); }
 
 private:
@@ -229,6 +239,7 @@ private:
 	Level *_interface = nullptr;
 	Object *_actionStrip = nullptr;
 	bool _subtitles = true;
+	int _slotChoice = 0;				// the saved game chosen on the save screen (0 none)
 	int _jimVerb = 0;					// what the pointer carried when it clicked Jim
 	bool _jimClickPending = false;		// Jim is saying his answer to that click
 	bool _jimClickAnswered = false;

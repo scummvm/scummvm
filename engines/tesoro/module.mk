@@ -29,6 +29,8 @@ MODULE_OBJS = \
 	core/level.o \
 	kinds/mapplace.o \
 	kinds/menuitem.o \
+	kinds/menubutton.o \
+	kinds/slotlabel.o \
 	core/namekey.o \
 	kinds/noteobject.o \
 	core/object.o \

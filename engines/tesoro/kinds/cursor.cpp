@@ -85,7 +85,6 @@ void Cursor::openSaveLoadMenu() {
 	if (place == Cursor::kBoard)
 		return;
 
-	// The pointer lets go of what it carries and shows its first picture.
 	if (_heldItem)
 		_heldItem->setVisible(true);
 	_heldItem = nullptr;
@@ -96,7 +95,7 @@ void Cursor::openSaveLoadMenu() {
 	if (Object *save = _host->interfaceObject("SALVAR"))
 		save->setActive(savable);
 	if (Object *texts = _host->interfaceObject("TEXTOS")) {
-		const int8 page = (int8)_host->menuPage();
+		const int8 page = (int8)_host->subtitleFrame();
 		texts->animation().selectBank(0, (uint16)page, page, false, false, _host->now());
 	}
 

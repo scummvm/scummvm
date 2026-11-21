@@ -34,11 +34,13 @@
 #include "tesoro/kinds/objectgroup.h"
 #include "tesoro/kinds/jim.h"
 #include "tesoro/kinds/mapplace.h"
+#include "tesoro/kinds/menubutton.h"
 #include "tesoro/kinds/noteobject.h"
 #include "tesoro/core/level.h"
 #include "tesoro/core/namekey.h"
 #include "tesoro/kinds/walkfloor.h"
 #include "tesoro/kinds/pathobject.h"
+#include "tesoro/kinds/slotlabel.h"
 #include "tesoro/kinds/storycharacter.h"
 #include "tesoro/kinds/storyprop.h"
 
@@ -361,6 +363,16 @@ Object *World::createObject(Level &level, const ObjectRecord &record, Room &room
 			object->init(record, sort, levelPlayers, loadTime, *this);
 			return object;
 		}
+		case 22: {
+			MenuButton *object = new MenuButton();
+			object->init(record, sort, levelPlayers, loadTime, *this);
+			return object;
+		}
+		case 23: {
+			SlotLabel *object = new SlotLabel();
+			object->init(record, sort, levelPlayers, loadTime, *this);
+			return object;
+		}
 		case 24: {
 			NoteObject *object = new NoteObject();
 			object->init(record, sort, levelPlayers, loadTime, *this);
@@ -474,6 +486,37 @@ bool World::skipPressed() {
 }
 
 bool World::subtitlesOn() { return _subtitles; }
+
+
+void World::previousSlot() {
+	warning("World::previousSlot not implemented");
+}
+
+void World::nextSlot() {
+	warning("World::previousSlot not implemented");
+}
+
+void World::loadSlot() {
+	warning("World::previousSlot not implemented");
+}
+
+void World::saveSlot() {
+	warning("World::previousSlot not implemented");
+}
+
+const char *World::slotTime() {
+	warning("World::previousSlot not implemented");
+	return nullptr;
+}
+
+void World::closeSaveLoadMenu() {
+	if (_cursor)
+		_cursor->closeSaveLoadMenu();
+}
+
+void World::drawMenuText(const char *text, uint32 colour, int32 x, int32 y, int32 width) {
+	_engine._display.queueText((const byte *)text, colour, x, y, width, 0, false, 0);
+}
 
 Camera &World::updateCamera(int32 divisor) {
 	Camera &camera = jimLevel()->camera();
