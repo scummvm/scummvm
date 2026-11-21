@@ -211,6 +211,11 @@ bool Scene8090::drawCustomComposite(Graphics::ManagedSurface &viewport) {
 }
 
 void Scene8090::handleAnimationFrameHook() {
+	if (_roomAction == 402 && _actionStep == 9) {
+		_audio.playFootstep(1, _random.getRandomBit(), 230, 696);
+	} else if (_roomAction == 403 && (_actionStep == 5 || _actionStep == 9)) {
+		_audio.playFootstep(2, _random.getRandomBit(), 230, 696);
+	}
 	if (_roomAction == 440 && _actionStep == 14) {
 		_audio.playEffect(27, 230);
 	}

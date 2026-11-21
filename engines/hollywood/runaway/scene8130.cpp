@@ -119,7 +119,7 @@ bool Scene8130::updateCustomSequence() {
 		++_departureFrame;
 		for (uint i = 0; i < ARRAYSIZE(footsteps); ++i) {
 			if (_departureFrame == footsteps[i]) {
-				_audio.playFootstep(2, _random.getRandomBit(), (65 + i * 5) * 255 / 100);
+				_audio.playFootstep(2, _random.getRandomBit(), (65 + i * 5) * 255 / 100, 400 - i * 50);
 				break;
 			}
 		}

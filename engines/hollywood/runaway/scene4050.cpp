@@ -578,6 +578,23 @@ void Scene4050::finishCustomAnimation(uint16 action) {
 }
 
 void Scene4050::handleAnimationFrameHook() {
+	// Susan's footsteps are timed to the outward and return animation cels.
+	static const AnimationFootstep toLaser[] = {
+		{18, 520}, {25, 550}, {29, 580}, {33, 610}, {35, 640}, {38, 670}, {42, 700},
+		{45, 730}, {47, 760}, {51, 790}, {54, 820}, {56, 850}, {59, 880}, {62, 910},
+		{65, 940}, {68, 970}, {72, 1000}, {75, 1030}, {77, 1060}
+	};
+	static const AnimationFootstep fromLaser[] = {
+		{13, 1060}, {19, 1035}, {25, 1010}, {30, 985}, {33, 960}, {36, 935}, {39, 910},
+		{42, 885}, {45, 860}, {48, 835}, {51, 810}, {54, 785}, {57, 760}, {60, 735},
+		{63, 710}, {66, 685}, {67, 660}, {69, 635}, {72, 610}, {75, 585}, {78, 560},
+		{81, 535}, {84, 510}
+	};
+	if (_roomAction == 450 || _roomAction == 452) {
+		playAnimationFootsteps(_actionStep, 1, toLaser, ARRAYSIZE(toLaser));
+	} else if (_roomAction == 451) {
+		playAnimationFootsteps(_actionStep, 1, fromLaser, ARRAYSIZE(fromLaser));
+	}
 	if ((_roomAction == 328 || _roomAction == 428) && (_actionStep == 4 || _actionStep == 2)) {
 		_audio.playEffect(37, 204);
 	}

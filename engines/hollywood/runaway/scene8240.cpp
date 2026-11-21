@@ -396,9 +396,8 @@ RunawayRoomScene::ActionResult Scene8240::dispatchCustomSceneAction(uint16 actio
 }
 
 void Scene8240::handleAnimationFrameHook() {
-	if (_roomAction == 304 && (_actionStep == 11 || _actionStep == 18)) {
-		_audio.playFootstep(3, _random.getRandomBit());
-	} else if (_roomAction == 414 && _actionStep == 37) {
+	Scene6240::handleAnimationFrameHook();
+	if (_roomAction == 414 && _actionStep == 37) {
 		_audio.playEffect(42, 230, 1);
 	}
 }

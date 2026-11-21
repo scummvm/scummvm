@@ -33,6 +33,7 @@ public:
 
 protected:
 	bool loadCustomResources() override;
+	void handleAnimationFrameHook() override;
 	RunawayAnimation _plantAnimation;
 
 private:
@@ -50,7 +51,6 @@ private:
 	void findWalkPath(Common::Point target) override;
 	bool adjustCustomWalkTargetToFloorMask(Common::Point &target) const override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
-	void handleAnimationFrameHook() override;
 
 	Common::Array<byte> _plantPatches[3];
 };

@@ -107,6 +107,9 @@ void Scene5110::setupActorDepth(RunawayActor::RenderParams &params) const {
 RunawayRoomScene::ActionResult Scene5110::dispatchCustomSceneAction(uint16 action) {
 	RunawaySaveState::DesertItems &items = _inventory.desert();
 	switch (action) {
+	case 1400: // Finish climbing into the train car.
+		visitDesertRoom(7, 1);
+		break;
 	case 302: // Leave the train car.
 		leaveDesertRoom(5081);
 		break;
@@ -221,7 +224,14 @@ RunawayRoomScene::ActionResult Scene5110::dispatchCustomSceneAction(uint16 actio
 }
 
 void Scene5110::runCustomEntrySequence() {
-	visitDesertRoom(7, 1);
+	_facing = 3;
+	beginRoomAnimation(400, 7, 12);
+}
+
+void Scene5110::handleAnimationFrameHook() {
+	if (_roomAction == 400 && _actionStep == 9) {
+		_audio.playFootstep(3, _random.getRandomBit(), 230, 327);
+	}
 }
 
 Common::U32String Scene5110::hotspotName(byte id) const {

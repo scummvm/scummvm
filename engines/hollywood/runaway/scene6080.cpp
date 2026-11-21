@@ -260,18 +260,18 @@ void Scene6080::handleAnimationFrameHook() {
 		}
 		if (frame == 18 || frame == 26 || frame == 33 || frame == 44 || frame == 53 ||
 				frame == 62 || frame == 82 || frame == 93 || frame == 111 || frame == 118 || frame == 125) {
-			_audio.playFootstep(2, _random.getRandomBit(), 77);
+			_audio.playFootstep(2, _random.getRandomBit(), 77, 610);
 		}
 	} else if (_roomAction == 412) {
 		if (_actionStep == 8 || _actionStep == 15 || _actionStep == 23 ||
 				_actionStep == 30 || _actionStep == 37 || _actionStep == 44) {
-			_audio.playFootstep(2, _random.getRandomBit(), 77);
+			_audio.playFootstep(2, _random.getRandomBit(), 77, _position.x);
 		}
 	} else if (_roomAction == 404) {
 		static const byte footsteps[] = {10, 18, 25, 31, 37, 44, 50, 55, 62, 68, 74, 80, 87, 93, 99, 105, 112, 118, 124};
 		for (uint i = 0; i < ARRAYSIZE(footsteps); ++i) {
 			if (_actionStep == footsteps[i]) {
-				_audio.playFootstep(2, _random.getRandomBit(), MIN<uint>(255, 51 + i * 13));
+				_audio.playFootstep(2, _random.getRandomBit(), MIN<uint>(100, 20 + i * 5) * 255 / 100, 610 - i * 20);
 				break;
 			}
 		}

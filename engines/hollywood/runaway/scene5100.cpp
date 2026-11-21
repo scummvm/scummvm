@@ -493,10 +493,12 @@ RunawayRoomScene::ActionResult Scene5100::dispatchCustomSceneAction(uint16 actio
 		break;
 	}
 	case 1450: // Stud follows Lula away from his beer.
+		_audio.playFootstep(2, _random.getRandomBit(), 255, 100);
 		_desert.guard = 1;
 		beginRoomAnimation(460, 17, 52, nullptr, 0, false);
 		return kBackgroundChanged;
 	case 1460: // Lula demonstrates her shooting on the first visit.
+		_audio.playFootstep(2, _random.getRandomBit(), 255, 100);
 		if (_desert.lulaDistractedGuard) {
 			deferDesertAction(490);
 		} else {
@@ -519,7 +521,15 @@ RunawayRoomScene::ActionResult Scene5100::dispatchCustomSceneAction(uint16 actio
 		_hangarThrowing = true;
 		say(14);
 		break;
-	case 329: // Try to walk past Stud.
+	case 329: { // Step out and back when trying to walk past Stud.
+		byte frames[30];
+		for (uint i = 0; i < ARRAYSIZE(frames); ++i) {
+			frames[i] = i <= 18 ? i : i - 1;
+		}
+		beginRoomAnimation(action, 10, 29, frames, ARRAYSIZE(frames));
+		break;
+	}
+	case 1329: // Decide against trying to pass Stud.
 		say(1, _random.getRandomBit());
 		break;
 	default:
@@ -625,15 +635,24 @@ void Scene5100::startHangarTaunt() {
 }
 
 void Scene5100::handleAnimationFrameHook() {
+	static const AnimationFootstep lulaSteps[] = {
+		{26, 800}, {35, 700}, {44, 600}, {53, 500}, {62, 400}, {71, 300}
+	};
+	static const AnimationFootstep studSteps[] = {
+		{19, 512}, {30, 500}, {37, 400}, {44, 300}, {51, 200}
+	};
 	if (_roomAction == 328 && _actionStep == 21) {
 		_audio.playEffect(39, 204);
 	}
-	if (_roomAction == 450 && (_actionStep == 7 || _actionStep == 16 || _actionStep == 25 ||
-			_actionStep == 34 || _actionStep == 43 || _actionStep == 52)) {
-		_audio.playFootstep(1, _random.getRandomBit());
+	if (_roomAction == 450) {
+		playAnimationFootsteps(_actionFrames[_actionStep], 2, lulaSteps, ARRAYSIZE(lulaSteps));
+	} else if (_roomAction == 460) {
+		playAnimationFootsteps(_actionStep, 2, studSteps, ARRAYSIZE(studSteps));
 	}
-	if (_roomAction == 460 && (_actionStep == 19 || _actionStep == 30 || _actionStep == 37 || _actionStep == 44 || _actionStep == 51)) {
-		_audio.playFootstep(1, _random.getRandomBit());
+	if ((_roomAction == 329 || _roomAction == 458 || _roomAction == 498) &&
+			(_actionFrames[_actionStep] == 10 || _actionFrames[_actionStep] == 28)) {
+		const byte volume = CLIP<int>((int)(actorHeight() * 255 / 455), 0, 255);
+		_audio.playFootstep(2, _random.getRandomBit(), volume, _position.x);
 	}
 	if (_roomAction == 470 || _roomAction == 480 || _roomAction == 558) {
 		const byte frame = _actionFrames[_actionStep];

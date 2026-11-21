@@ -135,6 +135,13 @@ public:
 protected:
 	enum ObjectState { kUnexamined, kIdentified, kTaken };
 	enum ActionResult { kUnhandled, kHandled, kBackgroundChanged };
+	struct AnimationFootstep {
+		constexpr AnimationFootstep(byte frameNumber, int16 position, byte loudness = 255) :
+			frame(frameNumber), x(position), volume(loudness) {}
+		byte frame;
+		int16 x;
+		byte volume;
+	};
 
 	virtual bool loadCustomResources() { return true; }
 	virtual bool loadBackground();
@@ -208,6 +215,7 @@ protected:
 	void setRoomAnimationOverlay(uint chunk, uint frames, const byte *order, uint count);
 	bool drawingRoomAnimation() const { return !_actionUsesActor && _roomAction && !_actionFrames.empty() && (_actionHoldSpeech || !speaking()) && !_walkPath.active(); }
 	void updateRoomAnimation();
+	void playAnimationFootsteps(uint frame, byte surface, const AnimationFootstep *steps, uint count);
 	virtual float actorHeight() const { return 455; }
 	virtual float actorWalkSpeed() const { return 0.18f * actorHeight() / 455; }
 	virtual const RunawayHotspot *hotspot(byte id) const;

@@ -36,6 +36,7 @@ private:
 	void runCustomEntrySequence() override;
 	void updateActor(uint elapsed, int scrollDirection, bool inventoryOpen) override;
 	void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) override;
+	void handleAnimationFrameHook() override;
 	void finishCustomAnimation(uint16 action) override;
 	bool handleCustomDialogueReply() override;
 	void handleCustomDialogueChoice(byte effect) override;

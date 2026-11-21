@@ -274,7 +274,8 @@ RunawayRoomScene::ActionResult Scene6240::dispatchCustomSceneAction(uint16 actio
 
 void Scene6240::handleAnimationFrameHook() {
 	if (_roomAction == 304 && (_actionStep == 11 || _actionStep == 18)) {
-		_audio.playFootstep(3, _random.getRandomBit());
+		const byte volume = CLIP<int>((int)(actorHeight() * 255 / 455), 0, 255);
+		_audio.playFootstep(3, _random.getRandomBit(), volume, _position.x);
 	}
 }
 

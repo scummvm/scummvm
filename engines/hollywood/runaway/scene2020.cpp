@@ -853,7 +853,8 @@ void Scene2020::handleAnimationFrameHook() {
 		error("Cannot clear Runaway hospital chart");
 	}
 	if (_roomAction == 332 && (_actionStep == 21 || _actionStep == 35 || _actionStep == 41)) {
-		_audio.playFootstep(1, _random.getRandomBit());
+		const byte volume = CLIP<int>((int)(actorHeight() * 255 / 455), 0, 255);
+		_audio.playFootstep(1, _random.getRandomBit(), volume, _position.x);
 	}
 }
 

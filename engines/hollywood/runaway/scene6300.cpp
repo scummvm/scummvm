@@ -758,6 +758,16 @@ void Scene6300::showCatapultImpact() {
 }
 
 void Scene6300::handleAnimationFrameHook() {
+	static const AnimationFootstep leavingSteps[] = {
+		{50, 560}, {57, 610}, {63, 660}, {70, 710}, {77, 760}, {84, 810},
+		{91, 860}, {98, 910}, {106, 960}, {113, 1010}, {120, 1060}
+	};
+	if (_roomAction == 446) {
+		playAnimationFootsteps(_actionFrames[_actionStep], 3, leavingSteps, ARRAYSIZE(leavingSteps));
+		if (_actionFrames[_actionStep] == 38) {
+			_audio.playEffectAt(33, Common::Point(607, 200), 255, 1);
+		}
+	}
 	if (_roomAction == 445 || _roomAction == 449) {
 		if (_actionFrames[_actionStep] == 14) {
 			say(28, _roomAction == 445 ? 9 : 10, false, 1);

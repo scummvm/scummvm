@@ -73,6 +73,16 @@ void Scene4070::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport
 	}
 }
 
+void Scene4070::handleAnimationFrameHook() {
+	static const AnimationFootstep steps[] = {
+		{10, 512}, {14, 512}, {38, 512}, {44, 412}, {51, 312},
+		{56, 212}, {62, 112}, {68, 12}
+	};
+	if (_roomAction == 458) {
+		playAnimationFootsteps(_actionFrames[_actionStep], 1, steps, ARRAYSIZE(steps));
+	}
+}
+
 void Scene4070::finishCustomAnimation(uint16 action) {
 	switch (action) {
 	case 417: // Offer the coffee package to Willy.

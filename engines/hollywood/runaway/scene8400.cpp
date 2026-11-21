@@ -255,13 +255,13 @@ void Scene8400::handleAnimationFrameHook() {
 		_audio.playEffect(47, 127);
 	} else if (_roomAction == 307) {
 		if (_actionStep == 12 || _actionStep == 19 || _actionStep == 27 || _actionStep == 35) {
-			_audio.playFootstep(5, _random.getRandomBit(), 112);
+			_audio.playFootstep(5, _random.getRandomBit(), 112, 1065);
 		}
 	} else if (_roomAction == 410) {
 		if (_actionStep == 7 || _actionStep == 17) {
-			_audio.playFootstep(5, _random.getRandomBit(), 102);
+			_audio.playFootstep(5, _random.getRandomBit(), 102, 1065);
 		} else if (_actionStep == 25 || _actionStep == 33) {
-			_audio.playFootstep(2, _random.getRandomBit(), 102);
+			_audio.playFootstep(2, _random.getRandomBit(), 102, 1065);
 		}
 	} else if (_roomAction == 439) {
 		const uint gustav = 43 + _actionStep;

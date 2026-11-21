@@ -61,7 +61,7 @@ private:
 	bool _museum = false;
 	byte _chapter = 3;
 	Audio::Mixer *_mixer;
-	SoundChannel _music, _speech, _effects[3], _footstep, _pointer;
+	SoundChannel _music, _speech, _effects[3], _footsteps[14], _pointer;
 	int _listenerX = 512;
 };
 

@@ -109,6 +109,12 @@ void Scene6190::runCustomEntrySequence() {
 	}
 }
 
+void Scene6190::handleAnimationFrameHook() {
+	if (_roomAction == 405 && (_actionStep == 4 || _actionStep == 14 || _actionStep == 19 || _actionStep == 22)) {
+		_audio.playFootstep(3, _random.getRandomBit(), 128, 553);
+	}
+}
+
 Common::U32String Scene6190::hotspotName(byte id) const {
 	if (id == 2 && _town.catapult == 3) {
 		return _strings.hotspotName(_room, 9);

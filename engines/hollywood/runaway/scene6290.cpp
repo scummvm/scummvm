@@ -835,6 +835,17 @@ void Scene6290::finishCustomFilm() {
 }
 
 void Scene6290::handleAnimationFrameHook() {
+	static const AnimationFootstep descendingSteps[] = {
+		{24, 200, 102}, {30, 150, 204}, {37, 100, 102}
+	};
+	static const AnimationFootstep returningSteps[] = {
+		{3, 50, 102}, {9, 100, 204}, {17, 150, 102}, {22, 200, 204}
+	};
+	if (_roomAction == 450) {
+		playAnimationFootsteps(_actionStep, 2, descendingSteps, ARRAYSIZE(descendingSteps));
+	} else if (_roomAction == 451) {
+		playAnimationFootsteps(_actionStep, 2, returningSteps, ARRAYSIZE(returningSteps));
+	}
 	if (_roomAction == 440) {
 		if (_actionStep == 11 || _actionStep == 33 || _actionStep == 106) {
 			_audio.playEffect(_actionStep == 11 ? 35 : _actionStep == 33 ? 36 : 37, 204);

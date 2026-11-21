@@ -256,6 +256,9 @@ RunawayRoomScene::ActionResult Scene5060::dispatchCustomSceneAction(uint16 actio
 	case 1308: // Finish entering the bus.
 		leaveDesertRoom(5170);
 		break;
+	case 1400: // Finish stepping out of the bus.
+		visitDesertRoom(3, 2);
+		break;
 	case 310: // Search the trunk.
 		say(6, _desert.ballTaken ? 2 : 0);
 		beginRoomAnimation(action, 10, 28, kSearchTrunkFrames, _desert.ballTaken ? ARRAYSIZE(kSearchTrunkFrames) : 57);
@@ -402,6 +405,14 @@ void Scene5060::runCustomEntrySequence() {
 		execute(480);
 		return;
 	}
+	if (_entryScene == 5061) {
+		_position = Common::Point(679, 448);
+		_walkPath.reset(_position);
+		_facing = 3;
+		updateCamera();
+		beginRoomAnimationRange(400, 6, 26, 9, 25);
+		return;
+	}
 	visitDesertRoom(3, 2);
 }
 
@@ -418,6 +429,29 @@ Common::U32String Scene5060::hotspotName(byte id) const {
 void Scene5060::resumeAmbientAudio(bool entering) {
 	if (!_audio.musicPlaying()) {
 		_audio.playMusic(21);
+	}
+}
+
+bool Scene5060::lulaDancing() const {
+	if (_entryScene == 5062 || _roomAction == 414 || _roomAction == 429 ||
+			_roomAction == 459 || _roomAction == 469 || _roomAction == 479) {
+		return false;
+	}
+	return !drawingRoomAnimation() || (_roomAction != 404 && _roomAction != 419 &&
+		_roomAction != 439 && _roomAction != 449);
+}
+
+void Scene5060::playLulaFootstep(uint frame) {
+	if (frame == 124 || frame == 128 || frame == 159 || frame == 181 || frame == 191) {
+		_audio.playFootstep(2, _random.getRandomBit(), 153, 160);
+	}
+}
+
+void Scene5060::advanceCustomGameplayLoop(uint32 delta) {
+	if (lulaDancing()) {
+		for (uint32 tick = (_now - delta) / 80 + 1; tick <= _now / 80; ++tick) {
+			playLulaFootstep(120 + tick % 75);
+		}
 	}
 }
 
@@ -443,10 +477,7 @@ void Scene5060::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport
 		_actionAnimation.draw(viewport, 96 + (speaker() == 2 ? speechFrame() % 6 : 0), _camera.x, -_camera.y);
 	} else if (!drawingRoomAnimation() || (_roomAction != 404 && _roomAction != 414 &&
 			_roomAction != 419 && _roomAction != 439 && _roomAction != 449)) {
-		uint frame = 120 + (_now / 80) % 75;
-		if (_roomAction == 414 || _roomAction == 429 || _roomAction == 469) {
-			frame = mouth[speaker() == 2 ? speechFrame() : 0];
-		}
+		const uint frame = lulaDancing() ? 120 + (_now / 80) % 75 : mouth[speaker() == 2 ? speechFrame() : 0];
 		_lulaAnimation.draw(viewport, frame, _camera.x, -_camera.y);
 	}
 }
@@ -458,6 +489,14 @@ void Scene5060::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport
 }
 
 void Scene5060::handleAnimationFrameHook() {
+	const byte frame = _actionFrames[_actionStep];
+	if (_roomAction == 308 && (frame == 8 || frame == 15 || frame == 21)) {
+		_audio.playFootstep(4, _random.getRandomBit(), 179, _position.x);
+	} else if (_roomAction == 400 && (frame == 14 || frame == 21 || frame == 25)) {
+		_audio.playFootstep(frame == 14 ? 4 : 2, _random.getRandomBit(), 179, 679);
+	} else if (_roomAction == 404 || _roomAction == 419) {
+		playLulaFootstep(frame);
+	}
 	if (_roomAction == 481) {
 		if (_actionStep == 3 || _actionStep == 12 || _actionStep == 17 || _actionStep == 25 || _actionStep == 29) {
 			_audio.playFootstep(4, _random.getRandomBit(), 153);

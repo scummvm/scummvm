@@ -92,7 +92,7 @@ private:
 		kTryMoveCooler, kMoveCooler, kRevealHatch, kFinishMoving, kHatchFound,
 		kDrainCooler, kFinishDraining, kPryHatch, kOpenHatch, kEscape,
 		kPeekDoor, kPeekConversation, kReturnFromPeek,
-		kHeatHelmet, kPrepareStirringHelmet, kStirHelmet
+		kHeatHelmet, kPrepareStirringHelmet, kStirHelmet, kEnterHatch
 	};
 	enum IceState { kFrozen, kMelted, kDrained };
 	enum HatchState { kHidden, kLocked, kUnlocked, kOpen };
@@ -132,6 +132,7 @@ private:
 	RunawayInterrogation _interrogation;
 	Common::RandomSource _random;
 	bool _peeked = false;
+	bool _entering = false;
 	bool _antialias = true, _fastScrolling = true;
 	RunawayActor _actor;
 	RunawaySpeech _speech;

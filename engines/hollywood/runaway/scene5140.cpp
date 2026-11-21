@@ -127,6 +127,9 @@ void Scene5140::runCustomEntrySequence() {
 }
 
 void Scene5140::updateIntroduction() {
+	static const AnimationFootstep arrivalSteps[] = {
+		{1, 800}, {1, 100}, {6, 512}, {11, 100}, {14, 800}, {15, 512}, {24, 512}
+	};
 	BusIntroduction &intro = _busIntroduction;
 	if (intro.phase == BusIntroduction::kFilm) {
 		intro.phase = BusIntroduction::kReturn;
@@ -146,10 +149,8 @@ void Scene5140::updateIntroduction() {
 			} else {
 				--intro.frame;
 			}
-			if (intro.phase == BusIntroduction::kArrival &&
-					(intro.frame == 1 || intro.frame == 6 || intro.frame == 11 ||
-					intro.frame == 14 || intro.frame == 15 || intro.frame == 24)) {
-				_audio.playFootstep(2, _random.getRandomBit());
+			if (intro.phase == BusIntroduction::kArrival) {
+				playAnimationFootsteps(intro.frame, 2, arrivalSteps, ARRAYSIZE(arrivalSteps));
 			}
 		} else if (intro.speaker >= kCarla && intro.facing != kBrianLula) {
 			intro.blink = !_random.getRandomNumber(14);

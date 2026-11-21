@@ -163,6 +163,10 @@ RunawayRoomScene::ActionResult Scene5080::dispatchCustomSceneAction(uint16 actio
 	case 1313: // Finish entering the train car.
 		leaveDesertRoom(5110);
 		break;
+	case 1400: // Finish climbing out of the train car.
+		walkTo(Common::Point(1000, 451), 5, true);
+		visitDesertRoom(5, 1);
+		break;
 	case 316: // Look at the anthill.
 		say(13, _desert.antsDistracted ? 2 : 0);
 		break;
@@ -253,7 +257,10 @@ void Scene5080::runCustomEntrySequence() {
 	if (_entryScene == 5081) {
 		_position = Common::Point(987, 379);
 		_walkPath.reset(_position);
-		walkTo(Common::Point(1000, 451), 5, true);
+		_facing = 5;
+		updateCamera();
+		beginRoomAnimationRange(400, 24, 20, 9, 19);
+		return;
 	}
 	visitDesertRoom(5, 1);
 }
@@ -297,6 +304,11 @@ void Scene5080::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport
 }
 
 void Scene5080::handleAnimationFrameHook() {
+	if (_roomAction == 313 && _actionFrames[_actionStep] == 21) {
+		_audio.playFootstep(4, _random.getRandomBit(), 255, _position.x);
+	} else if (_roomAction == 400 && _actionFrames[_actionStep] == 15) {
+		_audio.playFootstep(2, _random.getRandomBit(), 230, 1000);
+	}
 	if (_roomAction == 326 && _actionStep == 23) {
 		_audio.playEffect(72);
 	}

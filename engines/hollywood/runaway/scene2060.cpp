@@ -229,7 +229,8 @@ void Scene2060::finishCustomAnimation(uint16 action) {
 
 void Scene2060::handleAnimationFrameHook() {
 	if (_roomAction == 302 && (_actionStep == 23 || _actionStep == 36)) {
-		_audio.playFootstep(1, _random.getRandomBit());
+		const byte volume = CLIP<int>((int)(actorHeight() * 255 / 455), 0, 255);
+		_audio.playFootstep(1, _random.getRandomBit(), volume, _position.x);
 	}
 }
 

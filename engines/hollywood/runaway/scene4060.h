@@ -52,6 +52,7 @@ private:
 
 	RunawayAnimation _willyAnimation;
 	byte _willyFrame = 0;
+	int _entranceCameraX = 0;
 };
 
 } // End of namespace Runaway

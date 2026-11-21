@@ -40,9 +40,12 @@ private:
 	void runCustomEntrySequence() override;
 	Common::U32String hotspotName(byte id) const override;
 	void resumeAmbientAudio(bool entering) override;
+	void advanceCustomGameplayLoop(uint32 delta) override;
 	void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) override;
 	void drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) override;
 	void handleAnimationFrameHook() override;
+	bool lulaDancing() const;
+	void playLulaFootstep(uint frame);
 
 	RunawayAnimation _ambientAnimations[4];
 	RunawayAnimation _mariolaAnimation, _lulaAnimation;

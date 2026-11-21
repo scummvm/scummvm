@@ -113,7 +113,9 @@ void RunawayAudio::setMusicVolume(byte volume) {
 void RunawayAudio::setListenerPosition(int x) {
 	_listenerX = x;
 	_speech.setListenerPosition(x);
-	_footstep.setListenerPosition(x);
+	for (uint i = 0; i < ARRAYSIZE(_footsteps); ++i) {
+		_footsteps[i].setListenerPosition(x);
+	}
 	for (uint i = 0; i < ARRAYSIZE(_effects); ++i) {
 		_effects[i].setListenerPosition(x);
 	}
@@ -174,9 +176,11 @@ void RunawayAudio::playFootstep(byte surface, byte variant, byte volume, int x) 
 	assert(surface >= 1 && surface <= 7 && variant < 2);
 	// Retail 0x40a370 / cabin demo 0x407410 select one of two mono samples
 	// per surface, starting at cue 21 in the shared music archive.
+	// Each sample has its own playback buffer, so different steps can overlap.
+	const uint footstep = (surface - 1) * 2 + variant;
 	const Common::Point position(x, 200);
-	play("RESOURCE.002", 21 + (surface - 1) * 2 + variant, 100, false,
-		Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, Audio::Mixer::kSFXSoundType, _footstep, volume, false, 16000,
+	play("RESOURCE.002", 21 + footstep, 100, false,
+		Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, Audio::Mixer::kSFXSoundType, _footsteps[footstep], volume, false, 16000,
 		x >= 0 ? &position : nullptr);
 }
 
@@ -219,7 +223,9 @@ void RunawayAudio::stopSpeech() {
 
 void RunawayAudio::stopEffect() {
 	_pointer.stop();
-	_footstep.stop();
+	for (uint i = 0; i < ARRAYSIZE(_footsteps); ++i) {
+		_footsteps[i].stop();
+	}
 	for (uint i = 0; i < ARRAYSIZE(_effects); ++i)
 		_effects[i].stop();
 }

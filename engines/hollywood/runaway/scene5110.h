@@ -39,6 +39,7 @@ private:
 	void setupActorDepth(RunawayActor::RenderParams &params) const override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 	void runCustomEntrySequence() override;
+	void handleAnimationFrameHook() override;
 	Common::U32String hotspotName(byte id) const override;
 	void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) override;
 

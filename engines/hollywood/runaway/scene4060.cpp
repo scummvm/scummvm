@@ -409,12 +409,20 @@ void Scene4060::finishCustomAnimation(uint16 action) {
 		walkTo(Common::Point(980, 275), 7, true);
 		deferMuseumAction(472);
 		break;
-	case 472: // Enter the analysis laboratory or start the museum escape.
+	case 472: // Enter the analysis laboratory or show the gangsters arriving downstairs.
 		if (_inventory.museum().restoredCrucifix) {
-			startMuseumFilm(kMuseumExitFilm);
+			byte frames[40];
+			for (uint i = 0; i < ARRAYSIZE(frames); ++i) {
+				frames[i] = i < 20 ? 0 : i - 19;
+			}
+			_entranceCameraX = _camera.x;
+			beginRoomAnimation(476, 11, 21, frames, ARRAYSIZE(frames), true, 10);
 		} else {
 			leaveMuseumRoom(4100, Common::Point(141, 468));
 		}
+		break;
+	case 476: // Continue the museum escape after the gangsters enter.
+		startMuseumFilm(kMuseumExitFilm);
 		break;
 	case 460: // Willy approaches the security door.
 		_camera.y = 0;
@@ -487,6 +495,21 @@ void Scene4060::finishCustomAnimation(uint16 action) {
 }
 
 void Scene4060::handleAnimationFrameHook() {
+	if (_roomAction == 476) {
+		if (_actionStep <= 18) {
+			setCameraX(_entranceCameraX * (18 - _actionStep) / 18);
+			_camera.y = _actionStep * 32;
+		}
+		if (_actionStep == 18) {
+			// The camera uses the 10 ms timer; the walking cels use 60 ms.
+			_actionFrameDuration = 60;
+			_audio.playMusic(21);
+		}
+		const byte frame = _actionFrames[_actionStep];
+		if (frame == 1 || frame == 3 || frame == 8 || frame == 10 || frame == 14 || frame == 17) {
+			_audio.playFootstep(1, _random.getRandomBit(), 191, 512);
+		}
+	}
 	if (_roomAction == 461 && _actionStep == 156) {
 		_audio.playEffect(29);
 	} else if (_roomAction == 470 && _actionStep == 7) {

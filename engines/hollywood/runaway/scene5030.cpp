@@ -158,6 +158,7 @@ bool Scene5030::loadRoomGraphics() {
 
 void Scene5030::start(uint32 now) {
 	_now = _lastUpdate = now;
+	_entering = true;
 	resume();
 	if (_entryScene == 5030)
 		startAction(kIntroVideo);
@@ -166,6 +167,14 @@ void Scene5030::start(uint32 now) {
 void Scene5030::resume() {
 	if (!_audio.musicPlaying())
 		_audio.playMusic(11);
+	if (_entering) {
+		_entering = false;
+		if (_entryScene == 5031) {
+			setPosition(Common::Point(1215, 542), 3);
+			setCameraX(_position.x - kScreenWidth / 2);
+			startAction(kEnterHatch);
+		}
+	}
 }
 
 void Scene5030::captureState(RunawaySaveState &state) const {
@@ -210,6 +219,7 @@ bool Scene5030::restoreState(const RunawaySaveState &state, uint32 now, bool ent
 	_video.close();
 	_random.setSeed(state.randomSeed);
 	_now = _lastUpdate = _actionStarted = now;
+	_entering = entering;
 	_walkElapsed = _lastFootstep = _step = 0;
 	_action = _afterSpeech = _afterWalk = kNone;
 	_pendingHotspot = _pendingItem = _pickupHotspot = 0;
@@ -813,6 +823,10 @@ void Scene5030::startAction(Action action) {
 		chunk = 35;
 		frames = 37;
 		break;
+	case kEnterHatch: // Climb back into the cabin through the trap door.
+		chunk = 34;
+		frames = 32;
+		break;
 	case kPeekDoor:
 		chunk = 22;
 		frames = 19;
@@ -956,8 +970,9 @@ void Scene5030::updateAction() {
 		_step = (uint64)elapsed * 24 / 1000;
 		// Both demo movies run at 24 fps. Dispatch callbacks on crossing a
 		// frame, including delayed updates, so each effect plays exactly once.
-		if (_action == kIntroVideo && previousStep < 353 && _step >= 353)
-			_audio.playFootstep(3, _random.getRandomBit());
+		if (_action == kIntroVideo && previousStep < 353 && _step >= 353) {
+			_audio.playFootstep(3, _random.getRandomBit(), 255, 512);
+		}
 		if (_action == kCleanWindowVideo && previousStep < 56 && _step >= 56)
 			_audio.playEffect(22);
 		if (_step >= _video.frameCount()) {
@@ -986,8 +1001,9 @@ void Scene5030::updateAction() {
 		switch (_action) {
 		case kIntro:
 			length = 19;
-			if (previousStep < 5 && _step >= 5)
-				_audio.playFootstep(3, _random.getRandomBit(), 179);
+			if (previousStep < 5 && _step >= 5) {
+				_audio.playFootstep(3, _random.getRandomBit(), 179, 512);
+			}
 			break;
 		case kOpenLid:
 		case kCloseLid: {
@@ -1031,6 +1047,12 @@ void Scene5030::updateAction() {
 			break;
 		case kEscape:
 			length = 37;
+			break;
+		case kEnterHatch:
+			length = 32;
+			if (previousStep < 24 && _step >= 24) {
+				_audio.playFootstep(3, _random.getRandomBit(), 230, 1238);
+			}
 			break;
 		case kPeekDoor:
 		case kReturnFromPeek:
@@ -1151,6 +1173,8 @@ void Scene5030::draw() {
 		_actionAnimation.draw(_screen, frame, _cameraX, kRoomTop);
 	} else if (_action == kOpenHatch || _action == kEscape) {
 		_actionAnimation.draw(_screen, MAX<uint>(1, _step), _cameraX, kRoomTop);
+	} else if (_action == kEnterHatch) {
+		_actionAnimation.draw(_screen, _step ? _step - 1 : 0, _cameraX, kRoomTop);
 	} else if (_action == kPeekDoor || _action == kReturnFromPeek) {
 		const uint frame = _action == kPeekDoor ? MAX<int>(0, (int)_step - 1) : 18 - MAX<int>(0, (int)_step - 1);
 		_actionAnimation.draw(_screen, frame, _cameraX, kRoomTop);

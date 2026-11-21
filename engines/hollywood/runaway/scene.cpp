@@ -877,6 +877,14 @@ void RunawayRoomScene::setRoomAnimationOverlay(uint chunk, uint frames, const by
 	_secondaryFrames.assign(order, order + count);
 }
 
+void RunawayRoomScene::playAnimationFootsteps(uint frame, byte surface, const AnimationFootstep *steps, uint count) {
+	for (uint i = 0; i < count; ++i) {
+		if (frame == steps[i].frame) {
+			_audio.playFootstep(surface, _random.getRandomBit(), steps[i].volume, steps[i].x);
+		}
+	}
+}
+
 void RunawayRoomScene::updateRoomAnimation() {
 	if (!_roomAction || _actionFrames.empty())
 		return;
