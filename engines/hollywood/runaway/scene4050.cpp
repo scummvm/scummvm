@@ -130,7 +130,8 @@ const char *Scene4050::actionCaptionVariant(byte id, bool look, byte item) const
 }
 
 bool Scene4050::loadCustomResources() {
-	return _susanAnimation.load(_archive, 8, 75) && _laserAnimation.load(_archive, 22, 1) &&
+	return _susanAnimation.load(_archive, 8, 75) && _susanLegsAnimation.load(_archive, 22, 1) &&
+		(!museumChapter() || _susanBenchPatch.load(_archive, 12, 2)) &&
 		loadForeground(0, 4) && loadForeground(1, 5) && loadForeground(2, 6) && loadForeground(3, 7);
 }
 
@@ -143,6 +144,10 @@ bool Scene4050::applyCustomBackgroundPatches() {
 	}
 	if (_museum.restoration && !applyPatch(_museum.restoration == 1 ? 9 : 10)) {
 		return false;
+	}
+	const int benchFrame = _museum.susan ? 0 : _susanBenchFrame;
+	if (benchFrame >= 0) {
+		_susanBenchPatch.draw(_background, benchFrame, 0, 0);
 	}
 	if (!_susanAnimation.load(_archive, _museum.susan == 1 ? 15 : _museum.susan == 3 ? 16 : 8,
 			_museum.susan == 1 ? 170 : _museum.susan == 3 ? 2 : 75)) {
@@ -228,8 +233,11 @@ void Scene4050::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport
 		(_roomAction == 450 || _roomAction == 451 || _roomAction == 452 || _roomAction == 331 || _roomAction == 454);
 	if (!movingSusan) {
 		_susanAnimation.draw(viewport, museumChapter() ? _susanFrame : 0, _camera.x, -_camera.y);
+		// Only the seated working poses omit Susan's legs from their frames.
+		if (!museumChapter() || !_museum.susan) {
+			_susanLegsAnimation.draw(viewport, 0, _camera.x, -_camera.y);
+		}
 	}
-	_laserAnimation.draw(viewport, 0, _camera.x, -_camera.y);
 }
 
 void Scene4050::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) {
@@ -244,6 +252,9 @@ void Scene4050::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport
 	}
 	if (_position.y < 501) {
 		drawForeground(viewport, 3);
+		if (museumChapter() && _museum.susan >= 2) {
+			_susanAnimation.draw(viewport, _susanFrame, _camera.x, -_camera.y);
+		}
 	}
 }
 
@@ -485,6 +496,14 @@ void Scene4050::finishCustomAnimation(uint16 action) {
 void Scene4050::handleAnimationFrameHook() {
 	if ((_roomAction == 328 || _roomAction == 428) && (_actionStep == 4 || _actionStep == 2)) {
 		_audio.playEffect(37, 204);
+	}
+	// The original updates the bench as Susan leaves and returns.
+	if ((_roomAction == 450 || _roomAction == 452) && _actionStep == 8) {
+		_susanBenchFrame = 0;
+		_susanBenchPatch.draw(_background, _susanBenchFrame, 0, 0);
+	} else if (_roomAction == 451 && _actionStep == 90) {
+		_susanBenchFrame = 1;
+		_susanBenchPatch.draw(_background, _susanBenchFrame, 0, 0);
 	}
 }
 

@@ -54,8 +54,9 @@ private:
 
 	void startSusanConversation();
 
-	RunawayAnimation _susanAnimation, _laserAnimation;
+	RunawayAnimation _susanAnimation, _susanLegsAnimation, _susanBenchPatch;
 	byte _susanFrame = 0;
+	int8 _susanBenchFrame = -1;
 	uint32 _nextLaser = 0;
 };
 
