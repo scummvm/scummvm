@@ -40,17 +40,18 @@ enum RunawayRoomId {
 };
 
 struct RunawayHotspot {
-	constexpr RunawayHotspot() : x(0), y(0), facing(0), action{0, 0}, approach{0, 0}, exitCursor(0) {}
+	constexpr RunawayHotspot() : x(0), y(0), facing(0), action{0, 0}, approach{0, 0}, actionCursor(0), preferLook(false) {}
 	constexpr RunawayHotspot(int16 xPos, int16 yPos, byte direction, const uint16 (&actions)[2],
-			const int8 (&approaches)[2], Common::Point lookAt, byte cursor = 0) :
+			const int8 (&approaches)[2], Common::Point lookAt, byte cursor = 0, bool lookFirst = false) :
 		x(xPos), y(yPos), facing(direction), action{actions[0], actions[1]},
-		approach{approaches[0], approaches[1]}, lookPosition(lookAt), exitCursor(cursor) {}
+		approach{approaches[0], approaches[1]}, lookPosition(lookAt), actionCursor(cursor), preferLook(lookFirst) {}
 	int16 x, y;
 	byte facing;
 	uint16 action[2]; // Look, use; IDs from the original room's action table.
 	int8 approach[2]; // -1: keep facing; 0: face lookPosition; 1: walk and turn; 2/3: walk without turning.
 	Common::Point lookPosition;
-	byte exitCursor; // 0: ordinary hotspot; 4..7: northwest, northeast, southeast, southwest.
+	byte actionCursor; // 0: ordinary hotspot; 3: talk; 4..7: northwest, northeast, southeast, southwest.
+	bool preferLook; // Start with look even when the hotspot has a special action cursor.
 };
 
 struct RunawayItemAction {

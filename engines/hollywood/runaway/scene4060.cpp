@@ -50,7 +50,7 @@ const RunawayHotspot kHotspots[] = {
 	{1596, 351, 1, {326, 327}, {0, 0}, {1694, 186}}, // 11: Display case.
 	{140, 504, 7, {304, 305}, {0, 1}, {206, 618}, 4}, // 12: Stairs.
 	{1085, 411, 7, {304, 306}, {0, 1}, {1140, 446}, 4}, // 13: Stairs.
-	{921, 813, 7, {307, 308}, {0, 1}, {840, 730}}, // 14: Maintenance worker.
+	{921, 813, 7, {307, 308}, {0, 1}, {840, 730}, 3}, // 14: Maintenance worker.
 	{1588, 506, 7, {309, 310}, {0, 1}, {1610, 450}, 5}, // 15: Mayan exhibition.
 	{711, 797, 7, {328, 329}, {1, 0}, {670, 726}}, // 16: Plaque.
 	{1060, 730, 7, {330, 331}, {1, 0}, {984, 638}}, // 17: Plaque.
@@ -137,11 +137,11 @@ namespace Runaway {
 Scene4060::Scene4060(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
 
-byte Scene4060::exitCursor(byte id) const {
+byte Scene4060::actionCursor(byte id) const {
 	if (id == 7) {
 		return _museum.keypad == 4 ? 4 : 0;
 	}
-	return RunawayRoomScene::exitCursor(id);
+	return RunawayRoomScene::actionCursor(id);
 }
 
 const char *Scene4060::actionCaptionVariant(byte id, bool look, byte item) const {

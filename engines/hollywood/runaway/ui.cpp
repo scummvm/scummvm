@@ -145,8 +145,8 @@ bool RunawayUI::inViewport() const {
 		_mouse.y >= kRunawayViewportTop && _mouse.y < kRunawayViewportTop + kRunawayViewportHeight;
 }
 
-void RunawayUI::setVerb(RunawayVerb verb, byte exitCursor) {
-	const byte cursor = verb == kVerbUse && exitCursor ? exitCursor : (byte)verb;
+void RunawayUI::setVerb(RunawayVerb verb, byte actionCursor) {
+	const byte cursor = verb == kVerbUse && actionCursor ? actionCursor : (byte)verb;
 	if (_verb != verb || _cursorType != cursor) {
 		if (_pointerSound && (_inventoryOpen || _roomHasVerbs) && !_blocked && !_speaking && !busy()) {
 			_audio.playPointer();
@@ -156,7 +156,7 @@ void RunawayUI::setVerb(RunawayVerb verb, byte exitCursor) {
 		_verb = verb;
 		_verbStarted = _now;
 	}
-	_exitCursor = exitCursor;
+	_actionCursor = actionCursor;
 }
 
 void RunawayUI::captureState(RunawaySaveState &state) const {
@@ -174,7 +174,8 @@ void RunawayUI::restoreState(const RunawaySaveState &state, uint32 now) {
 	_enteredInventory = false;
 	_verb = (RunawayVerb)state.verb;
 	_cursorType = _previousCursor = state.verb;
-	_exitCursor = 0;
+	_actionCursor = 0;
+	_preferLook = false;
 	_cursorKey = -1;
 	// The options cursor may still be on top of the stack. Rebuild ours
 	// on the next gameplay update, after the menu has popped its cursor.
@@ -209,7 +210,7 @@ bool RunawayUI::cancel() {
 }
 
 void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool blocked, bool speaking,
-		bool inventoryPresentation, byte speechFrame, bool roomHasVerbs, byte exitCursor) {
+		bool inventoryPresentation, byte speechFrame, bool roomHasVerbs, byte actionCursor, bool preferLook) {
 	_now = now;
 	_mouse = mouse;
 	_blocked = blocked;
@@ -253,14 +254,16 @@ void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool b
 			setInventoryOpen(false);
 	}
 	const byte hovered = _inventoryOpen ? itemAt(mouse) : roomHotspot;
-	if (_inventoryOpen || !roomHasVerbs || _museum) {
-		exitCursor = 0;
+	if (_inventoryOpen || !roomHasVerbs || (_museum && actionCursor != 3)) {
+		actionCursor = 0;
+		preferLook = false;
 	}
-	if (_hovered != hovered || _roomHasVerbs != roomHasVerbs || _exitCursor != exitCursor) {
+	if (_hovered != hovered || _roomHasVerbs != roomHasVerbs || _actionCursor != actionCursor || _preferLook != preferLook) {
 		_hovered = hovered;
 		_roomHasVerbs = roomHasVerbs;
+		_preferLook = preferLook;
 		setVerb(hovered && (_inventoryOpen || _roomHasVerbs) ?
-			(_inventoryOpen || exitCursor ? kVerbUse : kVerbLook) : kVerbWalk, exitCursor);
+			(_inventoryOpen || (actionCursor && !preferLook) ? kVerbUse : kVerbLook) : kVerbWalk, actionCursor);
 	}
 	if (now - _buttonTick >= 20) {
 		const uint steps = MIN<uint>(6, (now - _buttonTick) / 20);
@@ -329,7 +332,7 @@ RunawayUI::Command RunawayUI::click(bool right) {
 		if (_inventory.selected()) {
 			_inventory.select(0);
 		} else if (_hovered && (_inventoryOpen || _roomHasVerbs)) {
-			setVerb(_verb == kVerbLook ? kVerbUse : kVerbLook, _exitCursor);
+			setVerb(_verb == kVerbLook ? kVerbUse : kVerbLook, _actionCursor);
 		}
 		return command;
 	}
@@ -374,8 +377,10 @@ void RunawayUI::updateCursor() {
 		return;
 	const bool useVerbs = _inventoryOpen || _roomHasVerbs;
 	const byte item = _choices.empty() && useVerbs ? _inventory.selected() : 0;
-	const RunawayVerb verb = useVerbs ? _verb : kVerbWalk;
-	uint tile = _museum ? (verb == kVerbWalk ? 0 : verb == kVerbLook ? 6 : 7) : useVerbs ? _cursorType : 0;
+	uint tile = useVerbs ? _cursorType : 0;
+	if (_museum && tile) {
+		tile = tile == 1 ? 6 : tile == 3 ? 8 : 7;
+	}
 	uint shade = 0;
 	if (item) {
 		tile = _inventory.cursor(item) + (_hovered != 0);

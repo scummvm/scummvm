@@ -126,7 +126,8 @@ Common::Point RunawayEngine::updateUI(uint32 now) {
 		const byte hotspot = _scene->hotspotAt(mouse);
 		_ui->setDialogueChoices(_scene->dialogueChoices());
 		_ui->update(now, mouse, hotspot, sceneBusy(), _scene->speaking(),
-			_scene->inventoryPresentation(), _scene->speechFrame(), _scene->hasVerbControls(), _scene->exitCursor(hotspot));
+			_scene->inventoryPresentation(), _scene->speechFrame(), _scene->hasVerbControls(),
+			_scene->actionCursor(hotspot), _scene->preferLook(hotspot));
 	}
 	return mouse;
 }

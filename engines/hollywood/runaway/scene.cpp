@@ -294,9 +294,14 @@ const RunawayHotspot *RunawayRoomScene::hotspot(byte id) const {
 	return _roomData && id && id < _roomData->hotspotCount ? &_roomData->hotspots[id] : nullptr;
 }
 
-byte RunawayRoomScene::exitCursor(byte id) const {
+byte RunawayRoomScene::actionCursor(byte id) const {
 	const RunawayHotspot *target = hotspot(id);
-	return target ? target->exitCursor : 0;
+	return target ? target->actionCursor : 0;
+}
+
+bool RunawayRoomScene::preferLook(byte id) const {
+	const RunawayHotspot *target = hotspot(id);
+	return target && target->preferLook;
 }
 
 byte RunawayRoomScene::hotspotAt(Common::Point mouse) const {

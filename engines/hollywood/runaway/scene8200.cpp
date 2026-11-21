@@ -34,7 +34,7 @@ const RunawayHotspot kHotspots[] = {
 	{1020, 483, 0, {308, 309}, {0, 0}, {1020, 458}}, // 5: Desk.
 	{1020, 483, 0, {310, 311}, {0, 0}, {1020, 458}}, // 6: Gun cabinet.
 	{857, 490, 0, {312, 313}, {0, 0}, {857, 435}}, // 7: Bulletin board.
-	{285, 501, 0, {306, 307}, {0, 0}, {271, 444}} // 8: Gustav and Feodor.
+	{285, 501, 0, {306, 307}, {0, 0}, {271, 444}, 3, true} // 8: Gustav and Feodor.
 };
 
 const RunawayResponse kResponses[] = {
