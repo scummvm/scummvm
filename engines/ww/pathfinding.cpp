@@ -133,8 +133,8 @@ void WWEngine::walkCalcOtherActorDest(int flag, int &x, int &y) {
 }
 
 int WWEngine::walkCalcPath(int flag, int sourceX, int sourceY, int destX, int destY, int pointsCount) {
-	if (pointsCount >= 300)
-		return 299;
+	if (pointsCount >= kWalkPointsCount)
+		return kWalkPointsCount - 1;
 
 	if (walkIsLineWalkable(sourceX, sourceY, destX, destY))
 		return walkAddWalkLine(flag, sourceX, sourceY, destX, destY, pointsCount);
@@ -328,7 +328,12 @@ int WWEngine::walkCalcDirection(int deltaX, int deltaY) {
 int WWEngine::walkAddWalkLine(int flag, int x1, int y1, int x2, int y2, int pointsCount) {
 	WalkPoint *walkPoints = flag == 0 ? _wayneWalkPoints : _garthWalkPoints;
 	const int newDirection = walkCalcDirection(x1 - x2, y1 - y2);
+	const int maxPoints = kWalkPointsCount - 1; // keep room for the end point
+
 	// debug("walkAddWalkLine() %d, %d, %d, %d", x1, y1, x2, y2);
+	
+	if (pointsCount >= maxPoints)
+		return pointsCount;
 
 	if (pointsCount == 0 || walkPoints[pointsCount - 1].x != x1 || walkPoints[pointsCount - 1].y != y1) {
 		walkPoints[pointsCount].x = x1;
