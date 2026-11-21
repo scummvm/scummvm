@@ -1290,7 +1290,7 @@ void Insane::smlayer_soundSetPriority(int32 soundId, int32 priority) {
 void Insane::smlayer_drawSomething(byte *renderBitmap, int32 codecparam,
 			   int32 x, int32 y, int32 arg_10, NutRenderer *nutfile,
 			   int32 c, int32 arg_1C, int32 arg_20) {
-	nutfile->drawFrame(renderBitmap, c, x, y, codecparam); // codecparam appears to be pitch
+	nutfile->drawFrame(renderBitmap, c, x, y, codecparam ? codecparam : -1);
 }
 
 void Insane::smlayer_overrideDrawActorAt(byte *arg_0, byte arg_4, byte arg_8) {
