@@ -33,7 +33,7 @@
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOMIDI)
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_RESTORED_CONTENT)
 	},
 	// English GOG release, with Bink movies.
 	{
@@ -45,7 +45,7 @@
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOMIDI)
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_RESTORED_CONTENT)
 	},
 	// Spanish DVD release, with Bink movies.
 	{
@@ -57,7 +57,7 @@
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOMIDI)
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_RESTORED_CONTENT)
 	},
 	// English museum demo (2000). Gameplay POC; movies are not supported.
 	{
