@@ -697,7 +697,7 @@ int WWEngine::drawActors(int direction, int wayneKind, int garthKind, int sprite
 
 	if (_garthSpriteX != -1) {
 		_garthActorScale = getActorScaleFromY(garthY);
-		garthHeight = (100 - _garthActorScale) * 48 / 100;
+		garthHeight = (100 - _garthActorScale) * 48 / 90;
 		garthWidth = _garthActorScale * 13 / 100;
 		const int scaledGarthWidth = _garthActorScale * 27 / 100;
 		const int scaledGarthHeight = _garthActorScale * 48 / 100;
