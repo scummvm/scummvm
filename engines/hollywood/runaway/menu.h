@@ -63,7 +63,7 @@ public:
 	void operationDone(bool success);
 	int selectedSlot() const { return _selectedSlot; }
 	int selectedChapter() const { return _selectedChapter; }
-	Common::String saveDescription() const { return _name.encode(); }
+	Common::String saveDescription() const;
 	bool enteringName() const { return _page == kName; }
 	void draw(Graphics::ManagedSurface &screen);
 	const Settings &settings() const { return _settings; }
