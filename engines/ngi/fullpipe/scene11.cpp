@@ -558,7 +558,7 @@ void sceneHandler11_swingieSit() {
 	}
 }
 
-void sceneHandler11_swingieJumpDown() {
+void sceneHandler11_doSwingerJumpdown() {
 	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SWR_JUMPDOWN), 0, 0);
 
 	mq->setFlags(mq->getFlags() | 1);
@@ -719,7 +719,7 @@ int sceneHandler11(Command *cmd) {
 			if (!g_vars->scene11_arcadeIsOn && g_vars->scene11_swingIsSwinging) {
 				if (!g_vars->scene11_swingie->_movement) {
 					if ((g_vars->scene11_boots->_flags & 4) && g_vars->scene11_boots->_statics->_staticsId == ST_BTS11_2)
-						sceneHandler11_swingieJumpDown();
+						sceneHandler11_doSwingerJumpdown();
 					else
 						g_vars->scene11_swingie->startMovement(MV_SWR_SWING, 0, -1);
 				}
