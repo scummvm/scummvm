@@ -132,7 +132,7 @@ struct RunawaySaveState {
 		byte cliffVisited = 0, skeletonSeen = 0, nail = 0, timber = 0;
 		byte femurTaken = 0, rockTried = 0;
 		byte ginaFound = 0, villageLevel = 0, rope = 0, legSplinted = 0;
-		byte cryptVisited = 0;
+		byte cryptVisited = 0, cryptReturnVisited = 0;
 		byte canyonVisited = 0, cryptEntranceVisited = 0, keyholeBlockedKnown = 0, bushSeen = 0;
 		byte cryptDoor = 0; // Sand-blocked, cleared, open, sealed after visiting Wupuchim.
 		byte statueVisited = 0, tomahawk = 0, leftCrossSeen = 0, rightCrossSeen = 0;

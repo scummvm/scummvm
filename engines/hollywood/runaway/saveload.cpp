@@ -386,6 +386,7 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(town.motorcycleRefilled, 28);
 	s.syncAsByte(town.wateringCanTaken, 29);
 	s.syncAsByte(town.cellVisited, 29);
+	s.syncAsByte(hopi.cryptReturnVisited, 30);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -538,7 +539,7 @@ bool RunawaySaveState::valid() const {
 		return false;
 	}
 	if (hopi.canyonVisited > 1 || hopi.cryptEntranceVisited > 1 || hopi.keyholeBlockedKnown > 1 ||
-			hopi.bushSeen > 1 || hopi.cryptDoor > 3) {
+			hopi.bushSeen > 1 || hopi.cryptDoor > 3 || hopi.cryptReturnVisited > 1) {
 		return false;
 	}
 	if (hopi.statueVisited > 1 || hopi.tomahawk > 2 || hopi.leftCrossSeen > 1 || hopi.rightCrossSeen > 1) {
@@ -586,7 +587,7 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 29)
+	if (version < 1 || version > 30)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
@@ -616,9 +617,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(29);
+	stream.writeUint16LE(30);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(29);
+	s.setVersion(30);
 	sync(s);
 	return !s.err();
 }
