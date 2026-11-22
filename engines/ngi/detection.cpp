@@ -194,6 +194,21 @@ static const NGIGameDescription gameDescriptions[] = {
 		GID_FULLPIPE
 	},
 
+	// Full Pipe Android version
+	{
+		{
+			"fullpipe",
+			nullptr,
+			AD_ENTRY2s("Full-Pipe-v1-0-0.apk", "71f99c6d83f68169695aa30f055d2bab", 48598381,
+					   "main.7.com.absolutist.fullpipepremium.obb", "e5570f4162cd1bbbe457eadc5875bcf2", 162825463),
+			Common::UNK_LANG,
+			Common::kPlatformAndroid,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GID_FULLPIPE
+	},
+
 	{ AD_TABLE_END_MARKER, 0 }
 };
 

@@ -51,6 +51,10 @@ Common::Language NGIEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
 
+Common::Platform NGIEngine::getPlatform() const {
+	return _gameDescription->desc.platform;
+}
+
 const char *NGIEngine::getGameId() const {
 	return _gameDescription->desc.gameId;
 }
