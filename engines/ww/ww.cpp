@@ -1042,7 +1042,7 @@ void WWEngine::moveObjectToRoom(int objectId, int roomNum) {
 }
 
 void WWEngine::moveObjectToNowhere(int objectId) {
-	if (objectId <= kLastInventoryObjectId) {
+	if (objectId <= kLastInventoryObjectId && objectId >= kFirstInventoryObjectId) {
 		const int inventoryIndex = objectId - kFirstInventoryObjectId;
 		if (isActorWayne()) {
 			_wayneInventory[inventoryIndex]--;
