@@ -311,7 +311,7 @@ void WWEngine::paletteFadeColor(int index, byte r, byte g, byte b, int steps) {
 	const int deltaG = fadePalette[(index * 3) + 1] >= destG ? 1 : -1;
 	const int deltaB = fadePalette[(index * 3) + 2] >= destB ? 1 : -1;
 	
-	while (fadePalette[index * 3] != destR && fadePalette[(index * 3) + 1] != destG && fadePalette[(index * 3) + 2] != destB) {
+	while (fadePalette[index * 3] != destR || fadePalette[(index * 3) + 1] != destG || fadePalette[(index * 3) + 2] != destB) {
 		fadePalette[index * 3] = ABS(fadePalette[index * 3] - destR) < steps ? destR : fadePalette[index * 3] - (steps * deltaR);
 		fadePalette[(index * 3) + 1] = ABS(fadePalette[(index * 3) + 1] - destG) < steps ? destG : fadePalette[(index * 3) + 1] - (steps * deltaG);
 		fadePalette[(index * 3) + 2] = ABS(fadePalette[(index * 3) + 2] - destB) < steps ? destB : fadePalette[(index * 3) + 2] - (steps * deltaB);
@@ -680,7 +680,6 @@ void WWEngine::loadStaticRoomObjects(int roomNum) {
 	for (int index = 0; index < count; index++) {
 		const StaticRoomObject &roomObject = _staticRoomObjects[startIndex + index];
 		if (roomObject.x1 != -1) {
-			debug("%s", roomObject.name);
 			Common::String objectName = Common::String::format("%s.pcx", roomObject.name);
 			_staticRoomObjectSprites[index] = _roomGxl->loadRoomSurface(objectName.c_str());
 			_backgroundSurface->drawSurfaceTransparent(_staticRoomObjectSprites[index], roomObject.x1, roomObject.y1);
