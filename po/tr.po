@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-21 00:05+0000\n"
+"POT-Creation-Date: 2026-11-22 06:38+0000\n"
 "PO-Revision-Date: 2024-10-10 12:33+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -4096,7 +4096,7 @@ msgid "Pause"
 msgstr ""
 
 #: engines/metaengine.cpp:120 engines/harvester/metaengine.cpp:93
-#: engines/hollywood/runaway/engine.cpp:817 engines/igor/metaengine.cpp:98
+#: engines/hollywood/runaway/engine.cpp:828 engines/igor/metaengine.cpp:98
 #: engines/parallaction/metaengine.cpp:163
 #: engines/scumm/insane/mortimer/mortimer.cpp:79
 #: engines/ultima/ultima8/metaengine.cpp:47
@@ -4123,8 +4123,8 @@ msgstr "Oyun"
 msgid "Skip"
 msgstr ""
 
-#: engines/metaengine.cpp:134 engines/sky/metaengine.cpp:121
-#: engines/supernova/metaengine.cpp:315
+#: engines/metaengine.cpp:134 engines/hollywood/runaway/engine.cpp:850
+#: engines/sky/metaengine.cpp:121 engines/supernova/metaengine.cpp:315
 msgid "Skip line"
 msgstr ""
 
@@ -4473,34 +4473,34 @@ msgid "Resolution: %dx%d"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1079
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2876
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2887
 msgid "Active graphics filter:"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1100
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2910
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2921
 #, fuzzy
 msgid "Enabled aspect ratio correction"
 msgstr "Görüntü oranı düzeltme"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1102
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2916
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2927
 #, fuzzy
 msgid "Disabled aspect ratio correction"
 msgstr "Görüntü oranı düzeltme"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1115
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2932
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2943
 msgid "Filtering enabled"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1117
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2934
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2945
 msgid "Filtering disabled"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1143
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2961
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2972
 #, fuzzy
 msgid "Stretch mode"
 msgstr "Çekiştirme modu:"
@@ -6427,7 +6427,7 @@ msgstr ""
 #: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
 #: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:542
 #: engines/grim/grim.cpp:642 engines/harvester/metaengine.cpp:92
-#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:828
+#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:839
 #: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
 #: engines/icb/icb.cpp:179 engines/macs2/metaengine.cpp:64
 #: engines/petka/metaengine.cpp:173 engines/phoenixvr/metaengine.cpp:82
@@ -10501,48 +10501,43 @@ msgstr "Oyunun tam ismi"
 msgid "Pan voices and footsteps according to their positions on screen"
 msgstr ""
 
-#: engines/hollywood/runaway/engine.cpp:785
+#: engines/hollywood/runaway/engine.cpp:796
 #, fuzzy
 #| msgid "Interpolation:"
 msgid "Perform action"
 msgstr "Enterpolasyon:"
 
-#: engines/hollywood/runaway/engine.cpp:791
-#: engines/hollywood/runaway/engine.cpp:834
+#: engines/hollywood/runaway/engine.cpp:802
+#: engines/hollywood/runaway/engine.cpp:845
 msgid "Next action / Cancel"
 msgstr ""
 
-#: engines/hollywood/runaway/engine.cpp:797 engines/sherlock/metaengine.cpp:578
+#: engines/hollywood/runaway/engine.cpp:808 engines/sherlock/metaengine.cpp:578
 #, fuzzy
 msgid "Scroll left"
 msgstr "Sol"
 
-#: engines/hollywood/runaway/engine.cpp:802 engines/sherlock/metaengine.cpp:584
+#: engines/hollywood/runaway/engine.cpp:813 engines/sherlock/metaengine.cpp:584
 #, fuzzy
 #| msgid "Right"
 msgid "Scroll right"
 msgstr "Sağ"
 
-#: engines/hollywood/runaway/engine.cpp:807
+#: engines/hollywood/runaway/engine.cpp:818
 #, fuzzy
 msgid "Scroll to the left edge"
 msgstr "Aşağı"
 
-#: engines/hollywood/runaway/engine.cpp:812
+#: engines/hollywood/runaway/engine.cpp:823
 #, fuzzy
 msgid "Scroll to the right edge"
 msgstr "Sol"
 
-#: engines/hollywood/runaway/engine.cpp:823
+#: engines/hollywood/runaway/engine.cpp:834
 #, fuzzy
-#| msgid "Change game options"
-msgid "Cancel action / Menu"
-msgstr "Oyun seçeneklerini değiştirme"
-
-#: engines/hollywood/runaway/engine.cpp:839
-#, fuzzy
-msgid "Skip intro / Skip line"
-msgstr "Gizli dosyaları göster"
+#| msgid "Speech"
+msgid "Skip cutscene / Cancel action / Menu"
+msgstr "Konuşma:"
 
 #: engines/hopkins/base_enhancements.cpp:313
 #, fuzzy
@@ -18999,6 +18994,15 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Change game options"
+#~ msgid "Cancel action / Menu"
+#~ msgstr "Oyun seçeneklerini değiştirme"
+
+#, fuzzy
+#~ msgid "Skip intro / Skip line"
+#~ msgstr "Gizli dosyaları göster"
 
 #, fuzzy
 #~| msgid "Backend"

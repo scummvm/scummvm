@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-21 00:05+0000\n"
+"POT-Creation-Date: 2026-11-22 06:38+0000\n"
 "PO-Revision-Date: 2026-04-23 00:22+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -4270,7 +4270,7 @@ msgid "Pause"
 msgstr "Παύση"
 
 #: engines/metaengine.cpp:120 engines/harvester/metaengine.cpp:93
-#: engines/hollywood/runaway/engine.cpp:817 engines/igor/metaengine.cpp:98
+#: engines/hollywood/runaway/engine.cpp:828 engines/igor/metaengine.cpp:98
 #: engines/parallaction/metaengine.cpp:163
 #: engines/scumm/insane/mortimer/mortimer.cpp:79
 #: engines/ultima/ultima8/metaengine.cpp:47
@@ -4296,8 +4296,8 @@ msgstr "Μενού παιχνιδιού"
 msgid "Skip"
 msgstr "Παράλειψη"
 
-#: engines/metaengine.cpp:134 engines/sky/metaengine.cpp:121
-#: engines/supernova/metaengine.cpp:315
+#: engines/metaengine.cpp:134 engines/hollywood/runaway/engine.cpp:850
+#: engines/sky/metaengine.cpp:121 engines/supernova/metaengine.cpp:315
 msgid "Skip line"
 msgstr "Παράλειψη γραμμής"
 
@@ -4650,32 +4650,32 @@ msgid "Resolution: %dx%d"
 msgstr "Ανάλυση: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1079
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2876
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2887
 msgid "Active graphics filter:"
 msgstr "Ενεργό φίλτρο γραφικών:"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1100
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2910
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2921
 msgid "Enabled aspect ratio correction"
 msgstr "Ενεργοποιήθηκε η διόρθωση αναλογίας διαστάσεων"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1102
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2916
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2927
 msgid "Disabled aspect ratio correction"
 msgstr "Απενεργοποιήθηκε η διόρθωση αναλογίας διαστάσεων"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1115
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2932
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2943
 msgid "Filtering enabled"
 msgstr "Ενεργοποίηση φιλτραρίσματος"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1117
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2934
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2945
 msgid "Filtering disabled"
 msgstr "Απενεργοποίηση φιλτραρίσματος"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1143
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2961
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2972
 msgid "Stretch mode"
 msgstr "Λειτουργία επέκτασης εικόνας"
 
@@ -6931,7 +6931,7 @@ msgstr "Πάρε"
 #: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
 #: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:542
 #: engines/grim/grim.cpp:642 engines/harvester/metaengine.cpp:92
-#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:828
+#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:839
 #: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
 #: engines/icb/icb.cpp:179 engines/macs2/metaengine.cpp:64
 #: engines/petka/metaengine.cpp:173 engines/phoenixvr/metaengine.cpp:82
@@ -11022,50 +11022,44 @@ msgstr "Ενεργοποίηση κοινού στούντιο"
 msgid "Pan voices and footsteps according to their positions on screen"
 msgstr ""
 
-#: engines/hollywood/runaway/engine.cpp:785
+#: engines/hollywood/runaway/engine.cpp:796
 #, fuzzy
 #| msgid "Perform default action"
 msgid "Perform action"
 msgstr "Εκτέλεση προεπιλεγμένης ενέργειας"
 
-#: engines/hollywood/runaway/engine.cpp:791
-#: engines/hollywood/runaway/engine.cpp:834
+#: engines/hollywood/runaway/engine.cpp:802
+#: engines/hollywood/runaway/engine.cpp:845
 #, fuzzy
 #| msgid "Next action"
 msgid "Next action / Cancel"
 msgstr "Επόμενη ενέργεια"
 
-#: engines/hollywood/runaway/engine.cpp:797 engines/sherlock/metaengine.cpp:578
+#: engines/hollywood/runaway/engine.cpp:808 engines/sherlock/metaengine.cpp:578
 msgid "Scroll left"
 msgstr "Κύλιση αριστερά"
 
-#: engines/hollywood/runaway/engine.cpp:802 engines/sherlock/metaengine.cpp:584
+#: engines/hollywood/runaway/engine.cpp:813 engines/sherlock/metaengine.cpp:584
 msgid "Scroll right"
 msgstr "Κύλιση δεξιά"
 
-#: engines/hollywood/runaway/engine.cpp:807
+#: engines/hollywood/runaway/engine.cpp:818
 #, fuzzy
 #| msgid "Scroll to top left"
 msgid "Scroll to the left edge"
 msgstr "Κύλιση ως πάνω αριστερά"
 
-#: engines/hollywood/runaway/engine.cpp:812
+#: engines/hollywood/runaway/engine.cpp:823
 #, fuzzy
 #| msgid "Scroll to bottom right"
 msgid "Scroll to the right edge"
 msgstr "Κύλιση ως κάτω δεξιά"
 
-#: engines/hollywood/runaway/engine.cpp:823
+#: engines/hollywood/runaway/engine.cpp:834
 #, fuzzy
-#| msgid "Cancel action"
-msgid "Cancel action / Menu"
-msgstr "Ακύρωση ενέργειας"
-
-#: engines/hollywood/runaway/engine.cpp:839
-#, fuzzy
-#| msgid "Skip intro / Exit map or inventory"
-msgid "Skip intro / Skip line"
-msgstr "Παράκαμψη εισαγωγής / Έξοδος από χάρτη ή υπάρχοντα"
+#| msgid "Skip cutscene"
+msgid "Skip cutscene / Cancel action / Menu"
+msgstr "Παράλειψη ταινίας"
 
 #: engines/hopkins/base_enhancements.cpp:313
 #, fuzzy
@@ -19810,6 +19804,16 @@ msgstr ""
 "απαιτούν ήχο MIDI για την επίλυσή τους.  Αυτοί οι γρίφοι εναλλακτικά μπορεί "
 "να επιλυθούν με χρήση υπότιτλων , αν υποστηρίζονται. Θα συνεχίσετε την "
 "εκκίνηση του παιχνιδιού;"
+
+#, fuzzy
+#~| msgid "Cancel action"
+#~ msgid "Cancel action / Menu"
+#~ msgstr "Ακύρωση ενέργειας"
+
+#, fuzzy
+#~| msgid "Skip intro / Exit map or inventory"
+#~ msgid "Skip intro / Skip line"
+#~ msgstr "Παράκαμψη εισαγωγής / Έξοδος από χάρτη ή υπάρχοντα"
 
 #~ msgid "Could not find correct ultima.dat datafile"
 #~ msgstr "Αδυναμία εύρεσης του σωστού αρχείου ultima.dat"

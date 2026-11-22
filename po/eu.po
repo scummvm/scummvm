@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-21 00:05+0000\n"
+"POT-Creation-Date: 2026-11-22 06:38+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -4169,7 +4169,7 @@ msgid "Pause"
 msgstr "Gelditu"
 
 #: engines/metaengine.cpp:120 engines/harvester/metaengine.cpp:93
-#: engines/hollywood/runaway/engine.cpp:817 engines/igor/metaengine.cpp:98
+#: engines/hollywood/runaway/engine.cpp:828 engines/igor/metaengine.cpp:98
 #: engines/parallaction/metaengine.cpp:163
 #: engines/scumm/insane/mortimer/mortimer.cpp:79
 #: engines/ultima/ultima8/metaengine.cpp:47
@@ -4196,8 +4196,8 @@ msgstr "Jokoaren menua"
 msgid "Skip"
 msgstr "Saltatu"
 
-#: engines/metaengine.cpp:134 engines/sky/metaengine.cpp:121
-#: engines/supernova/metaengine.cpp:315
+#: engines/metaengine.cpp:134 engines/hollywood/runaway/engine.cpp:850
+#: engines/sky/metaengine.cpp:121 engines/supernova/metaengine.cpp:315
 msgid "Skip line"
 msgstr "Lerroa saltatu"
 
@@ -4555,34 +4555,34 @@ msgid "Resolution: %dx%d"
 msgstr "Bereizmena: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1079
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2876
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2887
 msgid "Active graphics filter:"
 msgstr "Filtro grafiko aktiboa:"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1100
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2910
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2921
 msgid "Enabled aspect ratio correction"
 msgstr "Formatu-ratio zuzenketa gaituta"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1102
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2916
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2927
 msgid "Disabled aspect ratio correction"
 msgstr "Formatu-ratio zuzenketa desgaituta"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1115
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2932
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2943
 #, fuzzy
 msgid "Filtering enabled"
 msgstr "Klikatzea gaituta"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1117
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2934
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2945
 #, fuzzy
 msgid "Filtering disabled"
 msgstr "Klikatzea desgaituta"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1143
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2961
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2972
 #, fuzzy
 msgid "Stretch mode"
 msgstr "Helio modua"
@@ -6593,7 +6593,7 @@ msgstr "Kendu"
 #: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
 #: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:542
 #: engines/grim/grim.cpp:642 engines/harvester/metaengine.cpp:92
-#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:828
+#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:839
 #: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
 #: engines/icb/icb.cpp:179 engines/macs2/metaengine.cpp:64
 #: engines/petka/metaengine.cpp:173 engines/phoenixvr/metaengine.cpp:82
@@ -10921,50 +10921,44 @@ msgstr "Gaitu estudio ingurunea"
 msgid "Pan voices and footsteps according to their positions on screen"
 msgstr ""
 
-#: engines/hollywood/runaway/engine.cpp:785
+#: engines/hollywood/runaway/engine.cpp:796
 #, fuzzy
 #| msgid "Look at"
 msgid "Perform action"
 msgstr "Begiratu"
 
-#: engines/hollywood/runaway/engine.cpp:791
-#: engines/hollywood/runaway/engine.cpp:834
+#: engines/hollywood/runaway/engine.cpp:802
+#: engines/hollywood/runaway/engine.cpp:845
 #, fuzzy
 msgid "Next action / Cancel"
 msgstr "~A~urrekoa"
 
-#: engines/hollywood/runaway/engine.cpp:797 engines/sherlock/metaengine.cpp:578
+#: engines/hollywood/runaway/engine.cpp:808 engines/sherlock/metaengine.cpp:578
 #, fuzzy
 msgid "Scroll left"
 msgstr "Ezkerrera irristatu"
 
-#: engines/hollywood/runaway/engine.cpp:802 engines/sherlock/metaengine.cpp:584
+#: engines/hollywood/runaway/engine.cpp:813 engines/sherlock/metaengine.cpp:584
 #, fuzzy
 msgid "Scroll right"
 msgstr "Eskuinera irristatu"
 
-#: engines/hollywood/runaway/engine.cpp:807
+#: engines/hollywood/runaway/engine.cpp:818
 #, fuzzy
 #| msgid "Scroll list up"
 msgid "Scroll to the left edge"
 msgstr "Gora"
 
-#: engines/hollywood/runaway/engine.cpp:812
+#: engines/hollywood/runaway/engine.cpp:823
 #, fuzzy
 msgid "Scroll to the right edge"
 msgstr "Ezkerrera irristatu"
 
-#: engines/hollywood/runaway/engine.cpp:823
+#: engines/hollywood/runaway/engine.cpp:834
 #, fuzzy
-#| msgid "Change game options"
-msgid "Cancel action / Menu"
-msgstr "Aldatu jokoaren aukerak"
-
-#: engines/hollywood/runaway/engine.cpp:839
-#, fuzzy
-#| msgid "Skip line"
-msgid "Skip intro / Skip line"
-msgstr "Lerroa saltatu"
+#| msgid "Skip cutscene"
+msgid "Skip cutscene / Cancel action / Menu"
+msgstr "Eszena saltatu"
 
 #: engines/hopkins/base_enhancements.cpp:313
 #, fuzzy
@@ -19845,6 +19839,16 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Change game options"
+#~ msgid "Cancel action / Menu"
+#~ msgstr "Aldatu jokoaren aukerak"
+
+#, fuzzy
+#~| msgid "Skip line"
+#~ msgid "Skip intro / Skip line"
+#~ msgstr "Lerroa saltatu"
 
 #~ msgid ""
 #~ "Unable to access the globally set save path! Please revert to default "

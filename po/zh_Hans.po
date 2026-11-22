@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-21 00:05+0000\n"
+"POT-Creation-Date: 2026-11-22 06:38+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://"
@@ -4134,7 +4134,7 @@ msgid "Pause"
 msgstr "暂停"
 
 #: engines/metaengine.cpp:120 engines/harvester/metaengine.cpp:93
-#: engines/hollywood/runaway/engine.cpp:817 engines/igor/metaengine.cpp:98
+#: engines/hollywood/runaway/engine.cpp:828 engines/igor/metaengine.cpp:98
 #: engines/parallaction/metaengine.cpp:163
 #: engines/scumm/insane/mortimer/mortimer.cpp:79
 #: engines/ultima/ultima8/metaengine.cpp:47
@@ -4160,8 +4160,8 @@ msgstr "游戏菜单"
 msgid "Skip"
 msgstr "跳过"
 
-#: engines/metaengine.cpp:134 engines/sky/metaengine.cpp:121
-#: engines/supernova/metaengine.cpp:315
+#: engines/metaengine.cpp:134 engines/hollywood/runaway/engine.cpp:850
+#: engines/sky/metaengine.cpp:121 engines/supernova/metaengine.cpp:315
 msgid "Skip line"
 msgstr "跳过行"
 
@@ -4503,32 +4503,32 @@ msgid "Resolution: %dx%d"
 msgstr "分辨率：%dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1079
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2876
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2887
 msgid "Active graphics filter:"
 msgstr "活动图形过滤器："
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1100
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2910
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2921
 msgid "Enabled aspect ratio correction"
 msgstr "已启用宽高比矫正"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1102
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2916
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2927
 msgid "Disabled aspect ratio correction"
 msgstr "已禁用宽高比矫正"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1115
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2932
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2943
 msgid "Filtering enabled"
 msgstr "过滤已启用"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1117
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2934
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2945
 msgid "Filtering disabled"
 msgstr "过滤已禁用"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1143
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2961
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2972
 msgid "Stretch mode"
 msgstr "拉伸模式"
 
@@ -6856,7 +6856,7 @@ msgstr "拿取"
 #: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
 #: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:542
 #: engines/grim/grim.cpp:642 engines/harvester/metaengine.cpp:92
-#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:828
+#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:839
 #: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
 #: engines/icb/icb.cpp:179 engines/macs2/metaengine.cpp:64
 #: engines/petka/metaengine.cpp:173 engines/phoenixvr/metaengine.cpp:82
@@ -11200,54 +11200,48 @@ msgstr "启用工作室听众"
 msgid "Pan voices and footsteps according to their positions on screen"
 msgstr ""
 
-#: engines/hollywood/runaway/engine.cpp:785
+#: engines/hollywood/runaway/engine.cpp:796
 #, fuzzy
 #| msgid "General Information"
 msgid "Perform action"
 msgstr "通用信息"
 
-#: engines/hollywood/runaway/engine.cpp:791
-#: engines/hollywood/runaway/engine.cpp:834
+#: engines/hollywood/runaway/engine.cpp:802
+#: engines/hollywood/runaway/engine.cpp:845
 #, fuzzy
 #| msgid "Next action"
 msgid "Next action / Cancel"
 msgstr "下一个操作"
 
-#: engines/hollywood/runaway/engine.cpp:797 engines/sherlock/metaengine.cpp:578
+#: engines/hollywood/runaway/engine.cpp:808 engines/sherlock/metaengine.cpp:578
 #, fuzzy
 #| msgid "Move left"
 msgid "Scroll left"
 msgstr "向左移动"
 
-#: engines/hollywood/runaway/engine.cpp:802 engines/sherlock/metaengine.cpp:584
+#: engines/hollywood/runaway/engine.cpp:813 engines/sherlock/metaengine.cpp:584
 #, fuzzy
 #| msgid "Move right"
 msgid "Scroll right"
 msgstr "向右移动"
 
-#: engines/hollywood/runaway/engine.cpp:807
+#: engines/hollywood/runaway/engine.cpp:818
 #, fuzzy
 #| msgid "Scroll list up"
 msgid "Scroll to the left edge"
 msgstr "向上滚动列表"
 
-#: engines/hollywood/runaway/engine.cpp:812
+#: engines/hollywood/runaway/engine.cpp:823
 #, fuzzy
 #| msgid "Move to bottom"
 msgid "Scroll to the right edge"
 msgstr "移到底部"
 
-#: engines/hollywood/runaway/engine.cpp:823
+#: engines/hollywood/runaway/engine.cpp:834
 #, fuzzy
-#| msgid "Change game options"
-msgid "Cancel action / Menu"
-msgstr "更改游戏设置"
-
-#: engines/hollywood/runaway/engine.cpp:839
-#, fuzzy
-#| msgid "Skip intro/Exit map or inventory"
-msgid "Skip intro / Skip line"
-msgstr "跳过入场动画/退出地图或物品界面"
+#| msgid "Skip cutscene"
+msgid "Skip cutscene / Cancel action / Menu"
+msgstr "跳过过场动画"
 
 #: engines/hopkins/base_enhancements.cpp:313
 #, fuzzy
@@ -20271,6 +20265,16 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Change game options"
+#~ msgid "Cancel action / Menu"
+#~ msgstr "更改游戏设置"
+
+#, fuzzy
+#~| msgid "Skip intro/Exit map or inventory"
+#~ msgid "Skip intro / Skip line"
+#~ msgstr "跳过入场动画/退出地图或物品界面"
 
 #~ msgid "Could not find correct ultima.dat datafile"
 #~ msgstr "找不到正确的 ultima.dat 数据文件"

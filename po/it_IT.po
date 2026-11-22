@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-21 00:05+0000\n"
+"POT-Creation-Date: 2026-11-22 06:38+0000\n"
 "PO-Revision-Date: 2026-07-14 13:57+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -4183,7 +4183,7 @@ msgid "Pause"
 msgstr "Pausa"
 
 #: engines/metaengine.cpp:120 engines/harvester/metaengine.cpp:93
-#: engines/hollywood/runaway/engine.cpp:817 engines/igor/metaengine.cpp:98
+#: engines/hollywood/runaway/engine.cpp:828 engines/igor/metaengine.cpp:98
 #: engines/parallaction/metaengine.cpp:163
 #: engines/scumm/insane/mortimer/mortimer.cpp:79
 #: engines/ultima/ultima8/metaengine.cpp:47
@@ -4209,8 +4209,8 @@ msgstr "Menù di gioco"
 msgid "Skip"
 msgstr "Salta scena"
 
-#: engines/metaengine.cpp:134 engines/sky/metaengine.cpp:121
-#: engines/supernova/metaengine.cpp:315
+#: engines/metaengine.cpp:134 engines/hollywood/runaway/engine.cpp:850
+#: engines/sky/metaengine.cpp:121 engines/supernova/metaengine.cpp:315
 msgid "Skip line"
 msgstr "Salta battuta dialogo"
 
@@ -4562,32 +4562,32 @@ msgid "Resolution: %dx%d"
 msgstr "Risoluzione: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1079
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2876
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2887
 msgid "Active graphics filter:"
 msgstr "Filtro grafico attivo:"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1100
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2910
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2921
 msgid "Enabled aspect ratio correction"
 msgstr "Correzione proporzioni attivata"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1102
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2916
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2927
 msgid "Disabled aspect ratio correction"
 msgstr "Correzione proporzioni disattivata"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1115
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2932
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2943
 msgid "Filtering enabled"
 msgstr "Filtro video attivato"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1117
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2934
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2945
 msgid "Filtering disabled"
 msgstr "Filtro video disattivato"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1143
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2961
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2972
 msgid "Stretch mode"
 msgstr "Ridimensionamento"
 
@@ -6802,7 +6802,7 @@ msgstr "Prendi"
 #: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
 #: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:542
 #: engines/grim/grim.cpp:642 engines/harvester/metaengine.cpp:92
-#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:828
+#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:839
 #: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
 #: engines/icb/icb.cpp:179 engines/macs2/metaengine.cpp:64
 #: engines/petka/metaengine.cpp:173 engines/phoenixvr/metaengine.cpp:82
@@ -10855,50 +10855,44 @@ msgstr "Attiva le reazioni del pubblico"
 msgid "Pan voices and footsteps according to their positions on screen"
 msgstr ""
 
-#: engines/hollywood/runaway/engine.cpp:785
+#: engines/hollywood/runaway/engine.cpp:796
 #, fuzzy
 #| msgid "Perform default action"
 msgid "Perform action"
 msgstr "Esegui azione predefinita"
 
-#: engines/hollywood/runaway/engine.cpp:791
-#: engines/hollywood/runaway/engine.cpp:834
+#: engines/hollywood/runaway/engine.cpp:802
+#: engines/hollywood/runaway/engine.cpp:845
 #, fuzzy
 #| msgid "Next action"
 msgid "Next action / Cancel"
 msgstr "Azione successiva"
 
-#: engines/hollywood/runaway/engine.cpp:797 engines/sherlock/metaengine.cpp:578
+#: engines/hollywood/runaway/engine.cpp:808 engines/sherlock/metaengine.cpp:578
 msgid "Scroll left"
 msgstr "Scorrimento a sinistra"
 
-#: engines/hollywood/runaway/engine.cpp:802 engines/sherlock/metaengine.cpp:584
+#: engines/hollywood/runaway/engine.cpp:813 engines/sherlock/metaengine.cpp:584
 msgid "Scroll right"
 msgstr "Scorrimento a destra"
 
-#: engines/hollywood/runaway/engine.cpp:807
+#: engines/hollywood/runaway/engine.cpp:818
 #, fuzzy
 #| msgid "Scroll to top left"
 msgid "Scroll to the left edge"
 msgstr "Scorri in alto e a sinistra"
 
-#: engines/hollywood/runaway/engine.cpp:812
+#: engines/hollywood/runaway/engine.cpp:823
 #, fuzzy
 #| msgid "Scroll to bottom right"
 msgid "Scroll to the right edge"
 msgstr "Scorri in basso e a destra"
 
-#: engines/hollywood/runaway/engine.cpp:823
+#: engines/hollywood/runaway/engine.cpp:834
 #, fuzzy
-#| msgid "Cancel action"
-msgid "Cancel action / Menu"
-msgstr "Annulla azione"
-
-#: engines/hollywood/runaway/engine.cpp:839
-#, fuzzy
-#| msgid "Skip intro / Exit map or inventory"
-msgid "Skip intro / Skip line"
-msgstr "Salta introduzione / Chiudi mappa o inventario"
+#| msgid "Skip cutscene"
+msgid "Skip cutscene / Cancel action / Menu"
+msgstr "Salta scena di intermezzo"
 
 #: engines/hopkins/base_enhancements.cpp:313
 #, fuzzy
@@ -19400,6 +19394,16 @@ msgstr ""
 "Zork Nemesis contiene alcuni puzzle musicali the richiedono l'audio MIDI per "
 "poterli risolvere. In alternativa, i puzzle possono essere risolti usando i "
 "sottotitoli, se supportati. Desideri continuare ad avviare il gioco?"
+
+#, fuzzy
+#~| msgid "Cancel action"
+#~ msgid "Cancel action / Menu"
+#~ msgstr "Annulla azione"
+
+#, fuzzy
+#~| msgid "Skip intro / Exit map or inventory"
+#~ msgid "Skip intro / Skip line"
+#~ msgstr "Salta introduzione / Chiudi mappa o inventario"
 
 #~ msgid "Could not find correct ultima.dat datafile"
 #~ msgstr "Impossibile trovare un file dati ultima.dat appropriato"
