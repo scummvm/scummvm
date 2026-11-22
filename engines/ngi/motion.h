@@ -211,15 +211,15 @@ class MovGraphLink : public CObject {
  public:
 	MovGraphNode *_graphSrc;
 	MovGraphNode *_graphDst;
-	DWordArray _dwordArray1;
-	DWordArray _dwordArray2;
+	DWordArray _movementIds;
+	DWordArray _staticsIds;
 	uint32 _flags;
 	int _field_38;
 	int _field_3C;
 	double _length;
 	double _angle;
 	MovGraphReact *_movGraphReact;
-	Common::String _name;
+	Common::String _title;
 
   public:
 	MovGraphLink();

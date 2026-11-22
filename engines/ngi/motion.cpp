@@ -53,7 +53,7 @@ void MotionController::enableLinks(const char *linkName, bool enable) {
 
 				MovGraphLink *lnk = static_cast<MovGraphLink *>(*l);
 
-				if (lnk->_name == linkName) {
+				if (lnk->_title == linkName) {
 					if (enable)
 						lnk->_flags |= 0x20000000;
 					else
@@ -81,7 +81,7 @@ MovGraphLink *MotionController::getLinkByName(const char *name) {
 
 					MovGraphLink *lnk = static_cast<MovGraphLink *>(*l);
 
-					if (lnk->_name == name)
+					if (lnk->_title == name)
 						return lnk;
 				}
 			}
@@ -96,7 +96,7 @@ MovGraphLink *MotionController::getLinkByName(const char *name) {
 
 			MovGraphLink *lnk = static_cast<MovGraphLink *>(*l);
 
-			if (lnk->_name == name)
+			if (lnk->_title == name)
 				return lnk;
 		}
 	}
@@ -1009,14 +1009,14 @@ bool MovGraph::resetPosition(StaticANIObject *ani, int flag) {
 		Statics *st;
 
 		if (ani->_statics) {
-			int t = _aniHandler.getNumMovements(ani->_id, ani->_statics->_staticsId, movarr._link->_dwordArray2[_field_44]);
-			if (t > _aniHandler.getNumMovements(ani->_id, ani->_statics->_staticsId, movarr._link->_dwordArray2[_field_44 + 1]))
-				st = ani->getStaticsById(movarr._link->_dwordArray2[_field_44 + 1]);
+			int t = _aniHandler.getNumMovements(ani->_id, ani->_statics->_staticsId, movarr._link->_staticsIds[_field_44]);
+			if (t > _aniHandler.getNumMovements(ani->_id, ani->_statics->_staticsId, movarr._link->_staticsIds[_field_44 + 1]))
+				st = ani->getStaticsById(movarr._link->_staticsIds[_field_44 + 1]);
 			else
-				st = ani->getStaticsById(movarr._link->_dwordArray2[_field_44]);
+				st = ani->getStaticsById(movarr._link->_staticsIds[_field_44]);
 		} else {
 			ani->stopAnim_maybe();
-			st = ani->getStaticsById(movarr._link->_dwordArray2[_field_44]);
+			st = ani->getStaticsById(movarr._link->_staticsIds[_field_44]);
 		}
 
 		ani->_statics = st;
@@ -1194,23 +1194,23 @@ MessageQueue *MovGraph::makeWholeQueue(StaticANIObject *ani, MovArr *movarr, int
 
 	for (int i = 0; i < movarr->_movStepCount; i++) {
 		while (i < movarr->_movStepCount - 1) {
-			if (movarr->_movSteps[i    ]->link->_dwordArray1[movarr->_movSteps[i - 1]->sfield_0 + _field_44] !=
-				movarr->_movSteps[i + 1]->link->_dwordArray1[movarr->_movSteps[i    ]->sfield_0 + _field_44])
+			if (movarr->_movSteps[i    ]->link->_movementIds[movarr->_movSteps[i - 1]->sfield_0 + _field_44] !=
+				movarr->_movSteps[i + 1]->link->_movementIds[movarr->_movSteps[i    ]->sfield_0 + _field_44])
 				break;
 			i++;
 		}
 
 		MovStep *st = movarr->_movSteps[i];
 
-		ani->getMovementById(st->link->_dwordArray1[_field_44 + st->sfield_0]);
+		ani->getMovementById(st->link->_movementIds[_field_44 + st->sfield_0]);
 
 		if (i == movarr->_movStepCount - 1 && staticsId) {
 			id2 = staticsId;
 		} else {
 			if (i < movarr->_movStepCount - 1)
-				id2 = ani->getMovementById(movarr->_movSteps[i + 1]->link->_dwordArray1[_field_44 + st->sfield_0])->_staticsObj1->_staticsId;
+				id2 = ani->getMovementById(movarr->_movSteps[i + 1]->link->_movementIds[_field_44 + st->sfield_0])->_staticsObj1->_staticsId;
 			else
-				id2 = st->link->_dwordArray2[_field_44 + st->sfield_0];
+				id2 = st->link->_staticsIds[_field_44 + st->sfield_0];
 		}
 
 		int nx, ny, nd;
@@ -1242,7 +1242,7 @@ MessageQueue *MovGraph::makeWholeQueue(StaticANIObject *ani, MovArr *movarr, int
 		mkQueue.y2 = oy;
 		mkQueue.y1 = ny;
 		mkQueue.field_1C = nd;
-		mkQueue.movementId = st->link->_dwordArray1[_field_44 + st->sfield_0];
+		mkQueue.movementId = st->link->_movementIds[_field_44 + st->sfield_0];
 
 		mkQueue.flags = 0xe;
 		if (mq)
@@ -1609,14 +1609,14 @@ bool MovGraph::getHitPoint(int idx, int x, int y, MovArr *arr, int a6) {
 	int offmin = 100;
 
 	for (int i = 0; i < arrSize; i++) {
-		int off = _aniHandler.getNumMovements(_items[idx].ani->_id, staticsId, (*movarr)[i]->_link->_dwordArray2[_field_44]);
+		int off = _aniHandler.getNumMovements(_items[idx].ani->_id, staticsId, (*movarr)[i]->_link->_staticsIds[_field_44]);
 
 		if (off < offmin) {
 			offmin = off;
 			idxmin = i;
 		}
 
-		off = _aniHandler.getNumMovements(_items[idx].ani->_id, staticsId, (*movarr)[i]->_link->_dwordArray2[_field_44 + 1]);
+		off = _aniHandler.getNumMovements(_items[idx].ani->_id, staticsId, (*movarr)[i]->_link->_staticsIds[_field_44 + 1]);
 		if (off < offmin) {
 			offmin = off;
 			idxmin = i;
@@ -2864,16 +2864,16 @@ MovGraphLink::MovGraphLink() {
 MovGraphLink::~MovGraphLink() {
 	delete _movGraphReact;
 
-	_dwordArray1.clear();
-	_dwordArray2.clear();
+	_movementIds.clear();
+	_staticsIds.clear();
 }
 
 
 bool MovGraphLink::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "MovGraphLink::load()");
 
-	_dwordArray1.load(file);
-	_dwordArray2.load(file);
+	_movementIds.load(file);
+	_staticsIds.load(file);
 
 	_flags = file.readUint32LE();
 
@@ -2888,7 +2888,7 @@ bool MovGraphLink::load(MfcArchive &file) {
 	debugC(8, kDebugLoading, "length: %g, angle: %g", _length, _angle);
 
 	_movGraphReact = file.readClass<MovGraphReact>();
-	_name = file.readPascalString();
+	_title = file.readPascalString();
 
 	return true;
 }
