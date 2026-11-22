@@ -1581,7 +1581,7 @@ void ModalMainMenu::updateSoundVolume(Sound &snd) {
 
 			if (ani->_y <= _screct.bottom) {
 				if (ani->_y >= _screct.top) {
-					snd.setPanAndVolume(g_nmi->_sfxVolume, 0);
+					snd.attenuate(g_nmi->_sfxVolume, 0);
 
 					return;
 				}
@@ -1593,7 +1593,7 @@ void ModalMainMenu::updateSoundVolume(Sound &snd) {
 			par = 0;
 
 			if (dx > 800) {
-				snd.setPanAndVolume(-3500, 0);
+				snd.attenuate(-3500, 0);
 				return;
 			}
 
@@ -1604,7 +1604,7 @@ void ModalMainMenu::updateSoundVolume(Sound &snd) {
 			int dx = ani->_x - _screct.right;
 
 			if (dx > 800) {
-				snd.setPanAndVolume(-3500, 0);
+				snd.attenuate(-3500, 0);
 				return;
 			}
 
@@ -1616,7 +1616,7 @@ void ModalMainMenu::updateSoundVolume(Sound &snd) {
 
 		int32 pp = b * a;
 
-		snd.setPanAndVolume(pan + pp / 800, par);
+		snd.attenuate(pan + pp / 800, par);
 
 		return;
 	}
@@ -1629,9 +1629,9 @@ void ModalMainMenu::updateSoundVolume(Sound &snd) {
 		if (p > g_nmi->_sfxVolume)
 			p = g_nmi->_sfxVolume;
 
-		snd.setPanAndVolume(p, dx * (-3500) / 800);
+		snd.attenuate(p, dx * (-3500) / 800);
 	} else {
-		snd.setPanAndVolume(-3500, 0);
+		snd.attenuate(-3500, 0);
 	}
 }
 

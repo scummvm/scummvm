@@ -82,7 +82,7 @@ Sound::Sound() :
 	_objectId(0) {}
 
 Sound::~Sound() {
-	freeSound();
+	unload();
 	delete _handle;
 }
 
@@ -133,7 +133,7 @@ void Sound::setPanAndVolumeByStaticAni() {
 
 			if (ani->_y <= g_nmi->_sceneRect.bottom) {
 				if (ani->_y >= g_nmi->_sceneRect.top) {
-					setPanAndVolume(g_nmi->_sfxVolume, 0);
+					attenuate(g_nmi->_sfxVolume, 0);
 
 					return;
 				}
@@ -145,7 +145,7 @@ void Sound::setPanAndVolumeByStaticAni() {
 			par = 0;
 
 			if (dx > 800) {
-				setPanAndVolume(-3500, 0);
+				attenuate(-3500, 0);
 				return;
 			}
 
@@ -156,7 +156,7 @@ void Sound::setPanAndVolumeByStaticAni() {
 			int dx = ani->_x - g_nmi->_sceneRect.right;
 
 			if (dx > 800) {
-				setPanAndVolume(-3500, 0);
+				attenuate(-3500, 0);
 				return;
 			}
 
@@ -168,7 +168,7 @@ void Sound::setPanAndVolumeByStaticAni() {
 
 		int32 pp = b * a;
 
-		setPanAndVolume(pan + pp / 800, par);
+		attenuate(pan + pp / 800, par);
 
 		return;
 	}
@@ -181,18 +181,18 @@ void Sound::setPanAndVolumeByStaticAni() {
 		if (p > g_nmi->_sfxVolume)
 			p = g_nmi->_sfxVolume;
 
-		setPanAndVolume(p, dx * (-3500) / 800);
+		attenuate(p, dx * (-3500) / 800);
 	} else {
-		setPanAndVolume(-3500, 0);
+		attenuate(-3500, 0);
 	}
 }
 
-void Sound::setPanAndVolume(int vol, int pan) {
+void Sound::attenuate(int vol, int pan) {
 	g_nmi->_mixer->setChannelVolume(*_handle, MIN((vol + 10000) / 39, 255)); // -10000..0
 	g_nmi->_mixer->setChannelBalance(*_handle, CLIP(pan / 78, -127, 127)); // -10000..10000
 }
 
-void Sound::play(int flag) {
+void Sound::play(int loop) {
 	Audio::SoundHandle *handle = getHandle();
 
 	if (g_nmi->_mixer->isSoundHandleActive(*handle)) { // We need to restart the music
@@ -202,12 +202,12 @@ void Sound::play(int flag) {
 	byte *soundData = loadData();
 	Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(soundData, getDataSize());
 	Audio::RewindableAudioStream *wav = Audio::makeWAVStream(dataStream, DisposeAfterUse::YES);
-	Audio::AudioStream *audioStream = new Audio::LoopingAudioStream(wav, (flag == 1) ? 0 : 1);
+	Audio::AudioStream *audioStream = new Audio::LoopingAudioStream(wav, (loop == 1) ? 0 : 1);
 
 	g_nmi->_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, audioStream);
 }
 
-void Sound::freeSound() {
+void Sound::unload() {
 	stop();
 
 	free(_soundData);
@@ -468,14 +468,14 @@ void global_messageHandler_handleSound(Command *cmd) {
 
 	if (cmd->_z & 1) {
 		if (!g_nmi->_flgSoundList && (cmd->_z & 4))
-			snd->freeSound();
+			snd->unload();
 
 		snd->updateVolume();
 
 		if (snd->_objectId && g_nmi->_currentScene->findAniObjectById(snd->_objectId, -1))
 			snd->setPanAndVolumeByStaticAni();
 		else
-			snd->setPanAndVolume(g_nmi->_sfxVolume, 0);
+			snd->attenuate(g_nmi->_sfxVolume, 0);
 
 		if (snd->getVolume() > -3500)
 			snd->play(cmd->_param);
@@ -517,7 +517,7 @@ void NGIEngine::updateSoundVolume() {
 
 	for (int i = 0; i < _currSoundListCount; i++)
 		for (int j = 0; j < _currSoundList1[i]->getCount(); j++) {
-			_currSoundList1[i]->getSoundByIndex(j).setPanAndVolume(_sfxVolume, 0);
+			_currSoundList1[i]->getSoundByIndex(j).attenuate(_sfxVolume, 0);
 		}
 }
 

@@ -49,13 +49,13 @@ public:
 	int getId() const { return _id; }
 	Audio::SoundHandle *getHandle() const { return _handle; }
 
-	void play(int flag);
-	void freeSound();
+	void play(int loop);
+	void unload();
 	int getVolume();
 	void stop();
 
 	void setPanAndVolumeByStaticAni();
-	void setPanAndVolume(int vol, int pan);
+	void attenuate(int vol, int pan);
 };
 
 class SoundList : public CObject {
