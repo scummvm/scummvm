@@ -152,6 +152,7 @@ Common::Error Parallaction::init() {
 }
 
 void Parallaction::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
 	if (_soundMan) {
 		_soundMan->execute(SC_PAUSE, (int)pause);
 	}
