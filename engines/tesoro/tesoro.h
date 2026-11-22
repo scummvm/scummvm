@@ -113,6 +113,7 @@ private:
 protected:
 	// Engine APIs
 	Common::Error run() override;
+	void pauseEngineIntern(bool pause) override;
 public:
 	Graphics::Screen *_screen = nullptr;
 public:

@@ -365,6 +365,14 @@ int TesoroEngine::levelSecondStep(Level &level) {
 	return 1;
 }
 
+void TesoroEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+	if (pause)
+		_clock.suspend();
+	else
+		_clock.resume(_system->getMillis());
+}
+
 Common::Error TesoroEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
 	// Saved from ScummVM's own dialog, the original's save screen never took the scene's picture.
 	if (_world.interfaceCameraX() >= 0)
