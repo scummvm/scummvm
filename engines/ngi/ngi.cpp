@@ -25,6 +25,7 @@
 #include "common/compression/unzip.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/formats/xmlparser.h"
 #include "audio/mixer.h"
 
 #include "engines/metaengine.h"
@@ -45,6 +46,62 @@
 #include "ngi/console.h"
 #include "ngi/constants.h"
 namespace NGI {
+
+namespace {
+
+class XMLProjectParser : public Common::XMLParser {
+public:
+	Common::String startSceneFile() const {
+		return _scenes.getValOrDefault(_startScene);
+	}
+
+private:
+	Common::String _startScene;
+	Common::StringMap _scenes;
+
+	CUSTOM_XML_PARSER(XMLProjectParser) {
+		XML_KEY(PROJECT)
+			XML_PROP(title, false)
+			XML_PROP(width, false)
+			XML_PROP(height, false)
+			XML_PROP(screenWidth, false)
+			XML_PROP(screenHeight, false)
+			XML_PROP(dbg_font, false)
+			XML_PROP(start, true)
+			XML_PROP(fullscreen, false)
+			XML_PROP(adjust, false)
+			XML_PROP(create_inv, false)
+			XML_KEY(SCENE)
+				XML_PROP(id, true)
+				XML_PROP(file, true)
+			KEY_END()
+		KEY_END()
+	} PARSER_END()
+
+	bool parserCallback_PROJECT(ParserNode *node) {
+		_startScene = node->values["start"];
+		return true;
+	}
+
+	bool parserCallback_SCENE(ParserNode *node) {
+		_scenes[node->values["id"]] = node->values["file"];
+		return true;
+	}
+
+	bool handleUnknownKey(ParserNode *node) override {
+		const auto *parent = getParentNode(node);
+		if (!parent)
+			return false;
+		if (!parent->ignore && (parent->name != "PROJECT" ||
+				(node->name != "DIALOGCONTROLLER" && node->name != "CURSORCONTROLLER")))
+			return false;
+		node->layout = _XMLkeys;
+		node->ignore = true;
+		return true;
+	}
+};
+
+} // End of anonymous namespace
 
 NGIEngine *g_nmi = nullptr;
 Vars *g_vars = nullptr;
@@ -251,7 +308,19 @@ Common::Error NGIEngine::run() {
 
 		SearchMan.add("ngi-android-obb", obb.release());
 		SearchMan.add("ngi-android-apk", apk.release());
-		return Common::Error(Common::kUnsupportedGameidError, "Full Pipe Android project loading is not implemented");
+
+		const Common::Path projectPath("data/FullPipe.xml");
+		XMLProjectParser project;
+		if (!project.loadStream(SearchMan.createReadStreamForMember(projectPath), projectPath.toString()) || !project.parse())
+			return Common::Error(Common::kNoGameDataFoundError, "Could not read the Full Pipe Android project");
+
+		const Common::String startSceneFile = project.startSceneFile();
+		if (startSceneFile.empty() || !SearchMan.hasFile(Common::Path("data/res").join(startSceneFile)))
+			return Common::Error(Common::kNoGameDataFoundError, "Could not find the Full Pipe Android start scene");
+
+		debugC(1, kDebugXML, "Loaded Full Pipe Android project, start scene %s", startSceneFile.c_str());
+		return Common::Error(Common::kUnsupportedGameidError,
+			Common::String::format("Full Pipe Android scene loading is not implemented (%s)", startSceneFile.c_str()));
 	}
 
 	// Initialize backend
