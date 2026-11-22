@@ -166,16 +166,16 @@ void sceneHandler34_genFlies() {
 	g_vars->scene34_fliesCountdown = g_nmi->_rnd.getRandomNumber(500) + 500;
 }
 
-void sceneHandler34_fromCactus(ExCommand *cmd) {
+void sceneHandler34_fromCactus(Command *cmd) {
 	if (g_nmi->_aniMan->_movement || g_vars->scene34_cactus->_movement || (g_nmi->_aniMan->_flags & 0x100)) {
-		cmd->_messageKind = 0;
+		cmd->_cmd = 0;
 
 		return;
 	}
 
 	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC34_FROMCACTUS), 0, 0);
 
-	ExCommand *ex = new ExCommand(ANI_MAN, 34, 256, 0, 0, 0, 1, 0, 0, 0);
+	Command *ex = new Command(ANI_MAN, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 
 	ex->_messageNum = 0;
 	ex->_excFlags |= 3;
@@ -191,7 +191,7 @@ void sceneHandler34_fromCactus(ExCommand *cmd) {
 	g_nmi->_aniMan->_flags |= 0x100;
 }
 
-void sceneHandler34_animateLeaveBoard(ExCommand *cmd) {
+void sceneHandler34_animateLeaveBoard(Command *cmd) {
 	if (!g_nmi->_aniMan->_movement) {
 		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC34_LEAVEBOARD), 0, 0);
 
@@ -200,10 +200,10 @@ void sceneHandler34_animateLeaveBoard(ExCommand *cmd) {
 		mq->run(nullptr);
 	}
 
-	cmd->_messageKind = 0;
+	cmd->_cmd = 0;
 }
 
-void sceneHandler34_animateAction(ExCommand *cmd) {
+void sceneHandler34_animateAction(Command *cmd) {
 	if (g_nmi->_aniMan->_movement)
 		return;
 
@@ -294,8 +294,8 @@ void sceneHandler34_unclimb() {
 	g_vars->scene34_dudeClimbed = false;
 }
 
-int sceneHandler34(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler34(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch (cmd->_messageNum) {
@@ -419,13 +419,13 @@ int sceneHandler34(ExCommand *cmd) {
 				if ((ani->_id == ANI_STOOL_34 && cmd->_param == ANI_INV_BOX) || (ani->_id == ANI_BOX_34 && cmd->_param == ANI_INV_STOOL)) {
 					getGameLoaderInteractionController()->handleInteraction(g_nmi->_aniMan, g_vars->scene34_vent, cmd->_param);
 
-					cmd->_messageKind = 0;
+					cmd->_cmd = 0;
 				}
 
 				if (ani->_id == ANI_LIFTBUTTON) {
 					g_nmi->lift_animateButton(ani);
 
-					cmd->_messageKind = 0;
+					cmd->_cmd = 0;
 
 					break;
 				}

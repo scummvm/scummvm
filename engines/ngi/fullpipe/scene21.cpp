@@ -79,8 +79,8 @@ void sceneHandler21_doWiggle() {
 	}
 }
 
-int sceneHandler21(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler21(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch (cmd->_messageNum) {

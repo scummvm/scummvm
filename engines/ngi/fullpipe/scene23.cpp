@@ -286,7 +286,7 @@ void sceneHandler23_spinWheel3() {
 		sceneHandler23_startKiss();
 }
 
-void sceneHandler23_pushButton(ExCommand *cmd) {
+void sceneHandler23_pushButton(Command *cmd) {
 	if (g_nmi->_aniMan->isIdle() || !(g_nmi->_aniMan->_flags & 0x100)) {
 		if (!g_vars->scene23_topReached) {
 			if (g_nmi->_aniMan->_x != 405 || g_nmi->_aniMan->_y != 220) {
@@ -367,7 +367,7 @@ void sceneHandler23_sendClick(AniObject *ani) {
 		break;
 	}
 
-	ExCommand *ex = new ExCommand(0, 17, msg, 0, 0, 0, 1, 0, 0, 0);
+	Command *ex = new Command(0, 17, msg, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags |= 3;
 
 	ex->postMessage();
@@ -389,7 +389,7 @@ void sceneHandler23_exitCalendar() {
 	}
 }
 
-void sceneHandler23_fromCalendar(ExCommand *cmd) {
+void sceneHandler23_fromCalendar(Command *cmd) {
 	if (!g_nmi->_aniMan->_movement && g_nmi->_aniMan->_statics->_staticsId == ST_MAN_STANDLADDER
 		&& !g_nmi->_aniMan->getMessageQueue() && !(g_nmi->_aniMan->_flags & 0x100)) {
 		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC23_FROMCALENDAR), 0, 0);
@@ -403,7 +403,7 @@ void sceneHandler23_fromCalendar(ExCommand *cmd) {
 	}
 }
 
-void sceneHandler23_fromStool(ExCommand *cmd) {
+void sceneHandler23_fromStool(Command *cmd) {
 	if (!g_nmi->_aniMan->getMessageQueue() && !(g_nmi->_aniMan->_flags & 0x100)) {
 		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC23_FROMSTOOL), 0, 0);
 
@@ -411,12 +411,12 @@ void sceneHandler23_fromStool(ExCommand *cmd) {
 		mq->setFlags(mq->getFlags() | 1);
 		mq->run(nullptr);
 
-		cmd->_messageKind = 0;
+		cmd->_cmd = 0;
 	}
 }
 
-int sceneHandler23(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler23(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch (cmd->_messageNum) {
@@ -499,7 +499,7 @@ int sceneHandler23(ExCommand *cmd) {
 
 			if (ani && ani->_id == ANI_CALENDWHEEL) {
 				sceneHandler23_sendClick(ani);
-				cmd->_messageKind = 0;
+				cmd->_cmd = 0;
 			}
 
 			sceneHandler23_checkReachingTop();
@@ -510,14 +510,14 @@ int sceneHandler23(ExCommand *cmd) {
 				if (picId == PIC_SC23_LADDER) {
 					sceneHandler23_exitCalendar();
 
-					cmd->_messageKind = 0;
+					cmd->_cmd = 0;
 					break;
 				}
 
 				if (cmd->_sceneClickY > 450) {
 					sceneHandler23_fromCalendar(cmd);
 
-					cmd->_messageKind = 0;
+					cmd->_cmd = 0;
 					break;
 				}
 				break;
@@ -529,7 +529,7 @@ int sceneHandler23(ExCommand *cmd) {
 				if (picId == PIC_SC23_LADDERU && !g_vars->scene23_topReached) {
 					sceneHandler23_pushButton(cmd);
 
-					cmd->_messageKind = 0;
+					cmd->_cmd = 0;
 					break;
 				}
 				break;
@@ -537,11 +537,11 @@ int sceneHandler23(ExCommand *cmd) {
 
 			if (ani && ani->_id == ANI_HANDLE23) {
 				handleObjectInteraction(g_nmi->_aniMan, ani, cmd->_param);
-				cmd->_messageKind = 0;
+				cmd->_cmd = 0;
 			} else {
 				sceneHandler23_fromStool(cmd);
 
-				cmd->_messageKind = 0;
+				cmd->_cmd = 0;
 			}
 
 		}

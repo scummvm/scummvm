@@ -63,10 +63,10 @@ void scene01_initScene(Scene *sc, int entrance) {
 	g_nmi->lift_setButton(sO_Level2, ST_LBN_2N);
 }
 
-int sceneHandler01(ExCommand *cmd) {
+int sceneHandler01(Command *cmd) {
 	int res = 0;
 
-	if (cmd->_messageKind != 17)
+	if (cmd->_cmd != 17)
 		return 0;
 
 	if (cmd->_messageNum > MSG_SC1_SHOWOSK) {

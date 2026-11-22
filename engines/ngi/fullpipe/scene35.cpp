@@ -93,7 +93,7 @@ void sceneHandler35_startFlow() {
 
 			mq->setFlags(mq->getFlags() | 1);
 
-			ExCommand *cmd = new ExCommand(g_vars->scene35_bellyInflater->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
+			Command *cmd = new Command(g_vars->scene35_bellyInflater->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 
 			cmd->_excFlags |= 3;
 			cmd->_z = 256;
@@ -149,8 +149,8 @@ void sceneHandler35_genFlies() {
 	}
 }
 
-int sceneHandler35(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler35(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch (cmd->_messageNum) {
@@ -207,7 +207,7 @@ int sceneHandler35(ExCommand *cmd) {
 			if (ani)
 				if (ani->_id == ANI_LIFTBUTTON) {
 					g_nmi->lift_animateButton(ani);
-					cmd->_messageKind = 0;
+					cmd->_cmd = 0;
 					break;
 				}
 

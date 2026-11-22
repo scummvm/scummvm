@@ -38,180 +38,180 @@ int defaultUpdateCursor();
 
 int sceneIntro_updateCursor();
 void sceneIntro_initScene(Scene *sc);
-int sceneHandlerIntro(ExCommand *cmd);
+int sceneHandlerIntro(Command *cmd);
 
 int sceneIntroDemo_updateCursor();
 void sceneIntroDemo_initScene(Scene *sc);
-int sceneHandlerIntroDemo(ExCommand *cmd);
+int sceneHandlerIntroDemo(Command *cmd);
 
 void scene01_fixEntrance();
 void scene01_initScene(Scene *sc, int entrance);
-int sceneHandler01(ExCommand *cmd);
+int sceneHandler01(Command *cmd);
 
 void scene02_initScene(Scene *sc);
-int sceneHandler02(ExCommand *ex);
+int sceneHandler02(Command *ex);
 
 void scene03_setEaterState();
 int scene03_updateCursor();
 void scene03_initScene(Scene *sc);
-int sceneHandler03(ExCommand *cmd);
+int sceneHandler03(Command *cmd);
 
 int scene04_updateCursor();
 void scene04_initScene(Scene *sc);
-int sceneHandler04(ExCommand *cmd);
+int sceneHandler04(Command *cmd);
 
 void scene05_initScene(Scene *sc);
-int sceneHandler05(ExCommand *cmd);
+int sceneHandler05(Command *cmd);
 
 void scene06_initScene(Scene *sc);
 void scene06_initMumsy();
-int sceneHandler06(ExCommand *cmd);
+int sceneHandler06(Command *cmd);
 int scene06_updateCursor();
 
 void scene07_initScene(Scene *sc);
-int sceneHandler07(ExCommand *cmd);
+int sceneHandler07(Command *cmd);
 
 void scene08_initScene(Scene *sc);
 void scene08_setupMusic();
-int sceneHandler08(ExCommand *cmd);
+int sceneHandler08(Command *cmd);
 int scene08_updateCursor();
 
 int scene09_updateCursor();
 void scene09_initScene(Scene *sc);
-int sceneHandler09(ExCommand *cmd);
+int sceneHandler09(Command *cmd);
 
 void scene10_initScene(Scene *sc);
-int sceneHandler10(ExCommand *cmd);
+int sceneHandler10(Command *cmd);
 int scene10_updateCursor();
 
 void scene11_initScene(Scene *sc);
 void scene11_setupMusic();
-int sceneHandler11(ExCommand *cmd);
+int sceneHandler11(Command *cmd);
 int scene11_updateCursor();
 
 void scene12_initScene(Scene *sc);
-int sceneHandler12(ExCommand *ex);
+int sceneHandler12(Command *ex);
 
 void scene13_initScene(Scene *sc);
-int sceneHandler13(ExCommand *ex);
+int sceneHandler13(Command *ex);
 
 void scene14_initScene(Scene *sc);
 void scene14_setupMusic();
-int sceneHandler14(ExCommand *cmd);
+int sceneHandler14(Command *cmd);
 int scene14_updateCursor();
 
 int scene15_updateCursor();
 void scene15_initScene(Scene *sc);
-int sceneHandler15(ExCommand *cmd);
+int sceneHandler15(Command *cmd);
 
 void scene16_initScene(Scene *sc);
-int sceneHandler16(ExCommand *cmd);
+int sceneHandler16(Command *cmd);
 int scene16_updateCursor();
 
 void scene17_initScene(Scene *sc);
 void scene17_restoreState();
-int sceneHandler17(ExCommand *cmd);
+int sceneHandler17(Command *cmd);
 int scene17_updateCursor();
 
 void scene18_preload();
 void scene18_setupEntrance();
 void scene18_initScene1(Scene *sc);
 void scene18_initScene2(Scene *sc);
-int sceneHandler18(ExCommand *cmd);
+int sceneHandler18(Command *cmd);
 int scene18_updateCursor();
 
 void scene19_preload();
 void scene19_setMovements(Scene *sc, int entranceId);
 void scene19_initScene2();
-int sceneHandler19(ExCommand *cmd);
+int sceneHandler19(Command *cmd);
 int scene19_updateCursor();
 void scene19_setSugarState(Scene *sc);
 
 void scene20_initScene(Scene *sc);
-int sceneHandler20(ExCommand *ex);
+int sceneHandler20(Command *ex);
 
 int scene21_updateCursor();
 void scene21_initScene(Scene *sc);
-int sceneHandler21(ExCommand *cmd);
+int sceneHandler21(Command *cmd);
 
 void scene22_initScene(Scene *sc);
 void scene22_setBagState();
-int sceneHandler22(ExCommand *cmd);
+int sceneHandler22(Command *cmd);
 int scene22_updateCursor();
 
 void scene23_initScene(Scene *sc);
 void scene23_setGiraffeState();
-int sceneHandler23(ExCommand *cmd);
+int sceneHandler23(Command *cmd);
 int scene23_updateCursor();
 
 void scene24_initScene(Scene *sc);
 void scene24_setPoolState();
-int sceneHandler24(ExCommand *cmd);
+int sceneHandler24(Command *cmd);
 
 void scene25_initScene(Scene *sc, int entrance);
 void scene25_setupWater(Scene *sc, int entrance);
-int sceneHandler25(ExCommand *cmd);
+int sceneHandler25(Command *cmd);
 int scene25_updateCursor();
 
 void scene26_initScene(Scene *sc);
 void scene26_setupDrop(Scene *sc);
-int sceneHandler26(ExCommand *cmd);
+int sceneHandler26(Command *cmd);
 int scene26_updateCursor();
 
 void scene27_initScene(Scene *sc);
-int sceneHandler27(ExCommand *ex);
+int sceneHandler27(Command *ex);
 int scene27_updateCursor();
 
 void scene28_initScene(Scene *sc);
-int sceneHandler28(ExCommand *ex);
+int sceneHandler28(Command *ex);
 int scene28_updateCursor();
 
 int scene29_updateCursor();
 void scene29_initScene(Scene *sc);
-int sceneHandler29(ExCommand *cmd);
+int sceneHandler29(Command *cmd);
 
 int scene30_updateCursor();
 void scene30_initScene(Scene *sc, int flag);
-int sceneHandler30(ExCommand *cmd);
+int sceneHandler30(Command *cmd);
 
 void scene31_initScene(Scene *sc);
-int sceneHandler31(ExCommand *ex);
+int sceneHandler31(Command *ex);
 
 void scene32_initScene(Scene *sc);
 void scene32_setupMusic();
-int sceneHandler32(ExCommand *cmd);
+int sceneHandler32(Command *cmd);
 int scene32_updateCursor();
 
 void scene33_initScene(Scene *sc);
 void scene33_setupMusic();
-int sceneHandler33(ExCommand *cmd);
+int sceneHandler33(Command *cmd);
 int scene33_updateCursor();
 
 void scene34_initScene(Scene *sc);
 void scene34_initBeh();
-int sceneHandler34(ExCommand *cmd);
+int sceneHandler34(Command *cmd);
 int scene34_updateCursor();
 
 void scene35_initScene(Scene *sc);
-int sceneHandler35(ExCommand *cmd);
+int sceneHandler35(Command *cmd);
 
 int scene36_updateCursor();
 void scene36_initScene(Scene *sc);
-int sceneHandler36(ExCommand *cmd);
+int sceneHandler36(Command *cmd);
 
 void scene37_initScene(Scene *sc);
-int sceneHandler37(ExCommand *ex);
+int sceneHandler37(Command *ex);
 int scene37_updateCursor();
 
 void scene38_initScene(Scene *sc);
-int sceneHandler38(ExCommand *ex);
+int sceneHandler38(Command *ex);
 
 int sceneFinal_updateCursor();
 void sceneFinal_initScene();
-int sceneHandlerFinal(ExCommand *cmd);
+int sceneHandlerFinal(Command *cmd);
 
 void sceneDbgMenu_initScene(Scene *sc);
-int sceneHandlerDbgMenu(ExCommand *cmd);
+int sceneHandlerDbgMenu(Command *cmd);
 
 class Vars {
 public:

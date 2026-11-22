@@ -128,8 +128,8 @@ void updateMusic() {
 	}
 }
 
-int sceneHandlerFinal(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandlerFinal(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch (cmd->_messageNum) {

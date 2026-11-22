@@ -280,7 +280,7 @@ void sceneHandler08_finishArcade() {
 	getCurrSceneSc2MotionController()->activate();
 }
 
-void sceneHandler08_jumpOff(ExCommand *cmd) {
+void sceneHandler08_jumpOff(Command *cmd) {
 	MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 
 	mq->addCommandToEnd(cmd->createClone());
@@ -298,11 +298,11 @@ void sceneHandler08_standUp() {
 	g_vars->scene08_onBelly = false;
 }
 
-void sceneHandler08_jumpLogic(ExCommand *cmd) {
+void sceneHandler08_jumpLogic(Command *cmd) {
 	if (g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC8_LADDERD) {
 		sceneHandler08_jumpOff(cmd);
 
-		cmd->_messageKind = 0;
+		cmd->_cmd = 0;
 	} else {
 		sceneHandler08_standUp();
 	}
@@ -317,7 +317,7 @@ void sceneHandler08_badLuck() {
 
 	MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 
-	ExCommand *ex = new ExCommand(g_nmi->_aniMan->_id, 1, MV_MAN8_BADLUCK, 0, 0, 0, 1, 0, 0, 0);
+	Command *ex = new Command(g_nmi->_aniMan->_id, 1, MV_MAN8_BADLUCK, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags |= 2;
 	ex->_param = g_nmi->_aniMan->_copyId;
 	mq->addCommandToEnd(ex);
@@ -414,7 +414,7 @@ void sceneHandler08_checkEndArcade() {
 				return;
 			}
 
-			ExCommand *ex = new ExCommand(SC_8, 17, 0, 0, 0, 0, 1, 0, 0, 0);
+			Command *ex = new Command(SC_8, 17, 0, 0, 0, 0, 1, 0, 0, 0);
 			ex->_messageNum = 61;
 			ex->_excFlags |= 2;
 			ex->_param = TrubaUp;
@@ -424,8 +424,8 @@ void sceneHandler08_checkEndArcade() {
 	}
 }
 
-int sceneHandler08(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler08(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch (cmd->_messageNum) {

@@ -248,7 +248,7 @@ void sceneHandler16_drink() {
 				if (!g_vars->scene16_walkingGirl || !g_vars->scene16_walkingGirl->_movement || g_vars->scene16_walkingGirl->_movement->_id != MV_GRL_DRINK) {
 					if (g_vars->scene16_mug->_statics->_staticsId == ST_MUG_FULL) {
 						MessageQueue *mq;
-						ExCommand *ex;
+						Command *ex;
 
 						if (g_vars->scene16_walkingBoy) {
 							g_nmi->_aniMan->_flags |= 0x180;
@@ -260,7 +260,7 @@ void sceneHandler16_drink() {
 
 							mq->setObjectCopy(-1, g_vars->scene16_walkingBoy->_copyId);
 
-							ex = new ExCommand(ANI_MAN, 34, 384, 0, 0, 0, 1, 0, 0, 0);
+							ex = new Command(ANI_MAN, 34, 384, 0, 0, 0, 1, 0, 0, 0);
 							ex->_excFlags |= 3u;
 							ex->_z = 384;
 							ex->_messageNum = 0;
@@ -273,7 +273,7 @@ void sceneHandler16_drink() {
 
 							mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC16_MANDRINK), 0, 1);
 
-							ex = new ExCommand(ANI_MAN, 34, 256, 0, 0, 0, 1, 0, 0, 0);
+							ex = new Command(ANI_MAN, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 							ex->_excFlags |= 3u;
 							ex->_z = 256;
 							ex->_messageNum = 0;
@@ -301,7 +301,7 @@ void sceneHandler16_mugClick() {
 		MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, 310, 449, 1, ST_MAN_RIGHT);
 
 		if (mq) {
-			ExCommand *ex = new ExCommand(0, 17, MSG_SC16_MUGCLICK, 0, 0, 0, 1, 0, 0, 0);
+			Command *ex = new Command(0, 17, MSG_SC16_MUGCLICK, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags = 2;
 			mq->addCommandToEnd(ex);
 
@@ -389,8 +389,8 @@ void sceneHandler16_girlROTFL() {
 	g_vars->scene16_girlIsLaughing = false;
 }
 
-int sceneHandler16(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler16(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch(cmd->_messageNum) {
@@ -416,7 +416,7 @@ int sceneHandler16(ExCommand *cmd) {
 
 	case MSG_SC16_MUGCLICK:
 		if (!g_nmi->_aniMan->isIdle() || g_nmi->_aniMan->_flags & 0x100) {
-			cmd->_messageKind = 0;
+			cmd->_cmd = 0;
 		} else {
 			sceneHandler16_mugClick();
 		}

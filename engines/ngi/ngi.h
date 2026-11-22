@@ -82,7 +82,7 @@ class InputController;
 class Inventory2;
 struct CursorInfo;
 struct EntranceInfo;
-class ExCommand;
+class Command;
 class Floaters;
 class GameProject;
 class GameObject;
@@ -117,11 +117,11 @@ struct Palette {
 
 typedef Common::HashMap<uint16, Common::String> GameObjHMap;
 
-int global_messageHandler1(ExCommand *cmd);
-int global_messageHandler2(ExCommand *cmd);
-int global_messageHandler3(ExCommand *cmd);
-int global_messageHandler4(ExCommand *cmd);
-void global_messageHandler_handleSound(ExCommand *cmd);
+int global_messageHandler1(Command *cmd);
+int global_messageHandler2(Command *cmd);
+int global_messageHandler3(Command *cmd);
+int global_messageHandler4(Command *cmd);
+void global_messageHandler_handleSound(Command *cmd);
 
 
 class NGIEngine : public ::Engine {
@@ -238,7 +238,7 @@ public:
 	int _msgObjectId2;
 	int _msgId;
 
-	Common::List<ExCommand *> _exCommandList;
+	Common::List<Command *> _exCommandList;
 	bool _isProcessingMessages;
 
 	int _mouseVirtX;
@@ -271,7 +271,7 @@ public:
 	bool _normalSpeed;
 
 	void enableSaves() { _isSaveAllowed = true; }
-	void disableSaves(ExCommand *ex);
+	void disableSaves(Command *ex);
 	bool isSaveAllowed();
 
 	void initObjectStates();
@@ -336,7 +336,7 @@ public:
 	int _arcadeOverlayMidY;
 
 	void initArcadeKeys(const char *varname);
-	void processArcade(ExCommand *ex);
+	void processArcade(Command *ex);
 	void winArcade();
 	void setArcadeOverlay(int picId);
 	int drawArcadeOverlay(int adjust);
@@ -356,14 +356,14 @@ public:
 	void lift_setButton(const char *name, int state);
 	void lift_init(Scene *sc, int qu1, int qu2);
 	void lift_setButtonStatics(Scene *sc, int buttonId);
-	void lift_exitSeq(ExCommand *ex);
+	void lift_exitSeq(Command *ex);
 	void lift_closedoorSeq();
 	void lift_clickButton();
 	void lift_walkAndGo();
 	void lift_goAnimation();
 	void lift_animateButton(AniObject *button);
 	void lift_startExitQueue();
-	void lift_hoverButton(ExCommand *ex);
+	void lift_hoverButton(Command *ex);
 	bool lift_checkButton(const char *varname);
 	void lift_openLift();
 

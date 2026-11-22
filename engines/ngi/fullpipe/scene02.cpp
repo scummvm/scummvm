@@ -74,10 +74,10 @@ void sceneHandler02_hideLadder() {
 	g_nmi->_aniMan2->_z = 25;
 }
 
-int sceneHandler02(ExCommand *ex) {
+int sceneHandler02(Command *ex) {
 	int res = 0;
 
-	if (ex->_messageKind != 17)
+	if (ex->_cmd != 17)
 		return 0;
 
 	switch(ex->_messageNum) {

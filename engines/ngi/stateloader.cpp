@@ -158,7 +158,7 @@ bool GameLoader::readSavegame(const char *fname) {
 
 		loadScene(preloadItem.sceneId);
 
-		ExCommand *ex = new ExCommand(preloadItem.sceneId, 17, 62, 0, 0, 0, 1, 0, 0, 0);
+		Command *ex = new Command(preloadItem.sceneId, 17, 62, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags = 2;
 		ex->_param = preloadItem.param;
 

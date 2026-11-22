@@ -436,7 +436,7 @@ void sceneHandler25_walkOnLadder(AniObject *ani, Common::Point *pnt, MessageQueu
 	int aniY = ani->_y;
 	int newx = 0, newy = 0;
 	Common::Point point;
-	ExCommand *ex;
+	Command *ex;
 
 	if (flag) {
 		if (ani->_movement) {
@@ -450,14 +450,14 @@ void sceneHandler25_walkOnLadder(AniObject *ani, Common::Point *pnt, MessageQueu
 	int pnty = pnt->y;
 	int numObsolete = -1;
 	int minDistance = 20000;
-	ExCommand *lastEx = nullptr;
+	Command *lastEx = nullptr;
 
 	for (uint i = 0; i < mq->getCount(); i++) {
 		int curDistance = abs(pnty - aniY);
 
 		ex = mq->getCommandByIndex(i);
 
-		if (ex->_messageKind == 1 && ani->_id == ex->_parentId) {
+		if (ex->_cmd == 1 && ani->_id == ex->_parentId) {
 			if (ex->_excFlags & 0x10000) {
 				if (ex->_messageNum == MV_MAN_TOLADDER)
 					ex->_messageNum = MV_MAN_TOLADDER2;
@@ -486,7 +486,7 @@ void sceneHandler25_walkOnLadder(AniObject *ani, Common::Point *pnt, MessageQueu
 	for (int i = 0; i < numObsolete; i++)
 		mq->removeCommand(0, 1);
 
-	ex = new ExCommand(ani->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
+	ex = new Command(ani->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 
 	ex->_z = 256;
 	ex->_messageNum = 0;
@@ -518,7 +518,7 @@ void sceneHandler25_walkOnLadder(AniObject *ani, Common::Point *pnt, MessageQueu
 	ani->_flags |= 0x100;
 }
 
-bool sceneHandler25_isOnLadder(ExCommand *cmd) {
+bool sceneHandler25_isOnLadder(Command *cmd) {
 	if ((g_nmi->_aniMan->_movement && g_nmi->_aniMan->_movement->_id == MV_MAN_GOLADDERDOWN)
 		|| g_nmi->_aniMan->_statics->_staticsId == ST_MAN_GOLADDERD) {
 		Interaction *inter = getGameLoaderInteractionController()->getInteractionByObjectIds(PIC_SC25_LADDERDOWN, ANI_MAN, cmd->_param);
@@ -543,8 +543,8 @@ bool sceneHandler25_isOnLadder(ExCommand *cmd) {
 	}
 }
 
-int sceneHandler25(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler25(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch (cmd->_messageNum) {
@@ -639,7 +639,7 @@ int sceneHandler25(ExCommand *cmd) {
 
 			if (!g_vars->scene25_waterIsPresent) {
 				if ((picId == PIC_SC25_LADDERUP || picId == PIC_SC25_LADDERDOWN) && sceneHandler25_isOnLadder(cmd))
-					cmd->_messageKind = 0;
+					cmd->_cmd = 0;
 
 				return 0;
 			}
@@ -683,7 +683,7 @@ int sceneHandler25(ExCommand *cmd) {
 			}
 
 			if (picId == PIC_SC25_LADDERUP && sceneHandler25_isOnLadder(cmd))
-				cmd->_messageKind = 0;
+				cmd->_cmd = 0;
 
 			if (!g_nmi->_aniMan->isIdle() || (g_nmi->_aniMan->_flags & 0x100))
 				return 0;

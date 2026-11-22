@@ -148,7 +148,7 @@ void sceneHandler22_handleDown() {
 	g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_MOVE, 0);
 }
 
-void sceneHandler22_fromStool(ExCommand *cmd) {
+void sceneHandler22_fromStool(Command *cmd) {
 	if (g_nmi->_aniMan->isIdle() && !(g_nmi->_aniMan->_flags & 0x100)) {
 		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC22_FROMSTOOL), 0, 0);
 
@@ -158,7 +158,7 @@ void sceneHandler22_fromStool(ExCommand *cmd) {
 	}
 }
 
-void sceneHandler22_stoolLogic(ExCommand *cmd) {
+void sceneHandler22_stoolLogic(Command *cmd) {
 	AniObject *ani;
 	MessageQueue *mq;
 	int xpos;
@@ -256,7 +256,7 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 
 				mq = mgm.makeRunQueue(&mkQueue);
 
-				ExCommand *ex = mq->getCommandByIndex(0);
+				Command *ex = mq->getCommandByIndex(0);
 
 				mq->removeCommand(0, 0);
 
@@ -290,8 +290,8 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 	}
 }
 
-int sceneHandler22(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler22(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch (cmd->_messageNum) {
@@ -363,7 +363,7 @@ int sceneHandler22(ExCommand *cmd) {
 			}
 		}
 
-		cmd->_messageKind = 0;
+		cmd->_cmd = 0;
 		break;
 
 	case 33:

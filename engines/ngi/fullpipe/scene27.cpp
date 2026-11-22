@@ -190,7 +190,7 @@ void sceneHandler27_throwBat() {
 	g_vars->scene27_bat->hide();
 }
 
-void sceneHandler27_clickBat(ExCommand *cmd) {
+void sceneHandler27_clickBat(Command *cmd) {
 	int bx = g_vars->scene27_bat->_x - 5;
 	int by = g_vars->scene27_bat->_y - 71;
 
@@ -264,7 +264,7 @@ void sceneHandler27_startAiming() {
 	g_nmi->_aniMan->_movement->setCurFrame(phase);
 }
 
-void sceneHandler27_initAiming(ExCommand *cmd) {
+void sceneHandler27_initAiming(Command *cmd) {
 	g_vars->scene27_aimStartX = cmd->_x;
 	g_vars->scene27_aimStartY = cmd->_y;
 	g_vars->scene27_dudeIsAiming = true;
@@ -489,11 +489,11 @@ void sceneHandler27_batLogic() {
 
 		mq->setFlags(mq->getFlags() | 1);
 
-		ExCommand *ex = new ExCommand(g_vars->scene27_batHandler->_id, 1, mv, 0, 0, 0, 1, 0, 0, 0);
+		Command *ex = new Command(g_vars->scene27_batHandler->_id, 1, mv, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
 		mq->addCommandToEnd(ex);
 
-		ex = new ExCommand(0, 17, MSG_SC27_CLICKBET, 0, 0, 0, 1, 0, 0, 0);
+		ex = new Command(0, 17, MSG_SC27_CLICKBET, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
 		mq->addCommandToEnd(ex);
 
@@ -616,8 +616,8 @@ void sceneHandler27_animateBats() {
 	}
 }
 
-int sceneHandler27(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler27(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch (cmd->_messageNum) {

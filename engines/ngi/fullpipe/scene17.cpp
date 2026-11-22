@@ -162,8 +162,8 @@ void sceneHandler17_updateFlies() {
 }
 
 
-int sceneHandler17(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler17(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch (cmd->_messageNum) {

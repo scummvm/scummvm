@@ -26,7 +26,7 @@
 
 namespace NGI {
 
-class ExCommand;
+class Command;
 
 class StepArray : public CObject {
 	int _currPointIndex;
@@ -52,7 +52,7 @@ class StaticPhase : public Picture {
 	int16 _countdown;
 	int16 _field_68;
 	int16 _field_6A;
-	Common::ScopedPtr<ExCommand> _command;
+	Common::ScopedPtr<Command> _command;
 
   public:
 	StaticPhase();
@@ -61,7 +61,7 @@ class StaticPhase : public Picture {
 
 	virtual Common::String toXML();
 
-	ExCommand *getCommand() { return _command.get(); }
+	Command *getCommand() { return _command.get(); }
 };
 
 class Phase : public StaticPhase {

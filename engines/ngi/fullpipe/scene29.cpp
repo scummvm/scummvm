@@ -282,16 +282,16 @@ void sceneHandler29_manHit() {
 	mkQueue.movementId = MV_MAN29_HIT;
 
 	MessageQueue *mq = g_vars->scene29_aniHandler.makeRunQueue(&mkQueue);
-	ExCommand *ex;
+	Command *ex;
 
 	if (mq) {
 		if (g_vars->scene29_manX <= 638) {
-			ex = new ExCommand(ANI_MAN, 1, MV_MAN29_STANDUP_NORM, 0, 0, 0, 1, 0, 0, 0);
+			ex = new Command(ANI_MAN, 1, MV_MAN29_STANDUP_NORM, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags = 2;
 			ex->_param = g_nmi->_aniMan->_copyId;
 			mq->addCommandToEnd(ex);
 
-			ex = new ExCommand(0, 17, MSG_SC29_STOPRIDE, 0, 0, 0, 1, 0, 0, 0);
+			ex = new Command(0, 17, MSG_SC29_STOPRIDE, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags = 2;
 			mq->addCommandToEnd(ex);
 
@@ -300,7 +300,7 @@ void sceneHandler29_manHit() {
 			g_vars->scene29_reachedFarRight = false;
 			g_vars->scene29_rideBackEnabled = false;
 		} else {
-			ex = new ExCommand(ANI_MAN, 1, MV_MAN29_STANDUP, 0, 0, 0, 1, 0, 0, 0);
+			ex = new Command(ANI_MAN, 1, MV_MAN29_STANDUP, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags = 2;
 			ex->_param = g_nmi->_aniMan->_copyId;
 			mq->addCommandToEnd(ex);
@@ -472,9 +472,9 @@ void sceneHandler29_manToR() {
 	g_nmi->_scrollSpeed = 4;
 }
 
-void sceneHandler29_clickPorter(ExCommand *cmd) {
+void sceneHandler29_clickPorter(Command *cmd) {
 	if (!g_nmi->_aniMan->isIdle() || g_nmi->_aniMan->_flags & 0x100) {
-		cmd->_messageKind = 0;
+		cmd->_cmd = 0;
 
 		return;
 	}
@@ -674,8 +674,8 @@ void sceneHandler29_animBearded() {
 
 
 
-int sceneHandler29(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler29(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch (cmd->_messageNum) {
@@ -757,12 +757,12 @@ int sceneHandler29(ExCommand *cmd) {
 				if (ani && ani == g_vars->scene29_porter) {
 					sceneHandler29_clickPorter(cmd);
 
-					cmd->_messageKind = 0;
+					cmd->_cmd = 0;
 					break;
 				}
 			} else {
 				sceneHandler29_manJump();
-				cmd->_messageKind = 0;
+				cmd->_cmd = 0;
 			}
 		}
 		break;

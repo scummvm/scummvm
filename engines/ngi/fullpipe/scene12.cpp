@@ -54,10 +54,10 @@ void sceneHandler12_updateFloaters() {
 	g_nmi->_floaters->_array2[0].val7 = -50;
 }
 
-int sceneHandler12(ExCommand *cmd) {
+int sceneHandler12(Command *cmd) {
 	int res = 0;
 
-	if (cmd->_messageKind == 17 && cmd->_messageNum == 33) {
+	if (cmd->_cmd == 17 && cmd->_messageNum == 33) {
 		if (g_nmi->_aniMan2) {
 			if (g_nmi->_aniMan2->_x < g_nmi->_sceneRect.left + 200)
 				g_nmi->_currentScene->_x = g_nmi->_aniMan2->_x - g_nmi->_sceneRect.left - 300;

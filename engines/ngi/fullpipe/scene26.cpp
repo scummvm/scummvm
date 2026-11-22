@@ -252,7 +252,7 @@ void sceneHandler26_animateVents(AniObject *ani) {
 	}
 }
 
-void sceneHandler26_clickVent(AniObject *ani, ExCommand *cmd) {
+void sceneHandler26_clickVent(AniObject *ani, Command *cmd) {
 	if (ani->_copyId || g_nmi->getObjectState(sO_Hatch_26) != g_nmi->getObjectEnumState(sO_Hatch_26, sO_Opened)) {
 		if (g_nmi->_aniMan->isIdle() && !(g_nmi->_aniMan->_flags & 0x100)) {
 			g_vars->scene26_activeVent = ani;
@@ -264,7 +264,7 @@ void sceneHandler26_clickVent(AniObject *ani, ExCommand *cmd) {
 				MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, x, y, 1, ST_MAN_UP);
 
 				if (mq) {
-					ExCommand *ex = new ExCommand(0, 17, MSG_SC26_CLICKVENT, 0, 0, 0, 1, 0, 0, 0);
+					Command *ex = new Command(0, 17, MSG_SC26_CLICKVENT, 0, 0, 0, 1, 0, 0, 0);
 
 					ex->_excFlags |= 3;
 					ex->_param = ani->_copyId;
@@ -279,11 +279,11 @@ void sceneHandler26_clickVent(AniObject *ani, ExCommand *cmd) {
 		}
 	}
 
-	cmd->_messageKind = 0;
+	cmd->_cmd = 0;
 }
 
-int sceneHandler26(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler26(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch (cmd->_messageNum) {

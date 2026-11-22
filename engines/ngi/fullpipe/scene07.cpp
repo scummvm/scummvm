@@ -115,8 +115,8 @@ void sceneHandler07_hideBox() {
 	g_nmi->_currentScene->findAniObjectById(ANI_SC7_BOX, -1)->hide();
 }
 
-int sceneHandler07(ExCommand *ex) {
-	if (ex->_messageKind != 17)
+int sceneHandler07(Command *ex) {
+	if (ex->_cmd != 17)
 		return 0;
 
 	switch(ex->_messageNum) {

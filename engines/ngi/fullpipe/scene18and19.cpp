@@ -379,7 +379,7 @@ int scene19_updateCursor() {
 void sceneHandler18_clickBoard() {
 	if (ABS(967 - g_nmi->_aniMan->_x) > 1 || ABS(379 - g_nmi->_aniMan->_y) > 1 || g_nmi->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
 		MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, 967, 379, 1, ST_MAN_RIGHT);
-		ExCommand *ex = new ExCommand(0, 17, MSG_SC18_MANREADY, 0, 0, 0, 1, 0, 0, 0);
+		Command *ex = new Command(0, 17, MSG_SC18_MANREADY, 0, 0, 0, 1, 0, 0, 0);
 
 		ex->_excFlags = 2;
 
@@ -683,8 +683,8 @@ void sceneHandler18and19_animateRiders() {
 	}
 }
 
-int sceneHandler18(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler18(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch (cmd->_messageNum) {
@@ -727,7 +727,7 @@ int sceneHandler18(ExCommand *cmd) {
 	case 29:
 		{
 			if (g_vars->scene18_enteredTrubaRight) {
-				cmd->_messageKind = 0;
+				cmd->_cmd = 0;
 				break;
 			}
 
@@ -741,7 +741,7 @@ int sceneHandler18(ExCommand *cmd) {
 					&& (g_vars->scene18_domino->_flags & 4) && g_nmi->_aniMan->isIdle()) {
 					if (!(g_nmi->_aniMan->_flags & 0x100) && g_nmi->_msgObjectId2 != g_vars->scene18_domino->_id) {
 						handleObjectInteraction(g_nmi->_aniMan, g_vars->scene18_domino, cmd->_param);
-						cmd->_messageKind = 0;
+						cmd->_cmd = 0;
 
 						break;
 					}
@@ -821,8 +821,8 @@ void sceneHandler19_updateNumRides() {
 	g_nmi->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->setSubVarAsInt(sO_DudeSwinged, numRides);
 }
 
-int sceneHandler19(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler19(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch (cmd->_messageNum) {
@@ -856,25 +856,25 @@ int sceneHandler19(ExCommand *cmd) {
 			case PIC_SC19_RTRUBA1:
 				g_vars->scene18_jumpDistance = 1;
 				g_vars->scene18_jumpAngle = 331;
-				cmd->_messageKind = 0;
+				cmd->_cmd = 0;
 				break;
 
 			case PIC_SC19_RTRUBA2:
 				g_vars->scene18_jumpDistance = 2;
 				g_vars->scene18_jumpAngle = 350;
-				cmd->_messageKind = 0;
+				cmd->_cmd = 0;
 				break;
 
 			case PIC_SC19_RTRUBA3:
 				g_vars->scene18_jumpDistance = 3;
 				g_vars->scene18_jumpAngle = 9;
-				cmd->_messageKind = 0;
+				cmd->_cmd = 0;
 				break;
 
 			default:
 				g_vars->scene18_jumpDistance = -1;
 				g_vars->scene18_jumpAngle = -1;
-				cmd->_messageKind = 0;
+				cmd->_cmd = 0;
 				break;
 			}
 		} else {

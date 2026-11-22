@@ -231,8 +231,8 @@ void sceneHandler37_setRingsState() {
 	}
 }
 
-int sceneHandler37(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler37(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch(cmd->_messageNum) {

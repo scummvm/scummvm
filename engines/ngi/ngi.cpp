@@ -341,12 +341,12 @@ Common::Error NGIEngine::run() {
 void NGIEngine::updateEvents() {
 	Common::Event event;
 	Common::EventManager *eventMan = _system->getEventManager();
-	ExCommand *ex;
+	Command *ex;
 
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-			ex = new ExCommand(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
+			ex = new Command(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
 			ex->_param = event.customType;
 			ex->_excFlags |= 3;
 			ex->handle();
@@ -369,7 +369,7 @@ void NGIEngine::updateEvents() {
 					return;
 				}
 
-				ex = new ExCommand(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
+				ex = new Command(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
 				ex->_param = 32;
 				ex->_excFlags |= 3;
 				ex->handle();
@@ -381,7 +381,7 @@ void NGIEngine::updateEvents() {
 					return;
 				}
 
-				ex = new ExCommand(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
+				ex = new Command(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
 				ex->_param = event.kbd.keycode;
 				ex->_excFlags |= 3;
 				ex->handle();
@@ -390,7 +390,7 @@ void NGIEngine::updateEvents() {
 				return;
 				break;
 			default:
-				ex = new ExCommand(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
+				ex = new Command(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
 				ex->_param = event.kbd.keycode;
 				ex->_excFlags |= 3;
 				ex->handle();
@@ -399,7 +399,7 @@ void NGIEngine::updateEvents() {
 			break;
 		case Common::EVENT_KEYUP:
 			if (!_inputArFlag) {
-				ex = new ExCommand(0, 17, 37, 0, 0, 0, 1, 0, 0, 0);
+				ex = new Command(0, 17, 37, 0, 0, 0, 1, 0, 0, 0);
 				ex->_excFlags |= 3;
 				ex->handle();
 			}
@@ -407,7 +407,7 @@ void NGIEngine::updateEvents() {
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			if (_recordEvents) {
-				ex = new ExCommand(0, 17, 31, event.mouse.x, event.mouse.y, 0, 1, 0, 0, 0);
+				ex = new Command(0, 17, 31, event.mouse.x, event.mouse.y, 0, 1, 0, 0, 0);
 				ex->_excFlags |= 3;
 				ex->handle();
 			}
@@ -418,7 +418,7 @@ void NGIEngine::updateEvents() {
 			return;
 		case Common::EVENT_RBUTTONDOWN:
 			if (!_inputArFlag && (_updateTicks - _lastInputTicks) >= 2) {
-				ex = new ExCommand(0, 17, 107, event.mouse.x, event.mouse.y, 0, 1, 0, 0, 0);
+				ex = new Command(0, 17, 107, event.mouse.x, event.mouse.y, 0, 1, 0, 0, 0);
 				ex->_excFlags |= 3;
 				_lastInputTicks = _updateTicks;
 				ex->handle();
@@ -427,7 +427,7 @@ void NGIEngine::updateEvents() {
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 			if (!_inputArFlag && (_updateTicks - _lastInputTicks) >= 2) {
-				ex = new ExCommand(0, 17, 29, event.mouse.x, event.mouse.y, 0, 1, 0, 0, 0);
+				ex = new Command(0, 17, 29, event.mouse.x, event.mouse.y, 0, 1, 0, 0, 0);
 
 				ex->_sceneClickX = _sceneRect.left + ex->_x;
 				ex->_sceneClickY = _sceneRect.top + ex->_y;
@@ -440,7 +440,7 @@ void NGIEngine::updateEvents() {
 			break;
 		case Common::EVENT_LBUTTONUP:
 			if (!_inputArFlag && (_updateTicks - _lastButtonUpTicks) >= 2) {
-				ex = new ExCommand(0, 17, 30, 0, 0, 0, 1, 0, 0, 0);
+				ex = new Command(0, 17, 30, 0, 0, 0, 1, 0, 0, 0);
 				ex->_excFlags |= 3;
 				_lastButtonUpTicks = _updateTicks;
 				ex->handle();
@@ -565,7 +565,7 @@ void NGIEngine::setObjectState(const Common::String &name, int state) {
 	var->setSubVarAsInt(name, state);
 }
 
-void NGIEngine::disableSaves(ExCommand *ex) {
+void NGIEngine::disableSaves(Command *ex) {
 	if (_isSaveAllowed) {
 		_isSaveAllowed = false;
 

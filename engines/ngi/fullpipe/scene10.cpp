@@ -83,7 +83,7 @@ void sceneHandler10_clickGum() {
 				if (abs(x - g_nmi->_aniMan->_x) > 1 || abs(y - g_nmi->_aniMan->_y) > 1) {
 					MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, x, y, 1, ST_MAN_RIGHT);
 					if (mq) {
-						ExCommand *ex = new ExCommand(0, 17, MSG_SC10_CLICKGUM, 0, 0, 0, 1, 0, 0, 0);
+						Command *ex = new Command(0, 17, MSG_SC10_CLICKGUM, 0, 0, 0, 1, 0, 0, 0);
 						ex->_excFlags = 2;
 						mq->addCommandToEnd(ex);
 
@@ -121,8 +121,8 @@ void sceneHandler10_showGum() {
 }
 
 
-int sceneHandler10(ExCommand *ex) {
-	if (ex->_messageKind != 17)
+int sceneHandler10(Command *ex) {
+	if (ex->_cmd != 17)
 		return 0;
 
 	switch(ex->_messageNum) {
@@ -157,7 +157,7 @@ int sceneHandler10(ExCommand *ex) {
 	case MSG_SC10_CLICKGUM:
 		sceneHandler10_clickGum();
 
-		ex->_messageKind = 0;
+		ex->_cmd = 0;
 		break;
 
 	case MSG_SC10_HIDEGUM:
@@ -176,7 +176,7 @@ int sceneHandler10(ExCommand *ex) {
 		{
 			if (g_nmi->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY) == PIC_SC10_LADDER) {
 				handleObjectInteraction(g_nmi->_aniMan, g_nmi->_currentScene->findPictureObjectById(PIC_SC10_DTRUBA, 0), ex->_param);
-				ex->_messageKind = 0;
+				ex->_cmd = 0;
 
 				return 0;
 			}
@@ -185,7 +185,7 @@ int sceneHandler10(ExCommand *ex) {
 
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
 				g_nmi->lift_animateButton(ani);
-				ex->_messageKind = 0;
+				ex->_cmd = 0;
 
 				return 0;
 			}

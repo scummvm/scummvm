@@ -29,25 +29,25 @@
 
 namespace NGI {
 
-ExCommand::ExCommand() {
+Command::Command() {
 	_field_3C = 1;
 	_messageNum = 0;
 	_excFlags = 0;
 	_parId = 0;
 }
 
-ExCommand::ExCommand(ExCommand *src) : Message(*src) {
+Command::Command(Command *src) : Message(*src) {
 	_field_3C = 1;
 	_messageNum = src->_messageNum;
 	_excFlags = src->_excFlags;
 	_parId = src->_parId;
 }
 
-ExCommand *ExCommand::createClone() {
-	return new ExCommand(this);
+Command *Command::createClone() {
+	return new Command(this);
 }
 
-ExCommand::ExCommand(int16 parentId, int messageKind, int messageNum, int x, int y, int a7, int a8, int sceneClickX, int sceneClickY, int a11) :
+Command::Command(int16 parentId, int messageKind, int messageNum, int x, int y, int a7, int a8, int sceneClickX, int sceneClickY, int a11) :
 	Message(parentId, messageKind, x, y, a7, a8, sceneClickX, sceneClickY, a11) {
 	_field_3C = 1;
 	_messageNum = messageNum;
@@ -78,18 +78,18 @@ static const char *exCommandType2str(int type) {
 	return buf;
 }
 
-bool ExCommand::load(MfcArchive &file) {
-	debugC(5, kDebugLoading, "ExCommand::load()");
+bool Command::load(MfcArchive &file) {
+	debugC(5, kDebugLoading, "Command::load()");
 
 	_parentId = file.readUint16LE();
-	_messageKind = file.readUint32LE();
+	_cmd = file.readUint32LE();
 	_x = file.readSint32LE();
 	_y = file.readSint32LE();
 	_z = file.readUint32LE();
 	_sceneClickX = file.readUint32LE();
 	_sceneClickY = file.readUint32LE();
 	_invId = file.readUint32LE();
-	_field_24 = file.readUint32LE();
+	_wait = file.readUint32LE();
 	_param = file.readUint32LE();
 	_field_2C = file.readUint32LE();
 	_field_30 = file.readUint32LE();
@@ -107,18 +107,18 @@ bool ExCommand::load(MfcArchive &file) {
 	_objtype = kObjTypeExCommand;
 
 	debugC(6, kDebugXML, "%% <COMMAND parent=%d cmd=%s x=%d y=%d f14=%d sceneX=%d sceneY=%d f20=%d f24=%d param=%d f2c=%d f30=%d f34=%d num=%d flags=%d parId=%d />",
-			_parentId, exCommandType2str(_messageKind), _x, _y, _z, _sceneClickX, _sceneClickY, _invId, _field_24, _param, _field_2C,
+			_parentId, exCommandType2str(_cmd), _x, _y, _z, _sceneClickX, _sceneClickY, _invId, _wait, _param, _field_2C,
 			_field_30, _field_34, _messageNum, _excFlags, _parId);
 
 	return true;
 }
 
-bool ExCommand::handleMessage() {
+bool Command::handleMessage() {
 	int cnt = 0;
 	for (MessageHandler *m = g_nmi->_messageHandlers; m; m = m->nextItem)
 		cnt += m->callback(this);
 
-	if (_messageKind == 17 || (_excFlags & 1)) {
+	if (_cmd == 17 || (_excFlags & 1)) {
 		if (_parId) {
 			MessageQueue *mq = g_nmi->_globalMessageQueueList->getMessageQueueById(_parId);
 			if (mq)
@@ -132,17 +132,17 @@ bool ExCommand::handleMessage() {
 	return (cnt > 0);
 }
 
-void ExCommand::sendMessage() {
+void Command::sendMessage() {
 	g_nmi->_exCommandList.push_back(this);
 
 	processMessages();
 }
 
-void ExCommand::postMessage() {
+void Command::postMessage() {
 	g_nmi->_exCommandList.push_back(this);
 }
 
-void ExCommand::handle() {
+void Command::handle() {
 	if (g_nmi->_modalObject) {
 		g_nmi->_modalObject->handleMessage(this);
 
@@ -152,14 +152,14 @@ void ExCommand::handle() {
 	}
 }
 
-void ExCommand::setf3c(int val) {
+void Command::setf3c(int val) {
 	if (val != -1)
 		_field_3C = val;
 
 	_field_34 = 1;
 }
 
-void ExCommand::firef34() {
+void Command::firef34() {
 	if (_field_34) {
 		if (_field_3C >= _param) {
 			_field_34 = 0;
@@ -172,19 +172,19 @@ void ExCommand::firef34() {
 	}
 }
 
-ExCommand2::ExCommand2(int messageKind, int parentId, const PointList &points) : ExCommand(parentId, messageKind, 0, 0, 0, 0, 1, 0, 0, 0) {
+ExCommand2::ExCommand2(int messageKind, int parentId, const PointList &points) : Command(parentId, messageKind, 0, 0, 0, 0, 1, 0, 0, 0) {
 	_objtype = kObjTypeExCommand2;
 	_points = points;
 }
 
-ExCommand2::ExCommand2(ExCommand2 *src) : ExCommand(src), _points(src->_points) {}
+ExCommand2::ExCommand2(ExCommand2 *src) : Command(src), _points(src->_points) {}
 
 ExCommand2 *ExCommand2::createClone() {
 	return new ExCommand2(this);
 }
 
 Message::Message() {
-	_messageKind = 0;
+	_cmd = 0;
 	_parentId = 0;
 
 	_x = 0;
@@ -193,7 +193,7 @@ Message::Message() {
 	_sceneClickX = 0;
 	_sceneClickY = 0;
 	_invId = 0;
-	_field_24 = 0;
+	_wait = 0;
 	_param = 0;
 	_field_2C = 0;
 	_field_30 = 0;
@@ -201,14 +201,14 @@ Message::Message() {
 }
 
 Message::Message(int16 parentId, int messageKind, int x, int y, int z, int a7, int sceneClickX, int sceneClickY, int a10) {
-	_messageKind = messageKind;
+	_cmd = messageKind;
 	_parentId = parentId;
 	_x = x;
 	_y = y;
 	_z = z;
 	_sceneClickX = sceneClickX;
 	_sceneClickY = sceneClickY;
-	_field_24 = a7;
+	_wait = a7;
 	_invId = a10;
 	_param = 0;
 	_field_2C = 0;
@@ -221,7 +221,7 @@ ObjstateCommand::ObjstateCommand() {
 	_objtype = kObjTypeObjstateCommand;
 }
 
-ObjstateCommand::ObjstateCommand(ObjstateCommand *src) : ExCommand(src) {
+ObjstateCommand::ObjstateCommand(ObjstateCommand *src) : Command(src) {
 	_value = src->_value;
 	_objtype = kObjTypeObjstateCommand;
 
@@ -233,7 +233,7 @@ bool ObjstateCommand::load(MfcArchive &file) {
 
 	_objtype = kObjTypeObjstateCommand;
 
-	ExCommand::load(file);
+	Command::load(file);
 
 	_value = file.readUint32LE();
 
@@ -276,8 +276,8 @@ MessageQueue::MessageQueue(MessageQueue *src, int parId, int field_38) {
 	_counter = 0;
 	_field_38 = (field_38 == 0);
 
-	for (Common::List<ExCommand *>::iterator it = src->_commands.begin(); it != src->_commands.end(); ++it) {
-		ExCommand *ex = (*it)->createClone();
+	for (Common::List<Command *>::iterator it = src->_commands.begin(); it != src->_commands.end(); ++it) {
+		Command *ex = (*it)->createClone();
 		ex->_excFlags |= 2;
 
 		_commands.push_back(ex);
@@ -301,8 +301,8 @@ MessageQueue::MessageQueue(MessageQueue *src, int parId, int field_38) {
 }
 
 MessageQueue::~MessageQueue() {
-	for (Common::List<ExCommand *>::iterator it = _commands.begin(); it != _commands.end(); ++it) {
-		ExCommand *ex = *it;
+	for (Common::List<Command *>::iterator it = _commands.begin(); it != _commands.end(); ++it) {
+		Command *ex = *it;
 
 		if (ex && ex->_excFlags & 2)
 			delete ex;
@@ -330,7 +330,7 @@ bool MessageQueue::load(MfcArchive &file) {
 	_title = file.readPascalString();
 
 	for (int i = 0; i < count; i++) {
-		ExCommand *tmp = file.readClass<ExCommand>();
+		Command *tmp = file.readClass<Command>();
 		tmp->_excFlags |= 2;
 		_commands.push_back(tmp);
 	}
@@ -385,16 +385,16 @@ void MessageQueue::messageQueueCallback1(int par) {
 	}
 }
 
-void MessageQueue::addCommandToFront(ExCommand *ex) {
+void MessageQueue::addCommandToFront(Command *ex) {
 	_commands.push_front(ex);
 }
 
-void MessageQueue::addCommandToEnd(ExCommand *ex) {
+void MessageQueue::addCommandToEnd(Command *ex) {
 	_commands.push_back(ex);
 }
 
-void MessageQueue::addCommand(int pos, ExCommand *ex) {
-	Common::List<ExCommand *>::iterator it = _commands.begin();
+void MessageQueue::addCommand(int pos, Command *ex) {
+	Common::List<Command *>::iterator it = _commands.begin();
 
 	for (int i = pos; i > 0; i--)
 		++it;
@@ -402,11 +402,11 @@ void MessageQueue::addCommand(int pos, ExCommand *ex) {
 	_commands.insert(it, ex);
 }
 
-ExCommand *MessageQueue::getCommandByIndex(uint idx) {
+Command *MessageQueue::getCommandByIndex(uint idx) {
 	if (idx >= getCount())
 		return nullptr;
 
-	Common::List<ExCommand *>::iterator it = _commands.begin();
+	Common::List<Command *>::iterator it = _commands.begin();
 
 	while (idx) {
 		++it;
@@ -420,7 +420,7 @@ void MessageQueue::removeCommand(uint idx, bool doFree) {
 	if (idx >= getCount())
 		return;
 
-	Common::List<ExCommand *>::iterator it = _commands.begin();
+	Common::List<Command *>::iterator it = _commands.begin();
 
 	while (idx) {
 		++it;
@@ -445,13 +445,13 @@ void MessageQueue::next() {
 		if (!(_flags & 4) && (_flags & 1)) {
 			messageQueueCallback1(16);
 		}
-		ExCommand *ex = _commands.front();
+		Command *ex = _commands.front();
 
 		_commands.pop_front();
 
 		_counter++;
 		ex->_parId = _id;
-		ex->_excFlags |= (ex->_field_24 == 0 ? 1 : 0) | (ex->_field_3C != 0 ? 2 : 0);
+		ex->_excFlags |= (ex->_wait == 0 ? 1 : 0) | (ex->_field_3C != 0 ? 2 : 0);
 
 		_flags |= 4;
 		ex->sendMessage();
@@ -462,18 +462,18 @@ void MessageQueue::next() {
 }
 
 bool MessageQueue::checkGlobalExCommandList1() {
-	ExCommand *ex, *ex1;
+	Command *ex, *ex1;
 
 	for (uint i = 0; i < getCount(); i++) {
 		ex = getCommandByIndex(i);
 
-		if (ex->_messageKind != 1 && ex->_messageKind != 20 && ex->_messageKind != 5 && ex->_messageKind != 27)
+		if (ex->_cmd != 1 && ex->_cmd != 20 && ex->_cmd != 5 && ex->_cmd != 27)
 			continue;
 
-		for (Common::List<ExCommand *>::iterator it = g_nmi->_exCommandList.begin(); it != g_nmi->_exCommandList.end(); it++) {
+		for (Common::List<Command *>::iterator it = g_nmi->_exCommandList.begin(); it != g_nmi->_exCommandList.end(); it++) {
 			ex1 = *it;
 
-			if (ex1->_messageKind != 1 && ex1->_messageKind != 20 && ex1->_messageKind != 5 && ex1->_messageKind != 27)
+			if (ex1->_cmd != 1 && ex1->_cmd != 20 && ex1->_cmd != 5 && ex1->_cmd != 27)
 				continue;
 
 			if (ex1->_parentId != ex->_parentId)
@@ -494,18 +494,18 @@ bool MessageQueue::checkGlobalExCommandList1() {
 }
 
 bool MessageQueue::checkGlobalExCommandList2() {
-	ExCommand *ex, *ex1;
+	Command *ex, *ex1;
 
 	for (uint i = 0; i < getCount(); i++) {
 		ex = getCommandByIndex(i);
 
-		if (ex->_messageKind != 1 && ex->_messageKind != 20 && ex->_messageKind != 5 && ex->_messageKind != 27)
+		if (ex->_cmd != 1 && ex->_cmd != 20 && ex->_cmd != 5 && ex->_cmd != 27)
 			continue;
 
-		for (Common::List<ExCommand *>::iterator it = g_nmi->_exCommandList.begin(); it != g_nmi->_exCommandList.end();) {
+		for (Common::List<Command *>::iterator it = g_nmi->_exCommandList.begin(); it != g_nmi->_exCommandList.end();) {
 			ex1 = *it;
 
-			if (ex1->_messageKind != 1 && ex1->_messageKind != 20 && ex1->_messageKind != 5 && ex1->_messageKind != 27) {
+			if (ex1->_cmd != 1 && ex1->_cmd != 20 && ex1->_cmd != 5 && ex1->_cmd != 27) {
 				it++;
 				continue;
 			}
@@ -563,8 +563,8 @@ void MessageQueue::finish() {
 
 void MessageQueue::setObjectCopy(int key1, int key2) {
 	for (uint i = 0; i < getCount(); i++) {
-		ExCommand *ex = getCommandByIndex(i);
-		int k = ex->_messageKind;
+		Command *ex = getCommandByIndex(i);
+		int k = ex->_cmd;
 		if ((k == 1 || k == 20 || k == 5 || k == 6 || k == 2 || k == 18 || k == 19 || k == 22 || k == 55)
 					&& ex->_param == key1)
 			ex->_param = key2;
@@ -573,13 +573,13 @@ void MessageQueue::setObjectCopy(int key1, int key2) {
 
 int MessageQueue::calcDuration(AniObject *obj) {
 	int res = 0;
-	ExCommand *ex;
+	Command *ex;
 	Movement *mov;
 
 	for (uint i = 0; i < getCount(); i++) {
 		ex = getCommandByIndex(i);
 		if (ex->_parentId == obj->_id) {
-			if (ex->_messageKind == 1 || ex->_messageKind == 20) {
+			if (ex->_cmd == 1 || ex->_cmd == 20) {
 				if ((mov = obj->getMovement(ex->_messageNum)) != nullptr) {
 					if (ex->_z >= 1)
 						res += ex->_z;
@@ -595,8 +595,8 @@ int MessageQueue::calcDuration(AniObject *obj) {
 
 void MessageQueue::setObjectCopyForId(int objId, int oldCopyId, int newCopyId) {
 	for (uint i = 0; i < getCount(); i++) {
-		ExCommand *ex = getCommandByIndex(i);
-		int k = ex->_messageKind;
+		Command *ex = getCommandByIndex(i);
+		int k = ex->_cmd;
 
 		if ((k == 1 || k == 20 || k == 5 || k == 6 || k == 2 || k == 18 || k == 19 || k == 22 || k == 55)
 			 && ex->_param == oldCopyId
@@ -609,10 +609,10 @@ int MessageQueue::activateExCommandsByKind(int kind) {
 	int res = 0;
 
 	for (uint i = 0; i < getCount(); i++) {
-		ExCommand *ex = getCommandByIndex(i);
+		Command *ex = getCommandByIndex(i);
 
-		if (ex->_messageKind == kind) {
-			ex->_messageKind = 0;
+		if (ex->_cmd == kind) {
+			ex->_cmd = 0;
 			ex->_excFlags |= 1;
 
 			res++;
@@ -714,7 +714,7 @@ void clearGlobalMessageQueueList1() {
 
 void clearMessages() {
 	while (g_nmi->_exCommandList.size()) {
-		ExCommand *ex = g_nmi->_exCommandList.front();
+		Command *ex = g_nmi->_exCommandList.front();
 
 		g_nmi->_exCommandList.pop_front();
 
@@ -755,7 +755,7 @@ void updateMessageHandlerIndex(MessageHandler *msg, int offset) {
 		msg->index += offset;
 }
 
-void addMessageHandler(int (*callback)(ExCommand *), int16 id) {
+void addMessageHandler(int (*callback)(Command *), int16 id) {
 	if (getMessageHandlerById(id))
 		return;
 
@@ -792,7 +792,7 @@ MessageHandler *getMessageHandlerById(int16 id) {
 	return curItem;
 }
 
-bool allocMessageHandler(MessageHandler *where, int16 id, int (*callback)(ExCommand *), int index) {
+bool allocMessageHandler(MessageHandler *where, int16 id, int (*callback)(Command *), int index) {
 	MessageHandler *msg = new MessageHandler;
 
 	if (where) {
@@ -823,7 +823,7 @@ int getMessageHandlersCount() {
 	return result;
 }
 
-bool addMessageHandlerByIndex(int (*callback)(ExCommand *), int index, int16 id) {
+bool addMessageHandlerByIndex(int (*callback)(Command *), int index, int16 id) {
 	if (getMessageHandlerById(id))
 		return false;
 
@@ -858,7 +858,7 @@ bool addMessageHandlerByIndex(int (*callback)(ExCommand *), int index, int16 id)
 	}
 }
 
-bool insertMessageHandler(int (*callback)(ExCommand *), int index, int16 id) {
+bool insertMessageHandler(int (*callback)(Command *), int index, int16 id) {
 	if (getMessageHandlerById(id))
 		return false;
 
@@ -898,7 +898,7 @@ void processMessages() {
 		g_nmi->_isProcessingMessages = true;
 
 		while (g_nmi->_exCommandList.size()) {
-			ExCommand *ex = g_nmi->_exCommandList.front();
+			Command *ex = g_nmi->_exCommandList.front();
 			g_nmi->_exCommandList.pop_front();
 			ex->handleMessage();
 		}
@@ -950,7 +950,7 @@ bool runQueueByIdWithAni(AniObject *obj, int queueId, int flags) {
 }
 
 void postExCommand(int parentId, int keyCode, int x, int y, int f20, int f14) {
-	ExCommand *ex = new ExCommand(parentId, 17, 64, 0, 0, 0, 1, 0, 0, 0);
+	Command *ex = new Command(parentId, 17, 64, 0, 0, 0, 1, 0, 0, 0);
 
 	ex->_param = keyCode;
 	ex->_excFlags |= 3;

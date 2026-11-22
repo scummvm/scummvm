@@ -119,7 +119,7 @@ class Inventory2 : public Inventory {
 	void slideIn();
 	void slideOut();
 
-	bool handleLeftClick(ExCommand *cmd);
+	bool handleLeftClick(Command *cmd);
 	int selectItem(int itemId);
 	bool unselectItem(bool flag);
 

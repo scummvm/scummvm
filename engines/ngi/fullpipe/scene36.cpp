@@ -52,8 +52,8 @@ int scene36_updateCursor() {
 	return g_nmi->_cursorId;
 }
 
-int sceneHandler36(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler36(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch (cmd->_messageNum) {
@@ -65,7 +65,7 @@ int sceneHandler36(ExCommand *cmd) {
 						if (!(g_nmi->_aniMan->_flags & 0x100) && g_nmi->_msgObjectId2 != g_vars->scene36_scissors->_id ) {
 							handleObjectInteraction(g_nmi->_aniMan, g_vars->scene36_scissors, cmd->_param);
 
-							cmd->_messageKind = 0;
+							cmd->_cmd = 0;
 						}
 
 		break;

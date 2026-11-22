@@ -299,7 +299,7 @@ static CObject *createObject(int objectId) {
 	case kMessageQueue:
 		return new MessageQueue();
 	case kExCommand:
-		return new ExCommand();
+		return new Command();
 	case kObjstateCommand:
 		return new ObjstateCommand();
 	case kGameVar:

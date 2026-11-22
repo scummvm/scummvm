@@ -61,8 +61,8 @@ void sceneHandlerIntro_part2() {
 	runQueue(QU_IN2_DO, 0);
 }
 
-int sceneHandlerIntro(ExCommand *ex) {
-	if (ex->_messageKind != 17)
+int sceneHandlerIntro(Command *ex) {
+	if (ex->_cmd != 17)
 		return 0;
 
 	switch (ex->_messageNum) {

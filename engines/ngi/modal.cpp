@@ -72,8 +72,8 @@ ModalIntro::~ModalIntro() {
 	keymapper->getKeymap("ngi-default")->setEnabled(true);
 }
 
-bool ModalIntro::handleMessage(ExCommand *message) {
-	if (message->_messageKind != 17)
+bool ModalIntro::handleMessage(Command *message) {
+	if (message->_cmd != 17)
 		return false;
 
 	if (message->_messageNum != 36)
@@ -264,8 +264,8 @@ ModalIntroDemo::~ModalIntroDemo() {
 	keymapper->getKeymap("ngi-default")->setEnabled(true);
 }
 
-bool ModalIntroDemo::handleMessage(ExCommand *message) {
-	if (message->_messageKind != 17)
+bool ModalIntroDemo::handleMessage(Command *message) {
+	if (message->_cmd != 17)
 		return false;
 
 	if (message->_messageNum != 36)
@@ -608,8 +608,8 @@ void ModalMap::update() {
 	g_nmi->drawArcadeOverlay(1);
 }
 
-bool ModalMap::handleMessage(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+bool ModalMap::handleMessage(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return false;
 
 	switch (cmd->_messageNum) {
@@ -1137,8 +1137,8 @@ void ModalFinal::unloadScenes() {
 	g_nmi->stopAllSounds();
 }
 
-bool ModalFinal::handleMessage(ExCommand *cmd) {
-	if (cmd->_messageKind == 17 && cmd->_messageNum == 36 && cmd->_param == kActionPause) {
+bool ModalFinal::handleMessage(Command *cmd) {
+	if (cmd->_cmd == 17 && cmd->_messageNum == 36 && cmd->_param == kActionPause) {
 		g_nmi->_modalObject = new ModalMainMenu();
 		g_nmi->_modalObject->_parentObj = this;
 
@@ -1216,8 +1216,8 @@ ModalCredits::~ModalCredits() {
 	keymapper->getKeymap("ngi-default")->setEnabled(true);
 }
 
-bool ModalCredits::handleMessage(ExCommand *cmd) {
-	if (cmd->_messageKind == 17 && cmd->_messageNum == 36 && cmd->_param == kActionSkipCredits) {
+bool ModalCredits::handleMessage(Command *cmd) {
+	if (cmd->_cmd == 17 && cmd->_messageNum == 36 && cmd->_param == kActionSkipCredits) {
 		_fadeIn = false;
 
 		return true;
@@ -1375,8 +1375,8 @@ void ModalMainMenu::update() {
 	_scene->render();
 }
 
-bool ModalMainMenu::handleMessage(ExCommand *message) {
-	if (message->_messageKind != 17)
+bool ModalMainMenu::handleMessage(Command *message) {
+	if (message->_cmd != 17)
 		return false;
 
 	if (!_scene)
@@ -1809,8 +1809,8 @@ ModalHelp::~ModalHelp() {
 	g_nmi->_currentScene->_y = _hy;
 }
 
-bool ModalHelp::handleMessage(ExCommand *cmd) {
-	if (cmd->_messageKind == 17) {
+bool ModalHelp::handleMessage(Command *cmd) {
+	if (cmd->_cmd == 17) {
 		int msg = cmd->_messageNum;
 
 		if (msg == 29 || msg == 36 || msg == 107) {
@@ -1949,8 +1949,8 @@ void ModalQuery::update() {
 		_cancelBtn->draw();
 }
 
-bool ModalQuery::handleMessage(ExCommand *cmd) {
-	if (cmd->_messageKind == 17) {
+bool ModalQuery::handleMessage(Command *cmd) {
+	if (cmd->_cmd == 17) {
 		if (cmd->_messageNum == 29) {
 			if (_okBtn->isPointInside(g_nmi->_mouseScreenPos.x, g_nmi->_mouseScreenPos.y)) {
 				_queryResult = 1;
@@ -2304,7 +2304,7 @@ void ModalSaveGame::update() {
 		_okL->draw();
 }
 
-bool ModalSaveGame::handleMessage(ExCommand *cmd) {
+bool ModalSaveGame::handleMessage(Command *cmd) {
 	if (_queryDlg)
 		return _queryDlg->handleMessage(cmd);
 
@@ -2517,8 +2517,8 @@ void ModalDemo::update() {
 		_text->draw();
 }
 
-bool ModalDemo::handleMessage(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+bool ModalDemo::handleMessage(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return false;
 
 	if (cmd->_messageNum == 29) {
@@ -2545,7 +2545,7 @@ void NGIEngine::openMainMenu() {
 	/**
 	 * This function is only called in global_messageHandler1 to open the main menu.
 	 * To reach it, g_nmi->_modalObject is supposed to be null because, else, this object
-	 * would catch the message (see ExCommand::handle).
+	 * would catch the message (see Command::handle).
 	 * If we hammer kPauseAction, we get several messages in the queue which lead to this method
 	 * executed several times leading to use-after-frees when the last main menu is closed.
 	 * Instead, ignore messages which come in a row and only handle the first one.

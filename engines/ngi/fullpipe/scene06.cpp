@@ -163,7 +163,7 @@ void sceneHandler06_mumsyBallTake() {
 
 	MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 
-	ExCommand *ex = new ExCommand(ANI_MAMASHA, 2, 50, 0, 0, 0, 1, 0, 0, 0);
+	Command *ex = new Command(ANI_MAMASHA, 2, 50, 0, 0, 0, 1, 0, 0, 0);
 
 	ex->_excFlags = 2u;
 	mq->addCommandToEnd(ex);
@@ -174,51 +174,51 @@ void sceneHandler06_mumsyBallTake() {
 		if (g_nmi->getObjectState(sO_ClockAxis) == g_nmi->getObjectEnumState(sO_ClockAxis, sO_IsNotAvailable))
 			g_nmi->setObjectState(sO_ClockAxis, g_nmi->getObjectEnumState(sO_ClockAxis, sO_WithoutHandle));
 
-		ex = new ExCommand(ANI_MAMASHA, 1, momAni, 0, 0, 0, 1, 0, 0, 0);
+		ex = new Command(ANI_MAMASHA, 1, momAni, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
 		mq->addCommandToEnd(ex);
 
 		if (g_vars->scene06_mumsyPos + 3 >= 0) {
-			ex = new ExCommand(ANI_MAMASHA, 1, MV_MOM_STARTBK, 0, 0, 0, 1, 0, 0, 0);
+			ex = new Command(ANI_MAMASHA, 1, MV_MOM_STARTBK, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2u;
 			mq->addCommandToEnd(ex);
 
 			for (int i = 0; i < g_vars->scene06_mumsyPos + 3; i++) {
-				ex = new ExCommand(ANI_MAMASHA, 1, MV_MOM_CYCLEBK, 0, 0, 0, 1, 0, 0, 0);
+				ex = new Command(ANI_MAMASHA, 1, MV_MOM_CYCLEBK, 0, 0, 0, 1, 0, 0, 0);
 				ex->_excFlags |= 2;
 				mq->addCommandToEnd(ex);
 			}
 
-			ex = new ExCommand(ANI_MAMASHA, 1, MV_MOM_STOPBK, 0, 0, 0, 1, 0, 0, 0);
+			ex = new Command(ANI_MAMASHA, 1, MV_MOM_STOPBK, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
 			mq->addCommandToEnd(ex);
 		}
 
-		ex = new ExCommand(0, 18, QU_MOM_TOLIFT, 0, 0, 0, 1, 0, 0, 0);
+		ex = new Command(0, 18, QU_MOM_TOLIFT, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
 		mq->addCommandToEnd(ex);
 	} else {
 		if (momAni) {
-			ex = new ExCommand(ANI_MAMASHA, 1, momAni, 0, 0, 0, 1, 0, 0, 0);
+			ex = new Command(ANI_MAMASHA, 1, momAni, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
 			mq->addCommandToEnd(ex);
 		}
 
 		if (g_vars->scene06_mumsyPos < 0) {
 			for (int i = 0; i > g_vars->scene06_mumsyPos; i--) {
-				ex = new ExCommand(ANI_MAMASHA, 1, MV_MOM_JUMPFW, 0, 0, 0, 1, 0, 0, 0);
+				ex = new Command(ANI_MAMASHA, 1, MV_MOM_JUMPFW, 0, 0, 0, 1, 0, 0, 0);
 				ex->_excFlags |= 2;
 				mq->addCommandToEnd(ex);
 			}
 		} else if (g_vars->scene06_mumsyPos > 0) {
 			for (int i = 0; i < g_vars->scene06_mumsyPos; i++) {
-				ex = new ExCommand(ANI_MAMASHA, 1, MV_MOM_JUMPBK, 0, 0, 0, 1, 0, 0, 0);
+				ex = new Command(ANI_MAMASHA, 1, MV_MOM_JUMPBK, 0, 0, 0, 1, 0, 0, 0);
 				ex->_excFlags |= 2;
 				mq->addCommandToEnd(ex);
 			}
 		}
 
-		ex = new ExCommand(0, 18, QU_MOM_SITDOWN, 0, 0, 0, 1, 0, 0, 0);
+		ex = new Command(0, 18, QU_MOM_SITDOWN, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3u;
 		mq->addCommandToEnd(ex);
 	}
@@ -316,7 +316,7 @@ void sceneHandler06_takeBall() {
 			MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, 1158, 452, 1, (0x4000 | ST_MAN_RIGHT));
 
 			if (mq) {
-				ExCommand *ex = new ExCommand(0, 17, MSG_SC6_TAKEBALL, 0, 0, 0, 1, 0, 0, 0);
+				Command *ex = new Command(0, 17, MSG_SC6_TAKEBALL, 0, 0, 0, 1, 0, 0, 0);
 				ex->_excFlags |= 3;
 				mq->addCommandToEnd(ex);
 
@@ -535,8 +535,8 @@ void scene06_initScene(Scene *sc) {
 	g_nmi->setArcadeOverlay(PIC_CSR_ARCADE2);
 }
 
-int sceneHandler06(ExCommand *ex) {
-	if (ex->_messageKind != 17)
+int sceneHandler06(Command *ex) {
+	if (ex->_cmd != 17)
 		return 0;
 
 	switch(ex->_messageNum) {
@@ -644,7 +644,7 @@ int sceneHandler06(ExCommand *ex) {
 			if (st) {
 				if (!g_vars->scene06_arcadeEnabled && st->_id == ANI_LIFTBUTTON) {
 					g_nmi->lift_animateButton(st);
-					ex->_messageKind = 0;
+					ex->_cmd = 0;
 					return 0;
 				}
 
@@ -652,7 +652,7 @@ int sceneHandler06(ExCommand *ex) {
 					if (g_vars->scene06_numBallsGiven == 1)
 						sceneHandler06_takeBall();
 
-					ex->_messageKind = 0;
+					ex->_cmd = 0;
 				} else if (g_vars->scene06_ballInHands && g_nmi->_aniMan == st && !g_nmi->_aniMan->_movement && g_nmi->_aniMan->_statics->_staticsId == ST_MAN6_BALL) {
 					g_vars->scene06_sceneClickX = ex->_sceneClickX;
 					g_vars->scene06_sceneClickY = ex->_sceneClickY;

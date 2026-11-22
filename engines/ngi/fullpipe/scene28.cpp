@@ -67,7 +67,7 @@ void sceneHandler28_lift1ShowAfter() {
 	g_nmi->_aniMan->show1(-1, -1, -1, 0);
 }
 
-void sceneHandler28_makeFaces(ExCommand *cmd) {
+void sceneHandler28_makeFaces(Command *cmd) {
 	g_nmi->_currentScene->findPictureObjectById(PIC_SC28_DARK4, 0)->_flags &= 0xFFFB;
 
 	g_vars->scene28_lighteningObject = nullptr;
@@ -266,7 +266,7 @@ void sceneHandler28_clickLift(int numLift) {
 
 		MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, x, 472, 1, ST_MAN_UP);
 		if (mq) {
-			ExCommand *ex = new ExCommand(0, 17, MSG_SC28_CLICKLIFT, 0, 0, 0, 1, 0, 0, 0);
+			Command *ex = new Command(0, 17, MSG_SC28_CLICKLIFT, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 3;
 			ex->_param = numLift;
 
@@ -303,8 +303,8 @@ void sceneHandler28_clickLift(int numLift) {
 	}
 }
 
-int sceneHandler28(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler28(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch (cmd->_messageNum) {
@@ -414,7 +414,7 @@ int sceneHandler28(ExCommand *cmd) {
 				if (ani->_id == ANI_LIFT || ani->_id == ANI_LIFT_28 ) {
 					sceneHandler28_clickLift(ani->_copyId);
 
-					cmd->_messageKind = 0;
+					cmd->_cmd = 0;
 					break;
 				}
 

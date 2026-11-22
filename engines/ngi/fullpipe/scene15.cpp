@@ -99,8 +99,8 @@ int scene15_updateCursor() {
 	return g_nmi->_cursorId;
 }
 
-int sceneHandler15(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler15(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch(cmd->_messageNum) {
@@ -162,7 +162,7 @@ int sceneHandler15(ExCommand *cmd) {
 		{
 			if (g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC15_LADDER) {
 				handleObjectInteraction(g_nmi->_aniMan, g_nmi->_currentScene->findPictureObjectById(PIC_SC15_DTRUBA, 0), cmd->_param);
-				cmd->_messageKind = 0;
+				cmd->_cmd = 0;
 
 				return 0;
 			}
@@ -172,7 +172,7 @@ int sceneHandler15(ExCommand *cmd) {
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
 				g_nmi->lift_animateButton(ani);
 
-				cmd->_messageKind = 0;
+				cmd->_cmd = 0;
 			}
 		}
 		break;

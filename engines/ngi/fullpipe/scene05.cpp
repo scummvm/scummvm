@@ -128,7 +128,7 @@ void sceneHandler05_makeWackoFeedback() {
 		if (mq) {
 			mq->setFlags(mq->getFlags() | 1);
 
-			ExCommand *ex = new ExCommand(0, 17, MSG_SC5_MAKEOTMFEEDBACK, 0, 0, 0, 1, 0, 0, 0);
+			Command *ex = new Command(0, 17, MSG_SC5_MAKEOTMFEEDBACK, 0, 0, 0, 1, 0, 0, 0);
 
 			ex->_excFlags |= 2;
 
@@ -194,11 +194,11 @@ void sceneHandler05_handleUp() {
 	sceneHandler05_resetTicks();
 }
 
-void sceneHandler05_testHatch(ExCommand *inex) {
-	ExCommand *ex;
+void sceneHandler05_testHatch(Command *inex) {
+	Command *ex;
 
 	if (g_nmi->_currentScene->findAniObjectById(ANI_BIGLUK, -1)->_statics->_staticsId == ST_BLK_CLOSED) {
-		ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
+		ex = new Command(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = TrubaLeft;
 		ex->_excFlags |= 2;
 		ex->postMessage();
@@ -227,11 +227,11 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 
 			mq->setFlags(mq->getFlags() | 1);
 
-			ex = new ExCommand(ANI_OTMOROZ, 1, MV_OTM_HANDLEUP, 0, 0, 0, 1, 0, 0, 0);
+			ex = new Command(ANI_OTMOROZ, 1, MV_OTM_HANDLEUP, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2u;
 			mq->addCommandToEnd(ex);
 
-			ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
+			ex = new Command(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
 			ex->_param = TrubaLeft;
 			ex->_excFlags |= 2;
 			mq->addCommandToEnd(ex);
@@ -243,11 +243,11 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 		mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 		mq->setFlags(mq->getFlags() | 1);
 
-		ex = new ExCommand(ANI_OTMOROZ, 1, MV_OTM_HANDLEUP, 0, 0, 0, 1, 0, 0, 0);
+		ex = new Command(ANI_OTMOROZ, 1, MV_OTM_HANDLEUP, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
 		mq->addCommandToEnd(ex);
 
-		ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
+		ex = new Command(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = TrubaLeft;
 		ex->_excFlags |= 2;
 		mq->addCommandToEnd(ex);
@@ -269,11 +269,11 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 
 			mq->setFlags(mq->getFlags() | 1);
 
-			ex = new ExCommand(ANI_OTMOROZ, 1, MV_OTM_BOXHANDLEUP, 0, 0, 0, 1, 0, 0, 0);
+			ex = new Command(ANI_OTMOROZ, 1, MV_OTM_BOXHANDLEUP, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
 			mq->addCommandToEnd(ex);
 
-			ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
+			ex = new Command(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
 			ex->_param = TrubaLeft;
 			ex->_excFlags |= 2;
 			mq->addCommandToEnd(ex);
@@ -289,11 +289,11 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 		mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 		mq->setFlags(mq->getFlags() | 1);
 
-		ex = new ExCommand(ANI_OTMOROZ, 1, MV_OTM_BOXHANDLEUP, 0, 0, 0, 1, 0, 0, 0);
+		ex = new Command(ANI_OTMOROZ, 1, MV_OTM_BOXHANDLEUP, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
 		mq->addCommandToEnd(ex);
 
-		ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
+		ex = new Command(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = TrubaLeft;
 		ex->_excFlags |= 2;
 		mq->addCommandToEnd(ex);
@@ -303,7 +303,7 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 
 		return;
 	} else {
-		ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
+		ex = new Command(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = TrubaLeft;
 		ex->_excFlags |= 2;
 		ex->postMessage();
@@ -313,8 +313,8 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 }
 
 
-int sceneHandler05(ExCommand *ex) {
-	if (ex->_messageKind != 17)
+int sceneHandler05(Command *ex) {
+	if (ex->_cmd != 17)
 		return 0;
 
 	switch (ex->_messageNum) {

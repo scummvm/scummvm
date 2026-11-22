@@ -76,7 +76,7 @@ MessageQueue *AniHandler::makeQueue(AniObject *ani, int staticsIndex, int, int *
 
 	MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 	Common::Point point;
-	ExCommand *ex;
+	Command *ex;
 
 #if 0
 	int i = 0;
@@ -101,14 +101,14 @@ MessageQueue *AniHandler::makeQueue(AniObject *ani, int staticsIndex, int, int *
 			ex->_messageNum = _items[idx].subItems[subidx].movement->_id;
 		} else {
 #endif
-			ex = new ExCommand(ani->_id, 1, _items[idx].subItems[subidx].movement->_id, 0, 0, 0, 1, 0, 0, 0);
+			ex = new Command(ani->_id, 1, _items[idx].subItems[subidx].movement->_id, 0, 0, 0, 1, 0, 0, 0);
 #if 0
 		}
 #endif
 
 		ex->_param = ani->_copyId;
 		ex->_field_3C = 1;
-		ex->_field_24 = 1;
+		ex->_wait = 1;
 
 		mq->addCommandToEnd(ex);
 
@@ -396,11 +396,11 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 		j = s.staticsIndex;
 	}
 
-	ExCommand *ex = new ExCommand(mkQueue->ani->_id, 5, -1, mkQueue->x1, mkQueue->y1, 0, 1, 0, 0, 0);
+	Command *ex = new Command(mkQueue->ani->_id, 5, -1, mkQueue->x1, mkQueue->y1, 0, 1, 0, 0, 0);
 
 	ex->_z = mkQueue->destZ;
 	ex->_param = mkQueue->ani->_copyId;
-	ex->_field_24 = 0;
+	ex->_wait = 0;
 	ex->_excFlags |= 3;
 
 	mq->addCommandToEnd(ex);
@@ -746,7 +746,7 @@ ExCommand2 *AniHandler::createCommand(Movement *mov, int objId, int x1, int y1, 
 	ex->_excFlags = 2;
 	ex->_messageNum = mov->_id;
 	ex->_z = len;
-	ex->_field_24 = 1;
+	ex->_wait = 1;
 	ex->_param = -1;
 
 	return ex;

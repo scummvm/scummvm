@@ -56,8 +56,8 @@ GameObject *sceneHandlerDbgMenu_getObjectAtXY(int x, int y) {
 	return nullptr;
 }
 
-int sceneHandlerDbgMenu(ExCommand *ex) {
-	if (ex->_messageKind != 17)
+int sceneHandlerDbgMenu(Command *ex) {
+	if (ex->_cmd != 17)
 		return 0;
 
 	int mx = g_nmi->_mouseScreenPos.x + g_nmi->_sceneRect.left;

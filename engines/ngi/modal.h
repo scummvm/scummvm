@@ -53,7 +53,7 @@ class BaseModalObject {
 	void deleteObject();
 
 	virtual bool pollEvent() = 0;
-	virtual bool handleMessage(ExCommand *message) = 0;
+	virtual bool handleMessage(Command *message) = 0;
 	virtual bool init(int counterdiff) = 0;
 	virtual void update() = 0;
 
@@ -72,7 +72,7 @@ class ModalIntro : public BaseModalObject {
 	~ModalIntro() override;
 
 	bool pollEvent() override { return true; }
-	bool handleMessage(ExCommand *message) override;
+	bool handleMessage(Command *message) override;
 	bool init(int counterdiff) override;
 	void update() override;
 	void saveload() override {}
@@ -92,7 +92,7 @@ class ModalIntroDemo : public BaseModalObject {
 	~ModalIntroDemo() override;
 
 	bool pollEvent() override { return true; }
-	bool handleMessage(ExCommand *message) override;
+	bool handleMessage(Command *message) override;
 	bool init(int counterdiff) override;
 	void update() override;
 	void saveload() override {}
@@ -104,7 +104,7 @@ class ModalVideoPlayer : public BaseModalObject {
 public:
 
 	bool pollEvent() override { return true; }
-	bool handleMessage(ExCommand *message) override { return true; }
+	bool handleMessage(Command *message) override { return true; }
 	bool init(int counterdiff) override { return false; }
 	void update() override {}
 	void saveload() override {}
@@ -137,7 +137,7 @@ class ModalMap : public BaseModalObject {
 	~ModalMap() override;
 
 	bool pollEvent() override { return true; }
-	bool handleMessage(ExCommand *message) override;
+	bool handleMessage(Command *message) override;
 	bool init(int counterdiff) override;
 	virtual bool init2(int counterdiff);
 	void update() override;
@@ -165,7 +165,7 @@ class ModalFinal : public BaseModalObject {
 	~ModalFinal() override;
 
 	bool pollEvent() override { return true; }
-	bool handleMessage(ExCommand *message) override;
+	bool handleMessage(Command *message) override;
 	bool init(int counterdiff) override;
 	void update() override;
 	void saveload() override {}
@@ -189,7 +189,7 @@ class ModalCredits : public BaseModalObject {
 	~ModalCredits() override;
 
 	bool pollEvent() override { return true; }
-	bool handleMessage(ExCommand *message) override;
+	bool handleMessage(Command *message) override;
 	bool init(int counterdiff) override;
 	void update() override;
 	void saveload() override {}
@@ -221,7 +221,7 @@ public:
 	~ModalMainMenu() override {}
 
 	bool pollEvent() override { return true; }
-	bool handleMessage(ExCommand *message) override;
+	bool handleMessage(Command *message) override;
 	bool init(int counterdiff) override;
 	void update() override;
 	void saveload() override {}
@@ -252,7 +252,7 @@ public:
 	~ModalHelp() override;
 
 	bool pollEvent() override { return true; }
-	bool handleMessage(ExCommand *message) override;
+	bool handleMessage(Command *message) override;
 	bool init(int counterdiff) override;
 	void update() override;
 	void saveload() override {}
@@ -266,7 +266,7 @@ public:
 	~ModalQuery() override;
 
 	bool pollEvent() override { return true; }
-	bool handleMessage(ExCommand *message) override;
+	bool handleMessage(Command *message) override;
 	bool init(int counterdiff) override;
 	void update() override;
 	void saveload() override {}
@@ -290,7 +290,7 @@ public:
 	~ModalSaveGame() override;
 
 	bool pollEvent() override { return true; }
-	bool handleMessage(ExCommand *message) override;
+	bool handleMessage(Command *message) override;
 	bool init(int counterdiff) override;
 	void update() override;
 	void saveload() override;
@@ -340,7 +340,7 @@ class ModalDemo : public BaseModalObject {
 	bool launch();
 
 	bool pollEvent() override { return true; }
-	bool handleMessage(ExCommand *message) override;
+	bool handleMessage(Command *message) override;
 	bool init(int counterdiff) override;
 	bool init2(int counterdiff);
 	void update() override;

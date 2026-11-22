@@ -36,7 +36,7 @@
 namespace NGI {
 
 void scene38_setBottleState(Scene *sc) {
-	ExCommand *ex = sc->findMessageQueue(QU_SC38_SHOWBOTTLE_ONTABLE)->getCommandByIndex(0);
+	Command *ex = sc->findMessageQueue(QU_SC38_SHOWBOTTLE_ONTABLE)->getCommandByIndex(0);
 
 	if (g_vars->scene38_bottle->_x == ex->_x && g_vars->scene38_bottle->_y == ex->_y) {
 		if (g_nmi->lift_checkButton(sO_Level5) ) {
@@ -317,8 +317,8 @@ void sceneHandler38_animateAlcoholics() {
 	}
 }
 
-int sceneHandler38(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler38(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch (cmd->_messageNum) {
@@ -377,7 +377,7 @@ int sceneHandler38(ExCommand *cmd) {
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
 				g_nmi->lift_animateButton(ani);
 
-				cmd->_messageKind = 0;
+				cmd->_cmd = 0;
 			}
 		}
 		break;

@@ -453,7 +453,7 @@ void NGIEngine::playTrack(GameVar *sceneVar, const char *name, bool delayed) {
 	}
 }
 
-void global_messageHandler_handleSound(ExCommand *cmd) {
+void global_messageHandler_handleSound(Command *cmd) {
 	if (!g_nmi->_soundEnabled)
 		return;
 

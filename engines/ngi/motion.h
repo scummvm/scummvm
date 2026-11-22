@@ -285,7 +285,7 @@ public:
 	MovGraph();
 	~MovGraph() override;
 
-	static int messageHandler(ExCommand *cmd);
+	static int messageHandler(Command *cmd);
 
 	bool load(MfcArchive &file) override;
 

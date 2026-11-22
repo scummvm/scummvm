@@ -275,9 +275,9 @@ bool AniObject::setQueue(MessageQueue *mq) {
 }
 
 void AniObject::restartMessageQueue(MessageQueue *mq) {
-	ExCommand *ex = mq->getCommandByIndex(0);
+	Command *ex = mq->getCommandByIndex(0);
 	if (ex) {
-		while (ex->_messageKind != 1 || ex->_parentId != _id) {
+		while (ex->_cmd != 1 || ex->_parentId != _id) {
 			ex->_parId = 0;
 			ex->_excFlags |= 2;
 			ex->handleMessage();
@@ -326,10 +326,10 @@ void AniObject::startMQIfIdle(int qId, int flag) {
 
 		mq->setFlags(mq->getFlags() | flag);
 
-		ExCommand *ex = mq->getCommandByIndex(0);
+		Command *ex = mq->getCommandByIndex(0);
 
 		if (ex) {
-			while (ex->_messageKind != 1 || ex->_parentId != _id) {
+			while (ex->_cmd != 1 || ex->_parentId != _id) {
 				ex->_parId = 0;
 				ex->_excFlags |= 2;
 				ex->handleMessage();
@@ -739,7 +739,7 @@ void AniObject::update(int counterdiff) {
 		return;
 	}
 
-	ExCommand *ex, *newex;
+	Command *ex, *newex;
 
 	if (_movement) {
 		_movement->_counter += counterdiff;
@@ -760,10 +760,10 @@ void AniObject::update(int counterdiff) {
 			if (dyn->_delay == dyn->_countdown) {
 
 				ex = dyn->getCommand();
-				if (ex && ex->_messageKind != 35) {
+				if (ex && ex->_cmd != 35) {
 					newex = ex->createClone();
 					newex->_excFlags |= 2;
-					if (newex->_messageKind == 17) {
+					if (newex->_cmd == 17) {
 						newex->_parentId = _id;
 						newex->_param = _copyId;
 					}
@@ -775,7 +775,7 @@ void AniObject::update(int counterdiff) {
 			}
 
 			if (dyn->_delay == dyn->_countdown && dyn->_field_68 != 0) {
-				newex = new ExCommand(_id, 17, dyn->_field_68, 0, 0, 0, 1, 0, 0, 0);
+				newex = new Command(_id, 17, dyn->_field_68, 0, 0, 0, 1, 0, 0, 0);
 				newex->_excFlags = 2;
 				newex->_param = _copyId;
 				newex->sendMessage();
@@ -793,7 +793,7 @@ void AniObject::update(int counterdiff) {
 				if (dyn->_delay == dyn->_countdown) {
 					ex = dyn->getCommand();
 					if (ex) {
-						if (ex->_messageKind == 35) {
+						if (ex->_cmd == 35) {
 							newex = ex->createClone();
 							newex->_excFlags |= 2;
 							newex->sendMessage();
@@ -943,7 +943,7 @@ L12:
 		oid = _movement->_id;
 		_movement = nullptr;
 
-		ExCommand *ex = new ExCommand(_id, 17, 24, 0, 0, 0, 1, 0, 0, 0);
+		Command *ex = new Command(_id, 17, 24, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = _copyId;
 		ex->_excFlags = 2;
 		ex->postMessage();
@@ -1176,11 +1176,11 @@ void AniObject::startSliding(int movementId, int messageQueueId, int x, int y, c
 			newy += point.y + _movement->_prevStepY;
 			_stepArray.gotoNextPoint();
 
-			ExCommand *ex = _movement->_curPhase->getCommand();
+			Command *ex = _movement->_curPhase->getCommand();
 
 			if (ex) {
-				if (ex->_messageKind == 35) {
-					ExCommand *newEx = ex->createClone();
+				if (ex->_cmd == 35) {
+					Command *newEx = ex->createClone();
 
 					newEx->_excFlags |= 2u;
 					newEx->sendMessage();
@@ -1204,7 +1204,7 @@ void AniObject::startSliding(int movementId, int messageQueueId, int x, int y, c
 	_counter = _initialCounter;
 	_targetFrame = someDynamicPhaseIndex;
 
-	ExCommand *ex = new ExCommand(_id, 17, 23, 0, 0, movementId, 1, 0, 0, 0);
+	Command *ex = new Command(_id, 17, 23, 0, 0, movementId, 1, 0, 0, 0);
 
 	ex->_param = _copyId;
 	ex->_excFlags = 2;
@@ -1286,10 +1286,10 @@ bool AniObject::startMovement(int movementId, int messageQueueId, int dynPhaseId
 
 			_stepArray.gotoNextPoint();
 
-			ExCommand *ex = _movement->_curPhase->getCommand();
+			Command *ex = _movement->_curPhase->getCommand();
 			if (ex) {
-				if (ex->_messageKind == 35) {
-					ExCommand *newex = ex->createClone();
+				if (ex->_cmd == 35) {
+					Command *newex = ex->createClone();
 					newex->_excFlags |= 2;
 					newex->sendMessage();
 				}
@@ -1316,7 +1316,7 @@ bool AniObject::startMovement(int movementId, int messageQueueId, int dynPhaseId
 
 	_stepArray.clear();
 
-	ExCommand *newex = new ExCommand(_id, 17, 23, 0, 0, movementId, 1, 0, 0, 0);
+	Command *newex = new Command(_id, 17, 23, 0, 0, movementId, 1, 0, 0, 0);
 
 	newex->_param = _copyId;
 	newex->_excFlags = 2;
@@ -2190,7 +2190,7 @@ bool StaticPhase::load(MfcArchive &file) {
 
 	assert(g_nmi->_gameProjectVersion >= 12);
 
-	_command.reset(file.readClass<ExCommand>());
+	_command.reset(file.readClass<Command>());
 
 	return true;
 }

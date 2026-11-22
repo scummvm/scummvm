@@ -122,7 +122,7 @@ void sceneHandler03_swallowEgg(int item) {
 	}
 }
 
-void sceneHandler03_giveItem(ExCommand *ex) {
+void sceneHandler03_giveItem(Command *ex) {
 	debugC(2, kDebugSceneLogic, "scene03: giveItem");
 
 	if (ex->_parentId == ANI_INV_EGGAPL || ex->_parentId == ANI_INV_EGGDOM ||
@@ -135,25 +135,25 @@ int sceneHandler03_swallowedEgg1State() {
 	return g_vars->swallowedEgg1->_value.intValue;
 }
 
-void sceneHandler03_giveCoin(ExCommand *ex) {
+void sceneHandler03_giveCoin(Command *ex) {
 	debugC(2, kDebugSceneLogic, "scene03: giveCoin");
 
 	MessageQueue *mq = g_nmi->_globalMessageQueueList->getMessageQueueById(ex->_parId);
 
 	if (mq && mq->getCount() > 0) {
-		ExCommand *ex0 = mq->getCommandByIndex(0);
-		ExCommand *ex1 = mq->getCommandByIndex(1);
+		Command *ex0 = mq->getCommandByIndex(0);
+		Command *ex1 = mq->getCommandByIndex(1);
 
 		if (sceneHandler03_swallowedEgg1State()) {
-			ex0->_messageKind = 1;
-			ex1->_messageKind = 1;
+			ex0->_cmd = 1;
+			ex1->_cmd = 1;
 
 			getGameLoaderInventory()->removeItem(ANI_INV_COIN, 1);
 		} else {
-			ex0->_messageKind = 0;
+			ex0->_cmd = 0;
 			ex0->_excFlags |= 1;
 
-			ex1->_messageKind = 0;
+			ex1->_cmd = 0;
 			ex1->_excFlags |= 1;
 
 			g_vars->scene03_eggeater->_flags &= 0xFF7Fu;
@@ -187,14 +187,14 @@ void sceneHandler03_releaseEgg() {
 	g_vars->scene03_eggeater->show1(-1, -1, -1, 0);
 }
 
-void sceneHandler03_takeEgg(ExCommand *ex) {
+void sceneHandler03_takeEgg(Command *ex) {
 	debugC(2, kDebugSceneLogic, "scene03: taking egg");
 
 	MessageQueue *mq = g_nmi->_globalMessageQueueList->getMessageQueueById(ex->_parId);
 
 	if (mq && mq->getCount() > 0) {
-		ExCommand *ex0 = mq->getCommandByIndex(0);
-		ExCommand *ex1 = mq->getCommandByIndex(1);
+		Command *ex0 = mq->getCommandByIndex(0);
+		Command *ex1 = mq->getCommandByIndex(1);
 
 		int egg1 = sceneHandler03_swallowedEgg1State();
 
@@ -217,12 +217,12 @@ void sceneHandler03_takeEgg(ExCommand *ex) {
 	}
 }
 
-int sceneHandler03(ExCommand *ex) {
-	if (ex->_messageKind != 17 && ex->_messageNum != 33)
-		debugC(3, kDebugSceneLogic, "scene03: got message: kind %d, num: %d", ex->_messageKind, ex->_messageNum);
+int sceneHandler03(Command *ex) {
+	if (ex->_cmd != 17 && ex->_messageNum != 33)
+		debugC(3, kDebugSceneLogic, "scene03: got message: kind %d, num: %d", ex->_cmd, ex->_messageNum);
 
-	if (ex->_messageKind != 17) {
-		if (ex->_messageKind == 57)
+	if (ex->_cmd != 17) {
+		if (ex->_cmd == 57)
 			sceneHandler03_giveItem(ex);
 		return 0;
 	}
@@ -281,7 +281,7 @@ int sceneHandler03(ExCommand *ex) {
 			AniObject *ani = g_nmi->_currentScene->findAniObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
 				g_nmi->lift_animateButton(ani);
-				ex->_messageKind = 0;
+				ex->_cmd = 0;
 
 				return 0;
 			}
@@ -292,7 +292,7 @@ int sceneHandler03(ExCommand *ex) {
 						if (g_nmi->_aniMan->isIdle())
 							if (!(g_nmi->_aniMan->_flags & 0x100) && g_nmi->_msgObjectId2 != g_vars->scene03_domino->_id) {
 								handleObjectInteraction(g_nmi->_aniMan, g_vars->scene03_domino, ex->_param);
-								ex->_messageKind = 0;
+								ex->_cmd = 0;
 
 								return 0;
 							}

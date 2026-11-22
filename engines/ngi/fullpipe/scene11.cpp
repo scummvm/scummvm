@@ -272,7 +272,7 @@ void sceneHandler11_putBoot() {
 		MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, 353, 498, 1, ST_MAN_RIGHT);
 
 		if (mq) {
-			ExCommand *ex = new ExCommand(0, 17, MSG_SC11_PUTBOOT, 0, 0, 0, 1, 0, 0, 0);
+			Command *ex = new Command(0, 17, MSG_SC11_PUTBOOT, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 3;
 
 			mq->addCommandToEnd(ex);
@@ -314,7 +314,7 @@ void sceneHandler11_jumpFromSwing() {
 	g_vars->scene11_dudeOnSwing->_flags |= 4;
 
 	MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
-	ExCommand *ex = new ExCommand(g_nmi->_aniMan->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
+	Command *ex = new Command(g_nmi->_aniMan->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 	ex->_z = 256;
 	ex->_messageNum = 0;
 	ex->_excFlags |= 3;
@@ -414,13 +414,13 @@ void sceneHandler11_jumpHitAndWin() {
 
 	if (mq) {
 		g_vars->scene11_crySound = SND_11_024;
-		ExCommand *ex = new ExCommand(ANI_MAN, 2, 36, 0, 0, 0, 1, 0, 0, 0);
+		Command *ex = new Command(ANI_MAN, 2, 36, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = -1;
 		ex->_excFlags = 2;
 
 		mq->addCommandToEnd(ex);
 
-		ex = new ExCommand(SC_11, 17, 61, 0, 0, 0, 1, 0, 0, 0);
+		ex = new Command(SC_11, 17, 61, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = TrubaRight;
 		ex->_excFlags = 3;
 
@@ -460,7 +460,7 @@ void sceneHandler11_jumpOver(double angle) {
 	if (mq) {
 		g_vars->scene11_crySound = SND_11_022;
 
-		ExCommand *ex = new ExCommand(0, 17, MSG_SC11_RESTARTMAN, 0, 0, 0, 1, 0, 0, 0);
+		Command *ex = new Command(0, 17, MSG_SC11_RESTARTMAN, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags = 2;
 
 		mq->addCommandToEnd(ex);
@@ -500,7 +500,7 @@ void sceneHandler11_jumpHit(double angle) {
 	if (mq) {
 		g_vars->scene11_crySound = SND_11_022;
 
-		ExCommand *ex = new ExCommand(0, 17, MSG_SC11_RESTARTMAN, 0, 0, 0, 1, 0, 0, 0);
+		Command *ex = new Command(0, 17, MSG_SC11_RESTARTMAN, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags = 2;
 
 		mq->addCommandToEnd(ex);
@@ -587,8 +587,8 @@ void sceneHandler11_winArcade() {
 	}
 }
 
-int sceneHandler11(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler11(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch (cmd->_messageNum) {

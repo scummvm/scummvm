@@ -140,14 +140,14 @@ void sceneHandler14_showBallGrandmaHit() {
 		g_vars->scene14_flyingBall->_z = 27;
 
 		MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
-		ExCommand *ex = new ExCommand(ANI_BALL14, 1, MV_BAL14_TOGMA, 0, 0, 0, 1, 0, 0, 0);
+		Command *ex = new Command(ANI_BALL14, 1, MV_BAL14_TOGMA, 0, 0, 0, 1, 0, 0, 0);
 
 		ex->_param = g_vars->scene14_flyingBall->_copyId;
 		ex->_excFlags |= 2;
-		ex->_field_24 = 1;
+		ex->_wait = 1;
 		mq->addCommandToEnd(ex);
 
-		ex = new ExCommand(ANI_BALL14, 6, 0, 0, 0, 0, 1, 0, 0, 0);
+		ex = new Command(ANI_BALL14, 6, 0, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = g_vars->scene14_flyingBall->_copyId;
 		ex->_excFlags |= 3;
 		mq->addCommandToEnd(ex);
@@ -182,14 +182,14 @@ void sceneHandler14_showBallMan() {
 		g_vars->scene14_flyingBall->_z = 27;
 
 		MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
-		ExCommand *ex = new ExCommand(ANI_BALL14, 1, MV_BAL14_TOGMA, 0, 0, 0, 1, 0, 0, 0);
+		Command *ex = new Command(ANI_BALL14, 1, MV_BAL14_TOGMA, 0, 0, 0, 1, 0, 0, 0);
 
 		ex->_param = g_vars->scene14_flyingBall->_copyId;
 		ex->_excFlags |= 2;
-		ex->_field_24 = 1;
+		ex->_wait = 1;
 		mq->addCommandToEnd(ex);
 
-		ex = new ExCommand(ANI_BALL14, 6, 0, 0, 0, 0, 1, 0, 0, 0);
+		ex = new Command(ANI_BALL14, 6, 0, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = g_vars->scene14_flyingBall->_copyId;
 		ex->_excFlags |= 3;
 		mq->addCommandToEnd(ex);
@@ -427,7 +427,7 @@ void sceneHandler14_dudeDecline() {
 	g_vars->scene14_dudeIsKicking = true;
 }
 
-bool sceneHandler14_arcadeProcessClick(ExCommand *cmd) {
+bool sceneHandler14_arcadeProcessClick(Command *cmd) {
 	if (!getCurrSceneSc2MotionController()->_isEnabled)
 		return 0;
 
@@ -437,7 +437,7 @@ bool sceneHandler14_arcadeProcessClick(ExCommand *cmd) {
 				if (g_vars->scene14_pink->_flags & 4) {
 					if (cmd->_sceneClickX < g_vars->scene14_pink->_x + 40) {
 						handleObjectInteraction(g_nmi->_aniMan, g_vars->scene14_pink, 0);
-						cmd->_messageKind = 0;
+						cmd->_cmd = 0;
 						return true;
 					}
 				}
@@ -460,7 +460,7 @@ bool sceneHandler14_arcadeProcessClick(ExCommand *cmd) {
 	if (!mq)
 		return false;
 
-	ExCommand *ex = new ExCommand(0, 17, MSG_SC14_STARTARCADE, 0, 0, 0, 1, 0, 0, 0);
+	Command *ex = new Command(0, 17, MSG_SC14_STARTARCADE, 0, 0, 0, 1, 0, 0, 0);
 
 	ex->_excFlags |= 3;
 	mq->addCommandToEnd(ex);
@@ -468,7 +468,7 @@ bool sceneHandler14_arcadeProcessClick(ExCommand *cmd) {
 
 	postExCommand(g_nmi->_aniMan->_id, 2, 1237, 451, 0, -1);
 
-	cmd->_messageKind = 0;
+	cmd->_cmd = 0;
 
 	getCurrSceneSc2MotionController()->deactivate();
 	getGameLoaderInteractionController()->disableFlag24();
@@ -479,12 +479,12 @@ void sceneHandler14_grandmaThrow() {
 	g_vars->scene14_grandma->setStatic(ST_GMA_SIT);
 
 	MessageQueue *mq = new MessageQueue(0);
-	ExCommand *ex = new ExCommand(ANI_GRANDMA, 2, 30, 0, 0, 0, 1, 0, 0, 0);
+	Command *ex = new Command(ANI_GRANDMA, 2, 30, 0, 0, 0, 1, 0, 0, 0);
 
 	ex->_excFlags |= 2;
 	mq->addCommandToEnd(ex);
 
-	ex = new ExCommand(ANI_GRANDMA, 1, MV_GMA_THROW, 0, 0, 0, 1, 0, 0, 0);
+	ex = new Command(ANI_GRANDMA, 1, MV_GMA_THROW, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags |= 2;
 	mq->addCommandToEnd(ex);
 
@@ -496,14 +496,14 @@ void sceneHandler14_passToGrandma() {
 	g_vars->scene14_flyingBall->_z = 27;
 
 	MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
-	ExCommand *ex = new ExCommand(ANI_BALL14, 1, MV_BAL14_FALL, 0, 0, 0, 1, 0, 0, 0);
+	Command *ex = new Command(ANI_BALL14, 1, MV_BAL14_FALL, 0, 0, 0, 1, 0, 0, 0);
 
 	ex->_param = g_vars->scene14_flyingBall->_copyId;
 	ex->_excFlags |= 2;
-	ex->_field_24 = 1;
+	ex->_wait = 1;
 	mq->addCommandToEnd(ex);
 
-	ex = new ExCommand(ANI_BALL14, 6, 0, 0, 0, 0, 1, 0, 0, 0);
+	ex = new Command(ANI_BALL14, 6, 0, 0, 0, 0, 1, 0, 0, 0);
 	ex->_param = g_vars->scene14_flyingBall->_copyId;
 	ex->_excFlags |= 3;
 	mq->addCommandToEnd(ex);
@@ -519,16 +519,16 @@ void sceneHandler14_grandmaJumpThrow() {
 	g_vars->scene14_grandma->setStatic(ST_GMA_SIT);
 
 	MessageQueue *mq = new MessageQueue(0);
-	ExCommand *ex = new ExCommand(ANI_GRANDMA, 2, 30, 0, 0, 0, 1, 0, 0, 0);
+	Command *ex = new Command(ANI_GRANDMA, 2, 30, 0, 0, 0, 1, 0, 0, 0);
 
 	ex->_excFlags |= 2;
 	mq->addCommandToEnd(ex);
 
-	ex = new ExCommand(ANI_GRANDMA, 1, MV_GMA_JUMPFW, 0, 0, 0, 1, 0, 0, 0);
+	ex = new Command(ANI_GRANDMA, 1, MV_GMA_JUMPFW, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags |= 2;
 	mq->addCommandToEnd(ex);
 
-	ex = new ExCommand(ANI_GRANDMA, 1, MV_GMA_THROW, 0, 0, 0, 1, 0, 0, 0);
+	ex = new Command(ANI_GRANDMA, 1, MV_GMA_THROW, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags |= 2;
 	mq->addCommandToEnd(ex);
 
@@ -583,18 +583,18 @@ void sceneHandler14_arcadeLogic() {
 
 		--g_vars->scene14_hitsLeft;
 	} else {
-		ExCommand *ex;
+		Command *ex;
 
 		g_vars->scene14_grandma->setStatic(ST_GMA_SIT);
 
 		if (g_vars->scene14_hitsLeft != 3 || g_vars->scene14_pink) {
 			MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 
-			ex = new ExCommand(ANI_GRANDMA, 1, MV_GMA_BACKOFF, 0, 0, 0, 1, 0, 0, 0);
+			ex = new Command(ANI_GRANDMA, 1, MV_GMA_BACKOFF, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
 			mq->addCommandToEnd(ex);
 
-			ex = new ExCommand(ANI_GRANDMA, 1, MV_GMA_THROW, 0, 0, 0, 1, 0, 0, 0);
+			ex = new Command(ANI_GRANDMA, 1, MV_GMA_THROW, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
 			mq->addCommandToEnd(ex);
 
@@ -602,11 +602,11 @@ void sceneHandler14_arcadeLogic() {
 		} else {
 			MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 
-			ex = new ExCommand(ANI_GRANDMA, 1, MV_GMA_BACKOFF2, 0, 0, 0, 1, 0, 0, 0);
+			ex = new Command(ANI_GRANDMA, 1, MV_GMA_BACKOFF2, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
 			mq->addCommandToEnd(ex);
 
-			ex = new ExCommand(ANI_GRANDMA, 1, MV_GMA_THROW, 0, 0, 0, 1, 0, 0, 0);
+			ex = new Command(ANI_GRANDMA, 1, MV_GMA_THROW, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
 			mq->addCommandToEnd(ex);
 
@@ -649,8 +649,8 @@ void sceneHandler14_animateBall() {
 	}
 }
 
-int sceneHandler14(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler14(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch(cmd->_messageNum) {
@@ -818,7 +818,7 @@ int sceneHandler14(ExCommand *cmd) {
 
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
 				g_nmi->lift_animateButton(ani);
-				cmd->_messageKind = 0;
+				cmd->_cmd = 0;
 				break;
 			}
 

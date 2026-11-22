@@ -96,8 +96,8 @@ void scene24_setPoolState() {
 	}
 }
 
-int sceneHandler24(ExCommand *cmd) {
-	if (cmd->_messageKind == 17 && cmd->_messageNum == 33) {
+int sceneHandler24(Command *cmd) {
+	if (cmd->_cmd == 17 && cmd->_messageNum == 33) {
 		if (g_nmi->_aniMan2) {
 			int x = g_nmi->_aniMan2->_x;
 

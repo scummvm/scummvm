@@ -84,8 +84,8 @@ int scene30_updateCursor() {
 	return g_nmi->_cursorId;
 }
 
-int sceneHandler30(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler30(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch(cmd->_messageNum) {
@@ -124,7 +124,7 @@ int sceneHandler30(ExCommand *cmd) {
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
 				g_nmi->lift_animateButton(ani);
 
-				cmd->_messageKind = 0;
+				cmd->_cmd = 0;
 			}
 		}
 		break;

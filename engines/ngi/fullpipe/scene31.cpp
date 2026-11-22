@@ -59,22 +59,22 @@ void scene31_initScene(Scene *sc) {
 		g_vars->scene31_plusMinus->_statics = g_vars->scene31_plusMinus->getStatic(ST_PMS_PLUS);
 }
 
-void sceneHandler31_testCactus(ExCommand *cmd) {
+void sceneHandler31_testCactus(Command *cmd) {
 	if ((g_vars->scene31_cactus->_flags & 4) && g_vars->scene31_cactus->_statics->_staticsId == ST_CTS31_GROWN2) {
 		MessageQueue *mq = g_nmi->_globalMessageQueueList->getMessageQueueById(cmd->_parId);
 
 		if (mq) {
-			mq->getCommandByIndex(0)->_messageKind = 0;
+			mq->getCommandByIndex(0)->_cmd = 0;
 			mq->getCommandByIndex(0)->_excFlags |= 1;
 
-			mq->getCommandByIndex(1)->_messageKind = 0;
+			mq->getCommandByIndex(1)->_cmd = 0;
 			mq->getCommandByIndex(1)->_excFlags |= 1;
 		}
 	}
 }
 
-int sceneHandler31(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler31(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch (cmd->_messageNum) {

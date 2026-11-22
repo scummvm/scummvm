@@ -114,8 +114,8 @@ void sceneHandler20_updateFlies() {
 	g_vars->scene20_fliesCountdown = g_nmi->_rnd.getRandomNumber(200) + 400;
 }
 
-int sceneHandler20(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler20(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch (cmd->_messageNum) {

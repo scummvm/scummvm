@@ -200,7 +200,7 @@ void sceneHandler09_spitterClick() {
 			MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, x, y, 1, ST_MAN_UP);
 
 			if (mq) {
-				ExCommand *ex = new ExCommand(0, 17, MSG_SC9_PLVCLICK, 0, 0, 0, 1, 0, 0, 0);
+				Command *ex = new Command(0, 17, MSG_SC9_PLVCLICK, 0, 0, 0, 1, 0, 0, 0);
 				ex->_excFlags = 2;
 				mq->addCommandToEnd(ex);
 
@@ -240,7 +240,7 @@ void sceneHandler09_eatBall() {
 			MessageQueue *mq = g_vars->scene09_gulper->getMessageQueue();
 
 			if (mq) {
-				ExCommand *ex = new ExCommand(ANI_GLOTATEL, 1, MV_GLT_FLYAWAY, 0, 0, 0, 1, 0, 0, 0);
+				Command *ex = new Command(ANI_GLOTATEL, 1, MV_GLT_FLYAWAY, 0, 0, 0, 1, 0, 0, 0);
 				ex->_excFlags |= 2;
 
 				mq->addCommandToEnd(ex);
@@ -399,7 +399,7 @@ void sceneHandler09_hangerStartCycle() {
 		g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->phase = g_vars->scene09_intHangerPhase + (g_nmi->_mouseScreenPos.y - g_vars->scene09_clickY) / 2;
 
 		if (g_vars->scene09_intHangerMaxPhase != -1000 && g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->phase != g_vars->scene09_intHangerMaxPhase) {
-			ExCommand *ex = new ExCommand(0, 35, SND_9_019, 0, 0, 0, 1, 0, 0, 0);
+			Command *ex = new Command(0, 35, SND_9_019, 0, 0, 0, 1, 0, 0, 0);
 
 			ex->_z = 1;
 			ex->_excFlags |= 2;
@@ -416,8 +416,8 @@ void scene09_visCallback(int *phase) {
 	// do nothing
 }
 
-int sceneHandler09(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler09(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch (cmd->_messageNum) {
@@ -551,7 +551,7 @@ int sceneHandler09(ExCommand *cmd) {
 							g_vars->scene09_hangers[hng]->ani->_callback2 = scene09_visCallback;
 						}
 
-						ExCommand *ex = new ExCommand(0, 35, SND_9_018, 0, 0, 0, 1, 0, 0, 0);
+						Command *ex = new Command(0, 35, SND_9_018, 0, 0, 0, 1, 0, 0, 0);
 
 						ex->_z = 1;
 						ex->_excFlags |= 2;

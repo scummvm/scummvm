@@ -259,8 +259,8 @@ void sceneHandler13_walkBackward(bool flag) {
 	beh->_flags &= 0xFE;
 }
 
-int sceneHandler13(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler13(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch(cmd->_messageNum) {

@@ -224,7 +224,7 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 		if (stobj) {
 			stobj->_flags &= 0x100;
 
-			ExCommand *ex = new ExCommand(stobj->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
+			Command *ex = new Command(stobj->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 
 			ex->_z = 256;
 			ex->_messageNum = 0;
@@ -391,7 +391,7 @@ bool GameLoader::preloadScene(int sceneId, int entranceId) {
 
 	loadScene(_preloadItems[idx].sceneId);
 
-	ExCommand *ex = new ExCommand(_preloadItems[idx].sceneId, 17, 62, 0, 0, 0, 1, 0, 0, 0);
+	Command *ex = new Command(_preloadItems[idx].sceneId, 17, 62, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags = 2;
 	ex->_param = _preloadItems[idx].param;
 
@@ -558,7 +558,7 @@ void GameLoader::updateSystems(int counterdiff) {
 	if (g_nmi->_currentScene) {
 		g_nmi->_currentScene->update(counterdiff);
 
-		_exCommand._messageKind = 17;
+		_exCommand._cmd = 17;
 		_updateCounter++;
 		_exCommand._messageNum = 33;
 		_exCommand._excFlags = 0;

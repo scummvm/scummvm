@@ -74,21 +74,21 @@ int scene33_updateCursor() {
 	return g_nmi->_cursorId;
 }
 
-void sceneHandler33_processJettie(ExCommand *cmd) {
+void sceneHandler33_processJettie(Command *cmd) {
 	MessageQueue *mq = g_nmi->_globalMessageQueueList->getMessageQueueById(cmd->_parId);
 
 	if (mq && g_vars->scene33_jettie->_movement) {
-		ExCommand *ex = mq->getCommandByIndex(0);
+		Command *ex = mq->getCommandByIndex(0);
 
 		if (ex) {
-			ex->_messageKind = 0;
+			ex->_cmd = 0;
 			ex->_excFlags |= 1;
 		}
 
 		ex = mq->getCommandByIndex(1);
 
 		if (ex) {
-			ex->_messageKind = 0;
+			ex->_cmd = 0;
 			ex->_excFlags |= 1;
 		}
 	}
@@ -205,7 +205,7 @@ void sceneHandler33_zoneClickProcess(AniObject *ani) {
 	}
 }
 
-void sceneHandler33_clickZones(ExCommand *cmd) {
+void sceneHandler33_clickZones(Command *cmd) {
 	AniObject *closest = nullptr;
 	double mindist = 1e10;
 
@@ -228,8 +228,8 @@ void sceneHandler33_clickZones(ExCommand *cmd) {
 		sceneHandler33_zoneClickProcess(closest);
 }
 
-int sceneHandler33(ExCommand *cmd) {
-	if (cmd->_messageKind != 17)
+int sceneHandler33(Command *cmd) {
+	if (cmd->_cmd != 17)
 		return 0;
 
 	switch (cmd->_messageNum) {

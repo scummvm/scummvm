@@ -36,7 +36,7 @@ enum QueueFlags {
 
 class Message : public CObject {
  public:
-	int _messageKind;
+	int _cmd;
 	int16 _parentId;
 	int _x;
 	int _y;
@@ -44,7 +44,7 @@ class Message : public CObject {
 	int _sceneClickX;
 	int _sceneClickY;
 	int _invId;
-	int _field_24;
+	int _wait;
 	int _param;
 	int _field_2C;
 	int _field_30;
@@ -56,21 +56,21 @@ class Message : public CObject {
 	Message(int16 parentId, int messageKind, int x, int y, int a6, int a7, int sceneClickX, int sceneClickY, int a10);
 };
 
-class ExCommand : public Message {
+class Command : public Message {
  public:
 	int _messageNum;
 	int _field_3C;
 	int _excFlags;
 	int _parId;
 
-	ExCommand();
-	ExCommand(ExCommand *src);
-	ExCommand(int16 parentId, int messageKind, int messageNum, int x, int y, int a7, int a8, int sceneClickX, int sceneClickY, int a11);
-	~ExCommand() override {}
+	Command();
+	Command(Command *src);
+	Command(int16 parentId, int messageKind, int messageNum, int x, int y, int a7, int a8, int sceneClickX, int sceneClickY, int a11);
+	~Command() override {}
 
 	bool load(MfcArchive &file) override;
 
-	virtual ExCommand *createClone();
+	virtual Command *createClone();
 
 	bool handleMessage();
 	void sendMessage();
@@ -81,7 +81,7 @@ class ExCommand : public Message {
 	void setf3c(int val);
 };
 
-class ExCommand2 : public ExCommand {
+class ExCommand2 : public Command {
  public:
 	PointList _points;
 
@@ -91,7 +91,7 @@ class ExCommand2 : public ExCommand {
 	ExCommand2 *createClone() override;
 };
 
-class ObjstateCommand : public ExCommand {
+class ObjstateCommand : public Command {
  public:
 	Common::String _objCommandName;
 	int _value;
@@ -119,7 +119,7 @@ class MessageQueue : public CObject {
 	int _flag1;
 
   private:
-	Common::List<ExCommand *> _commands;
+	Common::List<Command *> _commands;
 
  public:
 	MessageQueue();
@@ -134,10 +134,10 @@ class MessageQueue : public CObject {
 
 	uint getCount() { return _commands.size(); }
 
-	void addCommandToFront(ExCommand *ex);
-	void addCommandToEnd(ExCommand *ex);
-	void addCommand(int pos, ExCommand *ex);
-	ExCommand *getCommandByIndex(uint idx);
+	void addCommandToFront(Command *ex);
+	void addCommandToEnd(Command *ex);
+	void addCommand(int pos, Command *ex);
+	Command *getCommandByIndex(uint idx);
 	void removeCommand(uint idx, bool doFree);
 
 	void mergeQueue(MessageQueue *mq);
@@ -175,7 +175,7 @@ public:
 };
 
 struct MessageHandler {
-	int (*callback)(ExCommand *cmd);
+	int (*callback)(Command *cmd);
 	int16 id;
 	int16 field_6;
 	int index;
@@ -184,12 +184,12 @@ struct MessageHandler {
 
 bool removeMessageHandler(int16 id, int pos);
 void updateMessageHandlerIndex(MessageHandler *msg, int offset);
-void addMessageHandler(int (*callback)(ExCommand *), int16 id);
+void addMessageHandler(int (*callback)(Command *), int16 id);
 MessageHandler *getMessageHandlerById(int16 id);
-bool allocMessageHandler(MessageHandler *where, int16 id, int (*callback)(ExCommand *), int index);
+bool allocMessageHandler(MessageHandler *where, int16 id, int (*callback)(Command *), int index);
 int getMessageHandlersCount();
-bool addMessageHandlerByIndex(int (*callback)(ExCommand *), int index, int16 id);
-bool insertMessageHandler(int (*callback)(ExCommand *), int index, int16 id);
+bool addMessageHandlerByIndex(int (*callback)(Command *), int index, int16 id);
+bool insertMessageHandler(int (*callback)(Command *), int index, int16 id);
 void clearMessageHandlers();
 void processMessages();
 void updateGlobalMessageQueue(int id, int objid);

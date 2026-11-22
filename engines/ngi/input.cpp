@@ -182,7 +182,7 @@ void NGIEngine::defHandleKeyDown(int key) {
 }
 
 void NGIEngine::winArcade() {
-	ExCommand *ex = new ExCommand(0, 17, MSG_CMN_WINARCADE, 0, 0, 0, 1, 0, 0, 0);
+	Command *ex = new Command(0, 17, MSG_CMN_WINARCADE, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags |= 3;
 
 	ex->postMessage();
@@ -270,7 +270,7 @@ void NGIEngine::initArcadeKeys(const char *varname) {
 	}
 }
 
-void NGIEngine::processArcade(ExCommand *cmd) {
+void NGIEngine::processArcade(Command *cmd) {
 	if (!g_nmi->_aniMan2)
 		return;
 
