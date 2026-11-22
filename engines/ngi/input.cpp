@@ -98,10 +98,10 @@ void CursorController::render(int x, int y) {
 	_cursorBounds.right = _cursorBounds.left + _cursorsArray[_cursorIndex]->width;
 	_cursorBounds.bottom = _cursorBounds.top + _cursorsArray[_cursorIndex]->height;
 
-	_cursorsArray[_cursorIndex]->picture->draw(_cursorBounds.left, _cursorBounds.top, 0, 0);
+	_cursorsArray[_cursorIndex]->picture->render(_cursorBounds.left, _cursorBounds.top, 0, 0);
 
 	if (_cursorItemPicture)
-		_cursorItemPicture->draw(_cursorBounds.left + _cursorsArray[_cursorIndex]->itemPictureOffsX,
+		_cursorItemPicture->render(_cursorBounds.left + _cursorsArray[_cursorIndex]->itemPictureOffsX,
 								 _cursorBounds.top + _cursorsArray[_cursorIndex]->itemPictureOffsY, 0, 0);
 }
 

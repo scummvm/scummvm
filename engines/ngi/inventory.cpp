@@ -291,7 +291,7 @@ void Inventory::render() {
 	g_nmi->_sceneRect.top = -_topOffset;
 	g_nmi->_sceneRect.left = 0;
 
-	_picture->draw(-1, -1, 0, 0);
+	_picture->render(-1, -1, 0, 0);
 
 	for (uint i = 0; i < _inventoryIcons.size(); i++) {
 		const InventoryIcon &icn = _inventoryIcons[i];
@@ -424,7 +424,7 @@ int Inventory::putOnCursor(int itemId) {
 	if (_scene) {
 		int idx = getInventoryPoolItemIndexById(itemId);
 
-		Picture *pic = _scene->findPictureObjectById(_itemsPool[idx].pictureObjectId1, 0)->_picture;
+		Texture *pic = _scene->findPictureObjectById(_itemsPool[idx].pictureObjectId1, 0)->_picture;
 		g_nmi->getGameLoaderInputController()->setObject(pic);
 	}
 

@@ -137,7 +137,7 @@ public:
 };
 
 class MemoryObject : CObject {
-	friend class Picture;
+	friend class Texture;
 	friend class Scene;
 
  protected:
@@ -168,7 +168,7 @@ class MemoryObject : CObject {
 };
 
 class MemoryObject2 : public MemoryObject {
-	friend class Picture;
+	friend class Texture;
 
  protected:
 	byte **_rows;

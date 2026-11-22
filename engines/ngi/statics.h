@@ -46,7 +46,7 @@ class StepArray : public CObject {
 	void insertPoints(const PointList &points);
 };
 
-class StaticPhase : public Picture {
+class StaticPhase : public Texture {
  public:
 	int16 _delay;
 	int16 _countdown;
@@ -88,7 +88,7 @@ class Statics : public Phase {
  public:
  	int16 _staticsId;
 	Common::String _staticsName;
-	Picture _picture;
+	Texture _picture;
 
   public:
 	Statics();

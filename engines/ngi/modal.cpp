@@ -1835,7 +1835,7 @@ void ModalHelp::update() {
 	g_nmi->_sceneRect.right = 800;
 	g_nmi->_sceneRect.bottom = 600;
 
-	_bg->draw(0, 0, 0, 0);
+	_bg->render(0, 0, 0, 0);
 }
 
 void ModalHelp::launch() {

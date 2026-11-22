@@ -27,7 +27,7 @@
 namespace NGI {
 
 class PictureObject;
-class Picture;
+class Texture;
 class Sound;
 
 struct FileInfo {
@@ -241,7 +241,7 @@ private:
 class ModalHelp : public BaseModalObject {
 public:
 	Scene *_mainMenuScene;
-	Picture *_bg;
+	Texture *_bg;
 	bool _isRunning;
 	Common::Rect _rect;
 	int _hx;

@@ -417,7 +417,7 @@ bool AniObject::hit(int x, int y) {
 
 bool AniObject::getPixelAtPos(int x, int y, uint32 *pixel, bool hitOnly) {
 	bool res = false;
-	Picture *pic;
+	Texture *pic;
 
 	if (_movement)
 		pic = _movement->_curPhase;
@@ -462,10 +462,10 @@ bool AniObject::getPixelAtPos(int x, int y, uint32 *pixel, bool hitOnly) {
 	pic->_y = 0;
 
 	if (hitOnly)
-		return pic->isPixelHitAtPos(xtarget, ytarget);
+		return pic->hit(xtarget, ytarget);
 
-	if (pic->isPixelHitAtPos(xtarget, ytarget)) {
-		*pixel = pic->getPixelAtPos(xtarget, ytarget);
+	if (pic->hit(xtarget, ytarget)) {
+		*pixel = pic->getColor(xtarget, ytarget);
 
 		res = true;
 	} else {
@@ -590,7 +590,7 @@ void AniObject::render() {
 				if (_shadowsOn != 1)
 					midy = _shadowsOn - shdw / 2;
 
-				shd->draw(px + midx, midy, 0, 0);
+				shd->render(px + midx, midy, 0, 0);
 			}
 		}
 	}
@@ -607,7 +607,7 @@ void AniObject::render() {
 		const Common::Point point = _statics->getSomeXY();
 		_statics->_x = _x - point.x;
 		_statics->_y = _y - point.y;
-		_statics->draw(_statics->_x, _statics->_y, 0, angle);
+		_statics->render(_statics->_x, _statics->_y, 0, angle);
 	} else {
 		_movement->draw(0, angle);
 	}
@@ -621,7 +621,7 @@ void AniObject::draw2() {
 			_movement->draw(1, 0);
 		} else {
 			const Common::Point point = _statics->getSomeXY();
-			_statics->draw(_x - point.x, _y - point.y, 1, 0);
+			_statics->render(_x - point.x, _y - point.y, 1, 0);
 		}
 	}
 }
@@ -696,7 +696,7 @@ void AniObject::preloadMovements(MovTable *mt) {
 }
 
 Dims AniObject::getFullSize() const {
-	Picture *pic;
+	Texture *pic;
 
 	if (_movement)
 		pic = _movement->_curPhase;
@@ -1385,7 +1385,7 @@ bool Statics::load(MfcArchive &file) {
 }
 
 void Statics::init() {
-	Picture::init();
+	Texture::init();
 
 	if (_staticsId & 0x4000) {
 		_bitmap.reset(_bitmap->reverseImage());
@@ -1433,7 +1433,7 @@ Movement::Movement() {
 Movement::~Movement() {
 	if (!_currMovement) {
 		if (_updateFlag1) {
-			_phases[0]->freePixelData();
+			_phases[0]->unload();
 			delete _phases.remove_at(0);
 		}
 
@@ -1443,7 +1443,7 @@ Movement::~Movement() {
 			if (phase != _prevStatic && phase != _nextStatic)
 				delete phase;
 			else
-				_phases[i]->freePixelData();
+				_phases[i]->unload();
 		}
 	}
 }
@@ -1845,10 +1845,10 @@ void Movement::load() {
 void Movement::unload() {
 	if (!_currMovement)
 		for (uint i = 0; i < _phases.size(); i++)
-			_phases[i]->freePixelData();
+			_phases[i]->unload();
 
 	if (_prevStatic)
-		_prevStatic->freePixelData();
+		_prevStatic->unload();
 }
 
 void Movement::removeFirstPhase() {
@@ -2183,7 +2183,7 @@ Common::String StaticPhase::toXML() {
 bool StaticPhase::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "StaticPhase::load()");
 
-	Picture::load(file);
+	Texture::load(file);
 
 	_delay = file.readUint16LE();
 	_field_6A = file.readUint16LE();

@@ -118,7 +118,7 @@ bool PictureObject::load(MfcArchive &file, bool bigPicture) {
 	if (bigPicture)
 		_picture = new BigPicture();
 	else
-		_picture = new Picture();
+		_picture = new Texture();
 
 	_picture->load(file);
 
@@ -141,9 +141,9 @@ bool PictureObject::load(MfcArchive &file, bool bigPicture) {
 
 void PictureObject::render() {
 	if (_flags & 1)
-		_picture->draw(_x, _y, 2, 0);
+		_picture->render(_x, _y, 2, 0);
 	else
-		_picture->draw(_x, _y, 0, 0);
+		_picture->render(_x, _y, 0, 0);
 }
 
 void PictureObject::renderAtPos(int x, int y) {
@@ -156,9 +156,9 @@ void PictureObject::renderAtPos(int x, int y) {
 	_picture->_y = y;
 
 	if (_flags & 1)
-		_picture->draw(x, y, 2, 0);
+		_picture->render(x, y, 2, 0);
 	else
-		_picture->draw(x, y, 0, 0);
+		_picture->render(x, y, 0, 0);
 }
 
 bool PictureObject::setPicAniInfo(const PicAniInfo &picAniInfo) {
@@ -201,7 +201,7 @@ bool PictureObject::hit(int x, int y) {
 
 	_picture->_x = _x;
 	_picture->_y = _y;
-	bool res = _picture->isPixelHitAtPos(x, y);
+	bool res = _picture->hit(x, y);
 	_picture->_x = oldx;
 	_picture->_y = oldy;
 
@@ -403,7 +403,7 @@ bool GameObject::setPicAniInfo(const PicAniInfo &picAniInfo) {
 	return false;
 }
 
-Picture::Picture() :
+Texture::Texture() :
 	_x(0),
 	_y(0),
 	_field_44(0),
@@ -412,12 +412,12 @@ Picture::Picture() :
 	_width(0),
 	_height(0) {}
 
-Picture::~Picture() {
+Texture::~Texture() {
 	freePicture();
 }
 
-void Picture::freePicture() {
-	debugC(5, kDebugMemory, "Picture::freePicture(): file: %s", _memfilename.toString().c_str());
+void Texture::freePicture() {
+	debugC(5, kDebugMemory, "Texture::freePicture(): file: %s", _memfilename.toString().c_str());
 
 	if (_bitmap) {
 		if (testFlags() && !_field_54) {
@@ -430,13 +430,13 @@ void Picture::freePicture() {
 	_convertedBitmap.reset();
 }
 
-void Picture::freePixelData() {
+void Texture::unload() {
 	freePicture();
 	freeData();
 }
 
-bool Picture::load(MfcArchive &file) {
-	debugC(5, kDebugLoading, "Picture::load()");
+bool Texture::load(MfcArchive &file) {
+	debugC(5, kDebugLoading, "Texture::load()");
 	MemoryObject::load(file);
 
 	_x = file.readSint32LE();
@@ -448,7 +448,7 @@ bool Picture::load(MfcArchive &file) {
 	_width = file.readUint32LE();
 	_height = file.readUint32LE();
 
-	debug(7, "Picture::load: x: %d y: %d, w: %d, h: %d", _x, _y, _width, _height);
+	debug(7, "Texture::load: x: %d y: %d, w: %d, h: %d", _x, _y, _width, _height);
 
 	_mflags |= 1;
 
@@ -474,13 +474,13 @@ bool Picture::load(MfcArchive &file) {
 
 	getData();
 
-	debugC(5, kDebugLoading, "Picture::load: loaded memobject=\"%s\" x=%d y=%d f44=%d width=%d height=%d alpha=%d memobject2=\"%s\"", _memfilename.toString().c_str(),
+	debugC(5, kDebugLoading, "Texture::load: loaded memobject=\"%s\" x=%d y=%d f44=%d width=%d height=%d alpha=%d memobject2=\"%s\"", _memfilename.toString().c_str(),
 				_x, _y, _field_44, _width, _height, _alpha, _memoryObject2->_memfilename.toString().c_str());
 
 	return true;
 }
 
-void Picture::setAOIDs() {
+void Texture::setAOIDs() {
 	int w = (g_nmi->_pictureScale + _width - 1) / g_nmi->_pictureScale;
 	int h = (g_nmi->_pictureScale + _height - 1) / g_nmi->_pictureScale;
 
@@ -494,8 +494,8 @@ void Picture::setAOIDs() {
 	}
 }
 
-void Picture::init() {
-	debugC(5, kDebugLoading, "Picture::init(), %s", _memfilename.toString().c_str());
+void Texture::init() {
+	debugC(5, kDebugLoading, "Texture::init(), %s", _memfilename.toString().c_str());
 
 	MemoryObject::getData();
 
@@ -506,13 +506,13 @@ void Picture::init() {
 	_bitmap->_flags |= 0x1000000;
 }
 
-void Picture::getDibInfo() {
+void Texture::getDibInfo() {
 	int off = _dataSize & ~0xf;
 
-	debugC(9, kDebugLoading, "Picture::getDibInfo: _dataSize: %d", _dataSize);
+	debugC(9, kDebugLoading, "Texture::getDibInfo: _dataSize: %d", _dataSize);
 
 	if (!_dataSize) {
-		warning("Picture::getDibInfo(): Empty data size");
+		warning("Texture::getDibInfo(): Empty data size");
 		return;
 	}
 
@@ -521,12 +521,12 @@ void Picture::getDibInfo() {
 	}
 
 	if (!_data) {
-		warning("Picture::getDibInfo: data is empty <%s>", _memfilename.toString().c_str());
+		warning("Texture::getDibInfo: data is empty <%s>", _memfilename.toString().c_str());
 
 		MemoryObject::load();
 
 		if (!_data)
-			error("Picture::getDibInfo: error loading object #%d", _cnum);
+			error("Texture::getDibInfo: error loading object #%d", _cnum);
 	}
 
 	Common::MemoryReadStream *s = new Common::MemoryReadStream(_data + off - 32, 32);
@@ -536,18 +536,18 @@ void Picture::getDibInfo() {
 	_bitmap->decode(_data, _paletteData.size ? _paletteData : *g_nmi->_globalPalette);
 }
 
-const Bitmap *Picture::getPixelData() {
+const Bitmap *Texture::getPixelData() {
 	if (!_bitmap)
 		init();
 
 	return _bitmap.get();
 }
 
-void Picture::draw(int x, int y, int style, int angle) {
+void Texture::render(int x, int y, int style, int angle) {
 	int x1 = x;
 	int y1 = y;
 
-	debugC(7, kDebugDrawing, "Picture::draw(%d, %d, %d, %d) (%s)", x, y, style, angle, _memfilename.toString().c_str());
+	debugC(7, kDebugDrawing, "Texture::render(%d, %d, %d, %d) (%s)", x, y, style, angle, _memfilename.toString().c_str());
 
 	if (x != -1)
 		x1 = x;
@@ -562,14 +562,14 @@ void Picture::draw(int x, int y, int style, int angle) {
 		return;
 
 	if ((_alpha & 0xff) < 0xff) {
-		debugC(7, kDebugDrawing, "Picture:draw: alpha = %0x", _alpha);
+		debugC(7, kDebugDrawing, "Texture:draw: alpha = %0x", _alpha);
 	}
 
 	const Palette *pal;
 	if (_paletteData.size) {
 		pal = &_paletteData;
 	} else {
-		//warning("Picture:draw: using global palette");
+		//warning("Texture:draw: using global palette");
 		pal = g_nmi->_globalPalette;
 	}
 
@@ -591,18 +591,18 @@ void Picture::draw(int x, int y, int style, int angle) {
 		break;
 	default:
 		if (angle)
-			drawRotated(x1, y1, angle);
+			renderRotate(x1, y1, angle);
 		else {
 			_bitmap->putDib(x1, y1, *pal, _alpha);
 		}
 	}
 }
 
-void Picture::drawRotated(int x, int y, int angle) {
-	warning("STUB: Picture::drawRotated(%d, %d, %d)", x, y, angle);
+void Texture::renderRotate(int x, int y, int angle) {
+	warning("STUB: Texture::renderRotate(%d, %d, %d)", x, y, angle);
 }
 
-void Picture::displayPicture() {
+void Texture::displayPicture() {
 	if (g_nmi->shouldQuit())
 		return;
 
@@ -615,7 +615,7 @@ void Picture::displayPicture() {
 	g_nmi->_backgroundSurface.fillRect(Common::Rect(0, 0, 800, 600), 0);
 	g_nmi->_system->copyRectToScreen(g_nmi->_backgroundSurface.getBasePtr(0, 0), g_nmi->_backgroundSurface.pitch, 0, 0, 800, 600);
 
-	draw(0, 0, 0, 0);
+	render(0, 0, 0, 0);
 
 	g_nmi->updateEvents();
 	g_nmi->_system->delayMillis(10);
@@ -633,7 +633,7 @@ void Picture::displayPicture() {
 	}
 }
 
-void Picture::setPaletteData(const Palette &pal) {
+void Texture::setPaletteData(const Palette &pal) {
 	if (pal.size) {
 		_paletteData.copy(pal);
 	} else {
@@ -641,7 +641,7 @@ void Picture::setPaletteData(const Palette &pal) {
 	}
 }
 
-void Picture::copyMemoryObject2(Picture &src) {
+void Texture::copyMemoryObject2(Texture &src) {
 	if (_width == src._width && _height == src._height) {
 		if (src._memoryObject2 && src._memoryObject2->_rows && _memoryObject2) {
 			byte *data = loadData();
@@ -651,7 +651,7 @@ void Picture::copyMemoryObject2(Picture &src) {
 	}
 }
 
-bool Picture::isPointInside(int x, int y) {
+bool Texture::isPointInside(int x, int y) {
 	if (x >= _x) {
 		if (y >= _y && x < _x + _width && y < _y + _height)
 			return true;
@@ -659,7 +659,7 @@ bool Picture::isPointInside(int x, int y) {
 	return false;
 }
 
-bool Picture::isPixelHitAtPos(int x, int y) {
+bool Texture::hit(int x, int y) {
 	if (x < _x || y < _y || x >= _x + _width || y >= _y + _height)
 		return false;
 
@@ -672,17 +672,17 @@ bool Picture::isPixelHitAtPos(int x, int y) {
 	return _bitmap->isPixelHitAtPos(x, y);
 }
 
-int Picture::getPixelAtPos(int x, int y) {
+int Texture::getColor(int x, int y) {
 	return getPixelAtPosEx(x / g_nmi->_pictureScale, y / g_nmi->_pictureScale);
 
 	return false;
 }
 
-int Picture::getPixelAtPosEx(int x, int y) {
+int Texture::getPixelAtPosEx(int x, int y) {
 	if (x < 0 || y < 0)
 		return 0;
 
-	warning("STUB: Picture::getPixelAtPosEx(%d, %d)", x, y);
+	warning("STUB: Texture::getPixelAtPosEx(%d, %d)", x, y);
 
 	// TODO: It looks like this doesn't really work.
 	if (x < (g_nmi->_pictureScale + _width - 1) / g_nmi->_pictureScale &&
@@ -1087,12 +1087,12 @@ void Bitmap::drawRotated(int x, int y, int angle, const Palette &palette, int al
 
 bool BigPicture::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "BigPicture::load()");
-	Picture::load(file);
+	Texture::load(file);
 
 	return true;
 }
 
-void BigPicture::draw(int x, int y, int style, int angle) {
+void BigPicture::render(int x, int y, int style, int angle) {
 	if (!_bitmap)
 		init();
 

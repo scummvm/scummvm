@@ -80,36 +80,36 @@ private:
 	Bitmap operator=(const Bitmap &);
 };
 
-class Picture : public MemoryObject {
+class Texture : public MemoryObject {
 public:
-	Picture();
-	~Picture() override;
+	Texture();
+	~Texture() override;
 
 	void freePicture();
-	void freePixelData();
+	void unload();
 
 	bool load(MfcArchive &file) override;
 	void setAOIDs();
 	virtual void init();
 	void getDibInfo();
 	const Bitmap *getPixelData();
-	virtual void draw(int x, int y, int style, int angle);
-	void drawRotated(int x, int y, int angle);
+	virtual void render(int x, int y, int style, int angle);
+	void renderRotate(int x, int y, int angle);
 
 	byte getAlpha() { return (byte)_alpha; }
 	void setAlpha(byte alpha) { _alpha = alpha; }
 
 	Dims getDimensions() const { return Dims(_width, _height); }
 	bool isPointInside(int x, int y);
-	bool isPixelHitAtPos(int x, int y);
-	int getPixelAtPos(int x, int y);
+	bool hit(int x, int y);
+	int getColor(int x, int y);
 	int getPixelAtPosEx(int x, int y);
 
 	const Bitmap *getConvertedBitmap() const { return _convertedBitmap.get(); }
 	const Palette &getPaletteData() const { return _paletteData; }
 	void setPaletteData(const Palette &pal);
 
-	void copyMemoryObject2(Picture &src);
+	void copyMemoryObject2(Texture &src);
 
 	int _x, _y;
 
@@ -128,13 +128,13 @@ protected:
 	void displayPicture();
 };
 
-class BigPicture : public Picture {
+class BigPicture : public Texture {
   public:
 	BigPicture() {}
 	~BigPicture() override {}
 
 	bool load(MfcArchive &file) override;
-	void draw(int x, int y, int style, int angle) override;
+	void render(int x, int y, int style, int angle) override;
 };
 
 class GameObject : public CObject {
@@ -185,7 +185,7 @@ public:
 	bool hit(int x, int y);
 	void setOXY2();
 
-	Picture *_picture;
+	Texture *_picture;
 
 private:
 	Common::Array<GameObject> _pictureObject2List;

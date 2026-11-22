@@ -722,7 +722,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 				uint v25 = bgNumY;
 				for (int y = g_nmi->_sceneRect.top - bgOffsetY; y < g_nmi->_sceneRect.bottom - 1;) {
 					BigPicture *v27 = getBigPicture(bgNumX, v25);
-					v27->draw(bgPosX, y, 0, 0);
+					v27->render(bgPosX, y, 0, 0);
 					y += v27->getDimensions().y;
 					v25++;
 

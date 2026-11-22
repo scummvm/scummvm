@@ -24,13 +24,13 @@
 
 namespace NGI {
 
-class Picture;
+class Texture;
 
 void setInputDisabled(bool state);
 
 struct Cursor {
 	int pictureId;
-	Picture *picture;
+	Texture *picture;
 	int ofsX;
 	int ofsY;
 	int itemPictureOffsX;
@@ -54,7 +54,7 @@ class CursorController {
 	int _cursorIndex;
 	CursorsArray _cursorsArray;
 	Common::Rect _cursorBounds;
-	Picture *_cursorItemPicture;
+	Texture *_cursorItemPicture;
 
  public:
 	CursorController();
@@ -67,7 +67,7 @@ class CursorController {
 	void render(int x, int y);
 	void setCursor(int id);
 
-	void setObject(Picture *pic) { _cursorItemPicture = pic; }
+	void setObject(Texture *pic) { _cursorItemPicture = pic; }
 };
 
 } // End of namespace NGI
