@@ -48,7 +48,7 @@ class StepArray : public CObject {
 
 class StaticPhase : public Texture {
  public:
-	int16 _delay;
+	int16 _delay;     // Extra animation ticks in binary projects.
 	int16 _countdown;
 	int16 _messageNum;
 	int16 _field_6A;
@@ -68,6 +68,8 @@ class Phase : public StaticPhase {
  public:
 	int _someX;
 	int _someY;
+	// XML phases can add both milliseconds and multiples of the movement's loop delay.
+	int _delayMs = 0;
 	int _delayRelative = 0;
 	Common::Rect _rect;
 	int16 _field_7C;
@@ -207,8 +209,6 @@ public:
 	Statics *getStatic(int id);
 	Statics *getStaticsByName(const Common::String &name);
 	Movement *getMovement(int id);
-	bool startAndroidMovement(int id);
-	bool advanceAndroidMovement(uint32 elapsed);
 	int getMovementIdById(int itemId) const;
 	Movement *getMovementByName(const Common::String &name);
 	Common::Point getFullSize() const;
@@ -243,7 +243,7 @@ public:
 	void show1(int x, int y, int movementId, int mqId);
 	void show2(int x, int y, int movementId, int mqId);
 	void playIdle();
-	void update(int counterdiff);
+	bool update(int counterdiff);
 
 	Statics *addReverseStatics(Statics *ani);
 	void render();

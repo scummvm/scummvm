@@ -279,7 +279,9 @@ private:
 	}
 
 	bool parserCallback_OLDANI(ParserNode *node) {
-		Common::ScopedPtr<AniObject> animation(new AniObject());
+		AniObject *animation = new AniObject();
+		// addAni resets visibility and draw order, so read the XML fields afterwards.
+		_scene.addAni(animation, true);
 		if (!parseObject(*animation, *node))
 			return false;
 
@@ -289,13 +291,6 @@ private:
 			return parserError("Unknown initial statics ID '" + statics + "'");
 
 		animation->_sceneId = _scene._sceneId;
-		// The binary loader clears flags when adding renderables. Keep the XML flags and order.
-		const int16 flags = animation->_flags;
-		const uint order = animation->_cnum;
-		AniObject *object = animation.release();
-		_scene.addAni(object, true);
-		object->_flags = flags;
-		object->_cnum = order;
 		return true;
 	}
 
@@ -307,7 +302,9 @@ private:
 		object._x = strtod(node.values.getValOrDefault("x").c_str(), nullptr);
 		object._y = strtod(node.values.getValOrDefault("y").c_str(), nullptr);
 		object._z = strtod(node.values.getValOrDefault("z").c_str(), nullptr);
-		object._flags = strtoul(node.values.getValOrDefault("flags").c_str(), nullptr, 10);
+		object._objectFlags = strtoul(node.values.getValOrDefault("flags").c_str(), nullptr, 10);
+		// XML bit 0 and NGI runtime bit 2 both mean visible.
+		object._flags = (object._objectFlags & 1) ? 4 : 0;
 		object._cnum = _objectOrder++;
 		return true;
 	}
@@ -376,7 +373,7 @@ private:
 			static_cast<uint16>(_scene._sceneId), static_cast<uint16>(animation._id), movementId, movementId, index);
 		Common::ScopedPtr<Phase> phase(new Phase());
 		phase->_flags = atoi(node->values.getValOrDefault("flags").c_str());
-		phase->_delay = atoi(node->values.getValOrDefault("delay").c_str());
+		phase->_delayMs = atoi(node->values.getValOrDefault("delay").c_str());
 		phase->_delayRelative = atoi(node->values.getValOrDefault("delayRelative").c_str());
 		phase->_x = atoi(node->values.getValOrDefault("x").c_str());
 		phase->_y = atoi(node->values.getValOrDefault("y").c_str());
@@ -389,6 +386,8 @@ private:
 	}
 
 	bool closedKeyCallback(ParserNode *node) override {
+		if (node->name == "MOVEMENT")
+			_scene._aniObjects.back()->_movements.back()->updateCurrDynamicPhase();
 		if (node->name == "OLDANI" && !_scene._aniObjects.back()->_statics)
 			return parserError("Missing initial statics for Android animation");
 		return true;
@@ -422,11 +421,11 @@ private:
 static void drawAndroidScene(const Scene &scene, Graphics::ManagedSurface &target) {
 	Common::Array<const GameObject *> visibleObjects;
 	for (const PictureObject *picture : scene._pictureObjects) {
-		if (picture->_flags & 1)
+		if (picture->_flags & 4)
 			visibleObjects.push_back(picture);
 	}
 	for (const AniObject *animation : scene._renderableAnis) {
-		if (animation->_flags & 1)
+		if (animation->_flags & 4)
 			visibleObjects.push_back(animation);
 	}
 
@@ -443,13 +442,8 @@ static void drawAndroidScene(const Scene &scene, Graphics::ManagedSurface &targe
 			static_cast<const PictureObject *>(object)->_picture->blitTo(target, position);
 		} else {
 			const AniObject &animation = *static_cast<const AniObject *>(object);
-			if (animation._movement) {
-				const Movement &movement = *animation._movement;
-				movement._curPhase->blitTo(target, movement._somePoint - Common::Point(scene._x, scene._y));
-			} else {
-				const Statics &pose = *animation._statics;
-				pose.blitTo(target, position - pose.getSomeXY());
-			}
+			const Phase *phase = animation._movement ? animation._movement->_curPhase : animation._statics;
+			phase->blitTo(target, position - animation.getSomeXY());
 		}
 	}
 }
@@ -487,7 +481,6 @@ Common::Error NGIEngine::runAndroid() {
 	if (language == Common::UNK_LANG)
 		language = Common::parseLanguageFromLocale(_system->getSystemLanguage().c_str());
 
-	_aniHandler.reset(new AniHandler());
 	Scene scene;
 	scene._sceneId = static_cast<int16>(startSceneId);
 	const Common::Path scenePath = Common::Path("data/res").join(startSceneFile);
@@ -526,11 +519,10 @@ Common::Error NGIEngine::runAndroid() {
 		const uint32 now = _system->getMillis();
 		const uint32 elapsed = now - lastUpdate;
 		lastUpdate = now;
-		bool redraw = false;
-		for (AniObject *animation : scene._renderableAnis)
-			redraw |= animation->advanceAndroidMovement(elapsed);
+		bool redraw = scene.update(elapsed);
 		if (scene._sceneId == SC_INTRO1)
 			redraw |= sceneIntro_updateAndroid(scene);
+		processMessages();
 
 		if (redraw) {
 			frame.clear(format.RGBToColor(0, 0, 0));

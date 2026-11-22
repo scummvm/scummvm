@@ -649,11 +649,13 @@ int Scene::getPictureObjectIdAtPos(int x, int y) {
 	return res;
 }
 
-void Scene::update(int counterdiff) {
+bool Scene::update(int counterdiff) {
 	debugC(6, kDebugDrawing, "Scene::update(%d)", counterdiff);
 
+	bool changed = false;
 	for (uint i = 0; i < _renderableAnis.size(); i++)
-		_renderableAnis[i]->update(counterdiff);
+		changed |= _renderableAnis[i]->update(counterdiff);
+	return changed;
 }
 
 void Scene::drawContent(int minPri, int maxPri, bool drawBg) {

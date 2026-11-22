@@ -30,10 +30,15 @@
 
 namespace NGI {
 
+static bool sceneIntro_playSleep(AniObject *sleeper) {
+	if (!sleeper || sleeper->_movement || !sleeper->_statics || sleeper->_statics->_staticsId != ST_IN1MAN_SLEEP)
+		return false;
+
+	return sleeper->startMovement(MV_IN1MAN_SLEEP, 0, -1);
+}
+
 bool sceneIntro_updateAndroid(Scene &scene) {
-	AniObject *sleeper = scene.findAniObjectById(ANI_IN1MAN, -1);
-	return sleeper && !sleeper->_movement && sleeper->_statics &&
-		sleeper->_statics->_staticsId == ST_IN1MAN_SLEEP && sleeper->startAndroidMovement(MV_IN1MAN_SLEEP);
+	return sceneIntro_playSleep(scene.findAniObjectById(ANI_IN1MAN, -1));
 }
 
 int sceneIntro_updateCursor() {
@@ -98,8 +103,7 @@ int sceneHandlerIntro(Command *ex) {
 	}
 
 	if (g_vars->sceneIntro_needSleep) {
-		if (!g_vars->sceneIntro_aniin1man->_movement && g_vars->sceneIntro_aniin1man->_statics->_staticsId == ST_IN1MAN_SLEEP)
-			g_vars->sceneIntro_aniin1man->startMovement(MV_IN1MAN_SLEEP, 0, -1);
+		sceneIntro_playSleep(g_vars->sceneIntro_aniin1man);
 	} else if (g_vars->sceneIntro_needGetup && !g_vars->sceneIntro_aniin1man->_movement &&
 				g_vars->sceneIntro_aniin1man->_statics->_staticsId == ST_IN1MAN_SLEEP) {
 		g_vars->sceneIntro_needGetup = 0;

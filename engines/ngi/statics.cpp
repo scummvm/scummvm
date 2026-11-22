@@ -205,52 +205,6 @@ bool AniObject::load(MfcArchive &file) {
 	return true;
 }
 
-bool AniObject::startAndroidMovement(int id) {
-	Movement *movement = getMovement(id);
-	if (_movement || !movement || movement->_phases.size() <= 1)
-		return false;
-
-	_statics = movement->_prevStatic;
-	_movement = movement;
-	movement->_curFrame = 0;
-	movement->_curPhase = movement->_phases.front();
-	movement->_counter = 0;
-	movement->_somePoint = Common::Point(_x, _y) - _statics->getSomeXY()
-		+ Common::Point(movement->_prevStepX, movement->_prevStepY) + movement->_framePosOffsets.front();
-	debugC(2, kDebugAnimation, "Started Android movement %u on object %u",
-		static_cast<uint16>(movement->_id), static_cast<uint16>(_id));
-	return true;
-}
-
-bool AniObject::advanceAndroidMovement(uint32 elapsed) {
-	if (!_movement)
-		return false;
-
-	Movement &movement = *_movement;
-	const Phase &phase = *movement._curPhase;
-	const int delay = movement._loopDelay * (1 + phase._delayRelative) + phase._delay;
-	movement._counter += elapsed;
-	if (movement._counter <= delay)
-		return false;
-
-	movement._counter = 0;
-	++movement._curFrame;
-	movement._somePoint += movement._framePosOffsets[movement._curFrame];
-	if (static_cast<uint>(movement._curFrame + 1) == movement._phases.size()) {
-		_statics = movement._nextStatic;
-		const Common::Point anchor = movement._somePoint + _statics->getSomeXY();
-		_x = anchor.x;
-		_y = anchor.y;
-		_movement = nullptr;
-		movement._curPhase = nullptr;
-		debugC(2, kDebugAnimation, "Finished Android movement %u on object %u",
-			static_cast<uint16>(movement._id), static_cast<uint16>(_id));
-	} else {
-		movement._curPhase = movement._phases[movement._curFrame];
-	}
-	return true;
-}
-
 void AniObject::setPos(int x, int y) {
 	_x = x;
 	_y = y;
@@ -767,7 +721,7 @@ Common::Point AniObject::getSomeXY() const {
 	error("No someXY found");
 }
 
-void AniObject::update(int counterdiff) {
+bool AniObject::update(int counterdiff) {
 	int mqid;
 
 	debugC(6, kDebugAnimation, "AniObject::update() (%s) [%d] [%d, %d] fl: %x", transCyrillic(_title), _id, _x, _y, _flags);
@@ -775,14 +729,14 @@ void AniObject::update(int counterdiff) {
 	if (_flags & 2) {
 		_messageNum--;
 		if (_messageNum)
-			return;
+			return false;
 
 		mqid = _messageQueueId;
 		_messageQueueId = 0;
 		_flags ^= 2;
 
 		updateGlobalMessageQueue(mqid, _id);
-		return;
+		return true;
 	}
 
 	Command *ex, *newex;
@@ -790,8 +744,15 @@ void AniObject::update(int counterdiff) {
 	if (_movement) {
 		_movement->_counter += counterdiff;
 
-		if (_movement->_counter < _movement->_loopDelay)
-			return;
+		const bool android = g_nmi->getPlatform() == Common::kPlatformAndroid;
+		if (android) {
+			const Phase &phase = *_movement->_curPhase;
+			const int delay = _movement->_loopDelay * (1 + phase._delayRelative) + phase._delayMs;
+			if (_movement->_counter <= delay)
+				return false;
+		} else if (_movement->_counter < _movement->_loopDelay) {
+			return false;
+		}
 
 		_movement->_counter = 0;
 
@@ -799,7 +760,7 @@ void AniObject::update(int counterdiff) {
 			if (_counter) {
 				_counter--;
 
-				return;
+				return false;
 			}
 
 			Phase *dyn = _movement->_curPhase;
@@ -816,7 +777,7 @@ void AniObject::update(int counterdiff) {
 					newex->sendMessage();
 
 					if (!_movement)
-						return;
+						return true;
 				}
 			}
 
@@ -827,10 +788,11 @@ void AniObject::update(int counterdiff) {
 				newex->sendMessage();
 
 				if (!_movement)
-					return;
+					return true;
 			}
 
-			if (!_movement->setNext(_callback1, _callback2)) {
+			// Android ends the movement as soon as the next statics takes over.
+			if (!_movement->setNext(_callback1, _callback2) || (android && _movement->_curPhase == _movement->_nextStatic)) {
 				stopMovement();
 			} else {
 				setPos(_movement->_x, _movement->_y);
@@ -848,7 +810,7 @@ void AniObject::update(int counterdiff) {
 				}
 			}
 			if (!_movement)
-				return;
+				return true;
 
 			const Common::Point point = _stepArray.getCurrPoint();
 			setPos(point.x + _x, point.y + _y);
@@ -866,19 +828,20 @@ void AniObject::update(int counterdiff) {
 			_movement->setPos(_x + point.x + _movement->_prevStepX - pointS.x,
 							  _y + point.y + _movement->_prevStepY - pointS.y);
 		}
-	} else {
-		if (_statics) {
-			if (_messageQueueId) {
-				if (_statics->_countdown) {
-					_statics->_countdown--;
-					return;
-				}
-				mqid = _messageQueueId;
-				_messageQueueId = 0;
-				updateGlobalMessageQueue(mqid, _id);
-			}
-		}
+		return true;
 	}
+
+	if (_statics && _messageQueueId) {
+		if (_statics->_countdown) {
+			_statics->_countdown--;
+			return false;
+		}
+		mqid = _messageQueueId;
+		_messageQueueId = 0;
+		updateGlobalMessageQueue(mqid, _id);
+		return true;
+	}
+	return false;
 }
 
 void AniObject::updateStepPos() {
@@ -1277,16 +1240,10 @@ bool AniObject::startMovement(int movementId, int messageQueueId, int dynPhaseId
 		return false;
 	}
 
-	Movement *mov = nullptr;
-
-	for (uint i = 0; i < _movements.size(); i++) {
-		if (_movements[i]->_id == movementId) {
-			mov = _movements[i];
-			break;
-		}
-	}
-
-	if (!mov) {
+	const bool android = g_nmi->getPlatform() == Common::kPlatformAndroid;
+	Movement *mov = getMovement(movementId);
+	// An XML movement without any PHASE elements contains only its end pose.
+	if (!mov || (android && !mov->getPhase(1))) {
 		updateGlobalMessageQueue(messageQueueId, _id);
 		return false;
 	}
@@ -1301,6 +1258,9 @@ bool AniObject::startMovement(int movementId, int messageQueueId, int dynPhaseId
 	int newx = _x;
 	int newy = _y;
 	Common::Point point;
+
+	if (android && !_movement)
+		_statics = mov->_prevStatic;
 
 	if (_movement) {
 		point = _movement->getCurrDynamicPhaseXY();
@@ -2176,6 +2136,8 @@ Phase::Phase(Phase *src, bool reverse) {
 		_command.reset();
 
 	_delay = src->_delay;
+	_delayMs = src->_delayMs;
+	_delayRelative = src->_delayRelative;
 	_field_6A = src->_field_6A;
 	_flags = src->_flags;
 

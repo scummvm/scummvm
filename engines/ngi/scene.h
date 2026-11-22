@@ -57,7 +57,8 @@ class Scene : public Background {
 	void updateScrolling();
 	void updateScrolling2();
 
-	void update(int counterdiff);
+	/** Returns true if the scene may need redrawing. */
+	bool update(int counterdiff);
 
 	AniObject *getAniMan();
 	AniObject *findAniObjectById(int obj, int a3);
