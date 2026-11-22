@@ -920,11 +920,17 @@ void GameLogic::handleRoomEvent(int eventNum) {
 		break;
 	case 24:
 		if (eventNum == 1) {
+			// Right ladder
 			r24_handleRoomEvent(92, 72, -43, 90, 38, 0);
 			_vm->drawActors(0, 1, 1, 0, 65, 136, 145, 136);
 		} else {
+			// Left ladder
 			r24_handleRoomEvent(203, 183, -43, 90, 38, 1);
-			_vm->drawActors(0, 1, 1, 0, 167, 136, 250, 136);
+			// Original bug fixed:
+			// The original uses x = 167 for Wayne, which makes him jump 9 pixels to the left
+			// at the end of the animation. 176 matches the last frame, as on the left ladder.
+			// It's likely the devs made a typo between 167 and 176.
+			_vm->drawActors(0, 1, 1, 0, 176, 136, 250, 136);
 		}
 		break;
 	case 28:
@@ -6221,6 +6227,8 @@ void GameLogic::r24_refreshRoomBackground() {
 }
 
 void GameLogic::r24_climbLadder(int wayneX, int wayneLadderX, int wayneLadderY, int ladderTopY, int ceilingIndex) {
+	debug("r24_climbLadder: wayne=(%d,%d) scale=%d garth=(%d,%d)", _vm->_wayneSpriteX, _vm->_wayneSpriteY,
+		  _vm->_wayneActorScale, _vm->_garthSpriteX, _vm->_garthSpriteY);
 	const int garthClimbX = wayneX;
 	const int garthLadderX = wayneLadderX + 20;
 	const int ceilingX = wayneX - 10;
