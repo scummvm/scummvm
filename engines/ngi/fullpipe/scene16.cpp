@@ -119,7 +119,7 @@ int scene16_updateCursor() {
 	return g_nmi->_cursorId;
 }
 
-void sceneHandler16_laughSound() {
+void sceneHandler16_makeLaughSound() {
 	int snd = SND_16_035;
 
 	switch (g_vars->scene16_sound) {
@@ -295,7 +295,7 @@ void sceneHandler16_drink() {
 	}
 }
 
-void sceneHandler16_mugClick() {
+void sceneHandler16_onMugClick() {
 	if (abs(310 - g_nmi->_aniMan->_x) >= 1 || abs(449 - g_nmi->_aniMan->_y) >= 1
 		|| g_nmi->_aniMan->_movement || g_nmi->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
 		MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, 310, 449, 1, ST_MAN_RIGHT);
@@ -395,7 +395,7 @@ int sceneHandler16(Command *cmd) {
 
 	switch(cmd->_messageNum) {
 	case MSG_SC16_LAUGHSOUND:
-		sceneHandler16_laughSound();
+		sceneHandler16_makeLaughSound();
 		break;
 
 	case MSG_SC16_SHOWBEARDED:
@@ -418,7 +418,7 @@ int sceneHandler16(Command *cmd) {
 		if (!g_nmi->_aniMan->isIdle() || g_nmi->_aniMan->_flags & 0x100) {
 			cmd->_cmd = 0;
 		} else {
-			sceneHandler16_mugClick();
+			sceneHandler16_onMugClick();
 		}
 		break;
 
