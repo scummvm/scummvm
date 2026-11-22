@@ -124,7 +124,7 @@ void sceneHandler26_testVent() {
 	if (!g_vars->scene26_activeVent)
 		return;
 
-	if (g_vars->scene26_activeVent->_odelay == 0) {
+	if (g_vars->scene26_activeVent->_copyId == 0) {
 		if (g_nmi->getObjectState(sO_Valve1_26) == g_nmi->getObjectEnumState(sO_Valve1_26, sO_Opened))
 			g_nmi->stopAllSoundInstances(SND_26_018);
 		else
@@ -141,7 +141,7 @@ void sceneHandler26_testVent() {
 
 			g_nmi->playSound(SND_26_020, 0);
 		}
-	} else if (g_vars->scene26_activeVent->_odelay == 1) {
+	} else if (g_vars->scene26_activeVent->_copyId == 1) {
 		if (g_nmi->getObjectState(sO_Valve2_26) == g_nmi->getObjectEnumState(sO_Valve2_26, sO_Opened))
 			g_nmi->playSound(SND_26_020, 0);
 		else
@@ -156,7 +156,7 @@ void sceneHandler26_testVent() {
 
 			chainQueue(QU_SC26_AUTOCLOSE1, 0);
 		}
-	} else if (g_vars->scene26_activeVent->_odelay == 2) {
+	} else if (g_vars->scene26_activeVent->_copyId == 2) {
 		if (g_nmi->getObjectState(sO_Valve3_26) == g_nmi->getObjectEnumState(sO_Valve3_26, sO_Opened))
 			g_nmi->playSound(SND_26_020, 0);
 		else
@@ -199,7 +199,7 @@ void sceneHandler26_hideVent() {
 void sceneHandler26_animateVents(StaticANIObject *ani) {
 	int qId = 0;
 
-	switch (ani->_odelay) {
+	switch (ani->_copyId) {
 	case 0:
 		if (g_nmi->getObjectState(sO_Valve1_26) == g_nmi->getObjectEnumState(sO_Valve1_26, sO_Closed)) {
 			qId = QU_SC26_OPEN1;
@@ -253,21 +253,21 @@ void sceneHandler26_animateVents(StaticANIObject *ani) {
 }
 
 void sceneHandler26_clickVent(StaticANIObject *ani, ExCommand *cmd) {
-	if (ani->_odelay || g_nmi->getObjectState(sO_Hatch_26) != g_nmi->getObjectEnumState(sO_Hatch_26, sO_Opened)) {
+	if (ani->_copyId || g_nmi->getObjectState(sO_Hatch_26) != g_nmi->getObjectEnumState(sO_Hatch_26, sO_Opened)) {
 		if (g_nmi->_aniMan->isIdle() && !(g_nmi->_aniMan->_flags & 0x100)) {
 			g_vars->scene26_activeVent = ani;
 
-			int x = ani->_ox - 20;
-			int y = ani->_oy + 61;
+			int x = ani->_x - 20;
+			int y = ani->_y + 61;
 
-			if (abs(x - g_nmi->_aniMan->_ox) > 1 || abs(y - g_nmi->_aniMan->_oy) > 1 || g_nmi->_aniMan->_movement || g_nmi->_aniMan->_statics->_staticsId != ST_MAN_UP) {
+			if (abs(x - g_nmi->_aniMan->_x) > 1 || abs(y - g_nmi->_aniMan->_y) > 1 || g_nmi->_aniMan->_movement || g_nmi->_aniMan->_statics->_staticsId != ST_MAN_UP) {
 				MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, x, y, 1, ST_MAN_UP);
 
 				if (mq) {
 					ExCommand *ex = new ExCommand(0, 17, MSG_SC26_CLICKVENT, 0, 0, 0, 1, 0, 0, 0);
 
 					ex->_excFlags |= 3;
-					ex->_param = ani->_odelay;
+					ex->_param = ani->_copyId;
 
 					mq->addExCommandToEnd(ex);
 
@@ -337,7 +337,7 @@ int sceneHandler26(ExCommand *cmd) {
 
 	case 33:
 		if (g_nmi->_aniMan2) {
-			int x = g_nmi->_aniMan2->_ox;
+			int x = g_nmi->_aniMan2->_x;
 
 			if (x < g_nmi->_sceneRect.left + 200)
 				g_nmi->_currentScene->_x = x - 300 - g_nmi->_sceneRect.left;

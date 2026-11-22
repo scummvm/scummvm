@@ -106,7 +106,7 @@ MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int,
 		}
 #endif
 
-		ex->_param = ani->_odelay;
+		ex->_param = ani->_copyId;
 		ex->_field_3C = 1;
 		ex->_field_24 = 1;
 
@@ -220,8 +220,8 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 	Common::Point point;
 
 	if (!(mkQueue->flags & 0x10) || !(mkQueue->flags & 0x20)) {
-		int nx = mkQueue->ani->_ox;
-		int ny = mkQueue->ani->_oy;
+		int nx = mkQueue->ani->_x;
+		int ny = mkQueue->ani->_y;
 
 		if (mkQueue->ani->_movement) {
 			mkQueue->ani->calcNextStep(&point);
@@ -362,7 +362,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 
 		ex2 = createCommand(s.movement, mkQueue->ani->_id, x1, y1, x2, y2, -1);
 		ex2->_parId = mq->_id;
-		ex2->_param = mkQueue->ani->_odelay;
+		ex2->_param = mkQueue->ani->_copyId;
 
 		mq->addExCommandToEnd(ex2);
 
@@ -379,7 +379,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 
 		ex2 = createCommand(mov, mkQueue->ani->_id, x1, y1, x2, y2, plen);
 		ex2->_parId = mq->_id;
-		ex2->_param = mkQueue->ani->_odelay;
+		ex2->_param = mkQueue->ani->_copyId;
 
 		mq->addExCommandToEnd(ex2);
 	}
@@ -389,7 +389,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 
 		ex2 = createCommand(s.movement, mkQueue->ani->_id, x1, y1, x2, y2, -1);
 		ex2->_parId = mq->_id;
-		ex2->_param = mkQueue->ani->_odelay;
+		ex2->_param = mkQueue->ani->_copyId;
 
 		mq->addExCommandToEnd(ex2);
 
@@ -399,7 +399,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 	ExCommand *ex = new ExCommand(mkQueue->ani->_id, 5, -1, mkQueue->x1, mkQueue->y1, 0, 1, 0, 0, 0);
 
 	ex->_z = mkQueue->field_1C;
-	ex->_param = mkQueue->ani->_odelay;
+	ex->_param = mkQueue->ani->_copyId;
 	ex->_field_24 = 0;
 	ex->_excFlags |= 3;
 
@@ -438,8 +438,8 @@ void AniHandler::putObjectToStatics(StaticANIObject *ani, int staticsId) {
 		ani->_movement->setLast();
 		ani->_statics = ani->_movement->_nextStatic;
 
-		int x = ani->_movement->_ox;
-		int y = ani->_movement->_oy;
+		int x = ani->_movement->_x;
+		int y = ani->_movement->_y;
 
 		ani->_movement = nullptr;
 
@@ -449,7 +449,7 @@ void AniHandler::putObjectToStatics(StaticANIObject *ani, int staticsId) {
 	if (ani->_statics) {
 		const Common::Point point = getTransitionSize(ani->_id, ani->_statics->_staticsId, staticsId);
 
-		ani->setOXY(ani->_ox + point.x, ani->_oy + point.y);
+		ani->setOXY(ani->_x + point.x, ani->_y + point.y);
 
 		ani->_statics = ani->getStaticsById(staticsId);
 	}

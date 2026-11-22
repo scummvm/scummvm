@@ -139,14 +139,14 @@ class BigPicture : public Picture {
 
 class GameObject : public CObject {
   public:
-	int16 _odelay;
-	int _field_8;
+	int16 _copyId;
+	int _objectFlags;
 	int16 _flags;
 	int16 _id;
-	Common::String _objectName;
-	int _ox;
-	int _oy;
-	int _priority;
+	Common::String _title;
+	int _x;
+	int _y;
+	int _z;
 	int _field_20;
 
   public:
@@ -155,12 +155,12 @@ class GameObject : public CObject {
 
 	virtual Common::String toXML();
 	bool load(MfcArchive &file) override;
-	void setOXY(int x, int y);
-	void renumPictures(Common::Array<StaticANIObject *> *lst);
-	void renumPictures(Common::Array<PictureObject *> *lst);
+	void setPos(int x, int y);
+	void assignCopyId(Common::Array<StaticANIObject *> *lst);
+	void assignCopyId(Common::Array<PictureObject *> *lst);
 	void setFlags(int16 flags) { _flags = flags; }
 	void clearFlags() { _flags = 0; }
-	Common::String getName() { return _objectName; }
+	Common::String getName() { return _title; }
 
 	bool getPicAniInfo(PicAniInfo &info);
 	bool setPicAniInfo(const PicAniInfo &info);

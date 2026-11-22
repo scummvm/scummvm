@@ -59,11 +59,11 @@ int sceneHandler12(ExCommand *cmd) {
 
 	if (cmd->_messageKind == 17 && cmd->_messageNum == 33) {
 		if (g_nmi->_aniMan2) {
-			if (g_nmi->_aniMan2->_ox < g_nmi->_sceneRect.left + 200)
-				g_nmi->_currentScene->_x = g_nmi->_aniMan2->_ox - g_nmi->_sceneRect.left - 300;
+			if (g_nmi->_aniMan2->_x < g_nmi->_sceneRect.left + 200)
+				g_nmi->_currentScene->_x = g_nmi->_aniMan2->_x - g_nmi->_sceneRect.left - 300;
 
-			if (g_nmi->_aniMan2->_ox > g_nmi->_sceneRect.right - 200)
-				g_nmi->_currentScene->_x = g_nmi->_aniMan2->_ox - g_nmi->_sceneRect.right + 300;
+			if (g_nmi->_aniMan2->_x > g_nmi->_sceneRect.right - 200)
+				g_nmi->_currentScene->_x = g_nmi->_aniMan2->_x - g_nmi->_sceneRect.right + 300;
 
 			res = 1;
 		}

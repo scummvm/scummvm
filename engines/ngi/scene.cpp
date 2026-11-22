@@ -276,7 +276,7 @@ StaticANIObject *Scene::getAniMan() {
 
 StaticANIObject *Scene::getStaticANIObject1ById(int obj, int a3) {
 	for (uint i = 0; i < _staticANIObjectList1.size(); i++) {
-		if (_staticANIObjectList1[i]->_id == obj && (a3 == -1 || _staticANIObjectList1[i]->_odelay == a3))
+		if (_staticANIObjectList1[i]->_id == obj && (a3 == -1 || _staticANIObjectList1[i]->_copyId == a3))
 			return _staticANIObjectList1[i];
 	}
 
@@ -285,7 +285,7 @@ StaticANIObject *Scene::getStaticANIObject1ById(int obj, int a3) {
 
 StaticANIObject *Scene::getStaticANIObject1ByName(const Common::String &name, int a3) {
 	for (uint i = 0; i < _staticANIObjectList1.size(); i++) {
-		if ((_staticANIObjectList1[i]->_objectName == name) && (a3 == -1 || _staticANIObjectList1[i]->_odelay == a3))
+		if ((_staticANIObjectList1[i]->_title == name) && (a3 == -1 || _staticANIObjectList1[i]->_copyId == a3))
 			return _staticANIObjectList1[i];
 	}
 
@@ -311,13 +311,13 @@ void Scene::addStaticANIObject(StaticANIObject *obj, bool addList2) {
 	// with same priority do not get swapped during drawing
 	obj->_cnum = _staticANIObjectList2.size() + 1;
 
-	if (obj->_odelay)
-		obj->renumPictures(&_staticANIObjectList1);
+	if (obj->_copyId)
+		obj->assignCopyId(&_staticANIObjectList1);
 
 	_staticANIObjectList1.push_back(obj);
 
 	if (addList2) {
-		if (!obj->_odelay)
+		if (!obj->_copyId)
 			obj->clearFlags();
 
 		_staticANIObjectList2.push_back(obj);
@@ -337,7 +337,7 @@ void Scene::stopAllSounds() {
 
 PictureObject *Scene::getPictureObjectById(int objId, int flags) {
 	for (uint i = 1; i < _picObjList.size(); i++) {
-		if (_picObjList[i]->_id == objId && _picObjList[i]->_odelay == flags)
+		if (_picObjList[i]->_id == objId && _picObjList[i]->_copyId == flags)
 			return _picObjList[i];
 	}
 
@@ -346,7 +346,7 @@ PictureObject *Scene::getPictureObjectById(int objId, int flags) {
 
 PictureObject *Scene::getPictureObjectByName(const Common::String &objName, int flags) {
 	for (uint i = 0; i < _picObjList.size(); i++) {
-		if ((_picObjList[i]->_objectName == objName) && (_picObjList[i]->_odelay == flags || flags == -1))
+		if ((_picObjList[i]->_title == objName) && (_picObjList[i]->_copyId == flags || flags == -1))
 			return _picObjList[i];
 	}
 
@@ -445,10 +445,10 @@ void Scene::initObjectCursors(const char *varname) {
 
 #if 0
 bool Scene::compareObjPriority(const void *p1, const void *p2) {
-	if (((const GameObject *)p1)->_priority > ((const GameObject *)p2)->_priority)
+	if (((const GameObject *)p1)->_z > ((const GameObject *)p2)->_z)
 		return true;
 
-	if (((const GameObject *)p1)->_priority == ((const GameObject *)p2)->_priority)
+	if (((const GameObject *)p1)->_z == ((const GameObject *)p2)->_z)
 		if (((const GameObject *)p1)->_cnum > ((const GameObject *)p2)->_cnum)
 			return true;
 
@@ -489,7 +489,7 @@ void Scene::objectList_sortByPriority(Common::Array<T *> &list, uint startIndex)
 			T *refElement = list[startIndex];
 			for (int i = startIndex; i < lastIndex; i++) {
 				T *curElement = list[i + 1];
-				if (curElement->_priority > refElement->_priority) {
+				if (curElement->_z > refElement->_z) {
 					// Push refElement down the list
 					list.remove_at(i);
 					list.insert_at(i + 1, refElement);
@@ -520,11 +520,11 @@ void Scene::draw() {
 
 	int priority = -1;
 	for (uint i = 0; i < _staticANIObjectList2.size(); i++) {
-		drawContent(_staticANIObjectList2[i]->_priority, priority, false);
+		drawContent(_staticANIObjectList2[i]->_z, priority, false);
 
 		_staticANIObjectList2[i]->draw();
 
-		priority = _staticANIObjectList2[i]->_priority;
+		priority = _staticANIObjectList2[i]->_z;
 	}
 
 	drawContent(-1, priority, false);
@@ -609,9 +609,9 @@ StaticANIObject *Scene::getStaticANIObjectAtPos(int x, int y) {
 	for (uint i = 0; i < _staticANIObjectList1.size(); i++) {
 		StaticANIObject *p = _staticANIObjectList1[i];
 
-		if ((p->_field_8 & 0x100) && (p->_flags & 4) &&
+		if ((p->_objectFlags & 0x100) && (p->_flags & 4) &&
 				p->isPixelHitAtPos(x, y) &&
-				(!res || res->_priority > p->_priority))
+				(!res || res->_z > p->_z))
 			res = p;
 	}
 
@@ -623,9 +623,9 @@ PictureObject *Scene::getPictureObjectAtPos(int x, int y) {
 
 	for (uint i = 0; i < _picObjList.size(); i++) {
 		PictureObject *p = _picObjList[i];
-		if ((p->_field_8 & 0x100) && (p->_flags & 4) &&
+		if ((p->_objectFlags & 0x100) && (p->_flags & 4) &&
 				p->isPixelHitAtPos(x, y) &&
-				(!res || res->_priority >= p->_priority))
+				(!res || res->_z >= p->_z))
 			res = p;
 	}
 
@@ -638,9 +638,9 @@ int Scene::getPictureObjectIdAtPos(int x, int y) {
 
 	for (uint i = 0; i < _picObjList.size(); i++) {
 		PictureObject *p = _picObjList[i];
-		if ((p->_field_8 & 0x100) && (p->_flags & 4) &&
+		if ((p->_objectFlags & 0x100) && (p->_flags & 4) &&
 				p->isPixelHitAtPos(x, y) &&
-				(!res || resp->_priority >= p->_priority)) {
+				(!res || resp->_z >= p->_z)) {
 			resp = p;
 			res = p->_id;
 		}
@@ -675,7 +675,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 #endif
 
 	if (minPri == -1 && _picObjList.size())
-		minPri = _picObjList.back()->_priority - 1;
+		minPri = _picObjList.back()->_z - 1;
 
 	if (maxPri == -1)
 		maxPri = 60000;
@@ -752,11 +752,11 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 	for (uint i = 1; i < _picObjList.size(); i++) {
 		PictureObject *obj = _picObjList[i];
 
-		if (obj->_priority < minPri || obj->_priority >= maxPri)
+		if (obj->_z < minPri || obj->_z >= maxPri)
 			continue;
 
-		int objX = obj->_ox;
-		int objY = obj->_oy;
+		int objX = obj->_x;
+		int objY = obj->_y;
 
 		debugC(8, kDebugDrawing, "obj: %d %d", objX, objY);
 
@@ -768,22 +768,22 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 		if (obj->_flags & 8) {
 			while (objX > g_nmi->_sceneRect.right) {
 				objX -= width;
-				obj->setOXY(objX, objY);
+				obj->setPos(objX, objY);
 			}
 			for (int j = width + objX; width + objX < g_nmi->_sceneRect.left; j = width + objX) {
 				objX = j;
-				obj->setOXY(j, objY);
+				obj->setPos(j, objY);
 			}
 		}
 
 		if (obj->_flags & 0x10) {
 			while (objY > g_nmi->_sceneRect.bottom) {
 				objY -= height;
-				obj->setOXY(objX, objY);
+				obj->setPos(objX, objY);
 			}
 			for (int j = objY + height; objY + height < g_nmi->_sceneRect.top; j = objY + height) {
 				objY = j;
-				obj->setOXY(objX, j);
+				obj->setPos(objX, j);
 			}
 		}
 		if (obj->_flags & 4)
@@ -791,27 +791,27 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 
 		if (obj->_flags & 2) {
 			if (objX > g_nmi->_sceneRect.left) {
-				obj->setOXY(objX - width, objY);
+				obj->setPos(objX - width, objY);
 				obj->draw();
-				obj->setOXY(objX, objY);
+				obj->setPos(objX, objY);
 			}
 			if (width + objX < g_nmi->_sceneRect.right) {
-				obj->setOXY(width + objX, objY);
+				obj->setPos(width + objX, objY);
 				obj->draw();
-				obj->setOXY(objX, objY);
+				obj->setPos(objX, objY);
 			}
 		}
 
 		if (obj->_flags & 0x20) {
 			if (objY > g_nmi->_sceneRect.top) {
-				obj->setOXY(objX, objY - height);
+				obj->setPos(objX, objY - height);
 				obj->draw();
-				obj->setOXY(objX, objY);
+				obj->setPos(objX, objY);
 			}
 			if (height + objY < g_nmi->_sceneRect.bottom) {
-				obj->setOXY(objX, height + objY);
+				obj->setPos(objX, height + objY);
 				obj->draw();
-				obj->setOXY(objX, objY);
+				obj->setPos(objX, objY);
 			}
 		}
 	}

@@ -70,7 +70,7 @@ void scene34_initScene(Scene *sc) {
 
 		g_vars->scene34_cactus->changeStatics2(ST_CTS34_EMPTY);
 		g_vars->scene34_cactus->setOXY(506, 674);
-		g_vars->scene34_cactus->_priority = 30;
+		g_vars->scene34_cactus->_z = 30;
 
 		g_vars->scene34_cactus->changeStatics2(ST_CTS34_GROWNEMPTY2);
 		g_vars->scene34_cactus->_flags |= 4;
@@ -207,8 +207,8 @@ void sceneHandler34_animateAction(ExCommand *cmd) {
 	if (g_nmi->_aniMan->_movement)
 		return;
 
-	int ox = g_nmi->_aniMan->_ox;
-	int oy = g_nmi->_aniMan->_oy;
+	int ox = g_nmi->_aniMan->_x;
+	int oy = g_nmi->_aniMan->_y;
 	StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
 
 	if (!ani || ani->_id != ANI_VENT_34) {
@@ -447,7 +447,7 @@ int sceneHandler34(ExCommand *cmd) {
 
 	case 33:
 		if (g_nmi->_aniMan2) {
-			int x = g_nmi->_aniMan2->_ox;
+			int x = g_nmi->_aniMan2->_x;
 
 			if (x < g_nmi->_sceneRect.left + 200)
 				g_nmi->_currentScene->_x = x - 300 - g_nmi->_sceneRect.left;

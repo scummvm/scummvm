@@ -308,14 +308,14 @@ void sceneHandler04_walkClimbLadder(ExCommand *ex) {
 
 	ExCommand *ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_TOLADDER, 0, 0, 0, 1, 0, 0, 0);
 
-	ex1->_param = g_nmi->_aniMan->_odelay;
+	ex1->_param = g_nmi->_aniMan->_copyId;
 	ex1->_excFlags |= 2;
 
 	mq->addExCommandToEnd(ex1);
 
 	ExCommand *ex2 = new ExCommand(ANI_MAN, 1, MV_MAN_STOPLADDER, 0, 0, 0, 1, 0, 0, 0);
 
-	ex2->_param = g_nmi->_aniMan->_odelay;
+	ex2->_param = g_nmi->_aniMan->_copyId;
 	ex2->_excFlags |= 2;
 
 	mq->addExCommandToEnd(ex2);
@@ -360,15 +360,15 @@ void sceneHandler04_walkClimbLadder(ExCommand *ex) {
 		g_vars->scene04_ladder->_ladmovements.front()->staticIds[2] = ST_MAN_GOLADDER;
 	}
 
-	g_nmi->_aniMan->_priority = 12;
+	g_nmi->_aniMan->_z = 12;
 
 	getSc2MctlCompoundBySceneId(g_nmi->_currentScene->_sceneId)->deactivate();
 	getGameLoaderInteractionController()->disableFlag24();
 }
 
 void sceneHandler04_clickLadder() {
-	g_vars->scene04_dudePosX = g_nmi->_aniMan->_ox;
-	g_vars->scene04_dudePosY = g_nmi->_aniMan->_oy;
+	g_vars->scene04_dudePosX = g_nmi->_aniMan->_x;
+	g_vars->scene04_dudePosY = g_nmi->_aniMan->_y;
 
 	if (g_vars->scene04_dudeOnLadder) {
 		if (!g_nmi->_aniMan->isIdle() || (g_nmi->_aniMan->_flags & 0x100)) {
@@ -442,7 +442,7 @@ void sceneHandler04_jumpOnLadder() {
 		if (!mq->chain(g_nmi->_aniMan))
 			delete mq;
 
-		g_nmi->_aniMan->_priority = 10;
+		g_nmi->_aniMan->_z = 10;
 	}
 
 	g_vars->scene04_ladderOffset = g_vars->scene04_ladder->collisionDetection(g_nmi->_aniMan);
@@ -481,7 +481,7 @@ void sceneHandler04_dropBottle() {
 	g_vars->scene04_hand->changeStatics2(ST_HND_EMPTY);
 
 	g_vars->scene04_hand->setOXY(429, 21);
-	g_vars->scene04_hand->_priority = 15;
+	g_vars->scene04_hand->_z = 15;
 }
 
 void sceneHandler04_gotoLadder(ExCommand *ex) {
@@ -531,7 +531,7 @@ void sceneHandler04_gotoLadder(ExCommand *ex) {
 		mq->setFlags(mq->getFlags() | 1);
 
 		if (mq->chain(g_nmi->_aniMan)) {
-			g_nmi->_aniMan->_priority = 12;
+			g_nmi->_aniMan->_z = 12;
 			g_nmi->_aniMan->_flags |= 0x100;
 		} else {
 			delete mq;
@@ -596,29 +596,29 @@ MessageQueue *sceneHandler04_kozFly3(StaticANIObject *ani, double phase) {
 	if (mq) {
 		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_param = ani->_odelay;
+		ex->_param = ani->_copyId;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_TURN, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_param = ani->_odelay;
+		ex->_param = ani->_copyId;
 		mq->addExCommandToEnd(ex);
 
 		for (int i = 0; i < 5; i++) {
 			ex = new ExCommand(ANI_KOZAWKA, 1, rMV_KZW_GOR, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
-			ex->_param = ani->_odelay;
+			ex->_param = ani->_copyId;
 			mq->addExCommandToEnd(ex);
 		}
 
 		ex = new ExCommand(ANI_KOZAWKA, 6, 0, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		ex->_param = ani->_odelay;
+		ex->_param = ani->_copyId;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 17, MSG_KOZAWRESTART, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		ex->_param = ani->_odelay;
+		ex->_param = ani->_copyId;
 		mq->addExCommandToEnd(ex);
 	}
 
@@ -636,7 +636,7 @@ MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
 	mkQueue.ani = ani;
 	mkQueue.staticsId2 = ST_KZW_JUMPOUT;
 	mkQueue.x1 = 525;
-	mkQueue.y1 = (int)(344.0 - (double)(320 - g_vars->scene04_bottle->_oy) * phase);
+	mkQueue.y1 = (int)(344.0 - (double)(320 - g_vars->scene04_bottle->_y) * phase);
 	mkQueue.field_1C = 10;
 	mkQueue.field_10 = 1;
 	mkQueue.flags = 78;
@@ -649,7 +649,7 @@ MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
 	mkQueue.staticsId1 = ST_KZW_JUMPOUT;
 	mkQueue.staticsId2 = ST_KZW_SIT;
 	mkQueue.x2 = 525;
-	mkQueue.y2 = (int)(344.0 - (double)(320 - g_vars->scene04_bottle->_oy) * phase);
+	mkQueue.y2 = (int)(344.0 - (double)(320 - g_vars->scene04_bottle->_y) * phase);
 	mkQueue.y1 = 486;
 	mkQueue.field_1C = 10;
 	mkQueue.field_10 = 1;
@@ -666,29 +666,29 @@ MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
 
 		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_param = ani->_odelay;
+		ex->_param = ani->_copyId;
 		mq1->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_TURN, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_param = ani->_odelay;
+		ex->_param = ani->_copyId;
 		mq1->addExCommandToEnd(ex);
 
 		for (int i = 0; i < 5; i++) {
 			ex = new ExCommand(ANI_KOZAWKA, 1, rMV_KZW_GOR, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
-			ex->_param = ani->_odelay;
+			ex->_param = ani->_copyId;
 			mq1->addExCommandToEnd(ex);
 		}
 
 		ex = new ExCommand(ANI_KOZAWKA, 6, 0, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		ex->_param = ani->_odelay;
+		ex->_param = ani->_copyId;
 		mq1->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 17, MSG_KOZAWRESTART, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		ex->_param = ani->_odelay;
+		ex->_param = ani->_copyId;
 		mq1->addExCommandToEnd(ex);
 	}
 
@@ -709,8 +709,8 @@ MessageQueue *sceneHandler04_kozFly6(StaticANIObject *ani) {
 	mkQueue.ani = ani;
 	mkQueue.staticsId2 = ST_KZW_SIT;
 	mkQueue.x1 = 397 - 4 * g_nmi->_rnd.getRandomNumber(1);
-	mkQueue.field_1C = ani->_priority;
-	mkQueue.y1 = g_vars->scene04_bottle->_oy - 4 * g_nmi->_rnd.getRandomNumber(1) + 109;
+	mkQueue.field_1C = ani->_z;
+	mkQueue.y1 = g_vars->scene04_bottle->_y - 4 * g_nmi->_rnd.getRandomNumber(1) + 109;
 	mkQueue.field_10 = 1;
 	mkQueue.flags = 78;
 	mkQueue.movementId = MV_KZW_JUMPROTATE;
@@ -722,17 +722,17 @@ MessageQueue *sceneHandler04_kozFly6(StaticANIObject *ani) {
 
 		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_param = ani->_odelay;
+		ex->_param = ani->_copyId;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_GOR, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_param = ani->_odelay;
+		ex->_param = ani->_copyId;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_RAISEHEAD, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_param = ani->_odelay;
+		ex->_param = ani->_copyId;
 		mq->addExCommandToEnd(ex);
 
 		g_vars->scene04_kozHeadRaised = true;
@@ -780,33 +780,33 @@ MessageQueue *sceneHandler04_kozFly7(StaticANIObject *ani, double phase) {
 	if (mq) {
 		sceneHandler04_kozMove(ani->getMovementById(MV_KZW_JUMPROTATE), 1, 9, g_vars->scene04_jumpRotateKozyawki, phase * 0.5 + 1.5);
 
-		ani->_priority = 10;
+		ani->_z = 10;
 
 		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_param = ani->_odelay;
+		ex->_param = ani->_copyId;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_TURN, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_param = ani->_odelay;
+		ex->_param = ani->_copyId;
 		mq->addExCommandToEnd(ex);
 
 		for (int i = 0; i < 2; i++) {
 			ex = new ExCommand(ANI_KOZAWKA, 1, rMV_KZW_GOR, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
-			ex->_param = ani->_odelay;
+			ex->_param = ani->_copyId;
 			mq->addExCommandToEnd(ex);
 		}
 
 		ex = new ExCommand(ANI_KOZAWKA, 6, 0, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		ex->_param = ani->_odelay;
+		ex->_param = ani->_copyId;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 17, MSG_KOZAWRESTART, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		ex->_param = ani->_odelay;
+		ex->_param = ani->_copyId;
 		mq->addExCommandToEnd(ex);
 	}
 
@@ -911,7 +911,7 @@ void sceneHandler04_showCoin() {
 	if (ani) {
 		ani->show1(MV_BDG_OPEN, MV_MAN_GOU, MV_SC4_COIN_default, 0);
 
-		ani->_priority = 40;
+		ani->_z = 40;
 	}
 }
 
@@ -949,7 +949,7 @@ void sceneHandler04_walkKozyawka() {
 		g_vars->scene04_kozyawkiObjList.pop_front();
 
 		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_KOZAW_WALK), 0, 1);
-		mq->setParamInt(-1, g_vars->scene04_walkingKozyawka->_odelay);
+		mq->setParamInt(-1, g_vars->scene04_walkingKozyawka->_copyId);
 		mq->chain(nullptr);
 	}
 }
@@ -959,11 +959,11 @@ void sceneHandler04_bottleUpdateObjects(int off) {
 		if ((*it)->_objtype == kObjTypeStaticANIObject) {
 			StaticANIObject *st = static_cast<StaticANIObject *>(*it);
 
-			st->setOXY(st->_ox, off + st->_oy);
+			st->setOXY(st->_x, off + st->_y);
 		} else {
 			GameObject *obj = *it;
 
-			obj->setOXY(obj->_ox, off + obj->_oy);
+			obj->setPos(obj->_x, off + obj->_y);
 		}
 	}
 }
@@ -1035,7 +1035,7 @@ void sceneHandler04_leaveScene() {
 		error("sceneHandler04_leaveScene(): Cannot find exit");
 	}
 
-	ex->_y = g_vars->scene04_bottle->_oy - 304;
+	ex->_y = g_vars->scene04_bottle->_y - 304;
 
 	mq->chain(nullptr);
 
@@ -1048,18 +1048,18 @@ void sceneHandler04_leaveScene() {
 }
 
 void sceneHandler04_liftBottle() {
-	int newy = g_vars->scene04_bottleY + g_vars->scene04_spring->_oy;
+	int newy = g_vars->scene04_bottleY + g_vars->scene04_spring->_y;
 
 	g_vars->scene04_bottleY += 5;
 
-	sceneHandler04_bottleUpdateObjects(newy - g_vars->scene04_spring->_oy);
+	sceneHandler04_bottleUpdateObjects(newy - g_vars->scene04_spring->_y);
 
-	g_vars->scene04_spring->setOXY(g_vars->scene04_spring->_ox, newy);
+	g_vars->scene04_spring->setOXY(g_vars->scene04_spring->_x, newy);
 
-	if (g_vars->scene04_bottle->_oy >= 226) {
-		sceneHandler04_bottleUpdateObjects(226 - g_vars->scene04_bottle->_oy);
+	if (g_vars->scene04_bottle->_y >= 226) {
+		sceneHandler04_bottleUpdateObjects(226 - g_vars->scene04_bottle->_y);
 
-		g_vars->scene04_spring->setOXY(g_vars->scene04_spring->_ox, 437);
+		g_vars->scene04_spring->setOXY(g_vars->scene04_spring->_x, 437);
 		g_vars->scene04_bottleIsDropped = false;
 		g_vars->scene04_handIsDown = false;
 		g_vars->scene04_objectIsTaken = true;
@@ -1162,18 +1162,18 @@ void sceneHandler04_leaveLadder(ExCommand *ex) {
 
 					if (g_nmi->_aniMan->_statics->_staticsId == ST_MAN_LADDERDOWN) {
 						ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_LOOKLADDERRV, 0, 0, 0, 1, 0, 0, 0);
-						ex1->_param = g_nmi->_aniMan->_odelay;
+						ex1->_param = g_nmi->_aniMan->_copyId;
 						ex1->_excFlags |= 2;
 						mq->addExCommandToEnd(ex1);
 					}
 
 					ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_STARTLADDERD, 0, 0, 0, 1, 0, 0, 0);
-					ex1->_param = g_nmi->_aniMan->_odelay;
+					ex1->_param = g_nmi->_aniMan->_copyId;
 					ex1->_excFlags |= 2;
 					mq->addExCommandToEnd(ex1);
 
 					ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_FROMLADDER, 0, 0, 0, 1, 0, 0, 0);
-					ex1->_param = g_nmi->_aniMan->_odelay;
+					ex1->_param = g_nmi->_aniMan->_copyId;
 					ex1->_excFlags |= 2;
 					mq->addExCommandToEnd(ex1);
 
@@ -1269,7 +1269,7 @@ void sceneHandler04_bigBallWalkIn() {
 
 void sceneHandler04_takeBottle() {
 	g_vars->scene04_bottleIsTaken = true;
-	g_vars->scene04_hand->_priority = 5;
+	g_vars->scene04_hand->_z = 5;
 
 	g_nmi->setObjectState(sO_LowerPipe, g_nmi->getObjectEnumState(sO_LowerPipe, sO_IsOpened));
 }
@@ -1316,15 +1316,15 @@ void sceneHandler04_updateBottle() {
 	int yoff;
 
 	if (g_vars->scene04_hand->_movement)
-		yoff = g_vars->scene04_hand->_movement->_oy;
+		yoff = g_vars->scene04_hand->_movement->_y;
 	else
-		yoff = g_vars->scene04_hand->_oy;
+		yoff = g_vars->scene04_hand->_y;
 
 	int newy = g_vars->scene04_hand->getSomeXY().y + yoff + 140;
 
-	sceneHandler04_bottleUpdateObjects(newy - g_vars->scene04_spring->_oy);
+	sceneHandler04_bottleUpdateObjects(newy - g_vars->scene04_spring->_y);
 
-	g_vars->scene04_spring->setOXY(g_vars->scene04_spring->_ox, newy);
+	g_vars->scene04_spring->setOXY(g_vars->scene04_spring->_x, newy);
 }
 
 void sceneHandler04_winArcade() {
@@ -1427,18 +1427,18 @@ int sceneHandler04(ExCommand *ex) {
 
 	case 33:
 		{
-			g_vars->scene04_dudePosX = g_nmi->_aniMan->_ox;
-			g_vars->scene04_dudePosY = g_nmi->_aniMan->_oy;
+			g_vars->scene04_dudePosX = g_nmi->_aniMan->_x;
+			g_vars->scene04_dudePosY = g_nmi->_aniMan->_y;
 
 			int res = 0;
 
 			if (g_nmi->_aniMan2) {
-				if (g_nmi->_aniMan->_ox < g_nmi->_sceneRect.left + 200) {
-					g_nmi->_currentScene->_x = g_nmi->_aniMan->_ox - g_nmi->_sceneRect.left - 300;
-					g_nmi->_aniMan->_ox = g_vars->scene04_dudePosX;
+				if (g_nmi->_aniMan->_x < g_nmi->_sceneRect.left + 200) {
+					g_nmi->_currentScene->_x = g_nmi->_aniMan->_x - g_nmi->_sceneRect.left - 300;
+					g_nmi->_aniMan->_x = g_vars->scene04_dudePosX;
 				}
-				if (g_nmi->_aniMan->_ox > g_nmi->_sceneRect.right - 200) {
-					g_nmi->_currentScene->_x = g_nmi->_aniMan->_ox - g_nmi->_sceneRect.right + 300;
+				if (g_nmi->_aniMan->_x > g_nmi->_sceneRect.right - 200) {
+					g_nmi->_currentScene->_x = g_nmi->_aniMan->_x - g_nmi->_sceneRect.right + 300;
 				}
 
 				res = 1;

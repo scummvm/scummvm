@@ -341,7 +341,7 @@ int sceneHandler13(ExCommand *cmd) {
 			int x;
 
 			if (g_nmi->_aniMan2) {
-				x = g_nmi->_aniMan2->_ox;
+				x = g_nmi->_aniMan2->_x;
 				g_vars->scene13_dudeX = x;
 
 				if (x < g_nmi->_sceneRect.left + 200)

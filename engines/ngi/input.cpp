@@ -193,7 +193,7 @@ void NGIEngine::updateCursorCommon() {
 	GameObject *ani = _currentScene->getStaticANIObjectAtPos(_mouseVirtX, _mouseVirtY);
 
 	PictureObject *pic = _currentScene->getPictureObjectAtPos(_mouseVirtX, _mouseVirtY);
-	if (!ani || (pic && pic->_priority < ani->_priority))
+	if (!ani || (pic && pic->_z < ani->_z))
 		ani = pic;
 
 	int selId = getGameLoaderInventory()->getSelectedItemId();
@@ -276,9 +276,9 @@ void NGIEngine::processArcade(ExCommand *cmd) {
 
 	int idx;
 
-	if (cmd->_sceneClickX <= g_nmi->_aniMan2->_ox) {
+	if (cmd->_sceneClickX <= g_nmi->_aniMan2->_x) {
 		for (idx = (int)_arcadeKeys.size() - 1; idx >= 0; idx--) {
-			if (_arcadeKeys[idx].x < g_nmi->_aniMan2->_ox)
+			if (_arcadeKeys[idx].x < g_nmi->_aniMan2->_x)
 				break;
 		}
 
@@ -286,7 +286,7 @@ void NGIEngine::processArcade(ExCommand *cmd) {
 			return;
 	} else {
 		for (idx = 0; idx < (int)_arcadeKeys.size(); idx++) {
-			if (_arcadeKeys[idx].x > g_nmi->_aniMan2->_ox)
+			if (_arcadeKeys[idx].x > g_nmi->_aniMan2->_x)
 				break;
 		}
 

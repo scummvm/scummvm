@@ -266,7 +266,7 @@ void sceneHandler06_showNextBall() {
 
 		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC6_SHOWNEXTBALL), 0, 1);
 
-		mq->setParamInt(-1, g_vars->scene06_currentBall->_odelay);
+		mq->setParamInt(-1, g_vars->scene06_currentBall->_copyId);
 		mq->chain(nullptr);
 
 		++g_vars->scene06_numBallsGiven;
@@ -309,8 +309,8 @@ void sceneHandler06_startAiming() {
 
 void sceneHandler06_takeBall() {
 	if (g_vars->scene06_currentBall && !g_vars->scene06_currentBall->_movement && g_vars->scene06_currentBall->_statics->_staticsId == ST_NBL_NORM) {
-		if (abs(1158 - g_nmi->_aniMan->_ox) > 1
-			|| abs(452 - g_nmi->_aniMan->_oy) > 1
+		if (abs(1158 - g_nmi->_aniMan->_x) > 1
+			|| abs(452 - g_nmi->_aniMan->_y) > 1
 			|| g_nmi->_aniMan->_movement
 			|| g_nmi->_aniMan->_statics->_staticsId != (0x4000 | ST_MAN_RIGHT)) {
 			MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, 1158, 452, 1, (0x4000 | ST_MAN_RIGHT));
@@ -351,9 +351,9 @@ void sceneHandler06_ballStartFly() {
 	if (g_vars->scene06_ballInHands) {
 		g_vars->scene06_flyingBall = g_vars->scene06_ballInHands;
 		g_vars->scene06_ballInHands = nullptr;
-		g_vars->scene06_flyingBall->show1(g_nmi->_aniMan->_ox - 60, g_nmi->_aniMan->_oy - 60, -1, 0);
+		g_vars->scene06_flyingBall->show1(g_nmi->_aniMan->_x - 60, g_nmi->_aniMan->_y - 60, -1, 0);
 
-		g_vars->scene06_flyingBall->_priority = 27;
+		g_vars->scene06_flyingBall->_z = 27;
 	}
 }
 
@@ -412,7 +412,7 @@ void sceneHandler06_fallBall() {
 
 	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC6_FALLBALL), 0, 1);
 
-	mq->setParamInt(-1, g_vars->scene06_flyingBall->_odelay);
+	mq->setParamInt(-1, g_vars->scene06_flyingBall->_copyId);
 	mq->chain(nullptr);
 
 	g_vars->scene06_balls.push_back(g_vars->scene06_flyingBall);
@@ -461,8 +461,8 @@ void sceneHandler06_catchBall() {
 			}
 
 			g_vars->scene06_mumsy->changeStatics2(ST_MOM_STANDS);
-			g_vars->scene06_mumsy->setOXY(point.x + g_vars->scene06_mumsy->_ox,
-										  point.y + g_vars->scene06_mumsy->_oy);
+			g_vars->scene06_mumsy->setOXY(point.x + g_vars->scene06_mumsy->_x,
+										  point.y + g_vars->scene06_mumsy->_y);
 		} else {
 			g_vars->scene06_mumsy->changeStatics2(ST_MOM_STANDS);
 		}
@@ -682,8 +682,8 @@ int sceneHandler06(ExCommand *ex) {
 			int res = 0;
 
 			if (g_nmi->_aniMan2) {
-				int ox = g_nmi->_aniMan2->_ox;
-				int oy = g_nmi->_aniMan2->_oy;
+				int ox = g_nmi->_aniMan2->_x;
+				int oy = g_nmi->_aniMan2->_y;
 
 				g_vars->scene06_manX = ox;
 				g_vars->scene06_manY = oy;
@@ -733,8 +733,8 @@ int sceneHandler06(ExCommand *ex) {
 			}
 
 			if (g_vars->scene06_flyingBall) {
-				g_vars->scene06_ballX = g_vars->scene06_flyingBall->_ox - g_vars->scene06_ballDeltaX;
-				g_vars->scene06_ballY = g_vars->scene06_flyingBall->_oy - g_vars->scene06_ballDeltaY;
+				g_vars->scene06_ballX = g_vars->scene06_flyingBall->_x - g_vars->scene06_ballDeltaX;
+				g_vars->scene06_ballY = g_vars->scene06_flyingBall->_y - g_vars->scene06_ballDeltaY;
 
 				g_vars->scene06_flyingBall->setOXY(g_vars->scene06_ballX, g_vars->scene06_ballY);
 

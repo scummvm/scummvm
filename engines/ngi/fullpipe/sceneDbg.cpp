@@ -46,9 +46,9 @@ GameObject *sceneHandlerDbgMenu_getObjectAtXY(int x, int y) {
 	for (uint i = 1; i < g_nmi->_currentScene->_picObjList.size(); i++) {
 		PictureObject *pic = g_nmi->_currentScene->_picObjList[i];
 
-		if (x >= pic->_ox && y >= pic->_oy) {
+		if (x >= pic->_x && y >= pic->_y) {
 			const Dims dims = pic->getDimensions();
-			if (x <= pic->_ox + dims.x && y <= pic->_oy + dims.y && pic != g_vars->selector)
+			if (x <= pic->_x + dims.x && y <= pic->_y + dims.y && pic != g_vars->selector)
 				return pic;
 		}
 	}
@@ -91,7 +91,7 @@ int sceneHandlerDbgMenu(ExCommand *ex) {
 		obj = sceneHandlerDbgMenu_getObjectAtXY(mx, my);
 		if (obj && canInteractAny(nullptr, obj, -3) ) {
 			g_vars->selector->_flags |= 4;
-			g_vars->selector->setOXY(obj->_ox, obj->_oy);
+			g_vars->selector->setPos(obj->_x, obj->_y);
 			g_nmi->_cursorId = PIC_CSR_DEFAULT;
 			g_nmi->setCursor(PIC_CSR_DEFAULT);
 			return 0;

@@ -44,7 +44,7 @@ void scene31_initScene(Scene *sc) {
 		g_nmi->_currentScene = sc;
 
 		g_vars->scene31_cactus->changeStatics2(ST_CTS31_GROWN2);
-		g_vars->scene31_cactus->_priority = 22;
+		g_vars->scene31_cactus->_z = 22;
 
 		g_nmi->_currentScene = oldsc;
 	} else {
@@ -98,7 +98,7 @@ int sceneHandler31(ExCommand *cmd) {
 
 	case 33:
 		if (g_nmi->_aniMan2) {
-			int x = g_nmi->_aniMan2->_ox;
+			int x = g_nmi->_aniMan2->_x;
 
 			if (x < g_nmi->_sceneRect.left + 200)
 				g_nmi->_currentScene->_x = x - 300 - g_nmi->_sceneRect.left;

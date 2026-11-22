@@ -99,7 +99,7 @@ void scene24_setPoolState() {
 int sceneHandler24(ExCommand *cmd) {
 	if (cmd->_messageKind == 17 && cmd->_messageNum == 33) {
 		if (g_nmi->_aniMan2) {
-			int x = g_nmi->_aniMan2->_ox;
+			int x = g_nmi->_aniMan2->_x;
 
 			if (x < g_nmi->_sceneRect.left + 200) {
 				g_nmi->_currentScene->_x = x - 300 - g_nmi->_sceneRect.left;

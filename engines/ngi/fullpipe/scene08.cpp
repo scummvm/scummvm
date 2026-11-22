@@ -123,8 +123,8 @@ int scene08_updateCursor() {
 		}
 	} else {
 		if (g_nmi->_objectIdAtCursor == PIC_SC8_LADDERD && g_nmi->_cursorId == PIC_CSR_ITN) {
-			if (g_nmi->_aniMan2->_oy >= 520) {
-				if (g_nmi->_aniMan2->_oy <= 750)
+			if (g_nmi->_aniMan2->_y >= 520) {
+				if (g_nmi->_aniMan2->_y <= 750)
 					g_nmi->_cursorId = PIC_CSR_GOU;
 			} else {
 				g_nmi->_cursorId = PIC_CSR_GOD;
@@ -140,7 +140,7 @@ void sceneHandler08_enterUp() {
 
 	g_nmi->_aniMan->changeStatics2(ST_MAN8_HANDSUP);
 	g_nmi->_aniMan->setOXY(386, 236);
-	g_nmi->_aniMan->_priority = 10;
+	g_nmi->_aniMan->_z = 10;
 	g_nmi->_aniMan->_flags = 4;
 
 	chainObjQueue(g_nmi->_aniMan, QU_SC8_FINISH, 1);
@@ -192,7 +192,7 @@ int sceneHandler08_calcOffset(int off, int flag) {
 }
 
 void sceneHandler08_pushCallback(int *par) {
-	int y = g_nmi->_aniMan->_oy + g_nmi->_aniMan->getSomeXY().y;
+	int y = g_nmi->_aniMan->_y + g_nmi->_aniMan->getSomeXY().y;
 
 	if (g_nmi->_aniMan->_statics && g_nmi->_aniMan->_statics->_staticsId == ST_MAN8_FLYDOWN)
 		y -= 25;
@@ -232,7 +232,7 @@ void sceneHandler08_startArcade() {
 
 	g_vars->scene08_vmyats->_statics = g_vars->scene08_vmyats->getStaticsById(ST_VMT_MIN);
 	g_vars->scene08_vmyats->setOXY(382, 703);
-	g_vars->scene08_vmyats->_priority = 29;
+	g_vars->scene08_vmyats->_z = 29;
 	g_vars->scene08_vmyats->_callback2 = sceneHandler08_pushCallback;
 
 	g_nmi->_aniMan = g_nmi->_currentScene->getStaticANIObject1ById(ANI_MAN, -1);
@@ -246,8 +246,8 @@ void sceneHandler08_startArcade() {
 
 void sceneHandler08_airMoves() {
 	if (g_nmi->_aniMan->isIdle() && !(g_nmi->_aniMan->_flags & 0x100)) {
-		int x = g_nmi->_aniMan->_ox;
-		int y = g_nmi->_aniMan->_oy;
+		int x = g_nmi->_aniMan->_x;
+		int y = g_nmi->_aniMan->_y;
 
 		if (703 - g_nmi->_aniMan->getSomeXY().y - y < 150) {
 			if (g_nmi->_aniMan->_statics) {
@@ -313,13 +313,13 @@ void sceneHandler08_badLuck() {
 
 	g_nmi->_aniMan->changeStatics2(ST_MAN8_HANDSUP);
 	g_nmi->_aniMan->setOXY(376, 280);
-	g_nmi->_aniMan->_priority = 10;
+	g_nmi->_aniMan->_z = 10;
 
 	MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 
 	ExCommand *ex = new ExCommand(g_nmi->_aniMan->_id, 1, MV_MAN8_BADLUCK, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags |= 2;
-	ex->_param = g_nmi->_aniMan->_odelay;
+	ex->_param = g_nmi->_aniMan->_copyId;
 	mq->addExCommandToEnd(ex);
 
 	mq->setFlags(mq->getFlags() | 1);
@@ -331,7 +331,7 @@ void sceneHandler08_badLuck() {
 }
 
 void sceneHandler08_sitDown() {
-	g_nmi->_aniMan->setOXY(380, g_nmi->_aniMan->_oy);
+	g_nmi->_aniMan->setOXY(380, g_nmi->_aniMan->_y);
 
 	g_nmi->_aniMan->changeStatics2(ST_MAN8_FLYDOWN);
 	g_nmi->_aniMan->startAnim(MV_MAN8_SITDOWN, 0, -1);
@@ -344,9 +344,9 @@ void sceneHandler08_sitDown() {
 }
 
 void sceneHandler08_calcFlight() {
-	int y = g_vars->scene08_manOffsetY + g_nmi->_aniMan->_oy;
+	int y = g_vars->scene08_manOffsetY + g_nmi->_aniMan->_y;
 
-	g_nmi->_aniMan->setOXY(g_nmi->_aniMan->_ox, y);
+	g_nmi->_aniMan->setOXY(g_nmi->_aniMan->_x, y);
 
 	g_vars->scene08_manOffsetY += 2;
 
@@ -358,7 +358,7 @@ void sceneHandler08_calcFlight() {
 	if (g_nmi->_aniMan->_statics && g_nmi->_aniMan->_statics->_staticsId == ST_MAN8_FLYDOWN)
 		y -= 25;
 
-	if (y <= g_vars->scene08_vmyats->_oy) {
+	if (y <= g_vars->scene08_vmyats->_y) {
 		g_vars->scene08_vmyats->hide();
 	} else {
 		g_vars->scene08_vmyats->show1(-1, -1, -1, 0);
@@ -367,12 +367,12 @@ void sceneHandler08_calcFlight() {
 			g_vars->scene08_vmyats->startAnim(MV_VMT_DEF, 0, -1);
 	}
 
-	if (g_nmi->_aniMan->_oy <= 280 && g_vars->scene08_stairsVisible
+	if (g_nmi->_aniMan->_y <= 280 && g_vars->scene08_stairsVisible
 		&& g_nmi->_aniMan->_statics && g_nmi->_aniMan->_statics->_staticsId == ST_MAN8_HANDSUP) {
 		sceneHandler08_badLuck();
-	} else if (g_nmi->_aniMan->_oy > 236 || g_vars->scene08_stairsVisible
+	} else if (g_nmi->_aniMan->_y > 236 || g_vars->scene08_stairsVisible
 				|| !g_nmi->_aniMan->_statics || g_nmi->_aniMan->_statics->_staticsId != ST_MAN8_HANDSUP) {
-		if (g_nmi->_aniMan->_movement || g_nmi->_aniMan->_oy < 660
+		if (g_nmi->_aniMan->_movement || g_nmi->_aniMan->_y < 660
 			|| (g_vars->scene08_vmyats->_movement && g_vars->scene08_vmyats->_movement->_curFrame > 0)
 			|| abs(g_vars->scene08_manOffsetY) > 2) {
 			if (g_vars->scene08_manOffsetY >= 0 && !g_nmi->_aniMan->_movement) {
@@ -382,7 +382,7 @@ void sceneHandler08_calcFlight() {
 					g_nmi->_aniMan->changeStatics2(ST_MAN8_FLYDOWN);
 			}
 
-			if (g_nmi->_aniMan->_oy < 500 && !g_nmi->_aniMan->_movement && g_nmi->_aniMan->_statics->_staticsId == ST_MAN8_FLYUP && g_vars->scene08_manOffsetY < 0)
+			if (g_nmi->_aniMan->_y < 500 && !g_nmi->_aniMan->_movement && g_nmi->_aniMan->_statics->_staticsId == ST_MAN8_FLYUP && g_vars->scene08_manOffsetY < 0)
 				g_nmi->_aniMan->startAnim(MV_MAN8_HANDSUP, 0, -1);
 		} else {
 			sceneHandler08_sitDown();
@@ -394,10 +394,10 @@ void sceneHandler08_calcFlight() {
 
 void sceneHandler08_checkEndArcade() {
 	if (g_vars->scene08_flyingUp) {
-		int x = g_nmi->_aniMan->_ox;
-		int y = g_vars->scene08_manOffsetY + g_nmi->_aniMan->_oy;
+		int x = g_nmi->_aniMan->_x;
+		int y = g_vars->scene08_manOffsetY + g_nmi->_aniMan->_y;
 
-		if (!((g_vars->scene08_manOffsetY + g_nmi->_aniMan->_oy) % 3))
+		if (!((g_vars->scene08_manOffsetY + g_nmi->_aniMan->_y) % 3))
 			g_vars->scene08_manOffsetY--;
 
 		g_nmi->_aniMan->setOXY(x, y);
@@ -445,7 +445,7 @@ int sceneHandler08(ExCommand *cmd) {
 		g_vars->scene08_manOffsetY = -10;
 		g_vars->scene08_vmyats->changeStatics2(ST_VMT_MIN);
 		g_vars->scene08_vmyats->setOXY(382, 703);
-		g_vars->scene08_vmyats->_priority = 29;
+		g_vars->scene08_vmyats->_z = 29;
 		g_vars->scene08_vmyats->_callback2 = sceneHandler08_pushCallback;
 		g_vars->scene08_inAir = true;
 		break;
@@ -488,8 +488,8 @@ int sceneHandler08(ExCommand *cmd) {
 				if (g_vars->scene08_inArcade) {
 					int scHeight = g_nmi->_sceneRect.bottom - g_nmi->_sceneRect.top;
 
-					if (g_nmi->_aniMan2->_oy < g_nmi->_sceneRect.top + 200) {
-						g_nmi->_sceneRect.top = g_nmi->_aniMan2->_oy - 200;
+					if (g_nmi->_aniMan2->_y < g_nmi->_sceneRect.top + 200) {
+						g_nmi->_sceneRect.top = g_nmi->_aniMan2->_y - 200;
 
 						if (g_nmi->_sceneRect.top < 0)
 							g_nmi->_sceneRect.top = 0;
@@ -497,16 +497,16 @@ int sceneHandler08(ExCommand *cmd) {
 						g_nmi->_sceneRect.bottom = scHeight + g_nmi->_sceneRect.top;
 					}
 
-					if (g_nmi->_aniMan2->_oy > g_nmi->_sceneRect.bottom - 350) {
-						g_nmi->_sceneRect.bottom = g_nmi->_aniMan2->_oy + 350;
-						g_nmi->_sceneRect.top = g_nmi->_aniMan2->_oy + 350 - scHeight;
+					if (g_nmi->_aniMan2->_y > g_nmi->_sceneRect.bottom - 350) {
+						g_nmi->_sceneRect.bottom = g_nmi->_aniMan2->_y + 350;
+						g_nmi->_sceneRect.top = g_nmi->_aniMan2->_y + 350 - scHeight;
 					}
 				} else {
-					if (g_nmi->_aniMan2->_ox < g_nmi->_sceneRect.left + 200)
-						g_nmi->_currentScene->_x = g_nmi->_aniMan2->_ox - g_nmi->_sceneRect.left - 300;
+					if (g_nmi->_aniMan2->_x < g_nmi->_sceneRect.left + 200)
+						g_nmi->_currentScene->_x = g_nmi->_aniMan2->_x - g_nmi->_sceneRect.left - 300;
 
-					if (g_nmi->_aniMan2->_ox > g_nmi->_sceneRect.right - 200)
-						g_nmi->_currentScene->_x = g_nmi->_aniMan2->_ox - g_nmi->_sceneRect.right + 300;
+					if (g_nmi->_aniMan2->_x > g_nmi->_sceneRect.right - 200)
+						g_nmi->_currentScene->_x = g_nmi->_aniMan2->_x - g_nmi->_sceneRect.right + 300;
 
 					res = 1;
 				}
@@ -522,10 +522,10 @@ int sceneHandler08(ExCommand *cmd) {
 
 				if (mov) {
 					if (mov->_id == MV_MAN_TOLADDERD && mov->_curFrame == 8)
-						g_nmi->_aniMan->_priority = 2;
+						g_nmi->_aniMan->_z = 2;
 
 					if (mov && mov->_id == MV_MAN_FROMLADDERUP && mov->_curFrame == 13)
-						g_nmi->_aniMan->_priority = 20;
+						g_nmi->_aniMan->_z = 20;
 				}
 
 				g_nmi->_behaviorManager->updateBehaviors();

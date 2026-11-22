@@ -125,21 +125,21 @@ void Sound::setPanAndVolumeByStaticAni() {
 
 	int a, b;
 
-	if (ani->_ox >= g_nmi->_sceneRect.left) {
+	if (ani->_x >= g_nmi->_sceneRect.left) {
 		int par, pan;
 
-		if (ani->_ox <= g_nmi->_sceneRect.right) {
+		if (ani->_x <= g_nmi->_sceneRect.right) {
 			int dx;
 
-			if (ani->_oy <= g_nmi->_sceneRect.bottom) {
-				if (ani->_oy >= g_nmi->_sceneRect.top) {
+			if (ani->_y <= g_nmi->_sceneRect.bottom) {
+				if (ani->_y >= g_nmi->_sceneRect.top) {
 					setPanAndVolume(g_nmi->_sfxVolume, 0);
 
 					return;
 				}
-				dx = g_nmi->_sceneRect.top - ani->_oy;
+				dx = g_nmi->_sceneRect.top - ani->_y;
 			} else {
-				dx = ani->_oy - g_nmi->_sceneRect.bottom;
+				dx = ani->_y - g_nmi->_sceneRect.bottom;
 			}
 
 			par = 0;
@@ -153,7 +153,7 @@ void Sound::setPanAndVolumeByStaticAni() {
 			a = g_nmi->_sfxVolume - (-3500);
 			b = 800 - dx;
 		} else {
-			int dx = ani->_ox - g_nmi->_sceneRect.right;
+			int dx = ani->_x - g_nmi->_sceneRect.right;
 
 			if (dx > 800) {
 				setPanAndVolume(-3500, 0);
@@ -173,7 +173,7 @@ void Sound::setPanAndVolumeByStaticAni() {
 		return;
 	}
 
-	int dx = g_nmi->_sceneRect.left - ani->_ox;
+	int dx = g_nmi->_sceneRect.left - ani->_x;
 	if (dx <= 800) {
 		int32 s = (800 - dx) * (g_nmi->_sfxVolume - (-3500));
 		int32 p = -3500 + s / 800;

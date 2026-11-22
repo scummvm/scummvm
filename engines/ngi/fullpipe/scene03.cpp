@@ -305,11 +305,11 @@ int sceneHandler03(ExCommand *ex) {
 			int res = 0;
 
 			if (g_nmi->_aniMan2) {
-				if (g_nmi->_aniMan2->_ox < g_nmi->_sceneRect.left + 200)
-					g_nmi->_currentScene->_x = g_nmi->_aniMan2->_ox - g_nmi->_sceneRect.left - 300;
+				if (g_nmi->_aniMan2->_x < g_nmi->_sceneRect.left + 200)
+					g_nmi->_currentScene->_x = g_nmi->_aniMan2->_x - g_nmi->_sceneRect.left - 300;
 
-				if (g_nmi->_aniMan2->_ox > g_nmi->_sceneRect.right - 200)
-					g_nmi->_currentScene->_x = g_nmi->_aniMan2->_ox - g_nmi->_sceneRect.right + 300;
+				if (g_nmi->_aniMan2->_x > g_nmi->_sceneRect.right - 200)
+					g_nmi->_currentScene->_x = g_nmi->_aniMan2->_x - g_nmi->_sceneRect.right + 300;
 
 				res = 1;
 			}

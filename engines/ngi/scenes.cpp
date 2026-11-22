@@ -520,8 +520,8 @@ int NGIEngine::getSceneFromTag(int tag) {
 
 void NGIEngine::sceneAutoScrolling() {
 	if (_aniMan2 == _aniMan && _currentScene && !_currentScene->_messageQueueId) {
-		if (800 - _mouseScreenPos.x >= 47 || _sceneRect.right >= _sceneWidth - 1 || _aniMan->_ox <= _sceneRect.left + 230) {
-			if (_mouseScreenPos.x < 47 && _sceneRect.left > 0 && _aniMan->_ox < _sceneRect.right - 230)
+		if (800 - _mouseScreenPos.x >= 47 || _sceneRect.right >= _sceneWidth - 1 || _aniMan->_x <= _sceneRect.left + 230) {
+			if (_mouseScreenPos.x < 47 && _sceneRect.left > 0 && _aniMan->_x < _sceneRect.right - 230)
 				_currentScene->_x = -10;
 		} else {
 			_currentScene->_x = 10;

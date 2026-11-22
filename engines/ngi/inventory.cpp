@@ -170,7 +170,7 @@ void Inventory2::removeItem2(Scene *sceneObj, int itemId, int x, int y, int prio
 
 				ani->_statics = ani->_staticsList[0];
 				ani->setOXY(x, y);
-				ani->_priority = priority;
+				ani->_z = priority;
 			}
 		}
 	}
@@ -239,7 +239,7 @@ void Inventory2::rebuildItemRects() {
 
 		for (uint j = 0; j < _itemsPool.size(); j++) {
 			if (_itemsPool[j].pictureObjectNormal == pic->_id) {
-				if (pic->_odelay)
+				if (pic->_copyId)
 					_scene->deletePictureObject(pic);
 				else
 					pic->_flags &= 0xFFFB;

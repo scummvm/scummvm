@@ -166,8 +166,8 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 
 	if (g_nmi->_aniMan->isIdle() && !(g_nmi->_aniMan->_flags & 0x100)) {
 		if (cmd->_param == ANI_INV_STOOL) {
-			if (abs(841 - g_nmi->_aniMan->_ox) <= 1) {
-				if (abs(449 - g_nmi->_aniMan->_oy) <= 1) {
+			if (abs(841 - g_nmi->_aniMan->_x) <= 1) {
+				if (abs(449 - g_nmi->_aniMan->_y) <= 1) {
 					chainQueue(QU_SC22_PUTSTOOL, 1);
 					g_vars->scene22_interactionIsDisabled = true;
 
@@ -180,8 +180,8 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 		if (cmd->_param == ANI_INV_BOX) {
 			ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_TABURETTE, -1);
 			if (!ani || !(ani->_flags & 4)) {
-				if (abs(841 - g_nmi->_aniMan->_ox) <= 1) {
-					if (abs(449 - g_nmi->_aniMan->_oy) <= 1) {
+				if (abs(841 - g_nmi->_aniMan->_x) <= 1) {
+					if (abs(449 - g_nmi->_aniMan->_y) <= 1) {
 						chainObjQueue(g_nmi->_aniMan, QU_SC22_TRYBOX, 1);
 						return;
 					}
@@ -216,8 +216,8 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 
 			ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_TABURETTE, -1);
 			if (ani && (ani->_flags & 4)) {
-				int x = g_nmi->_aniMan->_ox;
-				int y = g_nmi->_aniMan->_oy;
+				int x = g_nmi->_aniMan->_x;
+				int y = g_nmi->_aniMan->_y;
 
 				if (sqrt((double)((841 - x) * (841 - x) + (449 - y) * (449 - y)))
 					< sqrt((double)((1075 - x) * (1075 - x) + (449 - y) * (449 - y)))) {
@@ -270,8 +270,8 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 
 				g_vars->scene22_interactionIsDisabled = true;
 			} else {
-				if (abs(1010 - g_nmi->_aniMan->_ox) <= 1) {
-					if (abs(443 - g_nmi->_aniMan->_oy) <= 1) {
+				if (abs(1010 - g_nmi->_aniMan->_x) <= 1) {
+					if (abs(443 - g_nmi->_aniMan->_y) <= 1) {
 						chainQueue(QU_SC22_TRYHANDLE, 1);
 						return;
 					}
@@ -368,7 +368,7 @@ int sceneHandler22(ExCommand *cmd) {
 
 	case 33:
 		if (g_nmi->_aniMan2) {
-			int x = g_nmi->_aniMan2->_ox;
+			int x = g_nmi->_aniMan2->_x;
 
 			if (x <= g_nmi->_sceneWidth - 460) {
 				if (x < g_nmi->_sceneRect.left + 200)

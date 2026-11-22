@@ -134,12 +134,12 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 				ani->_messageQueueId = 0;
 				ani->changeStatics2(cinter->_staticsId1);
 			}
-			int xpos = cinter->_xOffs + obj->_ox;
-			int ypos = cinter->_yOffs + obj->_oy;
+			int xpos = cinter->_xOffs + obj->_x;
+			int ypos = cinter->_yOffs + obj->_y;
 
 			obj->setPicAniInfo(aniInfo);
 
-			if (abs(xpos - subj->_ox) > 1 || abs(ypos - subj->_oy) > 1) {
+			if (abs(xpos - subj->_x) > 1 || abs(ypos - subj->_y) > 1) {
 				debugC(0, kDebugPathfinding, "Calling makeQueue() at [%d, %d]", xpos, ypos);
 				mq = getSc2MctlCompoundBySceneId(g_nmi->_currentScene->_sceneId)->makeQueue(subj, xpos, ypos, 1, cinter->_staticsId2);
 				if (mq) {
@@ -184,8 +184,8 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 
 					ex = new ExCommand((subj ? subj->_id : 0), 55, 0, 0, 0, 0, 1, 0, 0, 0);
 					ex->_x = obj->_id;
-					ex->_y = obj->_odelay;
-					ex->_param = subj ? subj->_odelay : 0;
+					ex->_y = obj->_copyId;
+					ex->_param = subj ? subj->_copyId : 0;
 					ex->_excFlags = 3;
 					ex->_z = (obj->_objtype != kObjTypePictureObject);
 					ex->_invId = invId;
@@ -206,7 +206,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 
 		if (inter->_messageQueue) {
 			mq = new MessageQueue(inter->_messageQueue, 0, 1);
-			mq->changeParam28ForObjectId(obj->_id, -1, obj->_odelay);
+			mq->changeParam28ForObjectId(obj->_id, -1, obj->_copyId);
 
 			if (!mq->chain(nullptr))
 				return false;
@@ -251,15 +251,15 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 		if (!inter->_messageQueue)
 			return false;
 
-		subj->setOXY(inter->_xOffs + obj->_ox, inter->_yOffs + obj->_oy);
+		subj->setOXY(inter->_xOffs + obj->_x, inter->_yOffs + obj->_y);
 
 		mq = new MessageQueue(inter->_messageQueue, 0, 1);
-		mq->changeParam28ForObjectId(obj->_id, -1, obj->_odelay);
+		mq->changeParam28ForObjectId(obj->_id, -1, obj->_copyId);
 		mq->_flags |= 1;
 
 		if (!(inter->_flags & 0x10000)) {
 			ex = new ExCommand(obj->_id, 34, 0x80, 0, 0, 0, 1, 0, 0, 0);
-			ex->_param = obj->_odelay;
+			ex->_param = obj->_copyId;
 			ex->_z = 0x80;
 			ex->_messageNum = 0;
 			ex->_excFlags = 3;
@@ -267,14 +267,14 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 		}
 
 		ex = new ExCommand(obj->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
-		ex->_param = obj->_odelay;
+		ex->_param = obj->_copyId;
 		ex->_z = 0x100;
 		ex->_messageNum = 0;
 		ex->_excFlags = 3;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(subj->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
-		ex->_param = subj->_odelay;
+		ex->_param = subj->_copyId;
 		ex->_z = 0x100;
 		ex->_messageNum = 0;
 		ex->_excFlags = 3;
@@ -306,12 +306,12 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 			ani->changeStatics2(inter->_staticsId1);
 		}
 
-		int xpos = inter->_xOffs + obj->_ox;
-		int ypos = inter->_yOffs + obj->_oy;
+		int xpos = inter->_xOffs + obj->_x;
+		int ypos = inter->_yOffs + obj->_y;
 
 		obj->setPicAniInfo(aniInfo);
 
-		if (abs(xpos - subj->_ox) > 1 || abs(ypos - subj->_oy) > 1
+		if (abs(xpos - subj->_x) > 1 || abs(ypos - subj->_y) > 1
 				|| (inter->_staticsId2 != 0 && (subj->_statics == nullptr || subj->_statics->_staticsId != inter->_staticsId2))) {
 			mq = getSc2MctlCompoundBySceneId(g_nmi->_currentScene->_sceneId)->startMove(subj, xpos, ypos, 1, inter->_staticsId2);
 
@@ -320,8 +320,8 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 
 			ex = new ExCommand(subj->_id, 55, 0, 0, 0, 0, 1, 0, 0, 0);
 			ex->_x = obj->_id;
-			ex->_y = obj->_odelay;
-			ex->_param = subj->_odelay;
+			ex->_y = obj->_copyId;
+			ex->_param = subj->_copyId;
 			ex->_excFlags = 3;
 			ex->_invId = invId;
 			ex->_z = (obj->_objtype != kObjTypePictureObject);
@@ -335,7 +335,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 			ex->_excFlags |= 3;
 			ex->_param = 6;
 			ex->_z = obj->_id;
-			ex->_invId = obj->_odelay;
+			ex->_invId = obj->_copyId;
 			ex->postMessage();
 		}
 
@@ -366,21 +366,21 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 					} else {
 						ex = new ExCommand(ani->_id, 34, 0x80, 0, 0, 0, 1, 0, 0, 0);
 						ex->_z = 0x80;
-						ex->_param = ani->_odelay;
+						ex->_param = ani->_copyId;
 						ex->_excFlags = 3;
 						mq->addExCommandToEnd(ex);
 					}
 				}
 				ex = new ExCommand(ani->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
-				ex->_param = ani->_odelay;
+				ex->_param = ani->_copyId;
 				ex->_z = 0x100;
 				ex->_excFlags = 3;
 				mq->addExCommandToEnd(ex);
 			} else {
 				ex = new ExCommand(subj->_id, 55, 0, 0, 0, 0, 1, 0, 0, 0);
 				ex->_x = ani->_id;
-				ex->_y = ani->_odelay;
-				ex->_param = subj->_odelay;
+				ex->_y = ani->_copyId;
+				ex->_param = subj->_copyId;
 				ex->_excFlags = 2;
 				ex->_z = (obj->_objtype != kObjTypePictureObject);
 				ex->_invId = invId;
@@ -520,8 +520,8 @@ bool Interaction::canInteract(GameObject *obj1, GameObject *obj2, int invId) {
 }
 
 bool Interaction::isOverlapping(StaticANIObject *subj, GameObject *obj) {
-	if (abs(_xOffs + obj->_ox - subj->_ox) <= 1
-		&& abs(obj->_oy + _yOffs - subj->_oy) <= 1) {
+	if (abs(_xOffs + obj->_x - subj->_x) <= 1
+		&& abs(obj->_y + _yOffs - subj->_y) <= 1) {
 		if (!_staticsId2 || (subj->_statics != nullptr && subj->_statics->_staticsId == _staticsId2)) {
 			if (!_staticsId1 || !(_flags & 1))
 				return true;

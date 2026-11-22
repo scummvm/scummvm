@@ -108,7 +108,7 @@ void sceneHandler20_updateFlies() {
 		g_nmi->_floaters->_array2[idx].val3 = 200;
 		g_nmi->_floaters->_array2[idx].val6 = 253;
 		g_nmi->_floaters->_array2[idx].val7 = 650;
-		g_nmi->_floaters->_array2[idx].ani->_priority = 200;
+		g_nmi->_floaters->_array2[idx].ani->_z = 200;
 	}
 
 	g_vars->scene20_fliesCountdown = g_nmi->_rnd.getRandomNumber(200) + 400;
@@ -125,7 +125,7 @@ int sceneHandler20(ExCommand *cmd) {
 
 	case 33:
 		if (g_nmi->_aniMan2) {
-			int x = g_nmi->_aniMan2->_ox;
+			int x = g_nmi->_aniMan2->_x;
 
 			if (x < g_nmi->_sceneRect.left + 200)
 				g_nmi->_currentScene->_x = x - 300 - g_nmi->_sceneRect.left;

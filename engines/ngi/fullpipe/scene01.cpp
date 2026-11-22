@@ -79,8 +79,8 @@ int sceneHandler01(ExCommand *cmd) {
 	if (cmd->_messageNum == MSG_SC1_SHOWOSK) {
 		g_vars->scene01_picSc01Osk->_flags |= 4;
 
-		g_vars->scene01_picSc01Osk->_priority = 20;
-		g_vars->scene01_picSc01Osk2->_priority = 21;
+		g_vars->scene01_picSc01Osk->_z = 20;
+		g_vars->scene01_picSc01Osk2->_z = 21;
 
 		return 0;
 	}
@@ -88,8 +88,8 @@ int sceneHandler01(ExCommand *cmd) {
 	if (cmd->_messageNum != 0x21) {
 		if (cmd->_messageNum == MSG_SC1_SHOWOSK2) {
 			g_vars->scene01_picSc01Osk2->_flags |= 4;
-			g_vars->scene01_picSc01Osk2->_priority = 20;
-			g_vars->scene01_picSc01Osk->_priority = 21;
+			g_vars->scene01_picSc01Osk2->_z = 20;
+			g_vars->scene01_picSc01Osk->_z = 21;
 
 			return 0;
 		}
@@ -98,12 +98,12 @@ int sceneHandler01(ExCommand *cmd) {
 	}
 
 	if (g_nmi->_aniMan2) {
-		if (g_nmi->_aniMan2->_ox < g_nmi->_sceneRect.left + 200) {
-			g_nmi->_currentScene->_x = g_nmi->_aniMan2->_ox - g_nmi->_sceneRect.left - 300;
+		if (g_nmi->_aniMan2->_x < g_nmi->_sceneRect.left + 200) {
+			g_nmi->_currentScene->_x = g_nmi->_aniMan2->_x - g_nmi->_sceneRect.left - 300;
 		}
 
-		if (g_nmi->_aniMan2->_ox > g_nmi->_sceneRect.right - 200)
-			g_nmi->_currentScene->_x = g_nmi->_aniMan2->_ox - g_nmi->_sceneRect.right + 300;
+		if (g_nmi->_aniMan2->_x > g_nmi->_sceneRect.right - 200)
+			g_nmi->_currentScene->_x = g_nmi->_aniMan2->_x - g_nmi->_sceneRect.right + 300;
 
 		res = 1;
 	}

@@ -225,7 +225,7 @@ int global_messageHandler1(ExCommand *cmd) {
 					}
 
 					if (newex) {
-						newex->_param = g_nmi->_aniMan->_odelay;
+						newex->_param = g_nmi->_aniMan->_copyId;
 						newex->_excFlags |= 3;
 						newex->postMessage();
 					}
@@ -292,7 +292,7 @@ int global_messageHandler2(ExCommand *cmd) {
 	case 28:
 		ani = g_nmi->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_param);
 		if (ani)
-			ani->_priority = cmd->_z;
+			ani->_z = cmd->_z;
 		break;
 
 	case 25:
@@ -401,7 +401,7 @@ int global_messageHandler3(ExCommand *cmd) {
 				ani2 = g_nmi->_currentScene->getStaticANIObject1ById(g_nmi->_gameLoader->_field_FA, -1);
 
 				if (ani) {
-					if (g_nmi->_msgObjectId2 == ani->_id && g_nmi->_msgId == ani->_odelay) {
+					if (g_nmi->_msgObjectId2 == ani->_id && g_nmi->_msgId == ani->_copyId) {
 						cmd->_messageKind = 0;
 						return result;
 					}
@@ -413,7 +413,7 @@ int global_messageHandler3(ExCommand *cmd) {
 					int id = g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 					PictureObject *pic = g_nmi->_currentScene->getPictureObjectById(id, 0);
 					if (pic) {
-						if (g_nmi->_msgObjectId2 == pic->_id && g_nmi->_msgId == pic->_odelay) {
+						if (g_nmi->_msgObjectId2 == pic->_id && g_nmi->_msgId == pic->_copyId) {
 							cmd->_messageKind = 0;
 							return result;
 						}
@@ -480,7 +480,7 @@ int global_messageHandler3(ExCommand *cmd) {
 			}
 			ani = g_nmi->_currentScene->getStaticANIObject1ById(g_nmi->_gameLoader->_field_FA, -1);
 			if (ani) {
-				getGameLoaderInventory()->removeItem2(g_nmi->_currentScene, cmd->_parentId, ani->_ox + cmd->_x, ani->_oy + cmd->_y, ani->_priority + cmd->_z);
+				getGameLoaderInventory()->removeItem2(g_nmi->_currentScene, cmd->_parentId, ani->_x + cmd->_x, ani->_y + cmd->_y, ani->_z + cmd->_z);
 				getGameLoaderInventory()->rebuildItemRects();
 				return 1;
 			}
@@ -677,7 +677,7 @@ int global_messageHandler4(ExCommand *cmd) {
 			break;
 
 		if (cmd->_z >= 0)
-			ani->_priority = cmd->_z;
+			ani->_z = cmd->_z;
 
 		ani->show1(cmd->_x, cmd->_y, cmd->_messageNum, cmd->_parId);
 		break;
@@ -691,7 +691,7 @@ int global_messageHandler4(ExCommand *cmd) {
 			break;
 
 		if (cmd->_z >= 0)
-			ani->_priority = cmd->_z;
+			ani->_z = cmd->_z;
 
 		ani->show2(cmd->_x, cmd->_y, cmd->_messageNum, cmd->_parId);
 		break;
@@ -769,8 +769,8 @@ int MovGraph::messageHandler(ExCommand *cmd) {
 	Common::Point point;
 
 	for (LinkList::iterator i = gr->_links.begin(); i != gr->_links.end(); ++i) {
-		point.x = ani->_ox;
-		point.y = ani->_oy;
+		point.x = ani->_x;
+		point.y = ani->_y;
 
 		double dst = gr->putToLink(&point, *i, 0);
 		if (dst >= 0.0 && dst < mindistance) {
@@ -784,13 +784,13 @@ int MovGraph::messageHandler(ExCommand *cmd) {
 	if (link) {
 		MovGraphNode *node = link->_graphSrc;
 
-		double sq = (ani->_oy - node->_y) * (ani->_oy - node->_y) + (ani->_ox - node->_x) * (ani->_ox - node->_x);
+		double sq = (ani->_y - node->_y) * (ani->_y - node->_y) + (ani->_x - node->_x) * (ani->_x - node->_x);
 		int off = (node->_z >> 16) & 0xFF;
 		double off2 = ((link->_graphDst->_z >> 8) & 0xff) - off;
 
 		top = off + (int)(sqrt(sq) * off2 / link->_length);
 	} else {
-		top = (gr->findNearestNode(ani->_ox, ani->_oy)->_z >> 8) & 0xff;
+		top = (gr->findNearestNode(ani->_x, ani->_y)->_z >> 8) & 0xff;
 	}
 
 	if (ani->_movement) {

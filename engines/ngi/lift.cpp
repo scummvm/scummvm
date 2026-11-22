@@ -239,23 +239,23 @@ void NGIEngine::lift_exitSeq(ExCommand *cmd) {
 
 	if (!cmd) {
 		ex = new ExCommand(_aniMan->_id, 2, 40, 0, 0, 0, 1, 0, 0, 0);
-		ex->_param = _aniMan->_odelay;
+		ex->_param = _aniMan->_copyId;
 		ex->_excFlags |= 2;
 		mq->addExCommandToEnd(ex);
 	}
 
 	ex = new ExCommand(_lift->_id, 1, MV_LFT_OPEN, 0, 0, 0, 1, 0, 0, 0);
-	ex->_param = _lift->_odelay;
+	ex->_param = _lift->_copyId;
 	ex->_excFlags |= 2;
 	mq->addExCommandToEnd(ex);
 
 	ex = new ExCommand(_aniMan->_id, 1, MV_MAN_STARTD, 0, 0, 0, 1, 0, 0, 0);
-	ex->_param = _aniMan->_odelay;
+	ex->_param = _aniMan->_copyId;
 	ex->_excFlags |= 2;
 	mq->addExCommandToEnd(ex);
 
 	ex = new ExCommand(_aniMan->_id, 5, -1, 0, 0, 0, 1, 0, 0, 0);
-	ex->_param = _aniMan->_odelay;
+	ex->_param = _aniMan->_copyId;
 	ex->_z = 10;
 	ex->_x = -1;
 	ex->_y = -1;
@@ -273,7 +273,7 @@ void NGIEngine::lift_exitSeq(ExCommand *cmd) {
 	mq->addExCommandToEnd(ex);
 
 	ex = new ExCommand(_lift->_id, 1, MV_LFT_CLOSE, 0, 0, 0, 1, 0, 0, 0);
-	ex->_param = _lift->_odelay;
+	ex->_param = _lift->_copyId;
 	ex->_excFlags |= 2;
 
 	mq->addExCommandToEnd(ex);
@@ -322,7 +322,7 @@ void NGIEngine::lift_walkAndGo() {
 	MessageQueue *mq;
 	ExCommand *ex;
 
-	if (abs(_liftX - _aniMan->_ox) > 1 || abs(_liftY - _aniMan->_oy) > 1 || _aniMan->_movement || _aniMan->_statics->_staticsId != ST_MAN_UP) {
+	if (abs(_liftX - _aniMan->_x) > 1 || abs(_liftY - _aniMan->_y) > 1 || _aniMan->_movement || _aniMan->_statics->_staticsId != ST_MAN_UP) {
 		mq = getCurrSceneSc2MotionController()->startMove(_aniMan, _liftX, _liftY, 1, ST_MAN_UP);
 
 		if (mq) {
@@ -339,13 +339,13 @@ void NGIEngine::lift_walkAndGo() {
 		mq->setFlags(mq->getFlags() | 1);
 
 		ex = new ExCommand(_aniMan->_id, 2, 15, 0, 0, 0, 1, 0, 0, 0);
-		ex->_param = _aniMan->_odelay;
+		ex->_param = _aniMan->_copyId;
 		ex->_excFlags |= 2;
 		mq->addExCommand(ex);
 
 		ex = new ExCommand(_aniMan->_id, 5, -1, 0, 0, 0, 1, 0, 0, 0);
-		ex->_param = _aniMan->_odelay;
-		ex->_z = _lift->_priority + 1;
+		ex->_param = _aniMan->_copyId;
+		ex->_z = _lift->_z + 1;
 		ex->_x = -1;
 		ex->_y = -1;
 		ex->_excFlags |= 3;

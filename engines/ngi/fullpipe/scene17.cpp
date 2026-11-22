@@ -230,7 +230,7 @@ int sceneHandler17(ExCommand *cmd) {
 			g_vars->scene17_sceneOldEdgeX = g_vars->scene17_sceneEdgeX;
 
 			if (g_nmi->_aniMan2) {
-				x = g_nmi->_aniMan2->_ox;
+				x = g_nmi->_aniMan2->_x;
 
 				g_vars->scene17_sceneEdgeX = x;
 

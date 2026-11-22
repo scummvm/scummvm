@@ -533,7 +533,7 @@ PicAniInfoList GameLoader::savePicAniInfos(Scene *sc, int flag1, int flag2) {
 	for (uint i = 0; i < sc->_picObjList.size(); i++) {
 		PictureObject *obj = sc->_picObjList[i];
 
-		if (obj && ((obj->_flags & flag1) == flag1) && ((obj->_field_8 & flag2) == flag2)) {
+		if (obj && ((obj->_flags & flag1) == flag1) && ((obj->_objectFlags & flag2) == flag2)) {
 			res.push_back(PicAniInfo());
 			obj->getPicAniInfo(res.back());
 		}
@@ -542,7 +542,7 @@ PicAniInfoList GameLoader::savePicAniInfos(Scene *sc, int flag1, int flag2) {
 	for (uint i = 0; i < sc->_staticANIObjectList1.size(); i++) {
 		StaticANIObject *obj = sc->_staticANIObjectList1[i];
 
-		if (obj && ((obj->_flags & flag1) == flag1) && ((obj->_field_8 & flag2) == flag2)) {
+		if (obj && ((obj->_flags & flag1) == flag1) && ((obj->_objectFlags & flag2) == flag2)) {
 			res.push_back(PicAniInfo());
 			obj->getPicAniInfo(res.back());
 			res.back().type &= 0xFFFF;

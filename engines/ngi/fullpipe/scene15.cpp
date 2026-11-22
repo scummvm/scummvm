@@ -135,7 +135,7 @@ int sceneHandler15(ExCommand *cmd) {
 		break;
 
 	case MSG_SC15_LADDERTOBACK:
-		g_vars->scene15_ladder->_priority = 60;
+		g_vars->scene15_ladder->_z = 60;
 		break;
 
 	case MSG_LIFT_GO:
@@ -183,7 +183,7 @@ int sceneHandler15(ExCommand *cmd) {
 
 	case 33:
 		if (g_nmi->_aniMan2) {
-			int x = g_nmi->_aniMan2->_ox;
+			int x = g_nmi->_aniMan2->_x;
 
 			if (x < g_nmi->_sceneRect.left + 200)
 				g_nmi->_currentScene->_x = x - 300 - g_nmi->_sceneRect.left;

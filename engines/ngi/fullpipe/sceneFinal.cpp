@@ -161,7 +161,7 @@ int sceneHandlerFinal(ExCommand *cmd) {
 
 	case 33:
 		if (g_nmi->_aniMan2) {
-			g_vars->sceneFinal_var03 = g_nmi->_aniMan2->_ox;
+			g_vars->sceneFinal_var03 = g_nmi->_aniMan2->_x;
 
 			if (g_vars->sceneFinal_var03 < 450 && g_vars->sceneFinal_var02 >= 450 )
 				sceneHandlerFinal_fallCoin();

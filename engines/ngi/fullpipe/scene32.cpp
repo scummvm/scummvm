@@ -95,7 +95,7 @@ void scene32_initScene(Scene *sc) {
 		g_nmi->_currentScene = sc;
 
 		g_vars->scene32_cactus->changeStatics2(ST_CTS_GROWUP);
-		g_vars->scene32_cactus->_priority = 22;
+		g_vars->scene32_cactus->_z = 22;
 
 		g_nmi->_currentScene = oldsc;
 	}
@@ -193,7 +193,7 @@ void sceneHandler32_trySit(ExCommand *cmd) {
 		ex->_parentId = ANI_MAN;
 		ex->_messageKind = 1;
 		ex->_messageNum = MV_MAN32_SITDOWN;
-		ex->_param = g_nmi->_aniMan->_odelay;
+		ex->_param = g_nmi->_aniMan->_copyId;
 
 		g_vars->scene32_dudeIsSitting = true;
 
@@ -291,11 +291,11 @@ int sceneHandler32(ExCommand *cmd) {
 		break;
 
 	case MSG_SC32_TRUBATOBACK:
-		g_nmi->_currentScene->getPictureObjectById(PIC_SC32_RTRUBA, 0)->_priority = 20;
+		g_nmi->_currentScene->getPictureObjectById(PIC_SC32_RTRUBA, 0)->_z = 20;
 		break;
 
 	case MSG_SC32_TRUBATOFRONT:
-		g_nmi->_currentScene->getPictureObjectById(PIC_SC32_RTRUBA, 0)->_priority = 0;
+		g_nmi->_currentScene->getPictureObjectById(PIC_SC32_RTRUBA, 0)->_z = 0;
 		break;
 
 	case MSG_LIFT_CLICKBUTTON:
@@ -356,7 +356,7 @@ int sceneHandler32(ExCommand *cmd) {
 
 	case 33:
 		if (g_nmi->_aniMan2) {
-			int x = g_nmi->_aniMan2->_ox;
+			int x = g_nmi->_aniMan2->_x;
 
 			if (x < g_nmi->_sceneRect.left + 200)
 				g_nmi->_currentScene->_x = x - 300 - g_nmi->_sceneRect.left;

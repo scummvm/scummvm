@@ -108,7 +108,7 @@ void sceneHandler07_showBox() {
 	StaticANIObject *box = g_nmi->_currentScene->getStaticANIObject1ById(ANI_SC7_BOX, -1);
 
 	box->show1(492, 474, MV_SC7_BOX_default, 0);
-	box->_priority = 25;
+	box->_z = 25;
 }
 
 void sceneHandler07_hideBox() {
@@ -153,11 +153,11 @@ int sceneHandler07(ExCommand *ex) {
 			int res = 0;
 
 			if (g_nmi->_aniMan2) {
-				if (g_nmi->_aniMan2->_ox < g_nmi->_sceneRect.left + 200)
-					g_nmi->_currentScene->_x = g_nmi->_aniMan2->_ox - g_nmi->_sceneRect.left - 300;
+				if (g_nmi->_aniMan2->_x < g_nmi->_sceneRect.left + 200)
+					g_nmi->_currentScene->_x = g_nmi->_aniMan2->_x - g_nmi->_sceneRect.left - 300;
 
-				if (g_nmi->_aniMan2->_ox > g_nmi->_sceneRect.right - 200)
-					g_nmi->_currentScene->_x = g_nmi->_aniMan2->_ox - g_nmi->_sceneRect.right + 300;
+				if (g_nmi->_aniMan2->_x > g_nmi->_sceneRect.right - 200)
+					g_nmi->_currentScene->_x = g_nmi->_aniMan2->_x - g_nmi->_sceneRect.right + 300;
 
 				res = 1;
 			}

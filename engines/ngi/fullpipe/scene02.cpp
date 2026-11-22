@@ -71,7 +71,7 @@ void sceneHandler02_showLadder() {
 
 void sceneHandler02_hideLadder() {
 	g_nmi->_currentScene->getPictureObjectById(PIC_SC2_LADDER, 0)->_flags &= 0xfffb;
-	g_nmi->_aniMan2->_priority = 25;
+	g_nmi->_aniMan2->_z = 25;
 }
 
 int sceneHandler02(ExCommand *ex) {
@@ -90,7 +90,7 @@ int sceneHandler02(ExCommand *ex) {
 		break;
 
 	case MSG_SC2_PUTMANUP:
-		g_nmi->_aniMan2->_priority = 0;
+		g_nmi->_aniMan2->_z = 0;
 		break;
 
 	case MSG_SC2_HIDELADDER:
@@ -99,11 +99,11 @@ int sceneHandler02(ExCommand *ex) {
 
 	case 33:
 		if (g_nmi->_aniMan2) {
-			if (g_nmi->_aniMan2->_ox < g_nmi->_sceneRect.left + 200)
-				g_nmi->_currentScene->_x = g_nmi->_aniMan2->_ox - g_nmi->_sceneRect.left - 300;
+			if (g_nmi->_aniMan2->_x < g_nmi->_sceneRect.left + 200)
+				g_nmi->_currentScene->_x = g_nmi->_aniMan2->_x - g_nmi->_sceneRect.left - 300;
 
-			if (g_nmi->_aniMan2->_ox > g_nmi->_sceneRect.right - 200)
-				g_nmi->_currentScene->_x = g_nmi->_aniMan2->_ox - g_nmi->_sceneRect.right + 300;
+			if (g_nmi->_aniMan2->_x > g_nmi->_sceneRect.right - 200)
+				g_nmi->_currentScene->_x = g_nmi->_aniMan2->_x - g_nmi->_sceneRect.right + 300;
 
 			res = 1;
 		}

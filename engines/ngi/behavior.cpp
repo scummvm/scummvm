@@ -141,7 +141,7 @@ void BehaviorManager::updateBehavior(BehaviorInfo &behaviorInfo, BehaviorAnim &e
 }
 
 void BehaviorManager::updateStaticAniBehavior(StaticANIObject &ani, int delay, const BehaviorAnim &beh) {
-	debugC(6, kDebugBehavior, "BehaviorManager::updateStaticAniBehavior(%s)", transCyrillic(ani._objectName));
+	debugC(6, kDebugBehavior, "BehaviorManager::updateStaticAniBehavior(%s)", transCyrillic(ani._title));
 
 	MessageQueue *mq = nullptr;
 
@@ -171,7 +171,7 @@ void BehaviorManager::updateStaticAniBehavior(StaticANIObject &ani, int delay, c
 	}
 
 	if (mq) {
-		mq->setParamInt(-1, ani._odelay);
+		mq->setParamInt(-1, ani._copyId);
 		if (!mq->chain(&ani)) {
 			g_nmi->_globalMessageQueueList->deleteQueueById(mq->_id);
 		}
@@ -257,7 +257,7 @@ void BehaviorInfo::initAmbientBehavior(GameVar *var, Scene *sc) {
 
 void BehaviorInfo::initObjectBehavior(GameVar *var, Scene *sc, StaticANIObject *ani) {
 	Common::String s((char *)transCyrillic(var->_varName));
-	debugC(4, kDebugBehavior, "BehaviorInfo::initObjectBehavior(%s, %d, %s)", s.c_str(), sc->_sceneId, transCyrillic(ani->_objectName));
+	debugC(4, kDebugBehavior, "BehaviorInfo::initObjectBehavior(%s, %d, %s)", s.c_str(), sc->_sceneId, transCyrillic(ani->_title));
 
 	clear();
 

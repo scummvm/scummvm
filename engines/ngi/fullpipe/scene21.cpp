@@ -45,8 +45,8 @@ void scene21_initScene(Scene *sc) {
 		g_vars->scene21_giraffeBottom->changeStatics2(ST_GRFB_HANG);
 		g_vars->scene21_pipeIsOpen = true;
 		g_vars->scene21_wigglePos = 0.0;
-		g_vars->scene21_giraffeBottomX = g_vars->scene21_giraffeBottom->_ox;
-		g_vars->scene21_giraffeBottomY = g_vars->scene21_giraffeBottom->_oy;
+		g_vars->scene21_giraffeBottomX = g_vars->scene21_giraffeBottom->_x;
+		g_vars->scene21_giraffeBottomY = g_vars->scene21_giraffeBottom->_y;
 		g_vars->scene21_wiggleTrigger = false;
 	} else {
 		g_vars->scene21_pipeIsOpen = false;
@@ -66,8 +66,8 @@ int scene21_updateCursor() {
 }
 
 void sceneHandler21_doWiggle() {
-	g_vars->scene21_giraffeBottom->setOXY((int)(cos(g_vars->scene21_wigglePos) * 4.0) + g_vars->scene21_giraffeBottom->_ox,
-										  g_vars->scene21_giraffeBottom->_oy);
+	g_vars->scene21_giraffeBottom->setOXY((int)(cos(g_vars->scene21_wigglePos) * 4.0) + g_vars->scene21_giraffeBottom->_x,
+										  g_vars->scene21_giraffeBottom->_y);
 
 	g_vars->scene21_wigglePos += 0.19635;
 
@@ -116,7 +116,7 @@ int sceneHandler21(ExCommand *cmd) {
 
 	case 33:
 		if (g_nmi->_aniMan2) {
-			int x = g_nmi->_aniMan2->_ox;
+			int x = g_nmi->_aniMan2->_x;
 
 			if (x <= g_nmi->_sceneWidth - 460) {
 				if (x < g_nmi->_sceneRect.left + 200)

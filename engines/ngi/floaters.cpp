@@ -84,7 +84,7 @@ void Floaters::genFlies(Scene *sc, int x, int y, int priority, int flags) {
 	ani->_movement = nullptr;
 	ani->setOXY(x, y);
 	ani->_flags |= 4;
-	ani->_priority = priority;
+	ani->_z = priority;
 
 	sc->addStaticANIObject(ani, 1);
 
@@ -145,7 +145,7 @@ void Floaters::update() {
 
 				a2.val4 += newX;
 				a2.val5 += newY;
-				a2.ani->setOXY(newX + a2.ani->_ox, newY + a2.ani->_oy);
+				a2.ani->setOXY(newX + a2.ani->_x, newY + a2.ani->_y);
 
 				if (a2.val4 == a2.val2 && a2.val5 == a2.val3) {
 					a2.val9 = 0.0;

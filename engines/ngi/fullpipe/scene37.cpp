@@ -61,8 +61,8 @@ void scene37_initScene(Scene *sc) {
 	ring = new Ring();
 	ani = sc->getStaticANIObject1ById(ANI_GUARD_37, 0);
 	ring->ani = ani;
-	ring->x = ani->_ox - 40;
-	ring->y = ani->_ox + 40;
+	ring->x = ani->_x - 40;
+	ring->y = ani->_x + 40;
 	ring->numSubRings = 3;
 	ring->subRings[0] = 1;
 	ring->subRings[1] = 4;
@@ -73,8 +73,8 @@ void scene37_initScene(Scene *sc) {
 	ring = new Ring();
 	ani = sc->getStaticANIObject1ById(ANI_GUARD_37, 1);
 	ring->ani = ani;
-	ring->x = ani->_ox - 40;
-	ring->y = ani->_ox + 40;
+	ring->x = ani->_x - 40;
+	ring->y = ani->_x + 40;
 	ring->numSubRings = 3;
 	ring->subRings[0] = 2;
 	ring->subRings[1] = 5;
@@ -85,8 +85,8 @@ void scene37_initScene(Scene *sc) {
 	ring = new Ring();
 	ani = sc->getStaticANIObject1ById(ANI_GUARD_37, 2);
 	ring->ani = ani;
-	ring->x = ani->_ox - 40;
-	ring->y = ani->_ox + 40;
+	ring->x = ani->_x - 40;
+	ring->y = ani->_x + 40;
 	ring->numSubRings = 3;
 	ring->subRings[0] = 3;
 	ring->subRings[1] = 7;
@@ -263,7 +263,7 @@ int sceneHandler37(ExCommand *cmd) {
 
 	case 33:
 		if (g_nmi->_aniMan2) {
-			int x = g_nmi->_aniMan2->_ox;
+			int x = g_nmi->_aniMan2->_x;
 
 			g_vars->scene37_dudeX = x;
 

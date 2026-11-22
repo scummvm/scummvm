@@ -289,8 +289,8 @@ void sceneHandler23_spinWheel3() {
 void sceneHandler23_pushButton(ExCommand *cmd) {
 	if (g_nmi->_aniMan->isIdle() || !(g_nmi->_aniMan->_flags & 0x100)) {
 		if (!g_vars->scene23_topReached) {
-			if (g_nmi->_aniMan->_ox != 405 || g_nmi->_aniMan->_oy != 220) {
-				if (g_nmi->_aniMan->_ox != 276 || g_nmi->_aniMan->_oy != 438
+			if (g_nmi->_aniMan->_x != 405 || g_nmi->_aniMan->_y != 220) {
+				if (g_nmi->_aniMan->_x != 276 || g_nmi->_aniMan->_y != 438
 					|| g_nmi->_aniMan->_movement || g_nmi->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
 					if (g_nmi->_msgX == 276 && g_nmi->_msgY == 438 )
 						return;
@@ -350,7 +350,7 @@ void sceneHandler23_pushButton(ExCommand *cmd) {
 
 void sceneHandler23_sendClick(StaticANIObject *ani) {
 	int msg = 0;
-	switch (ani->_odelay) {
+	switch (ani->_copyId) {
 	case 0:
 		msg = MSG_SC23_CLICKBTN1;
 		break;
@@ -375,7 +375,7 @@ void sceneHandler23_sendClick(StaticANIObject *ani) {
 
 void sceneHandler23_checkReachingTop() {
 	if (g_nmi->_aniMan->_movement || g_nmi->_aniMan->_statics->_staticsId != ST_MAN_STANDLADDER
-		|| g_nmi->_aniMan->_ox != 405 || g_nmi->_aniMan->_oy != 220)
+		|| g_nmi->_aniMan->_x != 405 || g_nmi->_aniMan->_y != 220)
 		g_vars->scene23_topReached = false;
 	else
 		g_vars->scene23_topReached = true;
@@ -476,7 +476,7 @@ int sceneHandler23(ExCommand *cmd) {
 
 	case 33:
 		if (g_nmi->_aniMan2) {
-			int x = g_nmi->_aniMan2->_ox;
+			int x = g_nmi->_aniMan2->_x;
 
 			if (x < g_nmi->_sceneRect.left + 200)
 				g_nmi->_currentScene->_x = x - 300 - g_nmi->_sceneRect.left;

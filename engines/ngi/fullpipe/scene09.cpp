@@ -89,7 +89,7 @@ void scene09_initScene(Scene *sc) {
 	for (int x = 75; x < 300; x += 75) {
 		StaticANIObject *ani = new StaticANIObject(hanger);
 
-		ani->show1(x + hanger->_ox, hanger->_oy, MV_VSN_CYCLE2, 0);
+		ani->show1(x + hanger->_x, hanger->_y, MV_VSN_CYCLE2, 0);
 		sc->addStaticANIObject(ani, 1);
 
 		hng = new Hanger;
@@ -191,12 +191,12 @@ void sceneHandler09_spitterClick() {
 		g_vars->scene09_spitter->_messageQueueId = 0;
 		g_vars->scene09_spitter->changeStatics2(ST_PLV_SIT);
 
-		int x = g_vars->scene09_spitter->_ox - 10;
-		int y = g_vars->scene09_spitter->_oy + 145;
+		int x = g_vars->scene09_spitter->_x - 10;
+		int y = g_vars->scene09_spitter->_y + 145;
 
 		g_vars->scene09_spitter->setPicAniInfo(info);
 
-		if (ABS(x - g_nmi->_aniMan->_ox) > 1 || ABS(y - g_nmi->_aniMan->_oy) > 1) {
+		if (ABS(x - g_nmi->_aniMan->_x) > 1 || ABS(y - g_nmi->_aniMan->_y) > 1) {
 			MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, x, y, 1, ST_MAN_UP);
 
 			if (mq) {
@@ -264,7 +264,7 @@ void sceneHandler09_showBall() {
 
 		g_vars->scene09_flyingBalls.insert_at(0, ani);
 
-		ani->show1(g_nmi->_aniMan->_ox + 94, g_nmi->_aniMan->_oy - 162, MV_BALL9_EXPLODE, 0);
+		ani->show1(g_nmi->_aniMan->_x + 94, g_nmi->_aniMan->_y - 162, MV_BALL9_EXPLODE, 0);
 	}
 }
 
@@ -339,7 +339,7 @@ void sceneHandler09_ballExplode(uint num) {
 
 	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC9_BALLEXPLODE), 0, 1);
 
-	mq->setParamInt(-1, ball->_odelay);
+	mq->setParamInt(-1, ball->_copyId);
 
 	if (!mq->chain(ball))
 		delete mq;
@@ -349,9 +349,9 @@ void sceneHandler09_checkHangerCollide() {
 	for (uint b = 0; b < g_vars->scene09_flyingBalls.size(); b++) {
 		StaticANIObject *ball = g_vars->scene09_flyingBalls[b];
 
-		int newx = ball->_ox + 5;
+		int newx = ball->_x + 5;
 
-		ball->setOXY(newx, ball->_oy);
+		ball->setOXY(newx, ball->_y);
 
 		if (newx <= 1398 || g_vars->scene09_flyingBall) {
 			if (g_vars->scene09_gulperIsPresent)
@@ -372,7 +372,7 @@ void sceneHandler09_checkHangerCollide() {
 		for (int i = 0; i < g_vars->scene09_numMovingHangers; i++) {
 			for (int j = 0; j < 4; j++) {
 				int x1 = newx + g_vars->scene09_hangerOffsets[j].x;
-				int y1 = ball->_oy + g_vars->scene09_hangerOffsets[j].y;
+				int y1 = ball->_y + g_vars->scene09_hangerOffsets[j].y;
 
 				// Check 2 pixels to compensate cord width
 				hit = g_vars->scene09_hangers[i]->ani->isPixelHitAtPos(x1, y1)
@@ -471,9 +471,9 @@ int sceneHandler09(ExCommand *cmd) {
 			int res = 0;
 
 			if (g_nmi->_aniMan2) {
-				int x = g_nmi->_aniMan2->_ox;
+				int x = g_nmi->_aniMan2->_x;
 
-				g_vars->scene09_dudeY = g_nmi->_aniMan2->_oy;
+				g_vars->scene09_dudeY = g_nmi->_aniMan2->_y;
 
 				if (x < g_nmi->_sceneRect.left + 200)
 					g_nmi->_currentScene->_x = x - g_nmi->_sceneRect.left - 300;

@@ -73,12 +73,12 @@ bool Background::load(MfcArchive &file) {
 }
 
 void Background::addPictureObject(PictureObject *pct) {
-	if (pct->_odelay)
-		pct->renumPictures(&_picObjList);
+	if (pct->_copyId)
+		pct->assignCopyId(&_picObjList);
 
 	bool inserted = false;
 	for (uint i = 1; i < _picObjList.size(); i++) {
-		if (_picObjList[i]->_priority <= pct->_priority) {
+		if (_picObjList[i]->_z <= pct->_z) {
 			_picObjList.insert_at(i, pct);
 			inserted = true;
 			break;
@@ -91,8 +91,8 @@ void Background::addPictureObject(PictureObject *pct) {
 }
 
 PictureObject::PictureObject() {
-	_ox = 0;
-	_oy = 0;
+	_x = 0;
+	_y = 0;
 	_ox2 = 0;
 	_oy2 = 0;
 	_objtype = kObjTypePictureObject;
@@ -101,8 +101,8 @@ PictureObject::PictureObject() {
 
 PictureObject::PictureObject(PictureObject *src) : GameObject(src) {
 	_picture = src->_picture;
-	_ox2 = _ox;
-	_oy2 = _oy;
+	_ox2 = _x;
+	_oy2 = _y;
 	_pictureObject2List = src->_pictureObject2List;
 	_objtype = kObjTypePictureObject;
 }
@@ -129,8 +129,8 @@ bool PictureObject::load(MfcArchive &file, bool bigPicture) {
 		_pictureObject2List.back().load(file);
 	}
 
-	_ox2 = _ox;
-	_oy2 = _oy;
+	_ox2 = _x;
+	_oy2 = _y;
 
 #if 0
 	_picture->displayPicture();
@@ -141,16 +141,16 @@ bool PictureObject::load(MfcArchive &file, bool bigPicture) {
 
 void PictureObject::draw() {
 	if (_flags & 1)
-		_picture->draw(_ox, _oy, 2, 0);
+		_picture->draw(_x, _y, 2, 0);
 	else
-		_picture->draw(_ox, _oy, 0, 0);
+		_picture->draw(_x, _y, 0, 0);
 }
 
 void PictureObject::drawAt(int x, int y) {
 	if (x == -1)
-		x = _ox;
+		x = _x;
 	if (y == -1)
-		y = _oy;
+		y = _y;
 
 	_picture->_x = x;
 	_picture->_y = y;
@@ -167,11 +167,11 @@ bool PictureObject::setPicAniInfo(const PicAniInfo &picAniInfo) {
 	}
 
 	if (picAniInfo.type & 2) {
-		setOXY(picAniInfo.ox, picAniInfo.oy);
-		_priority = picAniInfo.priority;
-		_odelay = picAniInfo.field_8;
+		setPos(picAniInfo.ox, picAniInfo.oy);
+		_z = picAniInfo.priority;
+		_copyId = picAniInfo.field_8;
 		setFlags(picAniInfo.flags);
-		_field_8 = picAniInfo.field_24;
+		_objectFlags = picAniInfo.field_24;
 
 		return true;
 	}
@@ -184,8 +184,8 @@ bool PictureObject::isPointInside(int x, int y) {
 	int oldx = _picture->_x;
 	int oldy = _picture->_y;
 
-	_picture->_x = _ox;
-	_picture->_y = _oy;
+	_picture->_x = _x;
+	_picture->_y = _y;
 
 	res = _picture->isPointInside(x, y);
 
@@ -199,8 +199,8 @@ bool PictureObject::isPixelHitAtPos(int x, int y) {
 	int oldx = _picture->_x;
 	int oldy = _picture->_y;
 
-	_picture->_x = _ox;
-	_picture->_y = _oy;
+	_picture->_x = _x;
+	_picture->_y = _y;
 	bool res = _picture->isPixelHitAtPos(x, y);
 	_picture->_x = oldx;
 	_picture->_y = oldy;
@@ -209,96 +209,96 @@ bool PictureObject::isPixelHitAtPos(int x, int y) {
 }
 
 void PictureObject::setOXY2() {
-	_ox2 = _ox;
-	_oy2 = _oy;
+	_ox2 = _x;
+	_oy2 = _y;
 }
 
 GameObject::GameObject() {
-	_odelay = 0;
+	_copyId = 0;
 	_flags = 0;
 	_id = 0;
-	_ox = 0;
-	_oy = 0;
-	_priority = 0;
+	_x = 0;
+	_y = 0;
+	_z = 0;
 	_field_20 = 0;
-	_field_8 = 0;
+	_objectFlags = 0;
 }
 
 GameObject::GameObject(GameObject *src) {
-	_odelay = 1;
+	_copyId = 1;
 	_flags = 0;
 	_id = src->_id;
 
-	_objectName = src->_objectName;
+	_title = src->_title;
 
-	_ox = src->_ox;
-	_oy = src->_oy;
-	_priority = src->_priority;
+	_x = src->_x;
+	_y = src->_y;
+	_z = src->_z;
 	_field_20 = 1;
-	_field_8 = src->_field_8;
+	_objectFlags = src->_objectFlags;
 }
 
 Common::String GameObject::toXML() {
 	return Common::String::format("id=\"%s\" name=\"%s\" x=%d y=%d priority=%d f8=%d",
-		g_nmi->gameIdToStr(_id).c_str(), transCyrillic(_objectName), _ox, _oy, _priority, _field_8);
+		g_nmi->gameIdToStr(_id).c_str(), transCyrillic(_title), _x, _y, _z, _objectFlags);
 }
 
 bool GameObject::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "GameObject::load()");
-	_odelay = 0;
+	_copyId = 0;
 	_flags = 0;
 	_field_20 = 0;
 
 	_id = file.readUint16LE();
 
-	_objectName = file.readPascalString();
-	_ox = file.readSint32LE();
-	_oy = file.readSint32LE();
-	_priority = file.readUint16LE();
+	_title = file.readPascalString();
+	_x = file.readSint32LE();
+	_y = file.readSint32LE();
+	_z = file.readUint16LE();
 
 	if (g_nmi->_gameProjectVersion >= 11) {
-		_field_8 = file.readUint32LE();
+		_objectFlags = file.readUint32LE();
 	}
 
 	return true;
 }
 
-void GameObject::setOXY(int x, int y) {
-	_ox = x;
-	_oy = y;
+void GameObject::setPos(int x, int y) {
+	_x = x;
+	_y = y;
 }
 
-void GameObject::renumPictures(Common::Array<StaticANIObject *> *lst) {
+void GameObject::assignCopyId(Common::Array<StaticANIObject *> *lst) {
 	int *buf = (int *)calloc(lst->size() + 2, sizeof(int));
 
 	for (uint i = 0; i < lst->size(); i++) {
 		if (_id == (*lst)[i]->_id)
-			buf[(*lst)[i]->_odelay] = 1;
+			buf[(*lst)[i]->_copyId] = 1;
 	}
 
-	if (buf[_odelay]) {
+	if (buf[_copyId]) {
 		uint count;
 		for (count = 1; buf[count] && count < lst->size() + 2; count++)
 			;
-		_odelay = count;
+		_copyId = count;
 	}
 
 	free(buf);
 }
 
-void GameObject::renumPictures(Common::Array<PictureObject *> *lst) {
+void GameObject::assignCopyId(Common::Array<PictureObject *> *lst) {
 	int *buf = (int *)calloc(lst->size() + 2, sizeof(int));
 
 	for (uint i = 0; i < lst->size(); i++) {
 		if (_id == (*lst)[i]->_id)
-			buf[(*lst)[i]->_odelay] = 1;
+			buf[(*lst)[i]->_copyId] = 1;
 	}
 
-	if (buf[_odelay]) {
+	if (buf[_copyId]) {
 		uint count;
 		for (count = 1; buf[count] && count < lst->size() + 2; count++)
 			;
-		_odelay = count;
+		_copyId = count;
 	}
 
 	free(buf);
@@ -309,12 +309,12 @@ bool GameObject::getPicAniInfo(PicAniInfo &info) {
 		info.type = 2;
 		info.objectId = _id;
 		info.sceneId = 0;
-		info.field_8 = _odelay;
+		info.field_8 = _copyId;
 		info.flags = _flags;
-		info.field_24 = _field_8;
-		info.ox = _ox;
-		info.oy = _oy;
-		info.priority = _priority;
+		info.field_24 = _objectFlags;
+		info.ox = _x;
+		info.oy = _y;
+		info.priority = _z;
 
 		return true;
 	}
@@ -324,18 +324,18 @@ bool GameObject::getPicAniInfo(PicAniInfo &info) {
 
 		info.type = (ani->_messageQueueId << 16) | 1;
 		info.objectId = ani->_id;
-		info.field_8 = ani->_odelay;
+		info.field_8 = ani->_copyId;
 		info.sceneId = ani->_sceneId;
 		info.flags = ani->_flags;
-		info.field_24 = ani->_field_8;
+		info.field_24 = ani->_objectFlags;
 		if (ani->_movement) {
-			info.ox = ani->_movement->_ox;
-			info.oy = ani->_movement->_oy;
+			info.ox = ani->_movement->_x;
+			info.oy = ani->_movement->_y;
 		} else {
-			info.ox = ani->_ox;
-			info.oy = ani->_oy;
+			info.ox = ani->_x;
+			info.oy = ani->_y;
 		}
-		info.priority = ani->_priority;
+		info.priority = ani->_z;
 
 		if (ani->_statics)
 			info.staticsId = ani->_statics->_staticsId;
@@ -361,11 +361,11 @@ bool GameObject::setPicAniInfo(const PicAniInfo &picAniInfo) {
 	}
 
 	if (picAniInfo.type & 2) {
-		setOXY(picAniInfo.ox, picAniInfo.oy);
-		_priority = picAniInfo.priority;
-		_odelay = picAniInfo.field_8;
+		setPos(picAniInfo.ox, picAniInfo.oy);
+		_z = picAniInfo.priority;
+		_copyId = picAniInfo.field_8;
 		setFlags(picAniInfo.flags);
-		_field_8 = picAniInfo.field_24;
+		_objectFlags = picAniInfo.field_24;
 
 		return true;
 	}
@@ -374,9 +374,9 @@ bool GameObject::setPicAniInfo(const PicAniInfo &picAniInfo) {
 		StaticANIObject *ani = static_cast<StaticANIObject *>(this);
 
 		ani->_messageQueueId = (picAniInfo.type >> 16) & 0xffff;
-		ani->_odelay = picAniInfo.field_8;
+		ani->_copyId = picAniInfo.field_8;
 		ani->setFlags(picAniInfo.flags);
-		ani->_field_8 = picAniInfo.field_24;
+		ani->_objectFlags = picAniInfo.field_24;
 
 		if (picAniInfo.staticsId) {
 			ani->_statics = ani->getStaticsById(picAniInfo.staticsId);
@@ -393,7 +393,7 @@ bool GameObject::setPicAniInfo(const PicAniInfo &picAniInfo) {
 		}
 
 		ani->setOXY(picAniInfo.ox, picAniInfo.oy);
-		ani->_priority = picAniInfo.priority;
+		ani->_z = picAniInfo.priority;
 
 		ani->setSomeDynamicPhaseIndex(picAniInfo.someDynamicPhaseIndex);
 

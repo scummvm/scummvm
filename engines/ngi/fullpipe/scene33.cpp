@@ -52,7 +52,7 @@ void scene33_initScene(Scene *sc) {
 
 
 	for (int i = 0; i < 9; i++) {
-		g_vars->scene33_ventsX[i] = sc->getStaticANIObject1ById(ANI_VENT_33, i)->_ox;
+		g_vars->scene33_ventsX[i] = sc->getStaticANIObject1ById(ANI_VENT_33, i)->_x;
 
 		g_vars->scene33_ventsState[i] = ventsInit[i];
 	}
@@ -106,16 +106,16 @@ void sceneHandler33_switchVent(StaticANIObject *ani) {
 	if (mv)
 		ani->startAnim(mv, 0, -1);
 
-	g_vars->scene33_ventsState[ani->_odelay] = !g_vars->scene33_ventsState[ani->_odelay];
+	g_vars->scene33_ventsState[ani->_copyId] = !g_vars->scene33_ventsState[ani->_copyId];
 }
 
 void sceneHandler33_processVents() {
 	for (int i = 0; i < 9; i++)
-		if (((g_vars->scene33_cubeX < g_vars->scene33_ventsX[i]) != (g_vars->scene33_cube->_ox < g_vars->scene33_ventsX[i]))
+		if (((g_vars->scene33_cubeX < g_vars->scene33_ventsX[i]) != (g_vars->scene33_cube->_x < g_vars->scene33_ventsX[i]))
 			&& g_vars->scene33_ventsState[i] != ventsInit[i])
 				sceneHandler33_switchVent(g_nmi->_currentScene->getStaticANIObject1ById(ANI_VENT_33, i));
 
-	g_vars->scene33_cubeX = g_vars->scene33_cube->_ox;
+	g_vars->scene33_cubeX = g_vars->scene33_cube->_x;
 }
 
 void sceneHandler33_tryCube() {
@@ -168,7 +168,7 @@ void sceneHandler33_zoneClickProcess(StaticANIObject *ani) {
 		StaticANIObject *vent1 = nullptr;
 		StaticANIObject *vent2 = nullptr;
 
-		switch (ani->_odelay) {
+		switch (ani->_copyId) {
 		case 0:
 			vent1 = g_nmi->_currentScene->getStaticANIObject1ById(ANI_VENT_33, 2);
 			vent2 = g_nmi->_currentScene->getStaticANIObject1ById(ANI_VENT_33, 3);
@@ -213,8 +213,8 @@ void sceneHandler33_clickZones(ExCommand *cmd) {
 		StaticANIObject *ani = g_nmi->_currentScene->_staticANIObjectList1[i];
 
 		if (ani->_id == ANI_VENT_33) {
-			int dx = ani->_ox - cmd->_sceneClickX;
-			int dy = ani->_oy - cmd->_sceneClickY;
+			int dx = ani->_x - cmd->_sceneClickX;
+			int dy = ani->_y - cmd->_sceneClickY;
 			double dist = sqrt((double)(dx * dx + dy * dy));
 
 			if (dist < mindist) {
@@ -234,11 +234,11 @@ int sceneHandler33(ExCommand *cmd) {
 
 	switch (cmd->_messageNum) {
 	case MSG_SC32_TRUBATOFRONT:
-		g_nmi->_currentScene->getPictureObjectById(PIC_SC33_LTRUBA, 0)->_priority = 0;
+		g_nmi->_currentScene->getPictureObjectById(PIC_SC33_LTRUBA, 0)->_z = 0;
 		break;
 
 	case MSG_SC32_TRUBATOBACK:
-		g_nmi->_currentScene->getPictureObjectById(PIC_SC33_LTRUBA, 0)->_priority = 20;
+		g_nmi->_currentScene->getPictureObjectById(PIC_SC33_LTRUBA, 0)->_z = 20;
 		break;
 
 	case MSG_SC33_TESTMUG:
@@ -249,7 +249,7 @@ int sceneHandler33(ExCommand *cmd) {
 		g_vars->scene33_cube = g_nmi->_currentScene->getStaticANIObject1ById(ANI_KUBIK, -1);
 
 		if (g_vars->scene33_cube)
-			g_vars->scene33_cubeX = g_vars->scene33_cube->_ox;
+			g_vars->scene33_cubeX = g_vars->scene33_cube->_x;
 
 		break;
 
@@ -288,7 +288,7 @@ int sceneHandler33(ExCommand *cmd) {
 
 	case 33:
 		if (g_nmi->_aniMan2) {
-			int x = g_nmi->_aniMan2->_ox;
+			int x = g_nmi->_aniMan2->_x;
 
 			if (x < g_nmi->_sceneRect.left + 200)
 				g_nmi->_currentScene->_x = x - 300 - g_nmi->_sceneRect.left;

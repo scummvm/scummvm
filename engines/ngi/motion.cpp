@@ -200,7 +200,7 @@ MessageQueue *MctlCompound::startMove(StaticANIObject *ani, int sourceX, int sou
 
 	for (uint i = 0; i < _motionControllers.size(); i++) {
 		if (_motionControllers[i]->_movGraphReactObj) {
-			if (_motionControllers[i]->_movGraphReactObj->hitTest(ani->_ox, ani->_oy)) {
+			if (_motionControllers[i]->_movGraphReactObj->hitTest(ani->_x, ani->_y)) {
 				idx = i;
 				break;
 			}
@@ -227,7 +227,7 @@ MessageQueue *MctlCompound::startMove(StaticANIObject *ani, int sourceX, int sou
 		return _motionControllers[idx]->_motionControllerObj->startMove(ani, sourceX, sourceY, fuzzyMatch, staticsId);
 
 	double dist;
-	MctlConnectionPoint *cp = getNextPoint(ani->_ox, ani->_oy, idx, sourceX, sourceY, sourceIdx, &dist);
+	MctlConnectionPoint *cp = getNextPoint(ani->_x, ani->_y, idx, sourceX, sourceY, sourceIdx, &dist);
 
 	if (!cp)
 		return nullptr;
@@ -249,7 +249,7 @@ MessageQueue *MctlCompound::startMove(StaticANIObject *ani, int sourceX, int sou
 
 	ex->_excFlags |= 2;
 	ex->_invId = fuzzyMatch;
-	ex->_param = ani->_odelay;
+	ex->_param = ani->_copyId;
 
 	mq->addExCommandToEnd(ex);
 
@@ -272,7 +272,7 @@ MessageQueue *MctlCompound::makeQueue(StaticANIObject *subj, int xpos, int ypos,
 
 	for (uint i = 0; i < _motionControllers.size(); i++) {
 		if (_motionControllers[i]->_movGraphReactObj) {
-			if (_motionControllers[i]->_movGraphReactObj->hitTest(subj->_ox, subj->_oy)) {
+			if (_motionControllers[i]->_movGraphReactObj->hitTest(subj->_x, subj->_y)) {
 				match1 = i;
 				break;
 			}
@@ -298,7 +298,7 @@ MessageQueue *MctlCompound::makeQueue(StaticANIObject *subj, int xpos, int ypos,
 		return _motionControllers[match1]->_motionControllerObj->makeQueue(subj, xpos, ypos, fuzzyMatch, staticsId);
 
 	double dist;
-	MctlConnectionPoint *closestP = getNextPoint(subj->_ox, subj->_oy, match1, xpos, ypos, match2, &dist);
+	MctlConnectionPoint *closestP = getNextPoint(subj->_x, subj->_y, match1, xpos, ypos, match2, &dist);
 
 	if (!closestP)
 		return nullptr;
@@ -317,7 +317,7 @@ MessageQueue *MctlCompound::makeQueue(StaticANIObject *subj, int xpos, int ypos,
 		ex = new ExCommand(subj->_id, 51, 0, xpos, ypos, 0, 1, 0, 0, 0);
 
 		ex->_invId = fuzzyMatch;
-		ex->_param = subj->_odelay;
+		ex->_param = subj->_copyId;
 		ex->_excFlags |= 2;
 
 		mq->addExCommandToEnd(ex);
@@ -347,12 +347,12 @@ int MctlLadder::collisionDetection(StaticANIObject *man) {
 
 	double delta;
 
-	if ((double)(man->_oy - _ladderY) / (double)_height < 0.0)
+	if ((double)(man->_y - _ladderY) / (double)_height < 0.0)
 		delta = -0.5;
 	else
 		delta = 0.5;
 
-	int res = (int)((double)(man->_oy - _ladderY) / (double)_height + delta);
+	int res = (int)((double)(man->_y - _ladderY) / (double)_height + delta);
 
 	if (res < 0)
 		return 0;
@@ -468,7 +468,7 @@ MessageQueue *MctlLadder::makeQueue(StaticANIObject *ani, int xpos, int ypos, in
 		return nullptr;
 
 	double dh = _height;
-	double corr = (double)(ani->_oy - _ladderY) / dh;
+	double corr = (double)(ani->_y - _ladderY) / dh;
 	int dl = (int)(corr + (corr < 0.0 ? -0.5 : 0.5));
 
 	corr = (double)(ypos - _ladderY) / dh;
@@ -480,7 +480,7 @@ MessageQueue *MctlLadder::makeQueue(StaticANIObject *ani, int xpos, int ypos, in
 	if (dl == dl2 || dl2 < 0)
 		return nullptr;
 
-	int direction = (normy - ani->_oy) < 0 ? 0 : 1;
+	int direction = (normy - ani->_y) < 0 ? 0 : 1;
 
 	MakeQueueStruct mkQueue;
 	PicAniInfo picinfo;
@@ -491,8 +491,8 @@ MessageQueue *MctlLadder::makeQueue(StaticANIObject *ani, int xpos, int ypos, in
 	if (ani->_movement) {
 		ani->getPicAniInfo(picinfo);
 
-		int ox = ani->_ox;
-		int oy = ani->_oy;
+		int ox = ani->_x;
+		int oy = ani->_y;
 
 		point = ani->_movement->getMovementSize(1, ani->_someDynamicPhaseIndex);
 		ani->_statics = ani->_movement->_nextStatic;
@@ -541,8 +541,8 @@ MessageQueue *MctlLadder::makeQueue(StaticANIObject *ani, int xpos, int ypos, in
 			return _aniHandler.makeRunQueue(&mkQueue);
 		}
 
-		int ox = ani->_ox;
-		int oy = ani->_oy;
+		int ox = ani->_x;
+		int oy = ani->_y;
 
 		point = ani->getMovementById(_ladmovements[pos]->movVars->varUpStop)->getMovementSize(0, -1);
 
@@ -565,7 +565,7 @@ MessageQueue *MctlLadder::makeQueue(StaticANIObject *ani, int xpos, int ypos, in
 		mq = _aniHandler.makeRunQueue(&mkQueue);
 
 		ex = new ExCommand(ani->_id, 1, _ladmovements[pos]->movVars->varUpStop, 0, 0, 0, 1, 0, 0, 0);
-		ex->_param = ani->_odelay;
+		ex->_param = ani->_copyId;
 		ex->_excFlags |= 2;
 
 		mq->insertExCommandAt(0, ex);
@@ -579,8 +579,8 @@ MessageQueue *MctlLadder::makeQueue(StaticANIObject *ani, int xpos, int ypos, in
 		if (!mq)
 			return nullptr;
 
-		int nx = ani->_ox;
-		int ny = ani->_oy;
+		int nx = ani->_x;
+		int ny = ani->_y;
 
 		point = _aniHandler.getTransitionSize(ani->_id, ani->_statics->_staticsId, _ladmovements[pos]->staticIds[0]);
 
@@ -605,8 +605,8 @@ MessageQueue *MctlLadder::makeQueue(StaticANIObject *ani, int xpos, int ypos, in
 	}
 
 	if (!direction) {
-		int nx = ani->_ox;
-		int ny = ani->_oy;
+		int nx = ani->_x;
+		int ny = ani->_y;
 
 		point = ani->getMovementById(_ladmovements[pos]->movVars->varDownStop)->getMovementSize(0, -1);
 
@@ -631,7 +631,7 @@ MessageQueue *MctlLadder::makeQueue(StaticANIObject *ani, int xpos, int ypos, in
 		mq = _aniHandler.makeRunQueue(&mkQueue);
 
 		ex = new ExCommand(ani->_id, 1, _ladmovements[pos]->movVars->varDownStop, 0, 0, 0, 1, 0, 0, 0);
-		ex->_param = ani->_odelay;
+		ex->_param = ani->_copyId;
 		ex->_excFlags |= 2;
 
 		mq->insertExCommandAt(0, ex);
@@ -864,10 +864,10 @@ Common::Array<MovItem *> *MovGraph::getPaths(StaticANIObject *ani, int x, int y,
 
 	Common::Point point;
 
-	point.x = ani->_ox;
-	point.y = ani->_oy;
+	point.x = ani->_x;
+	point.y = ani->_y;
 
-	if (!getHitPoint(idx, ani->_ox, ani->_oy, &_items[idx].movarr, 0))
+	if (!getHitPoint(idx, ani->_x, ani->_y, &_items[idx].movarr, 0))
 		getNearestPoint(idx, &point, &_items[idx].movarr);
 
 	_items[idx].count = 0;
@@ -919,7 +919,7 @@ MessageQueue *MovGraph::startMove(StaticANIObject *ani, int xpos, int ypos, int 
 		ani = _items[0].ani;
 	}
 
-	if (ABS(ani->_ox - xpos) < 50 && ABS(ani->_oy - ypos) < 50)
+	if (ABS(ani->_x - xpos) < 50 && ABS(ani->_y - ypos) < 50)
 		return nullptr;
 
 	if (!ani->isIdle())
@@ -939,7 +939,7 @@ MessageQueue *MovGraph::startMove(StaticANIObject *ani, int xpos, int ypos, int 
 
 		ani->calcStepLen(&point);
 
-		MessageQueue *mq = sub1(ani, ani->_ox - point.x, ani->_oy - point.y, ani->_movement->_prevStatic->_staticsId, xpos, ypos, 0, fuzzyMatch);
+		MessageQueue *mq = sub1(ani, ani->_x - point.x, ani->_y - point.y, ani->_movement->_prevStatic->_staticsId, xpos, ypos, 0, fuzzyMatch);
 
 		if (!mq || !mq->getExCommandByIndex(0))
 			return nullptr;
@@ -951,13 +951,13 @@ MessageQueue *MovGraph::startMove(StaticANIObject *ani, int xpos, int ypos, int 
 			mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 
 			ex = new ExCommand(ani->_id, 21, 0, 0, 0, 0, 1, 0, 0, 0);
-			ex->_param = ani->_odelay;
+			ex->_param = ani->_copyId;
 			ex->_field_3C = 1;
 			ex->_field_24 = 0;
 			mq->addExCommandToEnd(ex);
 
 			ex = new ExCommand(ani->_id, 51, 0, xpos, ypos, 0, 1, 0, 0, 0);
-			ex->_param = ani->_odelay;
+			ex->_param = ani->_copyId;
 			ex->_field_3C = 1;
 			ex->_field_24 = 0;
 			ex->_invId = fuzzyMatch;
@@ -999,8 +999,8 @@ bool MovGraph::resetPosition(StaticANIObject *ani, int flag) {
 	Common::Point point;
 	MovArr movarr;
 
-	point.x = ani->_ox;
-	point.y = ani->_oy;
+	point.x = ani->_x;
+	point.y = ani->_y;
 
 	getNearestPoint(idx, &point, &movarr);
 	ani->setOXY(point.x, point.y);
@@ -1044,7 +1044,7 @@ bool MovGraph::canDropInventory(StaticANIObject *ani, int x, int y) {
 						return true;
 				}
 			}
-		} else if (getHitPoint(idx, ani->_ox, ani->_oy, &m, 0) && m._link && (m._link->_flags & 0x4000000)) {
+		} else if (getHitPoint(idx, ani->_x, ani->_y, &m, 0) && m._link && (m._link->_flags & 0x4000000)) {
 			return true;
 		}
 	}
@@ -1073,7 +1073,7 @@ MessageQueue *MovGraph::makeQueue(StaticANIObject *subj, int xpos, int ypos, int
 
 					subj->calcStepLen(&point);
 
-					MessageQueue *mq = sub1(subj, subj->_ox - point.x, subj->_oy - point.y, subj->_movement->_prevStatic->_staticsId, xpos, ypos, 0, fuzzyMatch);
+					MessageQueue *mq = sub1(subj, subj->_x - point.x, subj->_y - point.y, subj->_movement->_prevStatic->_staticsId, xpos, ypos, 0, fuzzyMatch);
 
 					if (!mq || !mq->getExCommandByIndex(0))
 						return nullptr;
@@ -1187,8 +1187,8 @@ MessageQueue *MovGraph::makeWholeQueue(StaticANIObject *ani, MovArr *movarr, int
 		return nullptr;
 
 	MessageQueue *mq = nullptr;
-	int ox = ani->_ox;
-	int oy = ani->_oy;
+	int ox = ani->_x;
+	int oy = ani->_y;
 	int id1 = 0;
 	int id2;
 
@@ -1685,7 +1685,7 @@ int MctlGraph::getDirByMovement(int idx, int movId) {
 }
 
 int MctlGraph::getDirByPoint(int index, StaticANIObject *ani) {
-	if (getHitNode(ani->_ox, ani->_oy, 0) || getHitLink(ani->_ox, ani->_oy, -1, 0) || getNearestLink(ani->_ox, ani->_oy)) {
+	if (getHitNode(ani->_x, ani->_y, 0) || getHitLink(ani->_x, ani->_y, -1, 0) || getNearestLink(ani->_x, ani->_y)) {
 		int minidx = -1;
 		int min = 0;
 
@@ -1711,7 +1711,7 @@ bool MctlGraph::fillData(StaticANIObject *obj, GmctlAni &item) {
 	item._ani = obj;
 	item._objectId = obj->_id;
 
-	GameVar *var = g_nmi->getGameLoaderGameVar()->getSubVarByName(obj->_objectName);
+	GameVar *var = g_nmi->getGameLoaderGameVar()->getSubVarByName(obj->_title);
 	if (!var)
 		return false;
 
@@ -1997,7 +1997,7 @@ MessageQueue *MctlGraph::makeWholeQueue(GmctlMqStruct &mctlMQ) {
 				ExCommand *ex = new ExCommand(_items2[mctlMQ.objectIndex]._objectId, 1, mg2i->_movementId, 0, 0, 0, 1, 0, 0, 0);
 
 				ex->_excFlags |= 2;
-				ex->_param = _items2[mctlMQ.objectIndex]._ani->_odelay;
+				ex->_param = _items2[mctlMQ.objectIndex]._ani->_copyId;
 				ex->_field_24 = 1;
 				ex->_z = -1;
 				mq->addExCommandToEnd(ex);
@@ -2197,18 +2197,18 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 		if (subMgm) {
 			obj->_messageQueueId = 0;
 			obj->changeStatics2(_items2[idx]._directions[idxsub]._staticsId1);
-			newx = obj->_ox;
-			newy = obj->_oy;
+			newx = obj->_x;
+			newy = obj->_y;
 		} else {
 			point = obj->_movement->getMovementSize(0, picAniInfo.dynamicPhaseIndex);
-			newx = obj->_movement->_ox - point.x;
-			newy = obj->_movement->_oy - point.y;
+			newx = obj->_movement->_x - point.x;
+			newy = obj->_movement->_y - point.y;
 			if (idxsub != 1 && idxsub) {
 				if (idxsub == 2 || idxsub == 3) {
-					newy = obj->_movement->_oy;
+					newy = obj->_movement->_y;
 				}
 			} else {
-				newx = obj->_movement->_ox;
+				newx = obj->_movement->_x;
 			}
 		}
 
@@ -2216,7 +2216,7 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 		obj->setOXY(newx, newy);
 	}
 
-	if (obj->_ox == xpos && obj->_oy == ypos) {
+	if (obj->_x == xpos && obj->_y == ypos) {
 		MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 
 		if (staticsId && obj->_statics->_staticsId != staticsId) {
@@ -2243,7 +2243,7 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 			ex->_excFlags |= 3;
 			mq->addExCommandToEnd(ex);
 
-			ex = new ExCommand(picAniInfo.objectId, 5, -1, obj->_ox, obj->_oy, 0, 1, 0, 0, 0);
+			ex = new ExCommand(picAniInfo.objectId, 5, -1, obj->_x, obj->_y, 0, 1, 0, 0, 0);
 
 			ex->_z = -1;
 			ex->_param = picAniInfo.field_8;
@@ -2256,13 +2256,13 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 		return mq;
 	}
 
-	linkInfoSource.node = getHitNode(obj->_ox, obj->_oy, 0);
+	linkInfoSource.node = getHitNode(obj->_x, obj->_y, 0);
 
 	if (!linkInfoSource.node) {
-		linkInfoSource.link = getHitLink(obj->_ox, obj->_oy, idxsub, 0);
+		linkInfoSource.link = getHitLink(obj->_x, obj->_y, idxsub, 0);
 
 		if (!linkInfoSource.link) {
-			linkInfoSource.link = getNearestLink(obj->_ox, obj->_oy);
+			linkInfoSource.link = getNearestLink(obj->_x, obj->_y);
 
 			if (!linkInfoSource.link) {
 				obj->setPicAniInfo(picAniInfo);
@@ -2295,11 +2295,11 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 	mctlMQ1.clear();
 
 	mctlMQ1.sourceDir = idxsub;
-	mctlMQ1.sourcePos.x = obj->_ox;
-	mctlMQ1.sourcePos.y = obj->_oy;
+	mctlMQ1.sourcePos.x = obj->_x;
+	mctlMQ1.sourcePos.y = obj->_y;
 
-	int dx1 = obj->_ox;
-	int dy1 = obj->_oy;
+	int dx1 = obj->_x;
+	int dy1 = obj->_y;
 	int dx2, dy2;
 
 	if (linkInfoSource.node)
@@ -2367,7 +2367,7 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 					&& picAniInfo.someDynamicPhaseIndex == ex->_z) {
 				mq->deleteExCommandByIndex(0, 1);
 			} else {
-				ex = new ExCommand(picAniInfo.objectId, 5, ex->_messageNum, obj->_ox, obj->_oy, 0, 1, 0, 0, 0);
+				ex = new ExCommand(picAniInfo.objectId, 5, ex->_messageNum, obj->_x, obj->_y, 0, 1, 0, 0, 0);
 				ex->_z = -1;
 				ex->_param = picAniInfo.field_8;
 				ex->_excFlags |= 2;
@@ -2589,7 +2589,7 @@ MessageQueue *MctlGraph::makeLineQueue(GmctlMqStruct *info) {
 
 		ex->_z = info->sourceZ;
 
-		ex->_param = _items2[info->objectIndex]._ani->_odelay;
+		ex->_param = _items2[info->objectIndex]._ani->_copyId;
 		ex->_field_24 = 1;
 		ex->_excFlags |= 2;
 	} else {
@@ -2607,7 +2607,7 @@ MessageQueue *MctlGraph::makeLineQueue(GmctlMqStruct *info) {
 
 		ex->_z = info->sourceZ;
 
-		ex->_param = _items2[info->objectIndex]._ani->_odelay;
+		ex->_param = _items2[info->objectIndex]._ani->_copyId;
 		ex->_field_24 = 1;
 		ex->_excFlags |= 2;
 		mq->addExCommandToEnd(ex);
@@ -2621,7 +2621,7 @@ MessageQueue *MctlGraph::makeLineQueue(GmctlMqStruct *info) {
 								  y2,
 								  -1);
 		ex->_parId = mq->_id;
-		ex->_param = _items2[info->objectIndex]._ani->_odelay;
+		ex->_param = _items2[info->objectIndex]._ani->_copyId;
 	}
 
 	mq->addExCommandToEnd(ex);
@@ -2643,7 +2643,7 @@ MessageQueue *MctlGraph::makeLineQueue(GmctlMqStruct *info) {
 								  y2,
 								  par);
 		ex->_parId = mq->_id;
-		ex->_param = _items2[info->objectIndex]._ani->_odelay;
+		ex->_param = _items2[info->objectIndex]._ani->_copyId;
 		mq->addExCommandToEnd(ex);
 	}
 
@@ -2657,7 +2657,7 @@ MessageQueue *MctlGraph::makeLineQueue(GmctlMqStruct *info) {
 								  y2,
 								  -1);
 		ex->_parId = mq->_id;
-		ex->_param = _items2[info->objectIndex]._ani->_odelay;
+		ex->_param = _items2[info->objectIndex]._ani->_copyId;
 
 		mq->addExCommandToEnd(ex);
 	}
@@ -2665,7 +2665,7 @@ MessageQueue *MctlGraph::makeLineQueue(GmctlMqStruct *info) {
 	ex = new ExCommand(_items2[info->objectIndex]._objectId, 5, -1, info->destPos.x, info->destPos.y, 0, 1, 0, 0, 0);
 	ex->_z = info->destZ;
 
-	ex->_param = _items2[info->objectIndex]._ani->_odelay;
+	ex->_param = _items2[info->objectIndex]._ani->_copyId;
 	ex->_field_24 = 0;
 	ex->_excFlags |= 2;
 

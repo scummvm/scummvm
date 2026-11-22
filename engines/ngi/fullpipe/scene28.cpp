@@ -62,8 +62,8 @@ void sceneHandler28_lift1ShowAfter() {
 	StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_MAN_28, -1);
 
 	g_nmi->_aniMan->_statics = g_nmi->_aniMan->getStaticsById(ST_MAN_SIT|0x4000);
-	g_nmi->_aniMan->setOXY(ani->_ox + 7, ani->_oy);
-	g_nmi->_aniMan->_priority = ani->_priority;
+	g_nmi->_aniMan->setOXY(ani->_x + 7, ani->_y);
+	g_nmi->_aniMan->_z = ani->_z;
 	g_nmi->_aniMan->show1(-1, -1, -1, 0);
 }
 
@@ -191,8 +191,8 @@ void sceneHandler28_startWork1() {
 	StaticANIObject *man = g_nmi->_currentScene->getStaticANIObject1ById(ANI_MAN_28, -1);
 
 	man->_statics = man->getStaticsById(ST_MAN28_RIGHT);
-	man->setOXY(g_nmi->_aniMan->_ox, g_nmi->_aniMan->_oy);
-	man->_priority = g_nmi->_aniMan->_priority;
+	man->setOXY(g_nmi->_aniMan->_x, g_nmi->_aniMan->_y);
+	man->_z = g_nmi->_aniMan->_z;
 	man->show1(-1, -1, -1, 0);
 
 	chainQueue(QU_SC28_LIFT1_WORK, 1);
@@ -259,7 +259,7 @@ void sceneHandler28_clickLift(int numLift) {
 	default: break;
 	}
 
-	if (abs(x - g_nmi->_aniMan->_ox) > 1 || abs(472 - g_nmi->_aniMan->_oy) > 1
+	if (abs(x - g_nmi->_aniMan->_x) > 1 || abs(472 - g_nmi->_aniMan->_y) > 1
 		|| g_nmi->_aniMan->_movement
 		|| g_nmi->_aniMan->_statics->_staticsId != ST_MAN_UP) {
 		debugC(2, kDebugSceneLogic, "scene28: clickLift: overwrite");
@@ -412,7 +412,7 @@ int sceneHandler28(ExCommand *cmd) {
 
 			if (ani)
 				if (ani->_id == ANI_LIFT || ani->_id == ANI_LIFT_28 ) {
-					sceneHandler28_clickLift(ani->_odelay);
+					sceneHandler28_clickLift(ani->_copyId);
 
 					cmd->_messageKind = 0;
 					break;
@@ -433,7 +433,7 @@ int sceneHandler28(ExCommand *cmd) {
 
 	case 33:
 		if (g_nmi->_aniMan2) {
-			int x = g_nmi->_aniMan2->_ox;
+			int x = g_nmi->_aniMan2->_x;
 
 			if (x < g_nmi->_sceneRect.left + 200)
 				g_nmi->_currentScene->_x = x - 300 - g_nmi->_sceneRect.left;
@@ -468,7 +468,7 @@ int sceneHandler28(ExCommand *cmd) {
 
 		for (uint i = 0; i < g_nmi->_floaters->_array2.size(); i++)
 			if (g_nmi->_floaters->_array2[i].val13 == 1)
-				g_nmi->_floaters->_array2[i].ani->_priority = 15;
+				g_nmi->_floaters->_array2[i].ani->_z = 15;
 
 		g_nmi->_behaviorManager->updateBehaviors();
 

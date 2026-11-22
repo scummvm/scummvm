@@ -145,11 +145,11 @@ void sceneHandler27_showNextBat() {
 	if (g_vars->scene27_bat) {
 		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC27_SHOWBET), 0, 1);
 
-		mq->setParamInt(-1, g_vars->scene27_bat->_odelay);
+		mq->setParamInt(-1, g_vars->scene27_bat->_copyId);
 		mq->chain(nullptr);
 	}
 
-	g_vars->scene27_batHandler->_priority = 1045;
+	g_vars->scene27_batHandler->_z = 1045;
 }
 
 int sceneHandler27_updateScreenCallback() {
@@ -191,15 +191,15 @@ void sceneHandler27_throwBat() {
 }
 
 void sceneHandler27_clickBat(ExCommand *cmd) {
-	int bx = g_vars->scene27_bat->_ox - 5;
-	int by = g_vars->scene27_bat->_oy - 71;
+	int bx = g_vars->scene27_bat->_x - 5;
+	int by = g_vars->scene27_bat->_y - 71;
 
 #if DBG
 	sceneHandler27_throwBat();
 	return;
 #endif
 
-	if (ABS(bx - g_nmi->_aniMan->_ox) > 1 || ABS(by - g_nmi->_aniMan->_oy) > 1
+	if (ABS(bx - g_nmi->_aniMan->_x) > 1 || ABS(by - g_nmi->_aniMan->_y) > 1
 		|| g_nmi->_aniMan->_movement || g_nmi->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
 		MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, bx, by, 1, ST_MAN_RIGHT);
 
@@ -231,8 +231,8 @@ void sceneHandler27_startBat(StaticANIObject *bat) {
 	newbat->ani = bat;
 	newbat->powerCos = newbat->power * cos(0.0);
 	newbat->powerSin = newbat->power * sin(0.0);
-	newbat->currX = newbat->powerCos + (double)g_nmi->_aniMan->_ox + 42.0;
-	newbat->currY = newbat->powerSin + (double)g_nmi->_aniMan->_oy + 58.0;
+	newbat->currX = newbat->powerCos + (double)g_nmi->_aniMan->_x + 42.0;
+	newbat->currY = newbat->powerSin + (double)g_nmi->_aniMan->_y + 58.0;
 
 	bat->_statics = bat->_staticsList[0];
 	bat->setOXY((int)newbat->currX, (int)newbat->currY);
@@ -304,7 +304,7 @@ bool sceneHandler27_batFallLogic(uint batn) {
 		return false;
 
 	if (bat->currX - y > 15.0 || bat->ani->_statics->_staticsId == ST_BTA_FALL) {
-		bat->ani->_priority = 2020;
+		bat->ani->_z = 2020;
 
 		g_vars->scene27_var07.push_back(bat);
 
@@ -566,7 +566,7 @@ void sceneHandler27_animateBats() {
 		bat->currY = sin(bat->angle) * bat->power + bat->currY;
 
 		bat->ani->setOXY((int)bat->currX, (int)bat->currY);
-		bat->ani->_priority = (int)(600.0 - bat->currY);
+		bat->ani->_z = (int)(600.0 - bat->currY);
 
 		double powerDelta;
 
@@ -634,7 +634,7 @@ int sceneHandler27(ExCommand *cmd) {
 		break;
 
 	case MSG_SC27_HANDLERTOFRONT:
-		g_vars->scene27_batHandler->_priority = 1005;
+		g_vars->scene27_batHandler->_z = 1005;
 		break;
 
 	case MSG_SC27_STARTWIPE:
@@ -669,7 +669,7 @@ int sceneHandler27(ExCommand *cmd) {
 
 	case 33:
 		if (g_nmi->_aniMan2) {
-			int x = g_nmi->_aniMan2->_ox;
+			int x = g_nmi->_aniMan2->_x;
 
 			if (x < g_nmi->_sceneRect.left + 200)
 				g_nmi->_currentScene->_x = x - 300 - g_nmi->_sceneRect.left;

@@ -38,12 +38,12 @@ namespace NGI {
 void scene38_setBottleState(Scene *sc) {
 	ExCommand *ex = sc->getMessageQueueById(QU_SC38_SHOWBOTTLE_ONTABLE)->getExCommandByIndex(0);
 
-	if (g_vars->scene38_bottle->_ox == ex->_x && g_vars->scene38_bottle->_oy == ex->_y) {
+	if (g_vars->scene38_bottle->_x == ex->_x && g_vars->scene38_bottle->_y == ex->_y) {
 		if (g_nmi->lift_checkButton(sO_Level5) ) {
 			ex = sc->getMessageQueueById(QU_SC38_SHOWBOTTLE)->getExCommandByIndex(0);
 
 			g_vars->scene38_bottle->setOXY(ex->_x, ex->_y);
-			g_vars->scene38_bottle->_priority = ex->_z;
+			g_vars->scene38_bottle->_z = ex->_z;
 
 			g_nmi->setObjectState(sO_Bottle_38, g_nmi->getObjectEnumState(sO_Bottle_38, sO_Blocked));
 		}
@@ -93,7 +93,7 @@ void sceneHandler38_tryTakeBottle() {
 }
 
 void sceneHandler38_postHammerKick() {
-	g_vars->scene38_domino1->setOXY(g_vars->scene38_domino1->_ox, g_vars->scene38_domino1->_oy + 2);
+	g_vars->scene38_domino1->setOXY(g_vars->scene38_domino1->_x, g_vars->scene38_domino1->_y + 2);
 }
 
 void sceneHandler38_propose() {
@@ -136,7 +136,7 @@ void sceneHandler38_hammerKick() {
 		}
 	}
 
-	g_vars->scene38_domino1->setOXY(g_vars->scene38_domino1->_ox, g_vars->scene38_domino1->_oy - 2);
+	g_vars->scene38_domino1->setOXY(g_vars->scene38_domino1->_x, g_vars->scene38_domino1->_y - 2);
 
 	if (g_vars->scene38_dominos->_statics->_staticsId == ST_DMS_3)
 		g_vars->scene38_dominos->startAnim(MV_DMS_THREE, 0, -1);
@@ -384,7 +384,7 @@ int sceneHandler38(ExCommand *cmd) {
 
 	case 33:
 		if (g_nmi->_aniMan2) {
-			int x = g_nmi->_aniMan2->_ox;
+			int x = g_nmi->_aniMan2->_x;
 
 			if (x < g_nmi->_sceneRect.left + 200)
 				g_nmi->_currentScene->_x = x - 300 - g_nmi->_sceneRect.left;

@@ -77,10 +77,10 @@ void sceneHandler10_clickGum() {
 	if (g_vars->scene10_hasGum) {
 		if (sceneHandler10_inflaterIsBlind()) {
 			if (g_vars->scene10_hasGum) {
-				int x = g_vars->scene10_gum->_ox - 139;
-				int y = g_vars->scene10_gum->_oy - 48;
+				int x = g_vars->scene10_gum->_x - 139;
+				int y = g_vars->scene10_gum->_y - 48;
 
-				if (abs(x - g_nmi->_aniMan->_ox) > 1 || abs(y - g_nmi->_aniMan->_oy) > 1) {
+				if (abs(x - g_nmi->_aniMan->_x) > 1 || abs(y - g_nmi->_aniMan->_y) > 1) {
 					MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, x, y, 1, ST_MAN_RIGHT);
 					if (mq) {
 						ExCommand *ex = new ExCommand(0, 17, MSG_SC10_CLICKGUM, 0, 0, 0, 1, 0, 0, 0);
@@ -143,11 +143,11 @@ int sceneHandler10(ExCommand *ex) {
 		break;
 
 	case MSG_SC10_LADDERTOBACK:
-		g_vars->scene10_ladder->_priority = 49;
+		g_vars->scene10_ladder->_z = 49;
 		break;
 
 	case MSG_SC10_LADDERTOFORE:
-		g_vars->scene10_ladder->_priority = 0;
+		g_vars->scene10_ladder->_z = 0;
 		break;
 
 	case MSG_LIFT_GO:
@@ -197,11 +197,11 @@ int sceneHandler10(ExCommand *ex) {
 			int res = 0;
 
 			if (g_nmi->_aniMan2) {
-				if (g_nmi->_aniMan2->_ox < g_nmi->_sceneRect.left + 200)
-					g_nmi->_currentScene->_x = g_nmi->_aniMan2->_ox - g_nmi->_sceneRect.left - 300;
+				if (g_nmi->_aniMan2->_x < g_nmi->_sceneRect.left + 200)
+					g_nmi->_currentScene->_x = g_nmi->_aniMan2->_x - g_nmi->_sceneRect.left - 300;
 
-				if (g_nmi->_aniMan2->_ox > g_nmi->_sceneRect.right - 200)
-					g_nmi->_currentScene->_x = g_nmi->_aniMan2->_ox - g_nmi->_sceneRect.right + 300;
+				if (g_nmi->_aniMan2->_x > g_nmi->_sceneRect.right - 200)
+					g_nmi->_currentScene->_x = g_nmi->_aniMan2->_x - g_nmi->_sceneRect.right + 300;
 
 				res = 1;
 			}

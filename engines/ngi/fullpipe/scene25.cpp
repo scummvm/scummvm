@@ -36,12 +36,12 @@ namespace NGI {
 
 void scene25_showBoardOnRightFar() {
 	g_vars->scene25_board->show1(453, 557, MV_BRD25_RIGHT, 0);
-	g_vars->scene25_board->_priority = 28;
+	g_vars->scene25_board->_z = 28;
 }
 
 void scene25_showBoardOnRightClose() {
 	g_vars->scene25_board->show1(632, 557, rMV_BRD25_RIGHT, 0);
-	g_vars->scene25_board->_priority = 28;
+	g_vars->scene25_board->_z = 28;
 }
 
 void scene25_initScene(Scene *sc, int entranceId) {
@@ -164,8 +164,8 @@ void sceneHandler25_enterTruba() {
 	g_nmi->_aniMan->_messageQueueId = 0;
 	g_nmi->_aniMan->changeStatics2(g_nmi->_aniMan->_statics->_staticsId);
 
-	int x = g_nmi->_aniMan->_ox;
-	int y = g_nmi->_aniMan->_oy;
+	int x = g_nmi->_aniMan->_x;
+	int y = g_nmi->_aniMan->_y;
 
 	g_nmi->_aniMan->setPicAniInfo(info);
 
@@ -199,8 +199,8 @@ void sceneHandler25_toLadder() {
 	g_nmi->_aniMan->_messageQueueId = 0;
 	g_nmi->_aniMan->changeStatics2(g_nmi->_aniMan->_statics->_staticsId);
 
-	int x = g_nmi->_aniMan->_ox;
-	int y = g_nmi->_aniMan->_oy;
+	int x = g_nmi->_aniMan->_x;
+	int y = g_nmi->_aniMan->_y;
 
 	g_nmi->_aniMan->setPicAniInfo(info);
 
@@ -233,7 +233,7 @@ void sceneHandler25_animateBearders() {
 
 		mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC25_BEARDED), 0, 1);
 
-		mq->setParamInt(-1, g_vars->scene25_bearders[0]->_odelay);
+		mq->setParamInt(-1, g_vars->scene25_bearders[0]->_copyId);
 		mq->getExCommandByIndex(0)->_x = g_nmi->_rnd.getRandomNumber(650) + 100;
 		mq->chain(nullptr);
 
@@ -242,14 +242,14 @@ void sceneHandler25_animateBearders() {
 		if (g_nmi->_rnd.getRandomNumber(32767) < 0x1FFF) {
 			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC25_BEARDED2), 0, 1);
 
-			mq->setParamInt(-1, g_vars->scene25_bearders[1]->_odelay);
+			mq->setParamInt(-1, g_vars->scene25_bearders[1]->_copyId);
 			mq->getExCommandByIndex(0)->_x = g_nmi->_rnd.getRandomNumber(650) + 100;
 			mq->chain(nullptr);
 
 			if (g_nmi->_rnd.getRandomNumber(32767) < 8191) {
 				mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC25_BEARDED3), 0, 1);
 
-				mq->setParamInt(-1, g_vars->scene25_bearders[2]->_odelay);
+				mq->setParamInt(-1, g_vars->scene25_bearders[2]->_copyId);
 				mq->getExCommandByIndex(0)->_x = g_nmi->_rnd.getRandomNumber(650) + 100;
 				mq->chain(nullptr);
 			}
@@ -278,8 +278,8 @@ void sceneHandler25_rowShovel() {
 	g_nmi->_aniMan->_messageQueueId = 0;
 	g_nmi->_aniMan->changeStatics2(g_nmi->_aniMan->_statics->_staticsId);
 
-	int x = g_nmi->_aniMan->_ox;
-	int y = g_nmi->_aniMan->_oy;
+	int x = g_nmi->_aniMan->_x;
+	int y = g_nmi->_aniMan->_y;
 
 	g_nmi->_aniMan->setPicAniInfo(info);
 
@@ -312,8 +312,8 @@ void sceneHandler25_rowHand() {
 	g_nmi->_aniMan->_messageQueueId = 0;
 	g_nmi->_aniMan->changeStatics2(g_nmi->_aniMan->_statics->_staticsId);
 
-	int x = g_nmi->_aniMan->_ox;
-	int y = g_nmi->_aniMan->_oy;
+	int x = g_nmi->_aniMan->_x;
+	int y = g_nmi->_aniMan->_y;
 
 	g_nmi->_aniMan->setPicAniInfo(info);
 
@@ -366,8 +366,8 @@ void sceneHandler25_tryRow(int obj) {
 	g_nmi->_aniMan->_messageQueueId = 0;
 	g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 
-	int x = g_nmi->_aniMan->_ox;
-	int y = g_nmi->_aniMan->_oy;
+	int x = g_nmi->_aniMan->_x;
+	int y = g_nmi->_aniMan->_y;
 
 	g_nmi->_aniMan->setPicAniInfo(info);
 
@@ -433,7 +433,7 @@ void sceneHandler25_backToPipe() {
 }
 
 void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, MessageQueue *mq, int flag) {
-	int aniY = ani->_oy;
+	int aniY = ani->_y;
 	int newx = 0, newy = 0;
 	Common::Point point;
 	ExCommand *ex;
@@ -442,7 +442,7 @@ void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, Messa
 		if (ani->_movement) {
 			point = ani->_movement->getMovementSize(0, ani->_movement->_curFrame);
 			newx = point.x;
-			aniY = ani->_oy - point.y;
+			aniY = ani->_y - point.y;
 		}
 	}
 
@@ -530,8 +530,8 @@ bool sceneHandler25_isOnLadder(ExCommand *cmd) {
 		PictureObject *pic = g_nmi->_currentScene->getPictureObjectById(PIC_SC25_LADDERDOWN, 0);
 		Common::Point point;
 
-		point.x = inter->_xOffs + pic->_ox;
-		point.y = inter->_yOffs + pic->_oy;
+		point.x = inter->_xOffs + pic->_x;
+		point.y = inter->_yOffs + pic->_y;
 
 		mq->setFlags(mq->getFlags() | 1);
 
@@ -587,8 +587,8 @@ int sceneHandler25(ExCommand *cmd) {
 
 	case 33:
 		if (g_nmi->_aniMan2) {
-			int x = g_nmi->_aniMan2->_ox;
-			int y = g_nmi->_aniMan2->_oy;
+			int x = g_nmi->_aniMan2->_x;
+			int y = g_nmi->_aniMan2->_y;
 
 			if (x < g_nmi->_sceneRect.left + 200)
 				g_nmi->_currentScene->_x = x - 300 - g_nmi->_sceneRect.left;

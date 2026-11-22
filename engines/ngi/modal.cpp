@@ -565,7 +565,7 @@ bool ModalMap::init2(int counterdiff) {
 				const Dims d1 = _picI03->getDimensions();
 				const Dims d2 = _highlightedPic->getDimensions();
 
-				_picI03->setOXY(_highlightedPic->_ox + d2.x / 2 - d1.x / 2, _highlightedPic->_oy + d2.y / 2 - d1.y / 2);
+				_picI03->setPos(_highlightedPic->_x + d2.x / 2 - d1.x / 2, _highlightedPic->_y + d2.y / 2 - d1.y / 2);
 				_picI03->_flags |= 4;
 			}
 		}
@@ -683,8 +683,8 @@ void ModalMap::initMap() {
 		const Dims dims = pic->getDimensions();
 		Dims dims2;
 
-		_rect2.left = dims.x / 2 + pic->_ox - 400;
-		_rect2.top = dims.y / 2 + pic->_oy - 300;
+		_rect2.left = dims.x / 2 + pic->_x - 400;
+		_rect2.top = dims.y / 2 + pic->_y - 300;
 		_rect2.right = _rect2.left + 800;
 		_rect2.bottom = _rect2.top + 600;
 
@@ -695,13 +695,13 @@ void ModalMap::initMap() {
 		_pic = _mapScene->getPictureObjectById(PIC_MAP_I02, 0);
 		dims2 = _pic->getDimensions();
 
-		_pic->setOXY(pic->_ox + dims.x / 2 - dims2.x / 2, dims.y - dims2.y / 2 + pic->_oy - 24);
+		_pic->setPos(pic->_x + dims.x / 2 - dims2.x / 2, dims.y - dims2.y / 2 + pic->_y - 24);
 		_pic->_flags |= 4;
 
 		_pic = _mapScene->getPictureObjectById(PIC_MAP_I01, 0);
 		dims2 = _pic->getDimensions();
 
-		_pic->setOXY(pic->_ox + dims.x / 2 - dims2.x / 2, dims.y - dims2.y / 2 + pic->_oy - 25);
+		_pic->setPos(pic->_x + dims.x / 2 - dims2.x / 2, dims.y - dims2.y / 2 + pic->_y - 25);
 		_pic->_flags |= 4;
 	}
 
@@ -1199,7 +1199,7 @@ ModalCredits::ModalCredits() {
 
 	_currX = 400 - dims.x / 2;
 
-	_creditsPic->setOXY(_currX, _currY);
+	_creditsPic->setPos(_currX, _currY);
 
 	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 	keymapper->getKeymap("ngi-default")->setEnabled(false);
@@ -1233,7 +1233,7 @@ bool ModalCredits::init(int counterdiff) {
 		if (_countdown < 0)
 			_fadeIn = false;
 
-		_creditsPic->setOXY(_currX, _currY);
+		_creditsPic->setPos(_currX, _currY);
 
 		if (_currY > _maxY)
 			_currY -= 2;
@@ -1393,14 +1393,14 @@ bool ModalMainMenu::handleMessage(ExCommand *message) {
 		if (numarea >= 0) {
 			if (numarea == _menuSliderIdx) {
 				_lastArea = &_areas[_menuSliderIdx];
-				_sliderOffset = _lastArea->picObjL->_ox - point.x;
+				_sliderOffset = _lastArea->picObjL->_x - point.x;
 
 				return false;
 			}
 
 			if (numarea == _musicSliderIdx) {
 				_lastArea = &_areas[_musicSliderIdx];
-				_sliderOffset = _lastArea->picObjL->_ox - point.x;
+				_sliderOffset = _lastArea->picObjL->_x - point.x;
 
 				return false;
 			}
@@ -1573,21 +1573,21 @@ void ModalMainMenu::updateSoundVolume(Sound &snd) {
 
 	int a, b;
 
-	if (ani->_ox >= _screct.left) {
+	if (ani->_x >= _screct.left) {
 		int par, pan;
 
-		if (ani->_ox <= _screct.right) {
+		if (ani->_x <= _screct.right) {
 			int dx;
 
-			if (ani->_oy <= _screct.bottom) {
-				if (ani->_oy >= _screct.top) {
+			if (ani->_y <= _screct.bottom) {
+				if (ani->_y >= _screct.top) {
 					snd.setPanAndVolume(g_nmi->_sfxVolume, 0);
 
 					return;
 				}
-				dx = _screct.top - ani->_oy;
+				dx = _screct.top - ani->_y;
 			} else {
-				dx = ani->_oy - _screct.bottom;
+				dx = ani->_y - _screct.bottom;
 			}
 
 			par = 0;
@@ -1601,7 +1601,7 @@ void ModalMainMenu::updateSoundVolume(Sound &snd) {
 			a = g_nmi->_sfxVolume - (-3500);
 			b = 800 - dx;
 		} else {
-			int dx = ani->_ox - _screct.right;
+			int dx = ani->_x - _screct.right;
 
 			if (dx > 800) {
 				snd.setPanAndVolume(-3500, 0);
@@ -1621,7 +1621,7 @@ void ModalMainMenu::updateSoundVolume(Sound &snd) {
 		return;
 	}
 
-	int dx = _screct.left - ani->_ox;
+	int dx = _screct.left - ani->_x;
 	if (dx <= 800) {
 		int32 s = (800 - dx) * (g_nmi->_sfxVolume - (-3500));
 		int32 p = -3500 + s / 800;
@@ -1646,8 +1646,8 @@ void ModalMainMenu::updateSliderPos() {
 			x = 65;
 		}
 
-		_lastArea->picObjD->setOXY(x, _lastArea->picObjD->_oy);
-		_lastArea->picObjL->setOXY(x, _lastArea->picObjD->_oy);
+		_lastArea->picObjD->setPos(x, _lastArea->picObjD->_y);
+		_lastArea->picObjL->setPos(x, _lastArea->picObjD->_y);
 
 		int vol = 1000 * (3 * x - 195);
 		g_nmi->_sfxVolume = vol / 173 - 3000;
@@ -1666,8 +1666,8 @@ void ModalMainMenu::updateSliderPos() {
 			x = 65;
 		}
 
-		_lastArea->picObjD->setOXY(x, _lastArea->picObjD->_oy);
-		_lastArea->picObjL->setOXY(x, _lastArea->picObjD->_oy);
+		_lastArea->picObjD->setPos(x, _lastArea->picObjD->_y);
+		_lastArea->picObjL->setPos(x, _lastArea->picObjD->_y);
 
 		g_nmi->setMusicVolume(255 * (x - 65) / 173);
 	}
@@ -1707,7 +1707,7 @@ bool ModalMainMenu::isOverArea(PictureObject *obj, Common::Point *point) {
 	int down = point->y - 11;
 	int up = point->y + 9;
 
-	if (left >= obj->_ox && right < obj->_ox + dims.x && down >= obj->_oy && up < obj->_oy + dims.y)
+	if (left >= obj->_x && right < obj->_x + dims.x && down >= obj->_y && up < obj->_y + dims.y)
 		return true;
 
 	return false;
@@ -1769,8 +1769,8 @@ void ModalMainMenu::setSliderPos() {
 		x = 65;
 	}
 
-	obj->setOXY(x, obj->_oy);
-	_areas[_menuSliderIdx].picObjL->setOXY(x, obj->_oy);
+	obj->setPos(x, obj->_y);
+	_areas[_menuSliderIdx].picObjL->setPos(x, obj->_y);
 
 	x = 173 * g_nmi->_musicVolume / 255 + 65;
 	obj = _areas[_musicSliderIdx].picObjD;
@@ -1782,8 +1782,8 @@ void ModalMainMenu::setSliderPos() {
 		x = 65;
 	}
 
-	obj->setOXY(x, obj->_oy);
-	_areas[_musicSliderIdx].picObjL->setOXY(x, obj->_oy);
+	obj->setPos(x, obj->_y);
+	_areas[_musicSliderIdx].picObjL->setPos(x, obj->_y);
 }
 
 ModalHelp::ModalHelp() {
@@ -2162,8 +2162,8 @@ void ModalSaveGame::setup(Scene *sc, int mode) {
 	_arrayL.push_back(sc->getPictureObjectById(PIC_MSV_SPACE_D, 0));
 	_arrayD.push_back(sc->getPictureObjectById(PIC_MSV_SPACE_L, 0));
 
-	int x = _bgr->_ox + _bgr->getDimensions().x / 2;
-	int y = _bgr->_oy + 90;
+	int x = _bgr->_x + _bgr->getDimensions().x / 2;
+	int y = _bgr->_y + 90;
 	int w;
 
 	_files.clear();
@@ -2270,13 +2270,13 @@ void ModalSaveGame::update() {
 		if (g_nmi->_mouseScreenPos.x < _files[i].fx1 || g_nmi->_mouseScreenPos.x > _files[i].fx2 ||
 			g_nmi->_mouseScreenPos.y < _files[i].fy1 || g_nmi->_mouseScreenPos.y > _files[i].fy2 ) {
 			if (_files[i].empty) {
-				_emptyD->setOXY(_files[i].fx1, _files[i].fy1);
+				_emptyD->setPos(_files[i].fx1, _files[i].fy1);
 				_emptyD->draw();
 			} else {
 				int x = _files[i].fx1;
 
 				for (int j = 0; j < 16; j++) {
-					_arrayL[_files[i].date[j]]->setOXY(x + 1, _files[i].fy1);
+					_arrayL[_files[i].date[j]]->setPos(x + 1, _files[i].fy1);
 					_arrayL[_files[i].date[j]]->draw();
 
 					x += _arrayL[_files[i].date[j]]->getDimensions().x + 2;
@@ -2284,13 +2284,13 @@ void ModalSaveGame::update() {
 			}
 		} else {
 			if (_files[i].empty) {
-				_emptyL->setOXY(_files[i].fx1, _files[i].fy1);
+				_emptyL->setPos(_files[i].fx1, _files[i].fy1);
 				_emptyL->draw();
 			} else {
 				int x = _files[i].fx1;
 
 				for (int j = 0; j < 16; j++) {
-					_arrayD[_files[i].date[j]]->setOXY(x + 1, _files[i].fy1);
+					_arrayD[_files[i].date[j]]->setPos(x + 1, _files[i].fy1);
 					_arrayD[_files[i].date[j]]->draw();
 
 					x += _arrayD[_files[i].date[j]]->getDimensions().x + 2;

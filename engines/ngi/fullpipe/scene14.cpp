@@ -115,7 +115,7 @@ int sceneHandler14_updateScreenCallback() {
 void sceneHandler14_showBallGrandmaHit2() {
 	if (g_vars->scene14_flyingBall) {
 		g_vars->scene14_flyingBall->show1(g_vars->scene14_grandmaX + 223, g_vars->scene14_grandmaY + 35, MV_BAL14_SPIN, 0);
-		g_vars->scene14_flyingBall->_priority = 27;
+		g_vars->scene14_flyingBall->_z = 27;
 
 		g_vars->scene14_pink = g_vars->scene14_flyingBall;
 
@@ -137,18 +137,18 @@ void sceneHandler14_showBallGrandmaDive() {
 void sceneHandler14_showBallGrandmaHit() {
 	if (g_vars->scene14_flyingBall) {
 		g_vars->scene14_flyingBall->show1(g_vars->scene14_grandmaX + 190, g_vars->scene14_grandmaY + 56, MV_BAL14_TOGMA, 0);
-		g_vars->scene14_flyingBall->_priority = 27;
+		g_vars->scene14_flyingBall->_z = 27;
 
 		MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 		ExCommand *ex = new ExCommand(ANI_BALL14, 1, MV_BAL14_TOGMA, 0, 0, 0, 1, 0, 0, 0);
 
-		ex->_param = g_vars->scene14_flyingBall->_odelay;
+		ex->_param = g_vars->scene14_flyingBall->_copyId;
 		ex->_excFlags |= 2;
 		ex->_field_24 = 1;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_BALL14, 6, 0, 0, 0, 0, 1, 0, 0, 0);
-		ex->_param = g_vars->scene14_flyingBall->_odelay;
+		ex->_param = g_vars->scene14_flyingBall->_copyId;
 		ex->_excFlags |= 3;
 		mq->addExCommandToEnd(ex);
 		mq->chain(nullptr);
@@ -179,18 +179,18 @@ void sceneHandler14_exitScene() {
 void sceneHandler14_showBallMan() {
 	if (g_vars->scene14_flyingBall) {
 		g_vars->scene14_flyingBall->show1(g_vars->scene14_dudeX - 166, g_vars->scene14_dudeY + 40, MV_BAL14_TOGMA, 0);
-		g_vars->scene14_flyingBall->_priority = 27;
+		g_vars->scene14_flyingBall->_z = 27;
 
 		MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 		ExCommand *ex = new ExCommand(ANI_BALL14, 1, MV_BAL14_TOGMA, 0, 0, 0, 1, 0, 0, 0);
 
-		ex->_param = g_vars->scene14_flyingBall->_odelay;
+		ex->_param = g_vars->scene14_flyingBall->_copyId;
 		ex->_excFlags |= 2;
 		ex->_field_24 = 1;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_BALL14, 6, 0, 0, 0, 0, 1, 0, 0, 0);
-		ex->_param = g_vars->scene14_flyingBall->_odelay;
+		ex->_param = g_vars->scene14_flyingBall->_copyId;
 		ex->_excFlags |= 3;
 		mq->addExCommandToEnd(ex);
 		mq->chain(nullptr);
@@ -220,7 +220,7 @@ void sceneHandler14_manKickBall() {
 
 	g_vars->scene14_flyingBall->show1(g_vars->scene14_dudeX - 85, g_vars->scene14_dudeY - 76, -1, 0);
 	g_vars->scene14_flyingBall->startAnim(MV_BAL14_SPIN, 0, -1);
-	g_vars->scene14_flyingBall->_priority = 5;
+	g_vars->scene14_flyingBall->_z = 5;
 
 	g_vars->scene14_ballIsFlying = true;
 }
@@ -234,9 +234,9 @@ void sceneHandler14_showBallFly() {
 	int x, y;
 
 	if (g_vars->scene14_grandma->_movement) {
-		x = g_vars->scene14_grandma->_movement->_ox;
+		x = g_vars->scene14_grandma->_movement->_x;
 		g_vars->scene14_ballX = x;
-		y = g_vars->scene14_grandma->_movement->_oy;
+		y = g_vars->scene14_grandma->_movement->_y;
 	} else {
 		x = g_vars->scene14_grandmaX;
 		y = g_vars->scene14_grandmaY;
@@ -258,7 +258,7 @@ void sceneHandler14_showBallFly() {
 	g_vars->scene14_ballY = g_vars->scene14_ballDeltaY + y;
 
 	g_vars->scene14_flyingBall->show1(x + 32, g_vars->scene14_ballDeltaY + y, MV_BAL14_SPIN, 0);
-	g_vars->scene14_flyingBall->_priority = 5;
+	g_vars->scene14_flyingBall->_z = 5;
 	g_vars->scene14_flyingBall->startAnim(MV_BAL14_SPIN, 0, -1);
 
 	g_vars->scene14_ballIsFlying = true;
@@ -342,7 +342,7 @@ void sceneHandler14_winArcade() {
 void sceneHandler14_showBallLast() {
 	if (g_vars->scene14_pink) {
 		g_vars->scene14_pink->show1(693, 491, MV_BAL14_SPIN, 0);
-		g_vars->scene14_pink->_priority = 27;
+		g_vars->scene14_pink->_z = 27;
 	}
 }
 
@@ -361,7 +361,7 @@ void sceneHandler14_startArcade() {
 	if (g_nmi->_aniMan->_movement) {
 		g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 		g_nmi->_aniMan->setOXY(1237, 451);
-		g_nmi->_aniMan->_priority = 25;
+		g_nmi->_aniMan->_z = 25;
 	}
 
 	getCurrSceneSc2MotionController()->deactivate();
@@ -387,7 +387,7 @@ void sceneHandler14_kickAnimation() {
 	if (g_nmi->_aniMan->_movement) {
 		sceneHandler14_clearCallback();
 
-		if (g_vars->scene14_flyingBall && g_vars->scene14_dudeX - g_vars->scene14_flyingBall->_ox < 180) {
+		if (g_vars->scene14_flyingBall && g_vars->scene14_dudeX - g_vars->scene14_flyingBall->_x < 180) {
 			g_nmi->_aniMan->changeStatics2(g_nmi->_aniMan->_movement->_nextStatic->_staticsId);
 			g_nmi->_aniMan->startAnim(MV_MAN14_KICK, 0, -1);
 
@@ -435,7 +435,7 @@ bool sceneHandler14_arcadeProcessClick(ExCommand *cmd) {
 		if (!cmd->_param) {
 			if (g_vars->scene14_pink) {
 				if (g_vars->scene14_pink->_flags & 4) {
-					if (cmd->_sceneClickX < g_vars->scene14_pink->_ox + 40) {
+					if (cmd->_sceneClickX < g_vars->scene14_pink->_x + 40) {
 						handleObjectInteraction(g_nmi->_aniMan, g_vars->scene14_pink, 0);
 						cmd->_messageKind = 0;
 						return true;
@@ -493,18 +493,18 @@ void sceneHandler14_grandmaThrow() {
 
 void sceneHandler14_passToGrandma() {
 	g_vars->scene14_flyingBall->stopAnim_maybe();
-	g_vars->scene14_flyingBall->_priority = 27;
+	g_vars->scene14_flyingBall->_z = 27;
 
 	MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 	ExCommand *ex = new ExCommand(ANI_BALL14, 1, MV_BAL14_FALL, 0, 0, 0, 1, 0, 0, 0);
 
-	ex->_param = g_vars->scene14_flyingBall->_odelay;
+	ex->_param = g_vars->scene14_flyingBall->_copyId;
 	ex->_excFlags |= 2;
 	ex->_field_24 = 1;
 	mq->addExCommandToEnd(ex);
 
 	ex = new ExCommand(ANI_BALL14, 6, 0, 0, 0, 0, 1, 0, 0, 0);
-	ex->_param = g_vars->scene14_flyingBall->_odelay;
+	ex->_param = g_vars->scene14_flyingBall->_copyId;
 	ex->_excFlags |= 3;
 	mq->addExCommandToEnd(ex);
 	mq->chain(nullptr);
@@ -632,7 +632,7 @@ void sceneHandler14_animateBall() {
 			if (g_vars->scene14_ballDeltaX >= 0 || x >= g_vars->scene14_grandmaX + 65
 					|| x <= g_vars->scene14_grandmaX - 135 || y <= g_vars->scene14_grandmaY - 102) {
 				if (g_vars->scene14_flyingBall->_movement)
-					g_vars->scene14_flyingBall->_movement->setOXY(x, y);
+					g_vars->scene14_flyingBall->_movement->setPos(x, y);
 				else
 					g_vars->scene14_flyingBall->setOXY(x, y);
 			} else {
@@ -754,27 +754,27 @@ int sceneHandler14(ExCommand *cmd) {
 			Movement *mov = g_nmi->_aniMan->_movement;
 
 			if (mov) {
-				g_vars->scene14_dudeX = mov->_ox;
-				g_vars->scene14_dudeY = mov->_oy;
+				g_vars->scene14_dudeX = mov->_x;
+				g_vars->scene14_dudeY = mov->_y;
 
 				if (mov->_id == MV_MAN14_KICK)
-					g_vars->scene14_dudeX = mov->_ox + 2 * g_nmi->_aniMan->_movement->_curFrame;
+					g_vars->scene14_dudeX = mov->_x + 2 * g_nmi->_aniMan->_movement->_curFrame;
 			} else {
-				g_vars->scene14_dudeX = g_nmi->_aniMan->_ox;
-				g_vars->scene14_dudeY = g_nmi->_aniMan->_oy;
+				g_vars->scene14_dudeX = g_nmi->_aniMan->_x;
+				g_vars->scene14_dudeY = g_nmi->_aniMan->_y;
 			}
 
 			mov = g_vars->scene14_grandma->_movement;
 			if (mov) {
-				g_vars->scene14_grandmaX = mov->_ox;
-				g_vars->scene14_grandmaY = mov->_oy;
+				g_vars->scene14_grandmaX = mov->_x;
+				g_vars->scene14_grandmaY = mov->_y;
 			} else {
-				g_vars->scene14_grandmaX = g_vars->scene14_grandma->_ox;
-				g_vars->scene14_grandmaY = g_vars->scene14_grandma->_oy;
+				g_vars->scene14_grandmaX = g_vars->scene14_grandma->_x;
+				g_vars->scene14_grandmaY = g_vars->scene14_grandma->_y;
 			}
 
 			if (g_nmi->_aniMan2) {
-				int x = g_nmi->_aniMan2->_ox;
+				int x = g_nmi->_aniMan2->_x;
 				g_vars->scene14_dude2X = x;
 
 				if (x < g_nmi->_sceneRect.left + g_vars->scene14_sceneDeltaX) {
