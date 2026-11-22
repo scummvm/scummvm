@@ -313,7 +313,7 @@ int global_messageHandler2(Command *cmd) {
 		if (ani) {
 			Movement *mov = ani->_movement;
 			if (mov)
-				mov->_curPhase->_field_68 = 0;
+				mov->_curPhase->_messageNum = 0;
 		}
 		break;
 

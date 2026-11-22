@@ -50,7 +50,7 @@ class StaticPhase : public Texture {
  public:
 	int16 _delay;
 	int16 _countdown;
-	int16 _field_68;
+	int16 _messageNum;
 	int16 _field_6A;
 	Common::ScopedPtr<Command> _command;
 

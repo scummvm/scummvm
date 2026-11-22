@@ -774,8 +774,8 @@ void AniObject::update(int counterdiff) {
 				}
 			}
 
-			if (dyn->_delay == dyn->_countdown && dyn->_field_68 != 0) {
-				newex = new Command(_id, 17, dyn->_field_68, 0, 0, 0, 1, 0, 0, 0);
+			if (dyn->_delay == dyn->_countdown && dyn->_messageNum != 0) {
+				newex = new Command(_id, 17, dyn->_messageNum, 0, 0, 0, 1, 0, 0, 0);
 				newex->_excFlags = 2;
 				newex->_param = _copyId;
 				newex->sendMessage();
@@ -2173,7 +2173,7 @@ StaticPhase::StaticPhase() {
 	_field_6A = 1;
 	_delay = 0;
 	_countdown = 0;
-	_field_68 = 0;
+	_messageNum = 0;
 }
 
 Common::String StaticPhase::toXML() {
