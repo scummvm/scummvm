@@ -164,6 +164,26 @@ void TextObject::invalidate() {
 }
 
 template <typename S>
+int TextObject::getWidestWord(const S &msg, const Font *font) {
+	int widest = 0;
+	int width = 0;
+	bool inWord = false;
+	for (uint i = 0; i < msg.size(); i++) {
+		const typename S::value_type c = msg[i];
+		if (c == '\n' || (c == ' ' && inWord)) {
+			widest = MAX(widest, width);
+			width = 0;
+			inWord = false;
+			continue;
+		}
+		if (c != ' ')
+			inWord = true;
+		width += font->getCharKernedWidth(c);
+	}
+	return MAX(widest, width);
+}
+
+template <typename S>
 void TextObject::setupTextReal(S msg, Common::String (*convert)(const S &s)) {
 	S message;
 
@@ -186,16 +206,16 @@ void TextObject::setupTextReal(S msg, Common::String (*convert)(const S &s)) {
 	// format the output message to incorporate line wrapping
 	// (if necessary) for the text object
 	const int SCREEN_WIDTH = _width ? _width : 640;
-	const int SCREEN_MARGIN = SCREEN_WIDTH / 10;
+	const int SCREEN_MARGIN = 40;
 
 	// If the speaker is too close to the edge of the screen we have to make
 	// some room for the subtitles.
 	if (_isSpeech) {
-		if (_x < SCREEN_MARGIN) {
-			_x = SCREEN_MARGIN;
-		} else if (SCREEN_WIDTH - _x < SCREEN_MARGIN) {
-			_x = SCREEN_WIDTH - SCREEN_MARGIN;
-		}
+		const int halfWidth = getWidestWord(msg, _font) / 2;
+		if (_x - halfWidth < SCREEN_MARGIN)
+			_x = halfWidth + SCREEN_MARGIN;
+		if (_x + halfWidth > SCREEN_WIDTH - SCREEN_MARGIN)
+			_x = SCREEN_WIDTH - halfWidth - SCREEN_MARGIN;
 	}
 
 	// The maximum width for any line of text is determined by the justification

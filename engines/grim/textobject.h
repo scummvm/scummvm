@@ -150,6 +150,8 @@ protected:
 
 private:
 	template <typename S>
+	int getWidestWord(const S &msg, const Font *font);
+	template <typename S>
 	void setupTextReal(S msg, Common::String (*convert)(const S &s));
 };
 
