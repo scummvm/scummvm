@@ -29,8 +29,8 @@
 
 namespace NGI {
 
-bool Inventory::load(MfcArchive &file) {
-	debugC(5, kDebugLoading, "Inventory::load()");
+bool InventoryData::load(MfcArchive &file) {
+	debugC(5, kDebugLoading, "InventoryData::load()");
 
 	_sceneId = file.readUint16LE();
 	int numInvs = file.readUint32LE();
@@ -51,7 +51,7 @@ bool Inventory::load(MfcArchive &file) {
 	return true;
 }
 
-int Inventory::getInventoryPoolItemIndexById(int itemId) {
+int InventoryData::getInventoryPoolItemIndexById(int itemId) {
 	if (_itemsPool.size() <= 0)
 		return -1;
 
@@ -63,7 +63,7 @@ int Inventory::getInventoryPoolItemIndexById(int itemId) {
 	return 0;
 }
 
-bool Inventory::setItemFlags(int itemId, int flags) {
+bool InventoryData::setItemFlags(int itemId, int flags) {
 	int idx = getInventoryPoolItemIndexById(itemId);
 
 	if (idx < 0)

@@ -41,13 +41,13 @@ struct InventoryPoolItem {
 
 typedef Common::Array<InventoryPoolItem> InventoryPoolItems;
 
-class Inventory : public CObject {
+class InventoryData : public CObject {
  protected:
 	int16 _sceneId;
 	InventoryPoolItems _itemsPool;
 
  public:
-	Inventory() { _sceneId = 0; }
+	InventoryData() { _sceneId = 0; }
 
 	bool load(MfcArchive &file) override;
 
@@ -79,7 +79,7 @@ struct InventoryIcon {
 	bool isMouseHover;
 };
 
-class Inventory2 : public Inventory {
+class Inventory2 : public InventoryData {
 	Common::Array<InventoryItem> _inventoryItems;
 	Common::Array<InventoryIcon> _inventoryIcons;
 	int _selectedId;
