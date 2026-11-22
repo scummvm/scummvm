@@ -194,7 +194,7 @@ protected:
 	bool enterRoom(uint16 room, Common::Point position, byte facing);
 	bool loadForeground(uint layer, uint chunk, bool pixels = false);
 	void drawForeground(Graphics::ManagedSurface &viewport, uint layer);
-	void drawRoomAnimation(Graphics::ManagedSurface &viewport);
+	virtual void drawRoomAnimation(Graphics::ManagedSurface &viewport);
 	void drawAmbientAnimations(Graphics::ManagedSurface &viewport, const RunawayAnimation *animations, uint count);
 	bool rebuildBackground();
 	bool applyPatch(uint chunk);

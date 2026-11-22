@@ -30,6 +30,7 @@ namespace Runaway {
 class Scene5100 : public RunawayRoomScene {
 public:
 	Scene5100(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
+	void setCameraX(int x) override;
 	const Common::U32String &subtitle() const override;
 	byte subtitleColor() const override;
 
@@ -50,7 +51,8 @@ private:
 	void startHangarSpeech(uint16 cue, byte variation);
 	void showHangarSpeechLine();
 	void handleAnimationFrameHook() override;
-	void drawRoomComposite(Graphics::ManagedSurface &viewport, bool foreground);
+	void drawRoomComposite(Graphics::ManagedSurface &viewport);
+	void drawRoomAnimation(Graphics::ManagedSurface &viewport) override;
 	void advanceCustomGameplayLoop(uint32 delta) override;
 	const RunawayHotspot *hotspot(byte id) const override;
 	void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) override;
@@ -66,6 +68,7 @@ private:
 	SceneSpeechCue _hangarCue;
 	byte _hangarLine = 0;
 	uint _studStep = 0, _studElapsed = 0;
+	uint _panElapsed = 0;
 	byte _studState = 0xff;
 	byte _hangarShot = 0, _hangarShotCount = 0, _hangarShotFrame = 88;
 	uint _hangarShotElapsed = 0;
