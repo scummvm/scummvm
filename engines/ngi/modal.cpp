@@ -1122,7 +1122,7 @@ bool ModalFinal::init(int counterdiff) {
 
 	unloadScenes();
 
-	g_nmi->_modalObject = new ModalCredits();
+	g_nmi->_modalObject = new CreditsController();
 
 	return true;
 }
@@ -1180,7 +1180,7 @@ void ModalFinal::update() {
 	}
 }
 
-ModalCredits::ModalCredits() {
+CreditsController::CreditsController() {
 	_sceneTitles = g_nmi->findScene(SC_TITLES);
 
 	_creditsPic = _sceneTitles->findPictureObjectById(PIC_TTL_CREDITS, 0);
@@ -1206,7 +1206,7 @@ ModalCredits::ModalCredits() {
 	keymapper->getKeymap("credits")->setEnabled(true);
 }
 
-ModalCredits::~ModalCredits() {
+CreditsController::~CreditsController() {
 	g_nmi->_gameLoader->unloadScene(SC_TITLES);
 
 	g_nmi->_sfxVolume = _sfxVolume;
@@ -1216,7 +1216,7 @@ ModalCredits::~ModalCredits() {
 	keymapper->getKeymap("ngi-default")->setEnabled(true);
 }
 
-bool ModalCredits::handleMessage(Command *cmd) {
+bool CreditsController::handleMessage(Command *cmd) {
 	if (cmd->_cmd == 17 && cmd->_messageNum == 36 && cmd->_param == kActionSkipCredits) {
 		_fadeIn = false;
 
@@ -1226,7 +1226,7 @@ bool ModalCredits::handleMessage(Command *cmd) {
 	return false;
 }
 
-bool ModalCredits::init(int counterdiff) {
+bool CreditsController::init(int counterdiff) {
 	if (_fadeIn || _fadeOut) {
 		_countdown--;
 
@@ -1251,7 +1251,7 @@ bool ModalCredits::init(int counterdiff) {
 	return true;
 }
 
-void ModalCredits::update() {
+void CreditsController::update() {
 	if (_fadeOut) {
 		if (_fadeIn) {
 			_sceneTitles->render();
@@ -1493,7 +1493,7 @@ bool MainMenu::init(int counterdiff) {
 		break;
 
 	case PIC_MNU_AUTHORS_L:
-		g_nmi->_modalObject = new ModalCredits();
+		g_nmi->_modalObject = new CreditsController();
 		g_nmi->_modalObject->_parentObj = this;
 
 		_hoverAreaId = 0;

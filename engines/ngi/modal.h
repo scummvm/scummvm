@@ -173,7 +173,7 @@ class ModalFinal : public BaseModalObject {
 	void unloadScenes();
 };
 
-class ModalCredits : public BaseModalObject {
+class CreditsController : public BaseModalObject {
 	Scene *_sceneTitles;
 	PictureObject *_creditsPic;
 	bool _fadeIn;
@@ -185,8 +185,8 @@ class ModalCredits : public BaseModalObject {
 	int _maxY;
 
  public:
-	ModalCredits();
-	~ModalCredits() override;
+	CreditsController();
+	~CreditsController() override;
 
 	bool pollEvent() override { return true; }
 	bool handleMessage(Command *message) override;
