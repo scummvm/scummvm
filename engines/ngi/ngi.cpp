@@ -22,6 +22,7 @@
 #include "base/plugins.h"
 
 #include "common/archive.h"
+#include "common/compression/unzip.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "audio/mixer.h"
@@ -240,6 +241,19 @@ Common::String NGIEngine::getSaveStateName(int slot) const {
 }
 
 Common::Error NGIEngine::run() {
+	if (getPlatform() == Common::kPlatformAndroid) {
+		const auto &files = _gameDescription->desc.filesDescriptions;
+		const Common::FSNode gameDirectory(ConfMan.getPath("path"));
+		Common::ScopedPtr<Common::Archive> apk(Common::makeZipArchive(gameDirectory.getChild(files[0].fileName)));
+		Common::ScopedPtr<Common::Archive> obb(Common::makeZipArchive(gameDirectory.getChild(files[1].fileName)));
+		if (!apk || !obb)
+			return Common::Error(Common::kNoGameDataFoundError, "Could not open the Full Pipe APK and OBB archives");
+
+		SearchMan.add("ngi-android-obb", obb.release());
+		SearchMan.add("ngi-android-apk", apk.release());
+		return Common::Error(Common::kUnsupportedGameidError, "Full Pipe Android project loading is not implemented");
+	}
+
 	// Initialize backend
 	initGraphics(800, 600, nullptr);
 
