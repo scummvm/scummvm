@@ -754,8 +754,8 @@ void MovGraphItem::free() {
 		return;
 
 	for (uint i = 0; i < mi_movitems->size(); i++) {
-		(*mi_movitems)[i]->movarr->_steps.clear();
-		delete (*mi_movitems)[i]->movarr;
+		(*mi_movitems)[i]->path->_steps.clear();
+		delete (*mi_movitems)[i]->path;
 	}
 
 	delete mi_movitems;
@@ -763,19 +763,19 @@ void MovGraphItem::free() {
 	mi_movitems = nullptr;
 }
 
-GrPathDesc *getPreferredPath(AniObject *ani, Common::Array<MovItem *> *items, signed int counter) {
+GrPathDesc *getPreferredPath(AniObject *ani, Common::Array<PathDesc *> *items, signed int counter) {
 	int residx = 0;
 	int itemidx = 0;
 
 	while (counter > 1) {
-		if ((*items)[itemidx]->_mfield_4 > (*items)[itemidx + 1]->_mfield_4)
+		if ((*items)[itemidx]->_length > (*items)[itemidx + 1]->_length)
 			residx = itemidx;
 
 		counter--;
 		itemidx++;
 	}
 
-	return (*items)[residx]->movarr;
+	return (*items)[residx]->path;
 }
 
 MovGraph::MovGraph() {
@@ -840,7 +840,7 @@ void MovGraph::detachAllObjects() {
 	_items.clear();
 }
 
-Common::Array<MovItem *> *MovGraph::getPaths(AniObject *ani, int x, int y, int flag1, int *rescount) {
+Common::Array<PathDesc *> *MovGraph::getPaths(AniObject *ani, int x, int y, int flag1, int *rescount) {
 	debugC(4, kDebugPathfinding, "MovGraph::getPaths(*%d, %d, %d, %d, &rescount)", (ani ? ani->_id : -1), x, y, flag1);
 
 	*rescount = 0;
@@ -881,10 +881,10 @@ Common::Array<MovItem *> *MovGraph::getPaths(AniObject *ani, int x, int y, int f
 	if (movarr) {
 		for (int i = 0; i < arrSize; i++) {
 			int sz;
-			Common::Array<MovItem *> *movitems = getPaths(&_items[idx].movarr, (*movarr)[i], &sz);
+			Common::Array<PathDesc *> *movitems = getPaths(&_items[idx].movarr, (*movarr)[i], &sz);
 
 			if (sz > 0) {
-				_items[idx].mi_movitems = new Common::Array<MovItem *>;
+				_items[idx].mi_movitems = new Common::Array<PathDesc *>;
 				for (int j = 0; j < sz; j++)
 					_items[idx].mi_movitems->push_back(movitems[j]);
 			}
@@ -929,7 +929,7 @@ MessageQueue *MovGraph::startMove(AniObject *ani, int xpos, int ypos, int fuzzyM
 		return nullptr;
 
 	int count;
-	Common::Array<MovItem *> *movitems = getPaths(ani, xpos, ypos, fuzzyMatch, &count);
+	Common::Array<PathDesc *> *movitems = getPaths(ani, xpos, ypos, fuzzyMatch, &count);
 
 	if (!movitems)
 		return nullptr;
@@ -984,7 +984,7 @@ MessageQueue *MovGraph::startMove(AniObject *ani, int xpos, int ypos, int fuzzyM
 	return method50(ani, _selFunc(ani, movitems, count), staticsId);
 }
 
-void MovGraph::setSelFunc(GrPathDesc *(*callback1)(AniObject *ani, Common::Array<MovItem *> *items, signed int counter)) {
+void MovGraph::setSelFunc(GrPathDesc *(*callback1)(AniObject *ani, Common::Array<PathDesc *> *items, signed int counter)) {
 	_selFunc = callback1;
 }
 
@@ -1033,7 +1033,7 @@ bool MovGraph::canDropInventory(AniObject *ani, int x, int y) {
 		if (x != -1 || y != -1) {
 			int counter;
 
-			Common::Array<MovItem *> *movitem = getPaths(ani, x, y, 0, &counter);
+			Common::Array<PathDesc *> *movitem = getPaths(ani, x, y, 0, &counter);
 
 			if (movitem) {
 				GrPathDesc *movarr = _selFunc(ani, movitem, counter);
@@ -1058,7 +1058,7 @@ MessageQueue *MovGraph::makeQueue(AniObject *subj, int xpos, int ypos, int fuzzy
 	PicAniInfo picAniInfo;
 	int ss;
 
-	Common::Array<MovItem *> *movitem = getPaths(subj, xpos, ypos, fuzzyMatch, &ss);
+	Common::Array<PathDesc *> *movitem = getPaths(subj, xpos, ypos, fuzzyMatch, &ss);
 
 	subj->getPicAniInfo(picAniInfo);
 
@@ -1067,7 +1067,7 @@ MessageQueue *MovGraph::makeQueue(AniObject *subj, int xpos, int ypos, int fuzzy
 		int idx = getObjectIndex(subj);
 
 		for (int i = 0; i < _items[idx].count; i++) {
-			if ((*_items[idx].mi_movitems)[i]->movarr == goal) {
+			if ((*_items[idx].mi_movitems)[i]->path == goal) {
 				if (subj->_movement) {
 					Common::Point point;
 
@@ -1097,7 +1097,7 @@ MessageQueue *MovGraph::makeQueue(AniObject *subj, int xpos, int ypos, int fuzzy
 		if (_items[idx].count > 0) {
 			int arridx = 0;
 
-			while ((*_items[idx].mi_movitems)[arridx]->movarr != goal) {
+			while ((*_items[idx].mi_movitems)[arridx]->path != goal) {
 				arridx++;
 
 				if (arridx >= _items[idx].count) {
@@ -1107,8 +1107,8 @@ MessageQueue *MovGraph::makeQueue(AniObject *subj, int xpos, int ypos, int fuzzy
 			}
 
 			_items[idx].movarr._steps.clear();
-			_items[idx].movarr = *(*_items[idx].mi_movitems)[arridx]->movarr;
-			_items[idx].movarr._steps = (*_items[idx].mi_movitems)[arridx]->movarr->_steps;
+			_items[idx].movarr = *(*_items[idx].mi_movitems)[arridx]->path;
+			_items[idx].movarr._steps = (*_items[idx].mi_movitems)[arridx]->path->_steps;
 			_items[idx].movarr._afield_8 = -1;
 			_items[idx].movarr._link = nullptr;
 
@@ -1145,7 +1145,7 @@ MessageQueue *MovGraph::sub1(AniObject *ani, int x, int y, int stid, int x1, int
 
 	int rescount;
 
-	Common::Array<MovItem *> *movitems = getPaths(ani, x1, y1, flag1, &rescount);
+	Common::Array<PathDesc *> *movitems = getPaths(ani, x1, y1, flag1, &rescount);
 
 	if (!movitems) {
 		ani->setPicAniInfo(picinfo);
@@ -1162,10 +1162,10 @@ MessageQueue *MovGraph::sub1(AniObject *ani, int x, int y, int stid, int x1, int
 	int cnt = movgitem.count;
 
 	for (int nidx = 0; nidx < cnt; nidx++) {
-		if ((*movgitem.mi_movitems)[nidx]->movarr == goal) {
+		if ((*movgitem.mi_movitems)[nidx]->path == goal) {
 			movgitem.movarr._steps.clear();
-			_items[idx].movarr = *(*movgitem.mi_movitems)[nidx]->movarr;
-			_items[idx].movarr._steps = (*movgitem.mi_movitems)[nidx]->movarr->_steps;
+			_items[idx].movarr = *(*movgitem.mi_movitems)[nidx]->path;
+			_items[idx].movarr._steps = (*movgitem.mi_movitems)[nidx]->path->_steps;
 			_items[idx].movarr._afield_8 = -1;
 			_items[idx].movarr._link = nullptr;
 
@@ -1290,7 +1290,7 @@ MessageQueue *MovGraph::method50(AniObject *ani, GrPathDesc *movarr, int statics
 				return nullptr;
 
 			for (movidx = 0; movidx < _items[idx].count; movidx++) {
-				if ((*_items[idx].mi_movitems)[movidx]->movarr == movarr) {
+				if ((*_items[idx].mi_movitems)[movidx]->path == movarr) {
 					done = true;
 
 					break;
@@ -1300,8 +1300,8 @@ MessageQueue *MovGraph::method50(AniObject *ani, GrPathDesc *movarr, int statics
 	}
 
 	_items[idx].movarr._steps.clear();
-	_items[idx].movarr = *(*_items[idx].mi_movitems)[movidx]->movarr;
-	_items[idx].movarr._steps = (*_items[idx].mi_movitems)[movidx]->movarr->_steps;
+	_items[idx].movarr = *(*_items[idx].mi_movitems)[movidx]->path;
+	_items[idx].movarr._steps = (*_items[idx].mi_movitems)[movidx]->path->_steps;
 	_items[idx].movarr._afield_8 = -1;
 	_items[idx].movarr._link = nullptr;
 
@@ -1546,7 +1546,7 @@ void MovGraph::findAllPaths(MovGraphLink *lnk, MovGraphLink *lnk2, MovGraphLinkL
 }
 
 // Returns a list of possible paths two points in graph space
-Common::Array<MovItem *> *MovGraph::getPaths(GrPathDesc *currPos, GrPathDesc *destPos, int *pathCount) {
+Common::Array<PathDesc *> *MovGraph::getPaths(GrPathDesc *currPos, GrPathDesc *destPos, int *pathCount) {
 	debugC(4, kDebugPathfinding, "MovGraph::getPaths(...)");
 
 	MovGraphLinkList tempObList1;
@@ -1562,10 +1562,10 @@ Common::Array<MovItem *> *MovGraph::getPaths(GrPathDesc *currPos, GrPathDesc *de
 
 	*pathCount = allPaths.size();
 
-	Common::Array<MovItem *> *res = new Common::Array<MovItem *>;
+	Common::Array<PathDesc *> *res = new Common::Array<PathDesc *>;
 
 	for (int i = 0; i < *pathCount; i++) {
-		MovItem *r = new MovItem;
+		PathDesc *r = new PathDesc;
 
 		genMovItem(r, allPaths[i], currPos, destPos);
 
@@ -1580,7 +1580,7 @@ Common::Array<MovItem *> *MovGraph::getPaths(GrPathDesc *currPos, GrPathDesc *de
 	return res;
 }
 
-void MovGraph::genMovItem(MovItem *movitem, MovGraphLink *grlink, GrPathDesc *movarr1, GrPathDesc *movarr2) {
+void MovGraph::genMovItem(PathDesc *movitem, MovGraphLink *grlink, GrPathDesc *movarr1, GrPathDesc *movarr2) {
 	warning("STUB: MovGraph::genMovItem()");
 }
 

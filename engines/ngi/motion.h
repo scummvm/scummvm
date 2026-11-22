@@ -30,7 +30,7 @@ class MctlConnectionPoint;
 class MovGraphLink;
 class MessageQueue;
 struct GrPathDesc;
-struct MovItem;
+struct PathDesc;
 
 int startWalkTo(int objId, int objKey, int x, int y, int a5);
 bool doSomeAnimation(int objId, int objKey, int a3);
@@ -52,11 +52,11 @@ public:
 	virtual void attachObject(AniObject *obj) {}
 	virtual int detachObject(AniObject *obj) { return 0; }
 	virtual void detachAllObjects() {}
-	virtual Common::Array<MovItem *> *getPaths(AniObject *ani, int x, int y, int flag1, int *rescount) { return 0; }
+	virtual Common::Array<PathDesc *> *getPaths(AniObject *ani, int x, int y, int flag1, int *rescount) { return 0; }
 	virtual bool setPosImmediate(AniObject *obj, int x, int y) { return false; }
 	virtual int method30() { return 0; }
 	virtual MessageQueue *startMove(AniObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) { return 0; }
-	virtual void setSelFunc(GrPathDesc *(*_callback1)(AniObject *ani, Common::Array<MovItem *> *items, signed int counter)) {}
+	virtual void setSelFunc(GrPathDesc *(*_callback1)(AniObject *ani, Common::Array<PathDesc *> *items, signed int counter)) {}
 	virtual bool resetPosition(AniObject *ani, int flag) { return 0; }
 	virtual int checkCurrentPath() { return 0; }
 	virtual bool canDropInventory(AniObject *ani, int x, int y) { return false; }
@@ -245,9 +245,9 @@ struct GrPathDesc {
 	Common::Point _position;
 };
 
-struct MovItem {
-	GrPathDesc *movarr;
-	int _mfield_4;
+struct PathDesc {
+	GrPathDesc *path;
+	int _length;
 	int _mfield_8;
 	int _mfield_C;
 };
@@ -256,7 +256,7 @@ struct MovGraphItem {
 	AniObject *ani;
 	int field_4;
 	GrPathDesc movarr;
-	Common::Array<MovItem *> *mi_movitems;
+	Common::Array<PathDesc *> *mi_movitems;
 	int count;
 	int field_30;
 	int field_34;
@@ -278,7 +278,7 @@ private:
 	LinkList _links;
 	int _linkItemOffset;
 	Common::Array<MovGraphItem> _items;
-	GrPathDesc *(*_selFunc)(AniObject *ani, Common::Array<MovItem *> *items, signed int counter);
+	GrPathDesc *(*_selFunc)(AniObject *ani, Common::Array<PathDesc *> *items, signed int counter);
 	AniHandler _aniHandler;
 
 public:
@@ -292,10 +292,10 @@ public:
 	void attachObject(AniObject *obj) override;
 	int detachObject(AniObject *obj) override;
 	void detachAllObjects() override;
-	Common::Array<MovItem *> *getPaths(AniObject *ani, int x, int y, int flag1, int *rescount) override;
+	Common::Array<PathDesc *> *getPaths(AniObject *ani, int x, int y, int flag1, int *rescount) override;
 	bool setPosImmediate(AniObject *obj, int x, int y) override;
 	MessageQueue *startMove(AniObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) override;
-	void setSelFunc(GrPathDesc *(*_selFunc)(AniObject *ani, Common::Array<MovItem *> *items, signed int counter)) override;
+	void setSelFunc(GrPathDesc *(*_selFunc)(AniObject *ani, Common::Array<PathDesc *> *items, signed int counter)) override;
 	bool resetPosition(AniObject *ani, int flag) override;
 	bool canDropInventory(AniObject *ani, int x, int y) override;
 	MessageQueue *makeQueue(AniObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) override;
@@ -308,8 +308,8 @@ public:
 	int getObjectIndex(AniObject *ani);
 	Common::Array<GrPathDesc *> *getHitPoints(int x, int y, int *arrSize, int flag1, int flag2);
 	void findAllPaths(MovGraphLink *lnk, MovGraphLink *lnk2, MovGraphLinkList &tempObList1, MovGraphLinkList &tempObList2);
-	Common::Array<MovItem *> *getPaths(GrPathDesc *movarr1, GrPathDesc *movarr2, int *listCount);
-	void genMovItem(MovItem *movitem, MovGraphLink *grlink, GrPathDesc *movarr1, GrPathDesc *movarr2);
+	Common::Array<PathDesc *> *getPaths(GrPathDesc *movarr1, GrPathDesc *movarr2, int *listCount);
+	void genMovItem(PathDesc *movitem, MovGraphLink *grlink, GrPathDesc *movarr1, GrPathDesc *movarr2);
 	bool getHitPoint(int idx, int x, int y, GrPathDesc *arr, int a6);
 	MessageQueue *sub1(AniObject *ani, int x, int y, int a5, int x1, int y1, int a8, int a9);
 	MessageQueue *makeWholeQueue(AniObject *ani, GrPathDesc *movarr, int staticsId);
