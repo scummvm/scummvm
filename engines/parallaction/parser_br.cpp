@@ -635,7 +635,7 @@ DECLARE_COMMAND_PARSER(zeta)  {
 	ctxt.cmd->_zeta1 = atoi(_tokens[2]);
 	ctxt.nextToken++;
 
-	if (_tokens[3][0] != '\0') {
+	if (Common::isDigit(_tokens[3][0])) {
 		ctxt.cmd->_zeta2 = atoi(_tokens[3]);
 		ctxt.nextToken++;
 	} else {
