@@ -1503,7 +1503,7 @@ bool MainMenu::init(int counterdiff) {
 	case PIC_MNU_SAVE_L:
 	case PIC_MNU_LOAD_L:
 		{
-			ModalSaveGame *sg = new ModalSaveGame();
+			SaveGameDlg *sg = new SaveGameDlg();
 
 			g_nmi->_modalObject = sg;
 			g_nmi->_modalObject->_parentObj = _parentObj;
@@ -2022,7 +2022,7 @@ bool ModalQuery::init(int counterdiff) {
 	return false;
 }
 
-ModalSaveGame::ModalSaveGame() {
+SaveGameDlg::SaveGameDlg() {
 	_oldBgX = 0;
 	_oldBgY = 0;
 
@@ -2048,7 +2048,7 @@ ModalSaveGame::ModalSaveGame() {
 	keymapper->getKeymap("dialog")->setEnabled(true);
 }
 
-ModalSaveGame::~ModalSaveGame() {
+SaveGameDlg::~SaveGameDlg() {
 	g_nmi->_sceneRect = _rect;
 
 	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
@@ -2056,17 +2056,17 @@ ModalSaveGame::~ModalSaveGame() {
 	keymapper->getKeymap("ngi-default")->setEnabled(true);
 }
 
-void ModalSaveGame::setScene(Scene *sc) {
+void SaveGameDlg::setScene(Scene *sc) {
 	_queryRes = -1;
 	_menuScene = sc;
 }
 
-void ModalSaveGame::processKey(int action) {
+void SaveGameDlg::processKey(int action) {
 	if (action == kActionCloseDialog)
 		_queryRes = 0;
 }
 
-bool ModalSaveGame::init(int counterdiff) {
+bool SaveGameDlg::init(int counterdiff) {
 	if (_queryDlg) {
 		if (!_queryDlg->init(counterdiff)) {
 			if (!_queryDlg->getQueryResult())
@@ -2107,7 +2107,7 @@ bool ModalSaveGame::init(int counterdiff) {
 	return false;
 }
 
-void ModalSaveGame::setup(Scene *sc, int mode) {
+void SaveGameDlg::setup(Scene *sc, int mode) {
 	_files.clear();
 	_arrayL.clear();
 	_arrayD.clear();
@@ -2192,14 +2192,14 @@ void ModalSaveGame::setup(Scene *sc, int mode) {
 	}
 }
 
-char *ModalSaveGame::getSaveName() {
+char *SaveGameDlg::getSaveName() {
 	if (_queryRes < 0)
 		return nullptr;
 
 	return _files[_queryRes - 1].filename;
 }
 
-bool ModalSaveGame::getFileInfo(int slot, FileInfo *fileinfo) {
+bool SaveGameDlg::getFileInfo(int slot, FileInfo *fileinfo) {
 	Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(
 		g_nmi->getMetaEngine()->getSavegameFile(slot,fileinfo->filename)));
 
@@ -2250,7 +2250,7 @@ bool ModalSaveGame::getFileInfo(int slot, FileInfo *fileinfo) {
 	return true;
 }
 
-void ModalSaveGame::update() {
+void SaveGameDlg::update() {
 	if (_menuScene)
 		_menuScene->render();
 
@@ -2304,7 +2304,7 @@ void ModalSaveGame::update() {
 		_okL->render();
 }
 
-bool ModalSaveGame::handleMessage(Command *cmd) {
+bool SaveGameDlg::handleMessage(Command *cmd) {
 	if (_queryDlg)
 		return _queryDlg->handleMessage(cmd);
 
@@ -2316,7 +2316,7 @@ bool ModalSaveGame::handleMessage(Command *cmd) {
 	return false;
 }
 
-void ModalSaveGame::processMouse(int x, int y) {
+void SaveGameDlg::processMouse(int x, int y) {
 	for (uint i = 0; i < _files.size(); i++) {
 		if (x >= _files[i].fx1 && x <= _files[i].fx2 && y >= _files[i].fy1 && y <= _files[i].fy2) {
 			_queryRes = i + 1;
@@ -2337,7 +2337,7 @@ void ModalSaveGame::processMouse(int x, int y) {
 		_queryRes = 0;
 }
 
-void ModalSaveGame::saveload() {
+void SaveGameDlg::saveload() {
 	if (_objtype != kObjTypeModalSaveGame)
 		return;
 

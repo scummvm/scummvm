@@ -284,10 +284,10 @@ private:
 
 };
 
-class ModalSaveGame : public BaseModalObject {
+class SaveGameDlg : public BaseModalObject {
 public:
-	ModalSaveGame();
-	~ModalSaveGame() override;
+	SaveGameDlg();
+	~SaveGameDlg() override;
 
 	bool pollEvent() override { return true; }
 	bool handleMessage(Command *message) override;
