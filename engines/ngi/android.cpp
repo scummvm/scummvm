@@ -497,9 +497,12 @@ Common::Error NGIEngine::runAndroid() {
 	if (format.isCLUT8())
 		return Common::kUnsupportedColorMode;
 
-	Graphics::ManagedSurface frame(project.width(), project.height(), format);
+	Graphics::ManagedSurface &frame = _backgroundSurface;
+	frame.create(project.width(), project.height(), format);
+	byte brightness = scene._sceneId == SC_INTRO1 ? 0 : 255;
 	frame.clear(format.RGBToColor(0, 0, 0));
-	drawAndroidScene(scene, frame);
+	if (brightness)
+		drawAndroidScene(scene, frame);
 	_system->copyRectToScreen(frame.getPixels(), frame.pitch, 0, 0, frame.w, frame.h);
 	_system->updateScreen();
 	debugC(1, kDebugDrawing, "Presented first Full Pipe Android frame for %s", startSceneFile.c_str());
@@ -521,12 +524,14 @@ Common::Error NGIEngine::runAndroid() {
 		lastUpdate = now;
 		bool redraw = scene.update(elapsed);
 		if (scene._sceneId == SC_INTRO1)
-			redraw |= sceneIntro_updateAndroid(scene);
+			redraw |= sceneIntro_updateAndroid(scene, elapsed, brightness);
 		processMessages();
 
 		if (redraw) {
 			frame.clear(format.RGBToColor(0, 0, 0));
 			drawAndroidScene(scene, frame);
+			if (brightness < 255)
+				drawAlphaRectangle(0, 0, frame.w, frame.h, brightness);
 		}
 		if (redraw || screenChanged)
 			_system->copyRectToScreen(frame.getPixels(), frame.pitch, 0, 0, frame.w, frame.h);

@@ -37,7 +37,18 @@ static bool sceneIntro_playSleep(AniObject *sleeper) {
 	return sleeper->startMovement(MV_IN1MAN_SLEEP, 0, -1);
 }
 
-bool sceneIntro_updateAndroid(Scene &scene) {
+bool sceneIntro_updateAndroid(Scene &scene, uint32 elapsed, byte &brightness) {
+	const uint32 fadeDuration = 1025;
+	const uint32 previous = g_vars->sceneIntro_fadeElapsed;
+	if (previous < fadeDuration) {
+		g_vars->sceneIntro_fadeElapsed += MIN(elapsed, fadeDuration - previous);
+		// CFader samples the alpha before advancing its timer and clears it at the end.
+		const byte next = g_vars->sceneIntro_fadeElapsed == fadeDuration ? 255 : previous * 255 / fadeDuration;
+		const bool changed = brightness != next;
+		brightness = next;
+		return changed;
+	}
+
 	return sceneIntro_playSleep(scene.findAniObjectById(ANI_IN1MAN, -1));
 }
 

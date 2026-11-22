@@ -38,7 +38,7 @@ int defaultUpdateCursor();
 
 int sceneIntro_updateCursor();
 void sceneIntro_initScene(Scene *sc);
-bool sceneIntro_updateAndroid(Scene &scene);
+bool sceneIntro_updateAndroid(Scene &scene, uint32 elapsed, byte &brightness);
 int sceneHandlerIntro(Command *cmd);
 
 int sceneIntroDemo_updateCursor();
@@ -224,6 +224,7 @@ public:
 
 	AniObject *sceneIntro_aniin1man;
 	bool sceneIntro_needSleep;
+	uint32 sceneIntro_fadeElapsed = 0;
 	bool sceneIntro_needGetup;
 	bool sceneIntro_skipIntro;
 	bool sceneIntro_playing;
