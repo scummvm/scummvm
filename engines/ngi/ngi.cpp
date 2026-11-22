@@ -509,7 +509,7 @@ void NGIEngine::updateScreen() {
 			}
 		}
 	} else if (_currentScene) {
-		_currentScene->draw();
+		_currentScene->render();
 
 		if (_inventoryScene)
 			_inventory->draw();

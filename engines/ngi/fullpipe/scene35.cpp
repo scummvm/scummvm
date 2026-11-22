@@ -37,8 +37,8 @@
 namespace NGI {
 
 void scene35_initScene(Scene *sc) {
-	g_vars->scene35_hose = sc->getStaticANIObject1ById(ANI_HOSE, -1);
-	g_vars->scene35_bellyInflater = sc->getStaticANIObject1ById(ANI_PUZODUV, -1);
+	g_vars->scene35_hose = sc->findAniObjectById(ANI_HOSE, -1);
+	g_vars->scene35_bellyInflater = sc->findAniObjectById(ANI_PUZODUV, -1);
 	g_vars->scene35_flowCounter = 0;
 	g_vars->scene35_fliesCounter = 0;
 
@@ -89,7 +89,7 @@ void sceneHandler35_startFlow() {
 			g_vars->scene35_bellyInflater->setStatic(ST_PDV_SMALL);
 			g_vars->scene35_bellyInflater->_flags &= ~0x100;
 
-			MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC35_EATHOZE), 0, 0);
+			MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC35_EATHOZE), 0, 0);
 
 			mq->setFlags(mq->getFlags() | 1);
 
@@ -119,7 +119,7 @@ void sceneHandler35_startFlow() {
 }
 
 void sceneHandler35_genFlies() {
-	AniObject *fly = g_nmi->_currentScene->getStaticANIObject1ById(ANI_FLY, -1);
+	AniObject *fly = g_nmi->_currentScene->findAniObjectById(ANI_FLY, -1);
 
 	int xoff = 0;
 	if ((!fly || !(fly->_flags & 4)) && !(g_nmi->_rnd.getRandomNumber(32767) % 30)) {
@@ -202,7 +202,7 @@ int sceneHandler35(ExCommand *cmd) {
 
 	case 29:
 		{
-			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
+			AniObject *ani = g_nmi->_currentScene->findAniObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
 
 			if (ani)
 				if (ani->_id == ANI_LIFTBUTTON) {
@@ -213,7 +213,7 @@ int sceneHandler35(ExCommand *cmd) {
 
 			if (!ani || !canInteractAny(g_nmi->_aniMan, ani, cmd->_param)) {
 				int picId = g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-				PictureObject *pic = g_nmi->_currentScene->getPictureObjectById(picId, 0);
+				PictureObject *pic = g_nmi->_currentScene->findPictureObjectById(picId, 0);
 
 				if (!pic || !canInteractAny(g_nmi->_aniMan, pic, cmd->_param)) {
 					if ((g_nmi->_sceneRect.right - cmd->_sceneClickX < 47 && g_nmi->_sceneRect.right < g_nmi->_sceneWidth - 1) || (cmd->_sceneClickX - g_nmi->_sceneRect.left < 47 && g_nmi->_sceneRect.left > 0)) {

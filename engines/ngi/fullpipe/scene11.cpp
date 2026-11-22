@@ -93,14 +93,14 @@ void scene11_setupMusic() {
 }
 
 void scene11_initScene(Scene *sc) {
-	g_vars->scene11_swingie = sc->getStaticANIObject1ById(ANI_SWINGER, -1);
-	g_vars->scene11_boots = sc->getStaticANIObject1ById(ANI_BOOTS_11, -1);
+	g_vars->scene11_swingie = sc->findAniObjectById(ANI_SWINGER, -1);
+	g_vars->scene11_boots = sc->findAniObjectById(ANI_BOOTS_11, -1);
 	g_vars->scene11_aniHandler.detachAllObjects();
-	g_vars->scene11_dudeOnSwing = sc->getStaticANIObject1ById(ANI_MAN11, -1);
+	g_vars->scene11_dudeOnSwing = sc->findAniObjectById(ANI_MAN11, -1);
 	g_vars->scene11_dudeOnSwing->_callback2 = scene11_dudeSwingCallback;
-	g_vars->scene11_dudeOnSwing = sc->getStaticANIObject1ById(ANI_KACHELI, -1);
+	g_vars->scene11_dudeOnSwing = sc->findAniObjectById(ANI_KACHELI, -1);
 	g_vars->scene11_dudeOnSwing->_callback2 = scene11_dudeSwingCallback;
-	g_vars->scene11_hint = sc->getPictureObjectById(PIC_SC11_HINT, 0);
+	g_vars->scene11_hint = sc->findPictureObjectById(PIC_SC11_HINT, 0);
 	g_vars->scene11_hint->_flags &= 0xFFFB;
 
 	g_vars->scene11_arcadeIsOn = false;
@@ -184,7 +184,7 @@ void scene11_initScene(Scene *sc) {
 }
 
 void sceneHandler11_restartMan() {
-	chainObjQueue(nullptr, QU_SC11_RESTARTMAN, 1);
+	runQueueByIdWithAni(nullptr, QU_SC11_RESTARTMAN, 1);
 
 	getGameLoaderInteractionController()->enableFlag24();
 	getCurrSceneSc2MotionController()->activate();
@@ -196,7 +196,7 @@ void sceneHandler11_hitMan() {
 	if (g_nmi->_aniMan->_x > 345 && g_nmi->_aniMan->_x < 355) {
 		g_nmi->_aniMan->setStatic(ST_MAN_RIGHT);
 
-		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC11_MANFALL), 0, 0);
+		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC11_MANFALL), 0, 0);
 
 		mq->setFlags(mq->getFlags() | 1);
 		if (!mq->run(g_nmi->_aniMan))
@@ -241,7 +241,7 @@ void sceneHandler11_manToSwing() {
 	g_vars->scene11_swingInertia = 0.01; //1.9849218;
 
 	g_vars->scene11_dudeOnSwing->_flags &= 0xFFFB;
-	g_vars->scene11_dudeOnSwing = g_nmi->_currentScene->getStaticANIObject1ById(ANI_MAN11, -1);
+	g_vars->scene11_dudeOnSwing = g_nmi->_currentScene->findAniObjectById(ANI_MAN11, -1);
 	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStatic(ST_MAN11_EMPTY);
 	g_vars->scene11_dudeOnSwing->_movement = nullptr;
 	g_vars->scene11_dudeOnSwing->show1(690, 215, MV_MAN11_SWING_0, 0);
@@ -260,9 +260,9 @@ void sceneHandler11_manToSwing() {
 void sceneHandler11_putABoot() {
 	if (g_vars->scene11_boots->_flags & 4) {
 		if (g_vars->scene11_boots->_statics->_staticsId == ST_BTS11_ONE)
-			chainObjQueue(nullptr, QU_SC11_PUTBOOT2, 1);
+			runQueueByIdWithAni(nullptr, QU_SC11_PUTBOOT2, 1);
 	} else {
-		chainObjQueue(nullptr, QU_SC11_PUTBOOT1, 1);
+		runQueueByIdWithAni(nullptr, QU_SC11_PUTBOOT1, 1);
 	}
 }
 
@@ -285,7 +285,7 @@ void sceneHandler11_putBoot() {
 }
 
 void sceneHandler11_showSwing() {
-	g_vars->scene11_dudeOnSwing = g_nmi->_currentScene->getStaticANIObject1ById(ANI_KACHELI, -1);
+	g_vars->scene11_dudeOnSwing = g_nmi->_currentScene->findAniObjectById(ANI_KACHELI, -1);
 	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStatic(ST_KCH_0);
 	g_vars->scene11_dudeOnSwing->_movement = nullptr;
 	g_vars->scene11_dudeOnSwing->show1(691, 371, MV_KCH_START, 0);
@@ -305,9 +305,9 @@ void sceneHandler11_jumpFromSwing() {
 	g_vars->scene11_swingSpeed = 0.0;
 	g_vars->scene11_swingAngle = 0.0;
 
-	g_vars->scene11_dudeOnSwing = g_nmi->_currentScene->getStaticANIObject1ById(ANI_MAN11, -1);
+	g_vars->scene11_dudeOnSwing = g_nmi->_currentScene->findAniObjectById(ANI_MAN11, -1);
 	g_vars->scene11_dudeOnSwing->_flags &= 0xFFFB;
-	g_vars->scene11_dudeOnSwing = g_nmi->_currentScene->getStaticANIObject1ById(ANI_KACHELI, -1);
+	g_vars->scene11_dudeOnSwing = g_nmi->_currentScene->findAniObjectById(ANI_KACHELI, -1);
 	g_vars->scene11_dudeOnSwing->setStatic(ST_KCH_STATIC);
 	g_vars->scene11_dudeOnSwing->setPos(691, 371);
 	g_vars->scene11_dudeOnSwing->_z = 20;
@@ -383,7 +383,7 @@ void sceneHandler11_emptySwing() {
 
 	g_vars->scene11_dudeOnSwing->stopMovement();
 	g_vars->scene11_dudeOnSwing->hide();
-	g_vars->scene11_dudeOnSwing = g_nmi->_currentScene->getStaticANIObject1ById(ANI_KACHELI, -1);
+	g_vars->scene11_dudeOnSwing = g_nmi->_currentScene->findAniObjectById(ANI_KACHELI, -1);
 	g_vars->scene11_dudeOnSwing->show1(-1, -1, -1, 0);
 	g_vars->scene11_dudeOnSwing->setStatic(ST_KCH_EMPTY);
 	g_vars->scene11_dudeOnSwing->startMovement(MV_KCH_MOVE2, 0, -1);
@@ -559,7 +559,7 @@ void sceneHandler11_swingieSit() {
 }
 
 void sceneHandler11_swingieJumpDown() {
-	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SWR_JUMPDOWN), 0, 0);
+	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SWR_JUMPDOWN), 0, 0);
 
 	mq->setFlags(mq->getFlags() | 1);
 
@@ -733,7 +733,7 @@ int sceneHandler11(ExCommand *cmd) {
 
 	case 29:
 		if (g_vars->scene11_swingIsSwinging) {
-			if (g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y) == g_vars->scene11_swingie
+			if (g_nmi->_currentScene->findAniObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y) == g_vars->scene11_swingie
 				&& cmd->_param == ANI_INV_BOOT)
 				sceneHandler11_putBoot();
 		} else {
@@ -747,11 +747,11 @@ int sceneHandler11(ExCommand *cmd) {
 
 		if (!g_vars->scene11_arcadeIsOn) {
 		LABEL_69:
-			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->findAniObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (!ani || !canInteractAny(g_nmi->_aniMan, ani, cmd->_param)) {
 				int picId = g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-				PictureObject *pic = g_nmi->_currentScene->getPictureObjectById(picId, 0);
+				PictureObject *pic = g_nmi->_currentScene->findPictureObjectById(picId, 0);
 
 				if (!pic || !canInteractAny(g_nmi->_aniMan, pic, cmd->_param)) {
 					if ((g_nmi->_sceneRect.right - cmd->_sceneClickX < 47 && g_nmi->_sceneRect.right < g_nmi->_sceneWidth - 1)

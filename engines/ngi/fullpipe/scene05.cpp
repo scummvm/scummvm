@@ -44,9 +44,9 @@ void scene05_initScene(Scene *sc) {
 	inv->rebuildItemRects();
 #endif
 
-	g_vars->scene05_handle = sc->getStaticANIObject1ById(ANI_HANDLE, -1);
-	g_vars->scene05_wacko = sc->getStaticANIObject1ById(ANI_OTMOROZ, -1);
-	g_vars->scene05_bigHatch = sc->getStaticANIObject1ById(ANI_BIGLUK, -1);
+	g_vars->scene05_handle = sc->findAniObjectById(ANI_HANDLE, -1);
+	g_vars->scene05_wacko = sc->findAniObjectById(ANI_OTMOROZ, -1);
+	g_vars->scene05_bigHatch = sc->findAniObjectById(ANI_BIGLUK, -1);
 
 
 	g_vars->scene05_wackoTicker = 0;
@@ -96,7 +96,7 @@ void sceneHandler05_makeManFlight() {
 	else
 		qid = QU_SC5_MANFLY;
 
-	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(qid), 0, 0);
+	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(qid), 0, 0);
 
 	mq->setFlags(mq->getFlags() | 1);
 
@@ -168,11 +168,11 @@ void sceneHandler05_genFlies() {
 }
 
 void sceneHandler05_showHandle() {
-	g_nmi->_currentScene->getStaticANIObject1ById(ANI_HANDLE, -1)->show1(-1, -1, -1, 0);
+	g_nmi->_currentScene->findAniObjectById(ANI_HANDLE, -1)->show1(-1, -1, -1, 0);
 }
 
 void sceneHandler05_handleDown() {
-	AniObject *hatch = g_nmi->_currentScene->getStaticANIObject1ById(ANI_BIGLUK, -1);
+	AniObject *hatch = g_nmi->_currentScene->findAniObjectById(ANI_BIGLUK, -1);
 
 	hatch->setStatic(ST_BLK_CLOSED);
 	hatch->startMovement(MV_BLK_OPEN, 0, -1);
@@ -182,11 +182,11 @@ void sceneHandler05_handleDown() {
 }
 
 void sceneHandler05_hideHandle() {
-	g_nmi->_currentScene->getStaticANIObject1ById(ANI_HANDLE, -1)->hide();
+	g_nmi->_currentScene->findAniObjectById(ANI_HANDLE, -1)->hide();
 }
 
 void sceneHandler05_handleUp() {
-	AniObject *hatch = g_nmi->_currentScene->getStaticANIObject1ById(ANI_BIGLUK, -1);
+	AniObject *hatch = g_nmi->_currentScene->findAniObjectById(ANI_BIGLUK, -1);
 
 	hatch->setStatic(ST_BLK_OPEN);
 	hatch->startMovement(MV_BLK_CLOSE, 0, -1);
@@ -197,7 +197,7 @@ void sceneHandler05_handleUp() {
 void sceneHandler05_testHatch(ExCommand *inex) {
 	ExCommand *ex;
 
-	if (g_nmi->_currentScene->getStaticANIObject1ById(ANI_BIGLUK, -1)->_statics->_staticsId == ST_BLK_CLOSED) {
+	if (g_nmi->_currentScene->findAniObjectById(ANI_BIGLUK, -1)->_statics->_staticsId == ST_BLK_CLOSED) {
 		ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = TrubaLeft;
 		ex->_excFlags |= 2;
@@ -206,7 +206,7 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 		return;
 	}
 
-	AniObject *wacko = g_nmi->_currentScene->getStaticANIObject1ById(ANI_OTMOROZ, -1);
+	AniObject *wacko = g_nmi->_currentScene->findAniObjectById(ANI_OTMOROZ, -1);
 
 	if (wacko->_movement)
 		wacko->setStatic(wacko->_movement->_nextStatic->_staticsId);

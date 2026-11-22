@@ -59,7 +59,7 @@ void scene37_initScene(Scene *sc) {
 	g_vars->scene37_lastDudeX = -1;
 
 	ring = new Ring();
-	ani = sc->getStaticANIObject1ById(ANI_GUARD_37, 0);
+	ani = sc->findAniObjectById(ANI_GUARD_37, 0);
 	ring->ani = ani;
 	ring->x = ani->_x - 40;
 	ring->y = ani->_x + 40;
@@ -71,7 +71,7 @@ void scene37_initScene(Scene *sc) {
 	g_vars->scene37_rings.push_back(ring);
 
 	ring = new Ring();
-	ani = sc->getStaticANIObject1ById(ANI_GUARD_37, 1);
+	ani = sc->findAniObjectById(ANI_GUARD_37, 1);
 	ring->ani = ani;
 	ring->x = ani->_x - 40;
 	ring->y = ani->_x + 40;
@@ -83,7 +83,7 @@ void scene37_initScene(Scene *sc) {
 	g_vars->scene37_rings.push_back(ring);
 
 	ring = new Ring();
-	ani = sc->getStaticANIObject1ById(ANI_GUARD_37, 2);
+	ani = sc->findAniObjectById(ANI_GUARD_37, 2);
 	ring->ani = ani;
 	ring->x = ani->_x - 40;
 	ring->y = ani->_x + 40;
@@ -102,10 +102,10 @@ void scene37_initScene(Scene *sc) {
 
 	g_vars->scene37_pipeIsOpen = false;
 
-	g_vars->scene37_plusMinus1 = sc->getStaticANIObject1ById(ANI_PLUSMINUS, 1);
+	g_vars->scene37_plusMinus1 = sc->findAniObjectById(ANI_PLUSMINUS, 1);
 
 	for (int i = 0; i < g_vars->scene37_rings[0]->numSubRings; i++) {
-		ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_RING, g_vars->scene37_rings[0]->subRings[i]);
+		ani = g_nmi->_currentScene->findAniObjectById(ANI_RING, g_vars->scene37_rings[0]->subRings[i]);
 
 		if (g_nmi->getObjectState(sO_Guard_1) == g_nmi->getObjectEnumState(sO_Guard_1, sO_On)) {
 			g_vars->scene37_plusMinus1->_statics = g_vars->scene37_plusMinus1->getStatic(ST_PMS_PLUS);
@@ -116,10 +116,10 @@ void scene37_initScene(Scene *sc) {
 		}
 	}
 
-	g_vars->scene37_plusMinus2 = sc->getStaticANIObject1ById(ANI_PLUSMINUS, 2);
+	g_vars->scene37_plusMinus2 = sc->findAniObjectById(ANI_PLUSMINUS, 2);
 
 	for (int i = 0; i < g_vars->scene37_rings[1]->numSubRings; i++) {
-		ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_RING, g_vars->scene37_rings[1]->subRings[i]);
+		ani = g_nmi->_currentScene->findAniObjectById(ANI_RING, g_vars->scene37_rings[1]->subRings[i]);
 
 		if (g_nmi->getObjectState(sO_Guard_2) == g_nmi->getObjectEnumState(sO_Guard_2, sO_On)) {
 			g_vars->scene37_plusMinus2->_statics = g_vars->scene37_plusMinus2->getStatic(ST_PMS_PLUS);
@@ -130,10 +130,10 @@ void scene37_initScene(Scene *sc) {
 		}
 	}
 
-	g_vars->scene37_plusMinus3 = sc->getStaticANIObject1ById(ANI_PLUSMINUS, 3);
+	g_vars->scene37_plusMinus3 = sc->findAniObjectById(ANI_PLUSMINUS, 3);
 
 	for (int i = 0; i < g_vars->scene37_rings[2]->numSubRings; i++) {
-		ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_RING, g_vars->scene37_rings[2]->subRings[i]);
+		ani = g_nmi->_currentScene->findAniObjectById(ANI_RING, g_vars->scene37_rings[2]->subRings[i]);
 
 		if (g_nmi->getObjectState(sO_Guard_3) == g_nmi->getObjectEnumState(sO_Guard_3, sO_On)) {
 			g_vars->scene37_plusMinus3->_statics = g_vars->scene37_plusMinus3->getStatic(ST_PMS_PLUS);
@@ -168,7 +168,7 @@ void sceneHandler37_updateRing(int ringNum) {
 	AniObject *ani;
 
 	for (int i = 0; i < g_vars->scene37_rings[ringNum]->numSubRings; i++) {
-		ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_RING, g_vars->scene37_rings[ringNum]->subRings[i]);
+		ani = g_nmi->_currentScene->findAniObjectById(ANI_RING, g_vars->scene37_rings[ringNum]->subRings[i]);
 
 		if ((ani->_movement && ani->_movement->_id != MV_RNG_CLOSE) || ani->_statics->_staticsId != ST_RNG_CLOSED2) {
 			ani->setStatic(ST_RNG_OPEN);
@@ -183,7 +183,7 @@ void sceneHandler37_updateRing(int ringNum) {
 
 	for (uint i = 0; i < g_vars->scene37_rings.size(); i++) {
 		for (int j = 0; j < g_vars->scene37_rings[i]->numSubRings; j++) {
-			ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_RING, g_vars->scene37_rings[i]->subRings[j]);
+			ani = g_nmi->_currentScene->findAniObjectById(ANI_RING, g_vars->scene37_rings[i]->subRings[j]);
 
 			debugC(2, kDebugSceneLogic, "ring[%d][%d]: mov: %d st: %d", i, j, (ani->_movement ? ani->_movement->_id : 0), ani->_statics->_staticsId);
 
@@ -244,11 +244,11 @@ int sceneHandler37(ExCommand *cmd) {
 
 	case 29:
 		{
-			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->findAniObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (!ani || !canInteractAny(g_nmi->_aniMan, ani, cmd->_param)) {
 				int picId = g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-				PictureObject *pic = g_nmi->_currentScene->getPictureObjectById(picId, 0);
+				PictureObject *pic = g_nmi->_currentScene->findPictureObjectById(picId, 0);
 
 				if (!pic || !canInteractAny(g_nmi->_aniMan, pic, cmd->_param)) {
 					if ((g_nmi->_sceneRect.right - cmd->_sceneClickX < 47 && g_nmi->_sceneRect.right < g_nmi->_sceneWidth - 1)

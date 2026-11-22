@@ -60,7 +60,7 @@ void scene20_setExits(Scene *sc) {
 void scene20_initScene(Scene *sc) {
 	Scene *oldsc = g_nmi->_currentScene;
 
-	g_vars->scene20_grandma = sc->getStaticANIObject1ById(ANI_GRANDMA_20, -1);
+	g_vars->scene20_grandma = sc->findAniObjectById(ANI_GRANDMA_20, -1);
 
 	g_nmi->_currentScene = sc;
 

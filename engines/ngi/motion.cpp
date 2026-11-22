@@ -3087,13 +3087,13 @@ int startWalkTo(int objId, int objKey, int x, int y, int fuzzyMatch) {
 	MctlCompound *mc = getCurrSceneSc2MotionController();
 
 	if (mc)
-		return (mc->startMove(g_nmi->_currentScene->getStaticANIObject1ById(objId, objKey), x, y, fuzzyMatch, 0) != nullptr);
+		return (mc->startMove(g_nmi->_currentScene->findAniObjectById(objId, objKey), x, y, fuzzyMatch, 0) != nullptr);
 
 	return 0;
 }
 
 bool doSomeAnimation(int objId, int objKey, int a3) {
-	AniObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(objId, objKey);
+	AniObject *ani = g_nmi->_currentScene->findAniObjectById(objId, objKey);
 	MctlCompound *cmp = getCurrSceneSc2MotionController();
 
 	if (ani && cmp)

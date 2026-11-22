@@ -39,7 +39,7 @@ int sceneIntro_updateCursor() {
 void sceneIntro_initScene(Scene *sc) {
 	g_nmi->_gameLoader->loadScene(SC_INTRO2);
 
-	g_vars->sceneIntro_aniin1man = sc->getStaticANIObject1ById(ANI_IN1MAN, -1);
+	g_vars->sceneIntro_aniin1man = sc->findAniObjectById(ANI_IN1MAN, -1);
 	g_vars->sceneIntro_needSleep = true;
 	g_vars->sceneIntro_needGetup = false;
 	g_vars->sceneIntro_playing = true;
@@ -53,12 +53,12 @@ void sceneIntro_initScene(Scene *sc) {
 
 void sceneHandlerIntro_part1() {
 	g_nmi->_currentScene = g_nmi->accessScene(SC_INTRO1);
-	chainQueue(QU_INTR_FINISH, 0);
+	runQueue(QU_INTR_FINISH, 0);
 }
 
 void sceneHandlerIntro_part2() {
 	g_nmi->_currentScene = g_nmi->accessScene(SC_INTRO2);
-	chainQueue(QU_IN2_DO, 0);
+	runQueue(QU_IN2_DO, 0);
 }
 
 int sceneHandlerIntro(ExCommand *ex) {
@@ -98,7 +98,7 @@ int sceneHandlerIntro(ExCommand *ex) {
 				g_vars->sceneIntro_aniin1man->_statics->_staticsId == ST_IN1MAN_SLEEP) {
 		g_vars->sceneIntro_needGetup = 0;
 
-		chainQueue(QU_INTR_GETUPMAN, 0);
+		runQueue(QU_INTR_GETUPMAN, 0);
 	}
 
 	g_nmi->startSceneTrack();

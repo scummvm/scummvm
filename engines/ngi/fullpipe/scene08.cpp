@@ -45,9 +45,9 @@ void scene08_initScene(Scene *sc) {
 	g_vars->scene08_inAir = false;
 	g_vars->scene08_flyingUp = false;
 	g_vars->scene08_onBelly = false;
-	g_vars->scene08_batuta = sc->getStaticANIObject1ById(ANI_BATUTA, -1);
-	g_vars->scene08_vmyats = sc->getStaticANIObject1ById(ANI_VMYATS, -1);
-	g_vars->scene08_clock = sc->getStaticANIObject1ById(ANI_CLOCK_8, -1);
+	g_vars->scene08_batuta = sc->findAniObjectById(ANI_BATUTA, -1);
+	g_vars->scene08_vmyats = sc->findAniObjectById(ANI_VMYATS, -1);
+	g_vars->scene08_clock = sc->findAniObjectById(ANI_CLOCK_8, -1);
 	g_vars->scene08_stairsOffset = -37;
 	g_vars->scene08_snoringCountdown = -1;
 
@@ -89,14 +89,14 @@ void scene08_initScene(Scene *sc) {
 	if (g_nmi->getObjectState(sO_StairsUp_8) == g_nmi->getObjectEnumState(sO_StairsUp_8, sO_Broken)) {
 		g_vars->scene08_stairsVisible = false;
 
-		sc->getPictureObjectById(PIC_SC8_LADDER, 0)->_flags &= 0xFFFB;
+		sc->findPictureObjectById(PIC_SC8_LADDER, 0)->_flags &= 0xFFFB;
 
 		g_vars->scene08_stairsOffset = -39;
 	} else {
 		g_vars->scene08_stairsVisible = true;
 	}
 
-	sc->getPictureObjectById(PIC_SC8_ARCADENOW, 0)->_flags &= 0xFFFB;
+	sc->findPictureObjectById(PIC_SC8_ARCADENOW, 0)->_flags &= 0xFFFB;
 
 	g_nmi->_currentScene = oldsc;
 
@@ -136,14 +136,14 @@ int scene08_updateCursor() {
 }
 
 void sceneHandler08_enterUp() {
-	g_nmi->_currentScene->getPictureObjectById(PIC_SC8_LADDER, 0)->_flags &= 0xFFFB;
+	g_nmi->_currentScene->findPictureObjectById(PIC_SC8_LADDER, 0)->_flags &= 0xFFFB;
 
 	g_nmi->_aniMan->setStatic(ST_MAN8_HANDSUP);
 	g_nmi->_aniMan->setPos(386, 236);
 	g_nmi->_aniMan->_z = 10;
 	g_nmi->_aniMan->_flags = 4;
 
-	chainObjQueue(g_nmi->_aniMan, QU_SC8_FINISH, 1);
+	runQueueByIdWithAni(g_nmi->_aniMan, QU_SC8_FINISH, 1);
 
 	g_vars->scene08_inAir = false;
 }
@@ -159,7 +159,7 @@ void sceneHandler08_winArcade() {
 }
 
 void sceneHandler08_hideLadder() {
-	g_nmi->_currentScene->getPictureObjectById(PIC_SC8_LADDER_D, 0)->_flags &= 0xFFFB;
+	g_nmi->_currentScene->findPictureObjectById(PIC_SC8_LADDER_D, 0)->_flags &= 0xFFFB;
 }
 
 void sceneHandler08_arcadeNow() {
@@ -235,7 +235,7 @@ void sceneHandler08_startArcade() {
 	g_vars->scene08_vmyats->_z = 29;
 	g_vars->scene08_vmyats->_callback2 = sceneHandler08_pushCallback;
 
-	g_nmi->_aniMan = g_nmi->_currentScene->getStaticANIObject1ById(ANI_MAN, -1);
+	g_nmi->_aniMan = g_nmi->_currentScene->findAniObjectById(ANI_MAN, -1);
 
 	g_vars->scene08_manOffsetY = 15;
 
@@ -294,7 +294,7 @@ void sceneHandler08_jumpOff(ExCommand *cmd) {
 }
 
 void sceneHandler08_standUp() {
-	chainQueue(QU_SC8_STANDUP, 1);
+	runQueue(QU_SC8_STANDUP, 1);
 	g_vars->scene08_onBelly = false;
 }
 
@@ -309,7 +309,7 @@ void sceneHandler08_jumpLogic(ExCommand *cmd) {
 }
 
 void sceneHandler08_badLuck() {
-	g_nmi->_currentScene->getPictureObjectById(PIC_SC8_LADDER, 0)->_flags &= 0xFFFB;
+	g_nmi->_currentScene->findPictureObjectById(PIC_SC8_LADDER, 0)->_flags &= 0xFFFB;
 
 	g_nmi->_aniMan->setStatic(ST_MAN8_HANDSUP);
 	g_nmi->_aniMan->setPos(376, 280);

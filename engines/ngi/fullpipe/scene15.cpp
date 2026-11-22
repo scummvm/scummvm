@@ -38,7 +38,7 @@ namespace NGI {
 void scene15_initScene(Scene *sc) {
 	g_vars->scene15_chantingCountdown = 0;
 
-	AniObject *grandma = sc->getStaticANIObject1ById(ANI_GRANDMA_ASS, -1);
+	AniObject *grandma = sc->findAniObjectById(ANI_GRANDMA_ASS, -1);
 
 	Scene *oldsc = g_nmi->_currentScene;
 	g_nmi->_currentScene = sc;
@@ -71,15 +71,15 @@ void scene15_initScene(Scene *sc) {
 		g_nmi->setObjectState(sO_LeftPipe_15, g_nmi->getObjectEnumState(sO_LeftPipe_15, sO_IsOpened));
 	}
 
-	g_vars->scene15_plusminus = sc->getStaticANIObject1ById(ANI_PLUSMINUS, -1);
+	g_vars->scene15_plusminus = sc->findAniObjectById(ANI_PLUSMINUS, -1);
 
 	if (g_nmi->getObjectState(sO_Guard_2) == g_nmi->getObjectEnumState(sO_Guard_2, sO_Off))
 		g_vars->scene15_plusminus->_statics = g_vars->scene15_plusminus->getStatic(ST_PMS_MINUS);
 	else
 		g_vars->scene15_plusminus->_statics = g_vars->scene15_plusminus->getStatic(ST_PMS_PLUS);
 
- 	g_vars->scene15_ladder = sc->getPictureObjectById(PIC_SC15_LADDER, 0);
-	g_vars->scene15_boot = sc->getStaticANIObject1ById(ANI_BOOT_15, -1);
+	g_vars->scene15_ladder = sc->findPictureObjectById(PIC_SC15_LADDER, 0);
+	g_vars->scene15_boot = sc->findAniObjectById(ANI_BOOT_15, -1);
 
 	if (g_nmi->getObjectState(sO_Boot_15) != g_nmi->getObjectEnumState(sO_Boot_15, sO_IsPresent))
 		g_vars->scene15_boot->_flags &= 0xFFFB;
@@ -161,13 +161,13 @@ int sceneHandler15(ExCommand *cmd) {
 	case 29:
 		{
 			if (g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC15_LADDER) {
-				handleObjectInteraction(g_nmi->_aniMan, g_nmi->_currentScene->getPictureObjectById(PIC_SC15_DTRUBA, 0), cmd->_param);
+				handleObjectInteraction(g_nmi->_aniMan, g_nmi->_currentScene->findPictureObjectById(PIC_SC15_DTRUBA, 0), cmd->_param);
 				cmd->_messageKind = 0;
 
 				return 0;
 			}
 
-			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->findAniObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
 				g_nmi->lift_animateButton(ani);

@@ -319,7 +319,7 @@ bool AniObject::trySetMessageQueue(int msgNum, int qId) {
 }
 
 void AniObject::startMQIfIdle(int qId, int flag) {
-	MessageQueue *msg = g_nmi->_currentScene->getMessageQueueById(qId);
+	MessageQueue *msg = g_nmi->_currentScene->findMessageQueue(qId);
 
 	if (msg && isIdle() && !(_flags & 0x100)) {
 		MessageQueue *mq = new MessageQueue(msg, 0, 0);

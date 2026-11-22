@@ -1133,7 +1133,7 @@ void Shadows::init() {
 	AniObject *st;
 	Movement *mov;
 
-	if (scene && (st = scene->getStaticANIObject1ById(_staticAniObjectId, -1)) != nullptr
+	if (scene && (st = scene->findAniObjectById(_staticAniObjectId, -1)) != nullptr
 		&& ((mov = st->getMovement(_movementId)) != nullptr))
 		initMovement(mov);
 }
@@ -1202,7 +1202,7 @@ void NGIEngine::drawAlphaRectangle(int x1, int y1, int x2, int y2, int alpha) {
 void NGIEngine::sceneFade(Scene *sc, bool direction) {
 	for (int dim = 0; dim < 255; dim += 20) {
 		int ticks = g_nmi->_system->getMillis();
-		sc->draw();
+		sc->render();
 
 		drawAlphaRectangle(0, 0, g_nmi->_backgroundSurface.w, g_nmi->_backgroundSurface.h, direction ? dim : 255 - dim);
 		g_nmi->_system->copyRectToScreen(g_nmi->_backgroundSurface.getBasePtr(0, 0), g_nmi->_backgroundSurface.pitch, 0, 0, 800, 600);

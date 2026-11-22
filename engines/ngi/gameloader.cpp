@@ -216,11 +216,11 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 
 	g_nmi->_currentScene = st->_scene;
 
-	MessageQueue *mq1 = g_nmi->_currentScene->getMessageQueueById(_sc2array[sc2idx]._entranceData[entranceIdx]._messageQueueId);
+	MessageQueue *mq1 = g_nmi->_currentScene->findMessageQueue(_sc2array[sc2idx]._entranceData[entranceIdx]._messageQueueId);
 	if (mq1) {
 		MessageQueue *mq = new MessageQueue(mq1, 0, 0);
 
-		AniObject *stobj = g_nmi->_currentScene->getStaticANIObject1ById(_field_FA, -1);
+		AniObject *stobj = g_nmi->_currentScene->findAniObjectById(_field_FA, -1);
 		if (stobj) {
 			stobj->_flags &= 0x100;
 
@@ -241,7 +241,7 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 			return false;
 		}
 	} else {
-		AniObject *stobj = g_nmi->_currentScene->getStaticANIObject1ById(_field_FA, -1);
+		AniObject *stobj = g_nmi->_currentScene->findAniObjectById(_field_FA, -1);
 		if (stobj)
 			stobj->_flags &= 0xfeff;
 	}
@@ -254,7 +254,7 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 		if (flag == 50)
 			g_nmi->_aniMan->preloadMovements(g_nmi->_movTable.get());
 
-		AniObject *pbar = g_nmi->_loaderScene->getStaticANIObject1ById(ANI_PBAR, -1);
+		AniObject *pbar = g_nmi->_loaderScene->findAniObjectById(ANI_PBAR, -1);
 
 		if (pbar) {
 			int sz;
@@ -271,7 +271,7 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 
 		g_nmi->_currentScene = g_nmi->_loaderScene;
 
-		g_nmi->_loaderScene->draw();
+		g_nmi->_loaderScene->render();
 
 		g_nmi->_system->updateScreen();
 	} else {
@@ -319,7 +319,7 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 			g_nmi->_loaderScene = g_nmi->accessScene(SC_LDR);
 		}
 
-		AniObject *pbar = g_nmi->_loaderScene->getStaticANIObject1ById(ANI_PBAR, -1);
+		AniObject *pbar = g_nmi->_loaderScene->findAniObjectById(ANI_PBAR, -1);
 
 		if (pbar) {
 			pbar->show1(ST_EGTR_SLIMSORROW, ST_MAN_GOU, MV_PBAR_RUN, 0);
@@ -337,7 +337,7 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 
 		g_nmi->_currentScene = g_nmi->_loaderScene;
 
-		g_nmi->_loaderScene->draw();
+		g_nmi->_loaderScene->render();
 
 		g_nmi->_system->updateScreen();
 
@@ -459,12 +459,12 @@ void GameLoader::applyPicAniInfos(Scene *sc, const PicAniInfoList &picAniInfo) {
 		const PicAniInfo &info = picAniInfo[i];
 		debugC(7, kDebugAnimation, "PicAniInfo: id: %d type: %d", info.objectId, info.type);
 		if (info.type & 2) {
-			pict = sc->getPictureObjectById(info.objectId, info.field_8);
+			pict = sc->findPictureObjectById(info.objectId, info.field_8);
 			if (pict) {
 				pict->setPicAniInfo(info);
 				continue;
 			}
-			pict = sc->getPictureObjectById(info.objectId, 0);
+			pict = sc->findPictureObjectById(info.objectId, 0);
 			if (pict) {
 				PictureObject *pictNew = new PictureObject(pict);
 
@@ -480,17 +480,17 @@ void GameLoader::applyPicAniInfos(Scene *sc, const PicAniInfoList &picAniInfo) {
 			if (!scNew)
 				continue;
 
-			ani = sc->getStaticANIObject1ById(info.objectId, info.field_8);
+			ani = sc->findAniObjectById(info.objectId, info.field_8);
 			if (ani) {
 				ani->setPicAniInfo(picAniInfo[i]);
 				continue;
 			}
 
-			ani = scNew->getStaticANIObject1ById(info.objectId, 0);
+			ani = scNew->findAniObjectById(info.objectId, 0);
 			if (ani) {
 				AniObject *aniNew = new AniObject(ani);
 
-				sc->addStaticANIObject(aniNew, 1);
+				sc->addAni(aniNew, 1);
 
 				aniNew->setPicAniInfo(picAniInfo[i]);
 				continue;
@@ -523,7 +523,7 @@ PicAniInfoList GameLoader::savePicAniInfos(Scene *sc, int flag1, int flag2) {
 	if (!sc->_picObjList.size())
 		return PicAniInfoList();
 
-	int numInfos = sc->_staticANIObjectList1.size() + sc->_picObjList.size() - 1;
+	int numInfos = sc->_aniObjects.size() + sc->_picObjList.size() - 1;
 	if (numInfos < 1)
 		return PicAniInfoList();
 
@@ -539,8 +539,8 @@ PicAniInfoList GameLoader::savePicAniInfos(Scene *sc, int flag1, int flag2) {
 		}
 	}
 
-	for (uint i = 0; i < sc->_staticANIObjectList1.size(); i++) {
-		AniObject *obj = sc->_staticANIObjectList1[i];
+	for (uint i = 0; i < sc->_aniObjects.size(); i++) {
+		AniObject *obj = sc->_aniObjects[i];
 
 		if (obj && ((obj->_flags & flag1) == flag1) && ((obj->_objectFlags & flag2) == flag2)) {
 			res.push_back(PicAniInfo());

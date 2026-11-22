@@ -59,8 +59,8 @@ void scene03_initScene(Scene *sc) {
 	inv->rebuildItemRects();
 #endif
 
-	g_vars->scene03_eggeater = sc->getStaticANIObject1ById(ANI_EGGEATER, -1);
-	g_vars->scene03_domino = sc->getStaticANIObject1ById(ANI_DOMINO_3, -1);
+	g_vars->scene03_eggeater = sc->findAniObjectById(ANI_EGGEATER, -1);
+	g_vars->scene03_domino = sc->findAniObjectById(ANI_DOMINO_3, -1);
 
 	GameVar *v = g_nmi->_gameLoader->_gameVar->getSubVarByName("OBJSTATES")->getSubVarByName(sO_GulpedEggs);
 
@@ -162,7 +162,7 @@ void sceneHandler03_giveCoin(ExCommand *ex) {
 }
 
 void sceneHandler03_goLadder() {
-	handleObjectInteraction(g_nmi->_aniMan, g_nmi->_currentScene->getPictureObjectById(PIC_SC3_LADDER, 0), 0);
+	handleObjectInteraction(g_nmi->_aniMan, g_nmi->_currentScene->findPictureObjectById(PIC_SC3_LADDER, 0), 0);
 }
 
 void sceneHandler03_pushEggStack() {
@@ -278,7 +278,7 @@ int sceneHandler03(ExCommand *ex) {
 
 	case 29:
 		{
-			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->findAniObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
 				g_nmi->lift_animateButton(ani);
 				ex->_messageKind = 0;

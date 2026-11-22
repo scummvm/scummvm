@@ -174,11 +174,11 @@ void NGIEngine::lift_setButton(const char *name, int state) {
 void NGIEngine::lift_init(Scene *sc, int enterSeq, int exitSeq) {
 	_lastLiftButton = nullptr;
 
-	_liftEnterMQ = sc->getMessageQueueById(enterSeq);
+	_liftEnterMQ = sc->findMessageQueue(enterSeq);
 	if (!_liftEnterMQ)
 		return;
 
-	_liftExitMQ = sc->getMessageQueueById(exitSeq);
+	_liftExitMQ = sc->findMessageQueue(exitSeq);
 
 	if (!_liftExitMQ)
 		return;
@@ -191,10 +191,10 @@ void NGIEngine::lift_init(Scene *sc, int enterSeq, int exitSeq) {
 	_liftX = ex->_x;
 	_liftY = ex->_y;
 
-	_lift = sc->getStaticANIObject1ById(ANI_LIFT, -1);
+	_lift = sc->findAniObjectById(ANI_LIFT, -1);
 
-	for (uint i = 0; i < sc->_staticANIObjectList1.size(); i++) {
-		AniObject *ani = sc->_staticANIObjectList1[i];
+	for (uint i = 0; i < sc->_aniObjects.size(); i++) {
+		AniObject *ani = sc->_aniObjects[i];
 
 		if (ani->_id == ANI_LIFTBUTTON)
 			ani->_statics = ani->getStatic(lift_getButtonIdP(ani->_statics->_staticsId));
@@ -203,8 +203,8 @@ void NGIEngine::lift_init(Scene *sc, int enterSeq, int exitSeq) {
 	GameVar *var = getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_LiftButtons);
 	if (var) {
 		for (var = var->_subVars; var; var = var->_nextVarObj) {
-			for (uint i = 0; i < sc->_staticANIObjectList1.size(); i++) {
-				AniObject *ani = sc->_staticANIObjectList1[i];
+			for (uint i = 0; i < sc->_aniObjects.size(); i++) {
+				AniObject *ani = sc->_aniObjects[i];
 
 				if (ani->_id == ANI_LIFTBUTTON) {
 					int id = lift_getButtonIdN(ani->_statics->_staticsId);
@@ -504,8 +504,8 @@ bool NGIEngine::lift_checkButton(const char *varName) {
 }
 
 void NGIEngine::lift_setButtonStatics(Scene *sc, int buttonId) {
-	for (uint i = 0; i < sc->_staticANIObjectList1.size(); i++) {
-		AniObject *ani = sc->_staticANIObjectList1[i];
+	for (uint i = 0; i < sc->_aniObjects.size(); i++) {
+		AniObject *ani = sc->_aniObjects[i];
 
 		if (ani->_id == ANI_LIFTBUTTON) {
 			int id = lift_getButtonIdN(ani->_statics->_staticsId);

@@ -57,7 +57,7 @@ void scene18_preload() {
 			g_nmi->_scene3 = s->_scene;
 			s->_scene = nullptr;
 
-			g_nmi->_scene3->getStaticANIObject1ById(ANI_WHIRLIGIG_18, -1)->unloadMovements();
+			g_nmi->_scene3->findAniObjectById(ANI_WHIRLIGIG_18, -1)->unloadMovements();
 
 			break;
 		}
@@ -76,7 +76,7 @@ void scene19_setSugarState(Scene *sc) {
 		Scene *oldsc = g_nmi->_currentScene;
 
 		g_nmi->_currentScene = sc;
-		sc->getStaticANIObject1ById(ANI_CORDIE, -1)->setStatic(ST_CDI_EMPTY2);
+		sc->findAniObjectById(ANI_CORDIE, -1)->setStatic(ST_CDI_EMPTY2);
 		g_nmi->_currentScene = oldsc;
 	}
 }
@@ -101,7 +101,7 @@ void scene19_setMovements(Scene *sc, int entranceId) {
 			g_nmi->_currentScene = oldsc;
 		}
 
-		sc->deleteStaticANIObject(g_vars->scene18_swingers[i]->ani);
+		sc->removeAni(g_vars->scene18_swingers[i]->ani);
 	}
 
 	if (g_vars->scene18_whirlgig->_movement) {
@@ -120,8 +120,8 @@ void scene19_setMovements(Scene *sc, int entranceId) {
 		g_vars->scene18_whirlgigMovMum = 0;
 	}
 
-	sc->deleteStaticANIObject(g_vars->scene18_boy);
-	sc->deleteStaticANIObject(g_vars->scene18_girl);
+	sc->removeAni(g_vars->scene18_boy);
+	sc->removeAni(g_vars->scene18_girl);
 	sc->stopAllSounds();
 }
 
@@ -161,7 +161,7 @@ void scene18_setupSwingers(AniObject *ani, Scene *sc) {
 			swinger->ani = newani;
 			swinger->sflags = 2;
 
-			sc->addStaticANIObject(newani, 1);
+			sc->addAni(newani, 1);
 		} else {
 			swinger->ani = ani;
 			swinger->sflags = g_vars->scene18_girlIsSwinging ? 4 : 1;
@@ -197,11 +197,11 @@ void scene18_initScene1(Scene *sc) {
 	g_vars->scene18_girlIsSwinging = (g_nmi->getObjectState(sO_Girl) == g_nmi->getObjectEnumState(sO_Girl, sO_IsSwinging));
 
 	if (sc->_sceneId == SC_18) {
-		g_vars->scene18_whirlgig = sc->getStaticANIObject1ById(ANI_WHIRLIGIG_18, -1);
+		g_vars->scene18_whirlgig = sc->findAniObjectById(ANI_WHIRLIGIG_18, -1);
 		g_vars->scene18_wheelCenterX = 1032;
 		g_vars->scene18_wheelCenterY = -318;
 	} else {
-		g_vars->scene18_whirlgig = sc->getStaticANIObject1ById(ANI_WHIRLGIG_19, -1);
+		g_vars->scene18_whirlgig = sc->findAniObjectById(ANI_WHIRLGIG_19, -1);
 		g_vars->scene18_wheelCenterX = 1024;
 		g_vars->scene18_wheelCenterY = 242;
 	}
@@ -216,7 +216,7 @@ void scene18_initScene1(Scene *sc) {
 
 	for (uint i = 0; i < g_vars->scene18_swingers.size(); i++) {
 		g_vars->scene18_swingers[i]->ani->getPicAniInfo(info);
-		sc->addStaticANIObject(g_vars->scene18_swingers[i]->ani, 1);
+		sc->addAni(g_vars->scene18_swingers[i]->ani, 1);
 		g_vars->scene18_swingers[i]->ani->setPicAniInfo(info);
 
 		g_vars->scene18_swingers[i]->sx += newx;
@@ -256,7 +256,7 @@ void scene18_initScene1(Scene *sc) {
 	g_nmi->playSound(sndid, 1);
 
 	g_vars->scene18_boy->getPicAniInfo(info);
-	sc->addStaticANIObject(g_vars->scene18_boy, 1);
+	sc->addAni(g_vars->scene18_boy, 1);
 	g_vars->scene18_boy->setPicAniInfo(info);
 
 	int x, y;
@@ -272,7 +272,7 @@ void scene18_initScene1(Scene *sc) {
 	g_vars->scene18_boy->setPos(newx + x, newy + y);
 
 	g_vars->scene18_girl->getPicAniInfo(info);
-	sc->addStaticANIObject(g_vars->scene18_girl, 1);
+	sc->addAni(g_vars->scene18_girl, 1);
 	g_vars->scene18_girl->setPicAniInfo(info);
 
 	if (g_vars->scene18_girl->_movement) {
@@ -300,11 +300,11 @@ void scene18_initScene1(Scene *sc) {
 }
 
 void scene18_initScene2(Scene *sc) {
-	g_vars->scene18_whirlgig = sc->getStaticANIObject1ById(ANI_WHIRLIGIG_18, -1);
+	g_vars->scene18_whirlgig = sc->findAniObjectById(ANI_WHIRLIGIG_18, -1);
 	g_vars->scene18_wheelCenterX = 1032;
 	g_vars->scene18_wheelCenterY = -318;
 
-	AniObject *armchair = sc->getStaticANIObject1ById(ANI_KRESLO, -1);
+	AniObject *armchair = sc->findAniObjectById(ANI_KRESLO, -1);
 
 	armchair->loadMovements();
 
@@ -332,9 +332,9 @@ void scene18_initScene2(Scene *sc) {
 	g_vars->scene18_jumpAngle = -1;
 	g_vars->scene18_manIsReady = false;
 	g_vars->scene18_enteredTrubaRight = 0;
-	g_vars->scene18_boy = sc->getStaticANIObject1ById(ANI_BOY18, -1);
-	g_vars->scene18_girl = sc->getStaticANIObject1ById(ANI_GIRL18, -1);
-	g_vars->scene18_domino = sc->getStaticANIObject1ById(ANI_DOMINO_18, -1);
+	g_vars->scene18_boy = sc->findAniObjectById(ANI_BOY18, -1);
+	g_vars->scene18_girl = sc->findAniObjectById(ANI_GIRL18, -1);
+	g_vars->scene18_domino = sc->findAniObjectById(ANI_DOMINO_18, -1);
 	g_vars->scene18_boyJumpX = 290;
 	g_vars->scene18_boyJumpY = -363;
 	g_vars->scene18_girlJumpX = 283;
@@ -432,7 +432,7 @@ void sceneHandler18and19_showManJump() {
 	}
 
 	if (mqid) {
-		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(mqid), 0, 0);
+		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(mqid), 0, 0);
 
 		g_nmi->_aniMan2 = g_nmi->_aniMan;
 		g_vars->scene18_enteredTrubaRight = false;
@@ -731,11 +731,11 @@ int sceneHandler18(ExCommand *cmd) {
 				break;
 			}
 
-			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->findAniObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (!ani || !canInteractAny(g_nmi->_aniMan, ani, cmd->_param)) {
 				int picId = g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-				PictureObject *pic = g_nmi->_currentScene->getPictureObjectById(picId, 0);
+				PictureObject *pic = g_nmi->_currentScene->findPictureObjectById(picId, 0);
 
 				if (pic && pic->_id == PIC_SC18_DOMIN && g_vars->scene18_domino
 					&& (g_vars->scene18_domino->_flags & 4) && g_nmi->_aniMan->isIdle()) {
@@ -882,7 +882,7 @@ int sceneHandler19(ExCommand *cmd) {
 				if (g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC19_RTRUBA3) {
 					if (g_nmi->_aniMan->isIdle()) {
 						if (!(g_nmi->_aniMan->_flags & 0x100)) {
-							PictureObject *pic = g_nmi->_currentScene->getPictureObjectById(PIC_SC19_RTRUBA31, 0);
+							PictureObject *pic = g_nmi->_currentScene->findPictureObjectById(PIC_SC19_RTRUBA31, 0);
 
 							handleObjectInteraction(g_nmi->_aniMan, pic, cmd->_param);
 							break;

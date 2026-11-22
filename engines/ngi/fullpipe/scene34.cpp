@@ -58,10 +58,10 @@ void sceneHandler34_setExits() {
 }
 
 void scene34_initScene(Scene *sc) {
-	g_vars->scene34_cactus = sc->getStaticANIObject1ById(ANI_CACTUS_34, -1);
-	g_vars->scene34_vent = sc->getStaticANIObject1ById(ANI_VENT_34, -1);
-	g_vars->scene34_hatch = sc->getStaticANIObject1ById(ANI_LUK_34, -1);
-	g_vars->scene34_boot = sc->getStaticANIObject1ById(ANI_BOOT_34, -1);
+	g_vars->scene34_cactus = sc->findAniObjectById(ANI_CACTUS_34, -1);
+	g_vars->scene34_vent = sc->findAniObjectById(ANI_VENT_34, -1);
+	g_vars->scene34_hatch = sc->findAniObjectById(ANI_LUK_34, -1);
+	g_vars->scene34_boot = sc->findAniObjectById(ANI_BOOT_34, -1);
 
 	if (g_nmi->getObjectState(sO_Cactus) == g_nmi->getObjectEnumState(sO_Cactus, sO_HasGrown)) {
 		Scene *oldsc = g_nmi->_currentScene;
@@ -135,16 +135,16 @@ void sceneHandler34_testVent() {
 	if (g_nmi->_aniMan->_movement->_id == MV_MAN34_TURNVENT_R) {
 		g_vars->scene34_hatch->setStatic(ST_LUK34_CLOSED);
 
-		chainQueue(QU_LUK34_OPEN, 0);
+		runQueue(QU_LUK34_OPEN, 0);
 	} else if (g_nmi->_aniMan->_movement->_id == MV_MAN34_TURNVENT_L) {
 		g_vars->scene34_hatch->setStatic(ST_LUK34_OPEN);
 
-		chainQueue(QU_LUK34_CLOSE, 0);
+		runQueue(QU_LUK34_CLOSE, 0);
 	}
 }
 
 void sceneHandler34_hideStool() {
-	g_nmi->_currentScene->getStaticANIObject1ById(ANI_STOOL_34, -1)->hide();
+	g_nmi->_currentScene->findAniObjectById(ANI_STOOL_34, -1)->hide();
 }
 
 void sceneHandler34_climb() {
@@ -173,7 +173,7 @@ void sceneHandler34_fromCactus(ExCommand *cmd) {
 		return;
 	}
 
-	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC34_FROMCACTUS), 0, 0);
+	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC34_FROMCACTUS), 0, 0);
 
 	ExCommand *ex = new ExCommand(ANI_MAN, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 
@@ -193,7 +193,7 @@ void sceneHandler34_fromCactus(ExCommand *cmd) {
 
 void sceneHandler34_animateLeaveBoard(ExCommand *cmd) {
 	if (!g_nmi->_aniMan->_movement) {
-		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC34_LEAVEBOARD), 0, 0);
+		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC34_LEAVEBOARD), 0, 0);
 
 		mq->addCommandToEnd(cmd->createClone());
 		mq->setFlags(mq->getFlags() | 1);
@@ -209,7 +209,7 @@ void sceneHandler34_animateAction(ExCommand *cmd) {
 
 	int ox = g_nmi->_aniMan->_x;
 	int oy = g_nmi->_aniMan->_y;
-	AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
+	AniObject *ani = g_nmi->_currentScene->findAniObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
 
 	if (!ani || ani->_id != ANI_VENT_34) {
 		int qId = 0;
@@ -224,7 +224,7 @@ void sceneHandler34_animateAction(ExCommand *cmd) {
 				return;
 
 			if (oy == 286) {
-				MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC34_FROMBOX), 0, 0);
+				MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC34_FROMBOX), 0, 0);
 
 				mq->addCommandToEnd(cmd->createClone());
 				mq->run(nullptr);
@@ -241,7 +241,7 @@ void sceneHandler34_animateAction(ExCommand *cmd) {
 		}
 
 		if (qId) {
-			MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(qId), 0, 0);
+			MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(qId), 0, 0);
 
 			mq->addCommandToEnd(cmd->createClone());
 			mq->run(nullptr);
@@ -278,11 +278,11 @@ void sceneHandler34_showVent() {
 }
 
 void sceneHandler34_showBox() {
-	g_nmi->_currentScene->getStaticANIObject1ById(ANI_STOOL_34, -1)->setStatic(ST_STL34_BOX2);
+	g_nmi->_currentScene->findAniObjectById(ANI_STOOL_34, -1)->setStatic(ST_STL34_BOX2);
 }
 
 void sceneHandler34_showStool() {
-	chainQueue(QU_SC34_SHOWSTOOL, 0);
+	runQueue(QU_SC34_SHOWSTOOL, 0);
 }
 
 void sceneHandler34_unclimb() {
@@ -413,7 +413,7 @@ int sceneHandler34(ExCommand *cmd) {
 				break;
 			}
 
-			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
+			AniObject *ani = g_nmi->_currentScene->findAniObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
 
 			if (ani) {
 				if ((ani->_id == ANI_STOOL_34 && cmd->_param == ANI_INV_BOX) || (ani->_id == ANI_BOX_34 && cmd->_param == ANI_INV_STOOL)) {
@@ -433,7 +433,7 @@ int sceneHandler34(ExCommand *cmd) {
 
 			if (!ani || !canInteractAny(g_nmi->_aniMan, ani, cmd->_param)) {
 				int picId = g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-				PictureObject *pic = g_nmi->_currentScene->getPictureObjectById(picId, 0);
+				PictureObject *pic = g_nmi->_currentScene->findPictureObjectById(picId, 0);
 
 				if (!pic || !canInteractAny(g_nmi->_aniMan, pic, cmd->_param)) {
 					if ((g_nmi->_sceneRect.right - cmd->_sceneClickX < 47 && g_nmi->_sceneRect.right < g_nmi->_sceneWidth - 1) || (cmd->_sceneClickX - g_nmi->_sceneRect.left < 47 && g_nmi->_sceneRect.left > 0)) {

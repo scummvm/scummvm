@@ -238,12 +238,12 @@ bool NGIEngine::loadGam(const char *fname, int scene) {
 
 	_aniMan->setSpeed(1);
 
-	PictureObject *pic = accessScene(SC_INV)->getPictureObjectById(PIC_INV_MENU, 0);
+	PictureObject *pic = accessScene(SC_INV)->findPictureObjectById(PIC_INV_MENU, 0);
 
 	pic->setFlags(pic->_flags & 0xFFFB);
 
 	// Not used in full game
-	//_evalVersionPic = accessScene(SC_COMMON)->getPictureObjectById(PIC_CMN_EVAL, 0);
+	//_evalVersionPic = accessScene(SC_COMMON)->findPictureObjectById(PIC_CMN_EVAL, 0);
 
 	initMap();
 	initCursors();

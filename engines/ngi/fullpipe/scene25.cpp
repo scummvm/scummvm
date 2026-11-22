@@ -45,9 +45,9 @@ void scene25_showBoardOnRightClose() {
 }
 
 void scene25_initScene(Scene *sc, int entranceId) {
-	g_vars->scene25_water = sc->getStaticANIObject1ById(ANI_WATER25, -1);
-	g_vars->scene25_board = sc->getStaticANIObject1ById(ANI_BOARD25, -1);
-	g_vars->scene25_drop = sc->getStaticANIObject1ById(ANI_DROP_25, -1);
+	g_vars->scene25_water = sc->findAniObjectById(ANI_WATER25, -1);
+	g_vars->scene25_board = sc->findAniObjectById(ANI_BOARD25, -1);
+	g_vars->scene25_drop = sc->findAniObjectById(ANI_DROP_25, -1);
 	g_vars->scene25_water->setAlpha(0xa0);
 	g_vars->scene25_drop->setAlpha(0xa0);
 	g_vars->scene25_dudeIsOnBoard = false;
@@ -132,7 +132,7 @@ void sceneHandler25_startBearders() {
 	g_vars->scene25_bearders.clear();
 	g_vars->scene25_beardersCounter = 0;
 
-	AniObject *bearded = g_nmi->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_BEARDED_CMN, -1);
+	AniObject *bearded = g_nmi->accessScene(SC_COMMON)->findAniObjectById(ANI_BEARDED_CMN, -1);
 
 	for (int i = 0; i < 3; i++) {
 		AniObject *ani = new AniObject(bearded);
@@ -141,7 +141,7 @@ void sceneHandler25_startBearders() {
 
 		ani->_statics = ani->getStatic(ST_BRDCMN_EMPTY);
 
-		g_nmi->_currentScene->addStaticANIObject(ani, 1);
+		g_nmi->_currentScene->addAni(ani, 1);
 	}
 
 	g_vars->scene25_beardersAreThere = true;
@@ -149,11 +149,11 @@ void sceneHandler25_startBearders() {
 
 void sceneHandler25_enterMan() {
 	if (g_vars->scene25_waterIsPresent) {
-		chainQueue(QU_SC25_ENTERUP_WATER, 1);
+		runQueue(QU_SC25_ENTERUP_WATER, 1);
 
 		getCurrSceneSc2MotionController()->deactivate();
 	} else {
-		chainQueue(QU_SC25_ENTERUP_FLOOR, 1);
+		runQueue(QU_SC25_ENTERUP_FLOOR, 1);
 	}
 }
 
@@ -183,7 +183,7 @@ void sceneHandler25_enterTruba() {
 	}
 
 	if (qid) {
-		chainQueue(qid, 1);
+		runQueue(qid, 1);
 		g_vars->scene25_sneezeFlipper = false;
 	}
 }
@@ -218,7 +218,7 @@ void sceneHandler25_toLadder() {
 	}
 
 	if (qid) {
-		chainQueue(qid, 1);
+		runQueue(qid, 1);
 		g_vars->scene25_dudeIsOnBoard = false;
 		g_vars->scene25_boardIsSelectable = true;
 		g_vars->scene25_sneezeFlipper = false;
@@ -231,7 +231,7 @@ void sceneHandler25_animateBearders() {
 	if (g_nmi->_rnd.getRandomNumber(32767) < 218) {
 		MessageQueue *mq;
 
-		mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC25_BEARDED), 0, 1);
+		mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC25_BEARDED), 0, 1);
 
 		mq->setObjectCopy(-1, g_vars->scene25_bearders[0]->_copyId);
 		mq->getCommandByIndex(0)->_x = g_nmi->_rnd.getRandomNumber(650) + 100;
@@ -240,14 +240,14 @@ void sceneHandler25_animateBearders() {
 		g_vars->scene25_beardersCounter = 0;
 
 		if (g_nmi->_rnd.getRandomNumber(32767) < 0x1FFF) {
-			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC25_BEARDED2), 0, 1);
+			mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC25_BEARDED2), 0, 1);
 
 			mq->setObjectCopy(-1, g_vars->scene25_bearders[1]->_copyId);
 			mq->getCommandByIndex(0)->_x = g_nmi->_rnd.getRandomNumber(650) + 100;
 			mq->run(nullptr);
 
 			if (g_nmi->_rnd.getRandomNumber(32767) < 8191) {
-				mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC25_BEARDED3), 0, 1);
+				mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC25_BEARDED3), 0, 1);
 
 				mq->setObjectCopy(-1, g_vars->scene25_bearders[2]->_copyId);
 				mq->getCommandByIndex(0)->_x = g_nmi->_rnd.getRandomNumber(650) + 100;
@@ -299,7 +299,7 @@ void sceneHandler25_rowShovel() {
 	}
 
 	if (qid) {
-		chainQueue(qid, 1);
+		runQueue(qid, 1);
 
 		g_vars->scene25_sneezeFlipper = false;
 	}
@@ -331,7 +331,7 @@ void sceneHandler25_rowHand() {
 	}
 
 	if (qid) {
-		chainObjQueue(g_nmi->_aniMan, qid, 1);
+		runQueueByIdWithAni(g_nmi->_aniMan, qid, 1);
 		g_vars->scene25_sneezeFlipper = false;
 	}
 }
@@ -342,7 +342,7 @@ void sceneHandler25_putBoard() {
 		g_nmi->_aniMan->setStatic(ST_MAN_STANDLADDER);
 		g_nmi->_aniMan->setPos(281, 481);
 
-		chainQueue(QU_SC25_PUTBOARD, 1);
+		runQueue(QU_SC25_PUTBOARD, 1);
 
 		g_vars->scene25_dudeIsOnBoard = true;
 		g_vars->scene25_sneezeFlipper = false;
@@ -355,7 +355,7 @@ void sceneHandler25_tryWater() {
 		|| g_nmi->_aniMan->_statics->_staticsId == ST_MAN_LADDERDOWN_R) {
 		g_nmi->_aniMan->setStatic(ST_MAN_STANDLADDER);
 
-		chainQueue(QU_SC25_TRYWATER, 1);
+		runQueue(QU_SC25_TRYWATER, 1);
 	}
 }
 
@@ -387,7 +387,7 @@ void sceneHandler25_tryRow(int obj) {
 			}
 
 			if (qid) {
-				chainQueue(qid, 1);
+				runQueue(qid, 1);
 
 				g_nmi->playSound(SND_25_028, 0);
 
@@ -397,18 +397,18 @@ void sceneHandler25_tryRow(int obj) {
 			if (obj == ANI_INV_SWAB) {
 				g_nmi->_aniMan->setStatic(ST_MAN_RIGHT | 0x4000);
 
-				chainQueue(QU_SC25_TRYSWAB, 1);
+				runQueue(QU_SC25_TRYSWAB, 1);
 			} else if (!obj) {
 				g_nmi->_aniMan->setStatic(ST_MAN_RIGHT | 0x4000);
 
-				chainObjQueue(g_nmi->_aniMan, QU_SC25_TRYHAND, 1);
+				runQueueByIdWithAni(g_nmi->_aniMan, QU_SC25_TRYHAND, 1);
 
 				g_nmi->playSound(SND_25_028, 0);
 			}
 		} else if (g_vars->scene25_board->_statics->_staticsId == (ST_BRD25_RIGHT2 | 0x4000) && !obj) {
 			g_nmi->_aniMan->setStatic(ST_MAN_RIGHT | 0x4000);
 
-			chainQueue(QU_SC25_TRUBATOBOARD, 1);
+			runQueue(QU_SC25_TRUBATOBOARD, 1);
 
 			g_vars->scene25_dudeIsOnBoard = true;
 		}
@@ -420,7 +420,7 @@ void sceneHandler25_ladderUp() {
 		|| g_nmi->_aniMan->_statics->_staticsId == ST_MAN_LADDERDOWN_R) {
 		g_nmi->_aniMan->setStatic(ST_MAN_STANDLADDER);
 
-		chainQueue(QU_SC25_LADDERUP, 1);
+		runQueue(QU_SC25_LADDERUP, 1);
 	}
 }
 
@@ -428,7 +428,7 @@ void sceneHandler25_backToPipe() {
 	if (!g_nmi->_aniMan->_movement && g_nmi->_aniMan->_statics->_staticsId == (ST_MAN_RIGHT|0x4000)) {
 		g_nmi->_aniMan->setStatic(ST_MAN_RIGHT|0x4000);
 
-		chainQueue(QU_SC25_BACKTOTRUBA, 1);
+		runQueue(QU_SC25_BACKTOTRUBA, 1);
 	}
 }
 
@@ -527,7 +527,7 @@ bool sceneHandler25_isOnLadder(ExCommand *cmd) {
 			return 0;
 
 		MessageQueue *mq = new MessageQueue(inter->_messageQueue, 0, 1);
-		PictureObject *pic = g_nmi->_currentScene->getPictureObjectById(PIC_SC25_LADDERDOWN, 0);
+		PictureObject *pic = g_nmi->_currentScene->findPictureObjectById(PIC_SC25_LADDERDOWN, 0);
 		Common::Point point;
 
 		point.x = inter->_xOffs + pic->_x;
@@ -644,7 +644,7 @@ int sceneHandler25(ExCommand *cmd) {
 				return 0;
 			}
 
-			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->findAniObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (ani) {
 				if (g_nmi->_aniMan != ani) {

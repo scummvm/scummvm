@@ -35,11 +35,11 @@
 namespace NGI {
 
 void scene10_initScene(Scene *sc) {
-	g_vars->scene10_gum = sc->getStaticANIObject1ById(ANI_GUM, -1);
-	g_vars->scene10_packet = sc->getStaticANIObject1ById(ANI_PACHKA, -1);
-	g_vars->scene10_packet2 = sc->getStaticANIObject1ById(ANI_PACHKA2, -1);
-	g_vars->scene10_inflater = sc->getStaticANIObject1ById(ANI_NADUVATEL, -1);
-	g_vars->scene10_ladder = sc->getPictureObjectById(PIC_SC10_LADDER, 0);
+	g_vars->scene10_gum = sc->findAniObjectById(ANI_GUM, -1);
+	g_vars->scene10_packet = sc->findAniObjectById(ANI_PACHKA, -1);
+	g_vars->scene10_packet2 = sc->findAniObjectById(ANI_PACHKA2, -1);
+	g_vars->scene10_inflater = sc->findAniObjectById(ANI_NADUVATEL, -1);
+	g_vars->scene10_ladder = sc->findPictureObjectById(PIC_SC10_LADDER, 0);
 
 	g_nmi->lift_setButton(sO_Level1, ST_LBN_1N);
 	g_nmi->lift_init(sc, QU_SC10_ENTERLIFT, QU_SC10_EXITLIFT);
@@ -92,7 +92,7 @@ void sceneHandler10_clickGum() {
 				} else {
 					g_vars->scene10_hasGum = 0;
 
-					chainQueue(QU_SC10_TAKEGUM, 1);
+					runQueue(QU_SC10_TAKEGUM, 1);
 				}
 			}
 		} else {
@@ -175,13 +175,13 @@ int sceneHandler10(ExCommand *ex) {
 	case 29:
 		{
 			if (g_nmi->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY) == PIC_SC10_LADDER) {
-				handleObjectInteraction(g_nmi->_aniMan, g_nmi->_currentScene->getPictureObjectById(PIC_SC10_DTRUBA, 0), ex->_param);
+				handleObjectInteraction(g_nmi->_aniMan, g_nmi->_currentScene->findPictureObjectById(PIC_SC10_DTRUBA, 0), ex->_param);
 				ex->_messageKind = 0;
 
 				return 0;
 			}
 
-			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->findAniObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
 
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
 				g_nmi->lift_animateButton(ani);

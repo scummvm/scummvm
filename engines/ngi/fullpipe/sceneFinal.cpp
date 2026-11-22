@@ -81,19 +81,19 @@ void sceneHandlerFinal_goto4() {
 
 	g_nmi->_gameLoader->loadScene(SC_FINAL4);
 
-	chainQueue(QU_FN4_DOFINAL, 1);
+	runQueue(QU_FN4_DOFINAL, 1);
 }
 
 void sceneHandlerFinal_goto3() {
 	g_nmi->_currentScene = g_nmi->accessScene(SC_FINAL3);
 
-	chainQueue(QU_FN3_DOFINAL, 1);
+	runQueue(QU_FN3_DOFINAL, 1);
 }
 
 void sceneHandlerFinal_goto2() {
 	g_nmi->_currentScene = g_nmi->accessScene(SC_FINAL2);
 
-	chainQueue(QU_FN2_DOFINAL, 1);
+	runQueue(QU_FN2_DOFINAL, 1);
 }
 
 void sceneHandlerFinal_startFinal() {
@@ -106,7 +106,7 @@ void sceneHandlerFinal_startFinal() {
 
 	g_nmi->_aniMan->_flags &= 0xFFFB;
 
-	chainQueue(QU_FIN1_TAKECOIN, 1);
+	runQueue(QU_FIN1_TAKECOIN, 1);
 
 	g_nmi->playTrack(g_nmi->getGameLoaderGameVar()->getSubVarByName("SC_FINAL1"), "MUSIC2", 1);
 
@@ -114,11 +114,11 @@ void sceneHandlerFinal_startFinal() {
 }
 
 void sceneHandlerFinal_fallCoin() {
-	AniObject *coin = g_nmi->_currentScene->getStaticANIObject1ById(ANI_FIN_COIN, -1);
+	AniObject *coin = g_nmi->_currentScene->findAniObjectById(ANI_FIN_COIN, -1);
 
 	if (!coin->_movement) {
 		if (!coin->_statics || coin->_statics->_staticsId != ST_FCN_NORM)
-			chainQueue(QU_FIN1_FALLCOIN, 1);
+			runQueue(QU_FIN1_FALLCOIN, 1);
 	}
 }
 

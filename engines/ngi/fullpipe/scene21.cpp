@@ -38,7 +38,7 @@ namespace NGI {
 void scene21_initScene(Scene *sc) {
 	Scene *oldsc = g_nmi->_currentScene;
 
-	g_vars->scene21_giraffeBottom = sc->getStaticANIObject1ById(ANI_GIRAFFE_BOTTOM, -1);
+	g_vars->scene21_giraffeBottom = sc->findAniObjectById(ANI_GIRAFFE_BOTTOM, -1);
 	g_nmi->_currentScene = sc;
 
 	if (g_nmi->getObjectState(sO_LowerPipe_21) == g_nmi->getObjectEnumState(sO_LowerPipe_21, sO_IsOpened)) {
@@ -99,11 +99,11 @@ int sceneHandler21(ExCommand *cmd) {
 
 	case 29:
 		{
-			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->findAniObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 			if (!ani || !canInteractAny(g_nmi->_aniMan, ani, cmd->_param)) {
 				int picId = g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
-				PictureObject *pic = g_nmi->_currentScene->getPictureObjectById(picId, 0);
+				PictureObject *pic = g_nmi->_currentScene->findPictureObjectById(picId, 0);
 
 				if (!pic || !canInteractAny(g_nmi->_aniMan, pic, cmd->_param) ) {
 					if ((g_nmi->_sceneRect.right - cmd->_sceneClickX < 47 && g_nmi->_sceneRect.right < g_nmi->_sceneWidth - 1)

@@ -40,7 +40,7 @@ void scene17_initScene(Scene *sc) {
 	g_vars->scene17_sugarIsShown = false;
 	g_vars->scene17_sceneOldEdgeX = 0;
 	g_vars->scene17_flyCountdown = 0;
-	g_vars->scene17_hand = sc->getStaticANIObject1ById(ANI_HAND17, -1);
+	g_vars->scene17_hand = sc->findAniObjectById(ANI_HAND17, -1);
 }
 
 void scene17_restoreState() {
@@ -89,31 +89,31 @@ int scene17_updateCursor() {
 }
 
 void sceneHandler17_drop() {
-	AniObject *mug = g_nmi->_currentScene->getStaticANIObject1ById(ANI_MUG_17, -1);
-	AniObject *jet = g_nmi->_currentScene->getStaticANIObject1ById(ANI_JET_17, -1);
+	AniObject *mug = g_nmi->_currentScene->findAniObjectById(ANI_MUG_17, -1);
+	AniObject *jet = g_nmi->_currentScene->findAniObjectById(ANI_JET_17, -1);
 
 	if (mug && mug->_flags & 4) {
 		mug->setStatic(ST_MUG17_EMPTY);
-		chainQueue(QU_SC17_FILLMUG_DROP, 0);
+		runQueue(QU_SC17_FILLMUG_DROP, 0);
 	} else if (jet) {
 		jet->setQueue(nullptr);
-		chainQueue(QU_JET17_DROP, 0);
+		runQueue(QU_JET17_DROP, 0);
 	}
 }
 
 void sceneHandler17_fillBottle() {
-	AniObject *bottle = g_nmi->_currentScene->getStaticANIObject1ById(ANI_INV_BOTTLE, -1);
-	AniObject *mug = g_nmi->_currentScene->getStaticANIObject1ById(ANI_MUG_17, -1);
-	AniObject *boot = g_nmi->_currentScene->getStaticANIObject1ById(ANI_BOOT_17, -1);
+	AniObject *bottle = g_nmi->_currentScene->findAniObjectById(ANI_INV_BOTTLE, -1);
+	AniObject *mug = g_nmi->_currentScene->findAniObjectById(ANI_MUG_17, -1);
+	AniObject *boot = g_nmi->_currentScene->findAniObjectById(ANI_BOOT_17, -1);
 
 	if (bottle && (bottle->_flags & 4))
-		chainQueue(QU_SC17_FILLBOTTLE, 1);
+		runQueue(QU_SC17_FILLBOTTLE, 1);
 	else if (mug && (mug->_flags & 4) && mug->_statics->_staticsId == ST_MUG17_EMPTY)
-		chainQueue(QU_SC17_FILLMUG, 1);
+		runQueue(QU_SC17_FILLMUG, 1);
 	else if (boot && (boot->_flags & 4))
-		chainQueue(QU_SC17_FILLBOOT, 1);
+		runQueue(QU_SC17_FILLBOOT, 1);
 	else
-		chainQueue(QU_JET17_FLOW, 1);
+		runQueue(QU_JET17_FLOW, 1);
 }
 
 void sceneHandler17_testTruba() {
@@ -126,28 +126,28 @@ void sceneHandler17_testTruba() {
 }
 
 void sceneHandler17_showBottle() {
-	chainQueue(QU_SC17_SHOWBOTTLE, 0);
+	runQueue(QU_SC17_SHOWBOTTLE, 0);
 }
 
 void sceneHandler17_hideSugar() {
-	AniObject *sugar = g_nmi->_currentScene->getStaticANIObject1ById(ANI_INV_SUGAR, -1);
+	AniObject *sugar = g_nmi->_currentScene->findAniObjectById(ANI_INV_SUGAR, -1);
 
 	if (sugar)
 		sugar->hide();
 }
 
 void sceneHandler17_showSugar() {
-	chainQueue(QU_SC17_SHOWSUGAR, 0);
+	runQueue(QU_SC17_SHOWSUGAR, 0);
 
 	g_vars->scene17_sugarIsShown = true;
 }
 
 void sceneHandler17_moonshineFill() {
-	AniObject *moonshiner = g_nmi->_currentScene->getStaticANIObject1ById(ANI_SAMOGONSHCHIK, -1);
+	AniObject *moonshiner = g_nmi->_currentScene->findAniObjectById(ANI_SAMOGONSHCHIK, -1);
 
 	if (!(moonshiner->_flags & 0x80)) {
 		moonshiner->setStatic(ST_SMG_SIT);
-		chainObjQueue(moonshiner, QU_SMG_FILLBOTTLE, 1);
+		runQueueByIdWithAni(moonshiner, QU_SMG_FILLBOTTLE, 1);
 
 		g_vars->scene17_sugarIsShown = false;
 	}

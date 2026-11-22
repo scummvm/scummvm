@@ -42,20 +42,20 @@ void scene01_fixEntrance() {
 }
 
 void scene01_initScene(Scene *sc, int entrance) {
-	g_vars->scene01_picSc01Osk = sc->getPictureObjectById(PIC_SC1_OSK, 0);
+	g_vars->scene01_picSc01Osk = sc->findPictureObjectById(PIC_SC1_OSK, 0);
 	g_vars->scene01_picSc01Osk->_flags &= 0xFFFB;
 
-	g_vars->scene01_picSc01Osk2 = sc->getPictureObjectById(PIC_SC1_OSK2, 0);
+	g_vars->scene01_picSc01Osk2 = sc->findPictureObjectById(PIC_SC1_OSK2, 0);
 	g_vars->scene01_picSc01Osk2->_flags &= 0xFFFB;
 
 	if (g_nmi->getObjectState(sO_EggCracker) == g_nmi->getObjectEnumState(sO_EggCracker, sO_DidNotCrackEgg)) {
-		PictureObject *pic = sc->getPictureObjectById(PIC_SC1_KUCHKA, 0);
+		PictureObject *pic = sc->findPictureObjectById(PIC_SC1_KUCHKA, 0);
 		if (pic)
 			pic->_flags &= 0xFFFB;
 	}
 
 	if (entrance != TrubaLeft) {
-		AniObject *bootAnim = sc->getStaticANIObject1ById(ANI_BOOT_1, -1);
+		AniObject *bootAnim = sc->findAniObjectById(ANI_BOOT_1, -1);
 		if (bootAnim)
 			bootAnim->_flags &= ~0x04;
 	}
@@ -71,7 +71,7 @@ int sceneHandler01(ExCommand *cmd) {
 
 	if (cmd->_messageNum > MSG_SC1_SHOWOSK) {
 		if (cmd->_messageNum == MSG_SC1_UTRUBACLICK)
-			handleObjectInteraction(g_nmi->_aniMan, g_nmi->_currentScene->getPictureObjectById(PIC_SC1_LADDER, 0), 0);
+			handleObjectInteraction(g_nmi->_aniMan, g_nmi->_currentScene->findPictureObjectById(PIC_SC1_LADDER, 0), 0);
 
 		return 0;
 	}

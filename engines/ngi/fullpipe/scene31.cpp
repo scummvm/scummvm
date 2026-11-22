@@ -37,7 +37,7 @@ namespace NGI {
 
 void scene31_initScene(Scene *sc) {
 	g_vars->scene31_chantingCountdown = 0;
-	g_vars->scene31_cactus = sc->getStaticANIObject1ById(ANI_CACTUS_31, -1);
+	g_vars->scene31_cactus = sc->findAniObjectById(ANI_CACTUS_31, -1);
 
 	if (g_nmi->getObjectState(sO_Cactus) == g_nmi->getObjectEnumState(sO_Cactus, sO_HasGrown)) {
 		Scene *oldsc = g_nmi->_currentScene;
@@ -51,7 +51,7 @@ void scene31_initScene(Scene *sc) {
 		g_vars->scene31_cactus->hide();
 	}
 
-	g_vars->scene31_plusMinus = sc->getStaticANIObject1ById(ANI_PLUSMINUS, -1);
+	g_vars->scene31_plusMinus = sc->findAniObjectById(ANI_PLUSMINUS, -1);
 
 	if (g_nmi->getObjectState(sO_Guard_3) == g_nmi->getObjectEnumState(sO_Guard_3, sO_Off))
 		g_vars->scene31_plusMinus->_statics = g_vars->scene31_plusMinus->getStatic(ST_PMS_MINUS);

@@ -42,12 +42,12 @@ void scene32_initScene(Scene *sc) {
 	g_vars->scene32_cactusCounter = -1;
 	g_vars->scene32_dudeOnLadder = false;
 	g_vars->scene32_cactusIsGrowing = false;
-	g_vars->scene32_flag = sc->getStaticANIObject1ById(ANI_FLAG, -1);
-	g_vars->scene32_cactus = sc->getStaticANIObject1ById(ANI_CACTUS, -1);
-	g_vars->scene32_massOrange = sc->getStaticANIObject1ById(ANI_TESTO_ORANGE, -1);
-	g_vars->scene32_massBlue = sc->getStaticANIObject1ById(ANI_TESTO_BLUE, -1);
-	g_vars->scene32_massGreen = sc->getStaticANIObject1ById(ANI_TESTO_GREEN, -1);
-	g_vars->scene32_button = sc->getStaticANIObject1ById(ANI_BUTTON_32, -1);
+	g_vars->scene32_flag = sc->findAniObjectById(ANI_FLAG, -1);
+	g_vars->scene32_cactus = sc->findAniObjectById(ANI_CACTUS, -1);
+	g_vars->scene32_massOrange = sc->findAniObjectById(ANI_TESTO_ORANGE, -1);
+	g_vars->scene32_massBlue = sc->findAniObjectById(ANI_TESTO_BLUE, -1);
+	g_vars->scene32_massGreen = sc->findAniObjectById(ANI_TESTO_GREEN, -1);
+	g_vars->scene32_button = sc->findAniObjectById(ANI_BUTTON_32, -1);
 
 	g_vars->scene32_massOrange->startMovement(MV_TSTO_FLOW, 0, -1);
 	g_vars->scene32_massOrange->_movement->setCurFrame(15);
@@ -59,7 +59,7 @@ void scene32_initScene(Scene *sc) {
 	AniObject *ani;
 
 	if (g_nmi->getObjectState(sO_ClockHandle) == g_nmi->getObjectEnumState(sO_ClockHandle, sO_In_32_Lies)) {
-		ani = sc->getStaticANIObject1ById(ANI_INV_HANDLE, -1);
+		ani = sc->findAniObjectById(ANI_INV_HANDLE, -1);
 		if (ani) {
 			g_nmi->_currentScene = sc;
 
@@ -67,7 +67,7 @@ void scene32_initScene(Scene *sc) {
 		}
 	} else {
 		if (g_nmi->getObjectState(sO_ClockHandle) == g_nmi->getObjectEnumState(sO_ClockHandle, sO_In_32_Sticks)) {
-			ani = sc->getStaticANIObject1ById(ANI_INV_HANDLE, -1);
+			ani = sc->findAniObjectById(ANI_INV_HANDLE, -1);
 
 			g_nmi->_currentScene = sc;
 
@@ -81,7 +81,7 @@ void scene32_initScene(Scene *sc) {
 	g_nmi->_currentScene = oldsc;
 
 	if (g_nmi->getObjectState(sO_Cube) == g_nmi->getObjectEnumState(sO_Cube, sO_In_32)) {
-		MessageQueue *mq = new MessageQueue(sc->getMessageQueueById(QU_KBK32_START), 0, 0);
+		MessageQueue *mq = new MessageQueue(sc->findMessageQueue(QU_KBK32_START), 0, 0);
 
 		mq->next();
 	}
@@ -117,7 +117,7 @@ int scene32_updateCursor() {
 
 void sceneHandler32_tryCube() {
 	if (g_nmi->getObjectState(sO_Cube) == g_nmi->getObjectEnumState(sO_Cube, sO_In_33))
-		chainQueue(QU_KBK32_GO, 0);
+		runQueue(QU_KBK32_GO, 0);
 }
 
 void sceneHandler32_startCactus() {
@@ -144,7 +144,7 @@ void sceneHandler32_spin(ExCommand *cmd) {
 
 		g_vars->scene32_cactus->setStatic(ST_CTS_GROWUP);
 
-		chainQueue(QU_CTS_BACK, 1);
+		runQueue(QU_CTS_BACK, 1);
 
 		g_vars->scene32_cactusIsGrowing = false;
 
@@ -158,7 +158,7 @@ void sceneHandler32_spin(ExCommand *cmd) {
 			mq->addCommand(1, newex);
 		}
 
-		chainQueue(QU_KDK_DRIZZLE, 0);
+		runQueue(QU_KDK_DRIZZLE, 0);
 	}
 }
 
@@ -204,34 +204,34 @@ void sceneHandler32_trySit(ExCommand *cmd) {
 
 void sceneHandler32_buttonPush() {
 	if (g_nmi->getObjectState(sO_ClockHandle) == g_nmi->getObjectEnumState(sO_ClockHandle, sO_In_32_Sticks)) {
-		AniObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_INV_HANDLE, -1);
+		AniObject *ani = g_nmi->_currentScene->findAniObjectById(ANI_INV_HANDLE, -1);
 		if (ani)
 			ani->setStatic(ST_HDL_PLUGGED);
 
-		chainQueue(QU_SC32_FALLHANDLE, 1);
+		runQueue(QU_SC32_FALLHANDLE, 1);
 
 		g_vars->scene32_button->setStatic(ST_BTN32_OFF);
 	}
 }
 
 void sceneHandler32_installHandle() {
-	chainQueue(QU_SC32_SHOWHANDLE, 0);
+	runQueue(QU_SC32_SHOWHANDLE, 0);
 
 	g_vars->scene32_button->setStatic(ST_BTN32_ON);
 }
 
 void sceneHandler32_animateCactus() {
 	if (g_nmi->_aniMan->_statics->_staticsId != ST_MAN32_SIT)
-		chainQueue(QU_CTS_GROW, 1);
+		runQueue(QU_CTS_GROW, 1);
 	else
-		chainQueue(QU_CTS_GROWMAN, 1);
+		runQueue(QU_CTS_GROWMAN, 1);
 
 	g_vars->scene32_cactusCounter = -1;
 	g_vars->scene32_cactusIsGrowing = true;
 }
 
 void sceneHandler32_ladderLogic(ExCommand *cmd) {
-	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC32_FROMLADDER), 0, 0);
+	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC32_FROMLADDER), 0, 0);
 
 	if (g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) != PIC_SC32_LADDER)
 		mq->addCommandToEnd(cmd->createClone());
@@ -258,7 +258,7 @@ void sceneHandler32_potLogic(ExCommand *cmd) {
 
 		mq->addCommandToEnd(ex);
 
-		AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+		AniObject *ani = g_nmi->_currentScene->findAniObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 		if (!ani || ani->_id != ANI_KADKA)
 			mq->addCommandToEnd(cmd->createClone());
@@ -291,11 +291,11 @@ int sceneHandler32(ExCommand *cmd) {
 		break;
 
 	case MSG_SC32_TRUBATOBACK:
-		g_nmi->_currentScene->getPictureObjectById(PIC_SC32_RTRUBA, 0)->_z = 20;
+		g_nmi->_currentScene->findPictureObjectById(PIC_SC32_RTRUBA, 0)->_z = 20;
 		break;
 
 	case MSG_SC32_TRUBATOFRONT:
-		g_nmi->_currentScene->getPictureObjectById(PIC_SC32_RTRUBA, 0)->_z = 0;
+		g_nmi->_currentScene->findPictureObjectById(PIC_SC32_RTRUBA, 0)->_z = 0;
 		break;
 
 	case MSG_LIFT_CLICKBUTTON:
@@ -410,7 +410,7 @@ int sceneHandler32(ExCommand *cmd) {
 		}
 
 		if (!g_vars->scene32_dudeIsSitting || g_nmi->_aniMan->_movement) {
-			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->findAniObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
 				g_nmi->lift_animateButton(ani);

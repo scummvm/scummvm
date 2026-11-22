@@ -34,7 +34,7 @@
 namespace NGI {
 
 void sceneDbgMenu_initScene(Scene *sc) {
-	g_vars->selector = sc->getPictureObjectById(PIC_SCD_SEL, 0);
+	g_vars->selector = sc->findPictureObjectById(PIC_SCD_SEL, 0);
 	getGameLoaderInteractionController()->disableFlag24();
 	setInputDisabled(false);
 }
@@ -80,7 +80,7 @@ int sceneHandlerDbgMenu(ExCommand *ex) {
 	}
 
 	g_nmi->_cursorId = PIC_CSR_DEFAULT;
-	GameObject *obj = g_nmi->_currentScene->getStaticANIObjectAtPos(mx, my);
+	GameObject *obj = g_nmi->_currentScene->findAniObjectAtPos(mx, my);
 	if (obj) {
 		if (canInteractAny(nullptr, obj, -3)) {
 			g_nmi->_cursorId = PIC_CSR_DEFAULT;

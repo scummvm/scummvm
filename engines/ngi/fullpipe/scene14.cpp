@@ -36,7 +36,7 @@
 namespace NGI {
 
 void scene14_initScene(Scene *sc) {
-	g_vars->scene14_grandma = sc->getStaticANIObject1ById(ANI_GRANDMA, -1);
+	g_vars->scene14_grandma = sc->findAniObjectById(ANI_GRANDMA, -1);
 	g_vars->scene14_sceneDeltaX = 200;
 	g_vars->scene14_sceneDeltaY = 200;
 	g_vars->scene14_arcadeIsOn = false;
@@ -52,7 +52,7 @@ void scene14_initScene(Scene *sc) {
 	if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_In_14)) {
 		g_vars->scene14_grandmaIsHere = true;
 
-		AniObject *ball = sc->getStaticANIObject1ById(ANI_BALL14, -1);
+		AniObject *ball = sc->findAniObjectById(ANI_BALL14, -1);
 
 		ball->_flags &= 0xFFFB;
 		g_vars->scene14_balls.push_back(ball);
@@ -63,7 +63,7 @@ void scene14_initScene(Scene *sc) {
 			ball->_flags &= 0xFFFB;
 			g_vars->scene14_balls.push_back(ball);
 
-			sc->addStaticANIObject(ball, 1);
+			sc->addAni(ball, 1);
 		}
 	} else {
 		g_vars->scene14_grandmaIsHere = false;
@@ -166,11 +166,11 @@ void sceneHandler14_exitScene() {
 
 	g_nmi->_aniMan->stopMovement();
 
-	handleObjectInteraction(g_nmi->_aniMan, g_nmi->_currentScene->getPictureObjectById(PIC_SC14_RTRUBA, 0), 0);
+	handleObjectInteraction(g_nmi->_aniMan, g_nmi->_currentScene->findPictureObjectById(PIC_SC14_RTRUBA, 0), 0);
 
 	g_vars->scene14_grandma->setStatic(ST_GMA_SIT);
 
-	chainQueue(QU_SC14_ENDARCADE, 0);
+	runQueue(QU_SC14_ENDARCADE, 0);
 
 	getGameLoaderInteractionController()->disableFlag24();
 	getCurrSceneSc2MotionController()->deactivate();
@@ -373,7 +373,7 @@ void sceneHandler14_startArcade() {
 	g_vars->scene14_hitsLeft = 4;
 	g_vars->scene14_pink = nullptr;
 
-	chainQueue(QU_SC14_STARTARCADE, 0);
+	runQueue(QU_SC14_STARTARCADE, 0);
 
 	g_nmi->_updateScreenCallback = sceneHandler14_updateScreenCallback;
 }
@@ -579,7 +579,7 @@ void sceneHandler14_arcadeLogic() {
 		g_vars->scene14_dudeCanKick = false;
 		g_nmi->_aniMan2 = nullptr;
 
-		chainQueue(QU_SC14_WINARCADE, 1);
+		runQueue(QU_SC14_WINARCADE, 1);
 
 		--g_vars->scene14_hitsLeft;
 	} else {
@@ -814,7 +814,7 @@ int sceneHandler14(ExCommand *cmd) {
 				break;
 			}
 		} else {
-			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->findAniObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
 				g_nmi->lift_animateButton(ani);
@@ -825,7 +825,7 @@ int sceneHandler14(ExCommand *cmd) {
 			if (!sceneHandler14_arcadeProcessClick(cmd) && (!ani || !canInteractAny(g_nmi->_aniMan, ani, cmd->_param))) {
 				int picId = g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
-				PictureObject *pic = g_nmi->_currentScene->getPictureObjectById(picId, 0);
+				PictureObject *pic = g_nmi->_currentScene->findPictureObjectById(picId, 0);
 
 				if (!pic || !canInteractAny(g_nmi->_aniMan, pic, cmd->_param)) {
 					if ((g_nmi->_sceneRect.right - cmd->_sceneClickX < 47 && g_nmi->_sceneRect.right < g_nmi->_sceneWidth - 1)

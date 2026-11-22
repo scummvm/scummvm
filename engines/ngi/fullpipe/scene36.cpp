@@ -36,8 +36,8 @@
 namespace NGI {
 
 void scene36_initScene(Scene *sc) {
-	g_vars->scene36_rotohrust = sc->getStaticANIObject1ById(ANI_ROTOHRUST, -1);
-	g_vars->scene36_scissors = sc->getStaticANIObject1ById(ANI_SCISSORS_36, -1);
+	g_vars->scene36_rotohrust = sc->findAniObjectById(ANI_ROTOHRUST, -1);
+	g_vars->scene36_scissors = sc->findAniObjectById(ANI_SCISSORS_36, -1);
 }
 
 int scene36_updateCursor() {

@@ -122,12 +122,12 @@ void sceneHandler06_winArcade() {
 }
 
 void sceneHandler06_enableDrops() {
-	chainQueue(QU_SC6_DROPS, 0);
+	runQueue(QU_SC6_DROPS, 0);
 
 	g_vars->scene06_mumsy->setStatic(ST_MOM_SITS);
 	g_nmi->setObjectState(sO_BigMumsy, g_nmi->getObjectEnumState(sO_BigMumsy, sO_IsPlaying));
 
-	chainQueue(QU_MOM_STANDUP, 1);
+	runQueue(QU_MOM_STANDUP, 1);
 
 	g_vars->scene06_arcadeEnabled = true;
 	g_vars->scene06_numBallsGiven = 0;
@@ -247,24 +247,24 @@ void sceneHandler06_spinHandle() {
 
 void sceneHandler06_uPipeClick() {
 	if (getGameLoaderInteractionController()->_flag24)
-		handleObjectInteraction(g_nmi->_aniMan2, g_nmi->_currentScene->getPictureObjectById(PIC_SC6_LADDER, 0), 0);
+		handleObjectInteraction(g_nmi->_aniMan2, g_nmi->_currentScene->findPictureObjectById(PIC_SC6_LADDER, 0), 0);
 }
 
 void sceneHandler06_buttonPush() {
-	g_vars->scene06_invHandle = g_nmi->_currentScene->getStaticANIObject1ById(ANI_INV_HANDLE, -1);
+	g_vars->scene06_invHandle = g_nmi->_currentScene->findAniObjectById(ANI_INV_HANDLE, -1);
 
 	if (g_vars->scene06_invHandle)
 		if (g_vars->scene06_invHandle->_flags & 4)
 			if (g_vars->scene06_invHandle->_statics)
 				if (g_vars->scene06_invHandle->_statics->_staticsId == ST_HDL_PLUGGED)
-					chainQueue(QU_SC6_FALLHANDLE, 1);
+					runQueue(QU_SC6_FALLHANDLE, 1);
 }
 
 void sceneHandler06_showNextBall() {
 	if (g_vars->scene06_balls.size()) {
 		g_vars->scene06_currentBall = g_vars->scene06_balls.remove_at(0);
 
-		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC6_SHOWNEXTBALL), 0, 1);
+		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC6_SHOWNEXTBALL), 0, 1);
 
 		mq->setObjectCopy(-1, g_vars->scene06_currentBall->_copyId);
 		mq->run(nullptr);
@@ -274,7 +274,7 @@ void sceneHandler06_showNextBall() {
 }
 
 void sceneHandler06_installHandle() {
-	chainQueue(QU_SC6_SHOWHANDLE, 0);
+	runQueue(QU_SC6_SHOWHANDLE, 0);
 }
 
 int sceneHandler06_updateScreenCallback() {
@@ -384,13 +384,13 @@ void sceneHandler06_throwBall() {
 
 void sceneHandler06_eggieWalk() {
 	if (15 - g_vars->scene06_numBallsGiven >= 4 && !g_nmi->_rnd.getRandomNumber(9)) {
-		AniObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_EGGIE, -1);
+		AniObject *ani = g_nmi->_currentScene->findAniObjectById(ANI_EGGIE, -1);
 
 		if (!ani || !(ani->_flags & 4)) {
 			if (g_vars->scene06_eggieDirection)
-				chainQueue(QU_EGG6_GOR, 0);
+				runQueue(QU_EGG6_GOR, 0);
 			else
-				chainQueue(QU_EGG6_GOL, 0);
+				runQueue(QU_EGG6_GOL, 0);
 
 			g_vars->scene06_eggieTimeout = 0;
 			g_vars->scene06_eggieDirection = !g_vars->scene06_eggieDirection;
@@ -402,7 +402,7 @@ void sceneHandler06_dropBall() {
 	if (g_vars->scene06_numBallsGiven >= 15 || g_vars->scene06_mumsyNumBalls >= 5)
 		g_vars->scene06_ballDrop->hide();
 	else
-		chainQueue(QU_SC6_DROPS3, 0);
+		runQueue(QU_SC6_DROPS3, 0);
 }
 
 void sceneHandler06_fallBall() {
@@ -410,7 +410,7 @@ void sceneHandler06_fallBall() {
 
 	g_vars->scene06_flyingBall->setPos(g_vars->scene06_ballX, g_vars->scene06_ballY);
 
-	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC6_FALLBALL), 0, 1);
+	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC6_FALLBALL), 0, 1);
 
 	mq->setObjectCopy(-1, g_vars->scene06_flyingBall->_copyId);
 	mq->run(nullptr);
@@ -467,7 +467,7 @@ void sceneHandler06_catchBall() {
 			g_vars->scene06_mumsy->setStatic(ST_MOM_STANDS);
 		}
 
-		chainQueue(QU_MOM_PUTBALL, 1);
+		runQueue(QU_MOM_PUTBALL, 1);
 		g_vars->scene06_mumsyGotBall = true;
 
 		sceneHandler06_dropBall();
@@ -477,7 +477,7 @@ void sceneHandler06_catchBall() {
 void sceneHandler06_checkBallTarget(int par) {
 	if (g_vars->scene06_ballY <= 475) {
 		if (g_vars->scene06_mumsy->hit(g_vars->scene06_ballX, g_vars->scene06_ballY)) {
-			chainObjQueue(g_vars->scene06_mumsy, QU_MOM_JUMPBK, 0);
+			runQueueByIdWithAni(g_vars->scene06_mumsy, QU_MOM_JUMPBK, 0);
 
 			sceneHandler06_catchBall();
 		}
@@ -487,11 +487,11 @@ void sceneHandler06_checkBallTarget(int par) {
 }
 
 void scene06_initScene(Scene *sc) {
-	g_vars->scene06_mumsy = sc->getStaticANIObject1ById(ANI_MAMASHA, -1);
+	g_vars->scene06_mumsy = sc->findAniObjectById(ANI_MAMASHA, -1);
 	g_vars->scene06_someBall = nullptr;
-	g_vars->scene06_invHandle = sc->getStaticANIObject1ById(ANI_INV_HANDLE, -1);
-	g_vars->scene06_liftButton = sc->getStaticANIObject1ById(ANI_BUTTON_6, -1);
-	g_vars->scene06_ballDrop = sc->getStaticANIObject1ById(ANI_BALLDROP, -1);
+	g_vars->scene06_invHandle = sc->findAniObjectById(ANI_INV_HANDLE, -1);
+	g_vars->scene06_liftButton = sc->findAniObjectById(ANI_BUTTON_6, -1);
+	g_vars->scene06_ballDrop = sc->findAniObjectById(ANI_BALLDROP, -1);
 	g_vars->scene06_arcadeEnabled = false;
 	g_vars->scene06_aimingBall = false;
 	g_vars->scene06_currentBall = nullptr;
@@ -503,7 +503,7 @@ void scene06_initScene(Scene *sc) {
 	g_vars->scene06_eggieTimeout = 0;
 	g_vars->scene06_eggieDirection = true;
 
-	AniObject *ball = sc->getStaticANIObject1ById(ANI_NEWBALL, -1);
+	AniObject *ball = sc->findAniObjectById(ANI_NEWBALL, -1);
 
 	ball->hide();
 	ball->_statics = ball->getStatic(ST_NBL_NORM);
@@ -515,7 +515,7 @@ void scene06_initScene(Scene *sc) {
 		ball2->hide();
 		ball2->_statics = ball2->getStatic(ST_NBL_NORM);
 
-		sc->addStaticANIObject(ball2, 1);
+		sc->addAni(ball2, 1);
 
 		g_vars->scene06_balls.push_back(ball2);
 	}
@@ -639,7 +639,7 @@ int sceneHandler06(ExCommand *ex) {
 
 	case 29:
 		{
-			AniObject *st = g_nmi->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
+			AniObject *st = g_nmi->_currentScene->findAniObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
 
 			if (st) {
 				if (!g_vars->scene06_arcadeEnabled && st->_id == ANI_LIFTBUTTON) {
@@ -663,7 +663,7 @@ int sceneHandler06(ExCommand *ex) {
 
 			if (!st || !canInteractAny(g_nmi->_aniMan, st, ex->_param)) {
 				int picId = g_nmi->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY);
-				PictureObject *pic = g_nmi->_currentScene->getPictureObjectById(picId, 0);
+				PictureObject *pic = g_nmi->_currentScene->findPictureObjectById(picId, 0);
 
 				if (!pic || !canInteractAny(g_nmi->_aniMan, pic, ex->_param)) {
 					if ((g_nmi->_sceneRect.right - ex->_sceneClickX < 47

@@ -58,9 +58,9 @@ void scene09_setupGrit(Scene *sc) {
 void scene09_initScene(Scene *sc) {
 	g_vars->scene09_flyingBall = nullptr;
 	g_vars->scene09_numSwallenBalls = 0;
-	g_vars->scene09_gulper = sc->getStaticANIObject1ById(ANI_GLOTATEL, -1);
-	g_vars->scene09_spitter = sc->getStaticANIObject1ById(ANI_PLEVATEL, -1);
-	g_vars->scene09_grit = sc->getStaticANIObject1ById(ANI_GRIT_9, -1);
+	g_vars->scene09_gulper = sc->findAniObjectById(ANI_GLOTATEL, -1);
+	g_vars->scene09_spitter = sc->findAniObjectById(ANI_PLEVATEL, -1);
+	g_vars->scene09_grit = sc->findAniObjectById(ANI_GRIT_9, -1);
 	g_vars->scene09_gulperIsPresent = true;
 	g_vars->scene09_dudeIsOnLadder = false;
 	g_vars->scene09_interactingHanger = -1;
@@ -76,7 +76,7 @@ void scene09_initScene(Scene *sc) {
 
 	g_vars->scene09_numMovingHangers = 4;
 
-	AniObject *hanger = sc->getStaticANIObject1ById(ANI_VISUNCHIK, -1);
+	AniObject *hanger = sc->findAniObjectById(ANI_VISUNCHIK, -1);
 	Hanger *hng = new Hanger;
 
 	hng->ani = hanger;
@@ -90,7 +90,7 @@ void scene09_initScene(Scene *sc) {
 		AniObject *ani = new AniObject(hanger);
 
 		ani->show1(x + hanger->_x, hanger->_y, MV_VSN_CYCLE2, 0);
-		sc->addStaticANIObject(ani, 1);
+		sc->addAni(ani, 1);
 
 		hng = new Hanger;
 
@@ -104,7 +104,7 @@ void scene09_initScene(Scene *sc) {
 
 	g_vars->scene09_sceneBalls.clear();
 
-	AniObject *newball1 = new AniObject(sc->getStaticANIObject1ById(ANI_BALL9, -1));
+	AniObject *newball1 = new AniObject(sc->findAniObjectById(ANI_BALL9, -1));
 	newball1->setAlpha(0xc8);
 
 	for (int i = 0; i < 4; i++) {
@@ -113,7 +113,7 @@ void scene09_initScene(Scene *sc) {
 		newball->setAlpha(0xc8);
 		g_vars->scene09_sceneBalls.push_back(newball);
 
-		sc->addStaticANIObject(newball, 1);
+		sc->addAni(newball, 1);
 	}
 
 	delete newball1;
@@ -175,7 +175,7 @@ void sceneHandler09_winArcade() {
 }
 
 void sceneHandler09_startAuntie() {
-	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_TTA9_GOL), 0, 1);
+	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_TTA9_GOL), 0, 1);
 
 	mq->getCommandByIndex(0)->_x = g_nmi->_sceneRect.right + 30;
 	mq->run(nullptr);
@@ -320,7 +320,7 @@ void sceneHandler09_collideBall(uint num) {
 		if (g_vars->scene09_gulper) {
 			g_vars->scene09_gulper->setStatic(ST_GLT_SIT);
 
-			MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC9_EATBALL), 0, 0);
+			MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC9_EATBALL), 0, 0);
 
 			mq->setFlags(mq->getFlags() | 1);
 
@@ -337,7 +337,7 @@ void sceneHandler09_ballExplode(uint num) {
 
 	g_vars->scene09_flyingBalls.remove_at(num);
 
-	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC9_BALLEXPLODE), 0, 1);
+	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC9_BALLEXPLODE), 0, 1);
 
 	mq->setObjectCopy(-1, ball->_copyId);
 
@@ -518,7 +518,7 @@ int sceneHandler09(ExCommand *cmd) {
 
 	case 29:
 		{
-			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
+			AniObject *ani = g_nmi->_currentScene->findAniObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
 
 			if (ani) {
 				if (ani->_id == ANI_PLEVATEL) {
@@ -564,12 +564,12 @@ int sceneHandler09(ExCommand *cmd) {
 
 			if (g_vars->scene09_dudeIsOnLadder && g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC9_LADDER_R
 				&& !cmd->_param && !g_nmi->_aniMan->_movement) {
-				handleObjectInteraction(g_nmi->_aniMan, g_nmi->_currentScene->getPictureObjectById(PIC_SC9_LADDER_R, 0), 0);
+				handleObjectInteraction(g_nmi->_aniMan, g_nmi->_currentScene->findPictureObjectById(PIC_SC9_LADDER_R, 0), 0);
 			}
 
 			if (!ani || !canInteractAny(g_nmi->_aniMan, ani, cmd->_param)) {
 				int picId = g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-				PictureObject *pic = g_nmi->_currentScene->getPictureObjectById(picId, 0);
+				PictureObject *pic = g_nmi->_currentScene->findPictureObjectById(picId, 0);
 
 				if (!pic || !canInteractAny(g_nmi->_aniMan, pic, cmd->_param)) {
 					if ((g_nmi->_sceneRect.right - cmd->_sceneClickX < 47 && g_nmi->_sceneRect.right < g_nmi->_sceneWidth - 1) || (cmd->_sceneClickX - g_nmi->_sceneRect.left < 47 && g_nmi->_sceneRect.left > 0))

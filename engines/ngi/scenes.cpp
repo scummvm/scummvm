@@ -586,7 +586,7 @@ bool NGIEngine::sceneSwitcher(const EntranceInfo &entrance) {
 
 	getGameLoaderInteractionController()->sortInteractions(scene->_sceneId);
 	_currentScene = scene;
-	scene->addStaticANIObject(_aniMan, 1);
+	scene->addAni(_aniMan, 1);
 	_scene2 = scene;
 	_aniMan->_movement = nullptr;
 	_aniMan->_statics = _aniMan->getStatic(ST_MAN_EMPTY);
@@ -602,10 +602,10 @@ bool NGIEngine::sceneSwitcher(const EntranceInfo &entrance) {
 
 	scene->setPictureObjectsFlag4();
 
-	for (uint i = 0; i < scene->_staticANIObjectList1.size(); i++)
-		scene->_staticANIObjectList1[i]->_flags &= 0xFE7F;
+	for (uint i = 0; i < scene->_aniObjects.size(); i++)
+		scene->_aniObjects[i]->_flags &= 0xFE7F;
 
-	PictureObject *p = accessScene(SC_INV)->getPictureObjectById(PIC_INV_MENU, 0);
+	PictureObject *p = accessScene(SC_INV)->findPictureObjectById(PIC_INV_MENU, 0);
 	p->setFlags(p->_flags & 0xFFFB);
 
 	removeMessageHandler(2, -1);

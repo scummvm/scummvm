@@ -32,10 +32,10 @@ class MessageQueue;
 class Scene : public Background {
  public:
 	/** list items are owned */
-	Common::Array<AniObject *> _staticANIObjectList1;
+	Common::Array<AniObject *> _aniObjects;
 
-	Common::Array<AniObject *> _staticANIObjectList2;
-	Common::Array<MessageQueue *> _messageQueueList;
+	Common::Array<AniObject *> _renderableAnis;
+	Common::Array<MessageQueue *> _messageQueues;
 	// PtrList _faObjectList; // not used
 	Common::ScopedPtr<Shadows> _shadows;
 	Common::ScopedPtr<SoundList> _soundList;
@@ -52,7 +52,7 @@ class Scene : public Background {
 
 	void initStaticANIObjects();
 	void init();
-	void draw();
+	void render();
 	void drawContent(int minPri, int maxPri, bool drawBG);
 	void updateScrolling();
 	void updateScrolling2();
@@ -60,23 +60,23 @@ class Scene : public Background {
 	void update(int counterdiff);
 
 	AniObject *getAniMan();
-	AniObject *getStaticANIObject1ById(int obj, int a3);
+	AniObject *findAniObjectById(int obj, int a3);
 	AniObject *getStaticANIObject1ByName(const Common::String &name, int a3);
-	MessageQueue *getMessageQueueById(int messageId);
+	MessageQueue *findMessageQueue(int messageId);
 	MessageQueue *getMessageQueueByName(const Common::String &name);
 
-	void deleteStaticANIObject(AniObject *obj);
+	void removeAni(AniObject *obj);
 	/** takes ownership of the passed obj */
-	void addStaticANIObject(AniObject *obj, bool addList2);
+	void addAni(AniObject *obj, bool addList2);
 
 	void setPictureObjectsFlag4();
-	PictureObject *getPictureObjectById(int objId, int flags);
+	PictureObject *findPictureObjectById(int objId, int flags);
 	PictureObject *getPictureObjectByName(const Common::String &name, int keyCode);
-	void deletePictureObject(PictureObject *obj);
+	void removePicture(PictureObject *obj);
 	void preloadMovements(GameVar *var);
 
-	AniObject *getStaticANIObjectAtPos(int x, int y);
-	PictureObject *getPictureObjectAtPos(int x, int y);
+	AniObject *findAniObjectAtPos(int x, int y);
+	PictureObject *findPictureObjectAtPos(int x, int y);
 	int getPictureObjectIdAtPos(int x, int y);
 
 	void initObjectCursors(const char *name);
@@ -86,11 +86,11 @@ class Scene : public Background {
   private:
 #if 0
 	static bool compareObjPriority(const void *p1, const void *p2);
-	void objectList_sortByPriority(Common::Array<AniObject *> &list, bool skipFirst = false);
-	void objectList_sortByPriority(Common::Array<PictureObject *> &list, bool skipFirst = false);
+	void sortRenderables(Common::Array<AniObject *> &list, bool skipFirst = false);
+	void sortRenderables(Common::Array<PictureObject *> &list, bool skipFirst = false);
 #else
 	template<typename T>
-	void objectList_sortByPriority(Common::Array<T*> &list, uint startIndex = 0);
+	void sortRenderables(Common::Array<T*> &list, uint startIndex = 0);
 #endif
 };
 

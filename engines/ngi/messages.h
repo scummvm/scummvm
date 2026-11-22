@@ -197,8 +197,8 @@ void clearMessages();
 void clearGlobalMessageQueueList();
 void clearGlobalMessageQueueList1();
 
-bool chainQueue(int queueId, int flags);
-bool chainObjQueue(AniObject *obj, int queueId, int flags);
+bool runQueue(int queueId, int flags);
+bool runQueueByIdWithAni(AniObject *obj, int queueId, int flags);
 void postExCommand(int parentId, int keyCode, int x, int y, int f20, int f16);
 
 } // End of namespace NGI

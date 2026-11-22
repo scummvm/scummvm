@@ -78,7 +78,7 @@ void Floaters::init(GameVar *var) {
 }
 
 void Floaters::genFlies(Scene *sc, int x, int y, int priority, int flags) {
-	AniObject *ani = new AniObject(g_nmi->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_FLY, -1));
+	AniObject *ani = new AniObject(g_nmi->accessScene(SC_COMMON)->findAniObjectById(ANI_FLY, -1));
 
 	ani->_statics = ani->getStatic(ST_FLY_FLY);
 	ani->_movement = nullptr;
@@ -86,7 +86,7 @@ void Floaters::genFlies(Scene *sc, int x, int y, int priority, int flags) {
 	ani->_flags |= 4;
 	ani->_z = priority;
 
-	sc->addStaticANIObject(ani, 1);
+	sc->addAni(ani, 1);
 
 	ani->startMovement(MV_FLY_FLY, 0, -1);
 
@@ -153,7 +153,7 @@ void Floaters::update() {
 					a2.val13 = g_nmi->_rnd.getRandomNumber(200) + 20;
 
 					if (a2.fflags & 1) {
-						g_nmi->_currentScene->deleteStaticANIObject(a2.ani);
+						g_nmi->_currentScene->removeAni(a2.ani);
 
 						if (a2.ani)
 							delete a2.ani;
@@ -225,7 +225,7 @@ void Floaters::update() {
 void Floaters::stopAll() {
 	for (uint i = 0; i < _array2.size(); i++) {
 		FloaterArray2 &a2 = _array2[i];
-		g_nmi->_currentScene->deleteStaticANIObject(a2.ani);
+		g_nmi->_currentScene->removeAni(a2.ani);
 		delete a2.ani;
 	}
 

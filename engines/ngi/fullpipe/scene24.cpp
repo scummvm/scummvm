@@ -35,9 +35,9 @@
 namespace NGI {
 
 void scene24_initScene(Scene *sc) {
-	g_vars->scene24_water = sc->getStaticANIObject1ById(ANI_WATER24, -1);
-	g_vars->scene24_jet = sc->getStaticANIObject1ById(ANI_JET24, -1);
-	g_vars->scene24_drop = sc->getStaticANIObject1ById(ANI_DROP_24, -1);
+	g_vars->scene24_water = sc->findAniObjectById(ANI_WATER24, -1);
+	g_vars->scene24_jet = sc->findAniObjectById(ANI_JET24, -1);
+	g_vars->scene24_drop = sc->findAniObjectById(ANI_DROP_24, -1);
 
 	g_vars->scene24_water->setAlpha(0xa0);
 	g_vars->scene24_jet->setAlpha(0xa0);

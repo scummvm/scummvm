@@ -47,7 +47,7 @@ void scene30_enablePass(Scene *sc) {
 void scene30_initScene(Scene *sc, int flag) {
 	Scene *oldsc = g_nmi->_currentScene;
 
-	g_vars->scene30_leg = sc->getStaticANIObject1ById(ANI_LEG, -1);
+	g_vars->scene30_leg = sc->findAniObjectById(ANI_LEG, -1);
 	g_nmi->_currentScene = sc;
 
 	if (g_nmi->getObjectState(sO_Leg) == g_nmi->getObjectEnumState(sO_Leg, sO_ShowingHeel))
@@ -119,7 +119,7 @@ int sceneHandler30(ExCommand *cmd) {
 
 	case 29:
 		{
-			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
+			AniObject *ani = g_nmi->_currentScene->findAniObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
 
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
 				g_nmi->lift_animateButton(ani);

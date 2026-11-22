@@ -190,9 +190,9 @@ void NGIEngine::winArcade() {
 }
 
 void NGIEngine::updateCursorCommon() {
-	GameObject *ani = _currentScene->getStaticANIObjectAtPos(_mouseVirtX, _mouseVirtY);
+	GameObject *ani = _currentScene->findAniObjectAtPos(_mouseVirtX, _mouseVirtY);
 
-	PictureObject *pic = _currentScene->getPictureObjectAtPos(_mouseVirtX, _mouseVirtY);
+	PictureObject *pic = _currentScene->findPictureObjectAtPos(_mouseVirtX, _mouseVirtY);
 	if (!ani || (pic && pic->_z < ani->_z))
 		ani = pic;
 
@@ -305,8 +305,8 @@ void NGIEngine::setArcadeOverlay(int picId) {
 	_arcadeOverlayX = 800;
 	_arcadeOverlayY = 545;
 
-	_arcadeOverlayHelper = accessScene(SC_INV)->getPictureObjectById(PIC_CSR_HELPERBGR, 0);
-	_arcadeOverlay = accessScene(SC_INV)->getPictureObjectById(picId, 0);
+	_arcadeOverlayHelper = accessScene(SC_INV)->findPictureObjectById(PIC_CSR_HELPERBGR, 0);
+	_arcadeOverlay = accessScene(SC_INV)->findPictureObjectById(picId, 0);
 
 	const Dims dims = _arcadeOverlay->getDimensions();
 	const Dims dims2 = _arcadeOverlayHelper->getDimensions();

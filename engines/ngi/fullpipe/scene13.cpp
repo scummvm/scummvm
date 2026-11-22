@@ -40,11 +40,11 @@ void scene13_whirlgigCallback(int *phase) {
 }
 
 void scene13_initScene(Scene *sc) {
-	g_vars->scene13_whirlgig = sc->getStaticANIObject1ById(ANI_WHIRLGIG_13, -1);
-	g_vars->scene13_guard = sc->getStaticANIObject1ById(ANI_STOROZH, -1);
-	g_vars->scene13_handleR = sc->getStaticANIObject1ById(ANI_HANDLE_R, -1);
-	g_vars->scene13_handleL = sc->getStaticANIObject1ById(ANI_HANDLE_L, -1);
-	g_vars->scene13_bridge = sc->getStaticANIObject1ById(ANI_BRIDGE, -1);
+	g_vars->scene13_whirlgig = sc->findAniObjectById(ANI_WHIRLGIG_13, -1);
+	g_vars->scene13_guard = sc->findAniObjectById(ANI_STOROZH, -1);
+	g_vars->scene13_handleR = sc->findAniObjectById(ANI_HANDLE_R, -1);
+	g_vars->scene13_handleL = sc->findAniObjectById(ANI_HANDLE_L, -1);
+	g_vars->scene13_bridge = sc->findAniObjectById(ANI_BRIDGE, -1);
 	g_vars->scene13_guardDirection = true;
 
 	MovGraphLink *lnk = getSc2MctlCompoundBySceneId(sc->_sceneId)->getGraphLink(sO_Bridge);
@@ -108,25 +108,25 @@ void sceneHandler13_testClose() {
 	int id = g_vars->scene13_handleL->_statics->_staticsId;
 
 	if (id == ST_HDLL_UP)
-		chainQueue(QU_SC13_CLOSEFAIL, 1);
+		runQueue(QU_SC13_CLOSEFAIL, 1);
 	else if (id == ST_HDLL_FIRECAN || id == ST_HDLL_HAMMER)
-		chainQueue(QU_SC13_CLOSESUCCESS, 1);
+		runQueue(QU_SC13_CLOSESUCCESS, 1);
 }
 
 void sceneHandler13_testOpen() {
 	switch (g_vars->scene13_handleR->_statics->_staticsId) {
 	case ST_HDLR_DOWN:
-		chainQueue(QU_SC13_OPENFAIL, 1);
+		runQueue(QU_SC13_OPENFAIL, 1);
 		break;
 
 	case ST_HDLR_DOWN_GUM:
-		chainQueue(QU_SC13_OPENSUCCESS, 1);
+		runQueue(QU_SC13_OPENSUCCESS, 1);
 		break;
 
 	case ST_HDLR_GUM:
 		g_vars->scene13_handleR->setStatic(ST_HDLR_DOWN_GUM);
 
-		chainQueue(QU_SC13_OPENSUCCESS, 1);
+		runQueue(QU_SC13_OPENSUCCESS, 1);
 		break;
 
 	default:
@@ -220,7 +220,7 @@ void sceneHandler13_updateBridge() {
 }
 
 void sceneHandler13_showGum() {
-	chainQueue(QU_SC13_SHOWGUM, 0);
+	runQueue(QU_SC13_SHOWGUM, 0);
 }
 
 void sceneHandler13_setBehFlag(BehaviorMove *beh, bool flag) {
@@ -318,11 +318,11 @@ int sceneHandler13(ExCommand *cmd) {
 
 	case 29:
 		{
-			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->findAniObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (!ani || !canInteractAny(g_nmi->_aniMan, ani, cmd->_param)) {
 				int picId = g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-				PictureObject *pic = g_nmi->_currentScene->getPictureObjectById(picId, 0);
+				PictureObject *pic = g_nmi->_currentScene->findPictureObjectById(picId, 0);
 
 				if (!pic || !canInteractAny(g_nmi->_aniMan, pic, cmd->_param)) {
 					if ((g_nmi->_sceneRect.right - cmd->_sceneClickX < 47

@@ -913,8 +913,8 @@ void updateGlobalMessageQueue(int id, int objid) {
 	}
 }
 
-bool chainQueue(int queueId, int flags) {
-	MessageQueue *mq = g_nmi->_currentScene->getMessageQueueById(queueId);
+bool runQueue(int queueId, int flags) {
+	MessageQueue *mq = g_nmi->_currentScene->findMessageQueue(queueId);
 
 	if (!mq)
 		return false;
@@ -931,8 +931,8 @@ bool chainQueue(int queueId, int flags) {
 	return true;
 }
 
-bool chainObjQueue(AniObject *obj, int queueId, int flags) {
-	MessageQueue *mq = g_nmi->_currentScene->getMessageQueueById(queueId);
+bool runQueueByIdWithAni(AniObject *obj, int queueId, int flags) {
+	MessageQueue *mq = g_nmi->_currentScene->findMessageQueue(queueId);
 
 	if (!mq)
 		return false;

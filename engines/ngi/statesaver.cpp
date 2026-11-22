@@ -151,7 +151,7 @@ bool GameLoader::writeSavegame(Scene *sc, const char *fname, const Common::Strin
 	saveFile->writeByte(desc.size());
 	saveFile->writeString(desc);
 
-	g_nmi->_currentScene->draw();
+	g_nmi->_currentScene->render();
 
 	Graphics::saveThumbnail(*saveFile); // FIXME. Render proper screen
 

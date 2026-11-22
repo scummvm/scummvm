@@ -164,9 +164,9 @@ void Inventory2::removeItem2(Scene *sceneObj, int itemId, int x, int y, int prio
 			Scene *sc = g_nmi->accessScene(_sceneId);
 
 			if (sc) {
-				AniObject *ani = new AniObject(sc->getStaticANIObject1ById(itemId, -1));
+				AniObject *ani = new AniObject(sc->findAniObjectById(itemId, -1));
 
-				sceneObj->addStaticANIObject(ani, 1);
+				sceneObj->addAni(ani, 1);
 
 				ani->_statics = ani->_staticsList[0];
 				ani->setPos(x, y);
@@ -240,7 +240,7 @@ void Inventory2::rebuildItemRects() {
 		for (uint j = 0; j < _itemsPool.size(); j++) {
 			if (_itemsPool[j].pictureObjectNormal == pic->_id) {
 				if (pic->_copyId)
-					_scene->deletePictureObject(pic);
+					_scene->removePicture(pic);
 				else
 					pic->_flags &= 0xFFFB;
 			}
@@ -255,9 +255,9 @@ void Inventory2::rebuildItemRects() {
 
 		icn.inventoryItemId = _itemsPool[idx].id;
 
-		icn.pictureObjectNormal = _scene->getPictureObjectById(_itemsPool[idx].pictureObjectNormal, 0);
-		icn.pictureObjectHover = _scene->getPictureObjectById(_itemsPool[idx].pictureObjectHover, 0);
-		icn.pictureObjectSelected = _scene->getPictureObjectById(_itemsPool[idx].pictureObjectSelected, 0);
+		icn.pictureObjectNormal = _scene->findPictureObjectById(_itemsPool[idx].pictureObjectNormal, 0);
+		icn.pictureObjectHover = _scene->findPictureObjectById(_itemsPool[idx].pictureObjectHover, 0);
+		icn.pictureObjectSelected = _scene->findPictureObjectById(_itemsPool[idx].pictureObjectSelected, 0);
 
 		const Dims dims = icn.pictureObjectNormal->getDimensions();
 
@@ -424,7 +424,7 @@ int Inventory2::selectItem(int itemId) {
 	if (_scene) {
 		int idx = getInventoryPoolItemIndexById(itemId);
 
-		Picture *pic = _scene->getPictureObjectById(_itemsPool[idx].pictureObjectId1, 0)->_picture;
+		Picture *pic = _scene->findPictureObjectById(_itemsPool[idx].pictureObjectId1, 0)->_picture;
 		g_nmi->getGameLoaderInputController()->setCursorItemPicture(pic);
 	}
 

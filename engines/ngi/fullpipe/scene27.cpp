@@ -47,24 +47,24 @@ struct Bat {
 };
 
 void scene27_initScene(Scene *sc) {
-	g_vars->scene27_hitZone = sc->getPictureObjectById(PIC_SC27_HITZONE2, 0);
-	g_vars->scene27_driver = sc->getStaticANIObject1ById(ANI_VODILLA, -1);
-	g_vars->scene27_maid = sc->getStaticANIObject1ById(ANI_MAID, -1);
-	g_vars->scene27_batHandler = sc->getStaticANIObject1ById(ANI_BITAHANDLER, -1);
+	g_vars->scene27_hitZone = sc->findPictureObjectById(PIC_SC27_HITZONE2, 0);
+	g_vars->scene27_driver = sc->findAniObjectById(ANI_VODILLA, -1);
+	g_vars->scene27_maid = sc->findAniObjectById(ANI_MAID, -1);
+	g_vars->scene27_batHandler = sc->findAniObjectById(ANI_BITAHANDLER, -1);
 
 	g_vars->scene27_balls.clear();
 	g_vars->scene27_bats.clear();
 	g_vars->scene27_var07.clear();
 
 	g_vars->scene27_driverHasVent = true;
-	g_vars->scene27_bat = sc->getStaticANIObject1ById(ANI_BITA, -1);
+	g_vars->scene27_bat = sc->findAniObjectById(ANI_BITA, -1);
 
 	for (int i = 0; i < 4; i++) {
 		AniObject *newbat = new AniObject(g_vars->scene27_bat);
 
 		g_vars->scene27_balls.push_back(newbat);
 
-		sc->addStaticANIObject(newbat, 1);
+		sc->addAni(newbat, 1);
 	}
 
 	g_vars->scene27_dudeIsAiming = false;
@@ -143,7 +143,7 @@ void sceneHandler27_takeVent() {
 
 void sceneHandler27_showNextBat() {
 	if (g_vars->scene27_bat) {
-		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC27_SHOWBET), 0, 1);
+		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC27_SHOWBET), 0, 1);
 
 		mq->setObjectCopy(-1, g_vars->scene27_bat->_copyId);
 		mq->run(nullptr);
@@ -423,14 +423,14 @@ void sceneHandler27_driverPushButton() {
 
 	if (g_nmi->getObjectState(sO_Driver) == g_nmi->getObjectEnumState(sO_Driver, sO_WithSteering)) {
 		g_vars->scene27_driver->setStatic(ST_DRV_VENT);
-		chainQueue(QU_DRV_PUSHBUTTON, 1);
+		runQueue(QU_DRV_PUSHBUTTON, 1);
 
 		g_vars->scene27_driverPushedButton = true;
 	} else {
 		g_vars->scene27_driver->setStatic(ST_DRV_SITNOVENT);
 
 
-		chainQueue(QU_DRV_PUSHBUTTON_NOVENT, 1);
+		runQueue(QU_DRV_PUSHBUTTON_NOVENT, 1);
 
 		g_vars->scene27_driverPushedButton = true;
 	}
@@ -475,7 +475,7 @@ void sceneHandler27_batLogic() {
 			break;
 
 		default:
-			chainQueue(QU_SC27_RESTARTBETS, 1);
+			runQueue(QU_SC27_RESTARTBETS, 1);
 
 			getCurrSceneSc2MotionController()->activate();
 			getGameLoaderInteractionController()->enableFlag24();
@@ -662,7 +662,7 @@ int sceneHandler27(ExCommand *cmd) {
 		break;
 
 	case 29:
-		if (g_nmi->_aniMan == g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y) && g_vars->scene27_maxPhaseReached) {
+		if (g_nmi->_aniMan == g_nmi->_currentScene->findAniObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y) && g_vars->scene27_maxPhaseReached) {
 			sceneHandler27_initAiming(cmd);
 		}
 		break;

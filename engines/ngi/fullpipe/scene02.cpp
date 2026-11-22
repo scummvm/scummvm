@@ -37,7 +37,7 @@
 namespace NGI {
 
 void scene02_initScene(Scene *sc) {
-	g_vars->scene02_guvTheDrawer = sc->getStaticANIObject1ById(ANI_DADAYASHIK, -1);
+	g_vars->scene02_guvTheDrawer = sc->findAniObjectById(ANI_DADAYASHIK, -1);
 
 	if (g_nmi->getObjectState(sO_GuvTheDrawer) == g_nmi->getObjectEnumState(sO_GuvTheDrawer, sO_IsSleeping)) {
 		Scene *s = g_nmi->_currentScene;
@@ -49,7 +49,7 @@ void scene02_initScene(Scene *sc) {
 
 	g_vars->scene02_boxDelay = 0;
 
-	AniObject *box = sc->getStaticANIObject1ById(ANI_SC2_BOX, -1);
+	AniObject *box = sc->findAniObjectById(ANI_SC2_BOX, -1);
 
 	if (box && box->_flags & 4) {
 		g_vars->scene02_boxOpen = false;
@@ -62,15 +62,15 @@ void scene02_initScene(Scene *sc) {
 }
 
 void sceneHandler02_ladderClick() {
-	handleObjectInteraction(g_nmi->_aniMan2, g_nmi->_currentScene->getPictureObjectById(PIC_SC2_DTRUBA, 0), 0);
+	handleObjectInteraction(g_nmi->_aniMan2, g_nmi->_currentScene->findPictureObjectById(PIC_SC2_DTRUBA, 0), 0);
 }
 
 void sceneHandler02_showLadder() {
-	g_nmi->_currentScene->getPictureObjectById(PIC_SC2_LADDER, 0)->_flags |= 4;
+	g_nmi->_currentScene->findPictureObjectById(PIC_SC2_LADDER, 0)->_flags |= 4;
 }
 
 void sceneHandler02_hideLadder() {
-	g_nmi->_currentScene->getPictureObjectById(PIC_SC2_LADDER, 0)->_flags &= 0xfffb;
+	g_nmi->_currentScene->findPictureObjectById(PIC_SC2_LADDER, 0)->_flags &= 0xfffb;
 	g_nmi->_aniMan2->_z = 25;
 }
 

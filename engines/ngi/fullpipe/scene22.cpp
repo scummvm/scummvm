@@ -36,12 +36,12 @@
 namespace NGI {
 
 void scene22_initScene(Scene *sc) {
-	g_vars->scene22_bag = sc->getStaticANIObject1ById(ANI_MESHOK, -1);
+	g_vars->scene22_bag = sc->findAniObjectById(ANI_MESHOK, -1);
 
 	Scene *oldsc = g_nmi->_currentScene;
 	g_nmi->_currentScene = sc;
 
-	g_vars->scene22_giraffeMiddle = sc->getStaticANIObject1ById(ANI_GIRAFFE_MIDDLE, -1);
+	g_vars->scene22_giraffeMiddle = sc->findAniObjectById(ANI_GIRAFFE_MIDDLE, -1);
 	g_vars->scene22_dudeIsOnStool = false;
 	g_vars->scene22_interactionIsDisabled = false;
 	g_vars->scene22_craneIsOut = true;
@@ -100,16 +100,16 @@ void scene22_setBagState() {
 }
 
 void sceneHandler22_showStool() {
-	chainQueue(QU_SC22_SHOWSTOOL, 0);
+	runQueue(QU_SC22_SHOWSTOOL, 0);
 }
 
 void sceneHandler22_hideStool() {
-	g_nmi->_currentScene->getStaticANIObject1ById(ANI_TABURETTE, -1)->hide();
+	g_nmi->_currentScene->findAniObjectById(ANI_TABURETTE, -1)->hide();
 }
 
 void sceneHandler22_handleDown() {
 	if (g_vars->scene22_bag->_statics->_staticsId == ST_MSH_SIT) {
-		chainQueue(QU_MSH_CRANEOUT, 1);
+		runQueue(QU_MSH_CRANEOUT, 1);
 		g_vars->scene22_interactionIsDisabled = false;
 	} else {
 		++g_vars->scene22_numBagFalls;
@@ -117,13 +117,13 @@ void sceneHandler22_handleDown() {
 		int qid;
 
 		if (g_vars->scene22_numBagFalls == 3) {
-			chainQueue(QU_SC22_FALLSACK_GMA, 1);
+			runQueue(QU_SC22_FALLSACK_GMA, 1);
 			qid = QU_SC22_FALLBROOM;
 		} else {
 			qid = QU_SC22_FALLSACK;
 		}
 
-		chainQueue(qid, 1);
+		runQueue(qid, 1);
 
 		int state;
 
@@ -150,7 +150,7 @@ void sceneHandler22_handleDown() {
 
 void sceneHandler22_fromStool(ExCommand *cmd) {
 	if (g_nmi->_aniMan->isIdle() && !(g_nmi->_aniMan->_flags & 0x100)) {
-		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC22_FROMSTOOL), 0, 0);
+		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC22_FROMSTOOL), 0, 0);
 
 		mq->addCommandToEnd(cmd->createClone());
 		mq->setFlags(mq->getFlags() | 1);
@@ -168,7 +168,7 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 		if (cmd->_param == ANI_INV_STOOL) {
 			if (abs(841 - g_nmi->_aniMan->_x) <= 1) {
 				if (abs(449 - g_nmi->_aniMan->_y) <= 1) {
-					chainQueue(QU_SC22_PUTSTOOL, 1);
+					runQueue(QU_SC22_PUTSTOOL, 1);
 					g_vars->scene22_interactionIsDisabled = true;
 
 					return;
@@ -178,11 +178,11 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 		}
 
 		if (cmd->_param == ANI_INV_BOX) {
-			ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_TABURETTE, -1);
+			ani = g_nmi->_currentScene->findAniObjectById(ANI_TABURETTE, -1);
 			if (!ani || !(ani->_flags & 4)) {
 				if (abs(841 - g_nmi->_aniMan->_x) <= 1) {
 					if (abs(449 - g_nmi->_aniMan->_y) <= 1) {
-						chainObjQueue(g_nmi->_aniMan, QU_SC22_TRYBOX, 1);
+						runQueueByIdWithAni(g_nmi->_aniMan, QU_SC22_TRYBOX, 1);
 						return;
 					}
 				}
@@ -208,13 +208,13 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 				if (g_nmi->_aniMan->_movement)
 					return;
 
-				chainQueue(QU_SC22_HANDLEDOWN, 1);
+				runQueue(QU_SC22_HANDLEDOWN, 1);
 
 				g_vars->scene22_interactionIsDisabled = true;
 				return;
 			}
 
-			ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_TABURETTE, -1);
+			ani = g_nmi->_currentScene->findAniObjectById(ANI_TABURETTE, -1);
 			if (ani && (ani->_flags & 4)) {
 				int x = g_nmi->_aniMan->_x;
 				int y = g_nmi->_aniMan->_y;
@@ -223,7 +223,7 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 					< sqrt((double)((1075 - x) * (1075 - x) + (449 - y) * (449 - y)))) {
 					if (abs(841 - x) <= 1) {
 						if (abs(449 - y) <= 1) {
-							chainQueue(QU_SC22_TOSTOOL, 1);
+							runQueue(QU_SC22_TOSTOOL, 1);
 
 							g_vars->scene22_interactionIsDisabled = true;
 							return;
@@ -262,7 +262,7 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 
 				delete mq;
 
-				mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC22_TOSTOOL_R), 0, 0);
+				mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC22_TOSTOOL_R), 0, 0);
 
 				mq->addCommand(2, ex);
 				mq->setFlags(mq->getFlags() | 1);
@@ -272,7 +272,7 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 			} else {
 				if (abs(1010 - g_nmi->_aniMan->_x) <= 1) {
 					if (abs(443 - g_nmi->_aniMan->_y) <= 1) {
-						chainQueue(QU_SC22_TRYHANDLE, 1);
+						runQueue(QU_SC22_TRYHANDLE, 1);
 						return;
 					}
 				}
@@ -296,7 +296,7 @@ int sceneHandler22(ExCommand *cmd) {
 
 	switch (cmd->_messageNum) {
 	case MSG_SC22_CRANEOUT_GMA:
-		chainQueue(QU_MSH_CRANEOUT_GMA, 1);
+		runQueue(QU_MSH_CRANEOUT_GMA, 1);
 		break;
 
 	case MSG_SC22_CHECKGMABOOT:
@@ -333,7 +333,7 @@ int sceneHandler22(ExCommand *cmd) {
 
 	case 29:
 		if (!g_vars->scene22_interactionIsDisabled) {
-			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->findAniObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (ani && ani->_id == ANI_HANDLE_L) {
 				sceneHandler22_stoolLogic(cmd);
@@ -343,7 +343,7 @@ int sceneHandler22(ExCommand *cmd) {
 			if (!g_vars->scene22_dudeIsOnStool) {
 				if (!ani || !canInteractAny(g_nmi->_aniMan, ani, cmd->_param)) {
 					int picId = g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-					PictureObject *pic = g_nmi->_currentScene->getPictureObjectById(picId, 0);
+					PictureObject *pic = g_nmi->_currentScene->findPictureObjectById(picId, 0);
 
 					if (!pic || !canInteractAny(g_nmi->_aniMan, pic, cmd->_param)) {
 						if ((g_nmi->_sceneRect.right - cmd->_sceneClickX < 47 && g_nmi->_sceneRect.right < g_nmi->_sceneWidth - 1)

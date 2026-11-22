@@ -170,7 +170,7 @@ void AniHandler::resetData(int objId) {
 	_items[idx].movements1.clear();
 	_items[idx].movements2.clear();
 
-	AniObject *obj = g_nmi->_currentScene->getStaticANIObject1ById(objId, -1);
+	AniObject *obj = g_nmi->_currentScene->findAniObjectById(objId, -1);
 
 	if (!obj)
 		return;

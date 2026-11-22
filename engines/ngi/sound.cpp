@@ -119,7 +119,7 @@ void Sound::setPanAndVolumeByStaticAni() {
 	if (!_objectId)
 		return;
 
-	AniObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(_objectId, -1);
+	AniObject *ani = g_nmi->_currentScene->findAniObjectById(_objectId, -1);
 	if (!ani)
 		return;
 
@@ -472,7 +472,7 @@ void global_messageHandler_handleSound(ExCommand *cmd) {
 
 		snd->updateVolume();
 
-		if (snd->_objectId && g_nmi->_currentScene->getStaticANIObject1ById(snd->_objectId, -1))
+		if (snd->_objectId && g_nmi->_currentScene->findAniObjectById(snd->_objectId, -1))
 			snd->setPanAndVolumeByStaticAni();
 		else
 			snd->setPanAndVolume(g_nmi->_sfxVolume, 0);
