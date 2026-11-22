@@ -127,8 +127,8 @@ DetectedGame MohawkMetaEngineDetection::toDetectedGame(const ADDetectedGame &adG
 	// game language. The 25th anniversary edition Myst games are multilanguage.
 	// Here we amend the detected games to set the list of supported languages.
 	if (game.gameId == "myst"
-			&& Common::checkGameGUIOption(GAMEOPTION_25TH, game.getGUIOptions())
-			&& Common::checkGameGUIOption(GAMEOPTION_ME, game.getGUIOptions())) {
+			&& game.getGUIOptions().contains(GAMEOPTION_25TH)
+			&& game.getGUIOptions().contains(GAMEOPTION_ME)) {
 		const Mohawk::MystLanguage *languages = Mohawk::MohawkMetaEngine_Myst::listLanguages();
 		while (languages->language != Common::UNK_LANG) {
 			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(languages->language));
@@ -137,7 +137,7 @@ DetectedGame MohawkMetaEngineDetection::toDetectedGame(const ADDetectedGame &adG
 	}
 
 	if (game.gameId == "riven"
-			&& Common::checkGameGUIOption(GAMEOPTION_25TH, game.getGUIOptions())) {
+			&& game.getGUIOptions().contains(GAMEOPTION_25TH)) {
 		const Mohawk::RivenLanguage *languages = Mohawk::MohawkMetaEngine_Riven::listLanguages();
 		while (languages->language != Common::UNK_LANG) {
 			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(languages->language));
