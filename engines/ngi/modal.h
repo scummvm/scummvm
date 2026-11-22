@@ -115,7 +115,7 @@ private:
 	Video::AVIDecoder _decoder;
 };
 
-class ModalMap : public BaseModalObject {
+class MapWindow : public BaseModalObject {
 	Scene *_mapScene;
 	PictureObject *_pic;
 	PictureObject *_picI03;
@@ -133,8 +133,8 @@ class ModalMap : public BaseModalObject {
 	Common::Rect _rect2;
 
  public:
-	ModalMap();
-	~ModalMap() override;
+	MapWindow();
+	~MapWindow() override;
 
 	bool pollEvent() override { return true; }
 	bool handleMessage(Command *message) override;
@@ -151,7 +151,7 @@ private:
 	bool checkScenePass(PreloadItem *item);
 	bool isSceneEnabled(int sceneId);
 
-	int findMapSceneId(int picId);
+	int getSceneId(int picId);
 	void clickButton(PictureObject *pic);
 };
 

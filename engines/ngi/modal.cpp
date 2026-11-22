@@ -434,7 +434,7 @@ finish:
 	_decoder.close();
 }
 
-ModalMap::ModalMap() {
+MapWindow::MapWindow() {
 	_mapScene = nullptr;
 	_pic = nullptr;
 	_picI03 = nullptr;
@@ -459,7 +459,7 @@ ModalMap::ModalMap() {
 	keymapper->getKeymap("map")->setEnabled(true);
 }
 
-ModalMap::~ModalMap() {
+MapWindow::~MapWindow() {
 	g_nmi->_gameLoader->unloadScene(SC_MAP);
 
 	g_nmi->_sceneRect = _rect1;
@@ -472,7 +472,7 @@ ModalMap::~ModalMap() {
 	keymapper->getKeymap("ngi-default")->setEnabled(true);
 }
 
-bool ModalMap::init(int counterdiff) {
+bool MapWindow::init(int counterdiff) {
 	if (_picI03)
 		return init2(counterdiff);
 
@@ -503,7 +503,7 @@ bool ModalMap::init(int counterdiff) {
 	return _isRunning;
 }
 
-bool ModalMap::init2(int counterdiff) {
+bool MapWindow::init2(int counterdiff) {
 	g_nmi->setCursor(PIC_CSR_DEFAULT);
 
 	_dragX = (int)((double)_dragX * 0.6666666666666666);
@@ -555,7 +555,7 @@ bool ModalMap::init2(int counterdiff) {
 			PreloadItem pitem;
 
 			pitem.preloadId1 = g_nmi->_currentScene->_sceneId;
-			pitem.sceneId = findMapSceneId(hpic->_id);
+			pitem.sceneId = getSceneId(hpic->_id);
 
 			if (pitem.preloadId1 == pitem.sceneId || checkScenePass(&pitem)) {
 				_highlightedPic->_flags |= 4;
@@ -587,7 +587,7 @@ bool ModalMap::init2(int counterdiff) {
 	return _isRunning;
 }
 
-int ModalMap::findMapSceneId(int picId) {
+int MapWindow::getSceneId(int picId) {
 	for (uint i = 0; i < g_nmi->_gameLoader->_preloadItems.size(); i++) {
 		PreloadItem &pitem = g_nmi->_gameLoader->_preloadItems[i];
 
@@ -600,7 +600,7 @@ int ModalMap::findMapSceneId(int picId) {
 }
 
 
-void ModalMap::update() {
+void MapWindow::update() {
 	g_nmi->_sceneRect = _rect2;
 
 	_mapScene->render();
@@ -608,7 +608,7 @@ void ModalMap::update() {
 	g_nmi->drawArcadeOverlay(1);
 }
 
-bool ModalMap::handleMessage(Command *cmd) {
+bool MapWindow::handleMessage(Command *cmd) {
 	if (cmd->_cmd != 17)
 		return false;
 
@@ -655,13 +655,13 @@ bool ModalMap::handleMessage(Command *cmd) {
 	return true;
 }
 
-void ModalMap::initMap() {
+void MapWindow::initMap() {
 	_isRunning = 1;
 
 	_mapScene = g_nmi->findScene(SC_MAP);
 
 	if (!_mapScene)
-		error("ModalMap::initMap(): error accessing scene SC_MAP");
+		error("MapWindow::initMap(): error accessing scene SC_MAP");
 
 	PictureObject *pic;
 
@@ -718,7 +718,7 @@ void ModalMap::initMap() {
 	g_nmi->setArcadeOverlay(PIC_CSR_MAP);
 }
 
-void ModalMap::clickButton(PictureObject *pic) {
+void MapWindow::clickButton(PictureObject *pic) {
 	if (g_nmi->_currentScene == g_nmi->_loaderScene) {
 		_isRunning = 0;
 		return;
@@ -774,7 +774,7 @@ void ModalMap::clickButton(PictureObject *pic) {
 	}
 }
 
-PictureObject *ModalMap::getScenePicture(int sceneId) {
+PictureObject *MapWindow::getScenePicture(int sceneId) {
 	int picId = 0;
 
 	switch (sceneId) {
@@ -900,10 +900,10 @@ PictureObject *ModalMap::getScenePicture(int sceneId) {
 	if (picId)
 		return _mapScene->findPictureObjectById(picId, 0);
 
-	error("ModalMap::getScenePicture(): Unknown scene id: %d", g_nmi->_currentScene->_sceneId);
+	error("MapWindow::getScenePicture(): Unknown scene id: %d", g_nmi->_currentScene->_sceneId);
 }
 
-PictureObject *ModalMap::getSceneHPicture(PictureObject *obj) {
+PictureObject *MapWindow::getSceneHPicture(PictureObject *obj) {
 	if (!obj)
 		return nullptr;
 
@@ -990,7 +990,7 @@ PictureObject *ModalMap::getSceneHPicture(PictureObject *obj) {
 	}
 }
 
-bool ModalMap::isSceneEnabled(int sceneId) {
+bool MapWindow::isSceneEnabled(int sceneId) {
 	int id = getScenePicture(sceneId)->_id;
 
 	for (int i = 0; i < 200; i++) {
@@ -1005,7 +1005,7 @@ bool ModalMap::isSceneEnabled(int sceneId) {
 	return false;
 }
 
-bool ModalMap::checkScenePass(PreloadItem *item) {
+bool MapWindow::checkScenePass(PreloadItem *item) {
 	bool res = true;
 
 	switch (item->preloadId1) {
@@ -1075,7 +1075,7 @@ bool ModalMap::checkScenePass(PreloadItem *item) {
 
 void NGIEngine::openMap() {
 	if (!_modalObject) {
-		ModalMap *map = new ModalMap;
+		MapWindow *map = new MapWindow;
 
 		_modalObject = map;
 
