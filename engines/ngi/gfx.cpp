@@ -169,9 +169,9 @@ bool PictureObject::setPicAniInfo(const PicAniInfo &picAniInfo) {
 	if (picAniInfo.type & 2) {
 		setPos(picAniInfo.ox, picAniInfo.oy);
 		_z = picAniInfo.priority;
-		_copyId = picAniInfo.field_8;
+		_copyId = picAniInfo.copyId;
 		setFlags(picAniInfo.flags);
-		_objectFlags = picAniInfo.field_24;
+		_objectFlags = picAniInfo.objectFlags;
 
 		return true;
 	}
@@ -309,9 +309,9 @@ bool GameObject::getPicAniInfo(PicAniInfo &info) {
 		info.type = 2;
 		info.objectId = _id;
 		info.sceneId = 0;
-		info.field_8 = _copyId;
+		info.copyId = _copyId;
 		info.flags = _flags;
-		info.field_24 = _objectFlags;
+		info.objectFlags = _objectFlags;
 		info.ox = _x;
 		info.oy = _y;
 		info.priority = _z;
@@ -324,10 +324,10 @@ bool GameObject::getPicAniInfo(PicAniInfo &info) {
 
 		info.type = (ani->_messageQueueId << 16) | 1;
 		info.objectId = ani->_id;
-		info.field_8 = ani->_copyId;
+		info.copyId = ani->_copyId;
 		info.sceneId = ani->_sceneId;
 		info.flags = ani->_flags;
-		info.field_24 = ani->_objectFlags;
+		info.objectFlags = ani->_objectFlags;
 		if (ani->_movement) {
 			info.ox = ani->_movement->_x;
 			info.oy = ani->_movement->_y;
@@ -342,10 +342,10 @@ bool GameObject::getPicAniInfo(PicAniInfo &info) {
 
 		if (ani->_movement) {
 			info.movementId = ani->_movement->_id;
-			info.dynamicPhaseIndex = ani->_movement->_curFrame;
+			info.curFrame = ani->_movement->_curFrame;
 		}
 
-		info.someDynamicPhaseIndex = ani->_targetFrame;
+		info.targetFrame = ani->_targetFrame;
 
 		return true;
 	}
@@ -363,9 +363,9 @@ bool GameObject::setPicAniInfo(const PicAniInfo &picAniInfo) {
 	if (picAniInfo.type & 2) {
 		setPos(picAniInfo.ox, picAniInfo.oy);
 		_z = picAniInfo.priority;
-		_copyId = picAniInfo.field_8;
+		_copyId = picAniInfo.copyId;
 		setFlags(picAniInfo.flags);
-		_objectFlags = picAniInfo.field_24;
+		_objectFlags = picAniInfo.objectFlags;
 
 		return true;
 	}
@@ -374,9 +374,9 @@ bool GameObject::setPicAniInfo(const PicAniInfo &picAniInfo) {
 		AniObject *ani = static_cast<AniObject *>(this);
 
 		ani->_messageQueueId = (picAniInfo.type >> 16) & 0xffff;
-		ani->_copyId = picAniInfo.field_8;
+		ani->_copyId = picAniInfo.copyId;
 		ani->setFlags(picAniInfo.flags);
-		ani->_objectFlags = picAniInfo.field_24;
+		ani->_objectFlags = picAniInfo.objectFlags;
 
 		if (picAniInfo.staticsId) {
 			ani->_statics = ani->getStatic(picAniInfo.staticsId);
@@ -387,7 +387,7 @@ bool GameObject::setPicAniInfo(const PicAniInfo &picAniInfo) {
 		if (picAniInfo.movementId) {
 			ani->_movement = ani->getMovement(picAniInfo.movementId);
 			if (ani->_movement)
-				ani->_movement->setCurFrame(picAniInfo.dynamicPhaseIndex);
+				ani->_movement->setCurFrame(picAniInfo.curFrame);
 		} else {
 			ani->_movement = nullptr;
 		}
@@ -395,7 +395,7 @@ bool GameObject::setPicAniInfo(const PicAniInfo &picAniInfo) {
 		ani->setPos(picAniInfo.ox, picAniInfo.oy);
 		ani->_z = picAniInfo.priority;
 
-		ani->setTargetFrame(picAniInfo.someDynamicPhaseIndex);
+		ani->setTargetFrame(picAniInfo.targetFrame);
 
 		return true;
 	}

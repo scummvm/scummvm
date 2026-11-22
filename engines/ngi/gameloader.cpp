@@ -459,7 +459,7 @@ void GameLoader::applyPicAniInfos(Scene *sc, const PicAniInfoList &picAniInfo) {
 		const PicAniInfo &info = picAniInfo[i];
 		debugC(7, kDebugAnimation, "PicAniInfo: id: %d type: %d", info.objectId, info.type);
 		if (info.type & 2) {
-			pict = sc->findPictureObjectById(info.objectId, info.field_8);
+			pict = sc->findPictureObjectById(info.objectId, info.copyId);
 			if (pict) {
 				pict->setPicAniInfo(info);
 				continue;
@@ -480,7 +480,7 @@ void GameLoader::applyPicAniInfos(Scene *sc, const PicAniInfoList &picAniInfo) {
 			if (!scNew)
 				continue;
 
-			ani = sc->findAniObjectById(info.objectId, info.field_8);
+			ani = sc->findAniObjectById(info.objectId, info.copyId);
 			if (ani) {
 				ani->setPicAniInfo(picAniInfo[i]);
 				continue;

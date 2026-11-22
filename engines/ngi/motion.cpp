@@ -2200,7 +2200,7 @@ MessageQueue *MctlGraph::makeQueue(AniObject *obj, int xpos, int ypos, int fuzzy
 			newx = obj->_x;
 			newy = obj->_y;
 		} else {
-			point = obj->_movement->getMovementSize(0, picAniInfo.dynamicPhaseIndex);
+			point = obj->_movement->getMovementSize(0, picAniInfo.curFrame);
 			newx = obj->_movement->_x - point.x;
 			newy = obj->_movement->_y - point.y;
 			if (idxsub != 1 && idxsub) {
@@ -2232,21 +2232,21 @@ MessageQueue *MctlGraph::makeQueue(AniObject *obj, int xpos, int ypos, int fuzzy
 			Command *ex = new Command(picAniInfo.objectId, 1, _aniData[idx]._directions[idxsub]._turnS[idxwalk]._movementId, 0, 0, 0, 1, 0, 0, 0);
 
 			ex->_wait = 1;
-			ex->_param = picAniInfo.field_8;
+			ex->_param = picAniInfo.copyId;
 			ex->_excFlags |= 2;
 
 			mq->addCommandToEnd(ex);
 		} else {
 			Command *ex = new Command(picAniInfo.objectId, 22, obj->_statics->_staticsId, 0, 0, 0, 1, 0, 0, 0);
 
-			ex->_param = picAniInfo.field_8;
+			ex->_param = picAniInfo.copyId;
 			ex->_excFlags |= 3;
 			mq->addCommandToEnd(ex);
 
 			ex = new Command(picAniInfo.objectId, 5, -1, obj->_x, obj->_y, 0, 1, 0, 0, 0);
 
 			ex->_z = -1;
-			ex->_param = picAniInfo.field_8;
+			ex->_param = picAniInfo.copyId;
 			ex->_excFlags |= 3;
 			mq->addCommandToEnd(ex);
 		}
@@ -2364,18 +2364,18 @@ MessageQueue *MctlGraph::makeQueue(AniObject *obj, int xpos, int ypos, int fuzzy
 
 			if (ex && (ex->_cmd == 1 || ex->_cmd == 20)
 					&& picAniInfo.movementId == ex->_messageNum
-					&& picAniInfo.someDynamicPhaseIndex == ex->_z) {
+					&& picAniInfo.targetFrame == ex->_z) {
 				mq->removeCommand(0, 1);
 			} else {
 				ex = new Command(picAniInfo.objectId, 5, ex->_messageNum, obj->_x, obj->_y, 0, 1, 0, 0, 0);
 				ex->_z = -1;
-				ex->_param = picAniInfo.field_8;
+				ex->_param = picAniInfo.copyId;
 				ex->_excFlags |= 2;
 				mq->addCommandToFront(ex);
 
 				ex = new Command(picAniInfo.objectId, 22, _aniData[idx]._directions[idxsub]._prevStaticId, 0, 0, 0, 1, 0, 0, 0);
 
-				ex->_param = picAniInfo.field_8;
+				ex->_param = picAniInfo.copyId;
 				ex->_excFlags |= 3;
 				mq->addCommandToFront(ex);
 			}

@@ -518,7 +518,7 @@ bool PicAniInfo::load(MfcArchive &file) {
 	type = file.readUint32LE();
 	objectId = file.readUint16LE();
 	field_6 = file.readUint16LE();
-	field_8 = file.readUint32LE();
+	copyId = file.readUint32LE();
 	sceneId = file.readUint16LE();
 	field_E = file.readUint16LE();
 	ox = file.readSint32LE();
@@ -526,10 +526,10 @@ bool PicAniInfo::load(MfcArchive &file) {
 	priority = file.readUint32LE();
 	staticsId = file.readUint16LE();
 	movementId = file.readUint16LE();
-	dynamicPhaseIndex = file.readUint16LE();
+	curFrame = file.readUint16LE();
 	flags = file.readUint16LE();
-	field_24 = file.readUint32LE();
-	someDynamicPhaseIndex = file.readUint32LE();
+	objectFlags = file.readUint32LE();
+	targetFrame = file.readUint32LE();
 
 	return true;
 }

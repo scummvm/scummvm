@@ -46,7 +46,7 @@ struct PicAniInfo {
 	uint32 type;
 	int16 objectId;
 	int16 field_6;
-	int32 field_8;
+	int32 copyId;
 	int16 sceneId;
 	int16 field_E;
 	int32 ox;
@@ -54,10 +54,10 @@ struct PicAniInfo {
 	int32 priority;
 	int16 staticsId;
 	int16 movementId;
-	int16 dynamicPhaseIndex;
+	int16 curFrame;
 	int16 flags;
-	int32 field_24;
-	int32 someDynamicPhaseIndex;
+	int32 objectFlags;
+	int32 targetFrame;
 
 	bool load(MfcArchive &file);
 	void save(MfcArchive &file);

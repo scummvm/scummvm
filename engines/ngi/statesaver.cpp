@@ -172,7 +172,7 @@ void PicAniInfo::save(MfcArchive &file) {
 	file.writeUint32LE(type);
 	file.writeUint16LE(objectId);
 	file.writeUint16LE(field_6);
-	file.writeUint32LE(field_8);
+	file.writeUint32LE(copyId);
 	file.writeUint16LE(sceneId);
 	file.writeUint16LE(field_E);
 	file.writeSint32LE(ox);
@@ -180,17 +180,17 @@ void PicAniInfo::save(MfcArchive &file) {
 	file.writeUint32LE(priority);
 	file.writeUint16LE(staticsId);
 	file.writeUint16LE(movementId);
-	file.writeUint16LE(dynamicPhaseIndex);
+	file.writeUint16LE(curFrame);
 	file.writeUint16LE(flags);
-	file.writeUint32LE(field_24);
-	file.writeUint32LE(someDynamicPhaseIndex);
+	file.writeUint32LE(objectFlags);
+	file.writeUint32LE(targetFrame);
 }
 
 void PicAniInfo::print() {
-	debug("type: %d objectId: %d field_6: %d field_8: %d", type, objectId, field_6, field_8);
+	debug("type: %d objectId: %d field_6: %d copyId: %d", type, objectId, field_6, copyId);
 	debug("sceneId: %d field_E: %d ox: %d oy: %d priority: %d", sceneId, field_E, ox, oy, priority);
-	debug("staticsId: %d movementId: %d dynamicPhaseIndex: %d flags: %x field_24: %d someDynamicPhaseIndex: %d",
-			staticsId, movementId, dynamicPhaseIndex, flags, field_24, someDynamicPhaseIndex);
+	debug("staticsId: %d movementId: %d curFrame: %d flags: %x objectFlags: %d targetFrame: %d",
+			staticsId, movementId, curFrame, flags, objectFlags, targetFrame);
 }
 
 void GameVar::save(MfcArchive &file) {
