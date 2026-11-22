@@ -124,10 +124,10 @@ struct MctlLadderMovementVars {
 	int varDownStart;
 };
 
-struct MctlLadderMovement {
-	int objId;
-	int staticIdsSize;
-	MctlLadderMovementVars *movVars;
+struct LmctlAni {
+	int aniId;
+	int staticIdCount;
+	MctlLadderMovementVars *movementIds;
 	int *staticIds;
 };
 
@@ -140,7 +140,7 @@ public:
 	int _stepY;
 	int _ladder_field_20;
 	int _ladder_field_24;
-	Common::Array<MctlLadderMovement *> _ladmovements;
+	Common::Array<LmctlAni *> _ladmovements;
 	AniHandler _aniHandler;
 
 public:
@@ -158,7 +158,7 @@ public:
 
 private:
 	int findIndex(AniObject *obj);
-	bool fillData(AniObject *ani, MctlLadderMovement *movement);
+	bool fillData(AniObject *ani, LmctlAni *movement);
 };
 
 class MovGraphNode : public CObject {

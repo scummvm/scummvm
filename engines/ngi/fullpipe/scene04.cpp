@@ -349,14 +349,14 @@ void sceneHandler04_walkClimbLadder(Command *ex) {
 	g_vars->scene04_ladder->attachObject(g_nmi->_aniMan);
 
 	if (g_vars->scene04_soundPlaying) {
-		g_vars->scene04_ladder->_ladmovements.front()->movVars->varUpStart = MV_MAN_STARTLADDER2;
-		g_vars->scene04_ladder->_ladmovements.front()->movVars->varUpGo = MV_MAN_GOLADDER2;
-		g_vars->scene04_ladder->_ladmovements.front()->movVars->varUpStop = MV_MAN_STOPLADDER2;
+		g_vars->scene04_ladder->_ladmovements.front()->movementIds->varUpStart = MV_MAN_STARTLADDER2;
+		g_vars->scene04_ladder->_ladmovements.front()->movementIds->varUpGo = MV_MAN_GOLADDER2;
+		g_vars->scene04_ladder->_ladmovements.front()->movementIds->varUpStop = MV_MAN_STOPLADDER2;
 		g_vars->scene04_ladder->_ladmovements.front()->staticIds[2] = ST_MAN_GOLADDER2;
 	} else {
-		g_vars->scene04_ladder->_ladmovements.front()->movVars->varUpStart = MV_MAN_STARTLADDER;
-		g_vars->scene04_ladder->_ladmovements.front()->movVars->varUpGo = MV_MAN_GOLADDER;
-		g_vars->scene04_ladder->_ladmovements.front()->movVars->varUpStop = MV_MAN_STOPLADDER;
+		g_vars->scene04_ladder->_ladmovements.front()->movementIds->varUpStart = MV_MAN_STARTLADDER;
+		g_vars->scene04_ladder->_ladmovements.front()->movementIds->varUpGo = MV_MAN_GOLADDER;
+		g_vars->scene04_ladder->_ladmovements.front()->movementIds->varUpStop = MV_MAN_STOPLADDER;
 		g_vars->scene04_ladder->_ladmovements.front()->staticIds[2] = ST_MAN_GOLADDER;
 	}
 
