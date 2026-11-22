@@ -122,13 +122,13 @@ void scene25_setupWater(Scene *a1, int entranceId) {
 	}
 }
 
-void sceneHandler25_stopBearders() {
+void sceneHandler25_doStopBeardeds() {
 	g_vars->scene25_beardersAreThere = false;
 
 	g_vars->scene25_bearders.clear();
 }
 
-void sceneHandler25_startBearders() {
+void sceneHandler25_doStartBeardeds() {
 	g_vars->scene25_bearders.clear();
 	g_vars->scene25_beardersCounter = 0;
 
@@ -549,11 +549,11 @@ int sceneHandler25(Command *cmd) {
 
 	switch (cmd->_messageNum) {
 	case MSG_SC25_STOPBEARDEDS:
-		sceneHandler25_stopBearders();
+		sceneHandler25_doStopBeardeds();
 		break;
 
 	case MSG_SC25_STARTBEARDEDS:
-		sceneHandler25_startBearders();
+		sceneHandler25_doStartBeardeds();
 		break;
 
 	case MSG_SC25_ENTERMAN:
