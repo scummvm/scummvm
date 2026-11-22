@@ -678,7 +678,7 @@ void Insane::actor02Reaction(int32 buttons) {
 					_actor[0].act[2].room = 0;
 					_actor[0].act[1].room = 0;
 					_actor[0].act[0].room = 0;
-					smlayer_setActorLayer(0, 2, 25);
+					smlayer_setActorLayer(1, 2, 25);
 					smlayer_setActorCostume(1, 2, readArray(45));
 					smlayer_setActorFacing(1, 2, 6, 180);
 					smlayer_startSfx(101);
@@ -988,7 +988,7 @@ void Insane::actor02Reaction(int32 buttons) {
 					smlayer_startSfx(80);
 				break;
 			default:
-				if (!calcEnemyDamage(1, 0))
+				if (calcEnemyDamage(1, 0))
 					smlayer_startSfx(79);
 				break;
 			}
@@ -1071,7 +1071,7 @@ void Insane::actor02Reaction(int32 buttons) {
 					}
 					break;
 				case INV_HAND:
-					if (!calcEnemyDamage(1, 0))
+					if (calcEnemyDamage(1, 0))
 						smlayer_startSfx(70);
 					break;
 				default:
@@ -1169,8 +1169,8 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].kicking = false;
 
 		if (!smlayer_actorNeedRedraw(0, 2)) {
-			switchBenWeapon();
 			_actor[0].act[2].state = 1;
+			switchBenWeapon();
 		}
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
 		break;

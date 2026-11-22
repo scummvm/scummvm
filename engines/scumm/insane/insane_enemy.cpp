@@ -639,42 +639,47 @@ int32 Insane::enemy3handler(int32 actor1, int32 actor2, int32 probability) {
 					if (!_enemyState[EN_VULTF1][4]) {
 						_enemyState[EN_VULTF1][4] = 1;
 						prepareScenePropScene(3, 0, 0);
+						_enHdlVar[EN_VULTF1][7] = _enHdlVar[EN_VULTF1][8];
 					}
 					break;
 				case 1:
 					if (!_enemyState[EN_VULTF1][1]) {
 						_enemyState[EN_VULTF1][1] = 1;
 						prepareScenePropScene(4, 0, 0);
+						_enHdlVar[EN_VULTF1][7] = _enHdlVar[EN_VULTF1][8];
 					}
 					break;
 				case 2:
 					if (!_enemyState[EN_VULTF1][2]) {
 						_enemyState[EN_VULTF1][2] = 1;
 						prepareScenePropScene(5, 0, 0);
+						_enHdlVar[EN_VULTF1][7] = _enHdlVar[EN_VULTF1][8];
 					}
 					break;
 				case 3:
 					if (!_enemyState[EN_VULTF1][3]) {
 						_enemyState[EN_VULTF1][3] = 1;
 						prepareScenePropScene(6, 0, 0);
+						_enHdlVar[EN_VULTF1][7] = _enHdlVar[EN_VULTF1][8];
 					}
 					break;
 				case 4:
 					if (!_enemyState[EN_VULTF1][4]) {
 						_enemyState[EN_VULTF1][4] = 1;
 						prepareScenePropScene(7, 0, 0);
+						_enHdlVar[EN_VULTF1][7] = _enHdlVar[EN_VULTF1][8];
 					}
 					break;
 				case 5:
 					if (!_enemyState[EN_VULTF1][5]) {
 						_enemyState[EN_VULTF1][5] = 1;
 						prepareScenePropScene(8, 0, 0);
+						_enHdlVar[EN_VULTF1][7] = _enHdlVar[EN_VULTF1][8];
 					}
 					break;
 				default:
 					break;
 				}
-				_enHdlVar[EN_VULTF1][7] = _enHdlVar[EN_VULTF1][8];
 			}
 
 		}
@@ -1198,7 +1203,7 @@ int32 Insane::enemy7handler(int32 actor1, int32 actor2, int32 probability) {
 		_enHdlVar[EN_CAVEFISH][1] = 0;
 	} else {
 		if (!_enHdlVar[EN_CAVEFISH][2]) {
-			if (weaponMaxRange(actor2) + 30 >= dist) {
+			if (weaponMaxRange(actor2) - 30 >= dist) {
 				if (act2x < act1x)
 					_actor[actor1].cursorX = 101;
 				else
@@ -1210,7 +1215,7 @@ int32 Insane::enemy7handler(int32 actor1, int32 actor2, int32 probability) {
 		}
 	}
 
-	if (weaponMaxRange(actor1) <= dist) {
+	if (weaponMaxRange(actor1) < dist) {
 		if (act2x < act1x)
 			_actor[actor1].cursorX = -101;
 		else
@@ -1323,7 +1328,7 @@ void Insane::ouchSoundEnemy() {
 		smlayer_startVoice(180);
 		break;
 	default:
-		smlayer_startVoice(99);
+		smlayer_startSfx(99);
 		break;
 	}
 }
@@ -2572,6 +2577,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		_actor[1].act[0].room = 0;
 		_actor[1].cursorX = 0;
 		_actor[1].act[2].state = 116;
+		smlayer_startVoice(232);
 		break;
 	case 116:
 		smlayer_setActorLayer(1, 2, 25);

@@ -1283,8 +1283,6 @@ void Insane::postCase9(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 void Insane::postCase10(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 						int32 setupsan13, int32 curFrame, int32 maxFrame) {
 	if (curFrame >= maxFrame && !_needSceneSwitch) {
-		_actor[0].damage = 0;
-
 		switch (_currSceneId) {
 		case 20:
 			writeArray(8, 1);
