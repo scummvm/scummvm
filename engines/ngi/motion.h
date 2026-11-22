@@ -345,18 +345,18 @@ struct MctlMQSub {
 	int distance;
 };
 
-struct MctlMQ {
-	int index;
-	Common::Point pt1;
-	Common::Point pt2;
-	int distance1;
-	int distance2;
-	int subIndex;
-	int item1Index;
+struct GmctlMqStruct {
+	int objectIndex;
+	Common::Point sourcePos;
+	Common::Point destPos;
+	int sourceZ;
+	int destZ;
+	int sourceDir;
+	int destDir;
 	Common::Array<MctlMQSub> items;
 	int flags;
 
-	MctlMQ() { clear(); }
+	GmctlMqStruct() { clear(); }
 	void clear();
 };
 
@@ -386,15 +386,15 @@ public:
 	int getLinkDir(MovGraphLinkList *linkList, int idx, Common::Rect *a3, Common::Point *a4);
 
 	bool fillData(StaticANIObject *obj, MctlAni &item);
-	void generateList(MctlMQ &movinfo, MovGraphLinkList *linkList, LinkOrNode *lnkSrc, LinkOrNode *lnkDst);
-	MessageQueue *makeWholeQueue(MctlMQ &mctlMQ);
+	void generateList(GmctlMqStruct &movinfo, MovGraphLinkList *linkList, LinkOrNode *lnkSrc, LinkOrNode *lnkDst);
+	MessageQueue *makeWholeQueue(GmctlMqStruct &mctlMQ);
 
 	MovGraphNode *getHitNode(int x, int y, int strictMatch);
 	MovGraphLink *getHitLink(int x, int y, int idx, int fuzzyMatch);
 	MovGraphLink *getNearestLink(int x, int y);
 	double iterate(LinkOrNode *linkInfoSource, LinkOrNode *linkInfoDest, MovGraphLinkList *listObj);
 
-	MessageQueue *makeLineQueue(MctlMQ *movinfo);
+	MessageQueue *makeLineQueue(GmctlMqStruct *movinfo);
 };
 
 class MctlConnectionPoint : public CObject {
