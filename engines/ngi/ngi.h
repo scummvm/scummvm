@@ -78,7 +78,7 @@ class BehaviorController;
 class BaseModalObject;
 class GameLoader;
 class GameVar;
-class InputController;
+class CursorController;
 class Inventory;
 struct CursorInfo;
 struct EntranceInfo;
@@ -164,7 +164,7 @@ public:
 	Common::String gameIdToStr(uint16 id);
 
 	GameVar *getGameLoaderGameVar();
-	InputController *getGameLoaderInputController();
+	CursorController *getGameLoaderInputController();
 
 	int _gameProjectVersion;
 	int _pictureScale;
@@ -189,7 +189,7 @@ public:
 	Palette _defaultPalette;
 	const Palette *_globalPalette;
 
-	InputController *_inputController;
+	CursorController *_inputController;
 	bool _inputDisabled;
 
 	int _currentCheat;

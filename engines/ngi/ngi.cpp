@@ -524,7 +524,7 @@ void NGIEngine::updateScreen() {
 	} else {
 		//vrtRectangle(*(_DWORD *)g_vrtHandle, 0, 0, 0, 800, 600);
 	}
-	_inputController->drawCursor(_mouseScreenPos.x, _mouseScreenPos.y);
+	_inputController->render(_mouseScreenPos.x, _mouseScreenPos.y);
 
 	++_updateTicks;
 }

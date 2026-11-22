@@ -35,7 +35,7 @@ namespace NGI {
 
 class SceneTag;
 class MctlCompound;
-class InputController;
+class CursorController;
 class InteractionController;
 class MotionController;
 class MovGraph;
@@ -113,7 +113,7 @@ class GameLoader : public CObject {
 
 	Common::ScopedPtr<GameProject> _gameProject;
 	InteractionController *_interactionController;
-	InputController *_inputController;
+	CursorController *_inputController;
 	Inventory _inventory;
 	Sc2Array _sc2array;
 	void *_sceneSwitcher;

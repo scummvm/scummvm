@@ -71,7 +71,7 @@ InteractionController *getGameLoaderInteractionController() {
 
 GameLoader::GameLoader() {
 	_interactionController = new InteractionController();
-	_inputController = new InputController();
+	_inputController = new CursorController();
 
 	addMessageHandlerByIndex(global_messageHandler2, 0, 0);
 	insertMessageHandler(global_messageHandler3, 0, 128);
@@ -661,7 +661,7 @@ GameVar *NGIEngine::getGameLoaderGameVar() {
 		return nullptr;
 }
 
-InputController *NGIEngine::getGameLoaderInputController() {
+CursorController *NGIEngine::getGameLoaderInputController() {
 	if (_gameLoader)
 		return _gameLoader->_inputController;
 	else

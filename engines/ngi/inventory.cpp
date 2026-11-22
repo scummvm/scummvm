@@ -425,7 +425,7 @@ int Inventory::putOnCursor(int itemId) {
 		int idx = getInventoryPoolItemIndexById(itemId);
 
 		Picture *pic = _scene->findPictureObjectById(_itemsPool[idx].pictureObjectId1, 0)->_picture;
-		g_nmi->getGameLoaderInputController()->setCursorItemPicture(pic);
+		g_nmi->getGameLoaderInputController()->setObject(pic);
 	}
 
 	return _selectedId;
@@ -442,7 +442,7 @@ bool Inventory::unselectItem(bool flag) {
 			_inventoryIcons[i].isSelected = false;
 	}
 
-	g_nmi->getGameLoaderInputController()->setCursorItemPicture(nullptr);
+	g_nmi->getGameLoaderInputController()->setObject(nullptr);
 
 	return true;
 }

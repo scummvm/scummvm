@@ -43,7 +43,7 @@ struct CursorInfo {
 
 typedef Common::Array<CursorInfo *> CursorsArray;
 
-class InputController {
+class CursorController {
 	//CObject obj;
 	int _flag;
 	int _inputFlags;
@@ -57,17 +57,17 @@ class InputController {
 	Picture *_cursorItemPicture;
 
  public:
-	InputController();
-	~InputController();
+	CursorController();
+	~CursorController();
 
 	void setInputDisabled(bool state);
 	void addCursor(CursorInfo *cursor);
 	void setCursorMode(bool mode);
 
-	void drawCursor(int x, int y);
+	void render(int x, int y);
 	void setCursor(int id);
 
-	void setCursorItemPicture(Picture *pic) { _cursorItemPicture = pic; }
+	void setObject(Picture *pic) { _cursorItemPicture = pic; }
 };
 
 } // End of namespace NGI

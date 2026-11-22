@@ -32,7 +32,7 @@
 
 namespace NGI {
 
-InputController::InputController() {
+CursorController::CursorController() {
 	g_nmi->_inputController = this;
 
 	_flag = 0;
@@ -51,7 +51,7 @@ InputController::InputController() {
 	_cursorItemPicture = nullptr;
 }
 
-InputController::~InputController() {
+CursorController::~CursorController() {
 	removeMessageHandler(126, -1);
 
 	g_nmi->_inputController = nullptr;
@@ -60,7 +60,7 @@ InputController::~InputController() {
 		delete _cursorsArray[i];
 }
 
-void InputController::setInputDisabled(bool state) {
+void CursorController::setInputDisabled(bool state) {
 	_flag = state;
 	g_nmi->_inputDisabled = state;
 }
@@ -69,7 +69,7 @@ void setInputDisabled(bool state) {
 	g_nmi->_inputController->setInputDisabled(state);
 }
 
-void InputController::addCursor(CursorInfo *cursor) {
+void CursorController::addCursor(CursorInfo *cursor) {
 	CursorInfo *newc = new CursorInfo(*cursor);
 	const Dims dims = cursor->picture->getDimensions();
 
@@ -82,14 +82,14 @@ void InputController::addCursor(CursorInfo *cursor) {
 	_cursorsArray.push_back(newc);
 }
 
-void InputController::setCursorMode(bool enabled) {
+void CursorController::setCursorMode(bool enabled) {
 	if (enabled)
 		_inputFlags |= 1;
 	else
 		_inputFlags &= ~1;
 }
 
-void InputController::drawCursor(int x, int y) {
+void CursorController::render(int x, int y) {
 	if (_cursorIndex == -1)
 		return;
 
@@ -105,7 +105,7 @@ void InputController::drawCursor(int x, int y) {
 								 _cursorBounds.top + _cursorsArray[_cursorIndex]->itemPictureOffsY, 0, 0);
 }
 
-void InputController::setCursor(int cursorId) {
+void CursorController::setCursor(int cursorId) {
 	if (_cursorIndex == -1 || _cursorsArray[_cursorIndex]->pictureId != cursorId) {
 		_cursorIndex = -1;
 
