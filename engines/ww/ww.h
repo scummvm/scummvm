@@ -278,6 +278,7 @@ public:
 	void handleMouseClick();
 	void handleMouseLeftClick();
 	void handleMouseRightClick();
+	uint updateGame();
 
 	// Palette loading
 	void loadPalette(GxlArchive *lib, const char *filename);
@@ -365,6 +366,7 @@ public:
 
 	void gxCloseLib(GxlArchive *lib);
 	void setMouseBounds(int x1, int x2, int y1, int y2);
+
 	// Room
 	void openRoomLibrary(int roomNum);
 	void openAlternateRoomLibrary(const char *name);

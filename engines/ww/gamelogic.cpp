@@ -6227,8 +6227,6 @@ void GameLogic::r24_refreshRoomBackground() {
 }
 
 void GameLogic::r24_climbLadder(int wayneX, int wayneLadderX, int wayneLadderY, int ladderTopY, int ceilingIndex) {
-	debug("r24_climbLadder: wayne=(%d,%d) scale=%d garth=(%d,%d)", _vm->_wayneSpriteX, _vm->_wayneSpriteY,
-		  _vm->_wayneActorScale, _vm->_garthSpriteX, _vm->_garthSpriteY);
 	const int garthClimbX = wayneX;
 	const int garthLadderX = wayneLadderX + 20;
 	const int ceilingX = wayneX - 10;

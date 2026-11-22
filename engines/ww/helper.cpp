@@ -764,4 +764,26 @@ void WWEngine::setMouseBounds(int x1, int x2, int y1, int y2) {
 	// Add one as rect.contains() use a strict < comparison for x2 and y2
 	_mouseZone = Common::Rect(x1, y1, x2 + 1, y2 + 1);
 }
+
+uint WWEngine::updateGame() {
+	updateEvents();
+	updateMouseMove();
+
+	// Take the clicks collected so far and reset them before handling them: a click made
+	// while they're being handled is kept for the next call
+	const uint clickButtons = _mouseClickButtons;
+	_mouseClickButtons = 0;
+
+	if (clickButtons & kLeftButtonClicked)
+		handleMouseLeftClick();
+	if (clickButtons & kRightButtonClicked)
+		handleMouseRightClick();
+
+	if (_roomEventNum != 0)
+		handleRoomEvent();
+	if (_gameState == 1 && _currentRoomNumber < 100)
+		gameMapOpen();
+
+	return clickButtons;
+}
 } // End of namespace WW

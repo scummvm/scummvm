@@ -465,13 +465,13 @@ bool WWEngine::walkTo(int actor1_destX, int actor1_destY, int direction, int act
 		// if (_inventoryItemsCount == 0 && _scrollPosition == 0) {
 		//	 waitMillis(10000 / (scale * scale) * 10);
 		// }
-		waitMillis(100); // TODO Fix this
-		if (_scrollRemaining > 0) {
-			warning("STUB - Missing scrolling in WalkTo");
-			// TODO
-			// if (updateGame()) {
-			//	 return true;
-			// }
+
+		// TODO Fix this - The formula above is correct, the purpose is to move at a different speed based on the scale. If you take a scale of 100, it results in a wait of 10ms
+		waitMillis(100);
+
+		if (_scrollRemaining == 0) {
+			if (updateGame())
+				return true;
 		}
 	}
 

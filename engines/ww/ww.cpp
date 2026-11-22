@@ -162,20 +162,7 @@ Common::Error WWEngine::run() {
 
 	while (!shouldQuit() && !(_logic->_r8_flags & 0x20)) {
 		handleMapPalette();
-		
-		_mouseClickButtons = 0;
-		// _keyInput = 0;
-		updateEvents();
-		updateMouseMove();
-		if (_mouseClickButtons != 0) {
-			handleMouseClick();
-		}
-		if (_roomEventNum != 0) {
-			handleRoomEvent();
-		}
-		if (_gameState == 1 && _currentRoomNumber < 100) {
-			gameMapOpen();
-		}
+		updateGame();
 		updateRoomAnimations();
 		g_system->updateScreen();
 	}
