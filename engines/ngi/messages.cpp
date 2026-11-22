@@ -91,9 +91,9 @@ bool Command::load(MfcArchive &file) {
 	_invId = file.readUint32LE();
 	_wait = file.readUint32LE();
 	_param = file.readUint32LE();
-	_field_2C = file.readUint32LE();
-	_field_30 = file.readUint32LE();
-	_field_34 = file.readUint32LE();
+	_auxParam = file.readUint32LE();
+	_oneShot = file.readUint32LE();
+	_armed = file.readUint32LE();
 
 	_messageNum = file.readUint32LE();
 
@@ -107,8 +107,8 @@ bool Command::load(MfcArchive &file) {
 	_objtype = kObjTypeExCommand;
 
 	debugC(6, kDebugXML, "%% <COMMAND parent=%d cmd=%s x=%d y=%d f14=%d sceneX=%d sceneY=%d f20=%d f24=%d param=%d f2c=%d f30=%d f34=%d num=%d flags=%d parId=%d />",
-			_parentId, exCommandType2str(_cmd), _x, _y, _z, _sceneClickX, _sceneClickY, _invId, _wait, _param, _field_2C,
-			_field_30, _field_34, _messageNum, _excFlags, _parId);
+			_parentId, exCommandType2str(_cmd), _x, _y, _z, _sceneClickX, _sceneClickY, _invId, _wait, _param, _auxParam,
+			_oneShot, _armed, _messageNum, _excFlags, _parId);
 
 	return true;
 }
@@ -156,18 +156,18 @@ void Command::setf3c(int val) {
 	if (val != -1)
 		_field_3C = val;
 
-	_field_34 = 1;
+	_armed = 1;
 }
 
 void Command::firef34() {
-	if (_field_34) {
+	if (_armed) {
 		if (_field_3C >= _param) {
-			_field_34 = 0;
+			_armed = 0;
 
 			sendMessage();
 
-			if (!_field_30 )
-				setf3c(_field_2C);
+			if (!_oneShot )
+				setf3c(_auxParam);
 		}
 	}
 }
@@ -195,9 +195,9 @@ Message::Message() {
 	_invId = 0;
 	_wait = 0;
 	_param = 0;
-	_field_2C = 0;
-	_field_30 = 0;
-	_field_34 = 0;
+	_auxParam = 0;
+	_oneShot = 0;
+	_armed = 0;
 }
 
 Message::Message(int16 parentId, int messageKind, int x, int y, int z, int a7, int sceneClickX, int sceneClickY, int a10) {
@@ -211,9 +211,9 @@ Message::Message(int16 parentId, int messageKind, int x, int y, int z, int a7, i
 	_wait = a7;
 	_invId = a10;
 	_param = 0;
-	_field_2C = 0;
-	_field_30 = 0;
-	_field_34 = 0;
+	_auxParam = 0;
+	_oneShot = 0;
+	_armed = 0;
 }
 
 ObjstateCommand::ObjstateCommand() {

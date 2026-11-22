@@ -46,9 +46,9 @@ class Message : public CObject {
 	int _invId;
 	int _wait;
 	int _param;
-	int _field_2C;
-	int _field_30;
-	int _field_34;
+	int _auxParam;
+	int _oneShot;
+	int _armed;
 
  public:
 	Message();

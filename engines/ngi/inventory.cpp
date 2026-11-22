@@ -359,7 +359,7 @@ void Inventory::slideIn() {
 
 	Command *ex = new Command(0, 17, 65, 0, 0, 0, 1, 0, 0, 0);
 
-	ex->_field_2C = 10;
+	ex->_auxParam = 10;
 	ex->_z = _isInventoryOut;
 	ex->_invId = !_isInventoryOut;
 	ex->_excFlags |= 3;
@@ -371,7 +371,7 @@ void Inventory::slideOut() {
 
 	Command *ex = new Command(0, 17, 65, 0, 0, 0, 1, 0, 0, 0);
 
-	ex->_field_2C = 10;
+	ex->_auxParam = 10;
 	ex->_z = _isInventoryOut;
 	ex->_invId = !_isInventoryOut;
 	ex->_excFlags |= 3;
@@ -394,7 +394,7 @@ bool Inventory::onMouseLKeyDown(Command *cmd) {
 			}
 			if (getItemFlags(icon.inventoryItemId) & 1) {
 				Command *ex = new Command(0, 17, 65, 0, 0, 0, 1, 0, 0, 0);
-				ex->_field_2C = 11;
+				ex->_auxParam = 11;
 				ex->_z = _inventoryIcons[i].inventoryItemId;
 				ex->_excFlags |= 3;
 				ex->postMessage();

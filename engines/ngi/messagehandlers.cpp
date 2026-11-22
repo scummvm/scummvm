@@ -245,7 +245,7 @@ int global_messageHandler1(Command *cmd) {
 			g_nmi->setCursor(g_nmi->_cursorId);
 			break;
 		case 65: // open map
-			if (cmd->_field_2C == 11 && cmd->_z == ANI_INV_MAP && g_nmi->_flgCanOpenMap)
+			if (cmd->_auxParam == 11 && cmd->_z == ANI_INV_MAP && g_nmi->_flgCanOpenMap)
 				g_nmi->openMap();
 			break;
 		default:
@@ -459,7 +459,7 @@ int global_messageHandler3(Command *cmd) {
 		setInputDisabled(0);
 		return result;
 	case 56:
-		if (cmd->_field_2C) {
+		if (cmd->_auxParam) {
 			ani = g_nmi->_currentScene->findAniObjectById(cmd->_parentId, cmd->_param);
 			if (ani) {
 				getGameLoaderInventory()->addItem2(ani);
@@ -472,7 +472,7 @@ int global_messageHandler3(Command *cmd) {
 		getGameLoaderInventory()->recalcItemPos();
 		return result;
 	case 57:
-		if (cmd->_field_2C) {
+		if (cmd->_auxParam) {
 			if (!cmd->_invId) {
 				getGameLoaderInventory()->removeItem2(g_nmi->_currentScene, cmd->_parentId, cmd->_x, cmd->_y, cmd->_z);
 				getGameLoaderInventory()->recalcItemPos();
