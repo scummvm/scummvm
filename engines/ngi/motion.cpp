@@ -1668,7 +1668,7 @@ int MctlGraph::getObjIndex(int objectId) {
 
 int MctlGraph::getDirByStatics(int idx, int staticsId) {
 	for (int i = 0; i < 4; i++)
-		if (_aniData[idx]._directions[i]._staticsId1 == staticsId || _aniData[idx]._directions[i]._staticsId2 == staticsId)
+		if (_aniData[idx]._directions[i]._prevStaticId == staticsId || _aniData[idx]._directions[i]._nextStaticId == staticsId)
 			return i;
 
 	return -1;
@@ -1691,7 +1691,7 @@ int MctlGraph::getDirByPoint(int index, AniObject *ani) {
 
 		for (int i = 0; i < 4; i++) {
 			debugC(1, kDebugPathfinding, "WWW 5");
-			int tmp = _aniHandler.getNumMovements(ani->_id, ani->_statics->_staticsId, _aniData[index]._directions[i]._staticsId1);
+			int tmp = _aniHandler.getNumMovements(ani->_id, ani->_statics->_staticsId, _aniData[index]._directions[i]._prevStaticId);
 
 			if (tmp >= 0 && (minidx == -1 || tmp < min)) {
 				minidx = i;
@@ -1837,8 +1837,8 @@ bool MctlGraph::fillData(AniObject *obj, GmctlAni &item) {
 			}
 		}
 
-		item._directions[dir]._staticsId1 = item._directions[dir]._walk[0]._movement->_prevStatic->_staticsId;
-		item._directions[dir]._staticsId2 = item._directions[dir]._walk[0]._movement->_nextStatic->_staticsId;
+		item._directions[dir]._prevStaticId = item._directions[dir]._walk[0]._movement->_prevStatic->_staticsId;
+		item._directions[dir]._nextStaticId = item._directions[dir]._walk[0]._movement->_nextStatic->_staticsId;
 
 	}
 	return true;
@@ -2196,7 +2196,7 @@ MessageQueue *MctlGraph::makeQueue(AniObject *obj, int xpos, int ypos, int fuzzy
 
 		if (subMgm) {
 			obj->_messageQueueId = 0;
-			obj->setStatic(_aniData[idx]._directions[idxsub]._staticsId1);
+			obj->setStatic(_aniData[idx]._directions[idxsub]._prevStaticId);
 			newx = obj->_x;
 			newy = obj->_y;
 		} else {
@@ -2346,7 +2346,7 @@ MessageQueue *MctlGraph::makeQueue(AniObject *obj, int xpos, int ypos, int fuzzy
 
 	mctlMQ1.flags = fuzzyMatch != 0;
 
-	if (_aniData[idx]._directions[idxsub]._staticsId1 != obj->_statics->_staticsId)
+	if (_aniData[idx]._directions[idxsub]._prevStaticId != obj->_statics->_staticsId)
 		mctlMQ1.flags |= 2;
 
 	generateList(mctlMQ1, &tempLinkList, &linkInfoSource, &linkInfoDest);
@@ -2373,7 +2373,7 @@ MessageQueue *MctlGraph::makeQueue(AniObject *obj, int xpos, int ypos, int fuzzy
 				ex->_excFlags |= 2;
 				mq->addCommandToFront(ex);
 
-				ex = new Command(picAniInfo.objectId, 22, _aniData[idx]._directions[idxsub]._staticsId1, 0, 0, 0, 1, 0, 0, 0);
+				ex = new Command(picAniInfo.objectId, 22, _aniData[idx]._directions[idxsub]._prevStaticId, 0, 0, 0, 1, 0, 0, 0);
 
 				ex->_param = picAniInfo.field_8;
 				ex->_excFlags |= 3;

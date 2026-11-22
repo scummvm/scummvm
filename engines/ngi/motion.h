@@ -326,8 +326,8 @@ struct MG2I {
 };
 
 struct MctlAniSub {
-	int _staticsId2;
-	int _staticsId1;
+	int _nextStaticId;
+	int _prevStaticId;
 	MG2I _walk[3];
 	MG2I _turn[4];
 	MG2I _turnS[4];
