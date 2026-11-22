@@ -1567,7 +1567,7 @@ void ModalMainMenu::updateSoundVolume(Sound &snd) {
 	if (!snd._objectId)
 		return;
 
-	StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(snd._objectId, -1);
+	AniObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(snd._objectId, -1);
 	if (!ani)
 		return;
 

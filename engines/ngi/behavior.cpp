@@ -59,7 +59,7 @@ void BehaviorManager::initBehavior(Scene *sc, GameVar *var) {
 			_behaviors.push_back(BehaviorInfo());
 			_behaviors.back().initAmbientBehavior(subvar, sc);
 		} else {
-			StaticANIObject *ani = sc->getStaticANIObject1ByName(subvar->_varName, -1);
+			AniObject *ani = sc->getStaticANIObject1ByName(subvar->_varName, -1);
 			if (ani) {
 				for (uint i = 0; i < sc->_staticANIObjectList1.size(); i++) {
 					if (sc->_staticANIObjectList1[i]->_id == ani->_id) {
@@ -140,7 +140,7 @@ void BehaviorManager::updateBehavior(BehaviorInfo &behaviorInfo, BehaviorAnim &e
 	}
 }
 
-void BehaviorManager::updateStaticAniBehavior(StaticANIObject &ani, int delay, const BehaviorAnim &beh) {
+void BehaviorManager::updateStaticAniBehavior(AniObject &ani, int delay, const BehaviorAnim &beh) {
 	debugC(6, kDebugBehavior, "BehaviorManager::updateStaticAniBehavior(%s)", transCyrillic(ani._title));
 
 	MessageQueue *mq = nullptr;
@@ -178,7 +178,7 @@ void BehaviorManager::updateStaticAniBehavior(StaticANIObject &ani, int delay, c
 	}
 }
 
-bool BehaviorManager::setBehaviorEnabled(StaticANIObject *obj, int aniId, int quId, int flag) {
+bool BehaviorManager::setBehaviorEnabled(AniObject *obj, int aniId, int quId, int flag) {
 	BehaviorMove *entry = getBehaviorMoveByMessageQueueDataId(obj, aniId, quId);
 
 	if (entry) {
@@ -192,7 +192,7 @@ bool BehaviorManager::setBehaviorEnabled(StaticANIObject *obj, int aniId, int qu
 	return true;
 }
 
-void BehaviorManager::setFlagByStaticAniObject(StaticANIObject *ani, int flag) {
+void BehaviorManager::setFlagByStaticAniObject(AniObject *ani, int flag) {
 	for (uint i = 0; i < _behaviors.size(); i++) {
 		BehaviorInfo &beh = _behaviors[i];
 
@@ -205,7 +205,7 @@ void BehaviorManager::setFlagByStaticAniObject(StaticANIObject *ani, int flag) {
 	}
 }
 
-BehaviorMove *BehaviorManager::getBehaviorMoveByMessageQueueDataId(StaticANIObject *ani, int id1, int id2) {
+BehaviorMove *BehaviorManager::getBehaviorMoveByMessageQueueDataId(AniObject *ani, int id1, int id2) {
 	for (uint i = 0; i < _behaviors.size(); i++) {
 		if (_behaviors[i]._ani == ani) {
 			for (uint j = 0; j < _behaviors[i]._behaviorAnims.size(); j++) {
@@ -255,7 +255,7 @@ void BehaviorInfo::initAmbientBehavior(GameVar *var, Scene *sc) {
 	}
 }
 
-void BehaviorInfo::initObjectBehavior(GameVar *var, Scene *sc, StaticANIObject *ani) {
+void BehaviorInfo::initObjectBehavior(GameVar *var, Scene *sc, AniObject *ani) {
 	Common::String s((char *)transCyrillic(var->_varName));
 	debugC(4, kDebugBehavior, "BehaviorInfo::initObjectBehavior(%s, %d, %s)", s.c_str(), sc->_sceneId, transCyrillic(ani->_title));
 
@@ -294,7 +294,7 @@ BehaviorAnim::BehaviorAnim() {
 	_flags = 0;
 }
 
-BehaviorAnim::BehaviorAnim(GameVar *var, Scene *sc, StaticANIObject *ani, int *minDelay) {
+BehaviorAnim::BehaviorAnim(GameVar *var, Scene *sc, AniObject *ani, int *minDelay) {
 	_staticsId = 0;
 
 	*minDelay = 0xffffffff;

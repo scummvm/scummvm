@@ -42,7 +42,7 @@ void scene21_initScene(Scene *sc) {
 	g_nmi->_currentScene = sc;
 
 	if (g_nmi->getObjectState(sO_LowerPipe_21) == g_nmi->getObjectEnumState(sO_LowerPipe_21, sO_IsOpened)) {
-		g_vars->scene21_giraffeBottom->changeStatics2(ST_GRFB_HANG);
+		g_vars->scene21_giraffeBottom->setStatic(ST_GRFB_HANG);
 		g_vars->scene21_pipeIsOpen = true;
 		g_vars->scene21_wigglePos = 0.0;
 		g_vars->scene21_giraffeBottomX = g_vars->scene21_giraffeBottom->_x;
@@ -66,7 +66,7 @@ int scene21_updateCursor() {
 }
 
 void sceneHandler21_doWiggle() {
-	g_vars->scene21_giraffeBottom->setOXY((int)(cos(g_vars->scene21_wigglePos) * 4.0) + g_vars->scene21_giraffeBottom->_x,
+	g_vars->scene21_giraffeBottom->setPos((int)(cos(g_vars->scene21_wigglePos) * 4.0) + g_vars->scene21_giraffeBottom->_x,
 										  g_vars->scene21_giraffeBottom->_y);
 
 	g_vars->scene21_wigglePos += 0.19635;
@@ -75,7 +75,7 @@ void sceneHandler21_doWiggle() {
 		g_vars->scene21_wigglePos = 0;
 
 		if (!g_vars->scene21_giraffeBottom->_movement)
-			g_vars->scene21_giraffeBottom->setOXY(g_vars->scene21_giraffeBottomX, g_vars->scene21_giraffeBottomY);
+			g_vars->scene21_giraffeBottom->setPos(g_vars->scene21_giraffeBottomX, g_vars->scene21_giraffeBottomY);
 	}
 }
 
@@ -86,9 +86,9 @@ int sceneHandler21(ExCommand *cmd) {
 	switch (cmd->_messageNum) {
 	case MSG_SC21_UPDATEASS:
 		if (g_nmi->getObjectState(sO_LowerPipe_21) == g_nmi->getObjectEnumState(sO_LowerPipe_21, sO_IsOpened)) {
-			g_vars->scene21_giraffeBottom->changeStatics2(ST_GRFB_HANG);
-			g_vars->scene21_giraffeBottom->setOXY(g_vars->scene21_giraffeBottomX, g_vars->scene21_giraffeBottomY);
-			g_vars->scene21_giraffeBottom->changeStatics2(ST_GRFB_SIT);
+			g_vars->scene21_giraffeBottom->setStatic(ST_GRFB_HANG);
+			g_vars->scene21_giraffeBottom->setPos(g_vars->scene21_giraffeBottomX, g_vars->scene21_giraffeBottomY);
+			g_vars->scene21_giraffeBottom->setStatic(ST_GRFB_SIT);
 
 			g_vars->scene21_pipeIsOpen = false;
 
@@ -99,7 +99,7 @@ int sceneHandler21(ExCommand *cmd) {
 
 	case 29:
 		{
-			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 			if (!ani || !canInteractAny(g_nmi->_aniMan, ani, cmd->_param)) {
 				int picId = g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 

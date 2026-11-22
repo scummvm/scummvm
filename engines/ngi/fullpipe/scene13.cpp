@@ -53,7 +53,7 @@ void scene13_initScene(Scene *sc) {
 	g_nmi->_currentScene = sc;
 
 	if (g_nmi->getObjectState(sO_Bridge) == g_nmi->getObjectEnumState(sO_Bridge, sO_Convoluted)) {
-		g_vars->scene13_bridge->changeStatics2(ST_BDG_CLOSED);
+		g_vars->scene13_bridge->setStatic(ST_BDG_CLOSED);
 
 		lnk->_flags |= 0x20000000u;
 
@@ -61,13 +61,13 @@ void scene13_initScene(Scene *sc) {
 
 		g_vars->scene13_whirlgig->_callback2 = nullptr; // Really NULL
 	} else {
-		g_vars->scene13_bridge->changeStatics2(ST_BDG_OPEN2);
+		g_vars->scene13_bridge->setStatic(ST_BDG_OPEN2);
 
 		lnk->_flags &= 0xDFFFFFFF;
 
-		g_vars->scene13_whirlgig->stopAnim_maybe();
+		g_vars->scene13_whirlgig->stopMovement();
 		g_vars->scene13_whirlgig->_callback2 = scene13_whirlgigCallback;
-		g_vars->scene13_whirlgig->startAnim(MV_WHR13_SPIN, 0, -1);
+		g_vars->scene13_whirlgig->startMovement(MV_WHR13_SPIN, 0, -1);
 
 		if (g_vars->scene13_whirlgig->_movement)
 			g_vars->scene13_whirlgig->_movement->setCurFrame(30);
@@ -94,13 +94,13 @@ void sceneHandler13_openBridge() {
 		else
 			sz = mov->_phases.size();
 
-		g_vars->scene13_bridge->changeStatics2(ST_BDG_CLOSED);
-		g_vars->scene13_bridge->startAnim(MV_BDG_OPEN, 0, -1);
+		g_vars->scene13_bridge->setStatic(ST_BDG_CLOSED);
+		g_vars->scene13_bridge->startMovement(MV_BDG_OPEN, 0, -1);
 
 		mov->setCurFrame(sz - mov->_curFrame);
 	} else {
-		g_vars->scene13_bridge->changeStatics2(ST_BDG_CLOSED);
-		g_vars->scene13_bridge->startAnim(MV_BDG_OPEN, 0, -1);
+		g_vars->scene13_bridge->setStatic(ST_BDG_CLOSED);
+		g_vars->scene13_bridge->startMovement(MV_BDG_OPEN, 0, -1);
 	}
 }
 
@@ -124,7 +124,7 @@ void sceneHandler13_testOpen() {
 		break;
 
 	case ST_HDLR_GUM:
-		g_vars->scene13_handleR->changeStatics2(ST_HDLR_DOWN_GUM);
+		g_vars->scene13_handleR->setStatic(ST_HDLR_DOWN_GUM);
 
 		chainQueue(QU_SC13_OPENSUCCESS, 1);
 		break;
@@ -145,19 +145,19 @@ void sceneHandler13_closeBridge() {
 		else
 			sz = mov->_phases.size();
 
-		g_vars->scene13_bridge->changeStatics2(ST_BDG_OPEN2);
-		g_vars->scene13_bridge->startAnim(MV_BDG_CLOSE, 0, -1);
+		g_vars->scene13_bridge->setStatic(ST_BDG_OPEN2);
+		g_vars->scene13_bridge->startMovement(MV_BDG_CLOSE, 0, -1);
 
 		mov->setCurFrame(sz - mov->_curFrame);
 	} else {
-		g_vars->scene13_bridge->changeStatics2(ST_BDG_OPEN2);
-		g_vars->scene13_bridge->startAnim(MV_BDG_CLOSE, 0, -1);
+		g_vars->scene13_bridge->setStatic(ST_BDG_OPEN2);
+		g_vars->scene13_bridge->startMovement(MV_BDG_CLOSE, 0, -1);
 	}
 }
 
 void sceneHandler13_closeFast() {
-	g_vars->scene13_bridge->changeStatics2(ST_BDG_OPEN2);
-	g_vars->scene13_bridge->startAnim(MV_BDG_CLOSE, 0, -1);
+	g_vars->scene13_bridge->setStatic(ST_BDG_OPEN2);
+	g_vars->scene13_bridge->startMovement(MV_BDG_CLOSE, 0, -1);
 	g_vars->scene13_bridge->_movement->setCurFrame(21);
 }
 
@@ -179,8 +179,8 @@ void sceneHandler13_startWhirlgig() {
 }
 
 void sceneHandler13_openFast() {
-	g_vars->scene13_bridge->changeStatics2(ST_BDG_CLOSED);
-	g_vars->scene13_bridge->startAnim(MV_BDG_OPEN, 0, -1);
+	g_vars->scene13_bridge->setStatic(ST_BDG_CLOSED);
+	g_vars->scene13_bridge->startMovement(MV_BDG_OPEN, 0, -1);
 	g_vars->scene13_bridge->_movement->setCurFrame(15);
 }
 
@@ -318,7 +318,7 @@ int sceneHandler13(ExCommand *cmd) {
 
 	case 29:
 		{
-			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (!ani || !canInteractAny(g_nmi->_aniMan, ani, cmd->_param)) {
 				int picId = g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);

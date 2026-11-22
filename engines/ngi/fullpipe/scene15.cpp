@@ -38,7 +38,7 @@ namespace NGI {
 void scene15_initScene(Scene *sc) {
 	g_vars->scene15_chantingCountdown = 0;
 
-	StaticANIObject *grandma = sc->getStaticANIObject1ById(ANI_GRANDMA_ASS, -1);
+	AniObject *grandma = sc->getStaticANIObject1ById(ANI_GRANDMA_ASS, -1);
 
 	Scene *oldsc = g_nmi->_currentScene;
 	g_nmi->_currentScene = sc;
@@ -46,25 +46,25 @@ void scene15_initScene(Scene *sc) {
 	int grandmaState = g_nmi->getObjectState(sO_Grandma);
 
 	if (grandmaState == g_nmi->getObjectEnumState(sO_Grandma, sO_In_15)) {
-		grandma->changeStatics2(ST_GMS_BOOT);
-		grandma->setOXY(97, 399);
+		grandma->setStatic(ST_GMS_BOOT);
+		grandma->setPos(97, 399);
 		g_nmi->setObjectState(sO_LeftPipe_15, g_nmi->getObjectEnumState(sO_LeftPipe_15, sO_IsClosed));
 	} else if (grandmaState == g_nmi->getObjectEnumState(sO_Grandma, sO_In_15_1)) {
-		grandma->changeStatics2(ST_GMS_BOOT);
-		grandma->setOXY(86, 399);
+		grandma->setStatic(ST_GMS_BOOT);
+		grandma->setPos(86, 399);
 		g_nmi->setObjectState(sO_LeftPipe_15, g_nmi->getObjectEnumState(sO_LeftPipe_15, sO_IsClosed));
 	} else if (grandmaState == g_nmi->getObjectEnumState(sO_Grandma, sO_In_15_2)) {
-		grandma->changeStatics2(ST_GMS_BOOT);
-		grandma->setOXY(71, 399);
+		grandma->setStatic(ST_GMS_BOOT);
+		grandma->setPos(71, 399);
 		g_nmi->setObjectState(sO_LeftPipe_15, g_nmi->getObjectEnumState(sO_LeftPipe_15, sO_IsClosed));
 	} else if (grandmaState == g_nmi->getObjectEnumState(sO_Grandma, sO_In_15_3)) {
-		grandma->changeStatics2(ST_GMS_BOOT);
-		grandma->setOXY(49, 399);
+		grandma->setStatic(ST_GMS_BOOT);
+		grandma->setPos(49, 399);
 		g_nmi->setObjectState(sO_LeftPipe_15, g_nmi->getObjectEnumState(sO_LeftPipe_15, sO_IsClosed));
 	} else if (grandmaState == g_nmi->getObjectEnumState(sO_Grandma, sO_WithoutBoot)) {
-		grandma->changeStatics2(ST_GMS_BOOT);
-		grandma->setOXY(97, 399);
-		grandma->changeStatics2(ST_GMS_BOOTLESS2);
+		grandma->setStatic(ST_GMS_BOOT);
+		grandma->setPos(97, 399);
+		grandma->setStatic(ST_GMS_BOOTLESS2);
 		g_nmi->setObjectState(sO_LeftPipe_15, g_nmi->getObjectEnumState(sO_LeftPipe_15, sO_IsClosed));
 	} else {
 		grandma->hide();
@@ -74,9 +74,9 @@ void scene15_initScene(Scene *sc) {
 	g_vars->scene15_plusminus = sc->getStaticANIObject1ById(ANI_PLUSMINUS, -1);
 
 	if (g_nmi->getObjectState(sO_Guard_2) == g_nmi->getObjectEnumState(sO_Guard_2, sO_Off))
-		g_vars->scene15_plusminus->_statics = g_vars->scene15_plusminus->getStaticsById(ST_PMS_MINUS);
+		g_vars->scene15_plusminus->_statics = g_vars->scene15_plusminus->getStatic(ST_PMS_MINUS);
 	else
-		g_vars->scene15_plusminus->_statics = g_vars->scene15_plusminus->getStaticsById(ST_PMS_PLUS);
+		g_vars->scene15_plusminus->_statics = g_vars->scene15_plusminus->getStatic(ST_PMS_PLUS);
 
  	g_vars->scene15_ladder = sc->getPictureObjectById(PIC_SC15_LADDER, 0);
 	g_vars->scene15_boot = sc->getStaticANIObject1ById(ANI_BOOT_15, -1);
@@ -148,9 +148,9 @@ int sceneHandler15(ExCommand *cmd) {
 
 	case MSG_SC15_PULL:
 		if (g_vars->scene15_plusminus->_statics->_staticsId == ST_PMS_MINUS) {
-			g_vars->scene15_plusminus->_statics = g_vars->scene15_plusminus->getStaticsById(ST_PMS_PLUS);
+			g_vars->scene15_plusminus->_statics = g_vars->scene15_plusminus->getStatic(ST_PMS_PLUS);
 		} else {
-			g_vars->scene15_plusminus->_statics = g_vars->scene15_plusminus->getStaticsById(ST_PMS_MINUS);
+			g_vars->scene15_plusminus->_statics = g_vars->scene15_plusminus->getStatic(ST_PMS_MINUS);
 		}
 		break;
 
@@ -167,7 +167,7 @@ int sceneHandler15(ExCommand *cmd) {
 				return 0;
 			}
 
-			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
 				g_nmi->lift_animateButton(ani);

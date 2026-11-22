@@ -132,14 +132,14 @@ void sceneHandler25_startBearders() {
 	g_vars->scene25_bearders.clear();
 	g_vars->scene25_beardersCounter = 0;
 
-	StaticANIObject *bearded = g_nmi->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_BEARDED_CMN, -1);
+	AniObject *bearded = g_nmi->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_BEARDED_CMN, -1);
 
 	for (int i = 0; i < 3; i++) {
-		StaticANIObject *ani = new StaticANIObject(bearded);
+		AniObject *ani = new AniObject(bearded);
 
 		g_vars->scene25_bearders.push_back(ani);
 
-		ani->_statics = ani->getStaticsById(ST_BRDCMN_EMPTY);
+		ani->_statics = ani->getStatic(ST_BRDCMN_EMPTY);
 
 		g_nmi->_currentScene->addStaticANIObject(ani, 1);
 	}
@@ -162,7 +162,7 @@ void sceneHandler25_enterTruba() {
 
 	g_nmi->_aniMan->getPicAniInfo(info);
 	g_nmi->_aniMan->_messageQueueId = 0;
-	g_nmi->_aniMan->changeStatics2(g_nmi->_aniMan->_statics->_staticsId);
+	g_nmi->_aniMan->setStatic(g_nmi->_aniMan->_statics->_staticsId);
 
 	int x = g_nmi->_aniMan->_x;
 	int y = g_nmi->_aniMan->_y;
@@ -173,11 +173,11 @@ void sceneHandler25_enterTruba() {
 	int qid = 0;
 
 	if (id == ST_MAN25_ONBOARD && x == 634 && y == 502) {
-		g_nmi->_aniMan->changeStatics2(ST_MAN25_ONBOARD);
+		g_nmi->_aniMan->setStatic(ST_MAN25_ONBOARD);
 
 		qid = QU_SC25_MANTOTRUBA;
 	} else if (id == (ST_MAN25_ONBOARD|0x4000) && x == 632 && y == 502) {
-		g_nmi->_aniMan->changeStatics2(ST_MAN25_ONBOARD|0x4000);
+		g_nmi->_aniMan->setStatic(ST_MAN25_ONBOARD|0x4000);
 
 		qid = QU_SC25_MANTOTRUBA_R;
 	}
@@ -197,7 +197,7 @@ void sceneHandler25_toLadder() {
 
 	g_nmi->_aniMan->getPicAniInfo(info);
 	g_nmi->_aniMan->_messageQueueId = 0;
-	g_nmi->_aniMan->changeStatics2(g_nmi->_aniMan->_statics->_staticsId);
+	g_nmi->_aniMan->setStatic(g_nmi->_aniMan->_statics->_staticsId);
 
 	int x = g_nmi->_aniMan->_x;
 	int y = g_nmi->_aniMan->_y;
@@ -208,11 +208,11 @@ void sceneHandler25_toLadder() {
 	int qid = 0;
 
 	if (id == ST_MAN25_ONBOARD && x == 307 && y == 502) {
-		g_nmi->_aniMan->changeStatics2(ST_MAN25_ONBOARD);
+		g_nmi->_aniMan->setStatic(ST_MAN25_ONBOARD);
 
 		qid = QU_SC25_BACKTOLADDER;
 	} else if (id == (ST_MAN25_ONBOARD|0x4000) && x == 192 && y == 502) {
-		g_nmi->_aniMan->changeStatics2(ST_MAN25_ONBOARD|0x4000);
+		g_nmi->_aniMan->setStatic(ST_MAN25_ONBOARD|0x4000);
 
 		qid = QU_SC25_BOARDTOLADDER;
 	}
@@ -260,14 +260,14 @@ void sceneHandler25_animateBearders() {
 void sceneHandler25_sneeze() {
 	if (g_nmi->_rnd.getRandomNumber(32767) % 10) {
 		if (g_nmi->_aniMan->_statics->_staticsId == ST_MAN25_ONBOARD) {
-			g_nmi->_aniMan->startAnim(MV_MAN25_ONBOARD, 0, -1);
+			g_nmi->_aniMan->startMovement(MV_MAN25_ONBOARD, 0, -1);
 		} else if (g_nmi->_aniMan->_statics->_staticsId == (ST_MAN25_ONBOARD|0x4000)) {
-			g_nmi->_aniMan->startAnim(rMV_MAN25_ONBOARD, 0, -1);
+			g_nmi->_aniMan->startMovement(rMV_MAN25_ONBOARD, 0, -1);
 		}
 	} else if (g_nmi->_aniMan->_statics->_staticsId == ST_MAN25_ONBOARD) {
-		g_nmi->_aniMan->startAnim(MV_MAN25_CHIH, 0, -1);
+		g_nmi->_aniMan->startMovement(MV_MAN25_CHIH, 0, -1);
 	} else if (g_nmi->_aniMan->_statics->_staticsId == (ST_MAN25_ONBOARD|0x4000)) {
-		g_nmi->_aniMan->startAnim(rMV_MAN25_CHIH, 0, -1);
+		g_nmi->_aniMan->startMovement(rMV_MAN25_CHIH, 0, -1);
 	}
 }
 
@@ -276,7 +276,7 @@ void sceneHandler25_rowShovel() {
 
 	g_nmi->_aniMan->getPicAniInfo(info);
 	g_nmi->_aniMan->_messageQueueId = 0;
-	g_nmi->_aniMan->changeStatics2(g_nmi->_aniMan->_statics->_staticsId);
+	g_nmi->_aniMan->setStatic(g_nmi->_aniMan->_statics->_staticsId);
 
 	int x = g_nmi->_aniMan->_x;
 	int y = g_nmi->_aniMan->_y;
@@ -287,11 +287,11 @@ void sceneHandler25_rowShovel() {
 	int qid = 0;
 
 	if (id == ST_MAN25_ONBOARD && x == 370 && y == 502) {
-		g_nmi->_aniMan->changeStatics2(ST_MAN25_ONBOARD);
+		g_nmi->_aniMan->setStatic(ST_MAN25_ONBOARD);
 
 		qid = QU_SC25_ROWTOTRUBA;
 	} else if (id == (ST_MAN25_ONBOARD|0x4000) && x == 632 && y == 502) {
-		g_nmi->_aniMan->changeStatics2(ST_MAN25_ONBOARD|0x4000);
+		g_nmi->_aniMan->setStatic(ST_MAN25_ONBOARD|0x4000);
 
 		qid = QU_SC25_ROWTOLADDER;
 
@@ -310,7 +310,7 @@ void sceneHandler25_rowHand() {
 
 	g_nmi->_aniMan->getPicAniInfo(info);
 	g_nmi->_aniMan->_messageQueueId = 0;
-	g_nmi->_aniMan->changeStatics2(g_nmi->_aniMan->_statics->_staticsId);
+	g_nmi->_aniMan->setStatic(g_nmi->_aniMan->_statics->_staticsId);
 
 	int x = g_nmi->_aniMan->_x;
 	int y = g_nmi->_aniMan->_y;
@@ -321,11 +321,11 @@ void sceneHandler25_rowHand() {
 	int qid = 0;
 
 	if (id == ST_MAN25_ONBOARD && x == 370 && y == 502) {
-		g_nmi->_aniMan->changeStatics2(ST_MAN25_ONBOARD);
+		g_nmi->_aniMan->setStatic(ST_MAN25_ONBOARD);
 
 		qid = QU_SC25_TRYROWHAND;
 	} else if (id == (ST_MAN25_ONBOARD|0x4000) && x == 632 && y == 502) {
-		g_nmi->_aniMan->changeStatics2(ST_MAN25_ONBOARD|0x4000);
+		g_nmi->_aniMan->setStatic(ST_MAN25_ONBOARD|0x4000);
 
 		qid = QU_SC25_TRYROWHAND_R;
 	}
@@ -339,8 +339,8 @@ void sceneHandler25_rowHand() {
 void sceneHandler25_putBoard() {
 	if (g_nmi->_aniMan->_statics->_staticsId == ST_MAN_STANDLADDER
 		|| g_nmi->_aniMan->_statics->_staticsId == ST_MAN_LADDERDOWN_R) {
-		g_nmi->_aniMan->changeStatics2(ST_MAN_STANDLADDER);
-		g_nmi->_aniMan->setOXY(281, 481);
+		g_nmi->_aniMan->setStatic(ST_MAN_STANDLADDER);
+		g_nmi->_aniMan->setPos(281, 481);
 
 		chainQueue(QU_SC25_PUTBOARD, 1);
 
@@ -353,7 +353,7 @@ void sceneHandler25_putBoard() {
 void sceneHandler25_tryWater() {
 	if (g_nmi->_aniMan->_statics->_staticsId == ST_MAN_STANDLADDER
 		|| g_nmi->_aniMan->_statics->_staticsId == ST_MAN_LADDERDOWN_R) {
-		g_nmi->_aniMan->changeStatics2(ST_MAN_STANDLADDER);
+		g_nmi->_aniMan->setStatic(ST_MAN_STANDLADDER);
 
 		chainQueue(QU_SC25_TRYWATER, 1);
 	}
@@ -364,7 +364,7 @@ void sceneHandler25_tryRow(int obj) {
 
 	g_nmi->_aniMan->getPicAniInfo(info);
 	g_nmi->_aniMan->_messageQueueId = 0;
-	g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
+	g_nmi->_aniMan->setStatic(ST_MAN_RIGHT | 0x4000);
 
 	int x = g_nmi->_aniMan->_x;
 	int y = g_nmi->_aniMan->_y;
@@ -376,12 +376,12 @@ void sceneHandler25_tryRow(int obj) {
 	if (x == 788 && y == 468) {
 		if (g_vars->scene25_board->_statics->_staticsId == ST_BRD25_RIGHT2) {
 			if (obj == ANI_INV_BROOM) {
-				g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
+				g_nmi->_aniMan->setStatic(ST_MAN_RIGHT | 0x4000);
 
 				qid = QU_SC25_TRYBROOM;
 			}
 			if (obj == ANI_INV_LOPAT) {
-				g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
+				g_nmi->_aniMan->setStatic(ST_MAN_RIGHT | 0x4000);
 
 				qid = QU_SC25_TRYSPADE;
 			}
@@ -395,18 +395,18 @@ void sceneHandler25_tryRow(int obj) {
 			}
 
 			if (obj == ANI_INV_SWAB) {
-				g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
+				g_nmi->_aniMan->setStatic(ST_MAN_RIGHT | 0x4000);
 
 				chainQueue(QU_SC25_TRYSWAB, 1);
 			} else if (!obj) {
-				g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
+				g_nmi->_aniMan->setStatic(ST_MAN_RIGHT | 0x4000);
 
 				chainObjQueue(g_nmi->_aniMan, QU_SC25_TRYHAND, 1);
 
 				g_nmi->playSound(SND_25_028, 0);
 			}
 		} else if (g_vars->scene25_board->_statics->_staticsId == (ST_BRD25_RIGHT2 | 0x4000) && !obj) {
-			g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
+			g_nmi->_aniMan->setStatic(ST_MAN_RIGHT | 0x4000);
 
 			chainQueue(QU_SC25_TRUBATOBOARD, 1);
 
@@ -418,7 +418,7 @@ void sceneHandler25_tryRow(int obj) {
 void sceneHandler25_ladderUp() {
 	if (g_nmi->_aniMan->_statics->_staticsId == ST_MAN_STANDLADDER
 		|| g_nmi->_aniMan->_statics->_staticsId == ST_MAN_LADDERDOWN_R) {
-		g_nmi->_aniMan->changeStatics2(ST_MAN_STANDLADDER);
+		g_nmi->_aniMan->setStatic(ST_MAN_STANDLADDER);
 
 		chainQueue(QU_SC25_LADDERUP, 1);
 	}
@@ -426,13 +426,13 @@ void sceneHandler25_ladderUp() {
 
 void sceneHandler25_backToPipe() {
 	if (!g_nmi->_aniMan->_movement && g_nmi->_aniMan->_statics->_staticsId == (ST_MAN_RIGHT|0x4000)) {
-		g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+		g_nmi->_aniMan->setStatic(ST_MAN_RIGHT|0x4000);
 
 		chainQueue(QU_SC25_BACKTOTRUBA, 1);
 	}
 }
 
-void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, MessageQueue *mq, int flag) {
+void sceneHandler25_walkOnLadder(AniObject *ani, Common::Point *pnt, MessageQueue *mq, int flag) {
 	int aniY = ani->_y;
 	int newx = 0, newy = 0;
 	Common::Point point;
@@ -477,7 +477,7 @@ void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, Messa
 				newy = pnty;
 			}
 
-			point = ani->getMovementById(ex->_messageNum)->getMovementSize(0, -1);
+			point = ani->getMovement(ex->_messageNum)->getMovementSize(0, -1);
 			pntx += point.x;
 			pnty += point.y;
 		}
@@ -500,18 +500,18 @@ void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, Messa
 		int movId = ani->_movement->_id;
 		int idx = ani->_movement->_curFrame;
 
-		ani->changeStatics2(ani->_movement->_prevStatic->_staticsId);
-		ani->setOXY(newx, newy);
+		ani->setStatic(ani->_movement->_prevStatic->_staticsId);
+		ani->setPos(newx, newy);
 
-		ani->startAnim(movId, mq->_id, -1);
+		ani->startMovement(movId, mq->_id, -1);
 
 		ani->_movement->setCurFrame(idx);
 	} else {
 		if (!lastEx)
 			error("sceneHandler25_walkOnLadder(): Incorrect state. Please report this to sev");
 
-		ani->changeStatics2(ani->getMovementById(lastEx->_messageNum)->_prevStatic->_staticsId);
-		ani->setOXY(newx, newy);
+		ani->setStatic(ani->getMovement(lastEx->_messageNum)->_prevStatic->_staticsId);
+		ani->setPos(newx, newy);
 		ani->restartMessageQueue(mq);
 	}
 
@@ -616,7 +616,7 @@ int sceneHandler25(ExCommand *cmd) {
 		g_nmi->startSceneTrack();
 
 		if (g_vars->scene25_waterIsPresent && !g_vars->scene25_water->_movement)
-			g_vars->scene25_water->startAnim(MV_WTR25_FLOW, 0, -1);
+			g_vars->scene25_water->startMovement(MV_WTR25_FLOW, 0, -1);
 
 		if (g_vars->scene25_dudeIsOnBoard && !g_nmi->_aniMan->_movement && g_vars->scene25_sneezeFlipper)
 			sceneHandler25_sneeze();
@@ -626,9 +626,9 @@ int sceneHandler25(ExCommand *cmd) {
 		if (g_vars->scene25_board->_flags & 4) {
 			if (!g_vars->scene25_board->_movement) {
 				if (g_vars->scene25_board->_statics->_staticsId & 0x4000)
-					g_vars->scene25_board->startAnim(rMV_BRD25_RIGHT, 0, -1);
+					g_vars->scene25_board->startMovement(rMV_BRD25_RIGHT, 0, -1);
 				else
-					g_vars->scene25_board->startAnim(MV_BRD25_RIGHT, 0, -1);
+					g_vars->scene25_board->startMovement(MV_BRD25_RIGHT, 0, -1);
 			}
 		}
 		break;
@@ -644,7 +644,7 @@ int sceneHandler25(ExCommand *cmd) {
 				return 0;
 			}
 
-			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (ani) {
 				if (g_nmi->_aniMan != ani) {

@@ -33,7 +33,7 @@
 namespace NGI {
 
 void global_messageHandler_KickStucco() {
-	Movement *mov = g_nmi->_aniMan->getMovementById(MV_MAN_HMRKICK);
+	Movement *mov = g_nmi->_aniMan->getMovement(MV_MAN_HMRKICK);
 	int end = mov->_currMovement ? mov->_currMovement->_phases.size() : mov->_phases.size();
 	bool flip = false;
 
@@ -50,7 +50,7 @@ void global_messageHandler_KickStucco() {
 		}
 	}
 
-	mov = g_nmi->_aniMan->getMovementById(MV_MAN_HMRKICK_COINLESS);
+	mov = g_nmi->_aniMan->getMovement(MV_MAN_HMRKICK_COINLESS);
 	end = mov->_currMovement ? mov->_currMovement->_phases.size() : mov->_phases.size();
 	flip = false;
 
@@ -69,7 +69,7 @@ void global_messageHandler_KickStucco() {
 }
 
 void global_messageHandler_KickMetal() {
-	Movement *mov = g_nmi->_aniMan->getMovementById(MV_MAN_HMRKICK);
+	Movement *mov = g_nmi->_aniMan->getMovement(MV_MAN_HMRKICK);
 	int end = mov->_currMovement ? mov->_currMovement->_phases.size() : mov->_phases.size();
 
 	for (int i = 0; i < end; i++) {
@@ -81,7 +81,7 @@ void global_messageHandler_KickMetal() {
 		}
 	}
 
-	mov = g_nmi->_aniMan->getMovementById(MV_MAN_HMRKICK_COINLESS);
+	mov = g_nmi->_aniMan->getMovement(MV_MAN_HMRKICK_COINLESS);
 	end = mov->_currMovement ? mov->_currMovement->_phases.size() : mov->_phases.size();
 
 	for (int i = 0; i < end; i++) {
@@ -281,7 +281,7 @@ int global_messageHandler2(ExCommand *cmd) {
 		return 0;
 
 	int res = 0;
-	StaticANIObject *ani;
+	AniObject *ani;
 
 	switch (cmd->_messageNum) {
 	case 0x44c8:
@@ -362,7 +362,7 @@ int global_messageHandler3(ExCommand *cmd) {
 		}
 	}
 
-	StaticANIObject *ani, *ani2;
+	AniObject *ani, *ani2;
 
 	switch (cmd->_messageKind) {
 	case 17:
@@ -379,7 +379,7 @@ int global_messageHandler3(ExCommand *cmd) {
 				if (ani) {
 					ani->_flags &= 0xFF7F;
 					ani->_flags &= 0xFEFF;
-					ani->deleteFromGlobalMessageQueue();
+					ani->stopQueue();
 				}
 			}
 			g_nmi->_msgX = 0;
@@ -519,7 +519,7 @@ int global_messageHandler3(ExCommand *cmd) {
 }
 
 int global_messageHandler4(ExCommand *cmd) {
-	StaticANIObject *ani = nullptr;
+	AniObject *ani = nullptr;
 
 	switch (cmd->_messageKind) {
 	case 18: {
@@ -557,9 +557,9 @@ int global_messageHandler4(ExCommand *cmd) {
 			flags = -1;
 
 		if (cmd->_excFlags & 1)
-			ani->startAnim(cmd->_messageNum, 0, flags);
+			ani->startMovement(cmd->_messageNum, 0, flags);
 		else
-			ani->startAnim(cmd->_messageNum, cmd->_parId, flags);
+			ani->startMovement(cmd->_messageNum, cmd->_parId, flags);
 
 		break;
 	}
@@ -590,9 +590,9 @@ int global_messageHandler4(ExCommand *cmd) {
 			ExCommand2 *cmd2 = static_cast<ExCommand2 *>(cmd);
 
 			if (cmd->_excFlags & 1) {
-				ani->startAnimSteps(cmd->_messageNum, 0, cmd->_x, cmd->_y, cmd2->_points, flags);
+				ani->startSliding(cmd->_messageNum, 0, cmd->_x, cmd->_y, cmd2->_points, flags);
 			} else {
-				ani->startAnimSteps(cmd->_messageNum, cmd->_parId, cmd->_x, cmd->_y, cmd2->_points, flags);
+				ani->startSliding(cmd->_messageNum, cmd->_parId, cmd->_x, cmd->_y, cmd2->_points, flags);
 			}
 		}
 		break;
@@ -605,7 +605,7 @@ int global_messageHandler4(ExCommand *cmd) {
 		if (!ani)
 			break;
 
-		ani->queueMessageQueue(nullptr);
+		ani->setQueue(nullptr);
 		ani->playIdle();
 		break;
 	case 9:
@@ -627,7 +627,7 @@ int global_messageHandler4(ExCommand *cmd) {
 			break;
 
 		MessageQueue *mq = ani->getMessageQueue();
-		MessageQueue *mq2 = ani->changeStatics1(cmd->_messageNum);
+		MessageQueue *mq2 = ani->moveToStatic(cmd->_messageNum);
 
 		if (!mq2 || !mq2->getExCommandByIndex(0) || !mq)
 			break;
@@ -645,7 +645,7 @@ int global_messageHandler4(ExCommand *cmd) {
 			break;
 
 		ani->_flags |= 4;
-		ani->changeStatics2(cmd->_messageNum);
+		ani->setStatic(cmd->_messageNum);
 		break;
 
 	case 6:
@@ -663,7 +663,7 @@ int global_messageHandler4(ExCommand *cmd) {
 		if (!g_nmi->_currentScene || g_nmi->_currentScene->getStaticANIObject1ById(cmd->_parentId, cmd->_param) == nullptr) {
 			ani = g_nmi->accessScene(cmd->_invId)->getStaticANIObject1ById(cmd->_parentId, -1);
 			if (ani) {
-				ani = new StaticANIObject(ani);
+				ani = new AniObject(ani);
 				g_nmi->_currentScene->addStaticANIObject(ani, 1);
 			}
 		}
@@ -754,7 +754,7 @@ int MovGraph::messageHandler(ExCommand *cmd) {
 	if (cmd->_messageNum != 33)
 		return 0;
 
-	StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(g_nmi->_gameLoader->_field_FA, -1);
+	AniObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(g_nmi->_gameLoader->_field_FA, -1);
 
 	if (!getSc2MctlCompoundBySceneId(g_nmi->_currentScene->_sceneId))
 		return 0;

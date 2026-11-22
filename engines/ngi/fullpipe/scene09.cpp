@@ -35,7 +35,7 @@
 namespace NGI {
 
 struct Hanger {
-	StaticANIObject *ani;
+	AniObject *ani;
 	int field_4;
 	int field_8;
 	int phase;
@@ -48,7 +48,7 @@ void scene09_setupGrit(Scene *sc) {
 				&& (g_vars->swallowedEgg1->_value.intValue == ANI_INV_EGGBOOT || g_vars->swallowedEgg2->_value.intValue == ANI_INV_EGGBOOT || g_vars->swallowedEgg3->_value.intValue == ANI_INV_EGGBOOT)) {
 				Scene *oldsc = g_nmi->_currentScene;
 				g_nmi->_currentScene = sc;
-				g_vars->scene09_grit->changeStatics2(ST_GRT9_NORM);
+				g_vars->scene09_grit->setStatic(ST_GRT9_NORM);
 				g_nmi->_currentScene = oldsc;
 			}
 		}
@@ -76,7 +76,7 @@ void scene09_initScene(Scene *sc) {
 
 	g_vars->scene09_numMovingHangers = 4;
 
-	StaticANIObject *hanger = sc->getStaticANIObject1ById(ANI_VISUNCHIK, -1);
+	AniObject *hanger = sc->getStaticANIObject1ById(ANI_VISUNCHIK, -1);
 	Hanger *hng = new Hanger;
 
 	hng->ani = hanger;
@@ -87,7 +87,7 @@ void scene09_initScene(Scene *sc) {
 	g_vars->scene09_hangers.push_back(hng);
 
 	for (int x = 75; x < 300; x += 75) {
-		StaticANIObject *ani = new StaticANIObject(hanger);
+		AniObject *ani = new AniObject(hanger);
 
 		ani->show1(x + hanger->_x, hanger->_y, MV_VSN_CYCLE2, 0);
 		sc->addStaticANIObject(ani, 1);
@@ -104,11 +104,11 @@ void scene09_initScene(Scene *sc) {
 
 	g_vars->scene09_sceneBalls.clear();
 
-	StaticANIObject *newball1 = new StaticANIObject(sc->getStaticANIObject1ById(ANI_BALL9, -1));
+	AniObject *newball1 = new AniObject(sc->getStaticANIObject1ById(ANI_BALL9, -1));
 	newball1->setAlpha(0xc8);
 
 	for (int i = 0; i < 4; i++) {
-		StaticANIObject *newball = new StaticANIObject(newball1);
+		AniObject *newball = new AniObject(newball1);
 
 		newball->setAlpha(0xc8);
 		g_vars->scene09_sceneBalls.push_back(newball);
@@ -164,8 +164,8 @@ int scene09_updateCursor() {
 
 void sceneHandler09_winArcade() {
 	if (g_vars->scene09_gulper->_flags & 4) {
-		g_vars->scene09_gulper->changeStatics2(ST_GLT_SIT);
-		g_vars->scene09_gulper->startAnim(MV_GLT_FLYAWAY, 0, -1);
+		g_vars->scene09_gulper->setStatic(ST_GLT_SIT);
+		g_vars->scene09_gulper->startMovement(MV_GLT_FLYAWAY, 0, -1);
 
 		g_nmi->setObjectState(sO_Jug, g_nmi->getObjectEnumState(sO_Jug, sO_Unblocked));
 		g_nmi->setObjectState(sO_RightStairs_9, g_nmi->getObjectEnumState(sO_RightStairs_9, sO_IsOpened));
@@ -189,7 +189,7 @@ void sceneHandler09_spitterClick() {
 
 		g_vars->scene09_spitter->getPicAniInfo(info);
 		g_vars->scene09_spitter->_messageQueueId = 0;
-		g_vars->scene09_spitter->changeStatics2(ST_PLV_SIT);
+		g_vars->scene09_spitter->setStatic(ST_PLV_SIT);
 
 		int x = g_vars->scene09_spitter->_x - 10;
 		int y = g_vars->scene09_spitter->_y + 145;
@@ -208,10 +208,10 @@ void sceneHandler09_spitterClick() {
 			}
 		} else {
 			if (!g_nmi->_aniMan->_movement) {
-				g_vars->scene09_spitter->changeStatics2(ST_PLV_SIT);
+				g_vars->scene09_spitter->setStatic(ST_PLV_SIT);
 				g_vars->scene09_spitter->hide();
 
-				g_nmi->_aniMan->startAnim(MV_MAN9_SHOOT, 0, -1);
+				g_nmi->_aniMan->startMovement(MV_MAN9_SHOOT, 0, -1);
 
 				g_nmi->stopAllSoundInstances(SND_9_006);
 			}
@@ -258,7 +258,7 @@ void sceneHandler09_showBall() {
 	debugC(2, kDebugSceneLogic, "scene09: showBall");
 
 	if (g_vars->scene09_sceneBalls.size()) {
-		StaticANIObject *ani = g_vars->scene09_sceneBalls.front();
+		AniObject *ani = g_vars->scene09_sceneBalls.front();
 		g_vars->scene09_sceneBalls.push_back(ani);
 		g_vars->scene09_sceneBalls.remove_at(0);
 
@@ -318,7 +318,7 @@ void sceneHandler09_collideBall(uint num) {
 		g_vars->scene09_flyingBall = g_vars->scene09_flyingBalls[num];
 
 		if (g_vars->scene09_gulper) {
-			g_vars->scene09_gulper->changeStatics2(ST_GLT_SIT);
+			g_vars->scene09_gulper->setStatic(ST_GLT_SIT);
 
 			MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC9_EATBALL), 0, 0);
 
@@ -333,7 +333,7 @@ void sceneHandler09_collideBall(uint num) {
 void sceneHandler09_ballExplode(uint num) {
 	debugC(2, kDebugSceneLogic, "scene09: ballExplode(%d) of %d", num, g_vars->scene09_flyingBalls.size());
 
-	StaticANIObject *ball = g_vars->scene09_flyingBalls[num];
+	AniObject *ball = g_vars->scene09_flyingBalls[num];
 
 	g_vars->scene09_flyingBalls.remove_at(num);
 
@@ -347,11 +347,11 @@ void sceneHandler09_ballExplode(uint num) {
 
 void sceneHandler09_checkHangerCollide() {
 	for (uint b = 0; b < g_vars->scene09_flyingBalls.size(); b++) {
-		StaticANIObject *ball = g_vars->scene09_flyingBalls[b];
+		AniObject *ball = g_vars->scene09_flyingBalls[b];
 
 		int newx = ball->_x + 5;
 
-		ball->setOXY(newx, ball->_y);
+		ball->setPos(newx, ball->_y);
 
 		if (newx <= 1398 || g_vars->scene09_flyingBall) {
 			if (g_vars->scene09_gulperIsPresent)
@@ -375,8 +375,8 @@ void sceneHandler09_checkHangerCollide() {
 				int y1 = ball->_y + g_vars->scene09_hangerOffsets[j].y;
 
 				// Check 2 pixels to compensate cord width
-				hit = g_vars->scene09_hangers[i]->ani->isPixelHitAtPos(x1, y1)
-							&& g_vars->scene09_hangers[i]->ani->isPixelHitAtPos(x1 + 10, y1);
+				hit = g_vars->scene09_hangers[i]->ani->hit(x1, y1)
+							&& g_vars->scene09_hangers[i]->ani->hit(x1 + 10, y1);
 
 				if (hit) {
 					sceneHandler09_ballExplode(b);
@@ -391,10 +391,10 @@ void sceneHandler09_checkHangerCollide() {
 }
 
 void sceneHandler09_hangerStartCycle() {
-	StaticANIObject *ani = g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->ani;
+	AniObject *ani = g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->ani;
 
 	if (ani->_movement) {
-		ani->startAnim(MV_VSN_CYCLE2, 0, -1);
+		ani->startMovement(MV_VSN_CYCLE2, 0, -1);
 		g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->field_8 = 0;
 		g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->phase = g_vars->scene09_intHangerPhase + (g_nmi->_mouseScreenPos.y - g_vars->scene09_clickY) / 2;
 
@@ -508,7 +508,7 @@ int sceneHandler09(ExCommand *cmd) {
 		if (g_vars->scene09_interactingHanger >= 0)  {
 			if (ABS(g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->phase) < 15) {
 				g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->ani->_callback2 = nullptr; // Really NULL
-				g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->ani->changeStatics2(ST_VSN_NORMAL);
+				g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->ani->setStatic(ST_VSN_NORMAL);
 			}
 		}
 
@@ -518,7 +518,7 @@ int sceneHandler09(ExCommand *cmd) {
 
 	case 29:
 		{
-			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
+			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
 
 			if (ani) {
 				if (ani->_id == ANI_PLEVATEL) {
@@ -546,8 +546,8 @@ int sceneHandler09(ExCommand *cmd) {
 						g_vars->scene09_clickY = cmd->_y;
 
 						if (!g_vars->scene09_hangers[hng]->ani->_movement || g_vars->scene09_hangers[hng]->ani->_movement->_id != MV_VSN_CYCLE2) {
-							g_vars->scene09_hangers[hng]->ani->changeStatics2(ST_VSN_NORMAL);
-							g_vars->scene09_hangers[hng]->ani->startAnim(MV_VSN_CYCLE2, 0, -1);
+							g_vars->scene09_hangers[hng]->ani->setStatic(ST_VSN_NORMAL);
+							g_vars->scene09_hangers[hng]->ani->startMovement(MV_VSN_CYCLE2, 0, -1);
 							g_vars->scene09_hangers[hng]->ani->_callback2 = scene09_visCallback;
 						}
 

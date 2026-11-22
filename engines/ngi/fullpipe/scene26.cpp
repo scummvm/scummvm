@@ -92,7 +92,7 @@ void scene26_setupDrop(Scene *sc) {
 }
 
 void sceneHandler26_showChi() {
-	g_vars->scene26_chhi->changeStatics2(ST_CHI_EMPTY);
+	g_vars->scene26_chhi->setStatic(ST_CHI_EMPTY);
 
 	chainQueue(QU_CHI_SHOW, 1);
 }
@@ -115,7 +115,7 @@ void sceneHandler26_updatePool() {
 }
 
 void sceneHandler26_hideChi() {
-	g_vars->scene26_chhi->changeStatics2(ST_CHI_NORM);
+	g_vars->scene26_chhi->setStatic(ST_CHI_NORM);
 
 	chainQueue(QU_CHI_HIDE, 1);
 }
@@ -180,12 +180,12 @@ void sceneHandler26_showVent() {
 		int id = g_vars->scene26_activeVent->_statics->_staticsId;
 
 		if (id == ST_VNT26_UP2) {
-			g_vars->scene26_activeVent->changeStatics2(ST_VNT26_RIGHT2);
+			g_vars->scene26_activeVent->setStatic(ST_VNT26_RIGHT2);
 		} else {
 			if (id != ST_VNT26_RIGHT2)
 				return;
 
-			g_vars->scene26_activeVent->changeStatics2(ST_VNT26_UP2);
+			g_vars->scene26_activeVent->setStatic(ST_VNT26_UP2);
 		}
 		g_vars->scene26_activeVent->show1(-1, -1, -1, 0);
 	}
@@ -196,7 +196,7 @@ void sceneHandler26_hideVent() {
 		g_vars->scene26_activeVent->hide();
 }
 
-void sceneHandler26_animateVents(StaticANIObject *ani) {
+void sceneHandler26_animateVents(AniObject *ani) {
 	int qId = 0;
 
 	switch (ani->_copyId) {
@@ -252,7 +252,7 @@ void sceneHandler26_animateVents(StaticANIObject *ani) {
 	}
 }
 
-void sceneHandler26_clickVent(StaticANIObject *ani, ExCommand *cmd) {
+void sceneHandler26_clickVent(AniObject *ani, ExCommand *cmd) {
 	if (ani->_copyId || g_nmi->getObjectState(sO_Hatch_26) != g_nmi->getObjectEnumState(sO_Hatch_26, sO_Opened)) {
 		if (g_nmi->_aniMan->isIdle() && !(g_nmi->_aniMan->_flags & 0x100)) {
 			g_vars->scene26_activeVent = ani;
@@ -313,7 +313,7 @@ int sceneHandler26(ExCommand *cmd) {
 
 	case MSG_SC26_CLICKVENT:
 		{
-			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_VENT, cmd->_param);
+			AniObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_VENT, cmd->_param);
 
 			if (ani && ani->_id == ANI_VENT) {
 				sceneHandler26_clickVent(ani, cmd);
@@ -327,7 +327,7 @@ int sceneHandler26(ExCommand *cmd) {
 
 	case 29:
 		{
-			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (ani && ani->_id == ANI_VENT) {
 				sceneHandler26_clickVent(ani, cmd);

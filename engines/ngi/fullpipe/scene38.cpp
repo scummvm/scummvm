@@ -42,7 +42,7 @@ void scene38_setBottleState(Scene *sc) {
 		if (g_nmi->lift_checkButton(sO_Level5) ) {
 			ex = sc->getMessageQueueById(QU_SC38_SHOWBOTTLE)->getExCommandByIndex(0);
 
-			g_vars->scene38_bottle->setOXY(ex->_x, ex->_y);
+			g_vars->scene38_bottle->setPos(ex->_x, ex->_y);
 			g_vars->scene38_bottle->_z = ex->_z;
 
 			g_nmi->setObjectState(sO_Bottle_38, g_nmi->getObjectEnumState(sO_Bottle_38, sO_Blocked));
@@ -73,7 +73,7 @@ void scene38_initScene(Scene *sc) {
 	if (g_nmi->getObjectState(sO_Boss) == g_nmi->getObjectEnumState(sO_Boss, sO_IsSleeping)) {
 		g_vars->scene38_shorty->_flags &= 0xFFFB;
 
-		g_vars->scene38_tally->stopAnim_maybe();
+		g_vars->scene38_tally->stopMovement();
 		g_vars->scene38_tally->_flags &= 0xFFFB;
 
 		g_vars->scene38_domino0->_flags &= 0xFFFB;
@@ -86,14 +86,14 @@ void scene38_initScene(Scene *sc) {
 }
 
 void sceneHandler38_tryTakeBottle() {
-	g_vars->scene38_boss->changeStatics2(ST_GLV_NOHAMMER);
-	g_vars->scene38_boss->startAnim(MV_GLV_LOOKMAN, 0, -1);
+	g_vars->scene38_boss->setStatic(ST_GLV_NOHAMMER);
+	g_vars->scene38_boss->startMovement(MV_GLV_LOOKMAN, 0, -1);
 
 	g_vars->scene38_bossCounter = 0;
 }
 
 void sceneHandler38_postHammerKick() {
-	g_vars->scene38_domino1->setOXY(g_vars->scene38_domino1->_x, g_vars->scene38_domino1->_y + 2);
+	g_vars->scene38_domino1->setPos(g_vars->scene38_domino1->_x, g_vars->scene38_domino1->_y + 2);
 }
 
 void sceneHandler38_propose() {
@@ -136,12 +136,12 @@ void sceneHandler38_hammerKick() {
 		}
 	}
 
-	g_vars->scene38_domino1->setOXY(g_vars->scene38_domino1->_x, g_vars->scene38_domino1->_y - 2);
+	g_vars->scene38_domino1->setPos(g_vars->scene38_domino1->_x, g_vars->scene38_domino1->_y - 2);
 
 	if (g_vars->scene38_dominos->_statics->_staticsId == ST_DMS_3)
-		g_vars->scene38_dominos->startAnim(MV_DMS_THREE, 0, -1);
+		g_vars->scene38_dominos->startMovement(MV_DMS_THREE, 0, -1);
 	else if (g_vars->scene38_dominos->_statics->_staticsId == ST_DMS_4)
-		g_vars->scene38_dominos->startAnim(MV_DMS_FOUR, 0, -1);
+		g_vars->scene38_dominos->startMovement(MV_DMS_FOUR, 0, -1);
 }
 
 void sceneHandler38_drink() {
@@ -372,7 +372,7 @@ int sceneHandler38(ExCommand *cmd) {
 
 	case 29:
 		{
-			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
+			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
 
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
 				g_nmi->lift_animateButton(ani);

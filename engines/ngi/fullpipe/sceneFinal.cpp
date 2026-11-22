@@ -114,7 +114,7 @@ void sceneHandlerFinal_startFinal() {
 }
 
 void sceneHandlerFinal_fallCoin() {
-	StaticANIObject *coin = g_nmi->_currentScene->getStaticANIObject1ById(ANI_FIN_COIN, -1);
+	AniObject *coin = g_nmi->_currentScene->getStaticANIObject1ById(ANI_FIN_COIN, -1);
 
 	if (!coin->_movement) {
 		if (!coin->_statics || coin->_statics->_staticsId != ST_FCN_NORM)

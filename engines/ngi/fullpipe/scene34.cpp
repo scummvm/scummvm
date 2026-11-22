@@ -68,11 +68,11 @@ void scene34_initScene(Scene *sc) {
 
 		g_nmi->_currentScene = sc;
 
-		g_vars->scene34_cactus->changeStatics2(ST_CTS34_EMPTY);
-		g_vars->scene34_cactus->setOXY(506, 674);
+		g_vars->scene34_cactus->setStatic(ST_CTS34_EMPTY);
+		g_vars->scene34_cactus->setPos(506, 674);
 		g_vars->scene34_cactus->_z = 30;
 
-		g_vars->scene34_cactus->changeStatics2(ST_CTS34_GROWNEMPTY2);
+		g_vars->scene34_cactus->setStatic(ST_CTS34_GROWNEMPTY2);
 		g_vars->scene34_cactus->_flags |= 4;
 
 		g_nmi->_currentScene = oldsc;
@@ -133,11 +133,11 @@ void sceneHandler34_onBoard() {
 
 void sceneHandler34_testVent() {
 	if (g_nmi->_aniMan->_movement->_id == MV_MAN34_TURNVENT_R) {
-		g_vars->scene34_hatch->changeStatics2(ST_LUK34_CLOSED);
+		g_vars->scene34_hatch->setStatic(ST_LUK34_CLOSED);
 
 		chainQueue(QU_LUK34_OPEN, 0);
 	} else if (g_nmi->_aniMan->_movement->_id == MV_MAN34_TURNVENT_L) {
-		g_vars->scene34_hatch->changeStatics2(ST_LUK34_OPEN);
+		g_vars->scene34_hatch->setStatic(ST_LUK34_OPEN);
 
 		chainQueue(QU_LUK34_CLOSE, 0);
 	}
@@ -209,7 +209,7 @@ void sceneHandler34_animateAction(ExCommand *cmd) {
 
 	int ox = g_nmi->_aniMan->_x;
 	int oy = g_nmi->_aniMan->_y;
-	StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
+	AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
 
 	if (!ani || ani->_id != ANI_VENT_34) {
 		int qId = 0;
@@ -252,33 +252,33 @@ void sceneHandler34_animateAction(ExCommand *cmd) {
 
 	if (ox == 887) {
 		if (oy == 370)
-			g_nmi->_aniMan->startAnim(MV_MAN34_TRYTABUR, 0, -1);
+			g_nmi->_aniMan->startMovement(MV_MAN34_TRYTABUR, 0, -1);
 
 	} else if (ox == 916) {
 		if (oy == 286) {
 			int id = g_vars->scene34_vent->_statics->_staticsId;
 			if (id == ST_VNT34_UP2) {
-				g_nmi->_aniMan->startAnim(MV_MAN34_TURNVENT_R, 0, -1);
+				g_nmi->_aniMan->startMovement(MV_MAN34_TURNVENT_R, 0, -1);
 			} else if (id == ST_VNT34_RIGHT3) {
-				g_nmi->_aniMan->startAnim(MV_MAN34_TURNVENT_L, 0, -1);
+				g_nmi->_aniMan->startMovement(MV_MAN34_TURNVENT_L, 0, -1);
 			}
 		} else if (oy == 345) {
-			g_nmi->_aniMan->startAnim(MV_MAN34_TRY, 0, -1);
+			g_nmi->_aniMan->startMovement(MV_MAN34_TRY, 0, -1);
 		}
 	}
 }
 
 void sceneHandler34_showVent() {
 	if (g_vars->scene34_vent->_statics->_staticsId == ST_VNT34_UP2)
-		g_vars->scene34_vent->changeStatics2(ST_VNT34_RIGHT3);
+		g_vars->scene34_vent->setStatic(ST_VNT34_RIGHT3);
 	else if (g_vars->scene34_vent->_statics->_staticsId == ST_VNT34_RIGHT3)
-		g_vars->scene34_vent->changeStatics2(ST_VNT34_UP2);
+		g_vars->scene34_vent->setStatic(ST_VNT34_UP2);
 
 	g_vars->scene34_vent->show1(-1, -1, -1, 0);
 }
 
 void sceneHandler34_showBox() {
-	g_nmi->_currentScene->getStaticANIObject1ById(ANI_STOOL_34, -1)->changeStatics2(ST_STL34_BOX2);
+	g_nmi->_currentScene->getStaticANIObject1ById(ANI_STOOL_34, -1)->setStatic(ST_STL34_BOX2);
 }
 
 void sceneHandler34_showStool() {
@@ -332,7 +332,7 @@ int sceneHandler34(ExCommand *cmd) {
 		if (!g_nmi->_aniMan->isIdle())
 			break;
 
-		g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT);
+		g_nmi->_aniMan->setStatic(ST_MAN_RIGHT);
 		g_nmi->_aniMan->_flags &= 0xFEFF;
 
 		getGameLoaderInteractionController()->handleInteraction(g_nmi->_aniMan, g_vars->scene34_vent, cmd->_param);
@@ -413,7 +413,7 @@ int sceneHandler34(ExCommand *cmd) {
 				break;
 			}
 
-			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
+			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
 
 			if (ani) {
 				if ((ani->_id == ANI_STOOL_34 && cmd->_param == ANI_INV_BOX) || (ani->_id == ANI_BOX_34 && cmd->_param == ANI_INV_STOOL)) {

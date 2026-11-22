@@ -32,9 +32,9 @@ class MessageQueue;
 class Scene : public Background {
  public:
 	/** list items are owned */
-	Common::Array<StaticANIObject *> _staticANIObjectList1;
+	Common::Array<AniObject *> _staticANIObjectList1;
 
-	Common::Array<StaticANIObject *> _staticANIObjectList2;
+	Common::Array<AniObject *> _staticANIObjectList2;
 	Common::Array<MessageQueue *> _messageQueueList;
 	// PtrList _faObjectList; // not used
 	Common::ScopedPtr<Shadows> _shadows;
@@ -59,15 +59,15 @@ class Scene : public Background {
 
 	void update(int counterdiff);
 
-	StaticANIObject *getAniMan();
-	StaticANIObject *getStaticANIObject1ById(int obj, int a3);
-	StaticANIObject *getStaticANIObject1ByName(const Common::String &name, int a3);
+	AniObject *getAniMan();
+	AniObject *getStaticANIObject1ById(int obj, int a3);
+	AniObject *getStaticANIObject1ByName(const Common::String &name, int a3);
 	MessageQueue *getMessageQueueById(int messageId);
 	MessageQueue *getMessageQueueByName(const Common::String &name);
 
-	void deleteStaticANIObject(StaticANIObject *obj);
+	void deleteStaticANIObject(AniObject *obj);
 	/** takes ownership of the passed obj */
-	void addStaticANIObject(StaticANIObject *obj, bool addList2);
+	void addStaticANIObject(AniObject *obj, bool addList2);
 
 	void setPictureObjectsFlag4();
 	PictureObject *getPictureObjectById(int objId, int flags);
@@ -75,7 +75,7 @@ class Scene : public Background {
 	void deletePictureObject(PictureObject *obj);
 	void preloadMovements(GameVar *var);
 
-	StaticANIObject *getStaticANIObjectAtPos(int x, int y);
+	AniObject *getStaticANIObjectAtPos(int x, int y);
 	PictureObject *getPictureObjectAtPos(int x, int y);
 	int getPictureObjectIdAtPos(int x, int y);
 
@@ -86,7 +86,7 @@ class Scene : public Background {
   private:
 #if 0
 	static bool compareObjPriority(const void *p1, const void *p2);
-	void objectList_sortByPriority(Common::Array<StaticANIObject *> &list, bool skipFirst = false);
+	void objectList_sortByPriority(Common::Array<AniObject *> &list, bool skipFirst = false);
 	void objectList_sortByPriority(Common::Array<PictureObject *> &list, bool skipFirst = false);
 #else
 	template<typename T>

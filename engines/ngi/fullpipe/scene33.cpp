@@ -94,7 +94,7 @@ void sceneHandler33_processJettie(ExCommand *cmd) {
 	}
 }
 
-void sceneHandler33_switchVent(StaticANIObject *ani) {
+void sceneHandler33_switchVent(AniObject *ani) {
 	int mv = 0;
 
 	if (ani->_statics->_staticsId == ST_VNT33_DOWN)
@@ -104,7 +104,7 @@ void sceneHandler33_switchVent(StaticANIObject *ani) {
 		mv = MV_VNT33_TURND;
 
 	if (mv)
-		ani->startAnim(mv, 0, -1);
+		ani->startMovement(mv, 0, -1);
 
 	g_vars->scene33_ventsState[ani->_copyId] = !g_vars->scene33_ventsState[ani->_copyId];
 }
@@ -132,7 +132,7 @@ void sceneHandler33_pour() {
 
 	if (solved) {
 		if ((g_vars->scene33_mug->_flags & 4) && g_vars->scene33_mug->_statics->_staticsId == ST_MUG33_EMPTY) {
-			g_vars->scene33_jettie->startAnim(MV_JTI33_POUR, 0, -1);
+			g_vars->scene33_jettie->startMovement(MV_JTI33_POUR, 0, -1);
 
 			g_vars->scene33_handleIsDown = false;
 
@@ -140,14 +140,14 @@ void sceneHandler33_pour() {
 		}
 
 		if ((g_vars->scene33_mug->_flags & 4) && g_vars->scene33_mug->_statics->_staticsId == ST_MUG33_FULL) {
-			g_vars->scene33_jettie->startAnim(MV_JTI33_POURFULL, 0, -1);
+			g_vars->scene33_jettie->startMovement(MV_JTI33_POURFULL, 0, -1);
 
 			g_vars->scene33_handleIsDown = false;
 
 			return;
 		}
 
-		g_vars->scene33_jettie->startAnim(MV_JTI33_FLOW, 0, -1);
+		g_vars->scene33_jettie->startMovement(MV_JTI33_FLOW, 0, -1);
 	}
 
 	g_vars->scene33_handleIsDown = false;
@@ -161,12 +161,12 @@ void sceneHandler33_handleDown() {
   }
 }
 
-void sceneHandler33_zoneClickProcess(StaticANIObject *ani) {
+void sceneHandler33_zoneClickProcess(AniObject *ani) {
 	if (!ani->_movement) {
 		sceneHandler33_switchVent(ani);
 
-		StaticANIObject *vent1 = nullptr;
-		StaticANIObject *vent2 = nullptr;
+		AniObject *vent1 = nullptr;
+		AniObject *vent2 = nullptr;
 
 		switch (ani->_copyId) {
 		case 0:
@@ -206,11 +206,11 @@ void sceneHandler33_zoneClickProcess(StaticANIObject *ani) {
 }
 
 void sceneHandler33_clickZones(ExCommand *cmd) {
-	StaticANIObject *closest = nullptr;
+	AniObject *closest = nullptr;
 	double mindist = 1e10;
 
 	for (uint i = 0; i < g_nmi->_currentScene->_staticANIObjectList1.size(); i++) {
-		StaticANIObject *ani = g_nmi->_currentScene->_staticANIObjectList1[i];
+		AniObject *ani = g_nmi->_currentScene->_staticANIObjectList1[i];
 
 		if (ani->_id == ANI_VENT_33) {
 			int dx = ani->_x - cmd->_sceneClickX;
@@ -267,7 +267,7 @@ int sceneHandler33(ExCommand *cmd) {
 
 	case 29:
 		{
-			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
+			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
 
 			if (!ani || !canInteractAny(g_nmi->_aniMan, ani, cmd->_param)) {
 				int picId = g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);

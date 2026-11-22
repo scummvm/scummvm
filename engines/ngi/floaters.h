@@ -27,7 +27,7 @@
 
 namespace NGI {
 
-class StaticANIObject;
+class AniObject;
 class Scene;
 class ReactPolygonal;
 
@@ -39,7 +39,7 @@ struct FloaterArray1 {
 };
 
 struct FloaterArray2 {
-	StaticANIObject *ani;
+	AniObject *ani;
 	int val2;
 	int val3;
 	int val4;

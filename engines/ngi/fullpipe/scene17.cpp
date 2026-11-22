@@ -89,22 +89,22 @@ int scene17_updateCursor() {
 }
 
 void sceneHandler17_drop() {
-	StaticANIObject *mug = g_nmi->_currentScene->getStaticANIObject1ById(ANI_MUG_17, -1);
-	StaticANIObject *jet = g_nmi->_currentScene->getStaticANIObject1ById(ANI_JET_17, -1);
+	AniObject *mug = g_nmi->_currentScene->getStaticANIObject1ById(ANI_MUG_17, -1);
+	AniObject *jet = g_nmi->_currentScene->getStaticANIObject1ById(ANI_JET_17, -1);
 
 	if (mug && mug->_flags & 4) {
-		mug->changeStatics2(ST_MUG17_EMPTY);
+		mug->setStatic(ST_MUG17_EMPTY);
 		chainQueue(QU_SC17_FILLMUG_DROP, 0);
 	} else if (jet) {
-		jet->queueMessageQueue(nullptr);
+		jet->setQueue(nullptr);
 		chainQueue(QU_JET17_DROP, 0);
 	}
 }
 
 void sceneHandler17_fillBottle() {
-	StaticANIObject *bottle = g_nmi->_currentScene->getStaticANIObject1ById(ANI_INV_BOTTLE, -1);
-	StaticANIObject *mug = g_nmi->_currentScene->getStaticANIObject1ById(ANI_MUG_17, -1);
-	StaticANIObject *boot = g_nmi->_currentScene->getStaticANIObject1ById(ANI_BOOT_17, -1);
+	AniObject *bottle = g_nmi->_currentScene->getStaticANIObject1ById(ANI_INV_BOTTLE, -1);
+	AniObject *mug = g_nmi->_currentScene->getStaticANIObject1ById(ANI_MUG_17, -1);
+	AniObject *boot = g_nmi->_currentScene->getStaticANIObject1ById(ANI_BOOT_17, -1);
 
 	if (bottle && (bottle->_flags & 4))
 		chainQueue(QU_SC17_FILLBOTTLE, 1);
@@ -119,8 +119,8 @@ void sceneHandler17_fillBottle() {
 void sceneHandler17_testTruba() {
 	if (g_vars->scene17_hand->isIdle()) {
 		if (!g_vars->scene17_hand->_movement || g_vars->scene17_hand->_movement->_id != MV_HND17_FIGA) {
-			g_vars->scene17_hand->changeStatics2(ST_HND17_EMPTY);
-			g_vars->scene17_hand->startAnim(MV_HND17_FIGA, 0, -1);
+			g_vars->scene17_hand->setStatic(ST_HND17_EMPTY);
+			g_vars->scene17_hand->startMovement(MV_HND17_FIGA, 0, -1);
 		}
 	}
 }
@@ -130,7 +130,7 @@ void sceneHandler17_showBottle() {
 }
 
 void sceneHandler17_hideSugar() {
-	StaticANIObject *sugar = g_nmi->_currentScene->getStaticANIObject1ById(ANI_INV_SUGAR, -1);
+	AniObject *sugar = g_nmi->_currentScene->getStaticANIObject1ById(ANI_INV_SUGAR, -1);
 
 	if (sugar)
 		sugar->hide();
@@ -143,10 +143,10 @@ void sceneHandler17_showSugar() {
 }
 
 void sceneHandler17_moonshineFill() {
-	StaticANIObject *moonshiner = g_nmi->_currentScene->getStaticANIObject1ById(ANI_SAMOGONSHCHIK, -1);
+	AniObject *moonshiner = g_nmi->_currentScene->getStaticANIObject1ById(ANI_SAMOGONSHCHIK, -1);
 
 	if (!(moonshiner->_flags & 0x80)) {
-		moonshiner->changeStatics2(ST_SMG_SIT);
+		moonshiner->setStatic(ST_SMG_SIT);
 		chainObjQueue(moonshiner, QU_SMG_FILLBOTTLE, 1);
 
 		g_vars->scene17_sugarIsShown = false;

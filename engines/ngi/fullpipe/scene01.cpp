@@ -55,7 +55,7 @@ void scene01_initScene(Scene *sc, int entrance) {
 	}
 
 	if (entrance != TrubaLeft) {
-		StaticANIObject *bootAnim = sc->getStaticANIObject1ById(ANI_BOOT_1, -1);
+		AniObject *bootAnim = sc->getStaticANIObject1ById(ANI_BOOT_1, -1);
 		if (bootAnim)
 			bootAnim->_flags &= ~0x04;
 	}

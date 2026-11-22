@@ -83,7 +83,7 @@ void sceneHandler06_winArcade() {
 	if (g_vars->scene06_arcadeEnabled) {
 		g_nmi->_aniMan->_callback2 = nullptr; // Really NULL
 
-		g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
+		g_nmi->_aniMan->setStatic(ST_MAN_RIGHT | 0x4000);
 
 		if (g_vars->scene06_someBall) {
 			g_vars->scene06_someBall->_flags &= 0xFFFB;
@@ -124,7 +124,7 @@ void sceneHandler06_winArcade() {
 void sceneHandler06_enableDrops() {
 	chainQueue(QU_SC6_DROPS, 0);
 
-	g_vars->scene06_mumsy->changeStatics2(ST_MOM_SITS);
+	g_vars->scene06_mumsy->setStatic(ST_MOM_SITS);
 	g_nmi->setObjectState(sO_BigMumsy, g_nmi->getObjectEnumState(sO_BigMumsy, sO_IsPlaying));
 
 	chainQueue(QU_MOM_STANDUP, 1);
@@ -292,7 +292,7 @@ void sceneHandler06_startAiming() {
 	if (g_vars->scene06_currentBall) {
 		g_vars->scene06_currentBall->hide();
 
-		g_nmi->_aniMan->startAnim(MV_MAN6_TAKEBALL, 0, -1);
+		g_nmi->_aniMan->startMovement(MV_MAN6_TAKEBALL, 0, -1);
 
 		g_vars->scene06_ballInHands = g_vars->scene06_currentBall;
 		g_vars->scene06_currentBall = nullptr;
@@ -303,7 +303,7 @@ void sceneHandler06_startAiming() {
 		getCurrSceneSc2MotionController()->deactivate();
 		getGameLoaderInteractionController()->disableFlag24();
 
-		g_vars->scene06_ballDrop->queueMessageQueue(nullptr);
+		g_vars->scene06_ballDrop->setQueue(nullptr);
 	}
 }
 
@@ -377,14 +377,14 @@ void sceneHandler06_throwCallback(int *arg) {
 
 void sceneHandler06_throwBall() {
 	g_nmi->_aniMan->_callback2 = sceneHandler06_throwCallback;
-	g_nmi->_aniMan->startAnim(MV_MAN6_THROWBALL, 0, -1);
+	g_nmi->_aniMan->startMovement(MV_MAN6_THROWBALL, 0, -1);
 
 	g_vars->scene06_aimingBall = true;
 }
 
 void sceneHandler06_eggieWalk() {
 	if (15 - g_vars->scene06_numBallsGiven >= 4 && !g_nmi->_rnd.getRandomNumber(9)) {
-		StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_EGGIE, -1);
+		AniObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_EGGIE, -1);
 
 		if (!ani || !(ani->_flags & 4)) {
 			if (g_vars->scene06_eggieDirection)
@@ -408,7 +408,7 @@ void sceneHandler06_dropBall() {
 void sceneHandler06_fallBall() {
 	g_vars->scene06_ballY = 475;
 
-	g_vars->scene06_flyingBall->setOXY(g_vars->scene06_ballX, g_vars->scene06_ballY);
+	g_vars->scene06_flyingBall->setPos(g_vars->scene06_ballX, g_vars->scene06_ballY);
 
 	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC6_FALLBALL), 0, 1);
 
@@ -460,11 +460,11 @@ void sceneHandler06_catchBall() {
 				}
 			}
 
-			g_vars->scene06_mumsy->changeStatics2(ST_MOM_STANDS);
-			g_vars->scene06_mumsy->setOXY(point.x + g_vars->scene06_mumsy->_x,
+			g_vars->scene06_mumsy->setStatic(ST_MOM_STANDS);
+			g_vars->scene06_mumsy->setPos(point.x + g_vars->scene06_mumsy->_x,
 										  point.y + g_vars->scene06_mumsy->_y);
 		} else {
-			g_vars->scene06_mumsy->changeStatics2(ST_MOM_STANDS);
+			g_vars->scene06_mumsy->setStatic(ST_MOM_STANDS);
 		}
 
 		chainQueue(QU_MOM_PUTBALL, 1);
@@ -476,7 +476,7 @@ void sceneHandler06_catchBall() {
 
 void sceneHandler06_checkBallTarget(int par) {
 	if (g_vars->scene06_ballY <= 475) {
-		if (g_vars->scene06_mumsy->isPixelHitAtPos(g_vars->scene06_ballX, g_vars->scene06_ballY)) {
+		if (g_vars->scene06_mumsy->hit(g_vars->scene06_ballX, g_vars->scene06_ballY)) {
 			chainObjQueue(g_vars->scene06_mumsy, QU_MOM_JUMPBK, 0);
 
 			sceneHandler06_catchBall();
@@ -503,17 +503,17 @@ void scene06_initScene(Scene *sc) {
 	g_vars->scene06_eggieTimeout = 0;
 	g_vars->scene06_eggieDirection = true;
 
-	StaticANIObject *ball = sc->getStaticANIObject1ById(ANI_NEWBALL, -1);
+	AniObject *ball = sc->getStaticANIObject1ById(ANI_NEWBALL, -1);
 
 	ball->hide();
-	ball->_statics = ball->getStaticsById(ST_NBL_NORM);
+	ball->_statics = ball->getStatic(ST_NBL_NORM);
 	g_vars->scene06_balls.push_back(ball);
 
 	for (int i = 0; i < 3; i++) {
-		StaticANIObject *ball2 = new StaticANIObject(ball);
+		AniObject *ball2 = new AniObject(ball);
 
 		ball2->hide();
-		ball2->_statics = ball2->getStaticsById(ST_NBL_NORM);
+		ball2->_statics = ball2->getStatic(ST_NBL_NORM);
 
 		sc->addStaticANIObject(ball2, 1);
 
@@ -639,7 +639,7 @@ int sceneHandler06(ExCommand *ex) {
 
 	case 29:
 		{
-			StaticANIObject *st = g_nmi->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
+			AniObject *st = g_nmi->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
 
 			if (st) {
 				if (!g_vars->scene06_arcadeEnabled && st->_id == ANI_LIFTBUTTON) {
@@ -736,7 +736,7 @@ int sceneHandler06(ExCommand *ex) {
 				g_vars->scene06_ballX = g_vars->scene06_flyingBall->_x - g_vars->scene06_ballDeltaX;
 				g_vars->scene06_ballY = g_vars->scene06_flyingBall->_y - g_vars->scene06_ballDeltaY;
 
-				g_vars->scene06_flyingBall->setOXY(g_vars->scene06_ballX, g_vars->scene06_ballY);
+				g_vars->scene06_flyingBall->setPos(g_vars->scene06_ballX, g_vars->scene06_ballY);
 
 				if (g_vars->scene06_ballDeltaX >= 2)
 					g_vars->scene06_ballDeltaX -= 2;

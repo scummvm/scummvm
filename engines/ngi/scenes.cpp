@@ -550,7 +550,7 @@ bool NGIEngine::sceneSwitcher(const EntranceInfo &entrance) {
 	scene->_x = 0;
 	scene->_y = 0;
 
-	_aniMan->setOXY(0, 0);
+	_aniMan->setPos(0, 0);
 	_aniMan->clearFlags();
 	_aniMan->_callback1 = nullptr; // Really NULL
 	_aniMan->_callback2 = nullptr; // Really NULL
@@ -589,8 +589,8 @@ bool NGIEngine::sceneSwitcher(const EntranceInfo &entrance) {
 	scene->addStaticANIObject(_aniMan, 1);
 	_scene2 = scene;
 	_aniMan->_movement = nullptr;
-	_aniMan->_statics = _aniMan->getStaticsById(ST_MAN_EMPTY);
-	_aniMan->setOXY(0, 0);
+	_aniMan->_statics = _aniMan->getStatic(ST_MAN_EMPTY);
+	_aniMan->setPos(0, 0);
 
 	_aniMan2 = _aniMan;
 	MctlCompound *cmp = getSc2MctlCompoundBySceneId(entrance._sceneId);

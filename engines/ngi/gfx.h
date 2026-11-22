@@ -156,7 +156,7 @@ class GameObject : public CObject {
 	virtual Common::String toXML();
 	bool load(MfcArchive &file) override;
 	void setPos(int x, int y);
-	void assignCopyId(Common::Array<StaticANIObject *> *lst);
+	void assignCopyId(Common::Array<AniObject *> *lst);
 	void assignCopyId(Common::Array<PictureObject *> *lst);
 	void setFlags(int16 flags) { _flags = flags; }
 	void clearFlags() { _flags = 0; }

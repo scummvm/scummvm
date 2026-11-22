@@ -59,9 +59,9 @@ void scene22_initScene(Scene *sc) {
 
 
 	if ( g_nmi->getObjectState(sO_LowerPipe_21) == g_nmi->getObjectEnumState(sO_LowerPipe_21, sO_IsOpened))
-		g_vars->scene22_giraffeMiddle->changeStatics2(ST_GRFM_AFTER);
+		g_vars->scene22_giraffeMiddle->setStatic(ST_GRFM_AFTER);
 	else
-		g_vars->scene22_giraffeMiddle->changeStatics2(ST_GRFM_NORM);
+		g_vars->scene22_giraffeMiddle->setStatic(ST_GRFM_NORM);
 
 	g_nmi->_currentScene = oldsc;
 
@@ -159,7 +159,7 @@ void sceneHandler22_fromStool(ExCommand *cmd) {
 }
 
 void sceneHandler22_stoolLogic(ExCommand *cmd) {
-	StaticANIObject *ani;
+	AniObject *ani;
 	MessageQueue *mq;
 	int xpos;
 	int manId;
@@ -333,7 +333,7 @@ int sceneHandler22(ExCommand *cmd) {
 
 	case 29:
 		if (!g_vars->scene22_interactionIsDisabled) {
-			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (ani && ani->_id == ANI_HANDLE_L) {
 				sceneHandler22_stoolLogic(cmd);

@@ -39,31 +39,31 @@ void scene07_initScene(Scene *sc) {
 	g_vars->scene07_plusMinus = sc->getStaticANIObject1ById(ANI_PLUSMINUS, -1);
 
 	if (g_nmi->getObjectState(sO_Guard_1) == g_nmi->getObjectEnumState(sO_Guard_1, sO_Off))
-		g_vars->scene07_plusMinus->_statics = g_vars->scene07_plusMinus->getStaticsById(ST_PMS_MINUS);
+		g_vars->scene07_plusMinus->_statics = g_vars->scene07_plusMinus->getStatic(ST_PMS_MINUS);
 	else
-		g_vars->scene07_plusMinus->_statics = g_vars->scene07_plusMinus->getStaticsById(ST_PMS_PLUS);
+		g_vars->scene07_plusMinus->_statics = g_vars->scene07_plusMinus->getStatic(ST_PMS_PLUS);
 
 	if (g_nmi->getObjectState(sO_HareTheNooksiter) == g_nmi->getObjectEnumState(sO_HareTheNooksiter, sO_WithoutHandle)) {
 		Scene *oldsc = g_nmi->_currentScene;
 
 		g_nmi->_currentScene = sc;
 
-		sc->getStaticANIObject1ById(ANI_CORNERSITTER, -1)->changeStatics2(ST_CST_HANDLELESS);
+		sc->getStaticANIObject1ById(ANI_CORNERSITTER, -1)->setStatic(ST_CST_HANDLELESS);
 
 		g_nmi->_currentScene = oldsc;
 	}
 }
 
 void sceneHandler07_openLuke() {
-	StaticANIObject *luke = g_nmi->_currentScene->getStaticANIObject1ById(ANI_LUKE, -1);
+	AniObject *luke = g_nmi->_currentScene->getStaticANIObject1ById(ANI_LUKE, -1);
 
-	luke->changeStatics2(ST_LUK_OPEN);
+	luke->setStatic(ST_LUK_OPEN);
 	luke->show1(-1, -1, -1, 0);
 
 	if (g_vars->scene07_lukeAnim) {
 		g_vars->scene07_lukeAnim->_percent = g_vars->scene07_lukePercent;
 	} else {
-		StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_CORNERSITTER, -1);
+		AniObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_CORNERSITTER, -1);
 
 		g_vars->scene07_lukeAnim = g_nmi->_behaviorManager->getBehaviorMoveByMessageQueueDataId(ani, ST_CST_HANDLELESS, QU_CST_CLOSELUKE);
 
@@ -72,10 +72,10 @@ void sceneHandler07_openLuke() {
 }
 
 void sceneHandler07_closeLuke() {
-	g_nmi->_currentScene->getStaticANIObject1ById(ANI_LUKE, -1)->changeStatics2(ST_LUK_CLOSED);
+	g_nmi->_currentScene->getStaticANIObject1ById(ANI_LUKE, -1)->setStatic(ST_LUK_CLOSED);
 
 	if (!g_vars->scene07_lukeAnim) {
-		StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_CORNERSITTER, -1);
+		AniObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_CORNERSITTER, -1);
 
 		g_vars->scene07_lukeAnim = g_nmi->_behaviorManager->getBehaviorMoveByMessageQueueDataId(ani, ST_CST_HANDLELESS, QU_CST_CLOSELUKE);
 	}
@@ -83,9 +83,9 @@ void sceneHandler07_closeLuke() {
 	g_vars->scene07_lukePercent = g_vars->scene07_lukeAnim->_percent;
 	g_vars->scene07_lukeAnim->_percent = 0;
 
-	StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_HOOLIGAN, -1);
+	AniObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_HOOLIGAN, -1);
 
-	ani->changeStatics2(ST_HGN_LUKE);
+	ani->setStatic(ST_HGN_LUKE);
 	ani->show1(-1, -1, -1, 0);
 }
 
@@ -96,16 +96,16 @@ void sceneHandler07_hideLuke() {
 
 	if (mov) {
 		if (mov->_id == MV_CST_CLOSELUKE) {
-			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_HOOLIGAN, -1);
+			AniObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_HOOLIGAN, -1);
 
-			ani->changeStatics2(ST_HGN_LOOK);
+			ani->setStatic(ST_HGN_LOOK);
 			ani->_flags &= 0xFFFB;
 		}
 	}
 }
 
 void sceneHandler07_showBox() {
-	StaticANIObject *box = g_nmi->_currentScene->getStaticANIObject1ById(ANI_SC7_BOX, -1);
+	AniObject *box = g_nmi->_currentScene->getStaticANIObject1ById(ANI_SC7_BOX, -1);
 
 	box->show1(492, 474, MV_SC7_BOX_default, 0);
 	box->_z = 25;
@@ -126,9 +126,9 @@ int sceneHandler07(ExCommand *ex) {
 
 	case MSG_SC7_PULL:
 		if (g_vars->scene07_plusMinus->_statics->_staticsId == ST_PMS_MINUS) {
-			g_vars->scene07_plusMinus->_statics = g_vars->scene07_plusMinus->getStaticsById(ST_PMS_PLUS);
+			g_vars->scene07_plusMinus->_statics = g_vars->scene07_plusMinus->getStatic(ST_PMS_PLUS);
 		} else {
-			g_vars->scene07_plusMinus->_statics = g_vars->scene07_plusMinus->getStaticsById(ST_PMS_MINUS);
+			g_vars->scene07_plusMinus->_statics = g_vars->scene07_plusMinus->getStatic(ST_PMS_MINUS);
 		}
 		break;
 

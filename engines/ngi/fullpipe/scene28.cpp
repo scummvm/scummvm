@@ -59,10 +59,10 @@ int scene28_updateCursor() {
 }
 
 void sceneHandler28_lift1ShowAfter() {
-	StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_MAN_28, -1);
+	AniObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_MAN_28, -1);
 
-	g_nmi->_aniMan->_statics = g_nmi->_aniMan->getStaticsById(ST_MAN_SIT|0x4000);
-	g_nmi->_aniMan->setOXY(ani->_x + 7, ani->_y);
+	g_nmi->_aniMan->_statics = g_nmi->_aniMan->getStatic(ST_MAN_SIT|0x4000);
+	g_nmi->_aniMan->setPos(ani->_x + 7, ani->_y);
 	g_nmi->_aniMan->_z = ani->_z;
 	g_nmi->_aniMan->show1(-1, -1, -1, 0);
 }
@@ -188,10 +188,10 @@ void sceneHandler28_startWork1() {
 
 	g_nmi->_aniMan->hide();
 
-	StaticANIObject *man = g_nmi->_currentScene->getStaticANIObject1ById(ANI_MAN_28, -1);
+	AniObject *man = g_nmi->_currentScene->getStaticANIObject1ById(ANI_MAN_28, -1);
 
-	man->_statics = man->getStaticsById(ST_MAN28_RIGHT);
-	man->setOXY(g_nmi->_aniMan->_x, g_nmi->_aniMan->_y);
+	man->_statics = man->getStatic(ST_MAN28_RIGHT);
+	man->setPos(g_nmi->_aniMan->_x, g_nmi->_aniMan->_y);
 	man->_z = g_nmi->_aniMan->_z;
 	man->show1(-1, -1, -1, 0);
 
@@ -235,7 +235,7 @@ void sceneHandler28_lift6Start() {
 
 	g_nmi->_behaviorManager->setFlagByStaticAniObject(g_nmi->_aniMan, 0);
 
-	StaticANIObject *woman = g_nmi->_currentScene->getStaticANIObject1ById(ANI_TIOTIA, -1);
+	AniObject *woman = g_nmi->_currentScene->getStaticANIObject1ById(ANI_TIOTIA, -1);
 
 	if (woman && (woman->_flags & 4))
 		chainQueue(QU_SC28_LIFT6_START2, 1);
@@ -408,7 +408,7 @@ int sceneHandler28(ExCommand *cmd) {
 				g_vars->scene28_lift6inside = false;
 			}
 
-			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (ani)
 				if (ani->_id == ANI_LIFT || ani->_id == ANI_LIFT_28 ) {

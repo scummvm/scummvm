@@ -100,7 +100,7 @@ void sceneHandler03_eaterFat() {
 
 	g_vars->scene03_eggeater->_flags &= 0xFF7F;
 
-	g_vars->scene03_eggeater->startAnim(MV_EGTR_FATASK, 0, -1);
+	g_vars->scene03_eggeater->startMovement(MV_EGTR_FATASK, 0, -1);
 }
 
 void sceneHandler03_swallowEgg(int item) {
@@ -278,7 +278,7 @@ int sceneHandler03(ExCommand *ex) {
 
 	case 29:
 		{
-			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
 				g_nmi->lift_animateButton(ani);
 				ex->_messageKind = 0;

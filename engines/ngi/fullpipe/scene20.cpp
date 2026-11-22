@@ -68,12 +68,12 @@ void scene20_initScene(Scene *sc) {
 		g_nmi->setObjectState(sO_Grandma, g_nmi->getObjectEnumState(sO_Grandma, sO_NearPipe));
 
 	if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_OnStool)) {
-		g_vars->scene20_grandma->changeStatics2(ST_GMA20_STOOL);
+		g_vars->scene20_grandma->setStatic(ST_GMA20_STOOL);
 	} else if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_OnTheFloor)) {
-		g_vars->scene20_grandma->changeStatics2(ST_GMA20_FLOOR);
+		g_vars->scene20_grandma->setStatic(ST_GMA20_FLOOR);
 	} else if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_NearPipe)
 				|| g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_NearPipeWithStool)) {
-		g_vars->scene20_grandma->changeStatics2(ST_GMA20_STAND);
+		g_vars->scene20_grandma->setStatic(ST_GMA20_STAND);
 	} else {
 		g_vars->scene20_grandma->hide();
 	}

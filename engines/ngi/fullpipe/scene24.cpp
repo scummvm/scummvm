@@ -54,7 +54,7 @@ void scene24_initScene(Scene *sc) {
 
 		g_vars->scene24_jetIsOn = false;
 
-		g_vars->scene24_water->changeStatics2(ST_WTR24_FLOWLOWER);
+		g_vars->scene24_water->setStatic(ST_WTR24_FLOWLOWER);
 
 		g_vars->scene24_flowIsLow = true;
 	}
@@ -110,13 +110,13 @@ int sceneHandler24(ExCommand *cmd) {
 
 		if (g_vars->scene24_waterIsOn && !g_vars->scene24_water->_movement) {
 			if (g_vars->scene24_flowIsLow)
-				g_vars->scene24_water->startAnim(MV_WTR24_FLOWLOWER, 0, -1);
+				g_vars->scene24_water->startMovement(MV_WTR24_FLOWLOWER, 0, -1);
 			else
-				g_vars->scene24_water->startAnim(MV_WTR24_FLOW, 0, -1);
+				g_vars->scene24_water->startMovement(MV_WTR24_FLOW, 0, -1);
 		}
 
 		if (g_vars->scene24_jetIsOn && !g_vars->scene24_jet->_movement)
-			g_vars->scene24_jet->startAnim(MV_JET24_FLOW, 0, -1);
+			g_vars->scene24_jet->startMovement(MV_JET24_FLOW, 0, -1);
 
 		g_nmi->_behaviorManager->updateBehaviors();
 	}

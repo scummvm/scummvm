@@ -50,11 +50,11 @@ void scene16_initScene(Scene *sc) {
 	if (g_nmi->getObjectState(sO_Bridge) == g_nmi->getObjectEnumState(sO_Bridge, sO_Convoluted)) {
 		g_vars->scene16_placeIsOccupied = true;
 
-		StaticANIObject *boy[2];
+		AniObject *boy[2];
 		boy[0] = sc->getStaticANIObject1ById(ANI_BOY, -1);
-		boy[0]->loadMovementsPixelData();
+		boy[0]->loadMovements();
 
-		boy[1] = new StaticANIObject(boy[0]);
+		boy[1] = new AniObject(boy[0]);
 		sc->addStaticANIObject(boy[1], 1);
 
 		int idx = 0;
@@ -83,23 +83,23 @@ void scene16_initScene(Scene *sc) {
 
 		g_vars->scene16_placeIsOccupied = false;
 
-		StaticANIObject *ani = new StaticANIObject(g_nmi->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_BEARDED_CMN, -1));
+		AniObject *ani = new AniObject(g_nmi->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_BEARDED_CMN, -1));
 		ani->_movement = nullptr;
 		ani->_statics = ani->_staticsList[0];
 		sc->addStaticANIObject(ani, 1);
 	}
 
 	if (g_nmi->getObjectState(sO_Girl) == g_nmi->getObjectEnumState(sO_Girl, sO_IsLaughing)) {
-		StaticANIObject *girl = sc->getStaticANIObject1ById(ANI_GIRL, -1);
+		AniObject *girl = sc->getStaticANIObject1ById(ANI_GIRL, -1);
 
 		girl->show1(554, 432, MV_GRL_LAUGH_POPA, 0);
 		girl->_z = 20;
 	}
 
 	if (g_nmi->getObjectState(sO_Cup) == g_nmi->getObjectEnumState(sO_Cup, sO_In_16)) {
-		g_vars->scene16_mug->_statics = g_vars->scene16_mug->getStaticsById(ST_MUG_EMPTY);
+		g_vars->scene16_mug->_statics = g_vars->scene16_mug->getStatic(ST_MUG_EMPTY);
 		g_vars->scene16_mug->_movement = nullptr;
-		g_vars->scene16_mug->setOXY(409, 459);
+		g_vars->scene16_mug->setPos(409, 459);
 		g_vars->scene16_mug->_z = 5;
 		g_vars->scene16_mug->_flags |= 4;
 	}
@@ -144,7 +144,7 @@ void sceneHandler16_laughSound() {
 
 void sceneHandler16_showBearded() {
 	if (g_nmi->getObjectState(sO_Bridge) == g_nmi->getObjectEnumState(sO_Bridge, sO_Unconvoluted)) {
-		StaticANIObject *brd = g_nmi->_currentScene->getStaticANIObject1ById(ANI_BEARDED_CMN, -1);
+		AniObject *brd = g_nmi->_currentScene->getStaticANIObject1ById(ANI_BEARDED_CMN, -1);
 
 		if (!brd || !(brd->_flags & 4))
 			chainQueue(QU_BRD16_STARTBEARDED, 0);
@@ -152,17 +152,17 @@ void sceneHandler16_showBearded() {
 }
 
 void sceneHandler16_showMugFull() {
-	g_vars->scene16_mug->changeStatics2(ST_MUG_FULL);
+	g_vars->scene16_mug->setStatic(ST_MUG_FULL);
 }
 
 void sceneHandler16_fillMug() {
 	if (g_vars->scene16_mug->_flags & 4) {
 		g_vars->scene16_jettie->_z = 2;
-		g_vars->scene16_jettie->startAnim(MV_JTI_FLOWIN, 0, -1);
+		g_vars->scene16_jettie->startMovement(MV_JTI_FLOWIN, 0, -1);
 
 		if (g_nmi->_aniMan->_movement) {
 			if (g_nmi->_aniMan->_movement->_id == MV_MAN16_TAKEMUG) {
-				g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT);
+				g_nmi->_aniMan->setStatic(ST_MAN_RIGHT);
 
 				g_vars->scene16_mug->show1(-1, -1, -1, 0);
 
@@ -176,7 +176,7 @@ void sceneHandler16_fillMug() {
 
 	if (!(g_vars->scene16_boot->_flags & 4)) {
 		g_vars->scene16_jettie->_z = 15;
-		g_vars->scene16_jettie->startAnim(MV_JTI_FLOWBY, 0, -1);
+		g_vars->scene16_jettie->startMovement(MV_JTI_FLOWBY, 0, -1);
 
 		if (g_vars->scene16_walkingBoy) {
 			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC16_BOYOUT), 0, 1);
@@ -201,9 +201,9 @@ void sceneHandler16_fillMug() {
 
 	g_vars->scene16_jettie->_z = 15;
 
-	g_vars->scene16_boot->startAnim(MV_BT16_FILL, 0, -1);
+	g_vars->scene16_boot->startMovement(MV_BT16_FILL, 0, -1);
 
-	StaticANIObject *ani;
+	AniObject *ani;
 
 	if (g_vars->scene16_walkingBoy) {
 		mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC16_BOYOUT), 0, 1);
@@ -226,9 +226,9 @@ void sceneHandler16_fillMug() {
 }
 
 void sceneHandler16_startLaugh() {
-	StaticANIObject *girl = g_nmi->_currentScene->getStaticANIObject1ById(ANI_GIRL, -1);
+	AniObject *girl = g_nmi->_currentScene->getStaticANIObject1ById(ANI_GIRL, -1);
 
-	girl->changeStatics2(ST_GRL_STAND);
+	girl->setStatic(ST_GRL_STAND);
 
 	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC16_GIRLLAUGH), 0, 1);
 
@@ -253,8 +253,8 @@ void sceneHandler16_drink() {
 						if (g_vars->scene16_walkingBoy) {
 							g_nmi->_aniMan->_flags |= 0x180;
 
-							g_vars->scene16_walkingBoy->changeStatics2(ST_BOY_STAND);
-							g_vars->scene16_walkingBoy->queueMessageQueue(nullptr);
+							g_vars->scene16_walkingBoy->setStatic(ST_BOY_STAND);
+							g_vars->scene16_walkingBoy->setQueue(nullptr);
 
 							mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC16_BOYKICK), 0, 1);
 
@@ -282,7 +282,7 @@ void sceneHandler16_drink() {
 							mq->setFlags(mq->getFlags() | 1);
 							mq->chain(nullptr);
 
-							g_nmi->_currentScene->getStaticANIObject1ById(ANI_GIRL, -1)->changeStatics2(ST_GRL_STAND);
+							g_nmi->_currentScene->getStaticANIObject1ById(ANI_GIRL, -1)->setStatic(ST_GRL_STAND);
 						}
 
 						g_nmi->_currentScene->getStaticANIObject1ById(ANI_WIRE16, -1)->show1(-1, -1, -1, 0);
@@ -313,7 +313,7 @@ void sceneHandler16_mugClick() {
 }
 
 void sceneHandler16_showMan() {
-	g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT);
+	g_nmi->_aniMan->setStatic(ST_MAN_RIGHT);
 	g_nmi->_aniMan->show1(-1, -1, -1, 0);
 
 	g_vars->scene16_mug->show1(-1, -1, -1, 0);
@@ -324,7 +324,7 @@ void sceneHandler16_showMug() {
 }
 
 void sceneHandler16_hideMan() {
-	g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT);
+	g_nmi->_aniMan->setStatic(ST_MAN_RIGHT);
 	g_nmi->_aniMan->hide();
 
 	g_vars->scene16_mug->hide();
@@ -343,7 +343,7 @@ void sceneHandler16_showWire() {
 }
 
 void sceneHandler16_putOnWheel() {
-	StaticANIObject *ani = g_vars->scene16_walkingBoy;
+	AniObject *ani = g_vars->scene16_walkingBoy;
 
 	if (!ani)
 		ani = g_vars->scene16_walkingGirl;
@@ -381,10 +381,10 @@ void sceneHandler16_putOnWheel() {
 }
 
 void sceneHandler16_girlROTFL() {
-	StaticANIObject *girl = g_nmi->_currentScene->getStaticANIObject1ById(ANI_GIRL, -1);
+	AniObject *girl = g_nmi->_currentScene->getStaticANIObject1ById(ANI_GIRL, -1);
 
-	girl->changeStatics2(ST_GRL_LAUGH);
-	girl->startAnim(MV_GRL_FALL, 0, -1);
+	girl->setStatic(ST_GRL_LAUGH);
+	girl->startMovement(MV_GRL_FALL, 0, -1);
 
 	g_vars->scene16_girlIsLaughing = false;
 }

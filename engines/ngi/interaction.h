@@ -28,9 +28,9 @@ namespace NGI {
 
 class GameObject;
 class MessageQueue;
-class StaticANIObject;
+class AniObject;
 
-int handleObjectInteraction(StaticANIObject *subject, GameObject *object, int invId);
+int handleObjectInteraction(AniObject *subject, GameObject *object, int invId);
 bool canInteractAny(GameObject *obj1, GameObject *obj2, int invId);
 
 
@@ -57,7 +57,7 @@ class Interaction : public CObject {
 
 	bool load(MfcArchive &file) override;
 	bool canInteract(GameObject *obj1, GameObject *obj2, int invId);
-	bool isOverlapping(StaticANIObject *subj, GameObject *obj);
+	bool isOverlapping(AniObject *subj, GameObject *obj);
 };
 
 class InteractionController : public CObject {
@@ -82,7 +82,7 @@ public:
 
 	void sortInteractions(int sceneId);
 
-	bool handleInteraction(StaticANIObject *subj, GameObject *obj, int invId);
+	bool handleInteraction(AniObject *subj, GameObject *obj, int invId);
 
 	Interaction *getInteractionByObjectIds(int obId, int obId2, int obId3);
 };

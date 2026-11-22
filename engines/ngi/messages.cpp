@@ -343,13 +343,13 @@ bool MessageQueue::load(MfcArchive &file) {
 	return true;
 }
 
-bool MessageQueue::chain(StaticANIObject *ani) {
+bool MessageQueue::chain(AniObject *ani) {
 	if (checkGlobalExCommandList1() && checkGlobalExCommandList2()) {
 		if (!(getFlags() & kInGlobalQueue)) {
 			g_nmi->_globalMessageQueueList->addMessageQueue(this);
 		}
 		if (ani) {
-			ani->queueMessageQueue(this);
+			ani->setQueue(this);
 		} else {
 			sendNextCommand();
 		}
@@ -571,7 +571,7 @@ void MessageQueue::setParamInt(int key1, int key2) {
 	}
 }
 
-int MessageQueue::calcDuration(StaticANIObject *obj) {
+int MessageQueue::calcDuration(AniObject *obj) {
 	int res = 0;
 	ExCommand *ex;
 	Movement *mov;
@@ -580,7 +580,7 @@ int MessageQueue::calcDuration(StaticANIObject *obj) {
 		ex = getExCommandByIndex(i);
 		if (ex->_parentId == obj->_id) {
 			if (ex->_messageKind == 1 || ex->_messageKind == 20) {
-				if ((mov = obj->getMovementById(ex->_messageNum)) != nullptr) {
+				if ((mov = obj->getMovement(ex->_messageNum)) != nullptr) {
 					if (ex->_z >= 1)
 						res += ex->_z;
 					else
@@ -931,7 +931,7 @@ bool chainQueue(int queueId, int flags) {
 	return true;
 }
 
-bool chainObjQueue(StaticANIObject *obj, int queueId, int flags) {
+bool chainObjQueue(AniObject *obj, int queueId, int flags) {
 	MessageQueue *mq = g_nmi->_currentScene->getMessageQueueById(queueId);
 
 	if (!mq)

@@ -102,7 +102,7 @@ class Statics : public Phase {
 	Common::Point getCenter() const;
 };
 
-class StaticANIObject;
+class AniObject;
 
 class Movement : public GameObject {
   public:
@@ -134,11 +134,11 @@ class Movement : public GameObject {
 	Movement();
 	~Movement() override;
 
-	Movement(Movement *src, StaticANIObject *ani);
-	Movement(Movement *src, int *flag1, int flag2, StaticANIObject *ani);
+	Movement(Movement *src, AniObject *ani);
+	Movement(Movement *src, int *flag1, int flag2, AniObject *ani);
 
 	bool load(MfcArchive &file) override;
-	bool load(MfcArchive &file, StaticANIObject *ani);
+	bool load(MfcArchive &file, AniObject *ani);
 
 	Common::Point getCurrDynamicPhaseXY() const;
 	Common::Point getCenter() const;
@@ -146,7 +146,7 @@ class Movement : public GameObject {
 
 	Common::Point getMovementSize(int idx, int dynidx);
 
-	void initStatics(StaticANIObject *ani);
+	void initStatics(AniObject *ani);
 	void updateCurrDynamicPhase();
 
 	void setAlpha(int alpha);
@@ -169,7 +169,7 @@ class Movement : public GameObject {
 	void draw(bool flipFlag, int angle);
 };
 
-class StaticANIObject : public GameObject {
+class AniObject : public GameObject {
  public:
 	Movement *_movement;
 	Statics *_statics;
@@ -190,25 +190,25 @@ class StaticANIObject : public GameObject {
 	int _messageNum;
 	int _animExFlag;
 	int _counter;
-	int _someDynamicPhaseIndex;
+	int _targetFrame;
 
 public:
 	int16 _sceneId;
 
 public:
-	StaticANIObject();
-	~StaticANIObject() override;
-	StaticANIObject(StaticANIObject *src);
+	AniObject();
+	~AniObject() override;
+	AniObject(AniObject *src);
 
 	bool load(MfcArchive &file) override;
 
-	void setOXY(int x, int y);
-	Statics *getStaticsById(int id);
+	void setPos(int x, int y);
+	Statics *getStatic(int id);
 	Statics *getStaticsByName(const Common::String &name);
-	Movement *getMovementById(int id);
+	Movement *getMovement(int id);
 	int getMovementIdById(int itemId) const;
 	Movement *getMovementByName(const Common::String &name);
-	Common::Point getCurrDimensions() const;
+	Common::Point getFullSize() const;
 
 	Common::Point getSomeXY() const;
 
@@ -217,24 +217,24 @@ public:
 	bool isIdle();
 	void setAlpha(int alpha);
 
-	void deleteFromGlobalMessageQueue();
-	bool queueMessageQueue(MessageQueue *msg);
+	void stopQueue();
+	bool setQueue(MessageQueue *msg);
 	void restartMessageQueue(MessageQueue *msg);
 	MessageQueue *getMessageQueue();
 	bool trySetMessageQueue(int msgNum, int qId);
 	void startMQIfIdle(int qId, int flag);
 
 	void initMovements();
-	void loadMovementsPixelData();
-	void freeMovementsPixelData();
+	void loadMovements();
+	void unloadMovements();
 	void preloadMovements(MovTable *mt);
 
-	void setSomeDynamicPhaseIndex(int val) { _someDynamicPhaseIndex = val; }
+	void setTargetFrame(int val) { _targetFrame = val; }
 	void adjustSomeXY();
 
-	bool startAnim(int movementId, int messageQueueId, int dynPhaseIdx);
+	bool startMovement(int movementId, int messageQueueId, int dynPhaseIdx);
 	bool startAnimEx(int movid, int parId, int flag1, int flag2);
-	void startAnimSteps(int movementId, int messageQueueId, int x, int y, const PointList &points, int someDynamicPhaseIndex);
+	void startSliding(int movementId, int messageQueueId, int x, int y, const PointList &points, int someDynamicPhaseIndex);
 
 	void hide();
 	void show1(int x, int y, int movementId, int mqId);
@@ -243,7 +243,7 @@ public:
 	void update(int counterdiff);
 
 	Statics *addReverseStatics(Statics *ani);
-	void draw();
+	void render();
 	void draw2();
 
 	/** ownership of returned object is transferred to caller */
@@ -252,14 +252,14 @@ public:
 	void setSpeed(int speed);
 
 	void updateStepPos();
-	void stopAnim_maybe();
+	void stopMovement();
 	Common::Point *calcNextStep(Common::Point *point);
 
-	MessageQueue *changeStatics1(int msgNum);
-	void changeStatics2(int objId);
+	MessageQueue *moveToStatic(int msgNum);
+	void setStatic(int objId);
 
 	bool getPixelAtPos(int x, int y, uint32 *pixel, bool hitOnly = false);
-	bool isPixelHitAtPos(int x, int y);
+	bool hit(int x, int y);
 };
 
 } // End of namespace NGI

@@ -51,15 +51,15 @@ void scene30_initScene(Scene *sc, int flag) {
 	g_nmi->_currentScene = sc;
 
 	if (g_nmi->getObjectState(sO_Leg) == g_nmi->getObjectEnumState(sO_Leg, sO_ShowingHeel))
-		g_vars->scene30_leg->changeStatics2(ST_LEG_UP);
+		g_vars->scene30_leg->setStatic(ST_LEG_UP);
 	else if (g_nmi->getObjectState(sO_Leg) == g_nmi->getObjectEnumState(sO_Leg, sO_WithoutJugs))
-		g_vars->scene30_leg->changeStatics2(ST_LEG_DOWN);
+		g_vars->scene30_leg->setStatic(ST_LEG_DOWN);
 	else if (g_nmi->getObjectState(sO_Leg) == g_nmi->getObjectEnumState(sO_Leg, sO_WithBig))
-		g_vars->scene30_leg->changeStatics2(ST_LEG_DOWN1);
+		g_vars->scene30_leg->setStatic(ST_LEG_DOWN1);
 	else if (g_nmi->getObjectState(sO_Leg) == g_nmi->getObjectEnumState(sO_Leg, sO_WithSmall))
-		g_vars->scene30_leg->changeStatics2(ST_LEG_DOWN2);
+		g_vars->scene30_leg->setStatic(ST_LEG_DOWN2);
 	else if (g_nmi->getObjectState(sO_Leg) == g_nmi->getObjectEnumState(sO_Leg, sO_WithAll))
-		g_vars->scene30_leg->changeStatics2(ST_LEG_EMPTY);
+		g_vars->scene30_leg->setStatic(ST_LEG_EMPTY);
 
 	g_nmi->_currentScene = oldsc;
 
@@ -119,7 +119,7 @@ int sceneHandler30(ExCommand *cmd) {
 
 	case 29:
 		{
-			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
+			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
 
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
 				g_nmi->lift_animateButton(ani);

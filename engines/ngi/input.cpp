@@ -218,7 +218,7 @@ void NGIEngine::updateCursorCommon() {
 			_cursorId = PIC_CSR_DEFAULT_INV;
 			return;
 		}
-		if (_objectIdAtCursor == ANI_LIFTBUTTON && ani->_objtype == kObjTypeStaticANIObject && lift_getButtonIdP(static_cast<StaticANIObject *>(ani)->_statics->_staticsId)) {
+		if (_objectIdAtCursor == ANI_LIFTBUTTON && ani->_objtype == kObjTypeStaticANIObject && lift_getButtonIdP(static_cast<AniObject *>(ani)->_statics->_staticsId)) {
 			_cursorId = PIC_CSR_LIFT;
 			return;
 		}

@@ -37,7 +37,7 @@
 namespace NGI {
 
 struct Swinger {
-	StaticANIObject *ani;
+	AniObject *ani;
 	int sfield_4;
 	double angle;
 	int sx;
@@ -57,7 +57,7 @@ void scene18_preload() {
 			g_nmi->_scene3 = s->_scene;
 			s->_scene = nullptr;
 
-			g_nmi->_scene3->getStaticANIObject1ById(ANI_WHIRLIGIG_18, -1)->freeMovementsPixelData();
+			g_nmi->_scene3->getStaticANIObject1ById(ANI_WHIRLIGIG_18, -1)->unloadMovements();
 
 			break;
 		}
@@ -76,7 +76,7 @@ void scene19_setSugarState(Scene *sc) {
 		Scene *oldsc = g_nmi->_currentScene;
 
 		g_nmi->_currentScene = sc;
-		sc->getStaticANIObject1ById(ANI_CORDIE, -1)->changeStatics2(ST_CDI_EMPTY2);
+		sc->getStaticANIObject1ById(ANI_CORDIE, -1)->setStatic(ST_CDI_EMPTY2);
 		g_nmi->_currentScene = oldsc;
 	}
 }
@@ -96,7 +96,7 @@ void scene19_setMovements(Scene *sc, int entranceId) {
 			g_vars->scene18_swingers[i]->sflags = 1;
 
 			g_nmi->_currentScene = sc;
-			g_vars->scene18_swingers[i]->ani->changeStatics2(ST_KSL_NORM);
+			g_vars->scene18_swingers[i]->ani->setStatic(ST_KSL_NORM);
 			g_vars->scene18_swingers[i]->ani->_z = 30;
 			g_nmi->_currentScene = oldsc;
 		}
@@ -136,7 +136,7 @@ void scene19_preload() {
 	}
 }
 
-void scene18_setupSwingers(StaticANIObject *ani, Scene *sc) {
+void scene18_setupSwingers(AniObject *ani, Scene *sc) {
 	Swinger *swinger;
 
 	g_vars->scene18_swingers.clear();
@@ -154,7 +154,7 @@ void scene18_setupSwingers(StaticANIObject *ani, Scene *sc) {
 		swinger->iy = swinger->sy;
 
 		if (i) {
-			StaticANIObject *newani = new StaticANIObject(ani);
+			AniObject *newani = new AniObject(ani);
 
 			ani = newani;
 
@@ -167,18 +167,18 @@ void scene18_setupSwingers(StaticANIObject *ani, Scene *sc) {
 			swinger->sflags = g_vars->scene18_girlIsSwinging ? 4 : 1;
 		}
 
-		ani->_statics = ani->getStaticsById(ST_KSL_NORM);
+		ani->_statics = ani->getStatic(ST_KSL_NORM);
 		//ani->_movement = 0;
-		ani->setOXY(swinger->sx, swinger->sy);
+		ani->setPos(swinger->sx, swinger->sy);
 		ani->_z = 30;
 		ani->_flags |= 4;
 
 		if (swinger->sflags & 2)
-			ani->startAnim(MV_KSL_SWINGBOY, 0, -1);
+			ani->startMovement(MV_KSL_SWINGBOY, 0, -1);
 		else if (swinger->sflags & 4)
-			ani->startAnim(MV_KSL_SWINGGIRL, 0, -1);
+			ani->startMovement(MV_KSL_SWINGGIRL, 0, -1);
 		else
-			ani->startAnim(MV_KSL_SWING, 0, -1);
+			ani->startMovement(MV_KSL_SWING, 0, -1);
 
 		ani->_movement->setCurFrame(g_nmi->_rnd.getRandomNumber(17));
 
@@ -235,7 +235,7 @@ void scene18_initScene1(Scene *sc) {
 	}
 
 	if (g_vars->scene18_bridgeIsConvoluted && g_vars->scene18_whirlgigMovMum != -1) {
-		g_vars->scene18_whirlgig->startAnim(sc->_sceneId != SC_18 ? MV_WHR19_SPIN : MV_WHR18_SPIN, 0, -1);
+		g_vars->scene18_whirlgig->startMovement(sc->_sceneId != SC_18 ? MV_WHR19_SPIN : MV_WHR18_SPIN, 0, -1);
 		g_vars->scene18_whirlgig->_movement->setCurFrame(g_vars->scene18_whirlgigMovMum);
 	}
 
@@ -269,7 +269,7 @@ void scene18_initScene1(Scene *sc) {
 		y = g_vars->scene18_boy->_y;
 	}
 
-	g_vars->scene18_boy->setOXY(newx + x, newy + y);
+	g_vars->scene18_boy->setPos(newx + x, newy + y);
 
 	g_vars->scene18_girl->getPicAniInfo(info);
 	sc->addStaticANIObject(g_vars->scene18_girl, 1);
@@ -283,7 +283,7 @@ void scene18_initScene1(Scene *sc) {
 		y = g_vars->scene18_girl->_y;
 	}
 
-	g_vars->scene18_girl->setOXY(newx + x, newy + y);
+	g_vars->scene18_girl->setPos(newx + x, newy + y);
 
 	g_vars->scene18_wheelFlipper = false;
 	g_vars->scene18_jumpDistance = -1;
@@ -304,9 +304,9 @@ void scene18_initScene2(Scene *sc) {
 	g_vars->scene18_wheelCenterX = 1032;
 	g_vars->scene18_wheelCenterY = -318;
 
-	StaticANIObject *armchair = sc->getStaticANIObject1ById(ANI_KRESLO, -1);
+	AniObject *armchair = sc->getStaticANIObject1ById(ANI_KRESLO, -1);
 
-	armchair->loadMovementsPixelData();
+	armchair->loadMovements();
 
 	g_vars->scene18_girlIsSwinging = (g_nmi->getObjectState(sO_Girl) == g_nmi->getObjectEnumState(sO_Girl, sO_IsSwinging));
 
@@ -392,13 +392,13 @@ void sceneHandler18_clickBoard() {
 }
 
 void sceneHandler18_showManJumpTo() {
-	g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT);
+	g_nmi->_aniMan->setStatic(ST_MAN_RIGHT);
 	g_nmi->_aniMan->_flags &= 0xFFFB;
 	g_nmi->_aniMan->_flags &= 0xFEFF;
 	g_vars->scene18_swingers[g_vars->scene18_manWheelPosTo]->sflags = 0x20;
 
-	g_vars->scene18_swingers[g_vars->scene18_manWheelPosTo]->ani->changeStatics2(ST_KSL_JUMPMAN);
-	g_vars->scene18_swingers[g_vars->scene18_manWheelPosTo]->ani->startAnim(MV_KSL_INMAN, 0, -1);
+	g_vars->scene18_swingers[g_vars->scene18_manWheelPosTo]->ani->setStatic(ST_KSL_JUMPMAN);
+	g_vars->scene18_swingers[g_vars->scene18_manWheelPosTo]->ani->startMovement(MV_KSL_INMAN, 0, -1);
 	g_vars->scene18_swingers[g_vars->scene18_manWheelPosTo]->ani->_z = 20;
 
 	g_vars->scene18_manIsReady = false;
@@ -443,25 +443,25 @@ void sceneHandler18and19_showManJump() {
 
 	g_vars->scene18_swingers[g_vars->scene18_manWheelPos]->sflags = 1;
 
-	g_vars->scene18_swingers[g_vars->scene18_manWheelPos]->ani->changeStatics2(ST_KSL_NORM);
+	g_vars->scene18_swingers[g_vars->scene18_manWheelPos]->ani->setStatic(ST_KSL_NORM);
 	g_vars->scene18_swingers[g_vars->scene18_manWheelPos]->ani->_z = 30;
 }
 
 void sceneHandler18and19_showGirlJumpTo() {
-	g_vars->scene18_girl->stopAnim_maybe();
+	g_vars->scene18_girl->stopMovement();
 	g_vars->scene18_girl->hide();
 
 	g_vars->scene18_swingers[g_vars->scene18_kidWheelPosTo]->sflags = 4;
 
-	g_vars->scene18_swingers[g_vars->scene18_kidWheelPosTo]->ani->changeStatics2(ST_KSL_JUMPGIRL);
-	g_vars->scene18_swingers[g_vars->scene18_kidWheelPosTo]->ani->startAnim(MV_KSL_INGIRL, 0, -1);
+	g_vars->scene18_swingers[g_vars->scene18_kidWheelPosTo]->ani->setStatic(ST_KSL_JUMPGIRL);
+	g_vars->scene18_swingers[g_vars->scene18_kidWheelPosTo]->ani->startMovement(MV_KSL_INGIRL, 0, -1);
 
 	g_vars->scene18_kidIsOnWheel--;
 	g_vars->scene18_girlIsOnWheel--;
 }
 
 void sceneHandler18and19_showGirlJump() {
-	StaticANIObject *ani = g_vars->scene18_swingers[g_vars->scene18_kidWheelPos]->ani;
+	AniObject *ani = g_vars->scene18_swingers[g_vars->scene18_kidWheelPos]->ani;
 	int x, y;
 
 	if (ani->_movement) {
@@ -474,31 +474,31 @@ void sceneHandler18and19_showGirlJump() {
 
 	g_vars->scene18_girl->show1(x - 62, y - 10, MV_GRL18_JUMPFROM, 0);
 	g_vars->scene18_girl->_z = 50;
-	g_vars->scene18_girl->startAnim(MV_GRL18_JUMPFROM, 0, -1);
+	g_vars->scene18_girl->startMovement(MV_GRL18_JUMPFROM, 0, -1);
 
 	g_vars->scene18_swingers[g_vars->scene18_kidWheelPos]->sflags = 1;
 
-	g_vars->scene18_swingers[g_vars->scene18_kidWheelPos]->ani->changeStatics2(ST_KSL_REACT);
-	g_vars->scene18_swingers[g_vars->scene18_kidWheelPos]->ani->startAnim(MV_KSL_CALMDOWN, 0, -1);
+	g_vars->scene18_swingers[g_vars->scene18_kidWheelPos]->ani->setStatic(ST_KSL_REACT);
+	g_vars->scene18_swingers[g_vars->scene18_kidWheelPos]->ani->startMovement(MV_KSL_CALMDOWN, 0, -1);
 
 	g_vars->scene18_kidIsOnWheel = 1;
 	g_vars->scene18_girlIsOnWheel++;
 }
 
 void sceneHandler18and19_showBoyJumpTo() {
-	g_vars->scene18_boy->stopAnim_maybe();
+	g_vars->scene18_boy->stopMovement();
 	g_vars->scene18_boy->hide();
 
 	g_vars->scene18_swingers[g_vars->scene18_kidWheelPosTo]->sflags = 2;
-	g_vars->scene18_swingers[g_vars->scene18_kidWheelPosTo]->ani->changeStatics2(ST_KSL_JUMPBOY);
-	g_vars->scene18_swingers[g_vars->scene18_kidWheelPosTo]->ani->startAnim(MV_KSL_INBOY, 0, -1);
+	g_vars->scene18_swingers[g_vars->scene18_kidWheelPosTo]->ani->setStatic(ST_KSL_JUMPBOY);
+	g_vars->scene18_swingers[g_vars->scene18_kidWheelPosTo]->ani->startMovement(MV_KSL_INBOY, 0, -1);
 
 	g_vars->scene18_kidIsOnWheel--;
 	g_vars->scene18_boyIsOnWheel--;
 }
 
 void sceneHandler18and19_showBoyJump() {
-	StaticANIObject *ani = g_vars->scene18_swingers[g_vars->scene18_kidWheelPos]->ani;
+	AniObject *ani = g_vars->scene18_swingers[g_vars->scene18_kidWheelPos]->ani;
 	int x, y;
 
 	if (ani->_movement) {
@@ -511,35 +511,35 @@ void sceneHandler18and19_showBoyJump() {
 
 	g_vars->scene18_boy->show1(x - 48, y + 8, MV_BOY18_JUMPFROM, 0);
 	g_vars->scene18_boy->_z = 50;
-	g_vars->scene18_boy->startAnim(MV_BOY18_JUMPFROM, 0, -1);
+	g_vars->scene18_boy->startMovement(MV_BOY18_JUMPFROM, 0, -1);
 
 	g_vars->scene18_swingers[g_vars->scene18_kidWheelPos]->sflags = 1;
 
-	g_vars->scene18_swingers[g_vars->scene18_kidWheelPos]->ani->changeStatics2(ST_KSL_REACT);
-	g_vars->scene18_swingers[g_vars->scene18_kidWheelPos]->ani->startAnim(MV_KSL_CALMDOWN, 0, -1);
+	g_vars->scene18_swingers[g_vars->scene18_kidWheelPos]->ani->setStatic(ST_KSL_REACT);
+	g_vars->scene18_swingers[g_vars->scene18_kidWheelPos]->ani->startMovement(MV_KSL_CALMDOWN, 0, -1);
 
 	g_vars->scene18_boyJumpedOff = true;
 }
 
 void sceneHandler18and19_boyJumpTo() {
-	g_vars->scene18_boy->stopAnim_maybe();
+	g_vars->scene18_boy->stopMovement();
 	g_vars->scene18_boy->show1(g_vars->scene18_boyJumpX, g_vars->scene18_boyJumpY, MV_BOY18_JUMPTO, 0);
 	g_vars->scene18_boy->_z = 50;
-	g_vars->scene18_boy->startAnim(MV_BOY18_JUMPTO, 0, -1);
+	g_vars->scene18_boy->startMovement(MV_BOY18_JUMPTO, 0, -1);
 }
 
 void sceneHandler18and19_girlJumpTo() {
-	g_vars->scene18_girl->stopAnim_maybe();
+	g_vars->scene18_girl->stopMovement();
 	g_vars->scene18_girl->show1(g_vars->scene18_girlJumpX, g_vars->scene18_girlJumpY, MV_GRL18_JUMPTO, 0);
 	g_vars->scene18_girl->_z = 50;
-	g_vars->scene18_girl->startAnim(MV_GRL18_JUMPTO, 0, -1);
+	g_vars->scene18_girl->startMovement(MV_GRL18_JUMPTO, 0, -1);
 }
 
 void sceneHandler18and19_manStandArmchair() {
-	g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT);
+	g_nmi->_aniMan->setStatic(ST_MAN_RIGHT);
 	g_nmi->_aniMan->_flags |= 0x100;
 	g_nmi->_aniMan->_z = 35;
-	g_nmi->_aniMan->startAnim(MV_MAN18_STANDKRESLO, 0, -1);
+	g_nmi->_aniMan->startMovement(MV_MAN18_STANDKRESLO, 0, -1);
 }
 
 void sceneHandler18and19_drawRiders() {
@@ -570,9 +570,9 @@ void sceneHandler18and19_drawRiders() {
 		}
 
 		if (swinger->ani->_movement)
-			swinger->ani->setOXY(ix - swinger->ix + swinger->ani->_movement->_x, iy - swinger->iy + swinger->ani->_movement->_y);
+			swinger->ani->setPos(ix - swinger->ix + swinger->ani->_movement->_x, iy - swinger->iy + swinger->ani->_movement->_y);
 		else
-			swinger->ani->setOXY(ix - swinger->ix + swinger->ani->_x, iy - swinger->iy + swinger->ani->_y);
+			swinger->ani->setPos(ix - swinger->ix + swinger->ani->_x, iy - swinger->iy + swinger->ani->_y);
 
 		swinger->ix = ix;
 		swinger->iy = iy;
@@ -591,7 +591,7 @@ void sceneHandler18and19_drawRiders() {
 			}
 
 			if (mv)
-				swinger->ani->startAnim(mv, 0, -1);
+				swinger->ani->startMovement(mv, 0, -1);
 
 			if (swinger->ani->_movement)
 				swinger->ani->_movement->_counter = 0;
@@ -600,13 +600,13 @@ void sceneHandler18and19_drawRiders() {
 		if (g_vars->scene18_wheelIsTurning) {
 			if ((swinger->sflags & 2) && swinger->angle >= Math::deg2rad<double>(160.0) && oldangle < Math::deg2rad<double>(160.0)) {
 				swinger->sflags = 8;
-				swinger->ani->changeStatics2(ST_KSL_BOY);
-				swinger->ani->startAnim(MV_KSL_JUMPBOY, 0, -1);
+				swinger->ani->setStatic(ST_KSL_BOY);
+				swinger->ani->startMovement(MV_KSL_JUMPBOY, 0, -1);
 				g_vars->scene18_kidWheelPos = i;
 			} else if ((swinger->sflags & 4) && swinger->angle >= Math::deg2rad<double>(162.0) && oldangle < Math::deg2rad<double>(162.0)) {
 				swinger->sflags = 16;
-				swinger->ani->changeStatics2(ST_KSL_GIRL);
-				swinger->ani->startAnim(MV_KSL_JUMPGIRL, 0, -1);
+				swinger->ani->setStatic(ST_KSL_GIRL);
+				swinger->ani->startMovement(MV_KSL_JUMPGIRL, 0, -1);
 				g_vars->scene18_kidWheelPos = i;
 			} else if (g_vars->scene18_kidIsOnWheel) {
 				if (g_vars->scene18_boyIsOnWheel > 0 && (swinger->sflags & 1) && swinger->angle >= Math::deg2rad<double>(185.0) && oldangle < Math::deg2rad<double>(185.0)) {
@@ -649,8 +649,8 @@ void sceneHandler18and19_drawRiders() {
 				double newa = (double)g_vars->scene18_jumpAngle * Math::deg2rad<double>(1.0);
 
 				if (newa <= swinger->angle && oldangle < newa) {
-					swinger->ani->changeStatics2(ST_KSL_MAN);
-					swinger->ani->startAnim(MV_KSL_JUMPMAN, 0, -1);
+					swinger->ani->setStatic(ST_KSL_MAN);
+					swinger->ani->startMovement(MV_KSL_JUMPMAN, 0, -1);
 					swinger->ani->_z = 35;
 
 					g_vars->scene18_manWheelPos = i;
@@ -675,7 +675,7 @@ void sceneHandler18and19_animateRiders() {
 				mv = MV_KSL_SWINGMAN;
 
 			if (mv)
-				swinger->ani->startAnim(mv, 0, -1);
+				swinger->ani->startMovement(mv, 0, -1);
 
 			if (swinger->ani->_movement)
 				swinger->ani->_movement->_counter = 0;
@@ -731,7 +731,7 @@ int sceneHandler18(ExCommand *cmd) {
 				break;
 			}
 
-			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (!ani || !canInteractAny(g_nmi->_aniMan, ani, cmd->_param)) {
 				int picId = g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
@@ -786,7 +786,7 @@ int sceneHandler18(ExCommand *cmd) {
 			g_vars->scene18_wheelFlipper = !g_vars->scene18_wheelFlipper;
 
 			if (!g_vars->scene18_whirlgig->_movement) {
-				g_vars->scene18_whirlgig->startAnim(MV_WHR18_SPIN, 0, -1);
+				g_vars->scene18_whirlgig->startMovement(MV_WHR18_SPIN, 0, -1);
 				g_nmi->_behaviorManager->updateBehaviors();
 
 				break;
@@ -913,7 +913,7 @@ int sceneHandler19(ExCommand *cmd) {
 			g_vars->scene18_wheelFlipper = !g_vars->scene18_wheelFlipper;
 
 			if (!g_vars->scene18_whirlgig->_movement) {
-				g_vars->scene18_whirlgig->startAnim(MV_WHR19_SPIN, 0, -1);
+				g_vars->scene18_whirlgig->startMovement(MV_WHR19_SPIN, 0, -1);
 
 				g_nmi->_behaviorManager->updateBehaviors();
 

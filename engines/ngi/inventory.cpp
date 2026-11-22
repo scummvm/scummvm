@@ -118,7 +118,7 @@ void Inventory2::addItem(int itemId, int count) {
 		_inventoryItems.push_back(InventoryItem(itemId, count));
 }
 
-void Inventory2::addItem2(StaticANIObject *obj) {
+void Inventory2::addItem2(AniObject *obj) {
 	if (getInventoryPoolItemIndexById(obj->_id) >= 0 && getInventoryPoolItemFieldCById(obj->_id) != 2) {
 		addItem(obj->_id, 1);
 		obj->hide();
@@ -164,12 +164,12 @@ void Inventory2::removeItem2(Scene *sceneObj, int itemId, int x, int y, int prio
 			Scene *sc = g_nmi->accessScene(_sceneId);
 
 			if (sc) {
-				StaticANIObject *ani = new StaticANIObject(sc->getStaticANIObject1ById(itemId, -1));
+				AniObject *ani = new AniObject(sc->getStaticANIObject1ById(itemId, -1));
 
 				sceneObj->addStaticANIObject(ani, 1);
 
 				ani->_statics = ani->_staticsList[0];
-				ani->setOXY(x, y);
+				ani->setPos(x, y);
 				ani->_z = priority;
 			}
 		}

@@ -59,7 +59,7 @@ struct MGMItem {
 };
 
 struct MakeQueueStruct {
-	StaticANIObject *ani;
+	AniObject *ani;
 	int staticsId1;
 	int staticsId2;
 	int movementId;
@@ -99,7 +99,7 @@ public:
 	int getIndex(int objId);
 
 	MessageQueue *makeRunQueue(MakeQueueStruct *mkQueue);
-	void putObjectToStatics(StaticANIObject *ani, int staticsId);
+	void putObjectToStatics(AniObject *ani, int staticsId);
 	Common::Point getTransitionSize(int aniId, int staticsId1, int staticsId2);
 	int getStaticsIndexById(int idx, int16 id);
 	int getStaticsIndex(int idx, Statics *st);
@@ -107,7 +107,7 @@ public:
 	int seekWay(int idx, int st1idx, int st2idx, bool flip, bool flop);
 	Common::Point getNumCycles(Movement *mov, int x, int y, int *mult, int *len, int flag);
 	ExCommand2 *createCommand(Movement *mov, int objId, int x1, int y1, Common::Point &x2, Common::Point &y2, int len);
-	MessageQueue *makeQueue(StaticANIObject *ani, int staticsIndex, int staticsId, int *resStatId, Common::Point **pointArr);
+	MessageQueue *makeQueue(AniObject *ani, int staticsIndex, int staticsId, int *resStatId, Common::Point **pointArr);
 	int getFramesCount(int idx, int subIdx, int subOffset, int flag);
 	int getNumMovements(int objectId, int idx1, int idx2);
 };

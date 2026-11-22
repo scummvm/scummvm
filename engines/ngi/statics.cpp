@@ -88,7 +88,7 @@ void StepArray::insertPoints(const PointList &points) {
 	Common::copy(points.begin(), points.end(), _points.begin() + _currPointIndex);
 }
 
-StaticANIObject::StaticANIObject() {
+AniObject::AniObject() {
 	_shadowsOn = 1;
 	_field_30 = 0;
 	_field_34 = 1;
@@ -102,7 +102,7 @@ StaticANIObject::StaticANIObject() {
 	_callback1 = nullptr; // Really NULL
 	_callback2 = nullptr; // Really NULL
 	_sceneId = -1;
-	_someDynamicPhaseIndex = -1;
+	_targetFrame = -1;
 
 	_field_32 = 0;
 	_field_96 = 0;
@@ -110,13 +110,13 @@ StaticANIObject::StaticANIObject() {
 	_objtype = kObjTypeStaticANIObject;
 }
 
-StaticANIObject::~StaticANIObject() {
+AniObject::~AniObject() {
 	Common::for_each(_staticsList.begin(), _staticsList.end(), Common::DefaultDeleter<Statics>());
 	Common::for_each(_movements.begin(), _movements.end(), Common::DefaultDeleter<Movement>());
 	g_nmi->_aniHandler->detachAllObjects();
 }
 
-StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
+AniObject::AniObject(AniObject *src) : GameObject(src) {
 	_shadowsOn = src->_shadowsOn;
 	_field_30 = src->_field_30;
 	_field_34 = 1;
@@ -129,7 +129,7 @@ StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
 	_messageQueueId = 0;
 	_animExFlag = 0;
 	_counter = 0;
-	_someDynamicPhaseIndex = -1;
+	_targetFrame = -1;
 	_sceneId = src->_sceneId;
 	_callback1 = src->_callback1;
 	_callback2 = src->_callback2;
@@ -146,8 +146,8 @@ StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
 
 		if (src->_movements[i]->_currMovement) {
 			// This is weird code. Logically it should be
-			// newmov = new Movement(src->getMovementById(src->getMovementIdById(src->_movements[i]->_id)), this);
-			newmov = new Movement(getMovementById(src->getMovementIdById(src->_movements[i]->_id)), this);
+			// newmov = new Movement(src->getMovement(src->getMovementIdById(src->_movements[i]->_id)), this);
+			newmov = new Movement(getMovement(src->getMovementIdById(src->_movements[i]->_id)), this);
 			newmov->_id = src->_movements[i]->_id;
 		} else {
 			newmov = new Movement(src->_movements[i], nullptr, -1, this);
@@ -157,8 +157,8 @@ StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
 	}
 }
 
-bool StaticANIObject::load(MfcArchive &file) {
-	debugC(5, kDebugLoading, "StaticANIObject::load()");
+bool AniObject::load(MfcArchive &file) {
+	debugC(5, kDebugLoading, "AniObject::load()");
 
 	GameObject::load(file);
 
@@ -200,12 +200,12 @@ bool StaticANIObject::load(MfcArchive &file) {
 
 	debugC(6, kDebugXML, "%% </OLDANI>");
 
-	setOXY(pt.x, pt.y);
+	setPos(pt.x, pt.y);
 
 	return true;
 }
 
-void StaticANIObject::setOXY(int x, int y) {
+void AniObject::setPos(int x, int y) {
 	_x = x;
 	_y = y;
 
@@ -213,10 +213,10 @@ void StaticANIObject::setOXY(int x, int y) {
 		_movement->setPos(x, y);
 }
 
-void StaticANIObject::clearFlags() {
+void AniObject::clearFlags() {
 	_flags = 0;
 
-	deleteFromGlobalMessageQueue();
+	stopQueue();
 	_messageQueueId = 0;
 	_movement = nullptr;
 	_statics = nullptr;
@@ -226,7 +226,7 @@ void StaticANIObject::clearFlags() {
 	_stepArray.clear();
 }
 
-void StaticANIObject::setFlags40(bool state) {
+void AniObject::setFlags40(bool state) {
 	if (state) {
 		_flags |= 0x40;
 	} else {
@@ -235,7 +235,7 @@ void StaticANIObject::setFlags40(bool state) {
 	}
 }
 
-void StaticANIObject::deleteFromGlobalMessageQueue() {
+void AniObject::stopQueue() {
 	while (_messageQueueId) {
 		if (g_nmi->_globalMessageQueueList->getMessageQueueById(_messageQueueId)) {
 			if (!isIdle())
@@ -248,12 +248,12 @@ void StaticANIObject::deleteFromGlobalMessageQueue() {
 	}
 }
 
-bool StaticANIObject::queueMessageQueue(MessageQueue *mq) {
+bool AniObject::setQueue(MessageQueue *mq) {
 	if (_flags & 0x80)
 		return false;
 
 	if (isIdle()) {
-		deleteFromGlobalMessageQueue();
+		stopQueue();
 		_messageQueueId = 0;
 		_messageNum = 0;
 
@@ -274,7 +274,7 @@ bool StaticANIObject::queueMessageQueue(MessageQueue *mq) {
 	return true;
 }
 
-void StaticANIObject::restartMessageQueue(MessageQueue *mq) {
+void AniObject::restartMessageQueue(MessageQueue *mq) {
 	ExCommand *ex = mq->getExCommandByIndex(0);
 	if (ex) {
 		while (ex->_messageKind != 1 || ex->_parentId != _id) {
@@ -291,20 +291,20 @@ void StaticANIObject::restartMessageQueue(MessageQueue *mq) {
 		}
 
 		if (ex) {
-			startAnim(ex->_messageNum, mq->_id, -1);
+			startMovement(ex->_messageNum, mq->_id, -1);
 			mq->deleteExCommandByIndex(0, 1);
 		}
 	}
 }
 
-MessageQueue *StaticANIObject::getMessageQueue() {
+MessageQueue *AniObject::getMessageQueue() {
 	if (this->_messageQueueId <= 0)
 		return nullptr;
 
 	return g_nmi->_globalMessageQueueList->getMessageQueueById(_messageQueueId);
 }
 
-bool StaticANIObject::trySetMessageQueue(int msgNum, int qId) {
+bool AniObject::trySetMessageQueue(int msgNum, int qId) {
 	if (_messageQueueId || !msgNum) {
 		updateGlobalMessageQueue(qId, _id);
 		return false;
@@ -318,7 +318,7 @@ bool StaticANIObject::trySetMessageQueue(int msgNum, int qId) {
 	return true;
 }
 
-void StaticANIObject::startMQIfIdle(int qId, int flag) {
+void AniObject::startMQIfIdle(int qId, int flag) {
 	MessageQueue *msg = g_nmi->_currentScene->getMessageQueueById(qId);
 
 	if (msg && isIdle() && !(_flags & 0x100)) {
@@ -343,14 +343,14 @@ void StaticANIObject::startMQIfIdle(int qId, int flag) {
 			}
 
 			if (ex) {
-				startAnim(ex->_messageNum, mq->_id, -1);
+				startMovement(ex->_messageNum, mq->_id, -1);
 				mq->deleteExCommandByIndex(0, 1);
 			}
 		}
 	}
 }
 
-bool StaticANIObject::isIdle() {
+bool AniObject::isIdle() {
 	assert(_objtype == kObjTypeStaticANIObject);
 
 	if (_messageQueueId) {
@@ -363,7 +363,7 @@ bool StaticANIObject::isIdle() {
 	return true;
 }
 
-Statics *StaticANIObject::getStaticsById(int itemId) {
+Statics *AniObject::getStatic(int itemId) {
 	for (uint i = 0; i < _staticsList.size(); i++)
 		if (_staticsList[i]->_staticsId == itemId)
 			return _staticsList[i];
@@ -371,7 +371,7 @@ Statics *StaticANIObject::getStaticsById(int itemId) {
 	return nullptr;
 }
 
-Statics *StaticANIObject::getStaticsByName(const Common::String &name) {
+Statics *AniObject::getStaticsByName(const Common::String &name) {
 	for (uint i = 0; i < _staticsList.size(); i++)
 		if (_staticsList[i]->_staticsName == name)
 			return _staticsList[i];
@@ -379,7 +379,7 @@ Statics *StaticANIObject::getStaticsByName(const Common::String &name) {
 	return nullptr;
 }
 
-Movement *StaticANIObject::getMovementById(int itemId) {
+Movement *AniObject::getMovement(int itemId) {
 	for (uint i = 0; i < _movements.size(); i++)
 		if (_movements[i]->_id == itemId)
 			return _movements[i];
@@ -387,7 +387,7 @@ Movement *StaticANIObject::getMovementById(int itemId) {
 	return nullptr;
 }
 
-int StaticANIObject::getMovementIdById(int itemId) const {
+int AniObject::getMovementIdById(int itemId) const {
 	for (uint i = 0; i < _movements.size(); i++) {
 		Movement *mov = _movements[i];
 
@@ -403,7 +403,7 @@ int StaticANIObject::getMovementIdById(int itemId) const {
 	return 0;
 }
 
-Movement *StaticANIObject::getMovementByName(const Common::String &name) {
+Movement *AniObject::getMovementByName(const Common::String &name) {
 	for (uint i = 0; i < _movements.size(); i++)
 		if (_movements[i]->_title == name)
 			return _movements[i];
@@ -411,11 +411,11 @@ Movement *StaticANIObject::getMovementByName(const Common::String &name) {
 	return nullptr;
 }
 
-bool StaticANIObject::isPixelHitAtPos(int x, int y) {
+bool AniObject::hit(int x, int y) {
 	return getPixelAtPos(x, y, nullptr, true);
 }
 
-bool StaticANIObject::getPixelAtPos(int x, int y, uint32 *pixel, bool hitOnly) {
+bool AniObject::getPixelAtPos(int x, int y, uint32 *pixel, bool hitOnly) {
 	bool res = false;
 	Picture *pic;
 
@@ -528,19 +528,19 @@ void Movement::draw(bool flipFlag, int angle) {
 	}
 }
 
-void StaticANIObject::loadMovementsPixelData() {
+void AniObject::loadMovements() {
 	for (uint i = 0; i < _movements.size(); i++)
 		_movements[i]->load();
 }
 
-void StaticANIObject::freeMovementsPixelData() {
+void AniObject::unloadMovements() {
 	for (uint i = 0; i < _movements.size(); i++)
 		_movements[i]->unload();
 }
 
-Statics *StaticANIObject::addReverseStatics(Statics *st) {
+Statics *AniObject::addReverseStatics(Statics *st) {
 	assert(st);
-	Statics *res = getStaticsById(st->_staticsId ^ 0x4000);
+	Statics *res = getStatic(st->_staticsId ^ 0x4000);
 
 	if (!res) {
 		res = new Statics(st, true);
@@ -550,14 +550,14 @@ Statics *StaticANIObject::addReverseStatics(Statics *st) {
 	return res;
 }
 
-void StaticANIObject::draw() {
+void AniObject::render() {
 	if ((_flags & 4) == 0)
 		return;
 
-	debugC(6, kDebugDrawing, "StaticANIObject::draw() (%s) [%d] [%d, %d]", transCyrillic(_title), _id, _x, _y);
+	debugC(6, kDebugDrawing, "AniObject::render() (%s) [%d] [%d, %d]", transCyrillic(_title), _id, _x, _y);
 
 	if (_shadowsOn && g_nmi->_currentScene && g_nmi->_currentScene->_shadows
-		&& (getCurrDimensions().x != 1 || getCurrDimensions().y != 1)) {
+		&& (getFullSize().x != 1 || getFullSize().y != 1)) {
 
 		Phase *dyn;
 
@@ -567,7 +567,7 @@ void StaticANIObject::draw() {
 			dyn = _movement->_curPhase;
 
 		if (!dyn) {
-			warning("HACK: StaticANIObject::draw(): dyn is missing");
+			warning("HACK: AniObject::render(): dyn is missing");
 			return;
 		}
 
@@ -613,7 +613,7 @@ void StaticANIObject::draw() {
 	}
 }
 
-void StaticANIObject::draw2() {
+void AniObject::draw2() {
 	debugC(6, kDebugDrawing, "StatciANIObject::draw2(): id: (%s) %d [%d, %d]", transCyrillic(_title), _id, _x, _y);
 
 	if ((_flags & 4) && (_flags & 0x10)) {
@@ -626,7 +626,7 @@ void StaticANIObject::draw2() {
 	}
 }
 
-MovTable *StaticANIObject::countMovements() {
+MovTable *AniObject::countMovements() {
 	GameVar *preloadSubVar = g_nmi->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("PRELOAD");
 
 	if (!preloadSubVar || preloadSubVar->getSubVarsCount() == 0)
@@ -648,14 +648,14 @@ MovTable *StaticANIObject::countMovements() {
 	return movTable;
 }
 
-void StaticANIObject::setSpeed(int speed) {
+void AniObject::setSpeed(int speed) {
 	GameVar *var = g_nmi->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("SpeedUp");
 
 	if (!var)
 		return;
 
 	for (var = var->_subVars; var; var = var->_nextVarObj) {
-		Movement *mov = getMovementById(var->_value.intValue);
+		Movement *mov = getMovement(var->_value.intValue);
 
 		if (mov) {
 			if (speed) {
@@ -669,7 +669,7 @@ void StaticANIObject::setSpeed(int speed) {
 
 }
 
-void StaticANIObject::setAlpha(int alpha) {
+void AniObject::setAlpha(int alpha) {
 	for (uint i = 0; i < _movements.size(); i++)
 		_movements[i]->setAlpha(alpha);
 
@@ -677,12 +677,12 @@ void StaticANIObject::setAlpha(int alpha) {
 		_staticsList[i]->setAlpha(alpha);
 }
 
-void StaticANIObject::initMovements() {
+void AniObject::initMovements() {
 	for (uint i = 0; i < _movements.size(); i++)
 		_movements[i]->removeFirstPhase();
 }
 
-void StaticANIObject::preloadMovements(MovTable *mt) {
+void AniObject::preloadMovements(MovTable *mt) {
 	if (mt) {
 		for (uint i = 0; i < _movements.size(); i++) {
 			Movement *mov = _movements[i];
@@ -695,7 +695,7 @@ void StaticANIObject::preloadMovements(MovTable *mt) {
 	}
 }
 
-Dims StaticANIObject::getCurrDimensions() const {
+Dims AniObject::getFullSize() const {
 	Picture *pic;
 
 	if (_movement)
@@ -710,7 +710,7 @@ Dims StaticANIObject::getCurrDimensions() const {
 	return Dims();
 }
 
-Common::Point StaticANIObject::getSomeXY() const {
+Common::Point AniObject::getSomeXY() const {
 	if (_movement) {
 		return _movement->getCurrDynamicPhaseXY();
 	}
@@ -721,10 +721,10 @@ Common::Point StaticANIObject::getSomeXY() const {
 	error("No someXY found");
 }
 
-void StaticANIObject::update(int counterdiff) {
+void AniObject::update(int counterdiff) {
 	int mqid;
 
-	debugC(6, kDebugAnimation, "StaticANIObject::update() (%s) [%d] [%d, %d] fl: %x", transCyrillic(_title), _id, _x, _y, _flags);
+	debugC(6, kDebugAnimation, "AniObject::update() (%s) [%d] [%d, %d] fl: %x", transCyrillic(_title), _id, _x, _y, _flags);
 
 	if (_flags & 2) {
 		_messageNum--;
@@ -785,9 +785,9 @@ void StaticANIObject::update(int counterdiff) {
 			}
 
 			if (!_movement->setNext(_callback1, _callback2)) {
-				stopAnim_maybe();
+				stopMovement();
 			} else {
-				setOXY(_movement->_x, _movement->_y);
+				setPos(_movement->_x, _movement->_y);
 				_counter = _initialCounter;
 
 				if (dyn->_delay == dyn->_countdown) {
@@ -805,9 +805,9 @@ void StaticANIObject::update(int counterdiff) {
 				return;
 
 			const Common::Point point = _stepArray.getCurrPoint();
-			setOXY(point.x + _x, point.y + _y);
+			setPos(point.x + _x, point.y + _y);
 			_stepArray.gotoNextPoint();
-			if (_someDynamicPhaseIndex == _movement->_curFrame)
+			if (_targetFrame == _movement->_curFrame)
 				adjustSomeXY();
 		} else if (_flags & 0x20) {
 			_flags ^= 0x20;
@@ -835,13 +835,13 @@ void StaticANIObject::update(int counterdiff) {
 	}
 }
 
-void StaticANIObject::updateStepPos() {
+void AniObject::updateStepPos() {
 	Common::Point point;
 
 	int ox = _movement->_x;
 	int oy = _movement->_y;
 
-	point = _movement->getMovementSize(1, _someDynamicPhaseIndex);
+	point = _movement->getMovementSize(1, _targetFrame);
 	int x = point.x;
 	int y = point.y;
 
@@ -852,10 +852,10 @@ void StaticANIObject::updateStepPos() {
 	_statics = _movement->_nextStatic;
 	_movement = nullptr;
 
-	setOXY(ox + x, oy + y);
+	setPos(ox + x, oy + y);
 }
 
-Common::Point *StaticANIObject::calcNextStep(Common::Point *pRes) {
+Common::Point *AniObject::calcNextStep(Common::Point *pRes) {
 	if (!_movement) {
 		pRes->x = 0;
 		pRes->y = 0;
@@ -863,19 +863,19 @@ Common::Point *StaticANIObject::calcNextStep(Common::Point *pRes) {
 		return pRes;
 	}
 
-	Common::Point point = _movement->getMovementSize(1, _someDynamicPhaseIndex);
+	Common::Point point = _movement->getMovementSize(1, _targetFrame);
 
 	int resX = point.x;
 	int resY = point.y;
 
 	int pointN, offset;
 
-	if (_someDynamicPhaseIndex <= 0) {
+	if (_targetFrame <= 0) {
 		pointN = _stepArray.getCurrPointIndex();
 		offset = _stepArray.getPointsCount() - _stepArray.getCurrPointIndex();
 	} else {
 		pointN = _stepArray.getCurrPointIndex();
-		offset = 1 - _movement->_curFrame + _someDynamicPhaseIndex;
+		offset = 1 - _movement->_curFrame + _targetFrame;
 	}
 
 	if (pointN >= 0) {
@@ -891,8 +891,8 @@ Common::Point *StaticANIObject::calcNextStep(Common::Point *pRes) {
 	return pRes;
 }
 
-void StaticANIObject::stopAnim_maybe() {
-	debugC(2, kDebugAnimation, "StaticANIObject::stopAnim_maybe()");
+void AniObject::stopMovement() {
+	debugC(2, kDebugAnimation, "AniObject::stopMovement()");
 
 	if (!(_flags & 1))
 		return;
@@ -904,7 +904,7 @@ void StaticANIObject::stopAnim_maybe() {
 	Common::Point point;
 
 	if (_movement) {
-		setOXY(_movement->_x, _movement->_y);
+		setPos(_movement->_x, _movement->_y);
 
 		if (_flags & 0x40) {
 			if (!_movement->_currMovement) {
@@ -963,7 +963,7 @@ L12:
 	}
 }
 
-void StaticANIObject::adjustSomeXY() {
+void AniObject::adjustSomeXY() {
 	if (_movement) {
 		Common::Point point;
 
@@ -980,11 +980,11 @@ void StaticANIObject::adjustSomeXY() {
 
 		_statics = _movement->_nextStatic;
 		_movement = nullptr;
-		_someDynamicPhaseIndex = -1;
+		_targetFrame = -1;
 	}
 }
 
-MessageQueue *StaticANIObject::changeStatics1(int msgNum) {
+MessageQueue *AniObject::moveToStatic(int msgNum) {
 	g_nmi->_aniHandler->attachObject(_id);
 
 	MessageQueue *mq = g_nmi->_aniHandler->makeQueue(this, msgNum, 0, nullptr, nullptr);
@@ -998,7 +998,7 @@ MessageQueue *StaticANIObject::changeStatics1(int msgNum) {
 		if (_flags & 1)
 			_messageQueueId = mq->_id;
 	} else {
-		if (!queueMessageQueue(mq)) {
+		if (!setQueue(mq)) {
 			delete mq;
 
 			return nullptr;
@@ -1010,16 +1010,16 @@ MessageQueue *StaticANIObject::changeStatics1(int msgNum) {
 	return mq;
 }
 
-void StaticANIObject::changeStatics2(int objId) {
+void AniObject::setStatic(int objId) {
 	_animExFlag = 0;
 
-	deleteFromGlobalMessageQueue();
+	stopQueue();
 
 	if (_movement || _statics) {
 		g_nmi->_aniHandler->attachObject(_id);
 		g_nmi->_aniHandler->putObjectToStatics(this, objId);
 	} else {
-		_statics = getStaticsById(objId);
+		_statics = getStatic(objId);
 	}
 
 	if (_messageQueueId) {
@@ -1030,15 +1030,15 @@ void StaticANIObject::changeStatics2(int objId) {
 	}
 }
 
-void StaticANIObject::hide() {
+void AniObject::hide() {
 	if (!_messageQueueId) {
 		if (_flags & 4)
 			_flags ^= 4;
 	}
 }
 
-void StaticANIObject::show1(int x, int y, int movId, int mqId) {
-	debugC(6, kDebugAnimation, "StaticANIObject::show1(%d, %d, %d, %d)", x, y, movId, mqId);
+void AniObject::show1(int x, int y, int movId, int mqId) {
+	debugC(6, kDebugAnimation, "AniObject::show1(%d, %d, %d, %d)", x, y, movId, mqId);
 
 	if (_messageQueueId)
 		return;
@@ -1046,18 +1046,18 @@ void StaticANIObject::show1(int x, int y, int movId, int mqId) {
 	if (movId == -1) {
 		_flags |= 4u;
 		if (x != -1 && y != -1) {
-			setOXY(x, y);
+			setPos(x, y);
 		}
 
 		return;
 	}
 
-	Movement *mov = getMovementById(movId);
+	Movement *mov = getMovement(movId);
 	if (!mov)
 		return;
 
 	if (x != -1 && y != -1) {
-		setOXY(x, y);
+		setPos(x, y);
 	}
 
 	_statics = mov->_prevStatic;
@@ -1084,7 +1084,7 @@ void StaticANIObject::show1(int x, int y, int movId, int mqId) {
 	_messageQueueId = mqId;
 }
 
-void StaticANIObject::show2(int x, int y, int movementId, int mqId) {
+void AniObject::show2(int x, int y, int movementId, int mqId) {
 	if (movementId == -1) {
 		_flags |= 4u;
 		return;
@@ -1093,7 +1093,7 @@ void StaticANIObject::show2(int x, int y, int movementId, int mqId) {
 	if (!_messageQueueId) {
 		_messageQueueId = mqId;
 
-		Movement *mov = getMovementById(movementId);
+		Movement *mov = getMovement(movementId);
 
 		if (mov) {
 			_statics = mov->_prevStatic;
@@ -1126,12 +1126,12 @@ void StaticANIObject::show2(int x, int y, int movementId, int mqId) {
 	}
 }
 
-void StaticANIObject::playIdle() {
+void AniObject::playIdle() {
 	if (isIdle())
 		adjustSomeXY();
 }
 
-void StaticANIObject::startAnimSteps(int movementId, int messageQueueId, int x, int y, const PointList &points, int someDynamicPhaseIndex) {
+void AniObject::startSliding(int movementId, int messageQueueId, int x, int y, const PointList &points, int someDynamicPhaseIndex) {
 	Movement *mov = nullptr;
 
 	if (!(_flags & 0x80)) {
@@ -1190,7 +1190,7 @@ void StaticANIObject::startAnimSteps(int movementId, int messageQueueId, int x, 
 	}
 
 	point = _movement->getCurrDynamicPhaseXY();
-	setOXY(point.x + newx, point.y + newy);
+	setPos(point.x + newx, point.y + newy);
 
 	if ((_movement->_nextStatic->_staticsId >> 8) & 0x40)
 		_flags |= 8;
@@ -1202,7 +1202,7 @@ void StaticANIObject::startAnimSteps(int movementId, int messageQueueId, int x, 
 	_movement->_curPhase->_countdown = _movement->_curPhase->_delay;
 	_movement->_counter = 0;
 	_counter = _initialCounter;
-	_someDynamicPhaseIndex = someDynamicPhaseIndex;
+	_targetFrame = someDynamicPhaseIndex;
 
 	ExCommand *ex = new ExCommand(_id, 17, 23, 0, 0, movementId, 1, 0, 0, 0);
 
@@ -1211,20 +1211,20 @@ void StaticANIObject::startAnimSteps(int movementId, int messageQueueId, int x, 
 	ex->postMessage();
 }
 
-bool StaticANIObject::startAnimEx(int movid, int parId, int flag1, int flag2) {
-	bool res = startAnim(movid, parId, -1);
+bool AniObject::startAnimEx(int movid, int parId, int flag1, int flag2) {
+	bool res = startMovement(movid, parId, -1);
 	if (res)
 		_animExFlag = 1;
 
-	_someDynamicPhaseIndex = -1;
+	_targetFrame = -1;
 	return res;
 }
 
-bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhaseIdx) {
+bool AniObject::startMovement(int movementId, int messageQueueId, int dynPhaseIdx) {
 	if (_flags & 0x80)
 		return false;
 
-	debugC(4, kDebugAnimation, "StaticANIObject::startAnim(%d, %d, %d) (%s [%d]) [%d, %d]", movementId, messageQueueId, dynPhaseIdx, transCyrillic(_title), _id, _x, _y);
+	debugC(4, kDebugAnimation, "AniObject::startMovement(%d, %d, %d) (%s [%d]) [%d, %d]", movementId, messageQueueId, dynPhaseIdx, transCyrillic(_title), _id, _x, _y);
 
 	if (_messageQueueId) {
 		updateGlobalMessageQueue(messageQueueId, _id);
@@ -1298,7 +1298,7 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 	}
 
 	point = _movement->getCurrDynamicPhaseXY();
-	setOXY(point.x + newx, point.y + newy);
+	setPos(point.x + newx, point.y + newy);
 
 	if (_movement->_nextStatic->_staticsId & 0x4000)
 		_flags |= 8;
@@ -1312,7 +1312,7 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 	_movement->_counter = 0;
 
 	_counter = _initialCounter;
-	_someDynamicPhaseIndex = dynPhaseIdx;
+	_targetFrame = dynPhaseIdx;
 
 	_stepArray.clear();
 
@@ -1326,7 +1326,7 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 	return true;
 }
 
-Common::Point *StaticANIObject::calcStepLen(Common::Point *p) {
+Common::Point *AniObject::calcStepLen(Common::Point *p) {
 	if (_movement) {
 		Common::Point point;
 
@@ -1448,7 +1448,7 @@ Movement::~Movement() {
 	}
 }
 
-Movement::Movement(Movement *src, StaticANIObject *ani) {
+Movement::Movement(Movement *src, AniObject *ani) {
 	_lastFrameSpecialFlag = 0;
 	_flipFlag = src->_flipFlag;
 	_updateFlag1 = src->_updateFlag1;
@@ -1482,7 +1482,7 @@ Movement::Movement(Movement *src, StaticANIObject *ani) {
 	updateCurrDynamicPhase();
 }
 
-Movement::Movement(Movement *src, int *oldIdxs, int newSize, StaticANIObject *ani) : GameObject(src) {
+Movement::Movement(Movement *src, int *oldIdxs, int newSize, AniObject *ani) : GameObject(src) {
 	_lastFrameSpecialFlag = 0;
 	_updateFlag1 = 1;
 	_prevStatic = nullptr;
@@ -1554,8 +1554,8 @@ Movement::Movement(Movement *src, int *oldIdxs, int newSize, StaticANIObject *an
 			_framePosOffsets[i].y = src->_framePosOffsets[i].y;
 		}
 
-		_prevStatic = ani->getStaticsById(src->_prevStatic->_staticsId);
-		_nextStatic = ani->getStaticsById(src->_nextStatic->_staticsId);
+		_prevStatic = ani->getStatic(src->_prevStatic->_staticsId);
+		_nextStatic = ani->getStatic(src->_nextStatic->_staticsId);
 
 		_phases.push_back(_nextStatic);
 
@@ -1574,7 +1574,7 @@ bool Movement::load(MfcArchive &file) {
 	return true;
 }
 
-bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
+bool Movement::load(MfcArchive &file, AniObject *ani) {
 	GameObject::load(file);
 
 	int dynCount = file.readUint16LE();
@@ -1594,10 +1594,10 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 
 		int staticsid = file.readUint16LE();
 
-		_prevStatic = ani->getStaticsById(staticsid);
+		_prevStatic = ani->getStatic(staticsid);
 
 		if (!_prevStatic && (staticsid & 0x4000)) {
-			Statics *s = ani->getStaticsById(staticsid ^ 0x4000);
+			Statics *s = ani->getStatic(staticsid ^ 0x4000);
 			_prevStatic = ani->addReverseStatics(s);
 		}
 
@@ -1606,10 +1606,10 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 
 		int staticsid2 = file.readUint16LE();
 
-		_nextStatic = ani->getStaticsById(staticsid2);
+		_nextStatic = ani->getStatic(staticsid2);
 
 		if (!_nextStatic && (staticsid2 & 0x4000)) {
-			Statics *s = ani->getStaticsById(staticsid2 ^ 0x4000);
+			Statics *s = ani->getStatic(staticsid2 ^ 0x4000);
 			_nextStatic = ani->addReverseStatics(s);
 		}
 
@@ -1634,7 +1634,7 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 	} else {
 		int movid = file.readUint16LE();
 
-		_currMovement = ani->getMovementById(movid);
+		_currMovement = ani->getMovement(movid);
 		_prevStatic = nullptr;
 		_nextStatic = nullptr;
 
@@ -1723,7 +1723,7 @@ Dims Movement::getPhaseSize(int phaseIndex) const {
 	return dyn->getDimensions();
 }
 
-void Movement::initStatics(StaticANIObject *ani) {
+void Movement::initStatics(AniObject *ani) {
 	if (!_currMovement)
 		return;
 

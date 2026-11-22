@@ -96,12 +96,12 @@ void sceneHandler10_clickGum() {
 				}
 			}
 		} else {
-			g_vars->scene10_inflater->changeStatics2(ST_NDV_SIT);
+			g_vars->scene10_inflater->setStatic(ST_NDV_SIT);
 
 			if (g_nmi->getObjectState(sO_Inflater) == g_nmi->getObjectEnumState(sO_Inflater, sO_WithGum))
-				g_vars->scene10_inflater->startAnim(MV_NDV_DENIES, 0, -1);
+				g_vars->scene10_inflater->startMovement(MV_NDV_DENIES, 0, -1);
 			else
-				g_vars->scene10_inflater->startAnim(MV_NDV_DENY_NOGUM, 0, -1);
+				g_vars->scene10_inflater->startMovement(MV_NDV_DENY_NOGUM, 0, -1);
 		}
 	}
 }
@@ -181,7 +181,7 @@ int sceneHandler10(ExCommand *ex) {
 				return 0;
 			}
 
-			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
 
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
 				g_nmi->lift_animateButton(ani);

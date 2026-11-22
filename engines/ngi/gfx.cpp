@@ -268,7 +268,7 @@ void GameObject::setPos(int x, int y) {
 	_y = y;
 }
 
-void GameObject::assignCopyId(Common::Array<StaticANIObject *> *lst) {
+void GameObject::assignCopyId(Common::Array<AniObject *> *lst) {
 	int *buf = (int *)calloc(lst->size() + 2, sizeof(int));
 
 	for (uint i = 0; i < lst->size(); i++) {
@@ -320,7 +320,7 @@ bool GameObject::getPicAniInfo(PicAniInfo &info) {
 	}
 
 	if (_objtype == kObjTypeStaticANIObject) {
-		StaticANIObject *ani = static_cast<StaticANIObject *>(this);
+		AniObject *ani = static_cast<AniObject *>(this);
 
 		info.type = (ani->_messageQueueId << 16) | 1;
 		info.objectId = ani->_id;
@@ -345,7 +345,7 @@ bool GameObject::getPicAniInfo(PicAniInfo &info) {
 			info.dynamicPhaseIndex = ani->_movement->_curFrame;
 		}
 
-		info.someDynamicPhaseIndex = ani->_someDynamicPhaseIndex;
+		info.someDynamicPhaseIndex = ani->_targetFrame;
 
 		return true;
 	}
@@ -355,7 +355,7 @@ bool GameObject::getPicAniInfo(PicAniInfo &info) {
 
 bool GameObject::setPicAniInfo(const PicAniInfo &picAniInfo) {
 	if (!(picAniInfo.type & 3)) {
-		warning("StaticANIObject::setPicAniInfo(): Wrong type: %d", picAniInfo.type);
+		warning("AniObject::setPicAniInfo(): Wrong type: %d", picAniInfo.type);
 
 		return false;
 	}
@@ -371,7 +371,7 @@ bool GameObject::setPicAniInfo(const PicAniInfo &picAniInfo) {
 	}
 
 	if (picAniInfo.type & 1 && _objtype == kObjTypeStaticANIObject) {
-		StaticANIObject *ani = static_cast<StaticANIObject *>(this);
+		AniObject *ani = static_cast<AniObject *>(this);
 
 		ani->_messageQueueId = (picAniInfo.type >> 16) & 0xffff;
 		ani->_copyId = picAniInfo.field_8;
@@ -379,23 +379,23 @@ bool GameObject::setPicAniInfo(const PicAniInfo &picAniInfo) {
 		ani->_objectFlags = picAniInfo.field_24;
 
 		if (picAniInfo.staticsId) {
-			ani->_statics = ani->getStaticsById(picAniInfo.staticsId);
+			ani->_statics = ani->getStatic(picAniInfo.staticsId);
 		} else {
 			ani->_statics = nullptr;
 		}
 
 		if (picAniInfo.movementId) {
-			ani->_movement = ani->getMovementById(picAniInfo.movementId);
+			ani->_movement = ani->getMovement(picAniInfo.movementId);
 			if (ani->_movement)
 				ani->_movement->setCurFrame(picAniInfo.dynamicPhaseIndex);
 		} else {
 			ani->_movement = nullptr;
 		}
 
-		ani->setOXY(picAniInfo.ox, picAniInfo.oy);
+		ani->setPos(picAniInfo.ox, picAniInfo.oy);
 		ani->_z = picAniInfo.priority;
 
-		ani->setSomeDynamicPhaseIndex(picAniInfo.someDynamicPhaseIndex);
+		ani->setTargetFrame(picAniInfo.someDynamicPhaseIndex);
 
 		return true;
 	}
@@ -1130,11 +1130,11 @@ bool Shadows::load(MfcArchive &file) {
 void Shadows::init() {
 	Scene *scene = g_nmi->accessScene(_sceneId);
 
-	StaticANIObject *st;
+	AniObject *st;
 	Movement *mov;
 
 	if (scene && (st = scene->getStaticANIObject1ById(_staticAniObjectId, -1)) != nullptr
-		&& ((mov = st->getMovementById(_movementId)) != nullptr))
+		&& ((mov = st->getMovement(_movementId)) != nullptr))
 		initMovement(mov);
 }
 

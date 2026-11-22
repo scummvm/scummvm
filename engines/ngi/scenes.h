@@ -30,7 +30,7 @@ struct Hanger;
 class AniHandler;
 class MctlLadder;
 struct Ring;
-class StaticANIObject;
+class AniObject;
 struct Swinger;
 struct WalkingBearder;
 
@@ -221,7 +221,7 @@ public:
 	GameVar *swallowedEgg2;
 	GameVar *swallowedEgg3;
 
-	StaticANIObject *sceneIntro_aniin1man;
+	AniObject *sceneIntro_aniin1man;
 	bool sceneIntro_needSleep;
 	bool sceneIntro_needGetup;
 	bool sceneIntro_skipIntro;
@@ -231,28 +231,28 @@ public:
 	PictureObject *scene01_picSc01Osk;
 	PictureObject *scene01_picSc01Osk2;
 
-	StaticANIObject *scene02_guvTheDrawer;
+	AniObject *scene02_guvTheDrawer;
 	int scene02_boxDelay;
 	bool scene02_boxOpen;
 
-	StaticANIObject *scene03_eggeater;
-	StaticANIObject *scene03_domino;
+	AniObject *scene03_eggeater;
+	AniObject *scene03_domino;
 
 	PictureObject *scene04_bottle;
-	StaticANIObject *scene04_hand;
-	StaticANIObject *scene04_plank;
-	StaticANIObject *scene04_clock;
-	StaticANIObject *scene04_spring;
-	StaticANIObject *scene04_mamasha;
-	StaticANIObject *scene04_boot;
-	StaticANIObject *scene04_speaker;
+	AniObject *scene04_hand;
+	AniObject *scene04_plank;
+	AniObject *scene04_clock;
+	AniObject *scene04_spring;
+	AniObject *scene04_mamasha;
+	AniObject *scene04_boot;
+	AniObject *scene04_speaker;
 
 	Common::Point scene04_jumpingKozyawki[20];
 	Common::Point scene04_jumpRotateKozyawki[20];
 
-	Common::List<StaticANIObject *> scene04_kozyawkiObjList;
+	Common::List<AniObject *> scene04_kozyawkiObjList;
 	Common::List<GameObject *> scene04_bottleObjList;
-	Common::List<StaticANIObject *> scene04_kozyawkiAni;
+	Common::List<AniObject *> scene04_kozyawkiAni;
 
 	MctlLadder *scene04_ladder;
 	int scene04_ladderOffset;
@@ -268,7 +268,7 @@ public:
 	int scene04_dudePosY;
 	int scene04_bottleY;
 
-	StaticANIObject *scene04_walkingKozyawka;
+	AniObject *scene04_walkingKozyawka;
 
 	int scene04_speakerVariant;
 	int scene04_speakerPhase;
@@ -288,33 +288,33 @@ public:
 	bool scene04_clockCanGo;
 	bool scene04_objectIsTaken;
 	int scene04_springOffset;
-	StaticANIObject *scene04_lastKozyawka;
+	AniObject *scene04_lastKozyawka;
 	int scene04_springDelay;
 	int scene04_musicStage;
 
 
-	StaticANIObject *scene05_handle;
-	StaticANIObject *scene05_wacko;
-	StaticANIObject *scene05_bigHatch;
+	AniObject *scene05_handle;
+	AniObject *scene05_wacko;
+	AniObject *scene05_bigHatch;
 	int scene05_wackoTicker;
 	int scene05_handleFlipper;
 	int scene05_floatersTicker;
 
-	StaticANIObject *scene06_mumsy;
+	AniObject *scene06_mumsy;
 	int scene06_manX;
 	int scene06_manY;
 	int scene06_ballX;
 	int scene06_ballY;
-	StaticANIObject *scene06_someBall;
-	StaticANIObject *scene06_invHandle;
-	StaticANIObject *scene06_liftButton;
-	StaticANIObject *scene06_ballDrop;
+	AniObject *scene06_someBall;
+	AniObject *scene06_invHandle;
+	AniObject *scene06_liftButton;
+	AniObject *scene06_ballDrop;
 	bool scene06_arcadeEnabled;
 	bool scene06_aimingBall;
-	StaticANIObject *scene06_currentBall;
-	StaticANIObject *scene06_ballInHands;
-	StaticANIObject *scene06_flyingBall;
-	Common::Array<StaticANIObject *> scene06_balls;
+	AniObject *scene06_currentBall;
+	AniObject *scene06_ballInHands;
+	AniObject *scene06_flyingBall;
+	Common::Array<AniObject *> scene06_balls;
 	int scene06_numBallsGiven;
 	int scene06_mumsyNumBalls;
 	int scene06_eggieTimeout;
@@ -332,11 +332,11 @@ public:
 
 	BehaviorMove *scene07_lukeAnim;
 	int scene07_lukePercent;
-	StaticANIObject *scene07_plusMinus;
+	AniObject *scene07_plusMinus;
 
-	StaticANIObject *scene08_batuta;
-	StaticANIObject *scene08_vmyats;
-	StaticANIObject *scene08_clock;
+	AniObject *scene08_batuta;
+	AniObject *scene08_vmyats;
+	AniObject *scene08_clock;
 	bool scene08_inAir;
 	bool scene08_flyingUp;
 	int scene08_onBelly;
@@ -347,33 +347,33 @@ public:
 	int scene08_manOffsetY;
 
 	int scene09_dudeY;
-	StaticANIObject *scene09_flyingBall;
+	AniObject *scene09_flyingBall;
 	int scene09_numSwallenBalls;
-	StaticANIObject *scene09_gulper;
-	StaticANIObject *scene09_spitter;
-	StaticANIObject *scene09_grit;
+	AniObject *scene09_gulper;
+	AniObject *scene09_spitter;
+	AniObject *scene09_grit;
 	bool scene09_gulperIsPresent;
 	bool scene09_dudeIsOnLadder;
 	int scene09_interactingHanger;
 	int scene09_intHangerPhase;
 	int scene09_intHangerMaxPhase;
-	Common::Array<StaticANIObject *> scene09_flyingBalls;
+	Common::Array<AniObject *> scene09_flyingBalls;
 	Common::Array<Hanger *> scene09_hangers;
-	Common::Array<StaticANIObject *> scene09_sceneBalls;
+	Common::Array<AniObject *> scene09_sceneBalls;
 	int scene09_numMovingHangers;
 	int scene09_clickY;
 	Common::Point scene09_hangerOffsets[4];
 
-	StaticANIObject *scene10_gum;
-	StaticANIObject *scene10_packet;
-	StaticANIObject *scene10_packet2;
-	StaticANIObject *scene10_inflater;
+	AniObject *scene10_gum;
+	AniObject *scene10_packet;
+	AniObject *scene10_packet2;
+	AniObject *scene10_inflater;
 	PictureObject *scene10_ladder;
 	int scene10_hasGum;
 
-	StaticANIObject *scene11_swingie;
-	StaticANIObject *scene11_boots;
-	StaticANIObject *scene11_dudeOnSwing;
+	AniObject *scene11_swingie;
+	AniObject *scene11_boots;
+	AniObject *scene11_dudeOnSwing;
 	PictureObject *scene11_hint;
 	AniHandler scene11_aniHandler;
 	bool scene11_arcadeIsOn;
@@ -400,15 +400,15 @@ public:
 	int scene12_fly;
 	int scene12_flyCountdown;
 
-	StaticANIObject *scene13_whirlgig;
-	StaticANIObject *scene13_guard;
-	StaticANIObject *scene13_handleR;
-	StaticANIObject *scene13_handleL;
-	StaticANIObject *scene13_bridge;
+	AniObject *scene13_whirlgig;
+	AniObject *scene13_guard;
+	AniObject *scene13_handleR;
+	AniObject *scene13_handleL;
+	AniObject *scene13_bridge;
 	bool scene13_guardDirection;
 	int scene13_dudeX;
 
-	StaticANIObject *scene14_grandma;
+	AniObject *scene14_grandma;
 	int scene14_sceneDeltaX;
 	int scene14_sceneDeltaY;
 	bool scene14_arcadeIsOn;
@@ -417,9 +417,9 @@ public:
 	bool scene14_dudeCanKick;
 	int scene14_sceneDiffX;
 	int scene14_sceneDiffY;
-	StaticANIObject *scene14_pink;
-	StaticANIObject *scene14_flyingBall;
-	Common::List<StaticANIObject *> scene14_balls;
+	AniObject *scene14_pink;
+	AniObject *scene14_flyingBall;
+	Common::List<AniObject *> scene14_balls;
 	bool scene14_grandmaIsHere;
 	int scene14_dudeX;
 	int scene14_dudeY;
@@ -434,18 +434,18 @@ public:
 	Common::Point scene14_mouseCursorPos;
 
 	int scene15_chantingCountdown;
-	StaticANIObject *scene15_plusminus;
+	AniObject *scene15_plusminus;
 	PictureObject *scene15_ladder;
-	StaticANIObject *scene15_boot;
+	AniObject *scene15_boot;
 
-	Common::List<StaticANIObject *> scene16_figures;
-	StaticANIObject *scene16_walkingBoy;
-	StaticANIObject *scene16_walkingGirl;
+	Common::List<AniObject *> scene16_figures;
+	AniObject *scene16_walkingBoy;
+	AniObject *scene16_walkingGirl;
 	int scene16_walkingCount;
-	StaticANIObject *scene16_wire;
-	StaticANIObject *scene16_mug;
-	StaticANIObject *scene16_jettie;
-	StaticANIObject *scene16_boot;
+	AniObject *scene16_wire;
+	AniObject *scene16_mug;
+	AniObject *scene16_jettie;
+	AniObject *scene16_boot;
 	bool scene16_girlIsLaughing;
 	int scene16_sound;
 	bool scene16_placeIsOccupied;
@@ -454,12 +454,12 @@ public:
 	bool scene17_sugarIsShown;
 	int scene17_sceneOldEdgeX;
 	int scene17_flyCountdown;
-	StaticANIObject *scene17_hand;
+	AniObject *scene17_hand;
 	bool scene17_handPhase;
 	int scene17_sceneEdgeX;
 
 	bool scene18_inScene18p1;
-	StaticANIObject *scene18_whirlgig;
+	AniObject *scene18_whirlgig;
 	Common::Array<Swinger *> scene18_swingers;
 	int scene18_wheelCenterX;
 	int scene18_wheelCenterY;
@@ -482,9 +482,9 @@ public:
 	int scene18_jumpAngle;
 	bool scene18_manIsReady;
 	bool scene18_enteredTrubaRight;
-	StaticANIObject *scene18_boy;
-	StaticANIObject *scene18_girl;
-	StaticANIObject *scene18_domino;
+	AniObject *scene18_boy;
+	AniObject *scene18_girl;
+	AniObject *scene18_domino;
 	int scene18_boyJumpX;
 	int scene18_boyJumpY;
 	int scene18_girlJumpX;
@@ -493,62 +493,62 @@ public:
 	bool scene19_enteredTruba3;
 
 	int scene20_fliesCountdown;
-	StaticANIObject *scene20_grandma;
+	AniObject *scene20_grandma;
 
-	StaticANIObject *scene21_giraffeBottom;
+	AniObject *scene21_giraffeBottom;
 	int scene21_giraffeBottomX;
 	int scene21_giraffeBottomY;
 	int scene21_pipeIsOpen;
 	double scene21_wigglePos;
 	bool scene21_wiggleTrigger;
 
-	StaticANIObject *scene22_bag;
-	StaticANIObject *scene22_giraffeMiddle;
+	AniObject *scene22_bag;
+	AniObject *scene22_giraffeMiddle;
 	bool scene22_dudeIsOnStool;
 	bool scene22_interactionIsDisabled;
 	bool scene22_craneIsOut;
 	int scene22_numBagFalls;
 
-	StaticANIObject *scene23_calend0;
-	StaticANIObject *scene23_calend1;
-	StaticANIObject *scene23_calend2;
-	StaticANIObject *scene23_calend3;
+	AniObject *scene23_calend0;
+	AniObject *scene23_calend1;
+	AniObject *scene23_calend2;
+	AniObject *scene23_calend3;
 	bool scene23_topReached;
 	bool scene23_isOnStool;
 	int scene23_someVar;
-	StaticANIObject *scene23_giraffeTop;
-	StaticANIObject *scene23_giraffee;
+	AniObject *scene23_giraffeTop;
+	AniObject *scene23_giraffee;
 
 	bool scene24_jetIsOn;
 	bool scene24_flowIsLow;
 	bool scene24_waterIsOn;
-	StaticANIObject *scene24_water;
-	StaticANIObject *scene24_jet;
-	StaticANIObject *scene24_drop;
+	AniObject *scene24_water;
+	AniObject *scene24_jet;
+	AniObject *scene24_drop;
 
-	StaticANIObject *scene25_water;
-	StaticANIObject *scene25_board;
-	StaticANIObject *scene25_drop;
+	AniObject *scene25_water;
+	AniObject *scene25_board;
+	AniObject *scene25_drop;
 	bool scene25_dudeIsOnBoard;
 	bool scene25_waterIsPresent;
 	bool scene25_boardIsSelectable;
 	bool scene25_beardersAreThere;
 	int scene25_beardersCounter;
-	Common::Array<StaticANIObject *> scene25_bearders;
+	Common::Array<AniObject *> scene25_bearders;
 	bool scene25_sneezeFlipper;
 
-	StaticANIObject *scene26_chhi;
-	StaticANIObject *scene26_drop;
+	AniObject *scene26_chhi;
+	AniObject *scene26_drop;
 	PictureObject *scene26_sockPic;
-	StaticANIObject *scene26_sock;
-	StaticANIObject *scene26_activeVent;
+	AniObject *scene26_sock;
+	AniObject *scene26_activeVent;
 
 	PictureObject *scene27_hitZone;
-	StaticANIObject *scene27_driver;
-	StaticANIObject *scene27_maid;
-	StaticANIObject *scene27_batHandler;
+	AniObject *scene27_driver;
+	AniObject *scene27_maid;
+	AniObject *scene27_batHandler;
 	bool scene27_driverHasVent;
-	StaticANIObject *scene27_bat;
+	AniObject *scene27_bat;
 	bool scene27_dudeIsAiming;
 	bool scene27_maxPhaseReached;
 	bool scene27_wipeIsNeeded;
@@ -558,7 +558,7 @@ public:
 	int scene27_aimStartX;
 	int scene27_aimStartY;
 	int scene27_launchPhase;
-	Common::Array<StaticANIObject *> scene27_balls;
+	Common::Array<AniObject *> scene27_balls;
 	Common::Array<Bat *> scene27_bats;
 	Common::Array<Bat *> scene27_var07;
 
@@ -570,14 +570,14 @@ public:
 	bool scene28_headBeardedFlipper;
 	bool scene28_lift6inside;
 
-	StaticANIObject *scene29_porter;
-	StaticANIObject *scene29_shooter1;
-	StaticANIObject *scene29_shooter2;
-	StaticANIObject *scene29_ass;
-	Common::Array<StaticANIObject *> scene29_greenBalls;
-	Common::Array<StaticANIObject *> scene29_redBalls;
-	Common::Array<StaticANIObject *> scene29_flyingRedBalls;
-	Common::Array<StaticANIObject *> scene29_flyingGreenBalls;
+	AniObject *scene29_porter;
+	AniObject *scene29_shooter1;
+	AniObject *scene29_shooter2;
+	AniObject *scene29_ass;
+	Common::Array<AniObject *> scene29_greenBalls;
+	Common::Array<AniObject *> scene29_redBalls;
+	Common::Array<AniObject *> scene29_flyingRedBalls;
+	Common::Array<AniObject *> scene29_flyingGreenBalls;
 	bool scene29_manIsRiding;
 	bool scene29_arcadeIsOn;
 	bool scene29_reachedFarRight;
@@ -593,12 +593,12 @@ public:
 	int scene29_manY;
 	AniHandler scene29_aniHandler;
 
-	StaticANIObject *scene30_leg;
+	AniObject *scene30_leg;
 	int scene30_liftFlag;
 
 	int scene31_chantingCountdown;
-	StaticANIObject *scene31_cactus;
-	StaticANIObject *scene31_plusMinus;
+	AniObject *scene31_cactus;
+	AniObject *scene31_plusMinus;
 
 	bool scene32_flagIsWaving;
 	bool scene32_flagNeedsStopping;
@@ -606,54 +606,54 @@ public:
 	int scene32_cactusCounter;
 	bool scene32_dudeOnLadder;
 	bool scene32_cactusIsGrowing;
-	StaticANIObject *scene32_flag;
-	StaticANIObject *scene32_cactus;
-	StaticANIObject *scene32_massOrange;
-	StaticANIObject *scene32_massBlue;
-	StaticANIObject *scene32_massGreen;
-	StaticANIObject *scene32_button;
+	AniObject *scene32_flag;
+	AniObject *scene32_cactus;
+	AniObject *scene32_massOrange;
+	AniObject *scene32_massBlue;
+	AniObject *scene32_massGreen;
+	AniObject *scene32_button;
 
-	StaticANIObject *scene33_mug;
-	StaticANIObject *scene33_jettie;
-	StaticANIObject *scene33_cube;
+	AniObject *scene33_mug;
+	AniObject *scene33_jettie;
+	AniObject *scene33_cube;
 	int scene33_cubeX;
 	bool scene33_handleIsDown;
 	int scene33_ventsX[9];
 	int scene33_ventsState[9];
 
-	StaticANIObject *scene34_cactus;
-	StaticANIObject *scene34_vent;
-	StaticANIObject *scene34_hatch;
-	StaticANIObject *scene34_boot;
+	AniObject *scene34_cactus;
+	AniObject *scene34_vent;
+	AniObject *scene34_hatch;
+	AniObject *scene34_boot;
 	bool scene34_dudeClimbed;
 	bool scene34_dudeOnBoard;
 	bool scene34_dudeOnCactus;
 	int scene34_fliesCountdown;
 
-	StaticANIObject *scene35_hose;
-	StaticANIObject *scene35_bellyInflater;
+	AniObject *scene35_hose;
+	AniObject *scene35_bellyInflater;
 	int scene35_flowCounter;
 	int scene35_fliesCounter;
 
-	StaticANIObject *scene36_rotohrust;
-	StaticANIObject *scene36_scissors;
+	AniObject *scene36_rotohrust;
+	AniObject *scene36_scissors;
 
 	Common::Array<Ring *> scene37_rings;
 	int scene37_lastDudeX;
 	bool scene37_pipeIsOpen;
-	StaticANIObject *scene37_plusMinus1;
-	StaticANIObject *scene37_plusMinus2;
-	StaticANIObject *scene37_plusMinus3;
+	AniObject *scene37_plusMinus1;
+	AniObject *scene37_plusMinus2;
+	AniObject *scene37_plusMinus3;
 	int scene37_soundFlipper;
 	int scene37_dudeX;
 
-	StaticANIObject *scene38_boss;
-	StaticANIObject *scene38_tally;
-	StaticANIObject *scene38_shorty;
-	StaticANIObject *scene38_domino0;
-	StaticANIObject *scene38_dominos;
-	StaticANIObject *scene38_domino1;
-	StaticANIObject *scene38_bottle;
+	AniObject *scene38_boss;
+	AniObject *scene38_tally;
+	AniObject *scene38_shorty;
+	AniObject *scene38_domino0;
+	AniObject *scene38_dominos;
+	AniObject *scene38_domino1;
+	AniObject *scene38_bottle;
 	int scene38_bossCounter;
 	int scene38_lastBossAnim;
 	int scene38_bossAnimCounter;
@@ -673,7 +673,7 @@ public:
 };
 
 struct Ring {
-	StaticANIObject *ani;
+	AniObject *ani;
 	int x;
 	int y;
 	int numSubRings;

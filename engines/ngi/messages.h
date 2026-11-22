@@ -145,7 +145,7 @@ class MessageQueue : public CObject {
 	void setParamInt(int key1, int key2);
 
 	/** `ani` will own `this` if `chain` returns true */
-	bool chain(StaticANIObject *ani);
+	bool chain(AniObject *ani);
 	void update();
 	void sendNextCommand();
 	void finish();
@@ -155,7 +155,7 @@ class MessageQueue : public CObject {
 	bool checkGlobalExCommandList1();
 	bool checkGlobalExCommandList2();
 
-	int calcDuration(StaticANIObject *obj);
+	int calcDuration(AniObject *obj);
 	void changeParam28ForObjectId(int objId, int oldParam28, int newParam28);
 
 	int activateExCommandsByKind(int kind);
@@ -198,7 +198,7 @@ void clearGlobalMessageQueueList();
 void clearGlobalMessageQueueList1();
 
 bool chainQueue(int queueId, int flags);
-bool chainObjQueue(StaticANIObject *obj, int queueId, int flags);
+bool chainObjQueue(AniObject *obj, int queueId, int flags);
 void postExCommand(int parentId, int keyCode, int x, int y, int f20, int f16);
 
 } // End of namespace NGI

@@ -39,11 +39,11 @@ struct BehaviorAnim {
 	Common::Array<BehaviorMove> _behaviorMoves;
 
 	BehaviorAnim();
-	BehaviorAnim(GameVar *var, Scene *sc, StaticANIObject *ani, int *minDelay);
+	BehaviorAnim(GameVar *var, Scene *sc, AniObject *ani, int *minDelay);
 };
 
 struct BehaviorInfo {
-	StaticANIObject *_ani;
+	AniObject *_ani;
 	int _staticsId;
 	int _counter;
 	int _counterMax;
@@ -56,7 +56,7 @@ struct BehaviorInfo {
 
 	void clear();
 	void initAmbientBehavior(GameVar *var, Scene *sc);
-	void initObjectBehavior(GameVar *var, Scene *sc, StaticANIObject *ani);
+	void initObjectBehavior(GameVar *var, Scene *sc, AniObject *ani);
 };
 
 class BehaviorManager : public CObject {
@@ -74,13 +74,13 @@ class BehaviorManager : public CObject {
 
 	void updateBehaviors();
 	void updateBehavior(BehaviorInfo &behaviorInfo, BehaviorAnim &entry);
-	void updateStaticAniBehavior(StaticANIObject &ani, int delay, const BehaviorAnim &beh);
+	void updateStaticAniBehavior(AniObject &ani, int delay, const BehaviorAnim &beh);
 
-	bool setBehaviorEnabled(StaticANIObject *obj, int aniId, int quId, int flag);
+	bool setBehaviorEnabled(AniObject *obj, int aniId, int quId, int flag);
 
-	void setFlagByStaticAniObject(StaticANIObject *ani, int flag);
+	void setFlagByStaticAniObject(AniObject *ani, int flag);
 
-	BehaviorMove *getBehaviorMoveByMessageQueueDataId(StaticANIObject *ani, int id1, int id2);
+	BehaviorMove *getBehaviorMoveByMessageQueueDataId(AniObject *ani, int id1, int id2);
 };
 
 } // End of namespace NGI

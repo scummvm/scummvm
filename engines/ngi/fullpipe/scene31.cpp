@@ -43,7 +43,7 @@ void scene31_initScene(Scene *sc) {
 		Scene *oldsc = g_nmi->_currentScene;
 		g_nmi->_currentScene = sc;
 
-		g_vars->scene31_cactus->changeStatics2(ST_CTS31_GROWN2);
+		g_vars->scene31_cactus->setStatic(ST_CTS31_GROWN2);
 		g_vars->scene31_cactus->_z = 22;
 
 		g_nmi->_currentScene = oldsc;
@@ -54,9 +54,9 @@ void scene31_initScene(Scene *sc) {
 	g_vars->scene31_plusMinus = sc->getStaticANIObject1ById(ANI_PLUSMINUS, -1);
 
 	if (g_nmi->getObjectState(sO_Guard_3) == g_nmi->getObjectEnumState(sO_Guard_3, sO_Off))
-		g_vars->scene31_plusMinus->_statics = g_vars->scene31_plusMinus->getStaticsById(ST_PMS_MINUS);
+		g_vars->scene31_plusMinus->_statics = g_vars->scene31_plusMinus->getStatic(ST_PMS_MINUS);
 	else
-		g_vars->scene31_plusMinus->_statics = g_vars->scene31_plusMinus->getStaticsById(ST_PMS_PLUS);
+		g_vars->scene31_plusMinus->_statics = g_vars->scene31_plusMinus->getStatic(ST_PMS_PLUS);
 }
 
 void sceneHandler31_testCactus(ExCommand *cmd) {
@@ -90,9 +90,9 @@ int sceneHandler31(ExCommand *cmd) {
 
 	case MSG_SC31_PULL:
 		if ( g_vars->scene31_plusMinus->_statics->_staticsId == ST_PMS_MINUS)
-			g_vars->scene31_plusMinus->_statics = g_vars->scene31_plusMinus->getStaticsById(ST_PMS_PLUS);
+			g_vars->scene31_plusMinus->_statics = g_vars->scene31_plusMinus->getStatic(ST_PMS_PLUS);
 		else
-			g_vars->scene31_plusMinus->_statics = g_vars->scene31_plusMinus->getStaticsById(ST_PMS_MINUS);
+			g_vars->scene31_plusMinus->_statics = g_vars->scene31_plusMinus->getStatic(ST_PMS_MINUS);
 
 		break;
 

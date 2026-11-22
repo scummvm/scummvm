@@ -119,7 +119,7 @@ void Sound::setPanAndVolumeByStaticAni() {
 	if (!_objectId)
 		return;
 
-	StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(_objectId, -1);
+	AniObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(_objectId, -1);
 	if (!ani)
 		return;
 

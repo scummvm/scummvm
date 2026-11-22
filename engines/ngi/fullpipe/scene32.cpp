@@ -49,21 +49,21 @@ void scene32_initScene(Scene *sc) {
 	g_vars->scene32_massGreen = sc->getStaticANIObject1ById(ANI_TESTO_GREEN, -1);
 	g_vars->scene32_button = sc->getStaticANIObject1ById(ANI_BUTTON_32, -1);
 
-	g_vars->scene32_massOrange->startAnim(MV_TSTO_FLOW, 0, -1);
+	g_vars->scene32_massOrange->startMovement(MV_TSTO_FLOW, 0, -1);
 	g_vars->scene32_massOrange->_movement->setCurFrame(15);
 
-	g_vars->scene32_massGreen->startAnim(MV_TSTG_FLOW, 0, -1);
+	g_vars->scene32_massGreen->startMovement(MV_TSTG_FLOW, 0, -1);
 	g_vars->scene32_massGreen->_movement->setCurFrame(26);
 
 	Scene *oldsc = g_nmi->_currentScene;
-	StaticANIObject *ani;
+	AniObject *ani;
 
 	if (g_nmi->getObjectState(sO_ClockHandle) == g_nmi->getObjectEnumState(sO_ClockHandle, sO_In_32_Lies)) {
 		ani = sc->getStaticANIObject1ById(ANI_INV_HANDLE, -1);
 		if (ani) {
 			g_nmi->_currentScene = sc;
 
-			ani->changeStatics2(ST_HDL_LAID);
+			ani->setStatic(ST_HDL_LAID);
 		}
 	} else {
 		if (g_nmi->getObjectState(sO_ClockHandle) == g_nmi->getObjectEnumState(sO_ClockHandle, sO_In_32_Sticks)) {
@@ -72,9 +72,9 @@ void scene32_initScene(Scene *sc) {
 			g_nmi->_currentScene = sc;
 
 			if (ani)
-				ani->changeStatics2(ST_HDL_PLUGGED);
+				ani->setStatic(ST_HDL_PLUGGED);
 
-			g_vars->scene32_button->changeStatics2(ST_BTN32_ON);
+			g_vars->scene32_button->setStatic(ST_BTN32_ON);
 		}
 	}
 
@@ -94,7 +94,7 @@ void scene32_initScene(Scene *sc) {
 	if (g_nmi->getObjectState(sO_Cactus) == g_nmi->getObjectEnumState(sO_Cactus, sO_HasGrown)) {
 		g_nmi->_currentScene = sc;
 
-		g_vars->scene32_cactus->changeStatics2(ST_CTS_GROWUP);
+		g_vars->scene32_cactus->setStatic(ST_CTS_GROWUP);
 		g_vars->scene32_cactus->_z = 22;
 
 		g_nmi->_currentScene = oldsc;
@@ -142,7 +142,7 @@ void sceneHandler32_spin(ExCommand *cmd) {
 			mq->insertExCommandAt(1, newex);
 		}
 
-		g_vars->scene32_cactus->changeStatics2(ST_CTS_GROWUP);
+		g_vars->scene32_cactus->setStatic(ST_CTS_GROWUP);
 
 		chainQueue(QU_CTS_BACK, 1);
 
@@ -163,15 +163,15 @@ void sceneHandler32_spin(ExCommand *cmd) {
 }
 
 void sceneHandler32_startFlagLeft() {
-	g_vars->scene32_flag->changeStatics2(ST_FLG_NORM);
-	g_vars->scene32_flag->startAnim(MV_FLG_STARTL, 0, -1);
+	g_vars->scene32_flag->setStatic(ST_FLG_NORM);
+	g_vars->scene32_flag->startMovement(MV_FLG_STARTL, 0, -1);
 
 	g_vars->scene32_flagIsWaving = true;
 }
 
 void sceneHandler32_startFlagRight() {
-	g_vars->scene32_flag->changeStatics2(ST_FLG_NORM);
-	g_vars->scene32_flag->startAnim(MV_FLG_STARTR, 0, -1);
+	g_vars->scene32_flag->setStatic(ST_FLG_NORM);
+	g_vars->scene32_flag->startMovement(MV_FLG_STARTR, 0, -1);
 
 	g_vars->scene32_flagIsWaving = true;
 }
@@ -204,20 +204,20 @@ void sceneHandler32_trySit(ExCommand *cmd) {
 
 void sceneHandler32_buttonPush() {
 	if (g_nmi->getObjectState(sO_ClockHandle) == g_nmi->getObjectEnumState(sO_ClockHandle, sO_In_32_Sticks)) {
-		StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_INV_HANDLE, -1);
+		AniObject *ani = g_nmi->_currentScene->getStaticANIObject1ById(ANI_INV_HANDLE, -1);
 		if (ani)
-			ani->changeStatics2(ST_HDL_PLUGGED);
+			ani->setStatic(ST_HDL_PLUGGED);
 
 		chainQueue(QU_SC32_FALLHANDLE, 1);
 
-		g_vars->scene32_button->changeStatics2(ST_BTN32_OFF);
+		g_vars->scene32_button->setStatic(ST_BTN32_OFF);
 	}
 }
 
 void sceneHandler32_installHandle() {
 	chainQueue(QU_SC32_SHOWHANDLE, 0);
 
-	g_vars->scene32_button->changeStatics2(ST_BTN32_ON);
+	g_vars->scene32_button->setStatic(ST_BTN32_ON);
 }
 
 void sceneHandler32_animateCactus() {
@@ -238,7 +238,7 @@ void sceneHandler32_ladderLogic(ExCommand *cmd) {
 
 	mq->setFlags(mq->getFlags() | 1);
 
-	g_nmi->_aniMan->changeStatics2(ST_MAN_STANDLADDER);
+	g_nmi->_aniMan->setStatic(ST_MAN_STANDLADDER);
 	if (!mq->chain(g_nmi->_aniMan))
 		delete mq;
 
@@ -258,7 +258,7 @@ void sceneHandler32_potLogic(ExCommand *cmd) {
 
 		mq->addExCommandToEnd(ex);
 
-		StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+		AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 		if (!ani || ani->_id != ANI_KADKA)
 			mq->addExCommandToEnd(cmd->createClone());
@@ -370,16 +370,16 @@ int sceneHandler32(ExCommand *cmd) {
 		if (!g_vars->scene32_flag->_movement) {
 			if (g_vars->scene32_flagIsWaving) {
 				if (g_vars->scene32_flag->_statics->_staticsId == ST_FLG_RIGHT)
-					g_vars->scene32_flag->startAnim(MV_FLG_CYCLER, 0, -1);
+					g_vars->scene32_flag->startMovement(MV_FLG_CYCLER, 0, -1);
 				else if (g_vars->scene32_flag->_statics->_staticsId == ST_FLG_LEFT)
-					g_vars->scene32_flag->startAnim(MV_FLG_CYCLEL, 0, -1);
+					g_vars->scene32_flag->startMovement(MV_FLG_CYCLEL, 0, -1);
 			}
 
 			if (g_vars->scene32_flagNeedsStopping && !g_vars->scene32_flagIsWaving) {
 				if (g_vars->scene32_flag->_statics->_staticsId == ST_FLG_RIGHT)
-					g_vars->scene32_flag->startAnim(MV_FLG_STOPR, 0, -1);
+					g_vars->scene32_flag->startMovement(MV_FLG_STOPR, 0, -1);
 				else if (g_vars->scene32_flag->_statics->_staticsId == ST_FLG_LEFT)
-					g_vars->scene32_flag->startAnim(MV_FLG_STOPL, 0, -1);
+					g_vars->scene32_flag->startMovement(MV_FLG_STOPL, 0, -1);
 
 				g_vars->scene32_flagNeedsStopping = false;
 			}
@@ -410,7 +410,7 @@ int sceneHandler32(ExCommand *cmd) {
 		}
 
 		if (!g_vars->scene32_dudeIsSitting || g_nmi->_aniMan->_movement) {
-			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
 				g_nmi->lift_animateButton(ani);

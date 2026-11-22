@@ -37,7 +37,7 @@
 namespace NGI {
 
 struct Bat {
-	StaticANIObject *ani;
+	AniObject *ani;
 	double power;
 	double angle;
 	double currX;
@@ -60,7 +60,7 @@ void scene27_initScene(Scene *sc) {
 	g_vars->scene27_bat = sc->getStaticANIObject1ById(ANI_BITA, -1);
 
 	for (int i = 0; i < 4; i++) {
-		StaticANIObject *newbat = new StaticANIObject(g_vars->scene27_bat);
+		AniObject *newbat = new AniObject(g_vars->scene27_bat);
 
 		g_vars->scene27_balls.push_back(newbat);
 
@@ -79,11 +79,11 @@ void scene27_initScene(Scene *sc) {
 	g_nmi->_currentScene = sc;
 
 	if (g_nmi->getObjectState(sO_Maid) == g_nmi->getObjectEnumState(sO_Maid, sO_WithSwab)) {
-		g_vars->scene27_maid->changeStatics2(ST_MID_SWAB2);
+		g_vars->scene27_maid->setStatic(ST_MID_SWAB2);
 	} else if (g_nmi->getObjectState(sO_Maid) == g_nmi->getObjectEnumState(sO_Maid, sO_WithBroom)) {
-		g_vars->scene27_maid->changeStatics2(ST_MID_BROOM);
+		g_vars->scene27_maid->setStatic(ST_MID_BROOM);
 	} else if (g_nmi->getObjectState(sO_Maid) == g_nmi->getObjectEnumState(sO_Maid, sO_WithSpade)) {
-		g_vars->scene27_maid->changeStatics2(ST_MID_SPADE);
+		g_vars->scene27_maid->setStatic(ST_MID_SPADE);
 	}
 
 	g_nmi->_currentScene = oldsc;
@@ -108,7 +108,7 @@ int scene27_updateCursor() {
 }
 
 void sceneHandler27_driverGiveVent() {
-	g_vars->scene27_driver->changeStatics2(ST_DRV_VENT);
+	g_vars->scene27_driver->setStatic(ST_DRV_VENT);
 	g_vars->scene27_driver->startMQIfIdle(QU_DRV_GIVEVENT, 1);
 
 	g_vars->scene27_driverHasVent = false;
@@ -124,7 +124,7 @@ void sceneHandler27_winArcade() {
 		g_vars->scene27_dudeIsAiming = false;
 
 		g_nmi->_aniMan->_callback2 = nullptr; // Really NULL
-		g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT);
+		g_nmi->_aniMan->setStatic(ST_MAN_RIGHT);
 
 		sceneHandler27_driverGiveVent();
 	}
@@ -134,7 +134,7 @@ void sceneHandler27_takeVent() {
 	if (g_nmi->getObjectState(sO_Maid) == g_nmi->getObjectEnumState(sO_Maid, sO_WithSwab)) {
 		if (g_vars->scene27_maid->isIdle()) {
 			if (g_vars->scene27_maid->_flags & 4) {
-				g_vars->scene27_maid->changeStatics2(ST_MID_SWAB2);
+				g_vars->scene27_maid->setStatic(ST_MID_SWAB2);
 				g_vars->scene27_maid->startMQIfIdle(QU_MID_CLEANVENT, 1);
 			}
 		}
@@ -178,7 +178,7 @@ void sceneHandler27_throwBat() {
 
 	g_nmi->_aniMan->_callback2 = sceneHandler27_aniManCallback;
 
-	g_nmi->_aniMan->startAnim(MV_MAN27_THROWBET, 0, -1);
+	g_nmi->_aniMan->startMovement(MV_MAN27_THROWBET, 0, -1);
 
 	getCurrSceneSc2MotionController()->deactivate();
 	getGameLoaderInteractionController()->disableFlag24();
@@ -218,10 +218,10 @@ void sceneHandler27_maidSwab() {
 	return;
 #endif
 	if (g_nmi->getObjectState(sO_Maid) == g_nmi->getObjectEnumState(sO_Maid, sO_WithSwab))
-		g_vars->scene27_maid->changeStatics2(ST_MID_SWAB);
+		g_vars->scene27_maid->setStatic(ST_MID_SWAB);
 }
 
-void sceneHandler27_startBat(StaticANIObject *bat) {
+void sceneHandler27_startBat(AniObject *bat) {
 	debugC(2, kDebugSceneLogic, "scene27: startBat");
 
 	Bat *newbat = new Bat;
@@ -235,7 +235,7 @@ void sceneHandler27_startBat(StaticANIObject *bat) {
 	newbat->currY = newbat->powerSin + (double)g_nmi->_aniMan->_y + 58.0;
 
 	bat->_statics = bat->_staticsList[0];
-	bat->setOXY((int)newbat->currX, (int)newbat->currY);
+	bat->setPos((int)newbat->currX, (int)newbat->currY);
 	bat->_flags |= 4;
 
 	g_vars->scene27_bats.push_back(newbat);
@@ -311,7 +311,7 @@ bool sceneHandler27_batFallLogic(uint batn) {
 		if (batn != g_vars->scene27_bats.size() - 1)
 			g_vars->scene27_bats.remove_at(batn);
 	} else if (!bat->ani->_movement) {
-		bat->ani->startAnim(MV_BTA_FALL, 0, -1);
+		bat->ani->startMovement(MV_BTA_FALL, 0, -1);
 	}
 
 	return true;
@@ -408,12 +408,12 @@ void sceneHandler27_batSetColors(int batn) {
 	if (g_vars->scene27_hitZone->isPixelHitAtPos((int)bat->currX, (int)bat->currY) ) {
 		if (bat->ani->_statics->_staticsId == ST_BTA_NORM) {
 			if (!bat->ani->_movement)
-				bat->ani->_statics = bat->ani->getStaticsById(ST_BTA_HILITE);
+				bat->ani->_statics = bat->ani->getStatic(ST_BTA_HILITE);
 		}
 	} else {
 		if (bat->ani->_statics->_staticsId == ST_BTA_HILITE) {
 			if (!bat->ani->_movement)
-				bat->ani->_statics = bat->ani->getStaticsById(ST_BTA_NORM);
+				bat->ani->_statics = bat->ani->getStatic(ST_BTA_NORM);
 		}
 	}
 }
@@ -422,12 +422,12 @@ void sceneHandler27_driverPushButton() {
 	debugC(2, kDebugSceneLogic, "scene27: driverPushButton");
 
 	if (g_nmi->getObjectState(sO_Driver) == g_nmi->getObjectEnumState(sO_Driver, sO_WithSteering)) {
-		g_vars->scene27_driver->changeStatics2(ST_DRV_VENT);
+		g_vars->scene27_driver->setStatic(ST_DRV_VENT);
 		chainQueue(QU_DRV_PUSHBUTTON, 1);
 
 		g_vars->scene27_driverPushedButton = true;
 	} else {
-		g_vars->scene27_driver->changeStatics2(ST_DRV_SITNOVENT);
+		g_vars->scene27_driver->setStatic(ST_DRV_SITNOVENT);
 
 
 		chainQueue(QU_DRV_PUSHBUTTON_NOVENT, 1);
@@ -439,7 +439,7 @@ void sceneHandler27_driverPushButton() {
 void sceneHandler27_maidSwitchback() {
 #ifndef DBG
 	if (g_nmi->getObjectState(sO_Maid) == g_nmi->getObjectEnumState(sO_Maid, sO_WithSwab)) {
-		g_vars->scene27_maid->changeStatics2(ST_MID_SWAB);
+		g_vars->scene27_maid->setStatic(ST_MID_SWAB);
 		g_vars->scene27_maid->startMQIfIdle(QU_MID_SWITCHBACK, 1);
 	}
 #endif
@@ -541,7 +541,7 @@ void sceneHandler27_regenBats() {
 	for (uint i = 0; i < g_vars->scene27_var07.size(); i++) {
 		g_vars->scene27_var07[i]->ani->hide();
 
-		StaticANIObject *newbat = g_vars->scene27_var07[i]->ani;
+		AniObject *newbat = g_vars->scene27_var07[i]->ani;
 
 		g_vars->scene27_balls.push_back(newbat);
 	}
@@ -565,7 +565,7 @@ void sceneHandler27_animateBats() {
 		bat->currX = cos(bat->angle) * bat->power + bat->currX;
 		bat->currY = sin(bat->angle) * bat->power + bat->currY;
 
-		bat->ani->setOXY((int)bat->currX, (int)bat->currY);
+		bat->ani->setPos((int)bat->currX, (int)bat->currY);
 		bat->ani->_z = (int)(600.0 - bat->currY);
 
 		double powerDelta;
@@ -602,7 +602,7 @@ void sceneHandler27_animateBats() {
 		} else {
 			bat->currX = bat->powerCos + bat->currX;
 			bat->currY = bat->powerSin + bat->currY;
-			bat->ani->setOXY((int)bat->currX, (int)bat->currY);
+			bat->ani->setPos((int)bat->currX, (int)bat->currY);
 			bat->powerSin = bat->powerSin + 1.0;
 		}
 	}
@@ -685,7 +685,7 @@ int sceneHandler27(ExCommand *cmd) {
 			sceneHandler27_wipeDo();
 
 			if (!g_nmi->_aniMan->_movement && g_nmi->_aniMan->_statics->_staticsId == ST_MAN_RIGHT)
-				g_nmi->_aniMan->startAnim(MV_MAN27_FLOW, 0, -1);
+				g_nmi->_aniMan->startMovement(MV_MAN27_FLOW, 0, -1);
 		}
 
 		sceneHandler27_animateBats();

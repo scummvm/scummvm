@@ -220,7 +220,7 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 	if (mq1) {
 		MessageQueue *mq = new MessageQueue(mq1, 0, 0);
 
-		StaticANIObject *stobj = g_nmi->_currentScene->getStaticANIObject1ById(_field_FA, -1);
+		AniObject *stobj = g_nmi->_currentScene->getStaticANIObject1ById(_field_FA, -1);
 		if (stobj) {
 			stobj->_flags &= 0x100;
 
@@ -241,7 +241,7 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 			return false;
 		}
 	} else {
-		StaticANIObject *stobj = g_nmi->_currentScene->getStaticANIObject1ById(_field_FA, -1);
+		AniObject *stobj = g_nmi->_currentScene->getStaticANIObject1ById(_field_FA, -1);
 		if (stobj)
 			stobj->_flags &= 0xfeff;
 	}
@@ -254,7 +254,7 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 		if (flag == 50)
 			g_nmi->_aniMan->preloadMovements(g_nmi->_movTable.get());
 
-		StaticANIObject *pbar = g_nmi->_loaderScene->getStaticANIObject1ById(ANI_PBAR, -1);
+		AniObject *pbar = g_nmi->_loaderScene->getStaticANIObject1ById(ANI_PBAR, -1);
 
 		if (pbar) {
 			int sz;
@@ -319,11 +319,11 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 			g_nmi->_loaderScene = g_nmi->accessScene(SC_LDR);
 		}
 
-		StaticANIObject *pbar = g_nmi->_loaderScene->getStaticANIObject1ById(ANI_PBAR, -1);
+		AniObject *pbar = g_nmi->_loaderScene->getStaticANIObject1ById(ANI_PBAR, -1);
 
 		if (pbar) {
 			pbar->show1(ST_EGTR_SLIMSORROW, ST_MAN_GOU, MV_PBAR_RUN, 0);
-			pbar->startAnim(MV_PBAR_RUN, 0, -1);
+			pbar->startMovement(MV_PBAR_RUN, 0, -1);
 		}
 
 		g_nmi->_inventoryScene = nullptr;
@@ -453,7 +453,7 @@ void GameLoader::applyPicAniInfos(Scene *sc, const PicAniInfoList &picAniInfo) {
 	debugC(0, kDebugAnimation, "GameLoader::applyPicAniInfos(sc, ptr, %d)", picAniInfo.size());
 
 	PictureObject *pict;
-	StaticANIObject *ani;
+	AniObject *ani;
 
 	for (uint i = 0; i < picAniInfo.size(); i++) {
 		const PicAniInfo &info = picAniInfo[i];
@@ -488,7 +488,7 @@ void GameLoader::applyPicAniInfos(Scene *sc, const PicAniInfoList &picAniInfo) {
 
 			ani = scNew->getStaticANIObject1ById(info.objectId, 0);
 			if (ani) {
-				StaticANIObject *aniNew = new StaticANIObject(ani);
+				AniObject *aniNew = new AniObject(ani);
 
 				sc->addStaticANIObject(aniNew, 1);
 
@@ -540,7 +540,7 @@ PicAniInfoList GameLoader::savePicAniInfos(Scene *sc, int flag1, int flag2) {
 	}
 
 	for (uint i = 0; i < sc->_staticANIObjectList1.size(); i++) {
-		StaticANIObject *obj = sc->_staticANIObjectList1[i];
+		AniObject *obj = sc->_staticANIObjectList1[i];
 
 		if (obj && ((obj->_flags & flag1) == flag1) && ((obj->_objectFlags & flag2) == flag2)) {
 			res.push_back(PicAniInfo());

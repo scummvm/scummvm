@@ -43,13 +43,13 @@ void scene02_initScene(Scene *sc) {
 		Scene *s = g_nmi->_currentScene;
 
 		g_nmi->_currentScene = sc;
-		g_vars->scene02_guvTheDrawer->changeStatics2(ST_DYAS_LIES);
+		g_vars->scene02_guvTheDrawer->setStatic(ST_DYAS_LIES);
 		g_nmi->_currentScene = s;
 	}
 
 	g_vars->scene02_boxDelay = 0;
 
-	StaticANIObject *box = sc->getStaticANIObject1ById(ANI_SC2_BOX, -1);
+	AniObject *box = sc->getStaticANIObject1ById(ANI_SC2_BOX, -1);
 
 	if (box && box->_flags & 4) {
 		g_vars->scene02_boxOpen = false;

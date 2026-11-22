@@ -28,7 +28,7 @@
 
 namespace NGI {
 
-int handleObjectInteraction(StaticANIObject *subject, GameObject *object, int invId) {
+int handleObjectInteraction(AniObject *subject, GameObject *object, int invId) {
 	return getGameLoaderInteractionController()->handleInteraction(subject, object, invId);
 }
 
@@ -96,7 +96,7 @@ void InteractionController::sortInteractions(int sceneId) {
 	Common::sort(_interactions.begin(), _interactions.end(), InteractionController::compareInteractions);
 }
 
-bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject *obj, int invId) {
+bool InteractionController::handleInteraction(AniObject *subj, GameObject *obj, int invId) {
 	if (subj) {
 		if (!subj->isIdle() || (subj->_flags & 0x100))
 			return false;
@@ -130,9 +130,9 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 			obj->getPicAniInfo(aniInfo);
 
 			if (cinter->_staticsId1 && obj->_objtype == kObjTypeStaticANIObject) {
-				StaticANIObject *ani = static_cast<StaticANIObject *>(obj);
+				AniObject *ani = static_cast<AniObject *>(obj);
 				ani->_messageQueueId = 0;
-				ani->changeStatics2(cinter->_staticsId1);
+				ani->setStatic(cinter->_staticsId1);
 			}
 			int xpos = cinter->_xOffs + obj->_x;
 			int ypos = cinter->_yOffs + obj->_y;
@@ -168,7 +168,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 
 	if (!inter->_objectId2) {
 		if (obj->_objtype == kObjTypeStaticANIObject) {
-			StaticANIObject *ani = static_cast<StaticANIObject *>(obj);
+			AniObject *ani = static_cast<AniObject *>(obj);
 
 			if (inter->_flags & 1) {
 				if (!ani->isIdle())
@@ -178,7 +178,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 					return false;
 			} else if (inter->_staticsId1 != 0) {
 				if (ani->_movement || ani->_statics == nullptr || ani->_statics->_staticsId != inter->_staticsId1) {
-					mq = ani->changeStatics1(inter->_staticsId1);
+					mq = ani->moveToStatic(inter->_staticsId1);
 					if (!mq)
 						return false;
 
@@ -193,13 +193,13 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 
 					if (mq->_isFinished) {
 						mq->_isFinished = 0;
-						ani->queueMessageQueue(mq);
+						ani->setQueue(mq);
 					}
 
 					return true;
 				} else {
 					if (ani->getMessageQueue())
-						ani->queueMessageQueue(nullptr);
+						ani->setQueue(nullptr);
 				}
 			}
 		}
@@ -237,12 +237,12 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 
 	if (inter->isOverlapping(subj, obj)) {
 		if (obj->_objtype == kObjTypeStaticANIObject) {
-			StaticANIObject *ani = static_cast<StaticANIObject *>(obj);
+			AniObject *ani = static_cast<AniObject *>(obj);
 
-			ani->queueMessageQueue(nullptr);
+			ani->setQueue(nullptr);
 
 			if (inter->_staticsId1)
-				ani->changeStatics2(inter->_staticsId1);
+				ani->setStatic(inter->_staticsId1);
 
 			if (!(inter->_flags & 0x10000))
 				obj->_flags |= 0x80;
@@ -251,7 +251,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 		if (!inter->_messageQueue)
 			return false;
 
-		subj->setOXY(inter->_xOffs + obj->_x, inter->_yOffs + obj->_y);
+		subj->setPos(inter->_xOffs + obj->_x, inter->_yOffs + obj->_y);
 
 		mq = new MessageQueue(inter->_messageQueue, 0, 1);
 		mq->changeParam28ForObjectId(obj->_id, -1, obj->_copyId);
@@ -300,10 +300,10 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 		obj->getPicAniInfo(aniInfo);
 
 		if (obj->_objtype == kObjTypeStaticANIObject && inter->_staticsId1) {
-			StaticANIObject *ani = static_cast<StaticANIObject *>(obj);
+			AniObject *ani = static_cast<AniObject *>(obj);
 
 			ani->_messageQueueId = 0;
-			ani->changeStatics2(inter->_staticsId1);
+			ani->setStatic(inter->_staticsId1);
 		}
 
 		int xpos = inter->_xOffs + obj->_x;
@@ -345,16 +345,16 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 		if (obj->_objtype != kObjTypeStaticANIObject)
 			return false;
 
-		StaticANIObject *ani = static_cast<StaticANIObject *>(obj);
+		AniObject *ani = static_cast<AniObject *>(obj);
 
 		if (!ani->isIdle())
 			return false;
 
 		if (ani->getMessageQueue())
-			ani->queueMessageQueue(nullptr);
+			ani->setQueue(nullptr);
 
 		if (!ani->_statics || ani->_statics->_staticsId != inter->_staticsId1 || ani->_movement) {
-			mq = ani->changeStatics1(inter->_staticsId1);
+			mq = ani->moveToStatic(inter->_staticsId1);
 
 			if (!mq)
 				return false;
@@ -390,7 +390,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 					return true;
 
 				mq->_isFinished = 0;
-				ani->queueMessageQueue(mq);
+				ani->setQueue(mq);
 			}
 		} else {
 			obj->_flags |= 0x100;
@@ -479,7 +479,7 @@ bool Interaction::canInteract(GameObject *obj1, GameObject *obj2, int invId) {
 		if (obj2->_objtype != kObjTypeStaticANIObject)
 			return false;
 
-		StaticANIObject *st = static_cast<StaticANIObject *>(obj2);
+		AniObject *st = static_cast<AniObject *>(obj2);
 
 		if (!st->_statics)
 			return false;
@@ -519,7 +519,7 @@ bool Interaction::canInteract(GameObject *obj1, GameObject *obj2, int invId) {
 	return true;
 }
 
-bool Interaction::isOverlapping(StaticANIObject *subj, GameObject *obj) {
+bool Interaction::isOverlapping(AniObject *subj, GameObject *obj) {
 	if (abs(_xOffs + obj->_x - subj->_x) <= 1
 		&& abs(obj->_y + _yOffs - subj->_y) <= 1) {
 		if (!_staticsId2 || (subj->_statics != nullptr && subj->_statics->_staticsId == _staticsId2)) {
@@ -527,7 +527,7 @@ bool Interaction::isOverlapping(StaticANIObject *subj, GameObject *obj) {
 				return true;
 
 			if (obj->_objtype == kObjTypeStaticANIObject) {
-				const StaticANIObject *ani = static_cast<StaticANIObject *>(obj);
+				const AniObject *ani = static_cast<AniObject *>(obj);
 				if (ani->_statics != nullptr && ani->_statics->_staticsId == _staticsId1)
 					return true;
 			}

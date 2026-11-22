@@ -78,17 +78,17 @@ void Floaters::init(GameVar *var) {
 }
 
 void Floaters::genFlies(Scene *sc, int x, int y, int priority, int flags) {
-	StaticANIObject *ani = new StaticANIObject(g_nmi->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_FLY, -1));
+	AniObject *ani = new AniObject(g_nmi->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_FLY, -1));
 
-	ani->_statics = ani->getStaticsById(ST_FLY_FLY);
+	ani->_statics = ani->getStatic(ST_FLY_FLY);
 	ani->_movement = nullptr;
-	ani->setOXY(x, y);
+	ani->setPos(x, y);
 	ani->_flags |= 4;
 	ani->_z = priority;
 
 	sc->addStaticANIObject(ani, 1);
 
-	ani->startAnim(MV_FLY_FLY, 0, -1);
+	ani->startMovement(MV_FLY_FLY, 0, -1);
 
 	int nummoves;
 
@@ -145,7 +145,7 @@ void Floaters::update() {
 
 				a2.val4 += newX;
 				a2.val5 += newY;
-				a2.ani->setOXY(newX + a2.ani->_x, newY + a2.ani->_y);
+				a2.ani->setPos(newX + a2.ani->_x, newY + a2.ani->_y);
 
 				if (a2.val4 == a2.val2 && a2.val5 == a2.val3) {
 					a2.val9 = 0.0;
@@ -217,7 +217,7 @@ void Floaters::update() {
 				a2.val15 = 1;
 			}
 
-			a2.ani->startAnim(MV_FLY_FLY, 0, -1);
+			a2.ani->startMovement(MV_FLY_FLY, 0, -1);
 		}
 	}
 }

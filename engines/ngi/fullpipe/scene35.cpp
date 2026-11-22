@@ -86,7 +86,7 @@ void sceneHandler35_startFlow() {
 			g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene35_bellyInflater, ST_PDV_SMALL, QU_PDV_SML_BLINK, 0);
 			g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene35_bellyInflater, ST_PDV_SMALL, QU_PDV_SML_TRY, 0);
 
-			g_vars->scene35_bellyInflater->changeStatics2(ST_PDV_SMALL);
+			g_vars->scene35_bellyInflater->setStatic(ST_PDV_SMALL);
 			g_vars->scene35_bellyInflater->_flags &= ~0x100;
 
 			MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC35_EATHOZE), 0, 0);
@@ -119,7 +119,7 @@ void sceneHandler35_startFlow() {
 }
 
 void sceneHandler35_genFlies() {
-	StaticANIObject *fly = g_nmi->_currentScene->getStaticANIObject1ById(ANI_FLY, -1);
+	AniObject *fly = g_nmi->_currentScene->getStaticANIObject1ById(ANI_FLY, -1);
 
 	int xoff = 0;
 	if ((!fly || !(fly->_flags & 4)) && !(g_nmi->_rnd.getRandomNumber(32767) % 30)) {
@@ -202,7 +202,7 @@ int sceneHandler35(ExCommand *cmd) {
 
 	case 29:
 		{
-			StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
+			AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
 
 			if (ani)
 				if (ani->_id == ANI_LIFTBUTTON) {

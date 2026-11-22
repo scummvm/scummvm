@@ -97,7 +97,7 @@ class Inventory2 : public Inventory {
 	bool loadPartial(MfcArchive &file);
 	bool savePartial(MfcArchive &file);
 	void addItem(int itemId, int count);
-	void addItem2(StaticANIObject *obj);
+	void addItem2(AniObject *obj);
 	void removeItem(int itemId, int count);
 	void removeItem2(Scene *sceneObj, int itemId, int x, int y, int priority);
 

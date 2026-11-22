@@ -32,7 +32,7 @@ void AniHandler::detachAllObjects() {
 	_items.clear();
 }
 
-MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int, int *, Common::Point **) {
+MessageQueue *AniHandler::makeQueue(AniObject *ani, int staticsIndex, int, int *, Common::Point **) {
 	debugC(4, kDebugPathfinding, "AniHandler::makeQueue(*%d, %d, id, res, point)", ani->_id, staticsIndex);
 
 	int idx = getIndex(ani->_id);
@@ -170,7 +170,7 @@ void AniHandler::resetData(int objId) {
 	_items[idx].movements1.clear();
 	_items[idx].movements2.clear();
 
-	StaticANIObject *obj = g_nmi->_currentScene->getStaticANIObject1ById(objId, -1);
+	AniObject *obj = g_nmi->_currentScene->getStaticANIObject1ById(objId, -1);
 
 	if (!obj)
 		return;
@@ -237,7 +237,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 			mkQueue->y2 = ny;
 	}
 
-	mov = mkQueue->ani->getMovementById(mkQueue->movementId);
+	mov = mkQueue->ani->getMovement(mkQueue->movementId);
 
 	if (!mov)
 		return nullptr;
@@ -427,14 +427,14 @@ int AniHandler::getFramesCount(int idx, int subIdx, int endIdx, int flag) {
 
 	return res;
 }
-void AniHandler::putObjectToStatics(StaticANIObject *ani, int staticsId) {
+void AniHandler::putObjectToStatics(AniObject *ani, int staticsId) {
 	debugC(4, kDebugPathfinding, "AniHandler::putObjectToStatics(*%d, %d)", ani->_id, staticsId);
 
 	if (getIndex(ani->_id) == -1)
 		return;
 
 	if (ani->_movement) {
-		ani->queueMessageQueue(nullptr);
+		ani->setQueue(nullptr);
 		ani->_movement->setLast();
 		ani->_statics = ani->_movement->_nextStatic;
 
@@ -443,15 +443,15 @@ void AniHandler::putObjectToStatics(StaticANIObject *ani, int staticsId) {
 
 		ani->_movement = nullptr;
 
-		ani->setOXY(x, y);
+		ani->setPos(x, y);
 	}
 
 	if (ani->_statics) {
 		const Common::Point point = getTransitionSize(ani->_id, ani->_statics->_staticsId, staticsId);
 
-		ani->setOXY(ani->_x + point.x, ani->_y + point.y);
+		ani->setPos(ani->_x + point.x, ani->_y + point.y);
 
-		ani->_statics = ani->getStaticsById(staticsId);
+		ani->_statics = ani->getStatic(staticsId);
 	}
 }
 

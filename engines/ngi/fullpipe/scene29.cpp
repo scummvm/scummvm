@@ -38,7 +38,7 @@
 namespace NGI {
 
 struct WalkingBearder {
-	StaticANIObject *ani;
+	AniObject *ani;
 	int wbflag;
 	int wbcounter;
 };
@@ -52,11 +52,11 @@ void scene29_initScene(Scene *sc) {
 	g_vars->scene29_greenBalls.clear();
 	g_vars->scene29_flyingGreenBalls.clear();
 
-	StaticANIObject *ani = sc->getStaticANIObject1ById(ANI_SHELL_GREEN, -1);
+	AniObject *ani = sc->getStaticANIObject1ById(ANI_SHELL_GREEN, -1);
 	g_vars->scene29_greenBalls.push_back(ani);
 
 	for (int i = 0; i < 2; i++) {
-		StaticANIObject *newani = new StaticANIObject(ani);
+		AniObject *newani = new AniObject(ani);
 
 		sc->addStaticANIObject(newani, 1);
 
@@ -71,7 +71,7 @@ void scene29_initScene(Scene *sc) {
 	g_vars->scene29_redBalls.push_back(ani);
 
 	for (int i = 0; i < 2; i++) {
-		StaticANIObject *newani = new StaticANIObject(ani);
+		AniObject *newani = new AniObject(ani);
 
 		sc->addStaticANIObject(newani, 1);
 
@@ -80,9 +80,9 @@ void scene29_initScene(Scene *sc) {
 
 	g_vars->scene29_bearders.clear();
 
-	ani = new StaticANIObject(g_nmi->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_BEARDED_CMN, -1));
+	ani = new AniObject(g_nmi->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_BEARDED_CMN, -1));
 
-	ani->_statics = ani->getStaticsById(ST_BRDCMN_EMPTY);
+	ani->_statics = ani->getStatic(ST_BRDCMN_EMPTY);
 
 	sc->addStaticANIObject(ani, 1);
 
@@ -112,12 +112,12 @@ void sceneHandler29_winArcade() {
 	if (g_vars->scene29_shooter2->_flags & 4) {
 		g_vars->scene29_shootCountdown = 0;
 
-		g_vars->scene29_shooter1->changeStatics2(ST_STR1_STAND);
-		g_vars->scene29_shooter2->changeStatics2(ST_STR2_STAND);
+		g_vars->scene29_shooter1->setStatic(ST_STR1_STAND);
+		g_vars->scene29_shooter2->setStatic(ST_STR2_STAND);
 
 		g_vars->scene29_shooter2->_flags &= 0xFFFB;
 
-		StaticANIObject *ani;
+		AniObject *ani;
 
 		while (g_vars->scene29_flyingGreenBalls.size()) {
 			ani = g_vars->scene29_flyingGreenBalls.front();
@@ -137,7 +137,7 @@ void sceneHandler29_winArcade() {
 			ani->hide();
 		}
 
-		g_vars->scene29_ass->queueMessageQueue(nullptr);
+		g_vars->scene29_ass->setQueue(nullptr);
 		g_vars->scene29_ass->_flags &= 0xFFFB;
 
 		chainQueue(QU_SC29_ESCAPE, 1);
@@ -150,7 +150,7 @@ void sceneHandler29_shootGreen() {
 	if (g_vars->scene29_greenBalls.size()) {
 		int x = g_vars->scene29_shooter1->_x - 113;
 		int y = g_vars->scene29_shooter1->_y - 48;
-		StaticANIObject *ani = g_vars->scene29_greenBalls.front();
+		AniObject *ani = g_vars->scene29_greenBalls.front();
 		g_vars->scene29_greenBalls.remove_at(0);
 
 		ani->show1(x, y, MV_SHG_NORM, 0);
@@ -164,7 +164,7 @@ void sceneHandler29_shootRed() {
 	if (g_vars->scene29_redBalls.size()) {
 		int x = g_vars->scene29_shooter1->_x - 101;
 		int y = g_vars->scene29_shooter1->_y - 14;
-		StaticANIObject *ani = g_vars->scene29_redBalls.front();
+		AniObject *ani = g_vars->scene29_redBalls.front();
 		g_vars->scene29_redBalls.remove_at(0);
 
 		ani->show1(x, y, MV_SHR_NORM, 0);
@@ -180,8 +180,8 @@ void sceneHandler29_manJump() {
 		g_vars->scene29_manIsHit = false;
 		g_vars->scene29_reachedFarRight = true;
 
-		g_nmi->_aniMan->changeStatics2(ST_MAN29_RUNR);
-		g_nmi->_aniMan->startAnim(MV_MAN29_JUMP, 0, -1);
+		g_nmi->_aniMan->setStatic(ST_MAN29_RUNR);
+		g_nmi->_aniMan->startMovement(MV_MAN29_JUMP, 0, -1);
 	}
 
 	g_vars->scene29_manX = g_nmi->_aniMan->_x;
@@ -194,15 +194,15 @@ void sceneHandler29_manBend() {
 		g_vars->scene29_manIsHit = false;
 		g_vars->scene29_reachedFarRight = true;
 
-		g_nmi->_aniMan->changeStatics2(ST_MAN29_RUNR);
-		g_nmi->_aniMan->startAnim(MV_MAN29_BEND, 0, -1);
+		g_nmi->_aniMan->setStatic(ST_MAN29_RUNR);
+		g_nmi->_aniMan->startMovement(MV_MAN29_BEND, 0, -1);
 	}
 
 	g_vars->scene29_manX = g_nmi->_aniMan->_x;
 	g_vars->scene29_manY = g_nmi->_aniMan->_y;
 }
 
-bool sceneHandler29_checkRedBallHit(StaticANIObject *ani, int maxx) {
+bool sceneHandler29_checkRedBallHit(AniObject *ani, int maxx) {
 #if DEBUG
 	return false;
 #endif
@@ -226,7 +226,7 @@ bool sceneHandler29_checkRedBallHit(StaticANIObject *ani, int maxx) {
 		return true;
 }
 
-bool sceneHandler29_checkGreenBallHit(StaticANIObject *ani, int maxx) {
+bool sceneHandler29_checkGreenBallHit(AniObject *ani, int maxx) {
 #if DEBUG
 	return false;
 #endif
@@ -269,8 +269,8 @@ void sceneHandler29_manHit() {
 
 	g_vars->scene29_manIsHit = true;
 
-	g_nmi->_aniMan->changeStatics2(ST_MAN29_RUNR);
-	g_nmi->_aniMan->setOXY(g_vars->scene29_manX, g_vars->scene29_manY);
+	g_nmi->_aniMan->setStatic(ST_MAN29_RUNR);
+	g_nmi->_aniMan->setPos(g_vars->scene29_manX, g_vars->scene29_manY);
 
 	mkQueue.ani = g_nmi->_aniMan;
 	mkQueue.staticsId2 = ST_MAN29_SITR;
@@ -315,15 +315,15 @@ void sceneHandler29_manHit() {
 
 void sceneHandler29_assHitRed() {
 	if (g_vars->scene29_ass->_statics->_staticsId == ST_ASS_NORM) {
-		g_vars->scene29_ass->changeStatics2(ST_ASS_NORM);
-		g_vars->scene29_ass->startAnim(MV_ASS_HITRED, 0, -1);
+		g_vars->scene29_ass->setStatic(ST_ASS_NORM);
+		g_vars->scene29_ass->startMovement(MV_ASS_HITRED, 0, -1);
 	}
 }
 
 void sceneHandler29_assHitGreen() {
 	if (g_vars->scene29_ass->_statics->_staticsId == ST_ASS_NORM) {
-		g_vars->scene29_ass->changeStatics2(ST_ASS_NORM);
-		g_vars->scene29_ass->startAnim(MV_ASS_HITGREEN, 0, -1);
+		g_vars->scene29_ass->setStatic(ST_ASS_NORM);
+		g_vars->scene29_ass->startMovement(MV_ASS_HITGREEN, 0, -1);
 	}
 }
 
@@ -331,7 +331,7 @@ void sceneHandler29_ballHitCheck() {
 	int x, y;
 
 	for (int i = (int)g_vars->scene29_flyingGreenBalls.size() - 1; i >= 0; i--) {
-		StaticANIObject *ani = g_vars->scene29_flyingGreenBalls[i];
+		AniObject *ani = g_vars->scene29_flyingGreenBalls[i];
 
 		x = ani->_x - 30;
 		y = ani->_y;
@@ -346,11 +346,11 @@ void sceneHandler29_ballHitCheck() {
 
 				g_nmi->playSound(SND_29_014, 0);
 
-				ani->startAnim(MV_SHG_HITMAN, 0, -1);
+				ani->startMovement(MV_SHG_HITMAN, 0, -1);
 
 				g_vars->scene29_hitBall = ani->_id;
 			} else {
-				ani->setOXY(x, y);
+				ani->setPos(x, y);
 			}
 		} else {
 			g_vars->scene29_greenBalls.push_back(ani);
@@ -364,7 +364,7 @@ void sceneHandler29_ballHitCheck() {
 	}
 
 	for (int i = (int)g_vars->scene29_flyingRedBalls.size() - 1; i >= 0; i--) {
-		StaticANIObject *ani = g_vars->scene29_flyingRedBalls[i];
+		AniObject *ani = g_vars->scene29_flyingRedBalls[i];
 
 		x = ani->_x - 30;
 		y = ani->_y;
@@ -379,11 +379,11 @@ void sceneHandler29_ballHitCheck() {
 
 				g_nmi->playSound(SND_29_027, 0);
 
-				ani->startAnim(MV_SHR_HITMAN, 0, -1);
+				ani->startMovement(MV_SHR_HITMAN, 0, -1);
 
 				g_vars->scene29_hitBall = ani->_id;
 			} else {
-				ani->setOXY(x, y);
+				ani->setPos(x, y);
 			}
 		} else {
 			g_vars->scene29_redBalls.push_back(ani);
@@ -404,7 +404,7 @@ void sceneHandler29_manFromL() {
 		getCurrSceneSc2MotionController()->activate();
 		getGameLoaderInteractionController()->enableFlag24();
 
-		g_nmi->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
+		g_nmi->_aniMan->setStatic(ST_MAN_RIGHT | 0x4000);
 		chainQueue(QU_SC29_MANFROM_L, 1);
 
 		g_vars->scene29_scrollingDisabled = true;
@@ -523,7 +523,7 @@ void sceneHandler29_shootersProcess() {
 			g_vars->scene29_shootDistance = (1310 - g_vars->scene29_manX) * 5213 / 100000 + 25;
 
 			if (!g_vars->scene29_manIsHit)
-				g_nmi->_aniMan->startAnim(MV_MAN29_RUN, 0, -1);
+				g_nmi->_aniMan->startMovement(MV_MAN29_RUN, 0, -1);
 		}
 	}
 
@@ -535,7 +535,7 @@ void sceneHandler29_shootersEscape() {
 	if (g_vars->scene29_arcadeIsOn) {
 		g_vars->scene29_manX += 2;
 
-		g_nmi->_aniMan->setOXY(g_vars->scene29_manX, g_vars->scene29_manY);
+		g_nmi->_aniMan->setPos(g_vars->scene29_manX, g_vars->scene29_manY);
 
 		if (g_vars->scene29_manX > 1310 && !g_vars->scene29_shooter1->_movement && !g_vars->scene29_shooter2->_movement
 				&& g_vars->scene29_shooter1->_statics->_staticsId == ST_STR1_RIGHT) {
@@ -543,12 +543,12 @@ void sceneHandler29_shootersEscape() {
 
 			g_vars->scene29_shootCountdown = 0;
 
-			g_vars->scene29_shooter1->changeStatics2(ST_STR1_STAND);
-			g_vars->scene29_shooter2->changeStatics2(ST_STR2_STAND);
+			g_vars->scene29_shooter1->setStatic(ST_STR1_STAND);
+			g_vars->scene29_shooter2->setStatic(ST_STR2_STAND);
 
 			chainQueue(QU_SC29_ESCAPE, 1);
 
-			g_vars->scene29_ass->queueMessageQueue(nullptr);
+			g_vars->scene29_ass->setQueue(nullptr);
 			g_vars->scene29_ass->hide();
 
 			g_nmi->setObjectState(sO_LeftPipe_29, g_nmi->getObjectEnumState(sO_LeftPipe_29, sO_IsOpened));
@@ -556,14 +556,14 @@ void sceneHandler29_shootersEscape() {
 	} else if (g_vars->scene29_manIsRiding) {
 		g_vars->scene29_manX -= 4;
 
-		g_nmi->_aniMan->setOXY(g_vars->scene29_manX, g_vars->scene29_manY);
+		g_nmi->_aniMan->setPos(g_vars->scene29_manX, g_vars->scene29_manY);
 	}
 }
 
 void sceneHandler29_manRideBack() {
 	g_vars->scene29_manX -= 2;
 
-	g_nmi->_aniMan->setOXY(g_vars->scene29_manX, g_vars->scene29_manY);
+	g_nmi->_aniMan->setPos(g_vars->scene29_manX, g_vars->scene29_manY);
 }
 
 void sceneHandler29_shoot() {
@@ -571,13 +571,13 @@ void sceneHandler29_shoot() {
 		if (g_nmi->_rnd.getRandomNumber(32767) <= 16383|| g_vars->scene29_shooter1->_movement || g_vars->scene29_shooter1->_statics->_staticsId != ST_STR1_RIGHT) {
 			if (!g_vars->scene29_shooter2->_movement && g_vars->scene29_shooter2->_statics->_staticsId == ST_STR2_RIGHT) {
 				if (g_vars->scene29_shooter2->_flags & 4) {
-					g_vars->scene29_shooter2->startAnim(MV_STR2_SHOOT, 0, -1);
+					g_vars->scene29_shooter2->startMovement(MV_STR2_SHOOT, 0, -1);
 
 					g_vars->scene29_shootCountdown = 0;
 				}
 			}
 		} else {
-			g_vars->scene29_shooter1->startAnim(MV_STR1_SHOOT, 0, -1);
+			g_vars->scene29_shooter1->startMovement(MV_STR1_SHOOT, 0, -1);
 
 			g_vars->scene29_shootCountdown = 0;
 		}
@@ -588,7 +588,7 @@ void sceneHandler29_animBearded() {
 	MessageQueue *mq;
 
 	for (uint i = 0; i < g_vars->scene29_bearders.size(); i++) {
-		StaticANIObject *ani = g_vars->scene29_bearders[i]->ani;
+		AniObject *ani = g_vars->scene29_bearders[i]->ani;
 
 		if (g_vars->scene29_bearders[i]->wbflag) {
 			int x = ani->_x;
@@ -609,14 +609,14 @@ void sceneHandler29_animBearded() {
 			}
 
 			if (!ani->_movement && ani->_statics->_staticsId == ST_BRDCMN_GOR)
-				ani->startAnim(MV_BRDCMN_GOR, 0, -1);
+				ani->startMovement(MV_BRDCMN_GOR, 0, -1);
 
 			if (ani->_movement) {
 				if (ani->_movement->_id == MV_BRDCMN_GOR) {
 					x -= 4;
 
 					if (g_vars->scene29_manX - x < 60 || x - g_vars->scene29_manX < -260 || !g_vars->scene29_arcadeIsOn) {
-						ani->changeStatics2(ST_BRDCMN_RIGHT);
+						ani->setStatic(ST_BRDCMN_RIGHT);
 
 						mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC29_BRDOUT2), 0, 1);
 
@@ -629,7 +629,7 @@ void sceneHandler29_animBearded() {
 				}
 			}
 
-			ani->setOXY(x, y);
+			ani->setPos(x, y);
 			continue;
 		}
 
@@ -696,7 +696,7 @@ int sceneHandler29(ExCommand *cmd) {
 			debugC(2, kDebugSceneLogic, "scene29: showLastRed");
 
 			g_vars->scene29_redBalls.back()->show1(-1, -1, -1, 0);
-			g_vars->scene29_redBalls.back()->startAnim(MV_SHR_HITASS, 0, -1);
+			g_vars->scene29_redBalls.back()->startMovement(MV_SHR_HITASS, 0, -1);
 		}
 
 		break;
@@ -714,7 +714,7 @@ int sceneHandler29(ExCommand *cmd) {
 			debugC(2, kDebugSceneLogic, "scene29: showLastGreen");
 
 			g_vars->scene29_greenBalls.back()->show1(-1, -1, -1, 0);
-			g_vars->scene29_greenBalls.back()->startAnim(MV_SHG_HITASS, 0, -1);
+			g_vars->scene29_greenBalls.back()->startMovement(MV_SHG_HITASS, 0, -1);
 		}
 		break;
 
@@ -752,7 +752,7 @@ int sceneHandler29(ExCommand *cmd) {
 	case 29:
 		if (!g_vars->scene29_manIsRiding || g_vars->scene29_arcadeIsOn) {
 			if (!g_vars->scene29_arcadeIsOn) {
-				StaticANIObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
+				AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(g_nmi->_sceneRect.left + cmd->_x, g_nmi->_sceneRect.top + cmd->_y);
 
 				if (ani && ani == g_vars->scene29_porter) {
 					sceneHandler29_clickPorter(cmd);
@@ -797,7 +797,7 @@ int sceneHandler29(ExCommand *cmd) {
 		sceneHandler29_ballHitCheck();
 
 		if (!g_vars->scene29_porter->_movement)
-			g_vars->scene29_porter->startAnim(MV_PTR_MOVEFAST, 0, -1);
+			g_vars->scene29_porter->startMovement(MV_PTR_MOVEFAST, 0, -1);
 
 		if (g_vars->scene29_manIsRiding)
 			sceneHandler29_manFromL();

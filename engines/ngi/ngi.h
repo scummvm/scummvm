@@ -95,7 +95,7 @@ class PictureObject;
 struct PreloadItem;
 class Scene;
 class SoundList;
-class StaticANIObject;
+class AniObject;
 class Vars;
 typedef Common::Array<int16> MovTable;
 typedef Common::Array<Common::Point> PointList;
@@ -184,8 +184,8 @@ public:
 	Scene *_loaderScene;
 	Scene *_scene2;
 	Scene *_scene3;
-	StaticANIObject *_aniMan;
-	StaticANIObject *_aniMan2;
+	AniObject *_aniMan;
+	AniObject *_aniMan2;
 	Palette _defaultPalette;
 	const Palette *_globalPalette;
 
@@ -343,10 +343,10 @@ public:
 
 	void getAllInventory();
 
-	StaticANIObject *_lastLiftButton;
+	AniObject *_lastLiftButton;
 	MessageQueue *_liftEnterMQ;
 	MessageQueue *_liftExitMQ;
-	StaticANIObject *_lift;
+	AniObject *_lift;
 	int _liftX;
 	int _liftY;
 
@@ -361,7 +361,7 @@ public:
 	void lift_clickButton();
 	void lift_walkAndGo();
 	void lift_goAnimation();
-	void lift_animateButton(StaticANIObject *button);
+	void lift_animateButton(AniObject *button);
 	void lift_startExitQueue();
 	void lift_hoverButton(ExCommand *ex);
 	bool lift_checkButton(const char *varname);
