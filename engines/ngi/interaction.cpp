@@ -536,12 +536,12 @@ bool Interact::isOverlapping(AniObject *subj, GameObject *obj) {
 	return false;
 }
 
-bool EntranceInfo::load(MfcArchive &file) {
-	debugC(5, kDebugLoading, "EntranceInfo::load()");
+bool Entrance::load(MfcArchive &file) {
+	debugC(5, kDebugLoading, "Entrance::load()");
 
 	_sceneId = file.readUint32LE();
-	_field_4 = file.readUint32LE();
-	_messageQueueId = file.readUint32LE();
+	_id = file.readUint32LE();
+	_queueId = file.readUint32LE();
 	file.skip(292); // FIXME: Ugh
 	_field_130 = file.readUint32LE();
 

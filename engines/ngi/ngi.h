@@ -81,7 +81,7 @@ class GameVar;
 class CursorController;
 class Inventory;
 struct Cursor;
-struct EntranceInfo;
+struct Entrance;
 class Command;
 class Floaters;
 class GameProject;
@@ -315,7 +315,7 @@ public:
 	int getStateValue(const Common::String &name, const char *state);
 
 	void sceneAutoScrolling();
-	bool doSetScene(const EntranceInfo &entrance);
+	bool doSetScene(const Entrance &entrance);
 	Scene *findScene(int sceneId);
 	void setSceneMusicParameters(GameVar *var);
 	int convertScene(int scene);

@@ -529,7 +529,7 @@ void NGIEngine::sceneAutoScrolling() {
 	}
 }
 
-bool NGIEngine::doSetScene(const EntranceInfo &entrance) {
+bool NGIEngine::doSetScene(const Entrance &entrance) {
 	GameVar *sceneVar;
 	Common::Point sceneDim;
 
@@ -638,7 +638,7 @@ bool NGIEngine::doSetScene(const EntranceInfo &entrance) {
 		scene01_fixEntrance();
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_1");
 		scene->preloadMovements(sceneVar);
-		scene01_initScene(scene, entrance._field_4);
+		scene01_initScene(scene, entrance._id);
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_1");
 		setSceneMusicParameters(sceneVar);
@@ -853,7 +853,7 @@ bool NGIEngine::doSetScene(const EntranceInfo &entrance) {
 
 			scene18_initScene2(g_nmi->_scene3);
 			scene18_preload();
-			scene19_setMovements(g_nmi->_scene3, entrance._field_4);
+			scene19_setMovements(g_nmi->_scene3, entrance._id);
 
 			g_vars->scene18_inScene18p1 = true;
 		}
@@ -937,12 +937,12 @@ bool NGIEngine::doSetScene(const EntranceInfo &entrance) {
 	case SC_25:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_25");
 		scene->preloadMovements(sceneVar);
-		scene25_initScene(scene, entrance._field_4);
+		scene25_initScene(scene, entrance._id);
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_25");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler25, 2);
-		scene25_setupWater(scene, entrance._field_4);
+		scene25_setupWater(scene, entrance._id);
 		_updateCursorCallback = scene25_updateCursor;
 		break;
 
@@ -994,7 +994,7 @@ bool NGIEngine::doSetScene(const EntranceInfo &entrance) {
 	case SC_30:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_30");
 		scene->preloadMovements(sceneVar);
-		scene30_initScene(scene, entrance._field_4);
+		scene30_initScene(scene, entrance._id);
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_30");
 		setSceneMusicParameters(sceneVar);

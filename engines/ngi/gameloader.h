@@ -51,7 +51,7 @@ class Sc2 : public CObject {
 	PicAniInfoList _defPicAniInfos;
 	PicAniInfoList _picAniInfos;
 	bool _isLoaded;
-	Common::Array<EntranceInfo> _entranceData;
+	Common::Array<Entrance> _entranceData;
 
  public:
 	Sc2();

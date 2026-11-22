@@ -197,7 +197,7 @@ bool GameLoader::setScene(int sceneId, int entranceId) {
 
 	uint entranceIdx = 0;
 	if (sceneId != 726) // WORKAROUND
-		for (entranceIdx = 0; _sc2array[sc2idx]._entranceData[entranceIdx]._field_4 != entranceId; entranceIdx++) {
+		for (entranceIdx = 0; _sc2array[sc2idx]._entranceData[entranceIdx]._id != entranceId; entranceIdx++) {
 			if (entranceIdx >= _sc2array[sc2idx]._entranceData.size())
 				return false;
 		}
@@ -216,7 +216,7 @@ bool GameLoader::setScene(int sceneId, int entranceId) {
 
 	g_nmi->_currentScene = st->_scene;
 
-	MessageQueue *mq1 = g_nmi->_currentScene->findMessageQueue(_sc2array[sc2idx]._entranceData[entranceIdx]._messageQueueId);
+	MessageQueue *mq1 = g_nmi->_currentScene->findMessageQueue(_sc2array[sc2idx]._entranceData[entranceIdx]._queueId);
 	if (mq1) {
 		MessageQueue *mq = new MessageQueue(mq1, 0, 0);
 

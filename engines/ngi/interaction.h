@@ -87,10 +87,10 @@ public:
 	Interact *getInteractionByObjectIds(int obId, int obId2, int obId3);
 };
 
-struct EntranceInfo {
+struct Entrance {
 	int32 _sceneId;
-	int32 _field_4;
-	int32 _messageQueueId;
+	int32 _id;
+	int32 _queueId;
 	int32 _field_130;
 
 	bool load(MfcArchive &file);
