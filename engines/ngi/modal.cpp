@@ -2169,7 +2169,7 @@ void SaveGameDlg::setup(Scene *sc, int mode) {
 	_files.clear();
 	_files.resize(7);
 	for (int i = 0; i < 7; i++) {
-		FileInfo &fileinfo = _files[i];
+		SavegameItem &fileinfo = _files[i];
 
 		Common::strlcpy(fileinfo.filename, g_nmi->getMetaEngine()->getSavegameFile(i,fileinfo.filename).c_str(), sizeof(fileinfo.filename));
 
@@ -2199,7 +2199,7 @@ char *SaveGameDlg::getSaveName() {
 	return _files[_queryRes - 1].filename;
 }
 
-bool SaveGameDlg::getFileInfo(int slot, FileInfo *fileinfo) {
+bool SaveGameDlg::getFileInfo(int slot, SavegameItem *fileinfo) {
 	Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(
 		g_nmi->getMetaEngine()->getSavegameFile(slot,fileinfo->filename)));
 

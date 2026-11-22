@@ -30,7 +30,7 @@ class PictureObject;
 class Texture;
 class Sound;
 
-struct FileInfo {
+struct SavegameItem {
 	char filename[260];
 	bool empty;
 	char date[16];
@@ -302,7 +302,7 @@ public:
 	void processKey(int action);
 
 	char *getSaveName();
-	bool getFileInfo(int slot, FileInfo *fileinfo);
+	bool getFileInfo(int slot, SavegameItem *fileinfo);
 
 	Common::Rect _rect;
 	int _oldBgX;
@@ -319,7 +319,7 @@ public:
 	Scene *_menuScene;
 	int _mode;
 	ModalQuery *_queryDlg;
-	Common::Array <FileInfo> _files;
+	Common::Array <SavegameItem> _files;
 	Common::Array <PictureObject *> _arrayL;
 	Common::Array <PictureObject *> _arrayD;
 	int _queryRes;
