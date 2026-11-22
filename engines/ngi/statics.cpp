@@ -205,6 +205,52 @@ bool AniObject::load(MfcArchive &file) {
 	return true;
 }
 
+bool AniObject::startAndroidMovement(int id) {
+	Movement *movement = getMovement(id);
+	if (_movement || !movement || movement->_phases.size() <= 1)
+		return false;
+
+	_statics = movement->_prevStatic;
+	_movement = movement;
+	movement->_curFrame = 0;
+	movement->_curPhase = movement->_phases.front();
+	movement->_counter = 0;
+	movement->_somePoint = Common::Point(_x, _y) - _statics->getSomeXY()
+		+ Common::Point(movement->_prevStepX, movement->_prevStepY) + movement->_framePosOffsets.front();
+	debugC(2, kDebugAnimation, "Started Android movement %u on object %u",
+		static_cast<uint16>(movement->_id), static_cast<uint16>(_id));
+	return true;
+}
+
+bool AniObject::advanceAndroidMovement(uint32 elapsed) {
+	if (!_movement)
+		return false;
+
+	Movement &movement = *_movement;
+	const Phase &phase = *movement._curPhase;
+	const int delay = movement._loopDelay * (1 + phase._delayRelative) + phase._delay;
+	movement._counter += elapsed;
+	if (movement._counter <= delay)
+		return false;
+
+	movement._counter = 0;
+	++movement._curFrame;
+	movement._somePoint += movement._framePosOffsets[movement._curFrame];
+	if (static_cast<uint>(movement._curFrame + 1) == movement._phases.size()) {
+		_statics = movement._nextStatic;
+		const Common::Point anchor = movement._somePoint + _statics->getSomeXY();
+		_x = anchor.x;
+		_y = anchor.y;
+		_movement = nullptr;
+		movement._curPhase = nullptr;
+		debugC(2, kDebugAnimation, "Finished Android movement %u on object %u",
+			static_cast<uint16>(movement._id), static_cast<uint16>(_id));
+	} else {
+		movement._curPhase = movement._phases[movement._curFrame];
+	}
+	return true;
+}
+
 void AniObject::setPos(int x, int y) {
 	_x = x;
 	_y = y;

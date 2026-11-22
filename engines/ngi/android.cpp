@@ -30,12 +30,14 @@
 
 #include "engines/util.h"
 #include "ngi/ngi.h"
+#include "ngi/constants.h"
 #include "ngi/detection.h"
 #include "ngi/messages.h"
 #include "ngi/utils.h"
 #include "ngi/scene.h"
 #include "ngi/statics.h"
 #include "ngi/anihandler.h"
+#include "ngi/scenes.h"
 
 namespace NGI {
 
@@ -375,6 +377,7 @@ private:
 		Common::ScopedPtr<Phase> phase(new Phase());
 		phase->_flags = atoi(node->values.getValOrDefault("flags").c_str());
 		phase->_delay = atoi(node->values.getValOrDefault("delay").c_str());
+		phase->_delayRelative = atoi(node->values.getValOrDefault("delayRelative").c_str());
 		phase->_x = atoi(node->values.getValOrDefault("x").c_str());
 		phase->_y = atoi(node->values.getValOrDefault("y").c_str());
 		if (!loadTexture(*phase, resource, isLocalized(*getParentNode(node))))
@@ -439,8 +442,14 @@ static void drawAndroidScene(const Scene &scene, Graphics::ManagedSurface &targe
 		if (object->_objtype == kObjTypePictureObject) {
 			static_cast<const PictureObject *>(object)->_picture->blitTo(target, position);
 		} else {
-			const Statics *pose = static_cast<const AniObject *>(object)->_statics;
-			pose->blitTo(target, position - pose->getSomeXY());
+			const AniObject &animation = *static_cast<const AniObject *>(object);
+			if (animation._movement) {
+				const Movement &movement = *animation._movement;
+				movement._curPhase->blitTo(target, movement._somePoint - Common::Point(scene._x, scene._y));
+			} else {
+				const Statics &pose = *animation._statics;
+				pose.blitTo(target, position - pose.getSomeXY());
+			}
 		}
 	}
 }
@@ -504,11 +513,31 @@ Common::Error NGIEngine::runAndroid() {
 
 	Common::Event event;
 	Common::EventManager *eventManager = _system->getEventManager();
+	uint32 lastUpdate = _system->getMillis();
 	while (!shouldQuit()) {
+		bool screenChanged = false;
 		while (eventManager->pollEvent(event)) {
 			if (event.type == Common::EVENT_SCREEN_CHANGED)
-				_system->copyRectToScreen(frame.getPixels(), frame.pitch, 0, 0, frame.w, frame.h);
+				screenChanged = true;
 		}
+		if (shouldQuit())
+			break;
+
+		const uint32 now = _system->getMillis();
+		const uint32 elapsed = now - lastUpdate;
+		lastUpdate = now;
+		bool redraw = false;
+		for (AniObject *animation : scene._renderableAnis)
+			redraw |= animation->advanceAndroidMovement(elapsed);
+		if (scene._sceneId == SC_INTRO1)
+			redraw |= sceneIntro_updateAndroid(scene);
+
+		if (redraw) {
+			frame.clear(format.RGBToColor(0, 0, 0));
+			drawAndroidScene(scene, frame);
+		}
+		if (redraw || screenChanged)
+			_system->copyRectToScreen(frame.getPixels(), frame.pitch, 0, 0, frame.w, frame.h);
 		_system->updateScreen();
 		_system->delayMillis(10);
 	}

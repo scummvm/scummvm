@@ -30,6 +30,12 @@
 
 namespace NGI {
 
+bool sceneIntro_updateAndroid(Scene &scene) {
+	AniObject *sleeper = scene.findAniObjectById(ANI_IN1MAN, -1);
+	return sleeper && !sleeper->_movement && sleeper->_statics &&
+		sleeper->_statics->_staticsId == ST_IN1MAN_SLEEP && sleeper->startAndroidMovement(MV_IN1MAN_SLEEP);
+}
+
 int sceneIntro_updateCursor() {
 	g_nmi->_cursorId = 0;
 

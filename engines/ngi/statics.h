@@ -68,6 +68,7 @@ class Phase : public StaticPhase {
  public:
 	int _someX;
 	int _someY;
+	int _delayRelative = 0;
 	Common::Rect _rect;
 	int16 _field_7C;
 	int16 _field_7E;
@@ -206,6 +207,8 @@ public:
 	Statics *getStatic(int id);
 	Statics *getStaticsByName(const Common::String &name);
 	Movement *getMovement(int id);
+	bool startAndroidMovement(int id);
+	bool advanceAndroidMovement(uint32 elapsed);
 	int getMovementIdById(int itemId) const;
 	Movement *getMovementByName(const Common::String &name);
 	Common::Point getFullSize() const;
