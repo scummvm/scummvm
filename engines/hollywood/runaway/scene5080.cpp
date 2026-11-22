@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "hollywood/runaway/scene5080.h"
@@ -189,7 +188,7 @@ RunawayRoomScene::ActionResult Scene5080::dispatchCustomSceneAction(uint16 actio
 	case 316: // Look at the anthill.
 		if (_desert.antsDistracted) {
 			say(13, 2);
-		} else if (items.antTrickKnown && ConfMan.getBool("restored_content")) {
+		} else if (items.antTrickKnown && _restoredContent) {
 			say(13, 1);
 		} else {
 			say(13);

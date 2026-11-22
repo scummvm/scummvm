@@ -171,7 +171,7 @@ Scene5130::Scene5130(HollywoodEngine *vm) :
 		_fillRuns(),
 		_paletteMask(),
 		_textStore(vm->textTranslation()),
-		_speech(vm->getLanguage()),
+		_speech(vm->getLanguage(), true, vm->positionalAudioEnabled()),
 		_soundBank0(),
 		_random("hollywood_scene5130"),
 		_selectedDrinks(),

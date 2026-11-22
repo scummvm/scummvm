@@ -102,7 +102,7 @@ const int kOptionsLanguageButtonBottom = 0x155;
 
 GameplayOptionsMenu::GameplayOptionsMenu(HollywoodEngine *vm) :
 		_vm(vm),
-		_testSpeech(vm->getLanguage(), vm->hasSpeechData()),
+		_testSpeech(vm->getLanguage(), vm->hasSpeechData(), vm->positionalAudioEnabled()),
 		_speechPreviewSampleId(0),
 		_loaded(false),
 		_confirmQuit(false),

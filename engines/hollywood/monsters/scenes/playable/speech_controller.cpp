@@ -23,8 +23,8 @@
 
 namespace Hollywood {
 
-SpeechController::SpeechController(Common::Language language, bool speechEnabled) :
-		_player(language, speechEnabled),
+SpeechController::SpeechController(Common::Language language, bool speechEnabled, bool positionalAudio) :
+		_player(language, speechEnabled, positionalAudio),
 		_primaryLeftSpeechLastFrame(0),
 		_primaryDialogueSpeechLastFrame(0),
 		_primaryDialogueSpeechGroup(0),

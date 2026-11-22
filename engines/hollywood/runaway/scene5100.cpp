@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "common/scummsys.h"
 #include "common/str-enc.h"
 #include "common/textconsole.h"
@@ -258,7 +257,7 @@ RunawayRoomScene::ActionResult Scene5100::dispatchCustomSceneAction(uint16 actio
 		say(6, !_desert.insideBarn);
 		break;
 	case 330: // Threaten the drugged Stud with the crowbar (restored content).
-		if (_desert.guard == 2 && ConfMan.getBool("restored_content")) {
+		if (_desert.guard == 2 && _restoredContent) {
 			say(12, 7, false, 1);
 		} else {
 			executeItemAction(defaultItemAction(2, 6));

@@ -21,7 +21,6 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
-#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/substream.h"
@@ -192,12 +191,13 @@ bool MusicPlayer::readCueSpan(const Common::Path &fileName, uint16 cueId, uint32
 	return true;
 }
 
-SpeechPlayer::SpeechPlayer(Common::Language language, bool enabled) :
+SpeechPlayer::SpeechPlayer(Common::Language language, bool enabled, bool positionalAudio) :
 		_sampleRate(language == Common::IT_ITA ? kItalianSpeechSampleRate : kSpanishSpeechSampleRate),
 		_rawFlags(language == Common::IT_ITA ? Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN : Audio::FLAG_UNSIGNED),
 		_bytesPerSample(language == Common::IT_ITA ? 2 : 1),
 		_lastSampleDurationMillis(0),
-		_enabled(enabled) {
+		_enabled(enabled),
+		_positionalAudio(positionalAudio) {
 }
 
 SpeechPlayer::~SpeechPlayer() {
@@ -207,7 +207,7 @@ SpeechPlayer::~SpeechPlayer() {
 bool SpeechPlayer::playSampleAt(uint16 sampleId, int worldX, int viewportX, byte volumePercent) {
 	const Common::Point position(worldX, HollywoodEngine::kScreenWidth / 2);
 	return playSample(sampleId, volumePercent, false,
-		ConfMan.getBool("positional_audio") ? &position : nullptr,
+		_positionalAudio ? &position : nullptr,
 		viewportX + HollywoodEngine::kScreenWidth / 2);
 }
 
@@ -394,9 +394,10 @@ bool SoundBank0Player::readSampleSpan(uint16 sampleId, uint32 &start, uint32 &si
 	return size != 0;
 }
 
-ResidentSoundEffectPlayer::ResidentSoundEffectPlayer(bool useSpanishDemoLayout) :
+ResidentSoundEffectPlayer::ResidentSoundEffectPlayer(bool useSpanishDemoLayout, bool positionalAudio) :
 		_resourceEntries(useSpanishDemoLayout ?
-			kSpanishDemoResidentSoundResourceEntries : kResidentSoundResourceEntries) {
+			kSpanishDemoResidentSoundResourceEntries : kResidentSoundResourceEntries),
+		_positionalAudio(positionalAudio) {
 }
 
 ResidentSoundEffectPlayer::~ResidentSoundEffectPlayer() {
@@ -406,7 +407,7 @@ ResidentSoundEffectPlayer::~ResidentSoundEffectPlayer() {
 bool ResidentSoundEffectPlayer::playSampleAt(byte soundEffectId, int worldX, int viewportX, byte volumePercent) {
 	const Common::Point position(worldX, HollywoodEngine::kScreenWidth / 2);
 	return playSample(soundEffectId, volumePercent,
-		ConfMan.getBool("positional_audio") ? &position : nullptr,
+		_positionalAudio ? &position : nullptr,
 		viewportX + HollywoodEngine::kScreenWidth / 2);
 }
 

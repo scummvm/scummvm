@@ -51,7 +51,8 @@
 namespace Hollywood {
 
 RunawayEngine::RunawayEngine(OSystem *syst, Common::Language language, RunawayGameType game) :
-	Engine(syst), _language(language), _game(game), _museum(game == kRunawayMuseumDemo), _strings(language), _audio(_mixer) {
+	Engine(syst), _language(language), _game(game), _museum(game == kRunawayMuseumDemo),
+	_restoredContent(ConfMan.getBool("restored_content")), _strings(language), _audio(_mixer) {
 	_state.game = game;
 	_state.scene = _museum ? 4050 : game == kRunawayFullGame ? 2020 : 5030;
 	_audio.setMuseum(_museum);
@@ -185,17 +186,21 @@ Common::Error RunawayEngine::loadGameStream(Common::SeekableReadStream *stream) 
 }
 
 RunawayScene *RunawayEngine::createScene(uint16 entryScene) {
-	const RunawayRoom *room = findRunawayRoom(entryScene);
-	if (room && ((_museum && entryScene >= 4000) ||
-			(_game == kRunawayFullGame && (entryScene / 1000 == 2 || entryScene / 1000 == 4 || entryScene / 1000 == 5 || entryScene / 1000 == 6 || entryScene / 1000 == 7 || entryScene / 1000 == 8 || entryScene / 1000 == 9)))) {
-		return createRunawayRoomScene(*room, _audio, *_inventory, _strings, _game);
-	}
-	if ((_game == kRunawayCabinDemo && entryScene == 5030) ||
-			(_game == kRunawayFullGame && entryScene >= 5030 && entryScene <= 5032))
-		return new Runaway::Scene5030(_mixer, _audio, *_inventory, _strings, _game);
 	// Retail scene scripts have their own entry substates. Sharing an archive
 	// with a demo does not make its puzzle initialization interchangeable.
-	return nullptr;
+	const RunawayRoom *room = findRunawayRoom(entryScene);
+	RunawayScene *scene = nullptr;
+	if (room && ((_museum && entryScene >= 4000) ||
+			(_game == kRunawayFullGame && (entryScene / 1000 == 2 || entryScene / 1000 == 4 || entryScene / 1000 == 5 || entryScene / 1000 == 6 || entryScene / 1000 == 7 || entryScene / 1000 == 8 || entryScene / 1000 == 9)))) {
+		scene = createRunawayRoomScene(*room, _audio, *_inventory, _strings, _game);
+	} else if ((_game == kRunawayCabinDemo && entryScene == 5030) ||
+			(_game == kRunawayFullGame && entryScene >= 5030 && entryScene <= 5032)) {
+		scene = new Runaway::Scene5030(_mixer, _audio, *_inventory, _strings, _game);
+	}
+	if (scene) {
+		scene->setRestoredContent(_restoredContent);
+	}
+	return scene;
 }
 
 bool RunawayEngine::sceneBusy() const {
@@ -384,21 +389,22 @@ Common::Error RunawayEngine::run() {
 		return Common::Error(Common::kReadingFailed, "Cannot load Runaway text. Please use the matching hollywood.dat file.");
 	}
 	_inventory.reset(new RunawayInventory(_strings, _game));
-	if (_museum && ConfMan.hasKey("boot_param") && ConfMan.getInt("boot_param") >= 4000 &&
-			findRunawayRoom(ConfMan.getInt("boot_param")))
-		_state.scene = ConfMan.getInt("boot_param");
-	if (_game == kRunawayFullGame && ConfMan.hasKey("boot_param")) {
-		const int scene = ConfMan.getInt("boot_param");
-		if (scene == 4000) {
+	const bool hasBootParam = ConfMan.hasKey("boot_param");
+	const int bootParam = hasBootParam ? ConfMan.getInt("boot_param") : 0;
+	if (_museum && bootParam >= 4000 && findRunawayRoom(bootParam)) {
+		_state.scene = bootParam;
+	}
+	if (_game == kRunawayFullGame && hasBootParam) {
+		if (bootParam == 4000) {
 			_state.scene = 4010;
-		} else if (scene == 6000) {
+		} else if (bootParam == 6000) {
 			_state.scene = 6350;
-		} else if (scene == 7000) {
+		} else if (bootParam == 7000) {
 			_state.scene = 7010;
-		} else if (scene == 8000) {
+		} else if (bootParam == 8000) {
 			_state.scene = 8100;
-		} else if (scene == 5030 || findRunawayRoom(scene)) {
-			_state.scene = scene;
+		} else if (bootParam == 5030 || findRunawayRoom(bootParam)) {
+			_state.scene = bootParam;
 		}
 	}
 	_inventory->setChapter(_state.chapter());
@@ -420,13 +426,13 @@ Common::Error RunawayEngine::run() {
 	if (!_scene->load(_state.scene) || !_ui->load(_game, _state.chapter()))
 		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway resources");
 	syncSoundSettings();
-	if (ConfMan.hasKey("save_slot") && ConfMan.getInt("save_slot") >= 0) {
-		const Common::Error result = loadGameState(ConfMan.getInt("save_slot"));
+	const int startupLoadSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+	if (startupLoadSlot >= 0) {
+		const Common::Error result = loadGameState(startupLoadSlot);
 		if (result.getCode() != Common::kNoError)
 			return result;
 	} else if (_game == kRunawayFullGame &&
-			((!ConfMan.hasKey("boot_param") && unlockedChapter()) ||
-			(ConfMan.hasKey("boot_param") && ConfMan.getInt("boot_param") == 1000))) {
+			((!hasBootParam && unlockedChapter()) || bootParam == 1000)) {
 		Common::Error result = playIntro(menu, 0, RunawayIntro::kLogoOnly);
 		if (result.getCode() == Common::kNoError && !_loadedGame && !shouldQuit()) {
 			result = selectChapter(menu);

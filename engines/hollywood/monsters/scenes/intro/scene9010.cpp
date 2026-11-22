@@ -52,7 +52,7 @@ const byte kPopupSequence[] = {
 Scene9010::Scene9010(HollywoodEngine *vm) :
 		PresentationScene(vm, "intro scene 9010", kSceneFramebufferSize, 0),
 		_music(),
-		_speech(vm->getLanguage(), vm->hasSpeechData()),
+		_speech(vm->getLanguage(), vm->hasSpeechData(), vm->positionalAudioEnabled()),
 		_text(vm->textTranslation()),
 		_i02FramePayloadFormat(kI02FramePayloadUnknown),
 		_i02SingleFrameOnly(false),

@@ -81,8 +81,8 @@ const byte kScene9170ScrollUpB[] = {
 Scene9170::Scene9170(HollywoodEngine *vm) :
 		PresentationScene(vm, "Scene 9170", kScene9170TallFramebufferSize, kSceneBufferByteCount),
 		_music(vm->introMusic()),
-		_speech(vm->getLanguage()),
-		_ambientSpeech(vm->getLanguage()),
+		_speech(vm->getLanguage(), true, vm->positionalAudioEnabled()),
+		_ambientSpeech(vm->getLanguage(), true, vm->positionalAudioEnabled()),
 		_sound(),
 		_ambientSound(),
 		_text(vm->textTranslation()),

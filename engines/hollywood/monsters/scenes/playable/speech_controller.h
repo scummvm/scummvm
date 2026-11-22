@@ -38,7 +38,7 @@ namespace Hollywood {
  */
 class SpeechController {
 public:
-	SpeechController(Common::Language language, bool speechEnabled = true);
+	SpeechController(Common::Language language, bool speechEnabled, bool positionalAudio);
 
 	void initialize(byte secondaryTextColor, byte primaryTextColor);
 	void resetRuntimeState(byte invalidPrimaryGroup, byte defaultPrimaryFrame);

@@ -49,10 +49,14 @@ public:
 
 protected:
 	void getSavegameThumbnail(Graphics::Surface &thumb) override;
+
+private:
+	mutable bool _isRunaway = false;
 };
 
 Common::Error HollywoodMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (!strcmp(desc->gameId, "runaway")) {
+	_isRunaway = !strcmp(desc->gameId, "runaway");
+	if (_isRunaway) {
 		const RunawayGameType game = (desc->flags & GF_RUNAWAY_MUSEUM_DEMO) ? kRunawayMuseumDemo :
 			(desc->flags & ADGF_DEMO) ? kRunawayCabinDemo : kRunawayFullGame;
 		*engine = new RunawayEngine(syst, desc->language, game);
@@ -73,13 +77,13 @@ void HollywoodMetaEngine::registerDefaultSettings(const Common::String &) const 
 }
 
 void HollywoodMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
-	if (g_engine && ConfMan.get("gameid") == "hollywood") {
+	if (g_engine && !_isRunaway) {
 		getMonstersSavegameThumbnail(thumb);
 		return;
 	}
-	if (g_engine && ConfMan.get("gameid") == "runaway" &&
-			static_cast<RunawayEngine *>(g_engine)->copySaveThumbnail(thumb))
+	if (g_engine && _isRunaway && static_cast<RunawayEngine *>(g_engine)->copySaveThumbnail(thumb)) {
 		return;
+	}
 
 	Graphics::createThumbnail(thumb);
 }

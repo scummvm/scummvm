@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "common/util.h"
 #include "hollywood/runaway/scene4050.h"
 #include "hollywood/runaway/strings.h"
@@ -557,7 +556,7 @@ void Scene4050::finishCustomAnimation(uint16 action) {
 	case 454: // Finish the exchange with Susan.
 		say(26, 1);
 		say(26, 2, false, 1);
-		if (ConfMan.getBool("restored_content")) {
+		if (_restoredContent) {
 			say(26, 3);
 		}
 		deferMuseumAction(453);
@@ -736,7 +735,7 @@ void Scene4050::startSusanConversation(bool introduction) {
 	memcpy(_dialogue[10], susan[1], sizeof(susan[1]));
 	memcpy(_dialogue[11], susan[2], sizeof(susan[2]));
 	memcpy(_dialogue[20], susan[3], sizeof(susan[3]));
-	if (ConfMan.getBool("restored_content")) {
+	if (_restoredContent) {
 		// The automatic follow-up node returns to her work topic after the laser explanation.
 		_dialogue[11][0].node = 0;
 		_dialogue[11][0].transition = 1;

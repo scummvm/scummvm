@@ -54,7 +54,7 @@ const byte kScene9180FrameMap[] = {
 
 Scene9180::Scene9180(HollywoodEngine *vm) :
 		PresentationScene(vm, "Scene 9180"),
-		_speech(vm->getLanguage()),
+		_speech(vm->getLanguage(), true, vm->positionalAudioEnabled()),
 		_loopSound(),
 		_effectSound(),
 		_text(vm->textTranslation()),

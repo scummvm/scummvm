@@ -51,7 +51,7 @@ const Scene9150ClipStep kScene9150ClipSteps[] = {
 
 Scene9150::Scene9150(HollywoodEngine *vm) :
 		PresentationScene(vm, "Scene 9150"),
-		_speech(vm->getLanguage()),
+		_speech(vm->getLanguage(), true, vm->positionalAudioEnabled()),
 		_text(vm->textTranslation()),
 		_paletteResource(),
 		_clipResource(),

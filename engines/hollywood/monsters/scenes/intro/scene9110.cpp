@@ -44,7 +44,7 @@ const uint kScene9110MusicFadeInterval = 50;
 Scene9110::Scene9110(HollywoodEngine *vm) :
 		PresentationScene(vm, "Scene 9110"),
 		_music(vm->introMusic()),
-		_speech(vm->getLanguage()),
+		_speech(vm->getLanguage(), true, vm->positionalAudioEnabled()),
 		_text(vm->textTranslation()),
 		_random("hollywood_scene9110"),
 		_mouthAccumulator(0),

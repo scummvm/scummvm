@@ -150,6 +150,8 @@ int optionsLevelToConfigTalkSpeed(byte level) {
 HollywoodEngine::HollywoodEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		Engine(syst),
 		_gameDescription(gameDesc),
+		_restoredContent(ConfMan.getBool("restored_content")),
+		_positionalAudio(ConfMan.getBool("positional_audio")),
 		_gameStrings(getGameStrings(gameDesc->language)),
 		_font(new HollywoodFont()),
 		_introMusic(),
@@ -202,10 +204,6 @@ bool HollywoodEngine::copyLastGameplayThumbnail(Graphics::Surface &thumbnail) co
 
 bool HollywoodEngine::subtitlesEnabled() const {
 	return _gameState.actorSpeechTextMode != 0;
-}
-
-bool HollywoodEngine::restoredContentEnabled() const {
-	return ConfMan.getBool("restored_content");
 }
 
 bool HollywoodEngine::consumeDebugSceneSolveRequest(uint16 sceneNumber) {

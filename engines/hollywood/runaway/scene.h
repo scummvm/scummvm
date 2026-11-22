@@ -83,6 +83,7 @@ public:
 	// Prepare a replacement scene without changing shared inventory or audio.
 	virtual bool restoreState(const RunawaySaveState &state, uint32 now, bool entering = false) { return false; }
 	virtual void setOptions(bool antialias, bool fastScrolling) = 0;
+	void setRestoredContent(bool enabled) { _restoredContent = enabled; }
 
 protected:
 	Common::U32String hotspotName(byte id) const override { return Common::U32String(); }
@@ -92,6 +93,7 @@ protected:
 	Common::Array<Common::U32String> _noChoices;
 	uint16 _entryScene = 0;
 	Transition _transition;
+	bool _restoredContent = false;
 };
 
 class RunawayStrings;

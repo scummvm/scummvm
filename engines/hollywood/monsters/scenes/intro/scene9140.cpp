@@ -103,7 +103,7 @@ const uint kScene9140VariantStepCounts[] = {
 
 Scene9140::Scene9140(HollywoodEngine *vm) :
 		PresentationScene(vm, "Scene 9140"),
-		_speech(vm->getLanguage()),
+		_speech(vm->getLanguage(), true, vm->positionalAudioEnabled()),
 		_text(vm->textTranslation()),
 		_paletteResource(),
 		_baseFramebuffer(),

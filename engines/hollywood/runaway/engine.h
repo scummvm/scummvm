@@ -102,6 +102,7 @@ private:
 	Common::Language _language;
 	const RunawayGameType _game;
 	const bool _museum;
+	const bool _restoredContent;
 	RunawayStrings _strings;
 	RunawayAudio _audio;
 	RunawaySaveState _state;

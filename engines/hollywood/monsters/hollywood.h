@@ -79,7 +79,8 @@ public:
 	GameplayState &gameState() { return _gameState; }
 	const GameplayState &gameState() const { return _gameState; }
 	bool subtitlesEnabled() const;
-	bool restoredContentEnabled() const;
+	bool restoredContentEnabled() const { return _restoredContent; }
+	bool positionalAudioEnabled() const { return _positionalAudio; }
 	void captureLastGameplayThumbnail();
 	bool copyLastGameplayThumbnail(Graphics::Surface &thumbnail) const;
 	bool isSceneRestartRequested() const { return _sceneRestartRequested; }
@@ -114,6 +115,8 @@ private:
 	void normalizeLoadedGameState();
 
 	const ADGameDescription *_gameDescription;
+	const bool _restoredContent;
+	const bool _positionalAudio;
 	TextTranslation _translation;
 	HollywoodGameStrings _gameStrings;
 	HollywoodFont *_font;
