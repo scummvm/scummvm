@@ -42,7 +42,7 @@ void scene35_initScene(Scene *sc) {
 	g_vars->scene35_flowCounter = 0;
 	g_vars->scene35_fliesCounter = 0;
 
-	MovGraphLink *lnk = getSc2MctlCompoundBySceneId(sc->_sceneId)->getLinkByName(sO_CloseThing);
+	MovGraphLink *lnk = getSc2MctlCompoundBySceneId(sc->_sceneId)->getGraphLink(sO_CloseThing);
 
 	if (g_vars->scene35_bellyInflater->_statics->_staticsId == ST_PDV_LARGE)
 		lnk->_flags |= 0x20000000;
@@ -77,7 +77,7 @@ void sceneHandler35_stopFlow() {
 }
 
 void sceneHandler35_shrink() {
-	getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing, 0);
+	getCurrSceneSc2MotionController()->lockLink(sO_CloseThing, 0);
 }
 
 void sceneHandler35_startFlow() {
@@ -106,7 +106,7 @@ void sceneHandler35_startFlow() {
 
 			g_vars->scene35_bellyInflater->_flags |= 0x100;
 
-			getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing, 1);
+			getCurrSceneSc2MotionController()->lockLink(sO_CloseThing, 1);
 
 			g_nmi->playSound(SND_35_012, 1);
 		} else {

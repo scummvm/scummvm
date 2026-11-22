@@ -36,7 +36,7 @@ bool MotionController::load(MfcArchive &file) {
 	return true;
 }
 
-void MotionController::enableLinks(const char *linkName, bool enable) {
+void MotionController::lockLink(const char *linkName, bool enable) {
 	if (_objtype != kObjTypeMctlCompound)
 		return;
 
@@ -64,8 +64,8 @@ void MotionController::enableLinks(const char *linkName, bool enable) {
 	}
 }
 
-MovGraphLink *MotionController::getLinkByName(const char *name) {
-	debugC(4, kDebugPathfinding, "MotionController::getLinkByName(%s)", name);
+MovGraphLink *MotionController::getGraphLink(const char *name) {
+	debugC(4, kDebugPathfinding, "MotionController::getGraphLink(%s)", name);
 
 	if (_objtype == kObjTypeMctlCompound) {
 		MctlCompound *obj = static_cast<MctlCompound *>(this);

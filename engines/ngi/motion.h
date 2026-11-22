@@ -58,13 +58,13 @@ public:
 	virtual MessageQueue *startMove(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) { return 0; }
 	virtual void setSelFunc(MovArr *(*_callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter)) {}
 	virtual bool resetPosition(StaticANIObject *ani, int flag) { return 0; }
-	virtual int method40() { return 0; }
+	virtual int checkCurrentPath() { return 0; }
 	virtual bool canDropInventory(StaticANIObject *ani, int x, int y) { return false; }
-	virtual int method48() { return -1; }
+	virtual int getStopStatics() { return -1; }
 	virtual MessageQueue *makeQueue(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) { return 0; }
 
-	void enableLinks(const char *linkName, bool enable);
-	MovGraphLink *getLinkByName(const char *name);
+	void lockLink(const char *linkName, bool enable);
+	MovGraphLink *getGraphLink(const char *name);
 };
 
 class MovGraphReact : public CObject {

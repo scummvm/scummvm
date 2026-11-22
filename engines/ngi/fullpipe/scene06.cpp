@@ -70,8 +70,8 @@ int scene06_updateCursor() {
 void sceneHandler06_setExits(Scene *sc) {
 	MotionController *mc = getSc2MctlCompoundBySceneId(sc->_sceneId);
 
-	mc->enableLinks(sO_CloseThing, (g_nmi->getObjectState(sO_BigMumsy) != g_nmi->getObjectEnumState(sO_BigMumsy, sO_IsGone)));
-	mc->enableLinks(sO_CloseThing2, g_vars->scene06_arcadeEnabled);
+	mc->lockLink(sO_CloseThing, (g_nmi->getObjectState(sO_BigMumsy) != g_nmi->getObjectEnumState(sO_BigMumsy, sO_IsGone)));
+	mc->lockLink(sO_CloseThing2, g_vars->scene06_arcadeEnabled);
 }
 
 void sceneHandler06_winArcade() {

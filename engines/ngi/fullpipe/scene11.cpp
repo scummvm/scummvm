@@ -130,9 +130,9 @@ void scene11_initScene(Scene *sc) {
 		g_vars->scene11_swingIsSwinging = true;
 		g_vars->scene11_swingieStands = false;
 
-		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing1, 1);
-		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing2, 1);
-		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing3, 0);
+		getCurrSceneSc2MotionController()->lockLink(sO_CloseThing1, 1);
+		getCurrSceneSc2MotionController()->lockLink(sO_CloseThing2, 1);
+		getCurrSceneSc2MotionController()->lockLink(sO_CloseThing3, 0);
 		getCurrSceneSc2MotionController()->replaceNodeX(805, 905);
 		getSc2MctlCompoundBySceneId(sc->_sceneId)->replaceNodeX(303, 353);
 	} else if (swingie == g_nmi->getObjectEnumState(sO_Swingie, sO_IsStandingInBoots)
@@ -142,9 +142,9 @@ void scene11_initScene(Scene *sc) {
 
 		g_vars->scene11_swingie->changeStatics2(ST_SWR_STAND3);
 
-		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing1, 0);
-		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing2, 1);
-		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing3, 0);
+		getCurrSceneSc2MotionController()->lockLink(sO_CloseThing1, 0);
+		getCurrSceneSc2MotionController()->lockLink(sO_CloseThing2, 1);
+		getCurrSceneSc2MotionController()->lockLink(sO_CloseThing3, 0);
 		getCurrSceneSc2MotionController()->replaceNodeX(905, 805);
 	} else {
 		g_vars->scene11_swingIsSwinging = false;
@@ -155,17 +155,17 @@ void scene11_initScene(Scene *sc) {
 			g_vars->scene11_swingie->_statics = g_vars->scene11_swingie->getStaticsById(ST_SWR_SIT);
 			g_vars->scene11_swingie->setOXY(144, 389);
 
-			getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing1, 0);
-			getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing2, 0);
-			getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing3, 1);
+			getCurrSceneSc2MotionController()->lockLink(sO_CloseThing1, 0);
+			getCurrSceneSc2MotionController()->lockLink(sO_CloseThing2, 0);
+			getCurrSceneSc2MotionController()->lockLink(sO_CloseThing3, 1);
 		} else {
 			g_vars->scene11_swingie->_movement = nullptr;
 			g_vars->scene11_swingie->_statics = g_vars->scene11_swingie->getStaticsById(ST_SWR_SITBALD);
 			g_vars->scene11_swingie->setOXY(144, 415);
 
-			getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing1, 0);
-			getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing2, 0);
-			getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing3, 1);
+			getCurrSceneSc2MotionController()->lockLink(sO_CloseThing1, 0);
+			getCurrSceneSc2MotionController()->lockLink(sO_CloseThing2, 0);
+			getCurrSceneSc2MotionController()->lockLink(sO_CloseThing3, 1);
 		}
 	}
 
@@ -552,9 +552,9 @@ void sceneHandler11_swingieSit() {
 
 		g_nmi->setObjectState(sO_Swingie, g_nmi->getObjectEnumState(sO_Swingie, sO_IsSitting));
 
-		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing1, 0);
-		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing2, 0);
-		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing3, 1);
+		getCurrSceneSc2MotionController()->lockLink(sO_CloseThing1, 0);
+		getCurrSceneSc2MotionController()->lockLink(sO_CloseThing2, 0);
+		getCurrSceneSc2MotionController()->lockLink(sO_CloseThing3, 1);
 	}
 }
 
@@ -570,9 +570,9 @@ void sceneHandler11_swingieJumpDown() {
 	g_vars->scene11_swingieStands = true;
 	g_vars->scene11_swingieScreenEdge = g_nmi->_sceneRect.left;
 
-	getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing1, 0);
-	getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing2, 1);
-	getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing3, 0);
+	getCurrSceneSc2MotionController()->lockLink(sO_CloseThing1, 0);
+	getCurrSceneSc2MotionController()->lockLink(sO_CloseThing2, 1);
+	getCurrSceneSc2MotionController()->lockLink(sO_CloseThing3, 0);
 
 	getCurrSceneSc2MotionController()->replaceNodeX(905, 805);
 }

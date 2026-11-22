@@ -36,7 +36,7 @@
 namespace NGI {
 
 void scene30_enablePass(Scene *sc) {
-	MovGraphLink *lnk = getSc2MctlCompoundBySceneId(sc->_sceneId)->getLinkByName(sO_WayToPipe);
+	MovGraphLink *lnk = getSc2MctlCompoundBySceneId(sc->_sceneId)->getGraphLink(sO_WayToPipe);
 
 	if (g_nmi->getObjectState(sO_Leg) == g_nmi->getObjectEnumState(sO_Leg, sO_WithAll))
 		lnk->_flags &= 0xDFFFFFFF;

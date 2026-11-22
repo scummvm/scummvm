@@ -55,7 +55,7 @@ void scene08_initScene(Scene *sc) {
 	g_nmi->_currentScene = sc;
 
 	int batuta = g_nmi->getObjectState(sO_TummyTrampie);
-	MovGraphLink *lock = getSc2MctlCompoundBySceneId(sc->_sceneId)->getLinkByName(sO_CloseThing);
+	MovGraphLink *lock = getSc2MctlCompoundBySceneId(sc->_sceneId)->getGraphLink(sO_CloseThing);
 
 	if (lock)
 		lock->_flags &= 0xDFFFFFFF;
@@ -163,7 +163,7 @@ void sceneHandler08_hideLadder() {
 }
 
 void sceneHandler08_arcadeNow() {
-	MovGraphLink *lnk = getCurrSceneSc2MotionController()->getLinkByName(sO_Stairway);
+	MovGraphLink *lnk = getCurrSceneSc2MotionController()->getGraphLink(sO_Stairway);
 
 	g_nmi->setObjectState(sO_TummyTrampie, g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsSleeping));
 

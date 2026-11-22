@@ -47,7 +47,7 @@ void scene13_initScene(Scene *sc) {
 	g_vars->scene13_bridge = sc->getStaticANIObject1ById(ANI_BRIDGE, -1);
 	g_vars->scene13_guardDirection = true;
 
-	MovGraphLink *lnk = getSc2MctlCompoundBySceneId(sc->_sceneId)->getLinkByName(sO_Bridge);
+	MovGraphLink *lnk = getSc2MctlCompoundBySceneId(sc->_sceneId)->getGraphLink(sO_Bridge);
 	Scene *oldsc = g_nmi->_currentScene;
 
 	g_nmi->_currentScene = sc;
@@ -209,7 +209,7 @@ void sceneHandler13_eatGum() {
 }
 
 void sceneHandler13_updateBridge() {
-	MovGraphLink *lnk = getCurrSceneSc2MotionController()->getLinkByName(sO_Bridge);
+	MovGraphLink *lnk = getCurrSceneSc2MotionController()->getGraphLink(sO_Bridge);
 
 	if (lnk) {
 		if (g_nmi->getObjectState(sO_Bridge) == g_nmi->getObjectEnumState(sO_Bridge, sO_Convoluted))
