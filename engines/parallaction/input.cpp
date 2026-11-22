@@ -167,7 +167,7 @@ void Input::waitForButtonEvent(uint32 buttonEventMask, int32 timeout) {
 		do {
 			readInput();
 			_vm->_system->delayMillis(LOOP_RESOLUTION);
-		} while ((_mouseButtons & buttonEventMask) == 0);
+		} while ((_mouseButtons & buttonEventMask) == 0 && !_vm->shouldQuit());
 	} else {
 		do {
 			readInput();
