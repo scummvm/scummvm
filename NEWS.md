@@ -36,6 +36,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  SCUMM:
    - Added optional hotspot highlighting with object names.
+   - Various fixes to Full Throttle bike fights.
 
  Sherlock:
    - Improved resource handling by not keeping entire resource files in memory at all times.
