@@ -200,7 +200,7 @@ MessageQueue *MctlCompound::startMove(StaticANIObject *ani, int sourceX, int sou
 
 	for (uint i = 0; i < _motionControllers.size(); i++) {
 		if (_motionControllers[i]->_movGraphReactObj) {
-			if (_motionControllers[i]->_movGraphReactObj->pointInRegion(ani->_ox, ani->_oy)) {
+			if (_motionControllers[i]->_movGraphReactObj->hitTest(ani->_ox, ani->_oy)) {
 				idx = i;
 				break;
 			}
@@ -209,7 +209,7 @@ MessageQueue *MctlCompound::startMove(StaticANIObject *ani, int sourceX, int sou
 
 	for (uint i = 0; i < _motionControllers.size(); i++) {
 		if (_motionControllers[i]->_movGraphReactObj) {
-			if (_motionControllers[i]->_movGraphReactObj->pointInRegion(sourceX, sourceY)) {
+			if (_motionControllers[i]->_movGraphReactObj->hitTest(sourceX, sourceY)) {
 				sourceIdx = i;
 				break;
 			}
@@ -272,7 +272,7 @@ MessageQueue *MctlCompound::makeQueue(StaticANIObject *subj, int xpos, int ypos,
 
 	for (uint i = 0; i < _motionControllers.size(); i++) {
 		if (_motionControllers[i]->_movGraphReactObj) {
-			if (_motionControllers[i]->_movGraphReactObj->pointInRegion(subj->_ox, subj->_oy)) {
+			if (_motionControllers[i]->_movGraphReactObj->hitTest(subj->_ox, subj->_oy)) {
 				match1 = i;
 				break;
 			}
@@ -284,7 +284,7 @@ MessageQueue *MctlCompound::makeQueue(StaticANIObject *subj, int xpos, int ypos,
 
 	for (uint i = 0; i < _motionControllers.size(); i++) {
 		if (_motionControllers[i]->_movGraphReactObj) {
-			if (_motionControllers[i]->_movGraphReactObj->pointInRegion(xpos, ypos)) {
+			if (_motionControllers[i]->_movGraphReactObj->hitTest(xpos, ypos)) {
 				match2 = i;
 				break;
 			}
@@ -676,7 +676,7 @@ MctlConnectionPoint *MctlCompound::findClosestConnectionPoint(int ox, int oy, in
 			if (_motionControllers[j]->_movGraphReactObj) {
 				MctlConnectionPoint *pt = _motionControllers[sourceIdx]->_connectionPoints[i];
 
-				if (_motionControllers[j]->_movGraphReactObj->pointInRegion(pt->_connectionX, pt->_connectionY)) {
+				if (_motionControllers[j]->_movGraphReactObj->hitTest(pt->_connectionX, pt->_connectionY)) {
 					MctlConnectionPoint *npt = findClosestConnectionPoint(ox, oy, destIndex, pt->_connectionX, pt->_connectionY, j, &currDistance);
 
 					if (currDistance < minDistance) {
@@ -1474,7 +1474,7 @@ Common::Array<MovArr *> *MovGraph::getHitPoints(int x, int y, int *arrSize, int 
 			}
 		} else {
 			if (lnk->_movGraphReact) {
-				if (lnk->_movGraphReact->pointInRegion(x, y)) {
+				if (lnk->_movGraphReact->hitTest(x, y)) {
 					if (!(lnk->_flags & 0x10000000) || lnk->_flags & 0x20000000) {
 						if (!flag2) {
 							movarr = new MovArr;
@@ -2693,7 +2693,7 @@ MovGraphLink *MctlGraph::getHitLink(int x, int y, int idx, int fuzzyMatch) {
 			if (dst >= 0.0 && dst < 2.0)
 				return lnk;
 		} else if (!(lnk->_flags & 0x20000000)) {
-			if (lnk->_movGraphReact->pointInRegion(x, y)) {
+			if (lnk->_movGraphReact->hitTest(x, y)) {
 				if (abs(lnk->_graphSrc->_x - lnk->_graphDst->_x) <= abs(lnk->_graphSrc->_y - lnk->_graphDst->_y)) {
 					if (idx == 2 || idx == 3)
 						return lnk;
@@ -2933,12 +2933,12 @@ bool ReactParallel::load(MfcArchive &file) {
 	_dx = file.readSint32LE();
 	_dy = file.readSint32LE();
 
-	createRegion();
+	create();
 
 	return true;
 }
 
-void ReactParallel::createRegion() {
+void ReactParallel::create() {
 	_points.resize(4);
 
 	double at = atan2((double)(_y1 - _y2), (double)(_x1 - _x2)) + 1.570796; // pi/2
@@ -2960,7 +2960,7 @@ void ReactParallel::createRegion() {
 	// GdiObject::Attach(_rgn, CreatePolygonRgn(_points, 4, 2);
 }
 
-void ReactParallel::setCenter(int x1, int y1, int x2, int y2) {
+void ReactParallel::setAnchorPoints(int x1, int y1, int x2, int y2) {
 	_x1 = x1;
 	_y1 = y1;
 	_x2 = x2;
@@ -2988,19 +2988,19 @@ bool ReactPolygonal::load(MfcArchive &file) {
 		_points[i].y = file.readUint32LE();
 	}
 
-	createRegion();
+	create();
 
 	return true;
 }
 
-void ReactPolygonal::createRegion() {
+void ReactPolygonal::create() {
 	if (_points.size()) {
 
 		// GdiObject::Attach(_rgn, CreatePolygonRgn(_points, _pointCount, 2);
 	}
 }
 
-void ReactPolygonal::setCenter(int x1, int y1, int x2, int y2) {
+void ReactPolygonal::setAnchorPoints(int x1, int y1, int x2, int y2) {
 	int cX = (x2 + x1) / 2;
 	int cY = (y2 + y1) / 2;
 
@@ -3042,7 +3042,7 @@ Common::Rect ReactPolygonal::getBBox() {
 }
 
 
-bool MovGraphReact::pointInRegion(int x, int y) {
+bool MovGraphReact::hitTest(int x, int y) {
 	if (_points.size() < 3) {
 		return false;
 	}

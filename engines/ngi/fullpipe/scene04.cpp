@@ -1139,7 +1139,7 @@ void sceneHandler04_leaveLadder(ExCommand *ex) {
 		if (getSc2MctlCompoundBySceneId(g_nmi->_currentScene->_sceneId)->_objtype == kObjTypeMctlCompound) {
 			MctlCompound *mc = static_cast<MctlCompound *>(getSc2MctlCompoundBySceneId(g_nmi->_currentScene->_sceneId));
 
-			if (mc->_motionControllers[0]->_movGraphReactObj->pointInRegion(g_nmi->_sceneRect.left + ex->_x, g_nmi->_sceneRect.top + ex->_y)) {
+			if (mc->_motionControllers[0]->_movGraphReactObj->hitTest(g_nmi->_sceneRect.left + ex->_x, g_nmi->_sceneRect.top + ex->_y)) {
 				if (g_vars->scene04_ladder->collisionDetection(g_nmi->_aniMan)) {
 					MessageQueue *mq = g_vars->scene04_ladder->controllerWalkTo(g_nmi->_aniMan, 0);
 

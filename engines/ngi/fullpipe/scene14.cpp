@@ -449,7 +449,7 @@ bool sceneHandler14_arcadeProcessClick(ExCommand *cmd) {
 	if (getCurrSceneSc2MotionController()->_objtype != kObjTypeMctlCompound)
 		return false;
 
-	if (!getCurrSceneSc2MotionController()->_motionControllers[0]->_movGraphReactObj->pointInRegion(cmd->_sceneClickX, cmd->_sceneClickY))
+	if (!getCurrSceneSc2MotionController()->_motionControllers[0]->_movGraphReactObj->hitTest(cmd->_sceneClickX, cmd->_sceneClickY))
 		return false;
 
 	if (cmd->_sceneClickX > 1237)

@@ -72,9 +72,9 @@ public:
 	PointList _points;
 
 public:
-	virtual void setCenter(int x1, int y1, int x2, int y2) {}
-	virtual void createRegion() {}
-	virtual bool pointInRegion(int x, int y);
+	virtual void setAnchorPoints(int x1, int y1, int x2, int y2) {}
+	virtual void create() {}
+	virtual bool hitTest(int x, int y);
 };
 
 class MctlItem : public CObject {
@@ -187,8 +187,8 @@ public:
 	ReactParallel();
 	bool load(MfcArchive &file) override;
 
-	void setCenter(int x1, int y1, int x2, int y2) override;
-	void createRegion() override;
+	void setAnchorPoints(int x1, int y1, int x2, int y2) override;
+	void create() override;
 };
 
 class ReactPolygonal : public MovGraphReact {
@@ -201,8 +201,8 @@ public:
 
 	bool load(MfcArchive &file) override;
 
-	void setCenter(int x1, int y1, int x2, int y2) override;
-	void createRegion() override;
+	void setAnchorPoints(int x1, int y1, int x2, int y2) override;
+	void create() override;
 
 	Common::Rect getBBox();
 };

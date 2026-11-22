@@ -188,12 +188,12 @@ void Floaters::update() {
 						int x2 = rect.left + g_nmi->_rnd.getRandomNumber(rect.right - rect.left);
 						int y2 = rect.top + g_nmi->_rnd.getRandomNumber(rect.bottom - rect.top);
 
-						if (_hRgn->pointInRegion(x2, y2)) {
+						if (_hRgn->hitTest(x2, y2)) {
 							int dx = a2.val2 - x2;
 							int dy = a2.val3 - y2;
 							double dst = sqrt((double)(dy * dy + dx * dx));
 
-							if (dst < 300.0 || !_hRgn->pointInRegion(a2.val4, a2.val5)) {
+							if (dst < 300.0 || !_hRgn->hitTest(a2.val4, a2.val5)) {
 								a2.val2 = x2;
 								a2.val3 = y2;
 							}
