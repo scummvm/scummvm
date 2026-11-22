@@ -124,7 +124,7 @@ void scene04_initScene(Scene *sc) {
 		}
 	}
 
-	Interaction *plank = getGameLoaderInteractionController()->getInteractionByObjectIds(ANI_PLANK, 0, 0);
+	Interact *plank = getGameLoaderInteractionController()->getInteractionByObjectIds(ANI_PLANK, 0, 0);
 	if (plank)
 		plank->_flags |= 8;
 

@@ -295,7 +295,7 @@ static CObject *createObject(int objectId) {
 	case kNullObject:
 		return nullptr;
 	case kInteraction:
-		return new Interaction();
+		return new Interact();
 	case kMessageQueue:
 		return new MessageQueue();
 	case kExCommand:

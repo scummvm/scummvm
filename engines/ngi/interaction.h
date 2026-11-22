@@ -34,17 +34,17 @@ int handleObjectInteraction(AniObject *subject, GameObject *object, int invId);
 bool canInteractAny(GameObject *obj1, GameObject *obj2, int invId);
 
 
-class Interaction : public CObject {
+class Interact : public CObject {
  public:
-	int16 _objectId1;
-	int16 _objectId2;
-	int16 _objectId3;
-	int16 _staticsId1;
-	int16 _staticsId2;
+	int16 _objectId;
+	int16 _heroId;
+	int16 _cursorObjectId;
+	int16 _objectStaticId;
+	int16 _heroStaticId;
 	int _objectState1;
 	int _objectState2;
-	int _xOffs;
-	int _yOffs;
+	int _heroOffsetX;
+	int _heroOffsetY;
 	MessageQueue *_messageQueue;
 	int _sceneId;
 	int _field_28;
@@ -52,11 +52,11 @@ class Interaction : public CObject {
 	Common::String _actionName;
 
  public:
-	Interaction();
-	~Interaction() override;
+	Interact();
+	~Interact() override;
 
 	bool load(MfcArchive &file) override;
-	bool canInteract(GameObject *obj1, GameObject *obj2, int invId);
+	bool canRun(GameObject *obj1, GameObject *obj2, int invId);
 	bool isOverlapping(AniObject *subj, GameObject *obj);
 };
 
@@ -64,12 +64,12 @@ class InteractionController : public CObject {
 	friend bool canInteractAny(GameObject *obj1, GameObject *obj2, int invId);
 
 public:
-	typedef ObList<Interaction> InteractionList;
+	typedef ObList<Interact> InteractionList;
 	bool _flag24;
 
  private:
 	InteractionList _interactions;
-	static bool compareInteractions(const Interaction *i1, const Interaction *i2);
+	static bool compareInteractions(const Interact *i1, const Interact *i2);
 
  public:
 	InteractionController() : _flag24(true) {}
@@ -84,7 +84,7 @@ public:
 
 	bool handleInteraction(AniObject *subj, GameObject *obj, int invId);
 
-	Interaction *getInteractionByObjectIds(int obId, int obId2, int obId3);
+	Interact *getInteractionByObjectIds(int obId, int obId2, int obId3);
 };
 
 struct EntranceInfo {

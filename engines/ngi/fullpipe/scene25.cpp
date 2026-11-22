@@ -521,7 +521,7 @@ void sceneHandler25_walkOnLadder(AniObject *ani, Common::Point *pnt, MessageQueu
 bool sceneHandler25_isOnLadder(Command *cmd) {
 	if ((g_nmi->_aniMan->_movement && g_nmi->_aniMan->_movement->_id == MV_MAN_GOLADDERDOWN)
 		|| g_nmi->_aniMan->_statics->_staticsId == ST_MAN_GOLADDERD) {
-		Interaction *inter = getGameLoaderInteractionController()->getInteractionByObjectIds(PIC_SC25_LADDERDOWN, ANI_MAN, cmd->_param);
+		Interact *inter = getGameLoaderInteractionController()->getInteractionByObjectIds(PIC_SC25_LADDERDOWN, ANI_MAN, cmd->_param);
 
 		if (!inter)
 			return 0;
@@ -530,8 +530,8 @@ bool sceneHandler25_isOnLadder(Command *cmd) {
 		PictureObject *pic = g_nmi->_currentScene->findPictureObjectById(PIC_SC25_LADDERDOWN, 0);
 		Common::Point point;
 
-		point.x = inter->_xOffs + pic->_x;
-		point.y = inter->_yOffs + pic->_y;
+		point.x = inter->_heroOffsetX + pic->_x;
+		point.y = inter->_heroOffsetY + pic->_y;
 
 		mq->setFlags(mq->getFlags() | 1);
 
