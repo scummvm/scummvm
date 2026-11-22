@@ -53,6 +53,7 @@ Parallaction_br::Parallaction_br(OSystem* syst, const PARALLACTIONGameDescriptio
 	_countersNames = nullptr;
 	_callables = nullptr;
 	_walker = nullptr;
+	_ferrcycleMode = 0;
 }
 
 Common::Error Parallaction_br::init() {
