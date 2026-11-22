@@ -113,7 +113,7 @@ int scene34_updateCursor() {
 	return g_nmi->_cursorId;
 }
 
-void sceneHandler34_leaveBoard() {
+void sceneHandler34_onLeaveBoard() {
 	getCurrSceneSc2MotionController()->activate();
 	getGameLoaderInteractionController()->enable();
 
@@ -304,7 +304,7 @@ int sceneHandler34(Command *cmd) {
 		break;
 
 	case MSG_SC34_LEAVEBOARD:
-		sceneHandler34_leaveBoard();
+		sceneHandler34_onLeaveBoard();
 		break;
 
 	case MSG_SC34_ONBOARD:
