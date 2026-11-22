@@ -320,9 +320,9 @@ class Movement;
 
 struct MG2I {
 	int _movementId;
-	Movement *_mov;
-	int _mx;
-	int _my;
+	Movement *_movement;
+	int _deltaX;
+	int _deltaY;
 };
 
 struct MctlAniSub {
