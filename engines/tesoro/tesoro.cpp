@@ -202,9 +202,9 @@ bool TesoroEngine::runFrame() {
 
 	// A script can take Jim into another level: that level is then the one shown.
 	if (!_inMenu && _world.jimLevel() && _world.jimLevel() != _level) {
-	_level = _world.jimLevel();
-	if (_cursor)
-		_cursor->setSurroundings(&_pointer, _level);
+		_level = _world.jimLevel();
+		if (_cursor)
+			_cursor->setSurroundings(&_pointer, _level);
 	}
 	// The first pass moves things; the second, unless the first asked to stop, draws the picture.
 	if (_world.mainList().runUpdate() != 3)
@@ -222,6 +222,11 @@ bool TesoroEngine::runFrame() {
 		_screen->addDirtyRect(Common::Rect(Display::kWidth, Display::kHeight));
 	}
 	_clock.unfreeze();
+
+	// The game ends when the main list has been emptied (the menus' exit does that).
+	if (_world.mainList().count() == 0)
+		return false;
+
 	return !shouldQuit();
 }
 
@@ -246,10 +251,11 @@ void TesoroEngine::enterNewGameMenu() {
 }
 
 void TesoroEngine::showMenu(Level *menu) {
-	_world.mainList().remove(_level);
+	_world.removeFromMainList(_level);
+	_inMenu = true;
+	_world.insertInMainList(menu, 0x14);
+	menu->camera().moveTo(0, 0, 0, gameTime());
 	_level = menu;
-	_world.mainList().insertByPriority(_level, 0x14);
-	_level->camera().moveTo(0, 0, 0, gameTime());
 	if (_cursor)
 		_cursor->setSurroundings(&_pointer, _level);
 }
