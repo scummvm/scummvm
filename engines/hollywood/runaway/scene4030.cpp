@@ -92,8 +92,11 @@ int Scene4030::sceneViewportYOffset() const {
 }
 
 bool Scene4030::loadCustomResources() {
+	Common::Array<byte> patch;
+	_keyhole.create(kRunawayScreenWidth, kRunawayViewportHeight, _screen.format);
 	return loadForeground(0, 4) && loadForeground(1, 5) && loadForeground(2, 6) &&
-		loadForeground(3, 7) && loadForeground(4, 12);
+		loadForeground(3, 7) && loadForeground(4, 12) &&
+		_archive.readVariableChunk(13, patch) && applyRunawayPatch(patch, _keyhole);
 }
 
 bool Scene4030::applyCustomBackgroundPatches() {
@@ -131,6 +134,27 @@ void Scene4030::runCustomEntrySequence() {
 		_museum.officeVisited = 1;
 		say(0);
 	}
+}
+
+void Scene4030::update(uint32 now, int scrollDirection, bool inventoryOpen) {
+	RunawayRoomScene::update(now, scrollDirection, inventoryOpen);
+	if (speaking()) {
+		return;
+	}
+	_showKeyhole = false;
+	if (_discoveringKeyhole) {
+		_discoveringKeyhole = false;
+		_showKeyhole = true;
+		say(2, 2);
+	}
+}
+
+bool Scene4030::drawCustomComposite(Graphics::ManagedSurface &viewport) {
+	if (!_showKeyhole) {
+		return false;
+	}
+	viewport.blitFrom(_keyhole);
+	return true;
 }
 
 void Scene4030::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) {
@@ -180,9 +204,10 @@ RunawayRoomScene::ActionResult Scene4030::dispatchCustomSceneAction(uint16 actio
 		_inventory.add(16);
 		say(2);
 		say(2, 1);
-		say(2, 2);
+		_discoveringKeyhole = true;
 		return kBackgroundChanged;
 	case 304: // Look at the crack.
+		_showKeyhole = true;
 		say(3, museumChapter() ? _museum.safeUsed : _safeOpen);
 		return kHandled;
 	case 308: // Look at the papers.

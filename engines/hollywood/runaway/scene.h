@@ -247,7 +247,7 @@ protected:
 	void refreshMuseum();
 	void leaveMuseumRoom(uint16 scene, Common::Point position, byte facing = 3, bool door = false);
 	enum MuseumFilm { kArrivalFilm, kCliveFilm, kDrillingFilm, kLaserFilm, kRubyFilm,
-		kMobstersFilm, kPhoneFilm, kScannerFilm, kBetrayalFilm, kMuseumExitFilm };
+		kCrucifixFilm, kMobstersFilm, kPhoneFilm, kScannerFilm, kBetrayalFilm, kMuseumExitFilm };
 	void startMuseumFilm(MuseumFilm film);
 	void startConversation(byte character);
 	void updateConversation();

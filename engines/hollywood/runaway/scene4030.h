@@ -31,12 +31,15 @@ class Scene4030 : public RunawayRoomScene {
 public:
 	Scene4030(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
 	void setCameraX(int x) override;
+	void update(uint32 now, int scrollDirection, bool inventoryOpen) override;
+	bool busy() const override { return _discoveringKeyhole || _showKeyhole || RunawayRoomScene::busy(); }
 
 private:
 	bool loadCustomResources() override;
 	bool applyCustomBackgroundPatches() override;
 	void applyCustomHotspotState() override;
 	void runCustomEntrySequence() override;
+	bool drawCustomComposite(Graphics::ManagedSurface &viewport) override;
 	void drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 	void finishCustomAnimation(uint16 action) override;
@@ -47,6 +50,9 @@ private:
 	int8 customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const override;
 
 	RunawayAnimation _safeAnimation;
+	Graphics::ManagedSurface _keyhole;
+	bool _discoveringKeyhole = false;
+	bool _showKeyhole = false;
 };
 
 } // End of namespace Runaway

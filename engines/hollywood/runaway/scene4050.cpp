@@ -559,9 +559,8 @@ void Scene4050::finishCustomAnimation(uint16 action) {
 		return;
 	case 405: // Collect the restored crucifix.
 		_inventory.add(7);
-		say(32, 2);
-		say(32, 3);
-		break;
+		startMuseumFilm(kCrucifixFilm);
+		return;
 	case 456: // Finish installing the ruby and approach Susan.
 		_inventory.remove(12);
 		say(30, 1);
@@ -619,6 +618,9 @@ void Scene4050::handleAnimationFrameHook() {
 
 void Scene4050::finishCustomFilm() {
 	switch (_museumFilm) {
+	case kCrucifixFilm:
+		say(32, 3);
+		break;
 	case kDrillingFilm:
 		_museum.laserSeen = 1;
 		beginRoomAnimation(451, 24, 101, nullptr, 0, false);

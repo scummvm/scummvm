@@ -84,6 +84,15 @@ void RunawayRoomScene::updateMuseum(uint elapsed) {
 }
 
 bool RunawayRoomScene::sayMuseumInventory(const RunawayInventory::Reply &reply) {
+	if (reply.cue == 102) { // Inspect the crucifix before or after restoration.
+		typedef RunawaySequence S;
+		const byte restored = _inventory.museum().restoredCrucifix != 0;
+		_filmCommands = {{S::kImage, (uint16)(143 + restored)}, {S::kSpeech, 102, restored, restored, 1},
+			{S::kWaitInput}, {S::kEnd}};
+		_inventorySequence = true;
+		_sequence.start(_filmCommands.data(), _text, _now, 'D');
+		return true;
+	}
 	if (reply.cue == 108) {
 		_inventory.museum().businessCardExamined = 1;
 	}
@@ -191,6 +200,9 @@ void RunawayRoomScene::startMuseumFilm(MuseumFilm film) {
 		break;
 	case kRubyFilm:
 		_filmCommands = {{S::kOpen, 4}, {S::kEffect, 51, 230}, {S::kPlay, 0, 75}};
+		break;
+	case kCrucifixFilm:
+		_filmCommands = {{S::kImage, 144}, {S::kSpeech, 32, 2, 2}, {S::kWaitSpeech}};
 		break;
 	case kMobstersFilm:
 		_filmCommands = {{S::kOpen, 7}, {S::kMusic, 21, 255, 1}, {S::kEffect, 13, 255}, {S::kPlay, 0, 213},
