@@ -73,7 +73,7 @@ ChamberEngine::ChamberEngine(OSystem *syst, const ADGameDescription *desc)
 	if (_renderMode == Common::kRenderEGA || _renderMode == Common::kRenderHercG || _renderMode == Common::kRenderHercA)
 		_videoMode = _renderMode;
 	else if (_renderMode == Common::kRenderDefault && ((_gameDescription->flags & GF_SPLASH_PRESEGA) ||
-	         Common::checkGameGUIOption(GUIO_RENDEREGA, Common::parseGameGUIOptions(ConfMan.get("guioptions")))))
+	         Common::checkGameGUIOption(GUIO_RENDEREGA, ConfMan.get("guioptions"))))
 		_videoMode = Common::kRenderEGA;
 	else
 		_videoMode = Common::kRenderCGA;
