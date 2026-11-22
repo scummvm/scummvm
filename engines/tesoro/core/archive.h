@@ -22,21 +22,23 @@
 #ifndef TESORO_CORE_ARCHIVE_H
 #define TESORO_CORE_ARCHIVE_H
 
+#include "common/array.h"
 #include "common/file.h"
-
-#include "tesoro/core/archiveindex.h"
 
 namespace Tesoro {
 
-/** The game's data file (.DAT) together with its sorted index (.TRE). */
+/**
+ * The game's data file (.DAT) together with its directory, built from the index (.TRE) file.
+ * The entries are kept sorted by name in descending order, which is the order findEntry() searches.
+ */
 class Archive {
 public:
 
 	bool open(const Common::Path &datName, const Common::Path &treName);
 	void close();
 
-	/** retrieves the data offset of an entry, 0 if missing. Names are upper case. */
-	uint32 findEntry(const char *name) const { return _index.find(name); }
+	/** Retrieves the data offset of an entry (exact, case sensitive lookup), 0 if missing. Names are upper case. */
+	uint32 findEntry(const char *name) const;
 
 	/** Positions the data file at an offset from findEntry() and returns it for reading. */
 	Common::SeekableReadStream *seekEntry(uint32 offset);
@@ -46,10 +48,18 @@ public:
 	/** Seeks to offset keeping the previous position. */
 	uint32 seekSavePos(uint32 offset);
 
-	const ArchiveIndex &index() const { return _index; }
-
 private:
-	ArchiveIndex _index;
+	static const uint32 kRecordSize = 28;
+	static const uint32 kNameSize = 19;
+
+	struct Entry {
+		char name[kNameSize];	// upper case, at most 18 characters
+		uint32 offset;			// start of the entry's payload in the data file
+	};
+
+	void loadIndex(const byte *data, uint32 size);
+
+	Common::Array<Entry> _entries;
 	Common::File _dat;
 };
 

@@ -22,7 +22,6 @@
 #ifndef TESORO_KINDS_CURSOR_H
 #define TESORO_KINDS_CURSOR_H
 
-#include "tesoro/core/hovertext.h"
 #include "tesoro/core/pointerstate.h"
 #include "tesoro/kinds/actionstrip.h"
 #include "tesoro/kinds/spriteobject.h"
@@ -38,6 +37,8 @@ class Level;
  */
 class Cursor : public SpriteObject {
 public:
+	static const uint kLabelSize = 160;
+
 	// Where the game stands, as far as the pointer goes.
 	enum Place { kGame, kMainMenu, kNewGameMenu, kBoard };
 
@@ -89,7 +90,8 @@ public:
 	/** Forgets the objects touched this frame (done once all of them were processed). */
 	void clearTouched() { _touched.clear(); }
 
-	HoverText &label() { return _label; }
+	/** Sets the name shown above the pointer (null clears it). A colour of 0 keeps the previous one. */
+	void setLabel(const char *text, int colour);
 
 	Object *heldItem() const { return _heldItem; }
 	void setHeldItem(Object *item) { _heldItem = item; }
@@ -102,7 +104,8 @@ public:
 private:
 	void showInventory();
 	void shiftActionStrip(int32 dx);
-	HoverText _label;
+	char _label[kLabelSize] = {};	// the name of what is under the pointer
+	uint16 _labelColour = 0;
 	ObjectList _hovered;	// objects that keep the label or the click
 	ObjectList _touched;	// objects under the pointer this frame
 	Object *_heldItem;

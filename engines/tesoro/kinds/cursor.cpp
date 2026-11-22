@@ -73,10 +73,28 @@ void Cursor::draw(const Camera &camera, Display &display) {
 	}
 
 	// The name of what is under the pointer, centered above it.
-	if (_label.text()[0]) {
+	if (_label[0]) {
 		const int32 centreX = (int32)((uint32)_x - (uint32)camera.scaledX() + 320);
-		display.queueText((const byte *)_label.text(), _label.colour(), centreX, camera.scaledY() - _y + 0xcb, 200, 0, true, 0);
+		display.queueText((const byte *)_label, _labelColour, centreX, camera.scaledY() - _y + 0xcb, 200, 0, true, 0);
 	}
+}
+
+void Cursor::setLabel(const char *text, int colour) {
+	if (!text) {
+		_label[0] = '\0';
+	} else {
+		const uint length = strlen(text);
+		if (length >= kLabelSize) {
+			warning("Cursor: label of %u characters does not fit", length);
+			memcpy(_label, text, kLabelSize - 1);
+			_label[kLabelSize - 1] = '\0';
+		} else {
+			memcpy(_label, text, length + 1);
+		}
+	}
+
+	if (colour > 0)
+		_labelColour = (uint16)colour;
 }
 
 void Cursor::openSaveLoadMenu() {
@@ -100,7 +118,7 @@ void Cursor::openSaveLoadMenu() {
 	}
 
 	_world->jimResumeFacing();
-	_label.set(nullptr, 0);
+	setLabel(nullptr, 0);
 
 	// move the pointer and the camera far out of the way to capture the scene for the save thumbnail, then restore them.
 	shiftY(-5000);
@@ -214,7 +232,7 @@ void Cursor::setActive(bool active) {
 	for (uint i = 0; i < _hovered.size(); ++i)
 		_hovered[i]->clearHoverText();
 	_hovered.clear();
-	_label.set(nullptr, 0);
+	setLabel(nullptr, 0);
 }
 
 int Cursor::processCandidates(byte buttons, int verb) {
@@ -308,7 +326,7 @@ void Cursor::showInventory() {
 		_heldItem->setVisible(false);
 	_world->jimResumeFacing();
 	_level->camera().shift(640, 0);
-	_label.set(nullptr, 0);
+	setLabel(nullptr, 0);
 	shiftActionStrip(640);
 }
 

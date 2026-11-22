@@ -19,9 +19,69 @@
  *
  */
 
+#include "common/endian.h"
+
 #include "tesoro/core/archive.h"
 
 namespace Tesoro {
+
+static int compareNames(const char *a, const char *b) {
+	for (;; ++a, ++b) {
+		const byte ca = (byte)*a, cb = (byte)*b;
+		if (ca != cb)
+			return ca < cb ? -1 : 1;
+		if (ca == 0)
+			return 0;
+	}
+}
+
+void Archive::loadIndex(const byte *data, uint32 size) {
+	_entries.clear();
+
+	// Record: uint32 offset, uint32 (unused), flags byte, name[19].
+	for (uint32 pos = 0; pos + kRecordSize <= size; pos += kRecordSize) {
+		const byte *rec = data + pos;
+		if ((rec[8] & 4) == 0) // skip those without the required flag
+			continue;
+
+		Entry e;
+		memset(&e, 0, sizeof(e));
+		for (uint32 i = 0; i < kNameSize && rec[9 + i]; ++i) {
+			const char c = (char)rec[9 + i];
+			e.name[i] = (c >= 'a' && c <= 'z') ? c - 0x20 : c; // to upper case
+		}
+		e.name[kNameSize - 1] = '\0';
+		e.offset = READ_LE_UINT32(rec) + 4;
+		_entries.push_back(e);
+	}
+
+	// Selection sort, largest name first
+	const int n = (int)_entries.size();
+	for (int i = 0; i < n - 1; ++i) {
+		int best = i;
+		for (int j = i + 1; j < n; ++j) {
+			if (compareNames(_entries[j].name, _entries[best].name) > 0)
+				best = j;
+		}
+		SWAP(_entries[i], _entries[best]);
+	}
+}
+
+// binary search for an entry by name
+uint32 Archive::findEntry(const char *name) const {
+	int lo = 0, hi = (int)_entries.size() - 1;
+	while (lo <= hi) {
+		const int mid = (lo + hi) >> 1;
+		const int c = compareNames(name, _entries[mid].name);
+		if (c == 0)
+			return _entries[mid].offset;
+		if (c < 0)
+			lo = mid + 1;
+		else
+			hi = mid - 1;
+	}
+	return 0;
+}
 
 bool Archive::open(const Common::Path &datName, const Common::Path &treName) {
 	close();
@@ -34,7 +94,7 @@ bool Archive::open(const Common::Path &datName, const Common::Path &treName) {
 		byte *data = new byte[size];
 		const uint32 got = tre.read(data, size);
 		// builds the index from the TRE file data
-		_index.load(data, got);
+		loadIndex(data, got);
 		delete[] data;
 	}
 

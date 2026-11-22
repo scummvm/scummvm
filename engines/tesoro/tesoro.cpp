@@ -409,7 +409,7 @@ bool TesoroEngine::level(int index) {
 
 void TesoroEngine::setHoverText(const char *text) {
 	if (_cursor)
-		_cursor->label().set(text, text ? 0xffff : 0);	// names are shown in white
+		_cursor->setLabel(text, text ? 0xffff : 0);	// names are shown in white
 }
 
 } // End of namespace Tesoro

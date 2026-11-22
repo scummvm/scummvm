@@ -6,14 +6,12 @@ MODULE_OBJS = \
 	core/animimage.o \
 	core/animset.o \
 	core/archive.o \
-	core/archiveindex.o \
 	core/camera.o \
 	core/clock.o \
 	core/collision.o \
 	core/connectfour.o \
 	core/connectfourmatch.o \
 	core/display.o \
-	core/hovertext.o \
 	core/level.o \
 	core/namekey.o \
 	core/object.o \
