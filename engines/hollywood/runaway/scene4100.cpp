@@ -185,11 +185,11 @@ void Scene4100::advanceCustomGameplayLoop(uint32 delta) {
 	if (_museum.chamberTime) {
 		_museum.chamberTime -= MIN<uint>(delta, _museum.chamberTime);
 		if (!_museum.chamberTime && !_roomAction) {
-			closeChamber();
+			animateChamber(false);
 		}
 	}
 	if (_museum.chamberOpen && !_museum.chamberTime && !_roomAction) {
-		closeChamber();
+		animateChamber(false);
 	}
 }
 
@@ -218,9 +218,12 @@ void Scene4100::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport
 	if (_cliveVisible) {
 		_cliveAnimation.draw(viewport, 17 + (speaker() ? speechFrame() : 0), _camera.x, 0);
 	}
-	_computerAnimation.draw(viewport, _computerFrame, _camera.x, 0);
-	if (_computerReject) {
-		_rejectionLight.draw(viewport, 6, _camera.x, 0);
+	// The moving door already includes the voice verifier and its lights.
+	if (!_museum.chamberOpen && _roomAction != 430 && _roomAction != 431) {
+		_computerAnimation.draw(viewport, _computerFrame, _camera.x, 0);
+		if (_computerReject) {
+			_rejectionLight.draw(viewport, 6, _camera.x, 0);
+		}
 	}
 }
 
@@ -297,10 +300,8 @@ RunawayRoomScene::ActionResult Scene4100::dispatchCustomSceneAction(uint16 actio
 		} else if (_inventory.museum().recorderBattery == 1 || _inventory.museum().recorderBattery == 2) {
 			say(20, _inventory.museum().recorderBattery == 1 ? 2 : 1);
 		} else {
-			const byte battery = _inventory.museum().recorderBattery;
-			say(20, battery == 0 ? 3 : battery == 3 ? 7 : 9);
-			walkTo(Common::Point(204, 448), 1, true);
-			beginRoomAnimation(340, 29, 12, kPressButtonFrames, ARRAYSIZE(kPressButtonFrames));
+			walkTo(Common::Point(204, 448), 1);
+			deferMuseumAction(339);
 		}
 		return kHandled;
 	case 325: // Freeze the battery in the ladle.
@@ -339,6 +340,12 @@ void Scene4100::finishCustomAnimation(uint16 action) {
 	case 451: // Close the door from the hall side.
 		leaveMuseumRoom(4062, Common::Point(1095, 300), 3);
 		break;
+	case 339: { // Prepare the recording after reaching the chamber button.
+		const byte battery = _inventory.museum().recorderBattery;
+		say(20, battery == 0 ? 3 : battery == 3 ? 7 : 9);
+		beginRoomAnimation(340, 29, 12, kPressButtonFrames, ARRAYSIZE(kPressButtonFrames));
+		break;
+	}
 	case 340: // The voice lock asks for identification.
 		say(90, 0, false, 1);
 		deferMuseumAction(341);
@@ -371,8 +378,7 @@ void Scene4100::finishCustomAnimation(uint16 action) {
 		}
 		break;
 	case 345: // Open the unlocked thermal chamber.
-		beginRoomAnimation(431, _museum.maskTaken ? 33 : 32, 36, nullptr, 0, false);
-		_audio.playEffect(33, 191);
+		animateChamber(true);
 		break;
 	case 325: // Retrieve the frozen battery from the ladle.
 		_inventory.museum().batteryInLadle = 0;
@@ -440,7 +446,7 @@ void Scene4100::finishCustomAnimation(uint16 action) {
 		beginRoomAnimationRange(411, 24, 28, 10, 27);
 		break;
 	case 432: // Close the chamber after taking the mask.
-		closeChamber();
+		animateChamber(false);
 		break;
 	case 430: // Finish closing the thermal chamber.
 		_museum.chamberOpen = 0;
@@ -566,9 +572,13 @@ byte Scene4100::customizeSceneActionFacing(byte id, byte facing) const {
 	return !museumChapter() && (id == 3 || id == 5) ? 1 : facing;
 }
 
-void Scene4100::closeChamber() {
+void Scene4100::animateChamber(bool open) {
+	// Door frames uncover the chamber interior as they slide aside.
+	if (!applyPatch(_museum.maskTaken ? 18 : 17)) {
+		error("Cannot update Runaway thermal chamber");
+	}
 	_museum.chamberTime = 0;
-	beginRoomAnimationRange(430, _museum.maskTaken ? 33 : 32, 36, 35, 0, false);
+	beginRoomAnimationRange(open ? 431 : 430, _museum.maskTaken ? 33 : 32, 36, open ? 0 : 35, open ? 35 : 0, false);
 	_audio.playEffect(33, 191);
 }
 

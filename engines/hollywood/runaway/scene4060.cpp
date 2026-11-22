@@ -446,7 +446,8 @@ void Scene4060::finishCustomAnimation(uint16 action) {
 		break;
 	case 471: // Keep the door open while Brian walks through it.
 		_actionAnimation.draw(_background, 12, 0, 0);
-		walkTo(Common::Point(980, 275), 7, true);
+		// The reserved doorway path enables the wall's foreground mask.
+		walkTo(Common::Point(980, 275), 7, false, true);
 		deferMuseumAction(472);
 		break;
 	case 472: // Enter the analysis laboratory or show the gangsters arriving downstairs.

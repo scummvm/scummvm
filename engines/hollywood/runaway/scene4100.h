@@ -54,7 +54,7 @@ private:
 	Common::Point customizeSceneActionPosition(byte id, byte item, Common::Point position) const override;
 	byte customizeSceneActionFacing(byte id, byte facing) const override;
 
-	void closeChamber();
+	void animateChamber(bool open);
 	void startComputerConversation();
 
 	RunawayAnimation _ambientAnimation, _overlayAnimation;
