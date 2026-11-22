@@ -816,7 +816,7 @@ int sceneHandler29(Command *cmd) {
 
 		sceneHandler29_animBearded();
 
-		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->update();
 		g_nmi->startSceneTrack();
 
 		break;

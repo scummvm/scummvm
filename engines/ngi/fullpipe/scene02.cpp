@@ -126,7 +126,7 @@ int sceneHandler02(Command *ex) {
 		}
 
 		g_nmi->_floaters->update();
-		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->update();
 
 		g_nmi->startSceneTrack();
 		break;

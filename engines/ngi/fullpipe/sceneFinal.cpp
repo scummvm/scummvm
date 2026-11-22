@@ -169,7 +169,7 @@ int sceneHandlerFinal(Command *cmd) {
 			g_vars->sceneFinal_var02 = g_vars->sceneFinal_var03;
 		}
 
-		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->update();
 
 		g_nmi->startSceneTrack();
 

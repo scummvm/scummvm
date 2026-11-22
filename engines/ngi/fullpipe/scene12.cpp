@@ -75,7 +75,7 @@ int sceneHandler12(Command *cmd) {
 
 		g_nmi->_floaters->update();
 
-		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->update();
 	}
 
 	return res;

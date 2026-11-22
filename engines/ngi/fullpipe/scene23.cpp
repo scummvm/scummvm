@@ -151,8 +151,8 @@ void scene23_initScene(Scene *sc) {
 
 void scene23_setGiraffeState() {
 	if (g_nmi->getObjectState(sO_UpperHatch_23) == g_nmi->getObjectEnumState(sO_UpperHatch_23, sO_Opened)) {
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene23_giraffeTop, ST_GRFU_UP, QU_GRFU_TURN_UL, 0);
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene23_giraffeTop, ST_GRFU_UP, QU_GRFU_TURN_UD, 0);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene23_giraffeTop, ST_GRFU_UP, QU_GRFU_TURN_UL, 0);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene23_giraffeTop, ST_GRFU_UP, QU_GRFU_TURN_UD, 0);
 	}
 }
 
@@ -426,7 +426,7 @@ int sceneHandler23(Command *cmd) {
 		getCurrSceneSc2MotionController()->activate();
 		getGameLoaderInteractionController()->enableFlag24();
 
-		g_nmi->_behaviorManager->setFlagByStaticAniObject(g_nmi->_aniMan, 1);
+		g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 1);
 		break;
 
 	case MSG_SC23_HIDEGIRAFFEE:
@@ -440,7 +440,7 @@ int sceneHandler23(Command *cmd) {
 		getCurrSceneSc2MotionController()->deactivate();
 		getGameLoaderInteractionController()->disableFlag24();
 
-		g_nmi->_behaviorManager->setFlagByStaticAniObject(g_nmi->_aniMan, 0);
+		g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 0);
 		break;
 
 	case MSG_SC22_SHOWSTOOL:
@@ -486,7 +486,7 @@ int sceneHandler23(Command *cmd) {
 		}
 
 		g_nmi->_floaters->update();
-		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->update();
 
 		g_nmi->startSceneTrack();
 

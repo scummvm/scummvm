@@ -787,7 +787,7 @@ int sceneHandler18(Command *cmd) {
 
 			if (!g_vars->scene18_whirlgig->_movement) {
 				g_vars->scene18_whirlgig->startMovement(MV_WHR18_SPIN, 0, -1);
-				g_nmi->_behaviorManager->updateBehaviors();
+				g_nmi->_behaviorManager->update();
 
 				break;
 			}
@@ -795,7 +795,7 @@ int sceneHandler18(Command *cmd) {
 			sceneHandler18and19_animateRiders();
 		}
 
-		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->update();
 
 		break;
 
@@ -915,7 +915,7 @@ int sceneHandler19(Command *cmd) {
 			if (!g_vars->scene18_whirlgig->_movement) {
 				g_vars->scene18_whirlgig->startMovement(MV_WHR19_SPIN, 0, -1);
 
-				g_nmi->_behaviorManager->updateBehaviors();
+				g_nmi->_behaviorManager->update();
 
 				break;
 			}
@@ -923,7 +923,7 @@ int sceneHandler19(Command *cmd) {
 			sceneHandler18and19_animateRiders();
 		}
 
-		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->update();
 
 		break;
 

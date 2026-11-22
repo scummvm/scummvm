@@ -37,8 +37,8 @@
 namespace NGI {
 
 void scene06_initMumsy() {
-	g_vars->scene06_mumsyJumpFw = g_nmi->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene06_mumsy, ST_MOM_STANDS, QU_MOM_JUMPFW);
-	g_vars->scene06_mumsyJumpBk = g_nmi->_behaviorManager->getBehaviorMoveByMessageQueueDataId(g_vars->scene06_mumsy, ST_MOM_STANDS, QU_MOM_JUMPBK);
+	g_vars->scene06_mumsyJumpFw = g_nmi->_behaviorManager->getAniQueue(g_vars->scene06_mumsy, ST_MOM_STANDS, QU_MOM_JUMPFW);
+	g_vars->scene06_mumsyJumpBk = g_nmi->_behaviorManager->getAniQueue(g_vars->scene06_mumsy, ST_MOM_STANDS, QU_MOM_JUMPBK);
 	g_vars->scene06_mumsyJumpFwPercent = g_vars->scene06_mumsyJumpFw->_percent;
 	g_vars->scene06_mumsyJumpBkPercent = g_vars->scene06_mumsyJumpBk->_percent;
 }
@@ -754,7 +754,7 @@ int sceneHandler06(Command *ex) {
 				&& !g_vars->scene06_mumsy->_movement
 				&& !g_vars->scene06_mumsyGotBall)
 				sceneHandler06_mumsyBallTake();
-			g_nmi->_behaviorManager->updateBehaviors();
+			g_nmi->_behaviorManager->update();
 			g_nmi->startSceneTrack();
 
 			return res;

@@ -141,7 +141,7 @@ int sceneHandler20(Command *cmd) {
 
 		g_nmi->_floaters->update();
 
-		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->update();
 
 		g_nmi->startSceneTrack();
 

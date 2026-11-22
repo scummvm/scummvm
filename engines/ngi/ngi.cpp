@@ -250,7 +250,7 @@ Common::Error NGIEngine::run() {
 	_backgroundSurface.create(800, 600, format);
 
 	_globalMessageQueueList.reset(new GlobalMessageQueueList);
-	_behaviorManager.reset(new BehaviorManager);
+	_behaviorManager.reset(new BehaviorController);
 
 	_sceneRect.left = 0;
 	_sceneRect.top = 0;

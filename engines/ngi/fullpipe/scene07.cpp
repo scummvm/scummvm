@@ -65,7 +65,7 @@ void sceneHandler07_openLuke() {
 	} else {
 		AniObject *ani = g_nmi->_currentScene->findAniObjectById(ANI_CORNERSITTER, -1);
 
-		g_vars->scene07_lukeAnim = g_nmi->_behaviorManager->getBehaviorMoveByMessageQueueDataId(ani, ST_CST_HANDLELESS, QU_CST_CLOSELUKE);
+		g_vars->scene07_lukeAnim = g_nmi->_behaviorManager->getAniQueue(ani, ST_CST_HANDLELESS, QU_CST_CLOSELUKE);
 
 		g_vars->scene07_lukeAnim->_percent = g_vars->scene07_lukePercent;
 	}
@@ -77,7 +77,7 @@ void sceneHandler07_closeLuke() {
 	if (!g_vars->scene07_lukeAnim) {
 		AniObject *ani = g_nmi->_currentScene->findAniObjectById(ANI_CORNERSITTER, -1);
 
-		g_vars->scene07_lukeAnim = g_nmi->_behaviorManager->getBehaviorMoveByMessageQueueDataId(ani, ST_CST_HANDLELESS, QU_CST_CLOSELUKE);
+		g_vars->scene07_lukeAnim = g_nmi->_behaviorManager->getAniQueue(ani, ST_CST_HANDLELESS, QU_CST_CLOSELUKE);
 	}
 
 	g_vars->scene07_lukePercent = g_vars->scene07_lukeAnim->_percent;
@@ -162,7 +162,7 @@ int sceneHandler07(Command *ex) {
 				res = 1;
 			}
 
-			g_nmi->_behaviorManager->updateBehaviors();
+			g_nmi->_behaviorManager->update();
 
 			return res;
 		}

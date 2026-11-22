@@ -395,7 +395,7 @@ int sceneHandler38(Command *cmd) {
 
 		sceneHandler38_animateAlcoholics();
 
-		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->update();
 
 		g_nmi->startSceneTrack();
 

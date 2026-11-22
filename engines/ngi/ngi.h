@@ -74,7 +74,7 @@ enum NGIActions {
 struct NGIGameDescription;
 
 
-class BehaviorManager;
+class BehaviorController;
 class BaseModalObject;
 class GameLoader;
 class GameVar;
@@ -245,7 +245,7 @@ public:
 	int _mouseVirtY;
 	Common::Point _mouseScreenPos;
 
-	Common::ScopedPtr<BehaviorManager> _behaviorManager;
+	Common::ScopedPtr<BehaviorController> _behaviorManager;
 
 	Common::ScopedPtr<MovTable> _movTable;
 

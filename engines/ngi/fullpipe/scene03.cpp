@@ -78,9 +78,9 @@ void scene03_initScene(Scene *sc) {
 
 void scene03_setEaterState() {
 	if (g_nmi->getObjectState(sO_EggGulperGaveCoin) == g_nmi->getObjectEnumState(sO_EggGulperGaveCoin, sO_Yes)) {
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene03_eggeater, ST_EGTR_SLIM, QU_EGTR_SLIMSHOW, 0);
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene03_eggeater, ST_EGTR_MID1, QU_EGTR_MD1_SHOW, 0);
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene03_eggeater, ST_EGTR_MID2, QU_EGTR_MD2_SHOW, 0);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene03_eggeater, ST_EGTR_SLIM, QU_EGTR_SLIMSHOW, 0);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene03_eggeater, ST_EGTR_MID1, QU_EGTR_MD1_SHOW, 0);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene03_eggeater, ST_EGTR_MID2, QU_EGTR_MD2_SHOW, 0);
 	}
 }
 
@@ -314,7 +314,7 @@ int sceneHandler03(Command *ex) {
 				res = 1;
 			}
 
-			g_nmi->_behaviorManager->updateBehaviors();
+			g_nmi->_behaviorManager->update();
 
 			g_nmi->startSceneTrack();
 

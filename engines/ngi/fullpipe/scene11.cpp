@@ -725,7 +725,7 @@ int sceneHandler11(Command *cmd) {
 				}
 			}
 
-			g_nmi->_behaviorManager->updateBehaviors();
+			g_nmi->_behaviorManager->update();
 			g_nmi->startSceneTrack();
 			return res;
 		}

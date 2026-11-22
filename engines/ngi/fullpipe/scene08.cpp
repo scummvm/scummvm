@@ -528,7 +528,7 @@ int sceneHandler08(Command *cmd) {
 						g_nmi->_aniMan->_z = 20;
 				}
 
-				g_nmi->_behaviorManager->updateBehaviors();
+				g_nmi->_behaviorManager->update();
 				g_nmi->startSceneTrack();
 			}
 

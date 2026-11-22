@@ -199,7 +199,7 @@ int sceneHandler15(Command *cmd) {
 				g_nmi->playSound(SND_15_001, 1);
 		}
 
-		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->update();
 		break;
 
 	default:

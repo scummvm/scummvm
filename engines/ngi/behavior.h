@@ -59,28 +59,28 @@ struct BehaviorInfo {
 	void initObjectBehavior(GameVar *var, Scene *sc, AniObject *ani);
 };
 
-class BehaviorManager : public CObject {
+class BehaviorController : public CObject {
 	Common::Array<BehaviorInfo> _behaviors;
 	Scene *_scene;
 	bool _isActive;
 
   public:
-	BehaviorManager();
-	~BehaviorManager() override;
+	BehaviorController();
+	~BehaviorController() override;
 
 	void clear();
 
 	void initBehavior(Scene *scene, GameVar *var);
 
-	void updateBehaviors();
+	void update();
 	void updateBehavior(BehaviorInfo &behaviorInfo, BehaviorAnim &entry);
 	void updateStaticAniBehavior(AniObject &ani, int delay, const BehaviorAnim &beh);
 
-	bool setBehaviorEnabled(AniObject *obj, int aniId, int quId, int flag);
+	bool enableAni(AniObject *obj, int aniId, int quId, int flag);
 
-	void setFlagByStaticAniObject(AniObject *ani, int flag);
+	void enableAllQueuesForAni(AniObject *ani, int flag);
 
-	BehaviorMove *getBehaviorMoveByMessageQueueDataId(AniObject *ani, int id1, int id2);
+	BehaviorMove *getAniQueue(AniObject *ani, int id1, int id2);
 };
 
 } // End of namespace NGI

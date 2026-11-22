@@ -114,7 +114,7 @@ int sceneHandler31(Command *cmd) {
 				g_nmi->playSound(SND_31_001, 1);
 		}
 
-		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->update();
 
 		break;
 

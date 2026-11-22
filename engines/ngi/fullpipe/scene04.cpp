@@ -936,7 +936,7 @@ void sceneHandler04_animOutOfBottle(Command *ex) {
 	mq->run(nullptr);
 
 	g_vars->scene04_dudeInBottle = false;
-	g_nmi->_behaviorManager->setFlagByStaticAniObject(g_nmi->_aniMan, 1);
+	g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 1);
 }
 
 void sceneHandler04_walkKozyawka() {
@@ -1042,7 +1042,7 @@ void sceneHandler04_leaveScene() {
 	g_vars->scene04_var07 = false;
 	g_vars->scene04_dudeOnLadder = 0;
 
-	g_nmi->_behaviorManager->setFlagByStaticAniObject(g_nmi->_aniMan, 0);
+	g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 0);
 
 	g_nmi->updateMapPiece(PIC_MAP_P03, 1);
 }
@@ -1483,7 +1483,7 @@ int sceneHandler04(Command *ex) {
 				if (!g_vars->scene04_soundPlaying) {
 					g_nmi->startSceneTrack();
 
-					g_nmi->_behaviorManager->updateBehaviors();
+					g_nmi->_behaviorManager->update();
 					return res;
 				}
 
@@ -1494,14 +1494,14 @@ int sceneHandler04(Command *ex) {
 			}
 
 			if (g_vars->scene04_soundPlaying) {
-				g_nmi->_behaviorManager->updateBehaviors();
+				g_nmi->_behaviorManager->update();
 
 				return res;
 			}
 
 			g_nmi->startSceneTrack();
 
-			g_nmi->_behaviorManager->updateBehaviors();
+			g_nmi->_behaviorManager->update();
 
 			return res;
 		}

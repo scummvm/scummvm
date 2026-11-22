@@ -496,7 +496,7 @@ int sceneHandler09(Command *cmd) {
 			if (g_vars->scene09_interactingHanger >= 0)
 				sceneHandler09_hangerStartCycle();
 
-			g_nmi->_behaviorManager->updateBehaviors();
+			g_nmi->_behaviorManager->update();
 
 			g_nmi->startSceneTrack();
 

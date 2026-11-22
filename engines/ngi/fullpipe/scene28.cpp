@@ -205,7 +205,7 @@ void sceneHandler28_lift0Start() {
 void sceneHandler28_lift1Start() {
 	g_nmi->_aniMan->_flags |= 0x100;
 
-	g_nmi->_behaviorManager->setFlagByStaticAniObject(g_nmi->_aniMan, 0);
+	g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 0);
 
 	runQueue(QU_SC28_LIFT1_START, 1);
 }
@@ -221,7 +221,7 @@ void sceneHandler28_lift3Start() {
 void sceneHandler28_lift4Start() {
 	g_nmi->_aniMan->_flags |= 0x100;
 
-	g_nmi->_behaviorManager->setFlagByStaticAniObject(g_nmi->_aniMan, 0);
+	g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 0);
 
 	runQueue(QU_SC28_WMN_START, 1);
 }
@@ -233,7 +233,7 @@ void sceneHandler28_lift5Start() {
 void sceneHandler28_lift6Start() {
 	g_nmi->_aniMan->_flags |= 0x100;
 
-	g_nmi->_behaviorManager->setFlagByStaticAniObject(g_nmi->_aniMan, 0);
+	g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 0);
 
 	AniObject *woman = g_nmi->_currentScene->findAniObjectById(ANI_TIOTIA, -1);
 
@@ -394,7 +394,7 @@ int sceneHandler28(Command *cmd) {
 	case MSG_SC28_ENDLIFT1:
 	case MSG_SC28_ENDLIFT6:
 	case MSG_SC28_ENDCABIN:
-		g_nmi->_behaviorManager->setFlagByStaticAniObject(g_nmi->_aniMan, 1);
+		g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 1);
 		g_nmi->_aniMan->_flags &= 0xFEFF;
 		break;
 
@@ -470,7 +470,7 @@ int sceneHandler28(Command *cmd) {
 			if (g_nmi->_floaters->_array2[i].val13 == 1)
 				g_nmi->_floaters->_array2[i].ani->_z = 15;
 
-		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->update();
 
 		g_nmi->startSceneTrack();
 

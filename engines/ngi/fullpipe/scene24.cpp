@@ -76,23 +76,23 @@ void scene24_initScene(Scene *sc) {
 
 void scene24_setPoolState() {
 	if (g_nmi->getObjectState(sO_Pool) == g_nmi->getObjectEnumState(sO_Pool, sO_Overfull)) {
-		g_nmi->_behaviorManager->setFlagByStaticAniObject(g_vars->scene24_drop, 0);
+		g_nmi->_behaviorManager->enableAllQueuesForAni(g_vars->scene24_drop, 0);
 
 		g_nmi->playSound(SND_24_007, 1);
 	} else if (g_nmi->getObjectState(sO_Pool) == g_nmi->getObjectEnumState(sO_Pool, sO_Full)) {
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOFLOOR, 0);
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOWATER, 1);
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOWATER2, 0);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOFLOOR, 0);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOWATER, 1);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOWATER2, 0);
 
 		g_nmi->playSound(SND_24_006, 1);
 	} else if (g_nmi->getObjectState(sO_Pool) == g_nmi->getObjectEnumState(sO_Pool, sO_HalfFull)) {
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOFLOOR, 0);
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOWATER, 0);
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOWATER2, 1);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOFLOOR, 0);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOWATER, 0);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOWATER2, 1);
 	} else {
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOFLOOR, 1);
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOWATER, 0);
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOWATER2, 0);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOFLOOR, 1);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOWATER, 0);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOWATER2, 0);
 	}
 }
 
@@ -118,7 +118,7 @@ int sceneHandler24(Command *cmd) {
 		if (g_vars->scene24_jetIsOn && !g_vars->scene24_jet->_movement)
 			g_vars->scene24_jet->startMovement(MV_JET24_FLOW, 0, -1);
 
-		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->update();
 	}
 
 	return 0;

@@ -302,7 +302,7 @@ int sceneHandler33(Command *cmd) {
 		if (g_vars->scene33_cube)
 			sceneHandler33_processVents();
 
-		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->update();
 
 		g_nmi->startSceneTrack();
 

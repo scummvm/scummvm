@@ -82,9 +82,9 @@ int scene26_updateCursor() {
 
 void sceneHandler26_updateDrop() {
 	if (g_nmi->getObjectState(sO_Valve5_26) == g_nmi->getObjectEnumState(sO_Valve5_26, sO_Closed))
-		g_nmi->_behaviorManager->setFlagByStaticAniObject(g_vars->scene26_drop, 0);
+		g_nmi->_behaviorManager->enableAllQueuesForAni(g_vars->scene26_drop, 0);
 	else
-		g_nmi->_behaviorManager->setFlagByStaticAniObject(g_vars->scene26_drop, 1);
+		g_nmi->_behaviorManager->enableAllQueuesForAni(g_vars->scene26_drop, 1);
 }
 
 void scene26_setupDrop(Scene *sc) {
@@ -346,7 +346,7 @@ int sceneHandler26(Command *cmd) {
 				g_nmi->_currentScene->_x = x + 300 - g_nmi->_sceneRect.right;
 		}
 
-		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->update();
 
 		g_nmi->startSceneTrack();
 

@@ -473,7 +473,7 @@ int sceneHandler16(Command *cmd) {
 					sceneHandler16_girlROTFL();
 		}
 
-		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->update();
 		g_nmi->startSceneTrack();
 
 		break;

@@ -206,7 +206,7 @@ int sceneHandler10(Command *ex) {
 				res = 1;
 			}
 
-			g_nmi->_behaviorManager->updateBehaviors();
+			g_nmi->_behaviorManager->update();
 			g_nmi->startSceneTrack();
 
 			return res;

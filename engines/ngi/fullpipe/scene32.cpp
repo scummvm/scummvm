@@ -389,13 +389,13 @@ int sceneHandler32(Command *cmd) {
 			if (g_vars->scene32_cactusCounter > 0)
 				--g_vars->scene32_cactusCounter;
 
-			g_nmi->_behaviorManager->updateBehaviors();
+			g_nmi->_behaviorManager->update();
 
 			g_nmi->startSceneTrack();
 		} else {
 			sceneHandler32_animateCactus();
 
-			g_nmi->_behaviorManager->updateBehaviors();
+			g_nmi->_behaviorManager->update();
 
 			g_nmi->startSceneTrack();
 

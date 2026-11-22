@@ -91,11 +91,11 @@ int scene22_updateCursor() {
 
 void scene22_setBagState() {
 	if (g_vars->scene22_craneIsOut) {
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_CRANEOUT, 1);
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_MOVE, 0);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_CRANEOUT, 1);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_MOVE, 0);
 	} else {
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_CRANEOUT, 0);
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_MOVE, 1);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_CRANEOUT, 0);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_MOVE, 1);
 	}
 }
 
@@ -144,8 +144,8 @@ void sceneHandler22_handleDown() {
 
 	g_vars->scene22_craneIsOut = true;
 
-	g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_CRANEOUT, 1);
-	g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_MOVE, 0);
+	g_nmi->_behaviorManager->enableAni(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_CRANEOUT, 1);
+	g_nmi->_behaviorManager->enableAni(g_vars->scene22_bag, ST_MSH_SIT, QU_MSH_MOVE, 0);
 }
 
 void sceneHandler22_fromStool(Command *cmd) {
@@ -318,13 +318,13 @@ int sceneHandler22(Command *cmd) {
 		g_vars->scene22_interactionIsDisabled = false;
 
 		getCurrSceneSc2MotionController()->activate();
-		g_nmi->_behaviorManager->setFlagByStaticAniObject(g_nmi->_aniMan, 1);
+		g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 1);
 		break;
 
 	case MSG_SC22_ONSTOOL:
 		g_vars->scene22_dudeIsOnStool = true;
 		getCurrSceneSc2MotionController()->deactivate();
-		g_nmi->_behaviorManager->setFlagByStaticAniObject(g_nmi->_aniMan, 0);
+		g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 0);
 		break;
 
 	case MSG_SC22_HANDLEDOWN:
@@ -382,7 +382,7 @@ int sceneHandler22(Command *cmd) {
 
 			g_nmi->sceneAutoScrolling();
 
-			g_nmi->_behaviorManager->updateBehaviors();
+			g_nmi->_behaviorManager->update();
 
 			g_nmi->startSceneTrack();
 		}

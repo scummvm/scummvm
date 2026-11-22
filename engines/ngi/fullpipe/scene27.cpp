@@ -116,7 +116,7 @@ void sceneHandler27_driverGiveVent() {
 	getCurrSceneSc2MotionController()->activate();
 	getGameLoaderInteractionController()->enableFlag24();
 
-	g_nmi->_behaviorManager->setFlagByStaticAniObject(g_nmi->_aniMan, 1);
+	g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 1);
 }
 
 void sceneHandler27_winArcade() {
@@ -183,7 +183,7 @@ void sceneHandler27_throwBat() {
 	getCurrSceneSc2MotionController()->deactivate();
 	getGameLoaderInteractionController()->disableFlag24();
 
-	g_nmi->_behaviorManager->setFlagByStaticAniObject(g_nmi->_aniMan, 0);
+	g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 0);
 
 	g_vars->scene27_maxPhaseReached = false;
 
@@ -480,7 +480,7 @@ void sceneHandler27_batLogic() {
 			getCurrSceneSc2MotionController()->activate();
 			getGameLoaderInteractionController()->enableFlag24();
 
-			g_nmi->_behaviorManager->setFlagByStaticAniObject(g_nmi->_aniMan, 1);
+			g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 1);
 
 			return;
 		}
@@ -690,7 +690,7 @@ int sceneHandler27(Command *cmd) {
 
 		sceneHandler27_animateBats();
 
-		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->update();
 		g_nmi->startSceneTrack();
 
 		break;

@@ -28,21 +28,21 @@
 
 namespace NGI {
 
-BehaviorManager::BehaviorManager() {
+BehaviorController::BehaviorController() {
 	_scene = nullptr;
 	_isActive = true;
 }
 
-BehaviorManager::~BehaviorManager() {
+BehaviorController::~BehaviorController() {
 	clear();
 }
 
-void BehaviorManager::clear() {
+void BehaviorController::clear() {
 	_behaviors.clear();
 }
 
-void BehaviorManager::initBehavior(Scene *sc, GameVar *var) {
-	debugC(2, kDebugBehavior, "BehaviorManager::initBehavior(%d, %s)", sc->_sceneId, transCyrillic(var->_varName));
+void BehaviorController::initBehavior(Scene *sc, GameVar *var) {
+	debugC(2, kDebugBehavior, "BehaviorController::initBehavior(%d, %s)", sc->_sceneId, transCyrillic(var->_varName));
 
 	clear();
 	_scene = sc;
@@ -51,10 +51,10 @@ void BehaviorManager::initBehavior(Scene *sc, GameVar *var) {
 	if (!behvar)
 		return;
 
-	debugC(3, kDebugBehavior, "BehaviorManager::initBehavior. have Variable");
+	debugC(3, kDebugBehavior, "BehaviorController::initBehavior. have Variable");
 
 	for (GameVar *subvar = behvar->_subVars; subvar; subvar = subvar->_nextVarObj) {
-		debugC(3, kDebugBehavior, "BehaviorManager::initBehavior. subVar %s", transCyrillic(subvar->_varName));
+		debugC(3, kDebugBehavior, "BehaviorController::initBehavior. subVar %s", transCyrillic(subvar->_varName));
 		if (subvar->_varName == "AMBIENT") {
 			_behaviors.push_back(BehaviorInfo());
 			_behaviors.back().initAmbientBehavior(subvar, sc);
@@ -74,11 +74,11 @@ void BehaviorManager::initBehavior(Scene *sc, GameVar *var) {
 	}
 }
 
-void BehaviorManager::updateBehaviors() {
+void BehaviorController::update() {
 	if (!_isActive)
 		return;
 
-	debugC(6, kDebugBehavior, "BehaviorManager::updateBehaviors()");
+	debugC(6, kDebugBehavior, "BehaviorController::update()");
 	for (uint i = 0; i < _behaviors.size(); i++) {
 		BehaviorInfo &beh = _behaviors[i];
 
@@ -118,8 +118,8 @@ void BehaviorManager::updateBehaviors() {
 	}
 }
 
-void BehaviorManager::updateBehavior(BehaviorInfo &behaviorInfo, BehaviorAnim &entry) {
-	debugC(7, kDebugBehavior, "BehaviorManager::updateBehavior() moves: %d", entry._behaviorMoves.size());
+void BehaviorController::updateBehavior(BehaviorInfo &behaviorInfo, BehaviorAnim &entry) {
+	debugC(7, kDebugBehavior, "BehaviorController::updateBehavior() moves: %d", entry._behaviorMoves.size());
 	for (uint i = 0; i < entry._behaviorMoves.size(); i++) {
 		BehaviorMove &bhi = entry._behaviorMoves[i];
 		if (!(bhi._flags & 1)) {
@@ -140,8 +140,8 @@ void BehaviorManager::updateBehavior(BehaviorInfo &behaviorInfo, BehaviorAnim &e
 	}
 }
 
-void BehaviorManager::updateStaticAniBehavior(AniObject &ani, int delay, const BehaviorAnim &beh) {
-	debugC(6, kDebugBehavior, "BehaviorManager::updateStaticAniBehavior(%s)", transCyrillic(ani._title));
+void BehaviorController::updateStaticAniBehavior(AniObject &ani, int delay, const BehaviorAnim &beh) {
+	debugC(6, kDebugBehavior, "BehaviorController::updateStaticAniBehavior(%s)", transCyrillic(ani._title));
 
 	MessageQueue *mq = nullptr;
 
@@ -178,8 +178,8 @@ void BehaviorManager::updateStaticAniBehavior(AniObject &ani, int delay, const B
 	}
 }
 
-bool BehaviorManager::setBehaviorEnabled(AniObject *obj, int aniId, int quId, int flag) {
-	BehaviorMove *entry = getBehaviorMoveByMessageQueueDataId(obj, aniId, quId);
+bool BehaviorController::enableAni(AniObject *obj, int aniId, int quId, int flag) {
+	BehaviorMove *entry = getAniQueue(obj, aniId, quId);
 
 	if (entry) {
 		if (flag)
@@ -192,7 +192,7 @@ bool BehaviorManager::setBehaviorEnabled(AniObject *obj, int aniId, int quId, in
 	return true;
 }
 
-void BehaviorManager::setFlagByStaticAniObject(AniObject *ani, int flag) {
+void BehaviorController::enableAllQueuesForAni(AniObject *ani, int flag) {
 	for (uint i = 0; i < _behaviors.size(); i++) {
 		BehaviorInfo &beh = _behaviors[i];
 
@@ -205,7 +205,7 @@ void BehaviorManager::setFlagByStaticAniObject(AniObject *ani, int flag) {
 	}
 }
 
-BehaviorMove *BehaviorManager::getBehaviorMoveByMessageQueueDataId(AniObject *ani, int id1, int id2) {
+BehaviorMove *BehaviorController::getAniQueue(AniObject *ani, int id1, int id2) {
 	for (uint i = 0; i < _behaviors.size(); i++) {
 		if (_behaviors[i]._ani == ani) {
 			for (uint j = 0; j < _behaviors[i]._behaviorAnims.size(); j++) {

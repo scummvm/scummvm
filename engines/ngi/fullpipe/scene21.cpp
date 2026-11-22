@@ -136,7 +136,7 @@ int sceneHandler21(Command *cmd) {
 
 		g_vars->scene21_wiggleTrigger = !g_vars->scene21_wiggleTrigger;
 
-		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->update();
 		g_nmi->startSceneTrack();
 
 		break;

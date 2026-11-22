@@ -111,14 +111,14 @@ int scene25_updateCursor() {
 
 void scene25_setupWater(Scene *a1, int entranceId) {
 	if (g_vars->scene25_waterIsPresent) {
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene25_drop, ST_DRP25_EMPTY, QU_DRP25_TOFLOOR, 0);
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene25_drop, ST_DRP25_EMPTY, QU_DRP25_TOWATER, 1);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene25_drop, ST_DRP25_EMPTY, QU_DRP25_TOFLOOR, 0);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene25_drop, ST_DRP25_EMPTY, QU_DRP25_TOWATER, 1);
 
 		if (entranceId != TrubaRight)
 			g_nmi->playTrack(g_nmi->getGameLoaderGameVar()->getSubVarByName("SC_25"), "MUSIC2", 0);
 	} else {
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene25_drop, ST_DRP25_EMPTY, QU_DRP25_TOFLOOR, 1);
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene25_drop, ST_DRP25_EMPTY, QU_DRP25_TOWATER, 0);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene25_drop, ST_DRP25_EMPTY, QU_DRP25_TOFLOOR, 1);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene25_drop, ST_DRP25_EMPTY, QU_DRP25_TOWATER, 0);
 	}
 }
 
@@ -612,7 +612,7 @@ int sceneHandler25(Command *cmd) {
 				sceneHandler25_animateBearders();
 		}
 
-		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->update();
 		g_nmi->startSceneTrack();
 
 		if (g_vars->scene25_waterIsPresent && !g_vars->scene25_water->_movement)

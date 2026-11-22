@@ -97,8 +97,8 @@ void scene34_initScene(Scene *sc) {
 }
 
 void scene34_initBeh() {
-	g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene34_cactus, ST_CTS34_GROWNEMPTY2, QU_CTS34_FALLEFT, 0);
-	g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene34_cactus, ST_CTS34_GROWNEMPTY2, QU_CTS34_FALLRIGHT, 0);
+	g_nmi->_behaviorManager->enableAni(g_vars->scene34_cactus, ST_CTS34_GROWNEMPTY2, QU_CTS34_FALLEFT, 0);
+	g_nmi->_behaviorManager->enableAni(g_vars->scene34_cactus, ST_CTS34_GROWNEMPTY2, QU_CTS34_FALLRIGHT, 0);
 }
 
 int scene34_updateCursor() {
@@ -117,7 +117,7 @@ void sceneHandler34_leaveBoard() {
 	getCurrSceneSc2MotionController()->activate();
 	getGameLoaderInteractionController()->enableFlag24();
 
-	g_nmi->_behaviorManager->setFlagByStaticAniObject(g_nmi->_aniMan, 1);
+	g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 1);
 
 	g_vars->scene34_dudeOnBoard = false;
 }
@@ -126,7 +126,7 @@ void sceneHandler34_onBoard() {
 	getCurrSceneSc2MotionController()->deactivate();
 	getGameLoaderInteractionController()->disableFlag24();
 
-	g_nmi->_behaviorManager->setFlagByStaticAniObject(g_nmi->_aniMan, 0);
+	g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 0);
 
 	g_vars->scene34_dudeOnBoard = true;
 }
@@ -151,7 +151,7 @@ void sceneHandler34_climb() {
 	getCurrSceneSc2MotionController()->deactivate();
 	getGameLoaderInteractionController()->disableFlag24();
 
-	g_nmi->_behaviorManager->setFlagByStaticAniObject(g_nmi->_aniMan, 0);
+	g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 0);
 
 	g_vars->scene34_dudeClimbed = true;
 }
@@ -289,7 +289,7 @@ void sceneHandler34_unclimb() {
 	getCurrSceneSc2MotionController()->activate();
 	getGameLoaderInteractionController()->enableFlag24();
 
-	g_nmi->_behaviorManager->setFlagByStaticAniObject(g_nmi->_aniMan, 1);
+	g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 1);
 
 	g_vars->scene34_dudeClimbed = false;
 }
@@ -325,7 +325,7 @@ int sceneHandler34(Command *cmd) {
 		getCurrSceneSc2MotionController()->activate();
 		getGameLoaderInteractionController()->enableFlag24();
 
-		g_nmi->_behaviorManager->setFlagByStaticAniObject(g_nmi->_aniMan, 1);
+		g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 1);
 		break;
 
 	case MSG_SC34_RETRYVENT:
@@ -339,8 +339,8 @@ int sceneHandler34(Command *cmd) {
 		break;
 
 	case MSG_SC34_ONBUMP:
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene34_cactus, ST_CTS34_GROWNEMPTY2, QU_CTS34_FALLEFT, 1);
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene34_cactus, ST_CTS34_GROWNEMPTY2, QU_CTS34_FALLRIGHT, 1);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene34_cactus, ST_CTS34_GROWNEMPTY2, QU_CTS34_FALLEFT, 1);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene34_cactus, ST_CTS34_GROWNEMPTY2, QU_CTS34_FALLRIGHT, 1);
 		break;
 
 	case MSG_LIFT_CLOSEDOOR:
@@ -381,7 +381,7 @@ int sceneHandler34(Command *cmd) {
 		getCurrSceneSc2MotionController()->deactivate();
 		getGameLoaderInteractionController()->disableFlag24();
 
-		g_nmi->_behaviorManager->setFlagByStaticAniObject(g_nmi->_aniMan, 0);
+		g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 0);
 		break;
 
 	case MSG_SC34_SHOWVENT:
@@ -465,7 +465,7 @@ int sceneHandler34(Command *cmd) {
 
 		g_nmi->_floaters->update();
 
-		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->update();
 
 		g_nmi->startSceneTrack();
 		break;

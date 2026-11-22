@@ -83,8 +83,8 @@ void sceneHandler35_shrink() {
 void sceneHandler35_startFlow() {
 	if (g_nmi->getObjectState(sO_Valve_35) == g_nmi->getObjectEnumState(sO_Valve_35, sO_TurnedOn)) {
 		if ((g_vars->scene35_hose->_flags & 4) && g_vars->scene35_hose->_statics->_staticsId == ST_HZE_NORM) {
-			g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene35_bellyInflater, ST_PDV_SMALL, QU_PDV_SML_BLINK, 0);
-			g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene35_bellyInflater, ST_PDV_SMALL, QU_PDV_SML_TRY, 0);
+			g_nmi->_behaviorManager->enableAni(g_vars->scene35_bellyInflater, ST_PDV_SMALL, QU_PDV_SML_BLINK, 0);
+			g_nmi->_behaviorManager->enableAni(g_vars->scene35_bellyInflater, ST_PDV_SMALL, QU_PDV_SML_TRY, 0);
 
 			g_vars->scene35_bellyInflater->setStatic(ST_PDV_SMALL);
 			g_vars->scene35_bellyInflater->_flags &= ~0x100;
@@ -252,7 +252,7 @@ int sceneHandler35(Command *cmd) {
 
 		g_nmi->_floaters->update();
 
-		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->update();
 		g_nmi->startSceneTrack();
 
 		break;

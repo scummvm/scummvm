@@ -81,7 +81,7 @@ int sceneHandler36(Command *cmd) {
 				g_nmi->_currentScene->_x = x + 300 - g_nmi->_sceneRect.right;
 		}
 
-		g_nmi->_behaviorManager->updateBehaviors();
+		g_nmi->_behaviorManager->update();
 		g_nmi->startSceneTrack();
 
 		break;

@@ -45,13 +45,13 @@ void scene17_initScene(Scene *sc) {
 
 void scene17_restoreState() {
 	if (g_nmi->getObjectState(sO_UsherHand) == g_nmi->getObjectEnumState(sO_UsherHand, sO_WithCoin)) {
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 0);
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 0);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 0);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 0);
 
 		g_vars->scene17_handPhase = false;
 	} else {
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 0);
-		g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 1);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 0);
+		g_nmi->_behaviorManager->enableAni(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 1);
 
 		g_vars->scene17_handPhase = true;
 	}
@@ -173,13 +173,13 @@ int sceneHandler17(Command *cmd) {
 
 	case MSG_SC17_UPDATEHAND:
 		if (g_nmi->getObjectState(sO_UsherHand) == g_nmi->getObjectEnumState(sO_UsherHand, sO_WithCoin)) {
-			g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 0);
-			g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 0);
+			g_nmi->_behaviorManager->enableAni(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 0);
+			g_nmi->_behaviorManager->enableAni(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 0);
 
 			g_vars->scene17_handPhase = false;
 		} else {
-			g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 0);
-			g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 1);
+			g_nmi->_behaviorManager->enableAni(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 0);
+			g_nmi->_behaviorManager->enableAni(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 1);
 
 			g_vars->scene17_handPhase = true;
 		}
@@ -253,13 +253,13 @@ int sceneHandler17(Command *cmd) {
 
 			if (g_vars->scene17_handPhase) {
 				if (g_vars->scene17_sceneOldEdgeX < 410 && x >= 410) {
-					g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 0);
-					g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_ATTRACT, QU_HND17_ATTRACT, 0);
-					g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 1);
+					g_nmi->_behaviorManager->enableAni(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 0);
+					g_nmi->_behaviorManager->enableAni(g_vars->scene17_hand, ST_HND17_ATTRACT, QU_HND17_ATTRACT, 0);
+					g_nmi->_behaviorManager->enableAni(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 1);
 				} else if (g_vars->scene17_sceneOldEdgeX > 410 && x <= 410) {
-					g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 1);
-					g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_ATTRACT, QU_HND17_ATTRACT, 1);
-					g_nmi->_behaviorManager->setBehaviorEnabled(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 0);
+					g_nmi->_behaviorManager->enableAni(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 1);
+					g_nmi->_behaviorManager->enableAni(g_vars->scene17_hand, ST_HND17_ATTRACT, QU_HND17_ATTRACT, 1);
+					g_nmi->_behaviorManager->enableAni(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 0);
 				}
 			}
 
@@ -270,7 +270,7 @@ int sceneHandler17(Command *cmd) {
 
 			g_nmi->_floaters->update();
 
-			g_nmi->_behaviorManager->updateBehaviors();
+			g_nmi->_behaviorManager->update();
 
 			g_nmi->startSceneTrack();
 		}
