@@ -175,8 +175,9 @@ void Scene6370::startSushiConversation(bool introduction) {
 	memcpy(_dialogue[13], topics[4], sizeof(topics[4]));
 	_dialogue[0][0].enabled = !_town.sushiMet;
 	_dialogue[0][1].enabled = _town.sushiMet;
-	_dialogue[0][4].enabled = _town.mineMapKnown && _town.bankVisited;
+	_dialogue[0][4].enabled = _town.mineMapKnown && _town.bankVisited && !_town.safeOpened;
 	_dialogue[0][5].enabled = _town.bodySeen;
+	_dialogue[10][1].enabled = !_town.safeOpened;
 	_dialogue[12][0].enabled = !_town.safeSeen;
 	_dialogue[12][1].enabled = _town.safeSeen;
 }

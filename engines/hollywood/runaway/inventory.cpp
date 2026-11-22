@@ -442,12 +442,14 @@ RunawayInventory::Reply RunawayInventory::examine(byte item, const RunawaySaveSt
 			return Reply(207);
 		case 20: // Ancient stapler.
 			return Reply(212, _town.strap == 2);
+		case 21: // Flower pot.
+			return Reply(244);
 		case 22: // Pruning shears.
 			return Reply(213);
 		case 23: // Oil can.
 			return Reply(214, _town.oilCanFull);
 		case 27: // Tobacco leaves.
-			return Reply(217);
+			return Reply(217, state.town.rawTobaccoRefused);
 		case 29: // Stone with a hole.
 			return Reply(219, _town.sculpture * 2);
 		case 31: // Clay vessel.

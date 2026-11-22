@@ -153,6 +153,7 @@ RunawayRoomScene::ActionResult Scene6250::dispatchCustomSceneAction(uint16 actio
 		leaveTownRoom(6391);
 		break;
 	case 1400: // Brian reaches the bank basement for the first time.
+		_town.safeSeen = 1;
 		if (!_town.basementVisited) {
 			_town.basementVisited = 1;
 			say(0);

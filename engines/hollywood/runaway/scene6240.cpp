@@ -40,7 +40,6 @@ const RunawayHotspot kHotspots[] = {
 
 const RunawayResponse kResponses[] = {
 	{6240, 301, 1, 0},   // Look out into town.
-	{6240, 303, 2, 0},   // Look up the stairs.
 	{6240, 305, 3, 0},   // Examine the pot of soil.
 	{6240, 307, 5, 0},   // Examine the watering can.
 	{6240, 308, 6, 0},   // Leave the watering to the plants' owner.
@@ -168,6 +167,9 @@ RunawayRoomScene::ActionResult Scene6240::dispatchCustomSceneAction(uint16 actio
 	switch (action) {
 	case 302: // Return to the saloon porch.
 		leaveTownRoom(6181);
+		break;
+	case 303: // Recognize the stairs to Saturn's workshop after meeting him.
+		say(2, _town.kevinMet);
 		break;
 	case 304: // Climb the stairs to Kevin's room.
 		beginRoomAnimation(304, 5, 19);

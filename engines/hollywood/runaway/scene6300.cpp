@@ -688,6 +688,9 @@ RunawayRoomScene::ActionResult Scene6300::dispatchCustomSceneAction(uint16 actio
 			say(28, 12);
 			say(90, 7, false, 1);
 			_town.oscarStrengthKnown = 1;
+			if (!_town.oscarTobacco) {
+				_town.oscarTobacco = 1;
+			}
 		}
 		animateKevin(446, 32, 121, 0, 120);
 		break;
@@ -851,6 +854,9 @@ void Scene6300::handleCustomDialogueChoice(byte effect) {
 		break;
 	case 11: // Learn how Oscar helps Saturn move heavy stones.
 		_town.oscarStrengthKnown = 1;
+		if (!_town.oscarTobacco) {
+			_town.oscarTobacco = 1;
+		}
 		break;
 	default:
 		break;

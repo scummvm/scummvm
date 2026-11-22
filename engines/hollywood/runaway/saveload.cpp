@@ -383,6 +383,7 @@ void RunawaySaveState::sync(Common::Serializer &s) {
 	s.syncAsByte(museum.officeVisited, 27);
 	s.syncAsByte(museum.exhibitionVisited, 27);
 	s.syncAsByte(museum.phonePlanExplained, 27);
+	s.syncAsByte(town.motorcycleRefilled, 28);
 }
 
 byte RunawaySaveState::chapter() const {
@@ -493,7 +494,7 @@ bool RunawaySaveState::valid() const {
 			town.roughSculptureRefused > 1 || town.polishedSculptureRefused > 1 || town.oscarStrengthKnown > 1 || town.basementVisited > 1 ||
 			town.bankImpactSeen > 1 || town.safeOpened > 1 || town.stethoscopeTried > 1 || town.safeDialVisited > 1 ||
 			town.safeDial > 99 || town.safeProgress > 3 || town.machinePowered > 1 || town.melodyTried > 1 ||
-			town.campingGearTaken > 1 || townItems.sculpture > 2 || townItems.tube30 > 3 || townItems.tube50 > 5 ||
+			town.campingGearTaken > 1 || town.motorcycleRefilled > 1 || townItems.sculpture > 2 || townItems.tube30 > 3 || townItems.tube50 > 5 ||
 			townItems.mortar > 1 || townItems.mortarIdea > 1) {
 		return false;
 	}
@@ -582,11 +583,19 @@ bool RunawaySaveState::read(Common::SeekableReadStream &stream) {
 	if (stream.readUint32BE() != MKTAG('R', 'U', 'N', 'A'))
 		return false;
 	const uint16 version = stream.readUint16LE();
-	if (version < 1 || version > 27)
+	if (version < 1 || version > 28)
 		return false;
 	Common::Serializer s(&stream, nullptr);
 	s.setVersion(version);
 	sync(s);
+	if (version < 28) {
+		if (!town.safeSeen && town.basementVisited == 1) {
+			town.safeSeen = 1;
+		}
+		if (town.oscarStrengthKnown == 1 && !town.oscarTobacco) {
+			town.oscarTobacco = 1;
+		}
+	}
 	return !s.err() && !stream.eos() && valid();
 }
 
@@ -594,9 +603,9 @@ bool RunawaySaveState::write(Common::WriteStream &stream) {
 	if (!valid())
 		return false;
 	stream.writeUint32BE(MKTAG('R', 'U', 'N', 'A'));
-	stream.writeUint16LE(27);
+	stream.writeUint16LE(28);
 	Common::Serializer s(nullptr, &stream);
-	s.setVersion(27);
+	s.setVersion(28);
 	sync(s);
 	return !s.err();
 }

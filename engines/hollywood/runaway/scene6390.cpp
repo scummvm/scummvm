@@ -125,6 +125,11 @@ void Scene6390::turnDial(byte direction) {
 	static const byte combination[] = {85, 29, 54};
 	const byte requiredDirection = _town.safeProgress == 1 ? 2 : 1;
 	if (direction != requiredDirection) {
+		if (_town.safeProgress && _town.safeOpened && !listening) {
+			say(8, 3);
+			say(8, 2);
+			_heldDirection = 0;
+		}
 		_town.safeProgress = 0;
 	} else if ((listening || _town.safeOpened) && _town.safeDial == combination[_town.safeProgress]) {
 		++_town.safeProgress;
