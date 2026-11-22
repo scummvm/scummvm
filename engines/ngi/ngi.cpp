@@ -200,9 +200,9 @@ void NGIEngine::restartGame() {
 
 	_gameLoader->restoreDefPicAniInfos();
 
-	getGameLoaderInventory()->clear();
+	getGameLoaderInventory()->removeAllItems();
 	getGameLoaderInventory()->addItem(ANI_INV_MAP, 1);
-	getGameLoaderInventory()->rebuildItemRects();
+	getGameLoaderInventory()->recalcItemPos();
 
 	initMap();
 
@@ -512,7 +512,7 @@ void NGIEngine::updateScreen() {
 		_currentScene->render();
 
 		if (_inventoryScene)
-			_inventory->draw();
+			_inventory->render();
 
 		if (_updateScreenCallback)
 			_updateScreenCallback();

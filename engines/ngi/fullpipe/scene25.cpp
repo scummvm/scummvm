@@ -81,7 +81,7 @@ void scene25_initScene(Scene *sc, int entranceId) {
 		if (boardState == g_nmi->getObjectEnumState(sO_Board_25, sO_WithDudeOnLeft)) {
 			if (!getGameLoaderInventory()->getCountItemsWithId(ANI_INV_BOARD)) {
 				getGameLoaderInventory()->addItem(ANI_INV_BOARD, 1);
-				getGameLoaderInventory()->rebuildItemRects();
+				getGameLoaderInventory()->recalcItemPos();
 			}
 		} else {
 			g_vars->scene25_boardIsSelectable = true;

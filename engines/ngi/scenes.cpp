@@ -566,7 +566,7 @@ bool NGIEngine::sceneSwitcher(const EntranceInfo &entrance) {
 		_inventoryScene = nullptr;
 	} else {
 		_gameLoader->loadScene(SC_INV);
-		getGameLoaderInventory()->rebuildItemRects();
+		getGameLoaderInventory()->recalcItemPos();
 		_inventoryScene = getGameLoaderInventory()->getScene();
 	}
 	if (_soundEnabled) {

@@ -143,7 +143,7 @@ int global_messageHandler1(Command *cmd) {
 			break;
 		case 29: // left mouse
 			if (g_nmi->_inventoryScene) {
-				if (getGameLoaderInventory()->handleLeftClick(cmd))
+				if (getGameLoaderInventory()->onMouseLKeyDown(cmd))
 					cmd->_cmd = 0;
 			}
 			break;
@@ -211,7 +211,7 @@ int global_messageHandler1(Command *cmd) {
 
 			int invItem;
 
-			if (g_nmi->_updateFlag && (invItem = g_nmi->_inventory->getHoveredItem(&g_nmi->_mouseScreenPos))) {
+			if (g_nmi->_updateFlag && (invItem = g_nmi->_inventory->getItemAtPos(&g_nmi->_mouseScreenPos))) {
 				g_nmi->_cursorId = PIC_CSR_ITN;
 				if (!g_nmi->_currSelectedInventoryItemId && !g_nmi->_aniMan->_movement &&
 					!(g_nmi->_aniMan->_flags & 0x100) && g_nmi->_aniMan->isIdle()) {
@@ -254,7 +254,7 @@ int global_messageHandler1(Command *cmd) {
 	}
 
 	if (cmd->_cmd == 56) {
-		getGameLoaderInventory()->rebuildItemRects();
+		getGameLoaderInventory()->recalcItemPos();
 
 		Command *newex = new Command(0, 35, SND_CMN_031, 0, 0, 0, 1, 0, 0, 0);
 
@@ -264,7 +264,7 @@ int global_messageHandler1(Command *cmd) {
 
 		return 1;
 	} else if (cmd->_cmd == 57) {
-		getGameLoaderInventory()->rebuildItemRects();
+		getGameLoaderInventory()->recalcItemPos();
 
 		return 1;
 	}
@@ -469,25 +469,25 @@ int global_messageHandler3(Command *cmd) {
 			result = 1;
 			getGameLoaderInventory()->addItem(cmd->_parentId, 1);
 		}
-		getGameLoaderInventory()->rebuildItemRects();
+		getGameLoaderInventory()->recalcItemPos();
 		return result;
 	case 57:
 		if (cmd->_field_2C) {
 			if (!cmd->_invId) {
 				getGameLoaderInventory()->removeItem2(g_nmi->_currentScene, cmd->_parentId, cmd->_x, cmd->_y, cmd->_z);
-				getGameLoaderInventory()->rebuildItemRects();
+				getGameLoaderInventory()->recalcItemPos();
 				return 1;
 			}
 			ani = g_nmi->_currentScene->findAniObjectById(g_nmi->_gameLoader->_field_FA, -1);
 			if (ani) {
 				getGameLoaderInventory()->removeItem2(g_nmi->_currentScene, cmd->_parentId, ani->_x + cmd->_x, ani->_y + cmd->_y, ani->_z + cmd->_z);
-				getGameLoaderInventory()->rebuildItemRects();
+				getGameLoaderInventory()->recalcItemPos();
 				return 1;
 			}
 		} else {
 			getGameLoaderInventory()->removeItem(cmd->_parentId, 1);
 		}
-		getGameLoaderInventory()->rebuildItemRects();
+		getGameLoaderInventory()->recalcItemPos();
 		return 1;
 	case 55:
 		if (g_nmi->_currentScene) {

@@ -79,7 +79,7 @@ class BaseModalObject;
 class GameLoader;
 class GameVar;
 class InputController;
-class Inventory2;
+class Inventory;
 struct CursorInfo;
 struct EntranceInfo;
 class Command;
@@ -285,7 +285,7 @@ public:
 	int32 _mapTable[200];
 
 	Scene *_inventoryScene;
-	Inventory2 *_inventory;
+	Inventory *_inventory;
 	int _currSelectedInventoryItemId;
 
 	int32 _updateTicks;

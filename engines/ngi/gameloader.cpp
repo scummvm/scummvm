@@ -33,7 +33,7 @@
 
 namespace NGI {
 
-Inventory2 *getGameLoaderInventory() {
+Inventory *getGameLoaderInventory() {
 	return &g_nmi->_gameLoader->_inventory;
 }
 

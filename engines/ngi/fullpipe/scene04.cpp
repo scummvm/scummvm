@@ -71,9 +71,9 @@ void scene04_initScene(Scene *sc) {
 	debugC(1, kDebugSceneLogic, "scene04_initScene()");
 
 #if 0
-	Inventory2 *inv = getGameLoaderInventory();
+	Inventory *inv = getGameLoaderInventory();
 	inv->addItem(ANI_INV_COIN, 1);
-	inv->rebuildItemRects();
+	inv->recalcItemPos();
 #endif
 
 	g_vars->scene04_dudeOnLadder = false;

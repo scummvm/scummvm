@@ -79,7 +79,7 @@ struct InventoryIcon {
 	bool isMouseHover;
 };
 
-class Inventory2 : public InventoryData {
+class Inventory : public InventoryData {
 	Common::Array<InventoryItem> _inventoryItems;
 	Common::Array<InventoryIcon> _inventoryIcons;
 	int _selectedId;
@@ -91,8 +91,8 @@ class Inventory2 : public InventoryData {
 	BigPicture *_picture;
 
  public:
-	Inventory2();
-	~Inventory2() override;
+	Inventory();
+	~Inventory() override;
 
 	bool loadPartial(MfcArchive &file);
 	bool savePartial(MfcArchive &file);
@@ -107,7 +107,7 @@ class Inventory2 : public InventoryData {
 	int getCountItemsWithId(int itemId);
 	int getItemFlags(int itemId);
 
-	void rebuildItemRects();
+	void recalcItemPos();
 
 	Scene *getScene() { return _scene; }
 	bool getIsLocked() { return _isLocked; }
@@ -115,17 +115,17 @@ class Inventory2 : public InventoryData {
 	bool getIsInventoryOut() { return _isInventoryOut; }
 
 	int getSelectedItemId() { return _selectedId < 0 ? 0 : _selectedId; }
-	int getHoveredItem(Common::Point *point);
+	int getItemAtPos(Common::Point *point);
 	void slideIn();
 	void slideOut();
 
-	bool handleLeftClick(Command *cmd);
-	int selectItem(int itemId);
+	bool onMouseLKeyDown(Command *cmd);
+	int putOnCursor(int itemId);
 	bool unselectItem(bool flag);
 
-	void draw();
+	void render();
 
-	void clear();
+	void removeAllItems();
 };
 
 } // End of namespace NGI

@@ -114,7 +114,7 @@ class GameLoader : public CObject {
 	Common::ScopedPtr<GameProject> _gameProject;
 	InteractionController *_interactionController;
 	InputController *_inputController;
-	Inventory2 _inventory;
+	Inventory _inventory;
 	Sc2Array _sc2array;
 	void *_sceneSwitcher;
 	bool (*_preloadCallback)(PreloadItem &pre, int flag);
@@ -131,7 +131,7 @@ class GameLoader : public CObject {
 };
 
 
-Inventory2 *getGameLoaderInventory();
+Inventory *getGameLoaderInventory();
 InteractionController *getGameLoaderInteractionController();
 MctlCompound *getSc2MctlCompoundBySceneId(int16 sceneId);
 MovGraph *getSc2MovGraphBySceneId(int16 sceneId);

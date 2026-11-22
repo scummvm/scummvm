@@ -39,9 +39,9 @@ void scene05_initScene(Scene *sc) {
 	debugC(1, kDebugSceneLogic, "scene05_initScene()");
 
 #if 0
-	Inventory2 *inv = getGameLoaderInventory();
+	Inventory *inv = getGameLoaderInventory();
 	inv->addItem(ANI_INV_BOX, 1);
-	inv->rebuildItemRects();
+	inv->recalcItemPos();
 #endif
 
 	g_vars->scene05_handle = sc->findAniObjectById(ANI_HANDLE, -1);
