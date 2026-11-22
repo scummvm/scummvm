@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/scummsys.h"
 #include "common/str-enc.h"
 #include "common/textconsole.h"
@@ -88,6 +89,7 @@ const RunawayResponse kResponses[] = {
 
 const RunawayItemAction kItemActions[] = {
 	{5100, 2, 5, 327, true}, // Pry the footrest off the motorcycle.
+	{5100, 2, 6, 330, false}, // Threaten Stud with the crowbar (restored content).
 	{5100, 9, 6, 16, false}, // Offer the sleeping pill directly to Stud.
 	{5100, 9, 12, 328, true}, // Put the sleeping pill in Stud's beer.
 };
@@ -242,6 +244,13 @@ RunawayRoomScene::ActionResult Scene5100::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 310: // Talk to Stud.
 		say(6, !_desert.insideBarn);
+		break;
+	case 330: // Threaten the drugged Stud with the crowbar (restored content).
+		if (_desert.guard == 2 && ConfMan.getBool("restored_content")) {
+			say(12, 7, false, 1);
+		} else {
+			executeItemAction(defaultItemAction(2, 6));
+		}
 		break;
 	case 313: // Look at the loose footrest.
 		if (!_desert.footrestSeen) {

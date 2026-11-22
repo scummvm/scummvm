@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "hollywood/runaway/scene5080.h"
@@ -168,7 +169,13 @@ RunawayRoomScene::ActionResult Scene5080::dispatchCustomSceneAction(uint16 actio
 		visitDesertRoom(5, 1);
 		break;
 	case 316: // Look at the anthill.
-		say(13, _desert.antsDistracted ? 2 : 0);
+		if (_desert.antsDistracted) {
+			say(13, 2);
+		} else if (items.antTrickKnown && ConfMan.getBool("restored_content")) {
+			say(13, 1);
+		} else {
+			say(13);
+		}
 		break;
 	case 317: // Use the anthill.
 		if (_desert.antsDistracted) {
