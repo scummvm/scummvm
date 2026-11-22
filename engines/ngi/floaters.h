@@ -33,36 +33,36 @@ class ReactPolygonal;
 
 struct FloaterArray1 {
 	int val1;
-	int val2;
+	int targetX;
 
-	FloaterArray1() { val1 = 0; val2 = 0; }
+	FloaterArray1() { val1 = 0; targetX = 0; }
 };
 
-struct FloaterArray2 {
+struct GutlFly {
 	AniObject *ani;
-	int val2;
-	int val3;
-	int val4;
-	int val5;
-	int val6;
-	int val7;
+	int targetX;
+	int targetY;
+	int x;
+	int y;
+	int exitX;
+	int exitY;
 	int val8;
-	double val9;
-	double val11;
-	int val13;
+	double speed;
+	double maxSpeed;
+	int idleTicks;
 	int countdown;
 	int val15;
-	int fflags;
+	int flags;
 
-	FloaterArray2() : ani(nullptr), val2(0), val3(0), val4(0), val5(0), val6(0), val7(0), val8(0),
-		val9(0.0), val11(0.0), val13(0), countdown(0), val15(0), fflags(0) {}
+	GutlFly() : ani(nullptr), targetX(0), targetY(0), x(0), y(0), exitX(0), exitY(0), val8(0),
+		speed(0.0), maxSpeed(0.0), idleTicks(0), countdown(0), val15(0), flags(0) {}
 };
 
 class FlyPack {
 public:
 	Common::ScopedPtr<ReactPolygonal> _idleRegion;
 	Common::Array<FloaterArray1> _idlePoints;
-	Common::Array<FloaterArray2> _flies;
+	Common::Array<GutlFly> _flies;
 
 	void init(GameVar *var);
 	void addFly(Scene *sc, int x, int y, int priority, int flags);

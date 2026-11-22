@@ -157,8 +157,8 @@ void sceneHandler17_updateFlies() {
 	g_nmi->_floaters->addFly(g_nmi->_currentScene, 239, -50, 20, 4);
 
 	g_nmi->_floaters->_flies[0].countdown = g_nmi->_rnd.getRandomNumber(5) + 6;
-	g_nmi->_floaters->_flies[0].val6 = 239;
-	g_nmi->_floaters->_flies[0].val7 = -50;
+	g_nmi->_floaters->_flies[0].exitX = 239;
+	g_nmi->_floaters->_flies[0].exitY = -50;
 }
 
 

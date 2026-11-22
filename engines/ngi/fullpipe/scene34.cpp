@@ -160,8 +160,8 @@ void sceneHandler34_genFlies() {
 	g_nmi->_floaters->addFly(g_nmi->_currentScene, 1072, -50, 100, 4);
 
 	g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].countdown = 1;
-	g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].val6 = 1072;
-	g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].val7 = -50;
+	g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].exitX = 1072;
+	g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].exitY = -50;
 
 	g_vars->scene34_fliesCountdown = g_nmi->_rnd.getRandomNumber(500) + 500;
 }

@@ -69,7 +69,7 @@ void FlyPack::init(GameVar *var) {
 			FloaterArray1 &f = _idlePoints[idx];
 
 			f.val1 = sub->_subVars->_value.intValue;
-			f.val2 = sub->_subVars->_nextVarObj->_value.intValue;
+			f.targetX = sub->_subVars->_nextVarObj->_value.intValue;
 
 			++idx;
 			sub = sub->_nextVarObj;
@@ -99,60 +99,60 @@ void FlyPack::addFly(Scene *sc, int x, int y, int priority, int flags) {
 
 	ani->_movement->setCurFrame(g_nmi->_rnd.getRandomNumber(nummoves - 1));
 
-	_flies.push_back(FloaterArray2());
-	FloaterArray2 &arr2 = _flies.back();
+	_flies.push_back(GutlFly());
+	GutlFly &arr2 = _flies.back();
 	arr2.ani = ani;
-	arr2.val11 = 15.0;
-	arr2.val3 = y;
-	arr2.val5 = y;
-	arr2.val2 = x;
-	arr2.val4 = x;
-	arr2.fflags = flags;
+	arr2.maxSpeed = 15.0;
+	arr2.targetY = y;
+	arr2.y = y;
+	arr2.targetX = x;
+	arr2.x = x;
+	arr2.flags = flags;
 }
 
 void FlyPack::onUpdate() {
 	for (uint i = 0; i < _flies.size(); ++i) {
-		FloaterArray2 &a2 = _flies[i];
-		if (_flies[i].val13 <= 0) {
-			if (_flies[i].val4 != a2.val2 || a2.val5 != a2.val3) {
-				if (_flies[i].val9 < 2.0)
-					_flies[i].val9 = 2.0;
+		GutlFly &a2 = _flies[i];
+		if (_flies[i].idleTicks <= 0) {
+			if (_flies[i].x != a2.targetX || a2.y != a2.targetY) {
+				if (_flies[i].speed < 2.0)
+					_flies[i].speed = 2.0;
 
-				int dy = a2.val3 - a2.val5;
-				int dx = a2.val2 - a2.val4;
+				int dy = a2.targetY - a2.y;
+				int dx = a2.targetX - a2.x;
 				double dst = sqrt((double)(dy * dy + dx * dx));
 				double at = atan2((double)dy, (double)dx);
-				int newX = (int)(cos(at) * a2.val9);
-				int newY = (int)(sin(at) * a2.val9);
+				int newX = (int)(cos(at) * a2.speed);
+				int newY = (int)(sin(at) * a2.speed);
 
-				if (dst < a2.val9) {
-					newX = a2.val2 - a2.val4;
-					newY = a2.val3 - a2.val5;
+				if (dst < a2.speed) {
+					newX = a2.targetX - a2.x;
+					newY = a2.targetY - a2.y;
 				}
 				if (dst <= 30.0) {
 					if (dst < 30.0) {
-						a2.val9 = a2.val9 - a2.val9 * 0.5;
+						a2.speed = a2.speed - a2.speed * 0.5;
 
-						if (a2.val9 < 2.0)
-							a2.val9 = 2.0;
+						if (a2.speed < 2.0)
+							a2.speed = 2.0;
 					}
 				} else {
-					a2.val9 = a2.val9 * 0.5 + a2.val9;
+					a2.speed = a2.speed * 0.5 + a2.speed;
 
-					if (a2.val9 > a2.val11)
-						a2.val9 = a2.val11;
+					if (a2.speed > a2.maxSpeed)
+						a2.speed = a2.maxSpeed;
 				}
 
-				a2.val4 += newX;
-				a2.val5 += newY;
+				a2.x += newX;
+				a2.y += newY;
 				a2.ani->setPos(newX + a2.ani->_x, newY + a2.ani->_y);
 
-				if (a2.val4 == a2.val2 && a2.val5 == a2.val3) {
-					a2.val9 = 0.0;
+				if (a2.x == a2.targetX && a2.y == a2.targetY) {
+					a2.speed = 0.0;
 
-					a2.val13 = g_nmi->_rnd.getRandomNumber(200) + 20;
+					a2.idleTicks = g_nmi->_rnd.getRandomNumber(200) + 20;
 
-					if (a2.fflags & 1) {
+					if (a2.flags & 1) {
 						g_nmi->_currentScene->removeAni(a2.ani);
 
 						if (a2.ani)
@@ -169,16 +169,16 @@ void FlyPack::onUpdate() {
 					}
 				}
 			} else {
-				if ((a2.fflags & 4) && a2.countdown < 1) {
-					a2.fflags |= 1;
-					a2.val2 = a2.val6;
-					a2.val3 = a2.val7;
+				if ((a2.flags & 4) && a2.countdown < 1) {
+					a2.flags |= 1;
+					a2.targetX = a2.exitX;
+					a2.targetY = a2.exitY;
 				} else {
-					if (a2.fflags & 2) {
+					if (a2.flags & 2) {
 						int idx1 = g_nmi->_rnd.getRandomNumber(_idlePoints.size() - 1);
 
-						a2.val2 = _idlePoints[idx1].val1;
-						a2.val3 = _idlePoints[idx1].val2;
+						a2.targetX = _idlePoints[idx1].val1;
+						a2.targetY = _idlePoints[idx1].targetX;
 					} else {
 						if (!_idleRegion)
 							error("FlyPack::onUpdate(): empty fliers region");
@@ -189,25 +189,25 @@ void FlyPack::onUpdate() {
 						int y2 = rect.top + g_nmi->_rnd.getRandomNumber(rect.bottom - rect.top);
 
 						if (_idleRegion->hitTest(x2, y2)) {
-							int dx = a2.val2 - x2;
-							int dy = a2.val3 - y2;
+							int dx = a2.targetX - x2;
+							int dy = a2.targetY - y2;
 							double dst = sqrt((double)(dy * dy + dx * dx));
 
-							if (dst < 300.0 || !_idleRegion->hitTest(a2.val4, a2.val5)) {
-								a2.val2 = x2;
-								a2.val3 = y2;
+							if (dst < 300.0 || !_idleRegion->hitTest(a2.x, a2.y)) {
+								a2.targetX = x2;
+								a2.targetY = y2;
 							}
 						}
 					}
 
 					g_nmi->playSound(SND_CMN_061, 0);
 
-					if (a2.fflags & 4)
+					if (a2.flags & 4)
 						a2.countdown--;
 				}
 			}
 		} else {
-			a2.val13--;
+			a2.idleTicks--;
 		}
 
 		if (!a2.ani->_movement && a2.ani->_statics->_staticsId == ST_FLY_FLY) {
@@ -224,7 +224,7 @@ void FlyPack::onUpdate() {
 
 void FlyPack::deleteAllFlies() {
 	for (uint i = 0; i < _flies.size(); i++) {
-		FloaterArray2 &a2 = _flies[i];
+		GutlFly &a2 = _flies[i];
 		g_nmi->_currentScene->removeAni(a2.ani);
 		delete a2.ani;
 	}

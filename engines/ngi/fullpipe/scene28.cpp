@@ -171,12 +171,12 @@ void sceneHandler28_turnOn2() {
 	if (g_vars->scene28_fliesArePresent) {
 		g_nmi->_floaters->addFly(g_nmi->_currentScene, 1013, 329, 60, 4);
 
-		g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].val13 = 30;
+		g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].idleTicks = 30;
 		g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].countdown = g_nmi->_rnd.getRandomNumber(12) + 12;
 
 		g_nmi->_floaters->addFly(g_nmi->_currentScene, 1074, 311, 60, 4);
 
-		g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].val13 = 30;
+		g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].idleTicks = 30;
 		g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].countdown = g_nmi->_rnd.getRandomNumber(12) + 12;
 	}
 
@@ -467,7 +467,7 @@ int sceneHandler28(Command *cmd) {
 		g_nmi->_floaters->onUpdate();
 
 		for (uint i = 0; i < g_nmi->_floaters->_flies.size(); i++)
-			if (g_nmi->_floaters->_flies[i].val13 == 1)
+			if (g_nmi->_floaters->_flies[i].idleTicks == 1)
 				g_nmi->_floaters->_flies[i].ani->_z = 15;
 
 		g_nmi->_behaviorManager->update();

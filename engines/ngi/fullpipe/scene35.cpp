@@ -140,9 +140,9 @@ void sceneHandler35_genFlies() {
 
 			xoff += 40;
 
-			g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].val2 = 1084;
-			g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].val3 = y;
-			g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].val11 = 8.0;
+			g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].targetX = 1084;
+			g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].targetY = y;
+			g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].maxSpeed = 8.0;
 		}
 
 		g_vars->scene35_fliesCounter = 0;

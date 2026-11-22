@@ -84,7 +84,7 @@ void scene20_initScene(Scene *sc) {
 
 	for (int i = 0; i < 3; i++) {
 		g_nmi->_floaters->addFly(sc, g_nmi->_rnd.getRandomNumber(101) + 70, g_nmi->_rnd.getRandomNumber(51) + 175, 100, 0);
-		g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].val13 = g_nmi->_rnd.getRandomNumber(9);
+		g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].idleTicks = g_nmi->_rnd.getRandomNumber(9);
 	}
 
 	g_nmi->_currentScene = oldsc;
@@ -97,17 +97,17 @@ void sceneHandler20_updateFlies() {
 
 	if (sz < 3) {
 		g_nmi->_floaters->addFly(g_nmi->_currentScene, 253, 650, 200, 0);
-		g_nmi->_floaters->_flies[sz - 1].val2 = 250;
-		g_nmi->_floaters->_flies[sz - 1].val3 = 200;
+		g_nmi->_floaters->_flies[sz - 1].targetX = 250;
+		g_nmi->_floaters->_flies[sz - 1].targetY = 200;
 	} else {
 		int idx = g_nmi->_rnd.getRandomNumber(sz);
 
 		g_nmi->_floaters->_flies[idx].countdown = 0;
-		g_nmi->_floaters->_flies[idx].fflags |= 4u;
-		g_nmi->_floaters->_flies[idx].val2 = 250;
-		g_nmi->_floaters->_flies[idx].val3 = 200;
-		g_nmi->_floaters->_flies[idx].val6 = 253;
-		g_nmi->_floaters->_flies[idx].val7 = 650;
+		g_nmi->_floaters->_flies[idx].flags |= 4u;
+		g_nmi->_floaters->_flies[idx].targetX = 250;
+		g_nmi->_floaters->_flies[idx].targetY = 200;
+		g_nmi->_floaters->_flies[idx].exitX = 253;
+		g_nmi->_floaters->_flies[idx].exitY = 650;
 		g_nmi->_floaters->_flies[idx].ani->_z = 200;
 	}
 

@@ -158,9 +158,9 @@ void sceneHandler05_genFlies() {
 			int y = g_nmi->_rnd.getRandomNumber(60) + i * 30 + 520;
 
 			g_nmi->_floaters->addFly(g_nmi->_currentScene, x, y, 5, 1);
-			g_nmi->_floaters->_flies.back().val2 = 585;
-			g_nmi->_floaters->_flies.back().val3 = -70;
-			g_nmi->_floaters->_flies.back().val11 = 8.0;
+			g_nmi->_floaters->_flies.back().targetX = 585;
+			g_nmi->_floaters->_flies.back().targetY = -70;
+			g_nmi->_floaters->_flies.back().maxSpeed = 8.0;
 		}
 	}
 
