@@ -55,6 +55,15 @@ void Object::initAnimated(const ObjectRecord &record, int16 roomSortOffset, cons
 	_stateBlob.resize(stateSize);
 }
 
+AnimPlayer *Object::initClickable() {
+	if (_anim.bankCount() == 0)
+		return nullptr;
+	AnimPlayer &player = _anim.current();
+	const bool image = player.bank() && player.bank()->step(player.current()).hasImage();
+	_flags = (_flags & ~kVisible) | (image ? kVisible : 0) | kCollidable | kInRoomList | kHitter;
+	return &player;
+}
+
 void Object::saveState(Common::WriteStream &stream) const {
 	if (_flags & kHasAnimation)
 		_anim.saveState(stream);

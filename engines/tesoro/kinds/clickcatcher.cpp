@@ -29,11 +29,7 @@ void ClickCatcher::init(const ObjectRecord &record, int16 roomSortOffset, const 
 	//
 	_world = &world;
 	initAnimated(record, roomSortOffset, levelPlayers, 0);
-	if (_anim.bankCount() > 0) {
-		AnimPlayer &player = _anim.current();
-		const bool image = player.bank() && player.bank()->step(player.current()).hasImage();
-		_flags = (_flags & ~kVisible) | (image ? kVisible : 0) | kCollidable | kInRoomList | kHitter;
-	}
+	initClickable();
 	_sortValue = 50;
 	_flags |= kCollidable;
 }

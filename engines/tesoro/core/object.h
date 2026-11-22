@@ -83,6 +83,12 @@ public:
 	 */
 	void initAnimated(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, uint16 stateSize);
 
+	/**
+	 * Makes an animated object touchable by the pointer: collidable, in the room list and a hitter, and visible only if its
+	 * first picture has an image. Returns its animation player, or null if it has no animations.
+	 */
+	AnimPlayer *initClickable();
+
 	virtual void setActive(bool active) { _flags = (_flags & ~kActive) | (active ? kActive : 0); }
 	void setVisible(bool visible) { _flags = (_flags & ~kVisible) | (visible ? kVisible : 0); }
 

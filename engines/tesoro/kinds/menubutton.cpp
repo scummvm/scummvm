@@ -29,11 +29,7 @@ enum Action { kPrevious = 0, kNext = 1, kLoad = 2, kSave = 3, kNewGame = 5, kClo
 void MenuButton::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world) {
 	_world = &world;
 	initAnimated(record, roomSortOffset, levelPlayers, 0);
-	if (_anim.bankCount() > 0) {
-		AnimPlayer &player = _anim.current();
-		const bool image = player.bank() && player.bank()->step(player.current()).hasImage();
-		_flags = (_flags & ~kVisible) | (image ? kVisible : 0) | kCollidable | kInRoomList | kHitter;
-	}
+	initClickable();
 	_action = record.dataByte(1);
 	_sortValue = 1;
 	_flags |= kVisible;

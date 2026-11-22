@@ -42,12 +42,9 @@ void InteractiveObject::init(const ObjectRecord &record, int16 roomSortOffset, c
 	_world = &world;
 	initAnimated(record, roomSortOffset, levelPlayers, stateSize);
 
-	if (_anim.bankCount() > 0) {
-		AnimPlayer &player = _anim.current();
-		const bool image = player.bank() && player.bank()->step(player.current()).hasImage();
-		_flags = (_flags & ~kVisible) | (image ? kVisible : 0) | kCollidable | kInRoomList | kHitter;
+	if (AnimPlayer *player = initClickable()) {
 		const byte first = record.dataByte(dataStart);
-		player.setRange(first, first, false, false, now);
+		player->setRange(first, first, false, false, now);
 	}
 
 	_approachX = _x + (int16)(record.dataByte(dataStart + 2) | (record.dataByte(dataStart + 3) << 8));

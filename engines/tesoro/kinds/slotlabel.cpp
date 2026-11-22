@@ -30,12 +30,8 @@ namespace Tesoro {
 void SlotLabel::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world) {
 	_world = &world;
 	initAnimated(record, roomSortOffset, levelPlayers, 0);
-	if (_anim.bankCount() > 0) {
-		AnimPlayer &player = _anim.current();
-		const bool image = player.bank() && player.bank()->step(player.current()).hasImage();
-		_flags = (_flags & ~kVisible) | (image ? kVisible : 0) | kCollidable | kInRoomList | kHitter;
-		player.setRange(record.dataByte(0), record.dataByte(0), false, false, now);
-	}
+	if (AnimPlayer *player = initClickable())
+		player->setRange(record.dataByte(0), record.dataByte(0), false, false, now);
 
 	_sortValue = 2;
 	_caption = record.dataByte(1) != 0;
