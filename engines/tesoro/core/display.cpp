@@ -111,6 +111,12 @@ void Display::compose() {
 		_queue.rasterScaledImage(&_frame[0], s.x, s.y, s.depth, *s.image, s.scaleX, s.scaleY, s.extra);
 	}
 
+	// The shadows are put into the rows that they fall on.
+	if (!_shades.empty()) {
+		for (uint y = 0; y < kHeight; ++y)
+			_queue.mergeMask(y, &_frame[y * kWidth], &_shades[0]);
+	}
+
 	uint16 *out = &_frame[0];
 	uint16 *const end = out + _frame.size();
 

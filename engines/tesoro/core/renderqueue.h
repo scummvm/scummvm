@@ -123,6 +123,8 @@ public:
 private:
 	void rasterScaledRows(uint16 *frame, const byte *image, uint y, uint count, int32 xFixed, int32 rowFixed, uint16 depth, bool clip, int32 scaleX, int32 rowStep);
 	void queueRows(const byte *image, uint firstRow, uint count, uint y, int32 x, uint16 depth, bool clip, bool solid);
+	void queueScaledRows(const byte *image, uint y, uint count, int32 xFixed, int32 rowFixed, uint16 depth, bool clip, int32 scaleX, int32 rowStep, bool solid, uint32 extra);
+	void queueMaskRows(const byte *image, uint firstRow, uint count, uint y, int32 x, uint16 depth, bool clip, uint32 extra);
 
 	Common::Array<Row> _rows;
 	Common::Array<Row> _maskRows;

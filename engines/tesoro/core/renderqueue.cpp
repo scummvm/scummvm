@@ -200,6 +200,41 @@ void RenderQueue::addSprite(int32 x, int32 y, uint16 depth, const AnimImage &ima
 	const uint type = READ_LE_UINT16(data + 12);
 	if (type == 1 || type == 3)
 		queueRows(data, skipped, count, y, x, depth, clip, type == 3);
+	else
+		queueMaskRows(data, skipped, count, y, x, depth, clip, extra);
+}
+
+void RenderQueue::queueMaskRows(const byte *image, uint firstRow, uint count, uint y, int32 x, uint16 depth, bool clip, uint32 extra) {
+	for (uint r = 0; r < count; ++r) {
+		const byte *entry = image + 0x10 + 8 * (firstRow + r);
+		const byte *item = image + READ_LE_UINT32(entry);
+		uint items = READ_LE_UINT16(entry + 4);
+		Row &row = _maskRows[y + r];
+		int32 base = x;
+
+		while (items) {
+			--items;
+			// The first half of the item is the page of the shade table.
+			const uint16 page = READ_LE_UINT16(item);
+			int32 xs = base + READ_LE_UINT16(item + 4);
+			base = xs + READ_LE_UINT16(item + 6);
+			item += 8;
+			int32 xe = base - 1;
+
+			if (clip) {
+				if (xe < 0)
+					continue;
+				if (xs < 0)
+					xs = 0;
+				if (xs > kWidth - 1)
+					break;
+				if (xe > kWidth - 1)
+					xe = kWidth - 1;
+			}
+
+			row.insert(xs, xe, depth, extra, page);
+		}
+	}
 }
 
 uint16 RenderQueue::shade(const byte *table, uint16 page, uint16 colour) {
@@ -467,6 +502,49 @@ void RenderQueue::rasterScaledImage(uint16 *frame, int32 x, int32 y, uint16 dept
 	const bool clip = x < 0 || right > kWidth - 1;
 	if (type == 1)
 		rasterScaledRows(frame, data, y, count, xFixed, rowFixed, depth, clip, scaleX, rowStep);
+	else
+		queueScaledRows(data, y, count, xFixed, rowFixed, depth, clip, scaleX, rowStep, type == 3, extra);
+}
+
+void RenderQueue::queueScaledRows(const byte *image, uint y, uint count, int32 xFixed, int32 rowFixed, uint16 depth, bool clip, int32 scaleX, int32 rowStep, bool solid, uint32 extra) {
+	// Nothing is painted: the scaled stretches of a solid or shadow image only go into the row lists (the mask lists for a shadow).
+	for (uint r = 0; r < (uint16)count; ++r, ++y) {
+		Row &row = solid ? _rows[y] : _maskRows[y];
+		const int32 x = xFixed >> 16;
+		const byte *entry = image + 0x10 + 8 * (rowFixed >> 16);
+		rowFixed += rowStep;
+		const byte *item = image + READ_LE_UINT32(entry);
+		uint items = READ_LE_UINT16(entry + 4);
+		int32 sourceX = 0;
+
+		while (items) {
+			--items;
+			// The first half of the item is the colour (solid) or the page of the shade table (shadow).
+			const uint16 first = READ_LE_UINT16(item);
+			sourceX += READ_LE_UINT16(item + 4);
+			const uint32 length = READ_LE_UINT16(item + 6);
+			item += 8;
+			int32 xs = (wrapMul(sourceX, scaleX) >> 16) + x;
+			int32 xe = (wrapMul(scaleX, length) >> 16) + xs - 1;
+			sourceX += length;
+
+			if (clip) {
+				if (xe < 0)
+					continue;
+				if (xs < 0)
+					xs = 0;
+				if (xs > kWidth - 1)
+					break;
+				if (xe > kWidth - 1)
+					xe = kWidth - 1;
+			}
+
+			if (solid)
+				row.insert(xs, xe, depth, kSolid, first);
+			else
+				row.insert(xs, xe, depth, extra, first);
+		}
+	}
 }
 
 void RenderQueue::rasterScaledRows(uint16 *frame, const byte *image, uint y, uint count, int32 xFixed, int32 rowFixed, uint16 depth, bool clip, int32 scaleX, int32 rowStep) {
