@@ -237,7 +237,7 @@ class Shadows : public CObject {
 	bool load(MfcArchive &file) override;
 	void init();
 
-	void initMovement(Movement *mov);
+	void fillData(Movement *mov);
 	Phase *findSize(int width, int height);
 };
 

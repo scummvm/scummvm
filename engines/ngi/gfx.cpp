@@ -1135,10 +1135,10 @@ void Shadows::init() {
 
 	if (scene && (st = scene->findAniObjectById(_staticAniObjectId, -1)) != nullptr
 		&& ((mov = st->getMovement(_movementId)) != nullptr))
-		initMovement(mov);
+		fillData(mov);
 }
 
-void Shadows::initMovement(Movement *mov) {
+void Shadows::fillData(Movement *mov) {
 	uint num;
 
 	if (mov->_currMovement)
