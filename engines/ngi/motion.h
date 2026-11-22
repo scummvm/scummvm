@@ -252,19 +252,19 @@ struct PathDesc {
 	int _mfield_C;
 };
 
-struct MovGraphItem {
+struct NavDatum {
 	AniObject *ani;
 	int field_4;
-	GrPathDesc movarr;
-	Common::Array<PathDesc *> *mi_movitems;
-	int count;
+	GrPathDesc currentPath;
+	Common::Array<PathDesc *> *candidatePaths;
+	int candidatePathCount;
 	int field_30;
 	int field_34;
 	int field_38;
 	int field_3C;
 
-	MovGraphItem();
-	void free();
+	NavDatum();
+	void clearPathList();
 };
 
 class MovGraph : public MotionController {
@@ -277,7 +277,7 @@ private:
 	NodeList _nodes;
 	LinkList _links;
 	int _linkItemOffset;
-	Common::Array<MovGraphItem> _items;
+	Common::Array<NavDatum> _items;
 	GrPathDesc *(*_selFunc)(AniObject *ani, Common::Array<PathDesc *> *items, signed int counter);
 	AniHandler _aniHandler;
 
