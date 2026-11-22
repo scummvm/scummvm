@@ -37,6 +37,7 @@ private:
 	bool loadCustomResources() override;
 	bool applyCustomBackgroundPatches() override;
 	void applyCustomHotspotState() override;
+	void resumeAmbientAudio(bool entering) override;
 	void runCustomEntrySequence() override;
 	void advanceCustomGameplayLoop(uint32 delta) override;
 	void updateActor(uint elapsed, int scrollDirection, bool inventoryOpen) override;

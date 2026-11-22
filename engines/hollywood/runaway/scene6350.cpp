@@ -86,7 +86,7 @@ void Scene6350::finishCustomFilm() {
 	if (!rebuildBackground()) {
 		error("Cannot update Runaway chapter 4 map");
 	}
-	_audio.playMusic(11);
+	_audio.playMusic(11, false);
 	say(0);
 	leaveTownRoom(6220);
 }

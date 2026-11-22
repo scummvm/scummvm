@@ -165,8 +165,9 @@ void Scene5030::start(uint32 now) {
 }
 
 void Scene5030::resume() {
-	if (!_audio.musicPlaying())
-		_audio.playMusic(11);
+	if (_entering || !_audio.musicPlaying()) {
+		_audio.playMusic(11, _game != kRunawayFullGame);
+	}
 	if (_entering) {
 		_entering = false;
 		if (_entryScene == 5031) {
@@ -820,6 +821,10 @@ void Scene5030::startAction(Action action) {
 		frames = 43;
 		break;
 	case kOpenHatch:
+		if (_game == kRunawayFullGame) {
+			_audio.playMusic(20, false);
+			_audio.setMusicVolume(255);
+		}
 		chunk = 36;
 		frames = 47;
 		applyPatch(24);
@@ -1093,6 +1098,9 @@ void Scene5030::update(uint32 now, int scrollDirection, bool inventoryOpen) {
 	const uint elapsed = MIN<uint>(100, now - _lastUpdate);
 	const uint32 pausedTime = now - _lastUpdate;
 	_lastUpdate = now;
+	if (_game == kRunawayFullGame) {
+		_audio.updateBackgroundMusic(now, _random, 17, 3, 96, 30000);
+	}
 	if (_speechRow && !_audio.speechPlaying() && _speech.finished(now))
 		skipSpeech();
 	if (inventoryOpen && !inventoryPresentation()) {

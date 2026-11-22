@@ -36,6 +36,7 @@ private:
 	bool loadCustomResources() override;
 	bool applyCustomBackgroundPatches() override;
 	void applyCustomHotspotState() override;
+	void resumeAmbientAudio(bool entering) override;
 	void advanceCustomGameplayLoop(uint32 delta) override;
 	void handleAnimationFrameHook() override;
 	float actorHeight() const override;

@@ -150,6 +150,9 @@ RunawayRoomScene::ActionResult Scene5020::dispatchCustomSceneAction(uint16 actio
 }
 
 void Scene5020::runCustomEntrySequence() {
+	if (_entryScene == 5021) {
+		_audio.playMusic(12, false);
+	}
 	if (_entryScene == 5021 && !_desert.escapedCabin) {
 		_desert.escapedCabin = 1;
 		say(0);

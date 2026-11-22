@@ -34,6 +34,7 @@ public:
 
 private:
 	bool applyCustomBackgroundPatches() override;
+	void resumeAmbientAudio(bool entering) override;
 	void runCustomEntrySequence() override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 	float actorHeight() const override;

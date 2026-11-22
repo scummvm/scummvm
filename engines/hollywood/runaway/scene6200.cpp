@@ -96,7 +96,7 @@ void Scene6200::applyCustomHotspotState() {
 void Scene6200::resumeAmbientAudio(bool entering) {
 	const bool restart = entering && _entryScene == 6200;
 	if (restart || !_audio.musicPlaying()) {
-		_audio.playMusic(18);
+		_audio.playMusic(18, false);
 		_audio.setMusicVolume(191);
 	} else if (entering) {
 		_audio.setMusicVolume(191);

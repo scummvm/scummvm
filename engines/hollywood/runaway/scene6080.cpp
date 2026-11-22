@@ -103,6 +103,8 @@ void Scene6080::runCustomEntrySequence() {
 		_walkPath.reset(_position);
 		_facing = 7;
 		_mineOscarPresent = true;
+		_audio.playMusic(39, false);
+		_audio.setMusicVolume(255);
 		say(20, 0, false, 1);
 		say(20, 1);
 		say(20, 2, false, 1);

@@ -59,7 +59,6 @@ void Scene4140::click(Common::Point mouse, RunawayVerb verb, byte item) {
 	} else if (id == 12) { // Confirm the security code.
 		if (_keyCount == 4 && _museum.keypad >= 3 && _museum.keypadDigits == 8137) {
 			_keyResult = 2;
-			_museum.keypad = 4;
 			_audio.playEffect(31);
 			say(3, 3);
 			deferMuseumAction(414);
@@ -148,6 +147,13 @@ bool Scene4140::drawCustomComposite(Graphics::ManagedSurface &viewport) {
 
 void Scene4140::finishCustomAnimation(uint16 action) {
 	if (action == 414) {
+		if (_keyResult == 2 && _museum.keypad != 4) {
+			_museum.keypad = 4;
+			if (museumChapter()) {
+				_audio.playMusic(23, false);
+				_audio.setMusicVolume(255);
+			}
+		}
 		leaveMuseumRoom(4063, Common::Point(1153, 297), 7);
 	}
 }

@@ -133,16 +133,62 @@ void RunawayRoomScene::resume() {
 }
 
 void RunawayRoomScene::resumeAmbientAudio(bool entering) {
+	// Close-ups and conversations retain the surrounding scene's music.
+	const bool keepMusic = _room == 4140 || _room == 5130 || _room == 5140 || _room == 6270 || _room == 6390;
+	if (keepMusic) {
+		return;
+	}
+	if (!_audio.musicPlaying() || (entering && _audio.musicLooping())) {
+		const uint16 cue = museumChapter() ? 13 : desertChapter() ? 12 :
+			townChapter() ? 12 + _random.getRandomNumber(4) : 11;
+		_audio.playMusic(cue, _game != kRunawayFullGame);
+	}
+}
+
+void RunawayRoomScene::updateAmbientMusic() {
 	if (museumChapter()) {
-		if (entering || !_audio.musicPlaying()) {
-			_audio.playMusic(12, false);
+		if (_room == 4100) {
+			if (!_audio.musicPlaying()) {
+				_audio.playMusic(11);
+			}
+		} else if (_room != 4090 && _room != 4140) {
+			_audio.updateBackgroundMusic(_now, _random, 14, 3);
 		}
 	} else if (desertChapter()) {
-		if (!_audio.musicPlaying()) {
-			_audio.playMusic(12);
+		if (_room == 5160 || _room == 5170) {
+			if (!_audio.musicPlaying()) {
+				_audio.playMusic(16);
+				_audio.setMusicVolume(_room == 5170 ? 179 : 255);
+			}
+		} else if (_room != 5060 && _room != 5130 && _room != 5140) {
+			_audio.updateBackgroundMusic(_now, _random, 13, 2);
 		}
-	} else if (!_audio.musicPlaying()) {
-		_audio.playMusic(11, !hospitalChapter());
+	} else if (townChapter()) {
+		switch (_room) {
+		case 6200:
+		case 6210:
+			_audio.updateBackgroundMusic(_now, _random, 18, 1, 191);
+			break;
+		case 6250:
+			_audio.updateBackgroundMusic(_now, _random, 22, 1);
+			break;
+		case 6290:
+			_audio.updateBackgroundMusic(_now, _random, _town.joshuaGone ? 12 : 19, _town.joshuaGone ? 5 : 1);
+			break;
+		case 6300:
+			if (_town.kevinAway) {
+				updateOutdoorMusic(5);
+			}
+			break;
+		case 6270:
+		case 6280:
+		case 6370:
+		case 6390:
+			break;
+		default:
+			updateOutdoorMusic(5);
+			break;
+		}
 	}
 }
 
@@ -621,6 +667,7 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 	}
 	if (speaking() && _speech.finished(now))
 		skipSpeech();
+	updateAmbientMusic();
 	if (townChapter() || hopiChapter() || finaleChapter()) {
 		updateGameplay(elapsed);
 		if (_sequence.active() || _transition.scene)
@@ -680,23 +727,7 @@ void RunawayRoomScene::findGameplayWalkPath(Common::Point target) {
 }
 
 void RunawayRoomScene::updateOutdoorMusic(byte cueCount) {
-	if (_audio.musicPlaying()) {
-		_nextMusic = 0;
-		return;
-	}
-	if (!_nextMusic) {
-		static const uint16 pauses[] = {0, 240, 120, 60};
-		_nextMusic = _now + pauses[_random.getRandomNumber(3)] * 250;
-	}
-	if ((int32)(_now - _nextMusic) >= 0) {
-		byte cue;
-		do {
-			cue = 12 + _random.getRandomNumber(cueCount - 1);
-		} while (cue == _musicCue);
-		_musicCue = cue;
-		_audio.playMusic(cue, false);
-		_nextMusic = 0;
-	}
+	_audio.updateBackgroundMusic(_now, _random, 12, cueCount);
 }
 
 void RunawayRoomScene::deferAction(uint16 action) {

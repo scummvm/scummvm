@@ -150,6 +150,7 @@ RunawayRoomScene::ActionResult Scene5060::dispatchCustomSceneAction(uint16 actio
 		deferDesertAction(491);
 		break;
 	case 491: // Move to the rescue briefing.
+		_audio.stopMusic();
 		leaveDesertRoom(5130);
 		break;
 	case 302: // Go to the desert overview.
@@ -431,9 +432,10 @@ Common::U32String Scene5060::hotspotName(byte id) const {
 }
 
 void Scene5060::resumeAmbientAudio(bool entering) {
-	if (!_audio.musicPlaying()) {
+	if (entering || !_audio.musicPlaying()) {
 		_audio.playMusic(21);
 	}
+	_audio.setMusicVolume(255);
 }
 
 bool Scene5060::lulaDancing() const {

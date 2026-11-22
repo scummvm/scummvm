@@ -29,9 +29,8 @@ void RunawayRoomScene::resumeFinaleOutdoorAudio(bool entering, uint16 windCue, b
 	if (!_audio.effectPlaying(2)) {
 		_audio.playEffect(windCue, windVolume, 2, true);
 	}
-	if (entering || !_audio.musicPlaying()) {
-		_musicCue = 12 + _random.getRandomNumber(4);
-		_audio.playMusic(_musicCue, false);
+	if (entering || !_audio.musicPlaying() || _audio.musicLooping()) {
+		_audio.playMusic(12 + _random.getRandomNumber(4), false);
 	}
 }
 
@@ -101,21 +100,10 @@ void RunawayRoomScene::resumeFinaleJailAudio(bool entering) {
 		_audio.playMusic(18, false);
 	}
 	_audio.setMusicVolume(191);
-	_nextMusic = 0;
 }
 
 void RunawayRoomScene::updateFinaleJailAudio() {
-	if (!_audio.musicPlaying()) {
-		if (!_nextMusic) {
-			static const uint delays[] = {0, 60000, 30000, 15000};
-			_nextMusic = _now + delays[_random.getRandomNumber(ARRAYSIZE(delays) - 1)];
-		}
-		if ((int32)(_now - _nextMusic) >= 0) {
-			_audio.playMusic(18, false);
-			_audio.setMusicVolume(191);
-			_nextMusic = 0;
-		}
-	}
+	_audio.updateBackgroundMusic(_now, _random, 18, 1, 191);
 }
 
 } // End of namespace Hollywood

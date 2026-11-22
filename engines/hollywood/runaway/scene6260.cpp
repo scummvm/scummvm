@@ -96,6 +96,8 @@ void Scene6260::runCustomEntrySequence() {
 		beginRoomAnimation(401, 5, 88, nullptr, 0, true, 60);
 	} else if (_entryScene == 6262) {
 		// The steam shot is seen outside before returning to the cab.
+		_audio.playMusic(39, false);
+		_audio.setMusicVolume(255);
 		beginRoomAnimation(402, 9, 45, nullptr, 0, true, 60);
 		_actionFrames.insert_at(0, 0);
 	} else {

@@ -107,7 +107,7 @@ RunawayRoomScene::ActionResult Scene6370::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 403: // Finish the conversation and return to the street.
 		_town.sushiMet = 1;
-		_audio.playMusic(20);
+		_audio.playMusic(20, false);
 		_sushiPose = 79;
 		_sushiTick = _now;
 		walkTo(Common::Point(1443, 648), 1, true);

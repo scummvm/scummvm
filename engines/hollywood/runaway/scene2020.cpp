@@ -492,6 +492,8 @@ RunawayRoomScene::ActionResult Scene2020::dispatchCustomSceneAction(uint16 actio
 			say(34);
 			return kHandled;
 		}
+		_audio.playMusic(33, false);
+		_audio.setMusicVolume(255);
 		beginRoomAnimation(action, 19, 35);
 		_actionFrames.push_back(33);
 		for (int frame = 32; frame >= 0; --frame) {

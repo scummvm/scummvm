@@ -91,21 +91,7 @@ void RunawayRoomScene::leaveHospitalRoom(uint16 scene, Common::Point position, b
 }
 
 void RunawayRoomScene::updateHospitalAudio() {
-	if (!_audio.musicPlaying()) {
-		if (!_nextMusic) {
-			static const uint16 delays[] = {0, 240, 120, 60};
-			_nextMusic = _now + delays[_random.getRandomNumber(3)] * 250;
-		}
-		if ((int32)(_now - _nextMusic) >= 0) {
-			byte cue;
-			do {
-				cue = 12 + _random.getRandomNumber(3);
-			} while (cue == _musicCue);
-			_musicCue = cue;
-			_audio.playMusic(cue, false);
-			_nextMusic = 0;
-		}
-	}
+	_audio.updateBackgroundMusic(_now, _random, 12, 4);
 }
 
 } // End of namespace Hollywood

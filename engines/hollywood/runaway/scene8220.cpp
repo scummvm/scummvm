@@ -100,12 +100,10 @@ void Scene8220::prepareCustomGameplayLoop() {
 void Scene8220::resumeAmbientAudio(bool entering) {
 	resumeFinaleOutdoorAudio(false, 36, 51);
 	if (entering && _entryScene == 8220 && (!_finale.streetVisited || !_random.getRandomNumber(5))) {
-		_musicCue = 20;
-		_audio.playMusic(_musicCue, false);
+		_audio.playMusic(20, false);
 		_finale.streetVisited = 1;
 	} else if (entering && _entryScene == 8223) {
-		_musicCue = 12 + _random.getRandomNumber(4);
-		_audio.playMusic(_musicCue, false);
+		_audio.playMusic(12 + _random.getRandomNumber(4), false);
 	}
 	_audio.setMusicVolume(255);
 }
@@ -140,8 +138,7 @@ void Scene8220::runCustomEntrySequence() {
 		updateMaps();
 		_arrivalPhase = kWaitingForCar;
 		_roomAction = 420;
-		_musicCue = 38;
-		_audio.playMusic(_musicCue, false);
+		_audio.playMusic(38, false);
 		_audio.setMusicVolume(255);
 		_audio.playEffect(67, 178);
 		return;
@@ -320,9 +317,8 @@ void Scene8220::leaveStreet(uint16 destination, bool advanceResearch) {
 	if (advanceResearch && _finale.bankResearch == 1) {
 		_finale.bankResearch = 2;
 	}
-	if (destination == 8350 && _musicCue == 20) {
-		_musicCue = 12 + _random.getRandomNumber(4);
-		_audio.playMusic(_musicCue, false);
+	if (destination == 8350 && _audio.musicCue() == 20) {
+		_audio.playMusic(12 + _random.getRandomNumber(4), false);
 		_audio.setMusicVolume(255);
 	}
 	leaveRoom(destination);

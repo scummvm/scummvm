@@ -167,7 +167,7 @@ void Scene4100::runCustomEntrySequence() {
 
 void Scene4100::resumeAmbientAudio(bool entering) {
 	if (entering || !_audio.musicPlaying()) {
-		_audio.playMusic(11, false);
+		_audio.playMusic(11);
 	}
 }
 
@@ -257,6 +257,8 @@ RunawayRoomScene::ActionResult Scene4100::dispatchCustomSceneAction(uint16 actio
 		if (!_museum.chamberOpen) {
 			say(9);
 		} else {
+			_audio.playMusic(23, false);
+			_audio.setMusicVolume(255);
 			say(9, 1);
 			_museum.maskTaken = 1;
 			_inventory.add(11);

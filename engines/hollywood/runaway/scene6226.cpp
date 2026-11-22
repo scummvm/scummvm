@@ -78,6 +78,8 @@ void Scene6226::applyCustomHotspotState() {
 void Scene6226::resumeAmbientAudio(bool entering) {
 	if (!_town.kevinAway && (entering || !_audio.musicPlaying())) {
 		_audio.playMusic(12 + _random.getRandomNumber(4), false);
+	} else {
+		RunawayRoomScene::resumeAmbientAudio(entering);
 	}
 }
 

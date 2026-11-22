@@ -65,7 +65,9 @@ bool Scene6250::loadCustomResources() {
 }
 
 void Scene6250::resumeAmbientAudio(bool entering) {
-	_audio.playMusic(21);
+	if (_audio.musicCue() != 21 || !_audio.musicPlaying()) {
+		_audio.playMusic(21);
+	}
 }
 
 void Scene6250::runCustomEntrySequence() {

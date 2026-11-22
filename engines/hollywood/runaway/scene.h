@@ -278,6 +278,7 @@ protected:
 	void updateFinaleOutdoorAudio(byte wildlifeVolume = 0);
 	void resumeFinaleJailAudio(bool entering);
 	void updateFinaleJailAudio();
+	void updateAmbientMusic();
 	void updateOutdoorMusic(byte cueCount = 3);
 	void updateGameplay(uint32 delta);
 	void findGameplayWalkPath(Common::Point target);
@@ -344,8 +345,6 @@ protected:
 	byte _conversation = 0, _dialogueDepth = 0, _dialogueNode = 0, _dialogueIntro = 0;
 	bool _dialogueEnding = false;
 	uint16 _afterConversation = 0;
-	byte _musicCue = 11;
-	uint32 _nextMusic = 0;
 	uint32 _finaleAmbientTick = 0;
 	byte _finaleLastAmbient = 0;
 	bool _entering = false;

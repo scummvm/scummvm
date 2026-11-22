@@ -93,7 +93,9 @@ void Scene6220::applyCustomHotspotState() {
 
 void Scene6220::resumeAmbientAudio(bool entering) {
 	if (entering && _entryScene == 6223) {
-		_audio.playMusic(12 + _random.getRandomNumber(4));
+		_audio.playMusic(12 + _random.getRandomNumber(4), false);
+	} else if (entering && _entryScene == 6220 && _town.streetVisited && !_random.getRandomNumber(5)) {
+		_audio.playMusic(20, false);
 	} else {
 		RunawayRoomScene::resumeAmbientAudio(entering);
 	}

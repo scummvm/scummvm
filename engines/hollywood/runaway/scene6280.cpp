@@ -77,7 +77,9 @@ void Scene6280::applyCustomHotspotState() {
 }
 
 void Scene6280::resumeAmbientAudio(bool entering) {
-	_audio.playMusic(30);
+	if (_audio.musicCue() != 30 || !_audio.musicPlaying()) {
+		_audio.playMusic(30);
+	}
 	_audio.playMusicEffect(38, 128, 1, true);
 }
 

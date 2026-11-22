@@ -163,6 +163,14 @@ bool Scene4060::loadCustomResources() {
 	return _willyAnimation.load(_archive, 8, 22);
 }
 
+void Scene4060::resumeAmbientAudio(bool entering) {
+	if (entering && (_entryScene == 4062 || _entryScene == 4065)) {
+		_audio.playMusic(13, false);
+	} else {
+		RunawayRoomScene::resumeAmbientAudio(entering);
+	}
+}
+
 bool Scene4060::applyCustomBackgroundPatches() {
 	// The red indicator stays off once Willy has refilled the machine.
 	return !_museum.coffeeMachine || applyPatch(5);
@@ -612,7 +620,7 @@ void Scene4060::finishCustomFilm() {
 	case kCliveFilm:
 		_entryScene = 4060;
 		changeFloor(true, Common::Point(607, 323));
-		_audio.playMusic(12, false);
+		_audio.playMusic(13, false);
 		break;
 	case kPhoneFilm:
 		_museum.phoneUsed = 1;

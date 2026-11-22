@@ -87,6 +87,13 @@ bool Scene5160::loadCustomResources() {
 		_refrigeratorAnimation.load(_archive, 12, 1);
 }
 
+void Scene5160::resumeAmbientAudio(bool entering) {
+	if (_audio.musicCue() != 16 || !_audio.musicPlaying()) {
+		_audio.playMusic(16);
+	}
+	_audio.setMusicVolume(255);
+}
+
 bool Scene5160::applyCustomBackgroundPatches() {
 	return (_desert.needle != 2 || applyPatch(8)) && (!_desert.glassesTaken || applyPatch(9)) &&
 		(_desert.lipstickShelf >= 2 || applyPatch(10)) &&

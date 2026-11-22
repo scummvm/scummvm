@@ -289,6 +289,9 @@ void Scene8380::advanceSushi() {
 }
 
 void Scene8380::advanceCustomGameplayLoop(uint32 delta) {
+	if (!_audio.musicPlaying()) {
+		resumeAmbientAudio(false);
+	}
 	while (_now - _sushiTick >= 80) {
 		_sushiTick += 80;
 		advanceSushi();
@@ -377,6 +380,10 @@ void Scene8380::deliverItem(uint16 action) {
 }
 
 void Scene8380::receiveRecordings() {
+	if (_finale.recordings >= 3) {
+		_audio.playMusic(38, false);
+		_audio.setMusicVolume(255);
+	}
 	exchange(83, 0, 0);
 	if (_finale.recordings < 3) {
 		exchange(83, 1, 1);

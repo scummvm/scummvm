@@ -66,7 +66,7 @@ const char *Scene6210::actionCaptionVariant(byte id, bool look, byte item) const
 
 void Scene6210::resumeAmbientAudio(bool entering) {
 	if (!_audio.musicPlaying()) {
-		_audio.playMusic(18);
+		_audio.playMusic(18, false);
 		_audio.setMusicVolume(191);
 	} else if (entering) {
 		_audio.setMusicVolume(191);

@@ -170,9 +170,11 @@ void Scene6300::prepareCustomGameplayLoop() {
 
 void Scene6300::resumeAmbientAudio(bool entering) {
 	if (!_town.kevinAway) {
-		_audio.playMusic(24);
-	} else if (!_audio.musicPlaying()) {
-		_audio.playMusic(12 + _random.getRandomNumber(4), false);
+		if (_audio.musicCue() != 24 || !_audio.musicPlaying()) {
+			_audio.playMusic(24);
+		}
+	} else {
+		RunawayRoomScene::resumeAmbientAudio(entering);
 	}
 }
 

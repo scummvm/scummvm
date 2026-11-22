@@ -86,6 +86,12 @@ bool Scene4090::applyCustomBackgroundPatches() {
 	return !museumChapter() || !_museum.coffeeBeansTaken || applyPatch(4);
 }
 
+void Scene4090::resumeAmbientAudio(bool entering) {
+	if (entering || !_audio.musicPlaying()) {
+		_audio.playMusic(12);
+	}
+}
+
 void Scene4090::runCustomEntrySequence() {
 	if (!_museum.exhibitionVisited) {
 		_museum.exhibitionVisited = 1;

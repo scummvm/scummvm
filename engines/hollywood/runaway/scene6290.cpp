@@ -120,8 +120,12 @@ void Scene6290::resumeAmbientAudio(bool entering) {
 	if (_town.machinePowered && !_town.joshuaGone) {
 		_audio.playEffectAt(78, kMotorcycleSoundPosition, 178, 1, true);
 	}
-	if (entering || !_audio.musicPlaying()) {
-		_audio.playMusic(_town.joshuaGone ? 30 : 19);
+	if (entering && _entryScene == 6290) {
+		_audio.playMusic(12 + _random.getRandomNumber(4), false);
+	} else if (_town.joshuaGone) {
+		RunawayRoomScene::resumeAmbientAudio(entering);
+	} else if (entering || !_audio.musicPlaying()) {
+		_audio.playMusic(19, false);
 	}
 }
 
@@ -498,7 +502,7 @@ RunawayRoomScene::ActionResult Scene6290::dispatchCustomSceneAction(uint16 actio
 			_town.wrenchDelivered = 2;
 		}
 		_town.campLeft = 1;
-		_audio.playMusic(12 + _random.getRandomNumber(4));
+		_audio.playMusic(12 + _random.getRandomNumber(4), false);
 		leaveTownRoom(6350);
 		break;
 	case 309: // Examine the motorcycle before or after the repair.
