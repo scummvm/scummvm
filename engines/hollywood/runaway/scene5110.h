@@ -41,9 +41,13 @@ private:
 	void runCustomEntrySequence() override;
 	void handleAnimationFrameHook() override;
 	Common::U32String hotspotName(byte id) const override;
+	void advanceCustomGameplayLoop(uint32 delta) override;
 	void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) override;
 
 	RunawayAnimation _bucketAnimation, _doorAnimation;
+	RunawayAnimation _curtainAnimation, _shadowAnimation;
+	Common::Array<byte> _gunpowder;
+	uint32 _curtainTime = 0;
 };
 
 } // End of namespace Runaway
