@@ -1,6 +1,7 @@
 MODULE := engines/ngi
 
 MODULE_OBJS = \
+	android.o \
 	anihandler.o \
 	behavior.o \
 	console.o \

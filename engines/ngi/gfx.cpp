@@ -31,6 +31,8 @@
 #include "common/memstream.h"
 #include "graphics/managed_surface.h"
 
+#include "image/png.h"
+
 namespace NGI {
 
 Background::Background() {
@@ -414,6 +416,33 @@ Texture::Texture() :
 
 Texture::~Texture() {
 	freePicture();
+}
+
+bool Texture::loadPNG(Common::SeekableReadStream &stream) {
+	Image::PNGDecoder png;
+	if (!png.loadStream(stream))
+		return false;
+
+	freePicture();
+	const Graphics::Surface &source = *png.getSurface();
+	_width = source.w;
+	_height = source.h;
+	_bitmap.reset(new Bitmap());
+	_bitmap->_width = _width;
+	_bitmap->_height = _height;
+	_bitmap->_surface = new Graphics::ManagedSurface();
+	_bitmap->_surface->copyFrom(source);
+	const Graphics::Palette &palette = png.getPalette();
+	if (!palette.empty())
+		_bitmap->_surface->setPalette(palette.data(), 0, palette.size());
+	if (png.hasTransparentColor())
+		_bitmap->_surface->setTransparentColor(png.getTransparentColor());
+	return true;
+}
+
+void Texture::blitTo(Graphics::ManagedSurface &target, const Common::Point &position) const {
+	if (_bitmap && _bitmap->_surface)
+		target.blitFrom(*_bitmap->_surface, position);
 }
 
 void Texture::freePicture() {

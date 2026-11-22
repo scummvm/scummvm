@@ -128,6 +128,7 @@ class NGIEngine : public ::Engine {
 protected:
 
 	Common::Error run() override;
+	Common::Error runAndroid();
 
 public:
 	NGIEngine(OSystem *syst, const NGIGameDescription *gameDesc);
@@ -386,7 +387,7 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &description, bool isAutosave = false) override;
 	Common::String getSaveStateName(int slot) const override;
 
-	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return true; }
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return getPlatform() != Common::kPlatformAndroid; }
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return _isSaveAllowed; }
 	bool hasFeature(EngineFeature f) const override;
 
