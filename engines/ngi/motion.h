@@ -180,8 +180,8 @@ class ReactParallel : public MovGraphReact {
 	int _y1;
 	int _x2;
 	int _y2;
-	int _dx;
-	int _dy;
+	int _left;
+	int _right;
 
 public:
 	ReactParallel();

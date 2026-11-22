@@ -2917,8 +2917,8 @@ bool MovGraphNode::load(MfcArchive &file) {
 ReactParallel::ReactParallel() {
 	_x1 = 0;
 	_x2 = 0;
-	_dy = 0;
-	_dx = 0;
+	_right = 0;
+	_left = 0;
 	_y1 = 0;
 	_y2 = 0;
 }
@@ -2930,8 +2930,8 @@ bool ReactParallel::load(MfcArchive &file) {
 	_y1 = file.readSint32LE();
 	_x2 = file.readSint32LE();
 	_y2 = file.readSint32LE();
-	_dx = file.readSint32LE();
-	_dy = file.readSint32LE();
+	_left = file.readSint32LE();
+	_right = file.readSint32LE();
 
 	create();
 
@@ -2945,17 +2945,17 @@ void ReactParallel::create() {
 	double sn = sin(at);
 	double cs = cos(at);
 
-	_points[0].x = _x1 - _dx * cs;
-	_points[0].y = _y1 - _dx * sn;
+	_points[0].x = _x1 - _left * cs;
+	_points[0].y = _y1 - _left * sn;
 
-	_points[1].x = _x2 - _dx * cs;
-	_points[1].y = _y2 - _dx * sn;
+	_points[1].x = _x2 - _left * cs;
+	_points[1].y = _y2 - _left * sn;
 
-	_points[2].x = _x2 + _dy * cs;
-	_points[2].y = _y2 + _dy * sn;
+	_points[2].x = _x2 + _right * cs;
+	_points[2].y = _y2 + _right * sn;
 
-	_points[3].x = _x1 + _dy * cs;
-	_points[3].y = _y1 + _dy * sn;
+	_points[3].x = _x1 + _right * cs;
+	_points[3].y = _y1 + _right * sn;
 
 	// GdiObject::Attach(_rgn, CreatePolygonRgn(_points, 4, 2);
 }
