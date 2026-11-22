@@ -360,15 +360,15 @@ struct GmctlMqStruct {
 	void clear();
 };
 
-struct MctlAni { // 744
+struct GmctlAni { // 744
 	int _objectId;
-	StaticANIObject *_obj;
-	MctlAniSub _subItems[4];  // 184
+	StaticANIObject *_ani;
+	MctlAniSub _directions[4];  // 184
 };
 
 class MctlGraph : public MovGraph {
 public:
-	Common::Array<MctlAni> _items2;
+	Common::Array<GmctlAni> _items2;
 
 public:
 	void attachObject(StaticANIObject *obj) override;
@@ -385,7 +385,7 @@ public:
 	int getDirBySize(MovGraphLink *lnk, int x, int y);
 	int getLinkDir(MovGraphLinkList *linkList, int idx, Common::Rect *a3, Common::Point *a4);
 
-	bool fillData(StaticANIObject *obj, MctlAni &item);
+	bool fillData(StaticANIObject *obj, GmctlAni &item);
 	void generateList(GmctlMqStruct &movinfo, MovGraphLinkList *linkList, LinkOrNode *lnkSrc, LinkOrNode *lnkDst);
 	MessageQueue *makeWholeQueue(GmctlMqStruct &mctlMQ);
 
