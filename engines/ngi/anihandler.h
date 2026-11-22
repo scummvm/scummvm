@@ -31,8 +31,8 @@ class Statics;
 struct MGMSubItem {
 	Movement *movement;
 	int staticsIndex;
-	int field_8;
-	int field_C;
+	int movementCount;
+	int frameCount;
 	int x;
 	int y;
 
@@ -41,8 +41,8 @@ struct MGMSubItem {
 	void reset() {
 		movement = nullptr;
 		staticsIndex = 0;
-		field_8 = 0;
-		field_C = 0;
+		movementCount = 0;
+		frameCount = 0;
 		x = 0;
 		y = 0;
 	}

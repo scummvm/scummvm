@@ -141,8 +141,8 @@ MGMItem::MGMItem() {
 MGMSubItem::MGMSubItem() {
 	movement = nullptr;
 	staticsIndex = 0;
-	field_8 = 0;
-	field_C = 0;
+	movementCount = 0;
+	frameCount = 0;
 	x = 0;
 	y = 0;
 }
@@ -537,7 +537,7 @@ int AniHandler::seekWay(int idx, int st1idx, int st2idx, bool allowReverse, bool
 	}
 
 	if (item.subItems[subIdx].movement)
-		return item.subItems[subIdx].field_8;
+		return item.subItems[subIdx].movementCount;
 
 	Common::Point point;
 
@@ -557,17 +557,17 @@ int AniHandler::seekWay(int idx, int st1idx, int st2idx, bool allowReverse, bool
 			int sz = mov->_currMovement ? mov->_currMovement->_phases.size() : mov->_phases.size();
 			debugC(1, kDebugPathfinding, "AniHandler::seekWay, want idx: %d, off: %d (%d + %d), sz: %d", idx, stidx + st2idx * _items[idx].statics.size(), stidx, st2idx, item.subItems.size());
 
-			int newsz = sz + item.subItems[stidx + st2idx * _items[idx].statics.size()].field_C;
+			int newsz = sz + item.subItems[stidx + st2idx * _items[idx].statics.size()].frameCount;
 
 			if (recalc < 0)
 				continue;
 
-			if (!item.subItems[subIdx].movement || item.subItems[subIdx].field_8 > recalc + 1 ||
-				(item.subItems[subIdx].field_8 == recalc + 1 && item.subItems[subIdx].field_C > newsz)) {
+			if (!item.subItems[subIdx].movement || item.subItems[subIdx].movementCount > recalc + 1 ||
+				(item.subItems[subIdx].movementCount == recalc + 1 && item.subItems[subIdx].frameCount > newsz)) {
 				item.subItems[subIdx].movement = mov;
 				item.subItems[subIdx].staticsIndex = stidx;
-				item.subItems[subIdx].field_8 = recalc + 1;
-				item.subItems[subIdx].field_C = newsz;
+				item.subItems[subIdx].movementCount = recalc + 1;
+				item.subItems[subIdx].frameCount = newsz;
 
 				point = mov->getMovementSize(0, -1);
 
@@ -589,14 +589,14 @@ int AniHandler::seekWay(int idx, int st1idx, int st2idx, bool allowReverse, bool
 			if (recalc < 0)
 				continue;
 
-			if (!item.subItems[subIdx].movement || item.subItems[subIdx].field_8 > recalc + 1) {
+			if (!item.subItems[subIdx].movement || item.subItems[subIdx].movementCount > recalc + 1) {
 				item.subItems[subIdx].movement = mov;
 				item.subItems[subIdx].staticsIndex = stidx;
-				item.subItems[subIdx].field_8 = recalc + 1;
+				item.subItems[subIdx].movementCount = recalc + 1;
 
 				int sz = mov->_currMovement ? mov->_currMovement->_phases.size() : mov->_phases.size();
 
-				item.subItems[subIdx].field_C = sz + item.subItems[stidx + st2idx * _items[idx].statics.size()].field_C;
+				item.subItems[subIdx].frameCount = sz + item.subItems[stidx + st2idx * _items[idx].statics.size()].frameCount;
 
 				point = mov->getMovementSize(0, -1);
 
@@ -607,7 +607,7 @@ int AniHandler::seekWay(int idx, int st1idx, int st2idx, bool allowReverse, bool
 	}
 
 	if (item.subItems[subIdx].movement)
-		return item.subItems[subIdx].field_8;
+		return item.subItems[subIdx].movementCount;
 
 	return -1;
 }
@@ -625,7 +625,7 @@ int AniHandler::getNumMovements(int objectId, int idx1, int idx2) {
 		const MGMSubItem &sub = _items[idx].subItems[from + to * _items[idx].statics.size()];
 
 		if (sub.movement) {
-			idx = sub.field_8;
+			idx = sub.movementCount;
 		} else {
 			clearVisitsList(idx);
 			idx = seekWay(idx, from, to, 0, 1);
