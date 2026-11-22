@@ -62,8 +62,8 @@ MessageQueue *AniHandler::makeQueue(AniObject *ani, int staticsIndex, int, int *
 	if (stid == staticsIndex)
 		return new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 
-	int startidx = getStaticsIndexById(idx, stid);
-	int endidx = getStaticsIndexById(idx, staticsIndex);
+	int startidx = getStaticIndex(idx, stid);
+	int endidx = getStaticIndex(idx, staticsIndex);
 	int subidx = startidx + endidx * _items[idx].statics.size();
 
 	if (!_items[idx].subItems[subidx].movement) {
@@ -244,10 +244,10 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 
 
 	int itemIdx = getIndex(mkQueue->ani->_id);
-	int subIdx = getStaticsIndexById(itemIdx, mkQueue->staticsId1);
-	int st2idx = getStaticsIndexById(itemIdx, mov->_prevStatic->_staticsId);
-	int st1idx = getStaticsIndexById(itemIdx, mov->_nextStatic->_staticsId);
-	int subOffset = getStaticsIndexById(itemIdx, mkQueue->staticsId2);
+	int subIdx = getStaticIndex(itemIdx, mkQueue->staticsId1);
+	int st2idx = getStaticIndex(itemIdx, mov->_prevStatic->_staticsId);
+	int st1idx = getStaticIndex(itemIdx, mov->_nextStatic->_staticsId);
+	int subOffset = getStaticIndex(itemIdx, mkQueue->staticsId2);
 
 	debugC(3, kDebugPathfinding, "AniHandler::genMovement. (1) movements1 sz: %d movements2 sz: %d", _items[itemIdx].movements1.size(), _items[itemIdx].movements2.size());
 
@@ -427,8 +427,8 @@ int AniHandler::getFramesCount(int idx, int subIdx, int endIdx, int flag) {
 
 	return res;
 }
-void AniHandler::putObjectToStatics(AniObject *ani, int staticsId) {
-	debugC(4, kDebugPathfinding, "AniHandler::putObjectToStatics(*%d, %d)", ani->_id, staticsId);
+void AniHandler::putObjectToStatic(AniObject *ani, int staticsId) {
+	debugC(4, kDebugPathfinding, "AniHandler::putObjectToStatic(*%d, %d)", ani->_id, staticsId);
 
 	if (getIndex(ani->_id) == -1)
 		return;
@@ -464,8 +464,8 @@ Common::Point AniHandler::getTransitionSize(int objectId, int staticsId1, int st
 		return Common::Point(-1, -1);
 	}
 
-	int st1idx = getStaticsIndexById(idx, staticsId1);
-	int st2idx = getStaticsIndexById(idx, staticsId2);
+	int st1idx = getStaticIndex(idx, staticsId1);
+	int st2idx = getStaticIndex(idx, staticsId2);
 
 	if (st1idx == st2idx) {
 		return Common::Point(0, 0);
@@ -492,7 +492,7 @@ Common::Point AniHandler::getTransitionSize(int objectId, int staticsId1, int st
 	return Common::Point(sub.x, sub.y);
 }
 
-int AniHandler::getStaticsIndexById(int idx, int16 id) {
+int AniHandler::getStaticIndex(int idx, int16 id) {
 	if (!_items[idx].statics.size())
 		return -1;
 
@@ -504,7 +504,7 @@ int AniHandler::getStaticsIndexById(int idx, int16 id) {
 	return -1;
 }
 
-int AniHandler::getStaticsIndex(int idx, Statics *st) {
+int AniHandler::getStaticIndex(int idx, Statics *st) {
 	if (!_items[idx].statics.size())
 		return -1;
 
@@ -525,11 +525,11 @@ void AniHandler::clearVisitsList(int idx) {
 	debugC(3, kDebugPathfinding, "AniHandler::clearVisitsList. movements1 sz: %d movements2 sz: %d", _items[idx].movements1.size(), _items[idx].movements2.size());
 }
 
-int AniHandler::seekWay(int idx, int st1idx, int st2idx, bool flip, bool flop) {
+int AniHandler::seekWay(int idx, int st1idx, int st2idx, bool allowReverse, bool linkedOnly) {
 	MGMItem &item = _items[idx];
 	int subIdx = st1idx + st2idx * item.statics.size();
 
-	debugC(2, kDebugPathfinding, "AniHandler::seekWay(%d, %d, %d, %d, %d)", idx, st1idx, st2idx, flip, flop);
+	debugC(2, kDebugPathfinding, "AniHandler::seekWay(%d, %d, %d, %d, %d)", idx, st1idx, st2idx, allowReverse, linkedOnly);
 
 	if (st1idx == st2idx) {
 		item.subItems[subIdx].reset();
@@ -547,13 +547,13 @@ int AniHandler::seekWay(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 		Movement *mov = item.movements1[i];
 
 		if (mov->_prevStatic == item.statics[st1idx]) {
-			if (item.movements2[i] || (flop && !mov->_link))
+			if (item.movements2[i] || (linkedOnly && !mov->_link))
 				continue;
 
 			item.movements2[i] = 1;
 
-			int stidx = getStaticsIndex(idx, mov->_nextStatic);
-			int recalc = seekWay(idx, stidx, st2idx, flip, flop);
+			int stidx = getStaticIndex(idx, mov->_nextStatic);
+			int recalc = seekWay(idx, stidx, st2idx, allowReverse, linkedOnly);
 			int sz = mov->_currMovement ? mov->_currMovement->_phases.size() : mov->_phases.size();
 			debugC(1, kDebugPathfinding, "AniHandler::seekWay, want idx: %d, off: %d (%d + %d), sz: %d", idx, stidx + st2idx * _items[idx].statics.size(), stidx, st2idx, item.subItems.size());
 
@@ -574,17 +574,17 @@ int AniHandler::seekWay(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 				item.subItems[subIdx].x = item.subItems[stidx + st2idx * _items[idx].statics.size()].x + point.x;
 				item.subItems[subIdx].y = item.subItems[stidx + st2idx * _items[idx].statics.size()].y + point.y;
 			}
-		} else if (flip) {
+		} else if (allowReverse) {
 			if (mov->_nextStatic != item.statics[st1idx])
 				continue;
 
-			if (item.movements2[i] || (flop && !mov->_link))
+			if (item.movements2[i] || (linkedOnly && !mov->_link))
 				continue;
 
 			item.movements2[i] = 1;
 
-			int stidx = getStaticsIndex(idx, mov->_prevStatic);
-			int recalc = seekWay(idx, stidx, st2idx, flip, flop);
+			int stidx = getStaticIndex(idx, mov->_prevStatic);
+			int recalc = seekWay(idx, stidx, st2idx, allowReverse, linkedOnly);
 
 			if (recalc < 0)
 				continue;
@@ -618,8 +618,8 @@ int AniHandler::getNumMovements(int objectId, int idx1, int idx2) {
 	int idx = getIndex(objectId);
 
 	if (idx != -1) {
-		int from = getStaticsIndexById(idx, idx1);
-		int to = getStaticsIndexById(idx, idx2);
+		int from = getStaticIndex(idx, idx1);
+		int to = getStaticIndex(idx, idx2);
 
 		debugC(1, kDebugPathfinding, "WWW 6, want idx: %d, off: %d", idx, from + to * _items[idx].statics.size());
 		const MGMSubItem &sub = _items[idx].subItems[from + to * _items[idx].statics.size()];

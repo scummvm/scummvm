@@ -99,12 +99,12 @@ public:
 	int getIndex(int objId);
 
 	MessageQueue *makeRunQueue(MakeQueueStruct *mkQueue);
-	void putObjectToStatics(AniObject *ani, int staticsId);
+	void putObjectToStatic(AniObject *ani, int staticsId);
 	Common::Point getTransitionSize(int aniId, int staticsId1, int staticsId2);
-	int getStaticsIndexById(int idx, int16 id);
-	int getStaticsIndex(int idx, Statics *st);
+	int getStaticIndex(int idx, int16 id);
+	int getStaticIndex(int idx, Statics *st);
 	void clearVisitsList(int idx);
-	int seekWay(int idx, int st1idx, int st2idx, bool flip, bool flop);
+	int seekWay(int idx, int st1idx, int st2idx, bool allowReverse, bool linkedOnly);
 	Common::Point getNumCycles(Movement *mov, int x, int y, int *mult, int *len, int flag);
 	ExCommand2 *createCommand(Movement *mov, int objId, int x1, int y1, Common::Point &x2, Common::Point &y2, int len);
 	MessageQueue *makeQueue(AniObject *ani, int staticsIndex, int staticsId, int *resStatId, Common::Point **pointArr);

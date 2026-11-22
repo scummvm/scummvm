@@ -1017,7 +1017,7 @@ void AniObject::setStatic(int objId) {
 
 	if (_movement || _statics) {
 		g_nmi->_aniHandler->attachObject(_id);
-		g_nmi->_aniHandler->putObjectToStatics(this, objId);
+		g_nmi->_aniHandler->putObjectToStatic(this, objId);
 	} else {
 		_statics = getStatic(objId);
 	}
