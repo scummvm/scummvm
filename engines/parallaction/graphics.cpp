@@ -385,13 +385,13 @@ void Gfx::initiateScroll(int deltaX, int deltaY) {
 	if (deltaX != 0) {
 		_requestedHScrollDir = deltaX > 0 ? 1 : -1;
 		deltaX *= _requestedHScrollDir;
-		_requestedHScrollSteps = ((deltaX + kHScrollStepSize - 1) / kHScrollStepSize) / _requestedHScrollDir;
+		_requestedHScrollSteps = (deltaX + kHScrollStepSize - 1) / kHScrollStepSize;
 	}
 
 	if (deltaY != 0) {
 		_requestedVScrollDir = deltaY > 0 ? 1 : -1;
 		deltaY *= _requestedVScrollDir;
-		_requestedVScrollSteps = ((deltaY + kVScrollStepSize - 1) / kVScrollStepSize) / _requestedVScrollDir;
+		_requestedVScrollSteps = (deltaY + kVScrollStepSize - 1) / kVScrollStepSize;
 	}
 }
 
