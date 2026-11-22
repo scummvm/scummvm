@@ -69,8 +69,8 @@ void setInputDisabled(bool state) {
 	g_nmi->_inputController->setInputDisabled(state);
 }
 
-void CursorController::addCursor(CursorInfo *cursor) {
-	CursorInfo *newc = new CursorInfo(*cursor);
+void CursorController::addCursor(Cursor *cursor) {
+	Cursor *newc = new Cursor(*cursor);
 	const Dims dims = cursor->picture->getDimensions();
 
 	newc->width = dims.x;
@@ -93,8 +93,8 @@ void CursorController::render(int x, int y) {
 	if (_cursorIndex == -1)
 		return;
 
-	_cursorBounds.left = g_nmi->_sceneRect.left + x - _cursorsArray[_cursorIndex]->hotspotX;
-	_cursorBounds.top = g_nmi->_sceneRect.top + y - _cursorsArray[_cursorIndex]->hotspotY;
+	_cursorBounds.left = g_nmi->_sceneRect.left + x - _cursorsArray[_cursorIndex]->ofsX;
+	_cursorBounds.top = g_nmi->_sceneRect.top + y - _cursorsArray[_cursorIndex]->ofsY;
 	_cursorBounds.right = _cursorBounds.left + _cursorsArray[_cursorIndex]->width;
 	_cursorBounds.bottom = _cursorBounds.top + _cursorsArray[_cursorIndex]->height;
 

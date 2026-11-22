@@ -80,7 +80,7 @@ class GameLoader;
 class GameVar;
 class CursorController;
 class Inventory;
-struct CursorInfo;
+struct Cursor;
 struct EntranceInfo;
 class Command;
 class Floaters;
@@ -280,7 +280,7 @@ public:
 	void loadAllScenes();
 
 	void initCursors();
-	void addCursor(CursorInfo *cursorInfo, Scene *inv, int pictureId, int hotspotX, int hotspotY, int itemPictureOffsX, int itemPictureOffsY);
+	void addCursor(Cursor *cursorInfo, Scene *inv, int pictureId, int ofsX, int ofsY, int itemPictureOffsX, int itemPictureOffsY);
 
 	int32 _mapTable[200];
 

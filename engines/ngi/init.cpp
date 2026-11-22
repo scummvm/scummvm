@@ -141,11 +141,11 @@ void NGIEngine::setLevelStates() {
 	}
 }
 
-void NGIEngine::addCursor(CursorInfo *cursorInfo, Scene *inv, int pictureId, int hotspotX, int hotspotY, int itemPictureOffsX, int itemPictureOffsY) {
+void NGIEngine::addCursor(Cursor *cursorInfo, Scene *inv, int pictureId, int ofsX, int ofsY, int itemPictureOffsX, int itemPictureOffsY) {
 	cursorInfo->pictureId = pictureId;
 	cursorInfo->picture = inv->findPictureObjectById(pictureId, 0)->_picture;
-	cursorInfo->hotspotX = hotspotX;
-	cursorInfo->hotspotY = hotspotY;
+	cursorInfo->ofsX = ofsX;
+	cursorInfo->ofsY = ofsY;
 	cursorInfo->itemPictureOffsX = itemPictureOffsX;
 	cursorInfo->itemPictureOffsY = itemPictureOffsY;
 
@@ -153,7 +153,7 @@ void NGIEngine::addCursor(CursorInfo *cursorInfo, Scene *inv, int pictureId, int
 }
 
 void NGIEngine::initCursors() {
-	CursorInfo crs;
+	Cursor crs;
 	Scene *inv = findScene(SC_INV);
 
 	addCursor(&crs, inv, PIC_CSR_DEFAULT,     15,  1, 10, 10);

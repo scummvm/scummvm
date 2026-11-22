@@ -28,20 +28,20 @@ class Picture;
 
 void setInputDisabled(bool state);
 
-struct CursorInfo {
+struct Cursor {
 	int pictureId;
 	Picture *picture;
-	int hotspotX;
-	int hotspotY;
+	int ofsX;
+	int ofsY;
 	int itemPictureOffsX;
 	int itemPictureOffsY;
 	int width;
 	int height;
 
-	CursorInfo() { memset(this, 0, sizeof(*this)); }
+	Cursor() { memset(this, 0, sizeof(*this)); }
 };
 
-typedef Common::Array<CursorInfo *> CursorsArray;
+typedef Common::Array<Cursor *> CursorsArray;
 
 class CursorController {
 	//CObject obj;
@@ -61,7 +61,7 @@ class CursorController {
 	~CursorController();
 
 	void setInputDisabled(bool state);
-	void addCursor(CursorInfo *cursor);
+	void addCursor(Cursor *cursor);
 	void setCursorMode(bool mode);
 
 	void render(int x, int y);
