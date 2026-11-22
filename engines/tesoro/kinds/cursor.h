@@ -108,7 +108,7 @@ private:
 	uint16 _labelColour = 0;
 	ObjectList _hovered;	// objects that keep the label or the click
 	ObjectList _touched;	// objects under the pointer this frame
-	Object *_heldItem;
+	Object *_heldItem = nullptr;
 	Cursor *_companion = nullptr;
 	Cursor *_owner = nullptr;		// for the companion: the main pointer
 	const PointerState *_mouse = nullptr;

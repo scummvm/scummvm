@@ -69,9 +69,6 @@ public:
 
 	void resumeFacing() { if (_walking) setFacing(_facing); }
 
-	/** Takes Jim out of his level, for when the level is thrown away. */
-	void leaveLevel();
-
 	int32 scale() const { return _scale; }
 
 	int useItem(int item);

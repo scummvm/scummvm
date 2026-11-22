@@ -285,16 +285,6 @@ void Jim::queueFrame() {
 	drawScaled(x, y, (uint16)(_sortValue + 1), seq.imageIndex);
 }
 
-void Jim::leaveLevel() {
-	if (!_level)
-		return;
-	_level->movedObjects().clear();
-	removeFromList(_level->objects(), this);
-	_room->removeObject(this);
-	_level = nullptr;
-	_room = nullptr;
-}
-
 void Jim::showFacing(int facing) {
 	_anim.selectBank(kStanding, facing - 1, facing - 1, false, false, _world.now());
 }

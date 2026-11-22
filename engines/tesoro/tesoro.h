@@ -66,8 +66,6 @@ private:
 	GameClock _clock;
 	Common::RandomSource _randomSource;
 	Archive _archive;
-	Camera _camera;
-	Common::Array<AnimPlayer> _testPlayers;	// the "level" of the test object
 	Level *_level = nullptr;		// the level shown
 	Level *_mainMenu = nullptr;	// PRINCIPAL.LVL and NUEVO.LVL stay loaded while the other is shown
 	Level *_newGameMenu = nullptr;
@@ -160,10 +158,6 @@ public:
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
-	/** The camera of the level being shown, else the test object's. */
-	Camera &camera();
-	/** Loads a level from the archive and shows it. */
-	bool level(int index);
 	/** Second step of a level: draws it and, unless it is the interface level, composes the frame onto the screen. */
 	int levelSecondStep(Level &level);
 	void presentFrame();

@@ -396,29 +396,8 @@ Common::Error TesoroEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	return Common::kNoError;
 }
 
-Camera &TesoroEngine::camera() {
-	return _level ? _level->camera() : _camera;
-}
-
 Level *TesoroEngine::loadLevel(const char *name) {
 	return _world.loadLevelFile(name, AnimBank::kLoadNow);
-}
-
-bool TesoroEngine::level(int index) {
-	Level *level = _world.level(index);
-	if (!level)
-		return false;
-
-	// The world keeps every level it has loaded, so the one being replaced is not deleted.
-	_world.mainList().remove(_level);
-	if (_world.jimLevel() == _level)
-		_world.jim()->leaveLevel();
-	_level = level;
-	_level->reloadDeferredAnims(_world.archiveStream());
-	_world.mainList().insertByPriority(_level, 0x14);
-	if (_cursor)
-		_cursor->setSurroundings(&_pointer, _level);
-	return true;
 }
 
 void TesoroEngine::setHoverText(const char *text) {
