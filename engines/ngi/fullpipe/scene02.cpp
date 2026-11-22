@@ -65,11 +65,11 @@ void sceneHandler02_ladderClick() {
 	handleObjectInteraction(g_nmi->_aniMan2, g_nmi->_currentScene->findPictureObjectById(PIC_SC2_DTRUBA, 0), 0);
 }
 
-void sceneHandler02_showLadder() {
+void sceneHandler02_onShowLadder() {
 	g_nmi->_currentScene->findPictureObjectById(PIC_SC2_LADDER, 0)->_flags |= 4;
 }
 
-void sceneHandler02_hideLadder() {
+void sceneHandler02_onHideLadder() {
 	g_nmi->_currentScene->findPictureObjectById(PIC_SC2_LADDER, 0)->_flags &= 0xfffb;
 	g_nmi->_aniMan2->_z = 25;
 }
@@ -86,7 +86,7 @@ int sceneHandler02(Command *ex) {
 		break;
 
 	case MSG_SC2_SHOWLADDER:
-		sceneHandler02_showLadder();
+		sceneHandler02_onShowLadder();
 		break;
 
 	case MSG_SC2_PUTMANUP:
@@ -94,7 +94,7 @@ int sceneHandler02(Command *ex) {
 		break;
 
 	case MSG_SC2_HIDELADDER:
-		sceneHandler02_hideLadder();
+		sceneHandler02_onHideLadder();
 		break;
 
 	case 33:
