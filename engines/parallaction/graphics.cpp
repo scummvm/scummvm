@@ -41,6 +41,10 @@ namespace Parallaction {
 
 #define	LABEL_TRANSPARENT_COLOR 0xFF
 
+// pixels scrolled per step
+static const int kHScrollStepSize = 32;
+static const int kVScrollStepSize = 8;
+
 class HalfbritePrimitives : public Graphics::Primitives {
 public:
 	void drawPoint(int x, int y, uint32 color, void *data) override {
@@ -381,13 +385,13 @@ void Gfx::initiateScroll(int deltaX, int deltaY) {
 	if (deltaX != 0) {
 		_requestedHScrollDir = deltaX > 0 ? 1 : -1;
 		deltaX *= _requestedHScrollDir;
-		_requestedHScrollSteps = ((deltaX+31)/32) / _requestedHScrollDir;
+		_requestedHScrollSteps = ((deltaX + kHScrollStepSize - 1) / kHScrollStepSize) / _requestedHScrollDir;
 	}
 
 	if (deltaY != 0) {
 		_requestedVScrollDir = deltaY > 0 ? 1 : -1;
 		deltaY *= _requestedVScrollDir;
-		_requestedVScrollSteps = ((deltaY+7)/8) / _requestedVScrollDir;
+		_requestedVScrollSteps = ((deltaY + kVScrollStepSize - 1) / kVScrollStepSize) / _requestedVScrollDir;
 	}
 }
 
@@ -395,12 +399,12 @@ void Gfx::scroll() {
 	int32 x = _scrollPosX, y = _scrollPosY;
 
 	if (_requestedHScrollSteps) {
-		x += 32*_requestedHScrollDir;	// scroll 32 pixels at a time
+		x += kHScrollStepSize * _requestedHScrollDir;
 		_requestedHScrollSteps--;
 	}
 
 	if (_requestedVScrollSteps) {
-		y += 8*_requestedVScrollDir;	// scroll 8 pixel at a time
+		y += kVScrollStepSize * _requestedVScrollDir;
 		_requestedVScrollSteps--;
 	}
 
