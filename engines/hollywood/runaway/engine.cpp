@@ -35,6 +35,7 @@
 #include "graphics/cursorman.h"
 
 #include "hollywood/hotspots.h"
+#include "hollywood/runaway/archive.h"
 #include "hollywood/runaway/console.h"
 #include "hollywood/runaway/engine.h"
 #include "hollywood/runaway/intro.h"
@@ -267,6 +268,11 @@ void RunawayEngine::initializePath(const Common::FSNode &gamePath) {
 	SearchMan.addSubDirectoryMatching(gamePath.getParent(), "Dataa");
 	SearchMan.addSubDirectoryMatching(gamePath.getParent(), "Datav");
 	SearchMan.addSubDirectoryMatching(gamePath.getParent(), "Screenshots");
+	if (_game == kRunawayFullGame && !SearchMan.hasFile("RESOURCE.000")) {
+		Common::Archive *installer = makeRunawayInstallerArchive(gamePath);
+		if (installer)
+			SearchMan.add("runaway-installer", installer);
+	}
 }
 
 bool RunawayEngine::hasFeature(EngineFeature feature) const {

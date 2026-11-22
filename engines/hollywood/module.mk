@@ -141,6 +141,7 @@ MODULE_OBJS = \
 	monsters/scenes/playable/playable_scene.o \
 	monsters/scenes/playable/playable_scene_actions.o \
 	runaway/animation.o \
+	runaway/archive.o \
 	runaway/audio.o \
 	runaway/console.o \
 	runaway/desert.o \

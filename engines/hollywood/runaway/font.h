@@ -23,6 +23,7 @@
 #define HOLLYWOOD_RUNAWAY_FONT_H
 
 #include "common/array.h"
+#include "common/language.h"
 #include "common/ustr.h"
 #include "graphics/font.h"
 
@@ -31,7 +32,7 @@ namespace Hollywood {
 // RESOURCE.000 stores antialiased glyphs, including their contour masks.
 class RunawayFont : public Graphics::Font {
 public:
-	bool load(bool menuFont = false, bool museum = false);
+	bool load(bool menuFont = false, bool museum = false, Common::Language language = Common::EN_ANY);
 	static uint16 getColor(byte index);
 	int getFontHeight() const override { return 28; }
 	int getMaxCharWidth() const override { return 28; }
@@ -49,6 +50,7 @@ private:
 	Common::Array<int8> _kerning;
 	byte _glyphMap[256];
 	byte _missingGlyph = 255;
+	bool _frenchGlyphs = false;
 	Common::Array<byte> _pixels;
 	Common::U32String _characters;
 };

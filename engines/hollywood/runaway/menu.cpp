@@ -62,7 +62,7 @@ bool RunawayMenu::load(RunawayGameType game) {
 	_audio.setMuseum(museum);
 	Graphics::ManagedSurface cursors;
 	Common::Array<byte> animation;
-	if (!_font.load(true, museum) || !_captionFont.load(false, museum))
+	if (!_font.load(true, museum, _strings.language()) || !_captionFont.load(false, museum, _strings.language()))
 		return false;
 	if (museum) {
 		if (!loadRunawaySurface(Common::Path("panopc2.fnd"), 1024, 600, _background) ||

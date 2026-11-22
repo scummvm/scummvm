@@ -61,7 +61,7 @@ bool RunawayUI::load(RunawayGameType game, byte chapter) {
 	_museum = museum;
 	_audio.setMuseum(museum);
 	Common::Array<byte> animation;
-	if (!_font.load(false, museum))
+	if (!_font.load(false, museum, _strings.language()))
 		return false;
 	if (museum) {
 		if (!loadRunawaySurface(Common::Path("raton10.spf"), 904, 360, _cursors) ||

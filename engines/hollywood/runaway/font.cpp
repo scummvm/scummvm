@@ -71,7 +71,7 @@ uint16 RunawayFont::getColor(byte index) {
 	return format.RGBToColor(colors[index][0], colors[index][1], colors[index][2]);
 }
 
-bool RunawayFont::load(bool menuFont, bool museum) {
+bool RunawayFont::load(bool menuFont, bool museum, Common::Language language) {
 	Common::Array<byte> metrics;
 	if (museum) {
 		if (!readRunawayFile(Common::Path("TEMP_LET.SVG"), _pixels) ||
@@ -113,12 +113,14 @@ bool RunawayFont::load(bool menuFont, bool museum) {
 				_glyphMap[i] = _missingGlyph;
 		}
 	}
-	// The French table at 0x46f1e0 adds circumflex vowels and moves the
-	// missing-character box to 155. Glyphs 153/154 are the CP1252 ligatures.
-	if (_glyphs.size() == 156) {
+	// French circumflex vowels and ligatures occupy the same slots in the
+	// demo (0x46f1e0) and DVD (0x5a6210). The DVD shares its 181-glyph count
+	// with other languages, so its mapping cannot be selected by size alone.
+	_frenchGlyphs = _glyphs.size() == 156 || (_glyphs.size() == 181 && language == Common::FR_FRA);
+	if (_frenchGlyphs) {
 		for (uint i = 0; i < ARRAYSIZE(_glyphMap); ++i) {
 			if (_glyphMap[i] == 149)
-				_glyphMap[i] = 155;
+				_glyphMap[i] = _missingGlyph;
 		}
 		_glyphMap[0x83] = 148;
 		_glyphMap[0x88] = 149;
@@ -174,8 +176,8 @@ uint RunawayFont::glyphIndex(uint32 chr) const {
 	case 0x201e: return 92;
 	case '\'': return 90;
 	case '"': return 81;
-	case 0x0152: return _glyphs.size() == 156 ? 153 : _missingGlyph;
-	case 0x0153: return _glyphs.size() == 156 ? 154 : _missingGlyph;
+	case 0x0152: return _frenchGlyphs ? 153 : _missingGlyph;
+	case 0x0153: return _frenchGlyphs ? 154 : _missingGlyph;
 	}
 	if (chr < 128)
 		return _glyphMap[chr];

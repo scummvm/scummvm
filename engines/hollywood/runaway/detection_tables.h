@@ -59,6 +59,31 @@
 		ADGF_UNSTABLE,
 		GUIO2(GUIO_NOMIDI, GAMEOPTION_RESTORED_CONTENT)
 	},
+	// French DVD release, run directly from the disc. RESOURCE.003 is data2.ps;
+	// the remaining installed resources are read from the InstallShield cabinets.
+	{
+		"runaway",
+		"DVD",
+		AD_ENTRY3s("data1.hdr", "1e1809bc51ec85e3b42ecd276609b439", 14582,
+			"data2.ps", "8aa07584175fc9d28c1aff5fa5f93a5f", 7340291,
+			"RESOURCE.B02", "486eace90c76d8772d751a879466cc39", 8352653),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_RESTORED_CONTENT)
+	},
+	// The same French DVD release, already installed.
+	{
+		"runaway",
+		"DVD",
+		AD_ENTRY3s("RESOURCE.000", "2ff284d730060b7fe6382394c1bdd07c", 111391301,
+			"RESOURCE.003", "8aa07584175fc9d28c1aff5fa5f93a5f", 7340291,
+			"RESOURCE.B02", "486eace90c76d8772d751a879466cc39", 8352653),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_RESTORED_CONTENT)
+	},
 	// English museum demo (2000). Gameplay POC; movies are not supported.
 	{
 		"runaway",

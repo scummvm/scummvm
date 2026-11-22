@@ -59,6 +59,7 @@ public:
 		kMakeshiftMiningTool, kHotScalpel, kOpenPods, kTextCount
 	};
 	explicit RunawayStrings(Common::Language language) : _language(language) {}
+	Common::Language language() const { return _language; }
 	bool load();
 	Common::U32String text(TextId id) const;
 	Common::U32String itemName(byte chapter, byte item) const;
