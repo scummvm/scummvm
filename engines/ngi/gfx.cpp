@@ -1162,7 +1162,7 @@ void Shadows::initMovement(Movement *mov) {
 	}
 }
 
-DynamicPhase *Shadows::findSize(int width, int height) {
+Phase *Shadows::findSize(int width, int height) {
 	int idx = 0;
 	int min = 1000;
 

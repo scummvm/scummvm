@@ -64,27 +64,27 @@ class StaticPhase : public Picture {
 	ExCommand *getExCommand() { return _exCommand.get(); }
 };
 
-class DynamicPhase : public StaticPhase {
+class Phase : public StaticPhase {
  public:
 	int _someX;
 	int _someY;
 	Common::Rect _rect;
 	int16 _field_7C;
 	int16 _field_7E;
-	int _dynFlags;
+	int _flags;
 
   public:
-	DynamicPhase();
-	DynamicPhase(DynamicPhase *src, bool reverse);
+	Phase();
+	Phase(Phase *src, bool reverse);
 
 	bool load(MfcArchive &file) override;
 
 	Common::String toXML() override;
 
-	int getDynFlags() { return _dynFlags; }
+	int getDynFlags() { return _flags; }
 };
 
-class Statics : public DynamicPhase {
+class Statics : public Phase {
  public:
  	int16 _staticsId;
 	Common::String _staticsName;
@@ -120,12 +120,12 @@ class Movement : public GameObject {
 	int _loopDelay;
 	int _counter;
 	/** a confusing mix of owned and unowned items */
-	Common::Array<DynamicPhase *> _phases;
+	Common::Array<Phase *> _phases;
 	int _field_78;
 	PointList _framePosOffsets;
 	Movement *_currMovement;
 	int _field_84;
-	DynamicPhase *_curPhase;
+	Phase *_curPhase;
 	int _field_8C;
 	int _curFrame;
 	int _field_94;
@@ -152,7 +152,7 @@ class Movement : public GameObject {
 	void setAlpha(int alpha);
 
 	void setCurFrame(int index);
-	DynamicPhase *getPhase(int idx);
+	Phase *getPhase(int idx);
 
 	int calcDuration();
 	int countPhasesWithFlag(int maxidx, int flag);

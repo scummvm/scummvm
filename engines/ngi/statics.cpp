@@ -559,7 +559,7 @@ void StaticANIObject::draw() {
 	if (_shadowsOn && g_nmi->_currentScene && g_nmi->_currentScene->_shadows
 		&& (getCurrDimensions().x != 1 || getCurrDimensions().y != 1)) {
 
-		DynamicPhase *dyn;
+		Phase *dyn;
 
 		if (!_movement || _flags & 0x20)
 			dyn = _statics;
@@ -574,7 +574,7 @@ void StaticANIObject::draw() {
 		if (dyn->getDynFlags() & 4) {
 			const Common::Rect &rect = dyn->_rect;
 
-			DynamicPhase *shd = g_nmi->_currentScene->_shadows->findSize(rect.width(), rect.height());
+			Phase *shd = g_nmi->_currentScene->_shadows->findSize(rect.width(), rect.height());
 			if (shd) {
 				const Dims dims = shd->getDimensions();
 				int midx = _ox - dims.x / 2 - dyn->_someX;
@@ -756,7 +756,7 @@ void StaticANIObject::update(int counterdiff) {
 				return;
 			}
 
-			DynamicPhase *dyn = _movement->_curPhase;
+			Phase *dyn = _movement->_curPhase;
 			if (dyn->_initialCountdown == dyn->_countdown) {
 
 				ex = dyn->getExCommand();
@@ -1355,7 +1355,7 @@ Statics::Statics() {
 	_data = nullptr;
 }
 
-Statics::Statics(Statics *src, bool reverse) : DynamicPhase(src, reverse) {
+Statics::Statics(Statics *src, bool reverse) : Phase(src, reverse) {
 	_staticsId = src->_staticsId;
 
 	if (reverse) {
@@ -1371,13 +1371,13 @@ Statics::Statics(Statics *src, bool reverse) : DynamicPhase(src, reverse) {
 bool Statics::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "Statics::load()");
 
-	DynamicPhase::load(file);
+	Phase::load(file);
 
 	_staticsId = file.readUint16LE();
 
 	_staticsName = file.readPascalString();
 	debugC(6, kDebugXML, "%% <STATICS id=\"%s\" name=\"%s\" %s />",
-		g_nmi->gameIdToStr(_staticsId).c_str(), transCyrillic(_staticsName), DynamicPhase::toXML().c_str());
+		g_nmi->gameIdToStr(_staticsId).c_str(), transCyrillic(_staticsName), Phase::toXML().c_str());
 
 	_picture.load(file);
 
@@ -1439,7 +1439,7 @@ Movement::~Movement() {
 
 		// FIXME: At this point, the last entry in _phases is invalid
 		for (uint i = 0; i < _phases.size() - 1; i++) {
-			DynamicPhase *phase = _phases[i];
+			Phase *phase = _phases[i];
 			if (phase != _prevStatic && phase != _nextStatic)
 				delete phase;
 			else
@@ -1548,7 +1548,7 @@ Movement::Movement(Movement *src, int *oldIdxs, int newSize, StaticANIObject *an
 			src->setCurFrame(i);
 
 			if (i < newSize - 1)
-				_phases.push_back(new DynamicPhase(src->_curPhase, 0));
+				_phases.push_back(new Phase(src->_curPhase, 0));
 
 			_framePosOffsets[i].x = src->_framePosOffsets[i].x;
 			_framePosOffsets[i].y = src->_framePosOffsets[i].y;
@@ -1583,7 +1583,7 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 		_framePosOffsets.resize(dynCount + 2);
 
 		for (int i = 0; i < dynCount; i++) {
-			DynamicPhase *ph = new DynamicPhase();
+			Phase *ph = new Phase();
 			ph->load(file);
 
 			_phases.push_back(ph);
@@ -1713,7 +1713,7 @@ Dims Movement::getPhaseSize(int phaseIndex) const {
 	if (idx == -1)
 		idx = _curFrame;
 
-	DynamicPhase *dyn;
+	Phase *dyn;
 
 	if (_currMovement)
 		dyn = _currMovement->_phases[idx];
@@ -1797,7 +1797,7 @@ int Movement::countPhasesWithFlag(int maxidx, int flag) {
 		maxidx = sz;
 
 	for (int i = 0; i < maxidx && i < sz; i++)
-		if (getPhase(i)->_dynFlags & flag)
+		if (getPhase(i)->_flags & flag)
 			res++;
 
 	return res;
@@ -1812,7 +1812,7 @@ void Movement::setCurFrame(int index) {
 		gotoPrevFrame();
 }
 
-DynamicPhase *Movement::getPhase(int idx) {
+Phase *Movement::getPhase(int idx) {
 	debugC(7, kDebugAnimation, "Movement::updateCurrDynamicPhase()");
 
 	if (_currMovement) {
@@ -2068,20 +2068,20 @@ Common::Point Movement::getCenter() const {
 						 rect.top + _curPhase->_rect.height() / 2);
 }
 
-DynamicPhase::DynamicPhase() {
+Phase::Phase() {
 	_someX = 0;
 	_field_7C = 0;
 	_field_7E = 0;
-	_dynFlags = 0;
+	_flags = 0;
 	_someY = 0;
 	_data = nullptr;
 }
 
-DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
+Phase::Phase(Phase *src, bool reverse) {
 	_field_7C = src->_field_7C;
 	_field_7E = 0;
 
-	debugC(1, kDebugAnimation, "DynamicPhase::DynamicPhase(src, %d)", reverse);
+	debugC(1, kDebugAnimation, "Phase::Phase(src, %d)", reverse);
 
 	if (reverse) {
 		if (!src->_bitmap)
@@ -2131,23 +2131,23 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 
 	_initialCountdown = src->_initialCountdown;
 	_field_6A = src->_field_6A;
-	_dynFlags = src->_dynFlags;
+	_flags = src->_flags;
 
-	debug(8, "DynamicPhase::DynamicPhase(): pal: %p, pal size: %d",
+	debug(8, "Phase::Phase(): pal: %p, pal size: %d",
 		(const void *)&src->getPaletteData(), src->getPaletteData().size);
 	setPaletteData(src->getPaletteData());
 
 	copyMemoryObject2(*src);
 }
 
-Common::String DynamicPhase::toXML() {
+Common::String Phase::toXML() {
 	return Common::String::format("f7c=%d left=%d top=%d right=%d bottom=%d sX=%d sY=%d dynFlags=%d %s",
-			_field_7C, _rect.left, _rect.top, _rect.right, _rect.bottom, _someX, _someY, _dynFlags,
+			_field_7C, _rect.left, _rect.top, _rect.right, _rect.bottom, _someX, _someY, _flags,
 			StaticPhase::toXML().c_str());
 }
 
-bool DynamicPhase::load(MfcArchive &file) {
-	debugC(5, kDebugLoading, "DynamicPhase::load()");
+bool Phase::load(MfcArchive &file) {
+	debugC(5, kDebugLoading, "Phase::load()");
 
 	StaticPhase::load(file);
 
@@ -2164,7 +2164,7 @@ bool DynamicPhase::load(MfcArchive &file) {
 
 	assert(g_nmi->_gameProjectVersion >= 12);
 
-	_dynFlags = file.readUint32LE();
+	_flags = file.readUint32LE();
 
 	return true;
 }

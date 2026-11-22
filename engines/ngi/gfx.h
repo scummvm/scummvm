@@ -31,7 +31,7 @@ namespace Graphics {
 
 namespace NGI {
 
-class DynamicPhase;
+class Phase;
 class Movement;
 struct PicAniInfo;
 
@@ -221,7 +221,7 @@ public:
 struct ShadowsItem {
 	int width;
 	int height;
-	DynamicPhase *dynPhase;
+	Phase *dynPhase;
 };
 
 typedef Common::Array<ShadowsItem> ShadowsItemArray;
@@ -238,7 +238,7 @@ class Shadows : public CObject {
 	void init();
 
 	void initMovement(Movement *mov);
-	DynamicPhase *findSize(int width, int height);
+	Phase *findSize(int width, int height);
 };
 
 } // End of namespace NGI
