@@ -327,11 +327,11 @@ MessageQueue *MctlCompound::makeQueue(AniObject *subj, int xpos, int ypos, int f
 }
 
 MctlLadder::MctlLadder() {
-	_width = 0;
-	_ladderX = 0;
-	_height = 0;
-	_ladderY = 0;
-	_ladder_field_14 = 0;
+	_stepX = 0;
+	_x = 0;
+	_stepY = 0;
+	_y = 0;
+	_z = 0;
 
 	_ladder_field_20 = 0;
 	_ladder_field_24 = 0;
@@ -341,18 +341,18 @@ MctlLadder::~MctlLadder() {
 	detachAllObjects();
 }
 
-int MctlLadder::collisionDetection(AniObject *man) {
-	if (findObjectPos(man) < 0)
+int MctlLadder::getCurrentStep(AniObject *man) {
+	if (findIndex(man) < 0)
 		return 0;
 
 	double delta;
 
-	if ((double)(man->_y - _ladderY) / (double)_height < 0.0)
+	if ((double)(man->_y - _y) / (double)_stepY < 0.0)
 		delta = -0.5;
 	else
 		delta = 0.5;
 
-	int res = (int)((double)(man->_y - _ladderY) / (double)_height + delta);
+	int res = (int)((double)(man->_y - _y) / (double)_stepY + delta);
 
 	if (res < 0)
 		return 0;
@@ -363,10 +363,10 @@ int MctlLadder::collisionDetection(AniObject *man) {
 void MctlLadder::attachObject(AniObject *obj) {
 	debugC(4, kDebugPathfinding, "MctlLadder::attachObject(*%d)", obj->_id);
 
-	if (findObjectPos(obj) < 0) {
+	if (findIndex(obj) < 0) {
 		MctlLadderMovement *movement = new MctlLadderMovement;
 
-		if (initMovement(obj, movement)) {
+		if (fillData(obj, movement)) {
 			_aniHandler.attachObject(obj->_id);
 			_ladmovements.push_back(movement);
 		} else {
@@ -377,7 +377,7 @@ void MctlLadder::attachObject(AniObject *obj) {
 	}
 }
 
-int MctlLadder::findObjectPos(AniObject *obj) {
+int MctlLadder::findIndex(AniObject *obj) {
 	for (uint i = 0; i < _ladmovements.size(); i++)
 		if (_ladmovements[i]->objId == obj->_id)
 			return i;
@@ -385,8 +385,8 @@ int MctlLadder::findObjectPos(AniObject *obj) {
 	return -1;
 }
 
-bool MctlLadder::initMovement(AniObject *ani, MctlLadderMovement *movement) {
-	debugC(4, kDebugPathfinding, "MctlLadder::initMovement(*%d, ...)", ani->_id);
+bool MctlLadder::fillData(AniObject *ani, MctlLadderMovement *movement) {
+	debugC(4, kDebugPathfinding, "MctlLadder::fillData(*%d, ...)", ani->_id);
 	movement->movVars = nullptr;
 	movement->staticIds = nullptr;
 
@@ -462,20 +462,20 @@ MessageQueue *MctlLadder::startMove(AniObject *subj, int xpos, int ypos, int fuz
 MessageQueue *MctlLadder::makeQueue(AniObject *ani, int xpos, int ypos, int fuzzyMatch, int staticsId) {
 	debugC(1, kDebugPathfinding, "MctlLadder::makeQueue(*%d, %d, %d, %d, %d)", (ani ? ani->_id : -1), xpos, ypos, fuzzyMatch, staticsId);
 
-	int pos = findObjectPos(ani);
+	int pos = findIndex(ani);
 
 	if (pos < 0)
 		return nullptr;
 
-	double dh = _height;
-	double corr = (double)(ani->_y - _ladderY) / dh;
+	double dh = _stepY;
+	double corr = (double)(ani->_y - _y) / dh;
 	int dl = (int)(corr + (corr < 0.0 ? -0.5 : 0.5));
 
-	corr = (double)(ypos - _ladderY) / dh;
+	corr = (double)(ypos - _y) / dh;
 	int dl2 = (int)(corr + (corr < 0.0 ? -0.5 : 0.5));
 
-	int normx = _ladderX + dl2 * _width;
-	int normy = _ladderY + dl2 * _height;
+	int normx = _x + dl2 * _stepX;
+	int normy = _y + dl2 * _stepY;
 
 	if (dl == dl2 || dl2 < 0)
 		return nullptr;
@@ -516,7 +516,7 @@ MessageQueue *MctlLadder::makeQueue(AniObject *ani, int xpos, int ypos, int fuzz
 
 		mkQueue.x1 = normx;
 		mkQueue.y1 = normy;
-		mkQueue.destZ = _ladder_field_14;
+		mkQueue.destZ = _z;
 		mkQueue.flags = 14;
 		mkQueue.movementId = direction ? _ladmovements[pos]->movVars->varDownGo : _ladmovements[pos]->movVars->varUpGo;
 
@@ -534,7 +534,7 @@ MessageQueue *MctlLadder::makeQueue(AniObject *ani, int xpos, int ypos, int fuzz
 
 			mkQueue.x1 = normx;
 			mkQueue.y1 = normy;
-			mkQueue.destZ = _ladder_field_14;
+			mkQueue.destZ = _z;
 			mkQueue.flags = 14;
 			mkQueue.movementId = _ladmovements[pos]->movVars->varUpGo;
 
@@ -553,7 +553,7 @@ MessageQueue *MctlLadder::makeQueue(AniObject *ani, int xpos, int ypos, int fuzz
 		else
 			mkQueue.staticsId2 = _ladmovements[pos]->staticIds[1];
 
-		mkQueue.destZ = _ladder_field_14;
+		mkQueue.destZ = _z;
 		mkQueue.x1 = normx;
 		mkQueue.y1 = normy;
 		mkQueue.y2 = point.y + oy;
@@ -619,7 +619,7 @@ MessageQueue *MctlLadder::makeQueue(AniObject *ani, int xpos, int ypos, int fuzz
 		else
 			mkQueue.staticsId2 = _ladmovements[pos]->staticIds[0];
 
-		mkQueue.destZ = _ladder_field_14;
+		mkQueue.destZ = _z;
 		mkQueue.x1 = normx;
 		mkQueue.y1 = normy;
 		mkQueue.y2 = ny;
@@ -649,15 +649,15 @@ MessageQueue *MctlLadder::makeQueue(AniObject *ani, int xpos, int ypos, int fuzz
 
 	mkQueue.x1 = normx;
 	mkQueue.y1 = normy;
-	mkQueue.destZ = _ladder_field_14;
+	mkQueue.destZ = _z;
 	mkQueue.flags = 14;
 	mkQueue.movementId = _ladmovements[pos]->movVars->varDownGo;
 
 	return _aniHandler.makeRunQueue(&mkQueue);
 }
 
-MessageQueue *MctlLadder::controllerWalkTo(AniObject *ani, int off) {
-	return makeQueue(ani, _ladderX + off * _width, _ladderY + off * _height, 1, 0);
+MessageQueue *MctlLadder::makeQueue(AniObject *ani, int off) {
+	return makeQueue(ani, _x + off * _stepX, _y + off * _stepY, 1, 0);
 }
 
 MctlConnectionPoint *MctlCompound::getNextPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIdx, double *minDistancePtr) {

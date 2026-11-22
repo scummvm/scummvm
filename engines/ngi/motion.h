@@ -133,11 +133,11 @@ struct MctlLadderMovement {
 
 class MctlLadder : public MotionController {
 public:
-	int _ladderX;
-	int _ladderY;
-	int _ladder_field_14;
-	int _width;
-	int _height;
+	int _x;
+	int _y;
+	int _z;
+	int _stepX;
+	int _stepY;
 	int _ladder_field_20;
 	int _ladder_field_24;
 	Common::Array<MctlLadderMovement *> _ladmovements;
@@ -146,7 +146,7 @@ public:
 public:
 	MctlLadder();
 	~MctlLadder() override;
-	int collisionDetection(AniObject *man);
+	int getCurrentStep(AniObject *man);
 
 	void attachObject(AniObject *obj) override;
 	int detachObject(AniObject *obj) override { return 1; }
@@ -154,11 +154,11 @@ public:
 	MessageQueue *startMove(AniObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) override;
 	MessageQueue *makeQueue(AniObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) override;
 
-	MessageQueue *controllerWalkTo(AniObject *ani, int off);
+	MessageQueue *makeQueue(AniObject *ani, int off);
 
 private:
-	int findObjectPos(AniObject *obj);
-	bool initMovement(AniObject *ani, MctlLadderMovement *movement);
+	int findIndex(AniObject *obj);
+	bool fillData(AniObject *ani, MctlLadderMovement *movement);
 };
 
 class MovGraphNode : public CObject {

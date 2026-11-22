@@ -222,7 +222,7 @@ void scene04_initScene(Scene *sc) {
 
 bool sceneHandler04_friesAreWalking() {
 	if (g_vars->scene04_dudeOnLadder && g_nmi->_aniMan->isIdle() && !(g_nmi->_aniMan->_flags & 0x100)) {
-		int col = g_vars->scene04_ladder->collisionDetection(g_nmi->_aniMan);
+		int col = g_vars->scene04_ladder->getCurrentStep(g_nmi->_aniMan);
 		if (col >= 3 && col <= 6 ) {
 			Movement *koz;
 
@@ -338,11 +338,11 @@ void sceneHandler04_walkClimbLadder(Command *ex) {
 	g_vars->scene04_dudeOnLadder = 1;
 
 	g_vars->scene04_ladder = new MctlLadder;
-	g_vars->scene04_ladder->_ladderX = 1089;
-	g_vars->scene04_ladder->_ladderY = 406;
-	g_vars->scene04_ladder->_ladder_field_14 = 12;
-	g_vars->scene04_ladder->_width = 0;
-	g_vars->scene04_ladder->_height = -40;
+	g_vars->scene04_ladder->_x = 1089;
+	g_vars->scene04_ladder->_y = 406;
+	g_vars->scene04_ladder->_z = 12;
+	g_vars->scene04_ladder->_stepX = 0;
+	g_vars->scene04_ladder->_stepY = -40;
 	g_vars->scene04_ladder->_ladder_field_20 = 0;
 	g_vars->scene04_ladder->_ladder_field_24 = -60;
 
@@ -374,9 +374,9 @@ void sceneHandler04_clickLadder() {
 		if (!g_nmi->_aniMan->isIdle() || (g_nmi->_aniMan->_flags & 0x100)) {
 			g_vars->scene04_ladderClickable = true;
 		} else {
-			int h3 = 3 * g_vars->scene04_ladder->_height;
-			int half = abs(g_vars->scene04_ladder->_height) / 2;
-			int start = g_vars->scene04_ladder->_ladderY - g_vars->scene04_ladder->_ladder_field_24;
+			int h3 = 3 * g_vars->scene04_ladder->_stepY;
+			int half = abs(g_vars->scene04_ladder->_stepY) / 2;
+			int start = g_vars->scene04_ladder->_y - g_vars->scene04_ladder->_ladder_field_24;
 			int min = 2 * h3 + start + half + 1;
 			int max =     h3 + start - half - 1;
 
@@ -445,7 +445,7 @@ void sceneHandler04_jumpOnLadder() {
 		g_nmi->_aniMan->_z = 10;
 	}
 
-	g_vars->scene04_ladderOffset = g_vars->scene04_ladder->collisionDetection(g_nmi->_aniMan);
+	g_vars->scene04_ladderOffset = g_vars->scene04_ladder->getCurrentStep(g_nmi->_aniMan);
 }
 
 void sceneHandler04_clickPlank() {
@@ -1140,8 +1140,8 @@ void sceneHandler04_leaveLadder(Command *ex) {
 			MctlCompound *mc = static_cast<MctlCompound *>(getSc2MctlCompoundBySceneId(g_nmi->_currentScene->_sceneId));
 
 			if (mc->_motionControllers[0]->_movGraphReactObj->hitTest(g_nmi->_sceneRect.left + ex->_x, g_nmi->_sceneRect.top + ex->_y)) {
-				if (g_vars->scene04_ladder->collisionDetection(g_nmi->_aniMan)) {
-					MessageQueue *mq = g_vars->scene04_ladder->controllerWalkTo(g_nmi->_aniMan, 0);
+				if (g_vars->scene04_ladder->getCurrentStep(g_nmi->_aniMan)) {
+					MessageQueue *mq = g_vars->scene04_ladder->makeQueue(g_nmi->_aniMan, 0);
 
 					if (mq) {
 						mq->addCommandToEnd(ex->createClone());
@@ -1250,7 +1250,7 @@ void sceneHandler04_bigBallWalkIn() {
 
 	if (g_vars->scene04_dudeOnLadder
 		 && (!ball || !(ball->_flags & 4))
-		 && g_vars->scene04_ladder->collisionDetection(g_nmi->_aniMan) > 3) {
+		 && g_vars->scene04_ladder->getCurrentStep(g_nmi->_aniMan) > 3) {
 
 		if (!g_nmi->_rnd.getRandomNumber(49)) {
 			if (g_vars->scene04_bigBallFromLeft)
