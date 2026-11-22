@@ -92,11 +92,11 @@ void sceneHandler38_tryTakeBottle() {
 	g_vars->scene38_bossCounter = 0;
 }
 
-void sceneHandler38_postHammerKick() {
+void sceneHandler38_onPostHmrKick() {
 	g_vars->scene38_domino1->setPos(g_vars->scene38_domino1->_x, g_vars->scene38_domino1->_y + 2);
 }
 
-void sceneHandler38_propose() {
+void sceneHandler38_onPropose() {
 	if (!g_vars->scene38_tally->_movement) {
 		if (g_vars->scene38_tally->_flags & 4) {
 			if (!(g_vars->scene38_tally->_flags & 2) && g_vars->scene38_tallyCounter > 0
@@ -339,11 +339,11 @@ int sceneHandler38(Command *cmd) {
 		break;
 
 	case MSG_SC38_POSTHMRKICK:
-		sceneHandler38_postHammerKick();
+		sceneHandler38_onPostHmrKick();
 		break;
 
 	case MSG_SC38_PROPOSE:
-		sceneHandler38_propose();
+		sceneHandler38_onPropose();
 		break;
 
 	case MSG_LIFT_CLICKBUTTON:
