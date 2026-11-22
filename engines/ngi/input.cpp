@@ -308,8 +308,8 @@ void NGIEngine::setArcadeOverlay(int picId) {
 	_arcadeOverlayHelper = accessScene(SC_INV)->findPictureObjectById(PIC_CSR_HELPERBGR, 0);
 	_arcadeOverlay = accessScene(SC_INV)->findPictureObjectById(picId, 0);
 
-	const Dims dims = _arcadeOverlay->getDimensions();
-	const Dims dims2 = _arcadeOverlayHelper->getDimensions();
+	const Dims dims = _arcadeOverlay->getFullSize();
+	const Dims dims2 = _arcadeOverlayHelper->getFullSize();
 
 	// TODO: Only Y gets abs?
 	_arcadeOverlayMidX = (dims2.x - dims.x) / 2;
@@ -317,8 +317,8 @@ void NGIEngine::setArcadeOverlay(int picId) {
 }
 
 int NGIEngine::drawArcadeOverlay(int adjust) {
-	_arcadeOverlayHelper->drawAt(_sceneRect.left + _arcadeOverlayX, _sceneRect.top + _arcadeOverlayY);
-	_arcadeOverlay->drawAt(_sceneRect.left + _arcadeOverlayX + _arcadeOverlayMidX, _sceneRect.top + _arcadeOverlayY + _arcadeOverlayMidY);
+	_arcadeOverlayHelper->renderAtPos(_sceneRect.left + _arcadeOverlayX, _sceneRect.top + _arcadeOverlayY);
+	_arcadeOverlay->renderAtPos(_sceneRect.left + _arcadeOverlayX + _arcadeOverlayMidX, _sceneRect.top + _arcadeOverlayY + _arcadeOverlayMidY);
 
 	if (adjust) {
 		if (_arcadeOverlayX > 745) {

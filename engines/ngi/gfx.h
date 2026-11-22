@@ -176,13 +176,13 @@ public:
 	virtual bool load(MfcArchive &file, bool bigPicture);
 	bool load(MfcArchive &file) override { assert(0); return false; } // Disable base class
 
-	Dims getDimensions() const { return _picture->getDimensions(); }
-	void draw();
-	void drawAt(int x, int y);
+	Dims getFullSize() const { return _picture->getDimensions(); }
+	void render();
+	void renderAtPos(int x, int y);
 
 	bool setPicAniInfo(const PicAniInfo &picAniInfo);
 	bool isPointInside(int x, int y);
-	bool isPixelHitAtPos(int x, int y);
+	bool hit(int x, int y);
 	void setOXY2();
 
 	Picture *_picture;

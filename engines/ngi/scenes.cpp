@@ -538,7 +538,7 @@ bool NGIEngine::sceneSwitcher(const EntranceInfo &entrance) {
 	if (!scene)
 		return 0;
 
-	sceneDim = scene->_picObjList.front()->getDimensions();
+	sceneDim = scene->_picObjList.front()->getFullSize();
 	_sceneWidth = sceneDim.x;
 	_sceneHeight = sceneDim.y;
 

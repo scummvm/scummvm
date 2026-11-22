@@ -562,8 +562,8 @@ bool ModalMap::init2(int counterdiff) {
 
 				g_nmi->playSound(SND_CMN_070, 0);
 			} else {
-				const Dims d1 = _picI03->getDimensions();
-				const Dims d2 = _highlightedPic->getDimensions();
+				const Dims d1 = _picI03->getFullSize();
+				const Dims d2 = _highlightedPic->getFullSize();
 
 				_picI03->setPos(_highlightedPic->_x + d2.x / 2 - d1.x / 2, _highlightedPic->_y + d2.y / 2 - d1.y / 2);
 				_picI03->_flags |= 4;
@@ -680,7 +680,7 @@ void ModalMap::initMap() {
 	pic = getScenePicture(g_nmi->_currentScene->_sceneId);
 
 	if (pic) {
-		const Dims dims = pic->getDimensions();
+		const Dims dims = pic->getFullSize();
 		Dims dims2;
 
 		_rect2.left = dims.x / 2 + pic->_x - 400;
@@ -693,13 +693,13 @@ void ModalMap::initMap() {
 		_mapScene->updateScrolling2();
 
 		_pic = _mapScene->findPictureObjectById(PIC_MAP_I02, 0);
-		dims2 = _pic->getDimensions();
+		dims2 = _pic->getFullSize();
 
 		_pic->setPos(pic->_x + dims.x / 2 - dims2.x / 2, dims.y - dims2.y / 2 + pic->_y - 24);
 		_pic->_flags |= 4;
 
 		_pic = _mapScene->findPictureObjectById(PIC_MAP_I01, 0);
-		dims2 = _pic->getDimensions();
+		dims2 = _pic->getFullSize();
 
 		_pic->setPos(pic->_x + dims.x / 2 - dims2.x / 2, dims.y - dims2.y / 2 + pic->_y - 25);
 		_pic->_flags |= 4;
@@ -1189,7 +1189,7 @@ ModalCredits::ModalCredits() {
 	_fadeIn = true;
 	_fadeOut = false;
 
-	const Dims dims = _creditsPic->getDimensions();
+	const Dims dims = _creditsPic->getFullSize();
 
 	_countdown = dims.y / 2 + 470;
 	_sfxVolume = g_nmi->_sfxVolume;
@@ -1675,7 +1675,7 @@ void ModalMainMenu::updateSliderPos() {
 
 int ModalMainMenu::checkHover(Common::Point &point) {
 	for (uint i = 0; i < _areas.size(); i++) {
-		if (_areas[i].picObjL->isPixelHitAtPos(point.x, point.y)) {
+		if (_areas[i].picObjL->hit(point.x, point.y)) {
 			_areas[i].picObjL->_flags |= 4;
 
 			return i;
@@ -1700,7 +1700,7 @@ int ModalMainMenu::checkHover(Common::Point &point) {
 }
 
 bool ModalMainMenu::isOverArea(PictureObject *obj, Common::Point *point) {
-	const Dims dims = obj->getDimensions();
+	const Dims dims = obj->getFullSize();
 
 	int left = point->x - 8;
 	int right = point->x + 12;
@@ -1940,13 +1940,13 @@ void ModalQuery::update() {
 	if (_bgScene)
 		_bgScene->render();
 
-	_bg->draw();
+	_bg->render();
 
 	if (_okBtn->_flags & 4)
-		_okBtn->draw();
+		_okBtn->render();
 
 	if (_cancelBtn->_flags & 4)
-		_cancelBtn->draw();
+		_cancelBtn->render();
 }
 
 bool ModalQuery::handleMessage(Command *cmd) {
@@ -2162,7 +2162,7 @@ void ModalSaveGame::setup(Scene *sc, int mode) {
 	_arrayL.push_back(sc->findPictureObjectById(PIC_MSV_SPACE_D, 0));
 	_arrayD.push_back(sc->findPictureObjectById(PIC_MSV_SPACE_L, 0));
 
-	int x = _bgr->_x + _bgr->getDimensions().x / 2;
+	int x = _bgr->_x + _bgr->getFullSize().x / 2;
 	int y = _bgr->_y + 90;
 	int w;
 
@@ -2175,19 +2175,19 @@ void ModalSaveGame::setup(Scene *sc, int mode) {
 
 		if (!getFileInfo(i, &fileinfo)) {
 			fileinfo.empty = true;
-			w = _emptyD->getDimensions().x;
+			w = _emptyD->getFullSize().x;
 		} else {
 			w = 0;
 
 			for (uint j = 0; j < _arrayL.size(); j++) {
-				w += _arrayL[j]->getDimensions().x + 2;
+				w += _arrayL[j]->getFullSize().x + 2;
 			}
 		}
 
 		fileinfo.fx1 = x - w / 2;
 		fileinfo.fx2 = x + w / 2;
 		fileinfo.fy1 = y;
-		fileinfo.fy2 = y + _emptyD->getDimensions().y;
+		fileinfo.fy2 = y + _emptyD->getFullSize().y;
 		y = fileinfo.fy2 + 3;
 	}
 }
@@ -2254,7 +2254,7 @@ void ModalSaveGame::update() {
 	if (_menuScene)
 		_menuScene->render();
 
-	_bgr->draw();
+	_bgr->render();
 
 	if (_queryDlg) {
 		_queryDlg->update();
@@ -2271,37 +2271,37 @@ void ModalSaveGame::update() {
 			g_nmi->_mouseScreenPos.y < _files[i].fy1 || g_nmi->_mouseScreenPos.y > _files[i].fy2 ) {
 			if (_files[i].empty) {
 				_emptyD->setPos(_files[i].fx1, _files[i].fy1);
-				_emptyD->draw();
+				_emptyD->render();
 			} else {
 				int x = _files[i].fx1;
 
 				for (int j = 0; j < 16; j++) {
 					_arrayL[_files[i].date[j]]->setPos(x + 1, _files[i].fy1);
-					_arrayL[_files[i].date[j]]->draw();
+					_arrayL[_files[i].date[j]]->render();
 
-					x += _arrayL[_files[i].date[j]]->getDimensions().x + 2;
+					x += _arrayL[_files[i].date[j]]->getFullSize().x + 2;
 				}
 			}
 		} else {
 			if (_files[i].empty) {
 				_emptyL->setPos(_files[i].fx1, _files[i].fy1);
-				_emptyL->draw();
+				_emptyL->render();
 			} else {
 				int x = _files[i].fx1;
 
 				for (int j = 0; j < 16; j++) {
 					_arrayD[_files[i].date[j]]->setPos(x + 1, _files[i].fy1);
-					_arrayD[_files[i].date[j]]->draw();
+					_arrayD[_files[i].date[j]]->render();
 
-					x += _arrayD[_files[i].date[j]]->getDimensions().x + 2;
+					x += _arrayD[_files[i].date[j]]->getFullSize().x + 2;
 				}
 			}
 		}
 	}
-	if (_cancelL->isPixelHitAtPos(g_nmi->_mouseScreenPos.x, g_nmi->_mouseScreenPos.y))
-		_cancelL->draw();
-	else if (_okL->isPixelHitAtPos(g_nmi->_mouseScreenPos.x, g_nmi->_mouseScreenPos.y))
-		_okL->draw();
+	if (_cancelL->hit(g_nmi->_mouseScreenPos.x, g_nmi->_mouseScreenPos.y))
+		_cancelL->render();
+	else if (_okL->hit(g_nmi->_mouseScreenPos.x, g_nmi->_mouseScreenPos.y))
+		_okL->render();
 }
 
 bool ModalSaveGame::handleMessage(Command *cmd) {
@@ -2333,7 +2333,7 @@ void ModalSaveGame::processMouse(int x, int y) {
 		}
 	}
 
-	if (_cancelL->isPixelHitAtPos(x, y))
+	if (_cancelL->hit(x, y))
 		_queryRes = 0;
 }
 
@@ -2508,13 +2508,13 @@ void ModalDemo::update() {
 		return;
 	}
 
-	_bg->draw();
+	_bg->render();
 
 	if (_button->_flags & 4)
-		_button->draw();
+		_button->render();
 
 	if (_text->_flags & 4)
-		_text->draw();
+		_text->render();
 }
 
 bool ModalDemo::handleMessage(Command *cmd) {

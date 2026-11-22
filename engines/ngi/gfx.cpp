@@ -139,14 +139,14 @@ bool PictureObject::load(MfcArchive &file, bool bigPicture) {
 	return true;
 }
 
-void PictureObject::draw() {
+void PictureObject::render() {
 	if (_flags & 1)
 		_picture->draw(_x, _y, 2, 0);
 	else
 		_picture->draw(_x, _y, 0, 0);
 }
 
-void PictureObject::drawAt(int x, int y) {
+void PictureObject::renderAtPos(int x, int y) {
 	if (x == -1)
 		x = _x;
 	if (y == -1)
@@ -195,7 +195,7 @@ bool PictureObject::isPointInside(int x, int y) {
 	return res;
 }
 
-bool PictureObject::isPixelHitAtPos(int x, int y) {
+bool PictureObject::hit(int x, int y) {
 	int oldx = _picture->_x;
 	int oldy = _picture->_y;
 

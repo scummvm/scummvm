@@ -259,7 +259,7 @@ void Inventory::recalcItemPos() {
 		icn.pictureObjectHover = _scene->findPictureObjectById(_itemsPool[idx].pictureObjectHover, 0);
 		icn.pictureObjectSelected = _scene->findPictureObjectById(_itemsPool[idx].pictureObjectSelected, 0);
 
-		const Dims dims = icn.pictureObjectNormal->getDimensions();
+		const Dims dims = icn.pictureObjectNormal->getFullSize();
 
 		if (_itemsPool[idx].flags & 0x10000) {
 			icn.x1 = 730;
@@ -297,12 +297,12 @@ void Inventory::render() {
 		const InventoryIcon &icn = _inventoryIcons[i];
 
 		if (icn.isSelected) {
-			icn.pictureObjectSelected->drawAt(icn.x1, icn.y1 + 10);
+			icn.pictureObjectSelected->renderAtPos(icn.x1, icn.y1 + 10);
 		} else {
 			if (icn.isMouseHover)
-				icn.pictureObjectHover->drawAt(icn.x1, icn.y1 + 10);
+				icn.pictureObjectHover->renderAtPos(icn.x1, icn.y1 + 10);
 			else
-				icn.pictureObjectNormal->drawAt(icn.x1, icn.y1 + 10);
+				icn.pictureObjectNormal->renderAtPos(icn.x1, icn.y1 + 10);
 		}
 	}
 

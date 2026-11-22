@@ -584,7 +584,7 @@ void Scene::updateScrolling2() {
 		int offsetY = 0;
 		int offsetX = 0;
 
-		const Dims dims = _picObjList[0]->getDimensions();
+		const Dims dims = _picObjList[0]->getFullSize();
 		const int flags = _picObjList[0]->_flags;
 
 		if (g_nmi->_sceneRect.left < 0 && !(flags & 2))
@@ -624,7 +624,7 @@ PictureObject *Scene::findPictureObjectAtPos(int x, int y) {
 	for (uint i = 0; i < _picObjList.size(); i++) {
 		PictureObject *p = _picObjList[i];
 		if ((p->_objectFlags & 0x100) && (p->_flags & 4) &&
-				p->isPixelHitAtPos(x, y) &&
+				p->hit(x, y) &&
 				(!res || res->_z >= p->_z))
 			res = p;
 	}
@@ -639,7 +639,7 @@ int Scene::getPictureObjectIdAtPos(int x, int y) {
 	for (uint i = 0; i < _picObjList.size(); i++) {
 		PictureObject *p = _picObjList[i];
 		if ((p->_objectFlags & 0x100) && (p->_flags & 4) &&
-				p->isPixelHitAtPos(x, y) &&
+				p->hit(x, y) &&
 				(!res || resp->_z >= p->_z)) {
 			resp = p;
 			res = p->_id;
@@ -695,7 +695,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 
 		debugC(8, kDebugDrawing, "w: %d h:%d", width, height);
 
-		dims = _picObjList[0]->getDimensions();
+		dims = _picObjList[0]->getFullSize();
 
 		debugC(8, kDebugDrawing, "w2: %d h2:%d", dims.x, dims.y);
 
@@ -760,7 +760,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 
 		debugC(8, kDebugDrawing, "obj: %d %d", objX, objY);
 
-		dims = obj->getDimensions();
+		dims = obj->getFullSize();
 
 		int width = dims.x;
 		int height = dims.y;
@@ -787,17 +787,17 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 			}
 		}
 		if (obj->_flags & 4)
-			obj->draw();
+			obj->render();
 
 		if (obj->_flags & 2) {
 			if (objX > g_nmi->_sceneRect.left) {
 				obj->setPos(objX - width, objY);
-				obj->draw();
+				obj->render();
 				obj->setPos(objX, objY);
 			}
 			if (width + objX < g_nmi->_sceneRect.right) {
 				obj->setPos(width + objX, objY);
-				obj->draw();
+				obj->render();
 				obj->setPos(objX, objY);
 			}
 		}
@@ -805,12 +805,12 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 		if (obj->_flags & 0x20) {
 			if (objY > g_nmi->_sceneRect.top) {
 				obj->setPos(objX, objY - height);
-				obj->draw();
+				obj->render();
 				obj->setPos(objX, objY);
 			}
 			if (height + objY < g_nmi->_sceneRect.bottom) {
 				obj->setPos(objX, height + objY);
-				obj->draw();
+				obj->render();
 				obj->setPos(objX, objY);
 			}
 		}

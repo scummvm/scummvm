@@ -47,7 +47,7 @@ GameObject *sceneHandlerDbgMenu_getObjectAtXY(int x, int y) {
 		PictureObject *pic = g_nmi->_currentScene->_picObjList[i];
 
 		if (x >= pic->_x && y >= pic->_y) {
-			const Dims dims = pic->getDimensions();
+			const Dims dims = pic->getFullSize();
 			if (x <= pic->_x + dims.x && y <= pic->_y + dims.y && pic != g_vars->selector)
 				return pic;
 		}
