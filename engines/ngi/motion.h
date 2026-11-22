@@ -399,11 +399,11 @@ public:
 
 class MctlConnectionPoint : public CObject {
 public:
-	int _connectionX;
-	int _connectionY;
-	int _mctlflags;
-	int _mctlstatic;
-	int16 _mctlmirror;
+	int _x;
+	int _y;
+	int _flags;
+	int _static;
+	int16 _mirror;
 	Common::ScopedPtr<MessageQueue> _messageQueueObj;
 	int _motionControllerObj;
 

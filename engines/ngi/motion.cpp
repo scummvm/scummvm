@@ -232,7 +232,7 @@ MessageQueue *MctlCompound::startMove(StaticANIObject *ani, int sourceX, int sou
 	if (!cp)
 		return nullptr;
 
-	MessageQueue *mq = _motionControllers[idx]->_motionControllerObj->makeQueue(ani, cp->_connectionX, cp->_connectionY, 1, cp->_mctlmirror);
+	MessageQueue *mq = _motionControllers[idx]->_motionControllerObj->makeQueue(ani, cp->_x, cp->_y, 1, cp->_mirror);
 
 	if (!mq)
 		return nullptr;
@@ -303,7 +303,7 @@ MessageQueue *MctlCompound::makeQueue(StaticANIObject *subj, int xpos, int ypos,
 	if (!closestP)
 		return nullptr;
 
-	MessageQueue *mq = _motionControllers[match1]->_motionControllerObj->makeQueue(subj, closestP->_connectionX, closestP->_connectionY, 1, closestP->_mctlmirror);
+	MessageQueue *mq = _motionControllers[match1]->_motionControllerObj->makeQueue(subj, closestP->_x, closestP->_y, 1, closestP->_mirror);
 
 	ExCommand *ex;
 
@@ -676,8 +676,8 @@ MctlConnectionPoint *MctlCompound::findClosestConnectionPoint(int ox, int oy, in
 			if (_motionControllers[j]->_movGraphReactObj) {
 				MctlConnectionPoint *pt = _motionControllers[sourceIdx]->_connectionPoints[i];
 
-				if (_motionControllers[j]->_movGraphReactObj->hitTest(pt->_connectionX, pt->_connectionY)) {
-					MctlConnectionPoint *npt = findClosestConnectionPoint(ox, oy, destIndex, pt->_connectionX, pt->_connectionY, j, &currDistance);
+				if (_motionControllers[j]->_movGraphReactObj->hitTest(pt->_x, pt->_y)) {
+					MctlConnectionPoint *npt = findClosestConnectionPoint(ox, oy, destIndex, pt->_x, pt->_y, j, &currDistance);
 
 					if (currDistance < minDistance) {
 						minDistance = currDistance;
@@ -715,11 +715,11 @@ void MctlCompound::replaceNodeX(int from, int to) {
 }
 
 MctlConnectionPoint::MctlConnectionPoint() {
-	_connectionX = 0;
-	_connectionY = 0;
-	_mctlflags = 0;
-	_mctlstatic = 0;
-	_mctlmirror = 0;
+	_x = 0;
+	_y = 0;
+	_flags = 0;
+	_static = 0;
+	_mirror = 0;
 }
 
 void MctlMQ::clear() {
