@@ -129,7 +129,7 @@ const char *callableNamesRes_br[] = {
 	"resetpalette",
 	"ferrcycle",
 	"lipsinc",
-	"albycle",
+	"albcycle",
 	"password"
 };
 
