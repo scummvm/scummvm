@@ -82,12 +82,12 @@ public:
 	Common::ScopedPtr<MotionController> _motionControllerObj;
 	Common::ScopedPtr<MovGraphReact> _movGraphReactObj;
 	Common::Array<MctlConnectionPoint *> _connectionPoints;
-	int _field_20;
-	int _field_24;
-	int _field_28;
+	int _ofsX;
+	int _ofsY;
+	int _ofsZ;
 
 public:
-	MctlItem() : _field_20(0), _field_24(0), _field_28(0) {}
+	MctlItem() : _ofsX(0), _ofsY(0), _ofsZ(0) {}
 	~MctlItem() override;
 };
 

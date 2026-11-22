@@ -131,8 +131,8 @@ bool MctlCompound::load(MfcArchive &file) {
 			obj->_connectionPoints.push_back(obj1);
 		}
 
-		obj->_field_20 = file.readUint32LE();
-		obj->_field_24 = file.readUint32LE();
+		obj->_ofsX = file.readUint32LE();
+		obj->_ofsY = file.readUint32LE();
 
 		debugC(6, kDebugLoading, "graphReact");
 		obj->_movGraphReactObj.reset(file.readClass<MovGraphReact>());
