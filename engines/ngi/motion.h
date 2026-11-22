@@ -29,7 +29,7 @@ namespace NGI {
 class MctlConnectionPoint;
 class MovGraphLink;
 class MessageQueue;
-struct MovArr;
+struct GrPathDesc;
 struct MovItem;
 
 int startWalkTo(int objId, int objKey, int x, int y, int a5);
@@ -56,7 +56,7 @@ public:
 	virtual bool setPosImmediate(AniObject *obj, int x, int y) { return false; }
 	virtual int method30() { return 0; }
 	virtual MessageQueue *startMove(AniObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) { return 0; }
-	virtual void setSelFunc(MovArr *(*_callback1)(AniObject *ani, Common::Array<MovItem *> *items, signed int counter)) {}
+	virtual void setSelFunc(GrPathDesc *(*_callback1)(AniObject *ani, Common::Array<MovItem *> *items, signed int counter)) {}
 	virtual bool resetPosition(AniObject *ani, int flag) { return 0; }
 	virtual int checkCurrentPath() { return 0; }
 	virtual bool canDropInventory(AniObject *ani, int x, int y) { return false; }
@@ -232,21 +232,21 @@ class MovGraphLink : public CObject {
 typedef Common::Array<MovGraphLink *> MovGraphLinkList;
 
 struct MovStep {
-	int sfield_0;
+	int reverse;
 	MovGraphLink *link;
 };
 
-struct MovArr {
-	Common::Array<MovStep *> _movSteps;
-	int _movStepCount;
+struct GrPathDesc {
+	Common::Array<MovStep *> _steps;
+	int _stepCount;
 	int _afield_8;
 	MovGraphLink *_link;
-	double _dist;
-	Common::Point _point;
+	double _linkFraction;
+	Common::Point _position;
 };
 
 struct MovItem {
-	MovArr *movarr;
+	GrPathDesc *movarr;
 	int _mfield_4;
 	int _mfield_8;
 	int _mfield_C;
@@ -255,7 +255,7 @@ struct MovItem {
 struct MovGraphItem {
 	AniObject *ani;
 	int field_4;
-	MovArr movarr;
+	GrPathDesc movarr;
 	Common::Array<MovItem *> *mi_movitems;
 	int count;
 	int field_30;
@@ -278,7 +278,7 @@ private:
 	LinkList _links;
 	int _linkItemOffset;
 	Common::Array<MovGraphItem> _items;
-	MovArr *(*_selFunc)(AniObject *ani, Common::Array<MovItem *> *items, signed int counter);
+	GrPathDesc *(*_selFunc)(AniObject *ani, Common::Array<MovItem *> *items, signed int counter);
 	AniHandler _aniHandler;
 
 public:
@@ -295,24 +295,24 @@ public:
 	Common::Array<MovItem *> *getPaths(AniObject *ani, int x, int y, int flag1, int *rescount) override;
 	bool setPosImmediate(AniObject *obj, int x, int y) override;
 	MessageQueue *startMove(AniObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) override;
-	void setSelFunc(MovArr *(*_selFunc)(AniObject *ani, Common::Array<MovItem *> *items, signed int counter)) override;
+	void setSelFunc(GrPathDesc *(*_selFunc)(AniObject *ani, Common::Array<MovItem *> *items, signed int counter)) override;
 	bool resetPosition(AniObject *ani, int flag) override;
 	bool canDropInventory(AniObject *ani, int x, int y) override;
 	MessageQueue *makeQueue(AniObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) override;
-	virtual MessageQueue *method50(AniObject *ani, MovArr *movarr, int staticsId);
+	virtual MessageQueue *method50(AniObject *ani, GrPathDesc *movarr, int staticsId);
 
 	double putToLink(Common::Point *point, MovGraphLink *link, int fuzzyMatch);
 	void recalcLinkParams();
-	bool getNearestPoint(int unusedArg, Common::Point *p, MovArr *movarr);
+	bool getNearestPoint(int unusedArg, Common::Point *p, GrPathDesc *movarr);
 	MovGraphNode *findNearestNode(int ox, int oy);
 	int getObjectIndex(AniObject *ani);
-	Common::Array<MovArr *> *getHitPoints(int x, int y, int *arrSize, int flag1, int flag2);
+	Common::Array<GrPathDesc *> *getHitPoints(int x, int y, int *arrSize, int flag1, int flag2);
 	void findAllPaths(MovGraphLink *lnk, MovGraphLink *lnk2, MovGraphLinkList &tempObList1, MovGraphLinkList &tempObList2);
-	Common::Array<MovItem *> *getPaths(MovArr *movarr1, MovArr *movarr2, int *listCount);
-	void genMovItem(MovItem *movitem, MovGraphLink *grlink, MovArr *movarr1, MovArr *movarr2);
-	bool getHitPoint(int idx, int x, int y, MovArr *arr, int a6);
+	Common::Array<MovItem *> *getPaths(GrPathDesc *movarr1, GrPathDesc *movarr2, int *listCount);
+	void genMovItem(MovItem *movitem, MovGraphLink *grlink, GrPathDesc *movarr1, GrPathDesc *movarr2);
+	bool getHitPoint(int idx, int x, int y, GrPathDesc *arr, int a6);
 	MessageQueue *sub1(AniObject *ani, int x, int y, int a5, int x1, int y1, int a8, int a9);
-	MessageQueue *makeWholeQueue(AniObject *ani, MovArr *movarr, int staticsId);
+	MessageQueue *makeWholeQueue(AniObject *ani, GrPathDesc *movarr, int staticsId);
 	void setEnds(MovStep *step1, MovStep *step2);
 };
 

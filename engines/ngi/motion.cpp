@@ -754,7 +754,7 @@ void MovGraphItem::free() {
 		return;
 
 	for (uint i = 0; i < mi_movitems->size(); i++) {
-		(*mi_movitems)[i]->movarr->_movSteps.clear();
+		(*mi_movitems)[i]->movarr->_steps.clear();
 		delete (*mi_movitems)[i]->movarr;
 	}
 
@@ -763,7 +763,7 @@ void MovGraphItem::free() {
 	mi_movitems = nullptr;
 }
 
-MovArr *getPreferredPath(AniObject *ani, Common::Array<MovItem *> *items, signed int counter) {
+GrPathDesc *getPreferredPath(AniObject *ani, Common::Array<MovItem *> *items, signed int counter) {
 	int residx = 0;
 	int itemidx = 0;
 
@@ -834,7 +834,7 @@ void MovGraph::detachAllObjects() {
 	for (uint i = 0; i < _items.size(); i++) {
 		_items[i].free();
 
-		_items[i].movarr._movSteps.clear();
+		_items[i].movarr._steps.clear();
 	}
 
 	_items.clear();
@@ -860,7 +860,7 @@ Common::Array<MovItem *> *MovGraph::getPaths(AniObject *ani, int x, int y, int f
 
 	recalcLinkParams();
 
-	_items[idx].movarr._movSteps.clear();
+	_items[idx].movarr._steps.clear();
 
 	Common::Point point;
 
@@ -876,7 +876,7 @@ Common::Array<MovItem *> *MovGraph::getPaths(AniObject *ani, int x, int y, int f
 	_items[idx].mi_movitems = nullptr;
 
 	int arrSize;
-	Common::Array<MovArr *> *movarr = getHitPoints(x, y, &arrSize, flag1, 0);
+	Common::Array<GrPathDesc *> *movarr = getHitPoints(x, y, &arrSize, flag1, 0);
 
 	if (movarr) {
 		for (int i = 0; i < arrSize; i++) {
@@ -984,7 +984,7 @@ MessageQueue *MovGraph::startMove(AniObject *ani, int xpos, int ypos, int fuzzyM
 	return method50(ani, _selFunc(ani, movitems, count), staticsId);
 }
 
-void MovGraph::setSelFunc(MovArr *(*callback1)(AniObject *ani, Common::Array<MovItem *> *items, signed int counter)) {
+void MovGraph::setSelFunc(GrPathDesc *(*callback1)(AniObject *ani, Common::Array<MovItem *> *items, signed int counter)) {
 	_selFunc = callback1;
 }
 
@@ -997,7 +997,7 @@ bool MovGraph::resetPosition(AniObject *ani, int flag) {
 		return false;
 
 	Common::Point point;
-	MovArr movarr;
+	GrPathDesc movarr;
 
 	point.x = ani->_x;
 	point.y = ani->_y;
@@ -1027,7 +1027,7 @@ bool MovGraph::resetPosition(AniObject *ani, int flag) {
 
 bool MovGraph::canDropInventory(AniObject *ani, int x, int y) {
 	int idx = getObjectIndex(ani);
-	MovArr m;
+	GrPathDesc m;
 
 	if (idx != -1) {
 		if (x != -1 || y != -1) {
@@ -1036,11 +1036,11 @@ bool MovGraph::canDropInventory(AniObject *ani, int x, int y) {
 			Common::Array<MovItem *> *movitem = getPaths(ani, x, y, 0, &counter);
 
 			if (movitem) {
-				MovArr *movarr = _selFunc(ani, movitem, counter);
-				int cnt = movarr->_movStepCount;
+				GrPathDesc *movarr = _selFunc(ani, movitem, counter);
+				int cnt = movarr->_stepCount;
 
 				if (cnt > 0) {
-					if (movarr->_movSteps[cnt - 1]->link->_flags & 0x4000000)
+					if (movarr->_steps[cnt - 1]->link->_flags & 0x4000000)
 						return true;
 				}
 			}
@@ -1063,7 +1063,7 @@ MessageQueue *MovGraph::makeQueue(AniObject *subj, int xpos, int ypos, int fuzzy
 	subj->getPicAniInfo(picAniInfo);
 
 	if (movitem) {
-		MovArr *goal = _selFunc(subj, movitem, ss);
+		GrPathDesc *goal = _selFunc(subj, movitem, ss);
 		int idx = getObjectIndex(subj);
 
 		for (int i = 0; i < _items[idx].count; i++) {
@@ -1091,7 +1091,7 @@ MessageQueue *MovGraph::makeQueue(AniObject *subj, int xpos, int ypos, int fuzzy
 
 	movitem = getPaths(subj, xpos, ypos, fuzzyMatch, &ss);
 	if (movitem) {
-		MovArr *goal = _selFunc(subj, movitem, ss);
+		GrPathDesc *goal = _selFunc(subj, movitem, ss);
 		int idx = getObjectIndex(subj);
 
 		if (_items[idx].count > 0) {
@@ -1106,9 +1106,9 @@ MessageQueue *MovGraph::makeQueue(AniObject *subj, int xpos, int ypos, int fuzzy
 				}
 			}
 
-			_items[idx].movarr._movSteps.clear();
+			_items[idx].movarr._steps.clear();
 			_items[idx].movarr = *(*_items[idx].mi_movitems)[arridx]->movarr;
-			_items[idx].movarr._movSteps = (*_items[idx].mi_movitems)[arridx]->movarr->_movSteps;
+			_items[idx].movarr._steps = (*_items[idx].mi_movitems)[arridx]->movarr->_steps;
 			_items[idx].movarr._afield_8 = -1;
 			_items[idx].movarr._link = nullptr;
 
@@ -1155,7 +1155,7 @@ MessageQueue *MovGraph::sub1(AniObject *ani, int x, int y, int stid, int x1, int
 
 	MessageQueue *res = nullptr;
 
-	MovArr *goal = _selFunc(ani, movitems, rescount);
+	GrPathDesc *goal = _selFunc(ani, movitems, rescount);
 	int idx = getObjectIndex(ani);
 
 	MovGraphItem &movgitem = _items[idx];
@@ -1163,9 +1163,9 @@ MessageQueue *MovGraph::sub1(AniObject *ani, int x, int y, int stid, int x1, int
 
 	for (int nidx = 0; nidx < cnt; nidx++) {
 		if ((*movgitem.mi_movitems)[nidx]->movarr == goal) {
-			movgitem.movarr._movSteps.clear();
+			movgitem.movarr._steps.clear();
 			_items[idx].movarr = *(*movgitem.mi_movitems)[nidx]->movarr;
-			_items[idx].movarr._movSteps = (*movgitem.mi_movitems)[nidx]->movarr->_movSteps;
+			_items[idx].movarr._steps = (*movgitem.mi_movitems)[nidx]->movarr->_steps;
 			_items[idx].movarr._afield_8 = -1;
 			_items[idx].movarr._link = nullptr;
 
@@ -1180,10 +1180,10 @@ MessageQueue *MovGraph::sub1(AniObject *ani, int x, int y, int stid, int x1, int
 	return res;
 }
 
-MessageQueue *MovGraph::makeWholeQueue(AniObject *ani, MovArr *movarr, int staticsId) {
+MessageQueue *MovGraph::makeWholeQueue(AniObject *ani, GrPathDesc *movarr, int staticsId) {
 	debugC(4, kDebugPathfinding, "MovGraph::makeWholeQueue(*%d, *, %d)", (ani ? ani->_id : -1), staticsId);
 
-	if (!movarr->_movStepCount)
+	if (!movarr->_stepCount)
 		return nullptr;
 
 	MessageQueue *mq = nullptr;
@@ -1192,35 +1192,35 @@ MessageQueue *MovGraph::makeWholeQueue(AniObject *ani, MovArr *movarr, int stati
 	int id1 = 0;
 	int id2;
 
-	for (int i = 0; i < movarr->_movStepCount; i++) {
-		while (i < movarr->_movStepCount - 1) {
-			if (movarr->_movSteps[i    ]->link->_movementIds[movarr->_movSteps[i - 1]->sfield_0 + _linkItemOffset] !=
-				movarr->_movSteps[i + 1]->link->_movementIds[movarr->_movSteps[i    ]->sfield_0 + _linkItemOffset])
+	for (int i = 0; i < movarr->_stepCount; i++) {
+		while (i < movarr->_stepCount - 1) {
+			if (movarr->_steps[i    ]->link->_movementIds[movarr->_steps[i - 1]->reverse + _linkItemOffset] !=
+				movarr->_steps[i + 1]->link->_movementIds[movarr->_steps[i    ]->reverse + _linkItemOffset])
 				break;
 			i++;
 		}
 
-		MovStep *st = movarr->_movSteps[i];
+		MovStep *st = movarr->_steps[i];
 
-		ani->getMovement(st->link->_movementIds[_linkItemOffset + st->sfield_0]);
+		ani->getMovement(st->link->_movementIds[_linkItemOffset + st->reverse]);
 
-		if (i == movarr->_movStepCount - 1 && staticsId) {
+		if (i == movarr->_stepCount - 1 && staticsId) {
 			id2 = staticsId;
 		} else {
-			if (i < movarr->_movStepCount - 1)
-				id2 = ani->getMovement(movarr->_movSteps[i + 1]->link->_movementIds[_linkItemOffset + st->sfield_0])->_prevStatic->_staticsId;
+			if (i < movarr->_stepCount - 1)
+				id2 = ani->getMovement(movarr->_steps[i + 1]->link->_movementIds[_linkItemOffset + st->reverse])->_prevStatic->_staticsId;
 			else
-				id2 = st->link->_staticsIds[_linkItemOffset + st->sfield_0];
+				id2 = st->link->_staticsIds[_linkItemOffset + st->reverse];
 		}
 
 		int nx, ny, nd;
 
-		if (i == movarr->_movStepCount - 1) {
-			nx = movarr->_point.x;
-			ny = movarr->_point.y;
+		if (i == movarr->_stepCount - 1) {
+			nx = movarr->_position.x;
+			ny = movarr->_position.y;
 			nd = st->link->_graphSrc->_z;
 		} else {
-			if (st->sfield_0) {
+			if (st->reverse) {
 				nx = st->link->_graphSrc->_x;
 				ny = st->link->_graphSrc->_y;
 				nd = st->link->_graphSrc->_z;
@@ -1242,7 +1242,7 @@ MessageQueue *MovGraph::makeWholeQueue(AniObject *ani, MovArr *movarr, int stati
 		mkQueue.y2 = oy;
 		mkQueue.y1 = ny;
 		mkQueue.destZ = nd;
-		mkQueue.movementId = st->link->_movementIds[_linkItemOffset + st->sfield_0];
+		mkQueue.movementId = st->link->_movementIds[_linkItemOffset + st->reverse];
 
 		mkQueue.flags = 0xe;
 		if (mq)
@@ -1268,7 +1268,7 @@ MessageQueue *MovGraph::makeWholeQueue(AniObject *ani, MovArr *movarr, int stati
 	return mq;
 }
 
-MessageQueue *MovGraph::method50(AniObject *ani, MovArr *movarr, int staticsId) {
+MessageQueue *MovGraph::method50(AniObject *ani, GrPathDesc *movarr, int staticsId) {
 	debugC(4, kDebugPathfinding, "MovGraph::method50(*%d, *, %d)", (ani ? ani->_id : -1), staticsId);
 
 	if (_items.size() == 0)
@@ -1299,9 +1299,9 @@ MessageQueue *MovGraph::method50(AniObject *ani, MovArr *movarr, int staticsId) 
 		}
 	}
 
-	_items[idx].movarr._movSteps.clear();
+	_items[idx].movarr._steps.clear();
 	_items[idx].movarr = *(*_items[idx].mi_movitems)[movidx]->movarr;
-	_items[idx].movarr._movSteps = (*_items[idx].mi_movitems)[movidx]->movarr->_movSteps;
+	_items[idx].movarr._steps = (*_items[idx].mi_movitems)[movidx]->movarr->_steps;
 	_items[idx].movarr._afield_8 = -1;
 	_items[idx].movarr._link = nullptr;
 
@@ -1377,7 +1377,7 @@ void MovGraph::recalcLinkParams() {
 	}
 }
 
-bool MovGraph::getNearestPoint(int unusedArg, Common::Point *p, MovArr *movarr) {
+bool MovGraph::getNearestPoint(int unusedArg, Common::Point *p, GrPathDesc *movarr) {
 	debugC(4, kDebugPathfinding, "MovGraph::getNearestPoint(...)");
 
 	MovGraphLink *link = nullptr;
@@ -1442,7 +1442,7 @@ int MovGraph::getObjectIndex(AniObject *ani) {
 	return -1;
 }
 
-Common::Array<MovArr *> *MovGraph::getHitPoints(int x, int y, int *arrSize, int flag1, int flag2) {
+Common::Array<GrPathDesc *> *MovGraph::getHitPoints(int x, int y, int *arrSize, int flag1, int flag2) {
 	debugC(4, kDebugPathfinding, "MovGraph::getHitPoints(...)");
 
 	if (!_links.size()) {
@@ -1451,8 +1451,8 @@ Common::Array<MovArr *> *MovGraph::getHitPoints(int x, int y, int *arrSize, int 
 		return nullptr;
 	}
 
-	Common::Array<MovArr *> *arr = new Common::Array<MovArr *>;
-	MovArr *movarr;
+	Common::Array<GrPathDesc *> *arr = new Common::Array<GrPathDesc *>;
+	GrPathDesc *movarr;
 
 	for (LinkList::iterator i = _links.begin(); i != _links.end(); ++i) {
 		MovGraphLink *lnk = static_cast<MovGraphLink *>(*i);
@@ -1462,13 +1462,13 @@ Common::Array<MovArr *> *MovGraph::getHitPoints(int x, int y, int *arrSize, int 
 			double dist = putToLink(&point, lnk, 0);
 
 			if (dist >= 0.0 && dist < 2.0) {
-				movarr = new MovArr;
+				movarr = new GrPathDesc;
 
 				movarr->_link = lnk;
-				movarr->_dist = ((double)(lnk->_graphSrc->_y - lnk->_graphDst->_y) * (double)(lnk->_graphSrc->_y - point.y) +
+				movarr->_linkFraction = ((double)(lnk->_graphSrc->_y - lnk->_graphDst->_y) * (double)(lnk->_graphSrc->_y - point.y) +
 								 (double)(lnk->_graphDst->_x - lnk->_graphSrc->_x) * (double)(point.x - lnk->_graphSrc->_x)) /
 					lnk->_length / lnk->_length;
-				movarr->_point = point;
+				movarr->_position = point;
 
 				arr->push_back(movarr);
 			}
@@ -1477,30 +1477,30 @@ Common::Array<MovArr *> *MovGraph::getHitPoints(int x, int y, int *arrSize, int 
 				if (lnk->_movGraphReact->hitTest(x, y)) {
 					if (!(lnk->_flags & 0x10000000) || lnk->_flags & 0x20000000) {
 						if (!flag2) {
-							movarr = new MovArr;
+							movarr = new GrPathDesc;
 							movarr->_link = lnk;
-							movarr->_dist = 0.0;
-							movarr->_point.x = lnk->_graphSrc->_x;
-							movarr->_point.y = lnk->_graphSrc->_y;
+							movarr->_linkFraction = 0.0;
+							movarr->_position.x = lnk->_graphSrc->_x;
+							movarr->_position.y = lnk->_graphSrc->_y;
 							arr->push_back(movarr);
 
-							movarr = new MovArr;
+							movarr = new GrPathDesc;
 							movarr->_link = lnk;
-							movarr->_dist = 1.0;
-							movarr->_point.x = lnk->_graphSrc->_x;
-							movarr->_point.y = lnk->_graphSrc->_y;
+							movarr->_linkFraction = 1.0;
+							movarr->_position.x = lnk->_graphSrc->_x;
+							movarr->_position.y = lnk->_graphSrc->_y;
 							arr->push_back(movarr);
 						}
 					} else {
-						movarr = new MovArr;
+						movarr = new GrPathDesc;
 						movarr->_link = lnk;
-						movarr->_dist = ((double)(lnk->_graphSrc->_y - lnk->_graphDst->_y) * (double)(lnk->_graphSrc->_y - y) +
+						movarr->_linkFraction = ((double)(lnk->_graphSrc->_y - lnk->_graphDst->_y) * (double)(lnk->_graphSrc->_y - y) +
 										 (double)(lnk->_graphDst->_x - lnk->_graphSrc->_x) * (double)(x - lnk->_graphSrc->_x)) /
 							lnk->_length / lnk->_length;
-						movarr->_point.x = x;
-						movarr->_point.y = y;
+						movarr->_position.x = x;
+						movarr->_position.y = y;
 
-						putToLink(&movarr->_point, lnk, 0);
+						putToLink(&movarr->_position, lnk, 0);
 
 						arr->push_back(movarr);
 					}
@@ -1546,7 +1546,7 @@ void MovGraph::findAllPaths(MovGraphLink *lnk, MovGraphLink *lnk2, MovGraphLinkL
 }
 
 // Returns a list of possible paths two points in graph space
-Common::Array<MovItem *> *MovGraph::getPaths(MovArr *currPos, MovArr *destPos, int *pathCount) {
+Common::Array<MovItem *> *MovGraph::getPaths(GrPathDesc *currPos, GrPathDesc *destPos, int *pathCount) {
 	debugC(4, kDebugPathfinding, "MovGraph::getPaths(...)");
 
 	MovGraphLinkList tempObList1;
@@ -1580,11 +1580,11 @@ Common::Array<MovItem *> *MovGraph::getPaths(MovArr *currPos, MovArr *destPos, i
 	return res;
 }
 
-void MovGraph::genMovItem(MovItem *movitem, MovGraphLink *grlink, MovArr *movarr1, MovArr *movarr2) {
+void MovGraph::genMovItem(MovItem *movitem, MovGraphLink *grlink, GrPathDesc *movarr1, GrPathDesc *movarr2) {
 	warning("STUB: MovGraph::genMovItem()");
 }
 
-bool MovGraph::getHitPoint(int idx, int x, int y, MovArr *arr, int a6) {
+bool MovGraph::getHitPoint(int idx, int x, int y, GrPathDesc *arr, int a6) {
 	int staticsId;
 
 	if (_items[idx].ani->_statics) {
@@ -1598,7 +1598,7 @@ bool MovGraph::getHitPoint(int idx, int x, int y, MovArr *arr, int a6) {
 
 	int arrSize;
 
-	Common::Array<MovArr *> *movarr = getHitPoints(x, y, &arrSize, 0, 1);
+	Common::Array<GrPathDesc *> *movarr = getHitPoints(x, y, &arrSize, 0, 1);
 
 	if (!movarr)
 		return getNearestPoint(idx, nullptr, arr);
@@ -1638,22 +1638,22 @@ void MovGraph::setEnds(MovStep *step1, MovStep *step2) {
 	debugC(4, kDebugPathfinding, "MovGraph::setEnds(...)");
 
 	if (step1->link->_graphSrc == step2->link->_graphDst) {
-		step1->sfield_0 = 1;
-		step2->sfield_0 = 1;
+		step1->reverse = 1;
+		step2->reverse = 1;
 
 		return;
 	}
 
 	if (step1->link->_graphSrc == step2->link->_graphSrc) {
-		step1->sfield_0 = 1;
-		step2->sfield_0 = 0;
+		step1->reverse = 1;
+		step2->reverse = 0;
 	} else {
-		step1->sfield_0 = 0;
+		step1->reverse = 0;
 
 		if (step1->link->_graphDst != step2->link->_graphSrc) {
-			step2->sfield_0 = 1;
+			step2->reverse = 1;
 		} else {
-			step2->sfield_0 = 0;
+			step2->reverse = 0;
 		}
 	}
 }
