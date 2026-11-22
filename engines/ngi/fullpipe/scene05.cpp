@@ -103,7 +103,7 @@ void sceneHandler05_makeManFlight() {
 	mq->run(nullptr);
 }
 
-void sceneHandler05_makeWackoFeedback() {
+void sceneHandler05_doOtmFeedback() {
 	int staticsId1;
 	int staticsId2;
 
@@ -171,7 +171,7 @@ void sceneHandler05_showHandle() {
 	g_nmi->_currentScene->findAniObjectById(ANI_HANDLE, -1)->show1(-1, -1, -1, 0);
 }
 
-void sceneHandler05_handleDown() {
+void sceneHandler05_openLuke() {
 	AniObject *hatch = g_nmi->_currentScene->findAniObjectById(ANI_BIGLUK, -1);
 
 	hatch->setStatic(ST_BLK_CLOSED);
@@ -185,7 +185,7 @@ void sceneHandler05_hideHandle() {
 	g_nmi->_currentScene->findAniObjectById(ANI_HANDLE, -1)->hide();
 }
 
-void sceneHandler05_handleUp() {
+void sceneHandler05_closeLuke() {
 	AniObject *hatch = g_nmi->_currentScene->findAniObjectById(ANI_BIGLUK, -1);
 
 	hatch->setStatic(ST_BLK_OPEN);
@@ -333,7 +333,7 @@ int sceneHandler05(Command *ex) {
 	case MSG_SC5_MAKEOTMFEEDBACK:
 		if (!g_nmi->_aniMan->_movement || (g_nmi->_aniMan->_movement->_id != MV_MANHDL_HANDLEUP
 												&& g_nmi->_aniMan->_movement->_id != MV_MANHDL_HANDLEDOWN)) {
-			sceneHandler05_makeWackoFeedback();
+			sceneHandler05_doOtmFeedback();
 			g_vars->scene05_wackoTicker = 0;
 		}
 		break;
@@ -344,7 +344,7 @@ int sceneHandler05(Command *ex) {
 
 	case MSG_SC5_HANDLEDOWN:
 		g_vars->scene05_handle->setStatic(ST_HDL_DOWN);
-		sceneHandler05_handleDown();
+		sceneHandler05_openLuke();
 		break;
 
 	case MSG_SC5_HIDEHANDLE:
@@ -353,7 +353,7 @@ int sceneHandler05(Command *ex) {
 
 	case MSG_SC5_HANDLEUP:
 		g_vars->scene05_handle->setStatic(ST_HDL_UP);
-		sceneHandler05_handleUp();
+		sceneHandler05_closeLuke();
 		break;
 
 	case MSG_SC5_TESTLUK:
@@ -378,7 +378,7 @@ int sceneHandler05(Command *ex) {
 					if (!g_nmi->_aniMan->_movement || (g_nmi->_aniMan->_movement->_id != MV_MANHDL_HANDLEUP
 															&& g_nmi->_aniMan->_movement->_id != MV_MANHDL_HANDLEDOWN)) {
 						if (g_vars->scene05_handleFlipper % 2)
-							sceneHandler05_makeWackoFeedback();
+							sceneHandler05_doOtmFeedback();
 
 						g_vars->scene05_wackoTicker = 0;
 
