@@ -1,5 +1,5 @@
 plugins {
-	id('com.android.application') version '9.3.2'
+	id('com.android.application') version '9.5.2'
 }
 
 // Load our source dependent properties
