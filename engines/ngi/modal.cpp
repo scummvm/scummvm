@@ -1139,7 +1139,7 @@ void ModalFinal::unloadScenes() {
 
 bool ModalFinal::handleMessage(Command *cmd) {
 	if (cmd->_cmd == 17 && cmd->_messageNum == 36 && cmd->_param == kActionPause) {
-		g_nmi->_modalObject = new ModalMainMenu();
+		g_nmi->_modalObject = new MainMenu();
 		g_nmi->_modalObject->_parentObj = this;
 
 		return true;
@@ -1241,7 +1241,7 @@ bool ModalCredits::init(int counterdiff) {
 		if (_parentObj)
 			return 0;
 
-		ModalMainMenu *menu = new ModalMainMenu;
+		MainMenu *menu = new MainMenu;
 
 		g_nmi->_modalObject = menu;
 
@@ -1274,7 +1274,7 @@ void ModalCredits::update() {
 	_sceneTitles->render();
 }
 
-ModalMainMenu::ModalMainMenu() {
+MainMenu::MainMenu() {
 	_lastArea = nullptr;
 	_hoverAreaId = 0;
 	_mfield_34 = 0;
@@ -1366,16 +1366,16 @@ ModalMainMenu::ModalMainMenu() {
 	_musicSliderIdx = _areas.size() - 1;
 
 	if (g_nmi->_mainMenu_debugEnabled)
-		enableDebugMenuButton();
+		enableDebugMenu();
 
 	setSliderPos();
 }
 
-void ModalMainMenu::update() {
+void MainMenu::update() {
 	_scene->render();
 }
 
-bool ModalMainMenu::handleMessage(Command *message) {
+bool MainMenu::handleMessage(Command *message) {
 	if (message->_cmd != 17)
 		return false;
 
@@ -1429,7 +1429,7 @@ bool ModalMainMenu::handleMessage(Command *message) {
 	return false;
 }
 
-bool ModalMainMenu::init(int counterdiff) {
+bool MainMenu::init(int counterdiff) {
 	switch (_hoverAreaId) {
 	case PIC_MNU_RESTART_L:
 		g_nmi->restartGame();
@@ -1460,7 +1460,7 @@ bool ModalMainMenu::init(int counterdiff) {
 		g_nmi->_sceneRect = _screct;
 
 		if (!g_nmi->_currentScene)
-			error("ModalMainMenu::init: Bad state");
+			error("MainMenu::init: Bad state");
 
 		g_nmi->_currentScene->_x = _bgX;
 		g_nmi->_currentScene->_y = _bgY;
@@ -1554,7 +1554,7 @@ bool ModalMainMenu::init(int counterdiff) {
 	return true;
 }
 
-void ModalMainMenu::updateVolume() {
+void MainMenu::updateVolume() {
 	if (g_nmi->_soundEnabled) {
 		for (int s = 0; s < g_nmi->_currSoundListCount; s++)
 			for (int i = 0; i < g_nmi->_currSoundList1[s]->getCount(); i++) {
@@ -1563,7 +1563,7 @@ void ModalMainMenu::updateVolume() {
 	}
 }
 
-void ModalMainMenu::updateSoundVolume(Sound &snd) {
+void MainMenu::updateSoundVolume(Sound &snd) {
 	if (!snd._objectId)
 		return;
 
@@ -1635,7 +1635,7 @@ void ModalMainMenu::updateSoundVolume(Sound &snd) {
 	}
 }
 
-void ModalMainMenu::updateSliderPos() {
+void MainMenu::updateSliderPos() {
 	if (_lastArea->picIdL == PIC_MNU_SLIDER_L) {
 		int x = g_nmi->_mouseScreenPos.x + _sliderOffset;
 
@@ -1673,7 +1673,7 @@ void ModalMainMenu::updateSliderPos() {
 	}
 }
 
-int ModalMainMenu::checkHover(Common::Point &point) {
+int MainMenu::checkHover(Common::Point &point) {
 	for (uint i = 0; i < _areas.size(); i++) {
 		if (_areas[i].picObjL->hit(point.x, point.y)) {
 			_areas[i].picObjL->_flags |= 4;
@@ -1699,7 +1699,7 @@ int ModalMainMenu::checkHover(Common::Point &point) {
 	return -1;
 }
 
-bool ModalMainMenu::isOverArea(PictureObject *obj, Common::Point *point) {
+bool MainMenu::isOverArea(PictureObject *obj, Common::Point *point) {
 	const Dims dims = obj->getFullSize();
 
 	int left = point->x - 8;
@@ -1713,7 +1713,7 @@ bool ModalMainMenu::isOverArea(PictureObject *obj, Common::Point *point) {
 	return false;
 }
 
-bool ModalMainMenu::isSaveAllowed() {
+bool MainMenu::isSaveAllowed() {
 	if (!g_nmi->_isSaveAllowed)
 		return false;
 
@@ -1728,7 +1728,7 @@ bool ModalMainMenu::isSaveAllowed() {
 	return true;
 }
 
-void ModalMainMenu::enableDebugMenu(char c) {
+void MainMenu::enableDebugMenu(char c) {
 	const char deb[] = "debuger";
 
 	if (c == deb[_debugKeyCount]) {
@@ -1737,13 +1737,13 @@ void ModalMainMenu::enableDebugMenu(char c) {
 		if (deb[_debugKeyCount] )
 			return;
 
-		enableDebugMenuButton();
+		enableDebugMenu();
 	}
 
 	_debugKeyCount = 0;
 }
 
-void ModalMainMenu::enableDebugMenuButton() {
+void MainMenu::enableDebugMenu() {
 	for (uint i = 0; i < _areas.size(); i++)
 		if (_areas[i].picIdL == PIC_MNU_DEBUG_L)
 			return;
@@ -1758,7 +1758,7 @@ void ModalMainMenu::enableDebugMenuButton() {
 	g_nmi->_mainMenu_debugEnabled = true;
 }
 
-void ModalMainMenu::setSliderPos() {
+void MainMenu::setSliderPos() {
 	int x = 173 * (g_nmi->_sfxVolume + 3000) / 3000 + 65;
 	PictureObject *obj = _areas[_menuSliderIdx].picObjD;
 
@@ -2090,7 +2090,7 @@ bool ModalSaveGame::init(int counterdiff) {
 	}
 
 	if (!_queryRes) {
-		ModalMainMenu *m = new ModalMainMenu;
+		MainMenu *m = new MainMenu;
 
 		g_nmi->_modalObject = m;
 
@@ -2565,7 +2565,7 @@ void NGIEngine::openMainMenu() {
 
 		return;
 	}
-	ModalMainMenu *menu = new ModalMainMenu;
+	MainMenu *menu = new MainMenu;
 
 	menu->_parentObj = g_nmi->_modalObject;
 

@@ -201,7 +201,7 @@ struct MenuArea {
 	PictureObject *picObjL;
 };
 
-class ModalMainMenu : public BaseModalObject {
+class MainMenu : public BaseModalObject {
 public:
 	Scene *_scene;
 	int _hoverAreaId;
@@ -217,8 +217,8 @@ public:
 	int _debugKeyCount;
 
 public:
-	ModalMainMenu();
-	~ModalMainMenu() override {}
+	MainMenu();
+	~MainMenu() override {}
 
 	bool pollEvent() override { return true; }
 	bool handleMessage(Command *message) override;
@@ -228,7 +228,7 @@ public:
 
 private:
 	bool isSaveAllowed();
-	void enableDebugMenuButton();
+	void enableDebugMenu();
 	void setSliderPos();
 	void enableDebugMenu(char c);
 	int checkHover(Common::Point &point);
