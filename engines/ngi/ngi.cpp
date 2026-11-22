@@ -25,6 +25,7 @@
 #include "common/compression/unzip.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/file.h"
 #include "common/formats/xmlparser.h"
 #include "audio/mixer.h"
 
@@ -51,6 +52,8 @@ namespace {
 
 class XMLProjectParser : public Common::XMLParser {
 public:
+	const Common::String &startScene() const { return _startScene; }
+
 	Common::String startSceneFile() const {
 		return _scenes.getValOrDefault(_startScene);
 	}
@@ -99,6 +102,46 @@ private:
 		node->ignore = true;
 		return true;
 	}
+};
+
+class ObjectIdList {
+public:
+	bool load(const Common::Path &path) {
+		Common::File file;
+		if (!file.open(path))
+			return false;
+
+		while (!file.eos() && !file.err()) {
+			const Common::String line = file.readLine();
+			if (!line.hasPrefix("#define"))
+				continue;
+
+			const char *name = line.c_str() + 7;
+			while (*name == ' ' || *name == '\t')
+				++name;
+			const char *value = name;
+			while (*value && *value != ' ' && *value != '\t')
+				++value;
+			if (name == value || !*value)
+				continue;
+
+			const Common::String symbol(name, value);
+			if (!_ids.contains(symbol))
+				_ids[symbol] = strtoul(value, nullptr, 10);
+		}
+		return !file.err();
+	}
+
+	bool findId(const Common::String &symbol, uint32 &id) const {
+		const auto entry = _ids.find(symbol);
+		if (entry == _ids.end())
+			return false;
+		id = entry->_value;
+		return true;
+	}
+
+private:
+	Common::HashMap<Common::String, uint32> _ids;
 };
 
 } // End of anonymous namespace
@@ -314,11 +357,17 @@ Common::Error NGIEngine::run() {
 		if (!project.loadStream(SearchMan.createReadStreamForMember(projectPath), projectPath.toString()) || !project.parse())
 			return Common::Error(Common::kNoGameDataFoundError, "Could not read the Full Pipe Android project");
 
+		ObjectIdList ids;
+		if (!ids.load("data/obj.h"))
+			return Common::Error(Common::kNoGameDataFoundError, "Could not read the Full Pipe Android object IDs");
+
 		const Common::String startSceneFile = project.startSceneFile();
-		if (startSceneFile.empty() || !SearchMan.hasFile(Common::Path("data/res").join(startSceneFile)))
+		uint32 startSceneId;
+		if (!ids.findId(project.startScene(), startSceneId) || startSceneFile.empty() ||
+				!SearchMan.hasFile(Common::Path("data/res").join(startSceneFile)))
 			return Common::Error(Common::kNoGameDataFoundError, "Could not find the Full Pipe Android start scene");
 
-		debugC(1, kDebugXML, "Loaded Full Pipe Android project, start scene %s", startSceneFile.c_str());
+		debugC(1, kDebugXML, "Loaded Full Pipe Android project, start scene %s (%u)", startSceneFile.c_str(), startSceneId);
 		return Common::Error(Common::kUnsupportedGameidError,
 			Common::String::format("Full Pipe Android scene loading is not implemented (%s)", startSceneFile.c_str()));
 	}
