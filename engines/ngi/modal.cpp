@@ -103,7 +103,7 @@ bool ModalIntro::init(int counterdiff) {
 		}
 
 		if (_introFlags & 0x10)
-			g_nmi->_gameLoader->updateSystems(42);
+			g_nmi->_gameLoader->updateContent(42);
 
 		_introFlags |= 2;
 
@@ -183,7 +183,7 @@ bool ModalIntro::init(int counterdiff) {
 
 				runQueue(QU_INTR_STARTINTRO, 1);
 			}
-			g_nmi->_gameLoader->updateSystems(42);
+			g_nmi->_gameLoader->updateContent(42);
 		}
 		return true;
 	}
@@ -240,7 +240,7 @@ void ModalIntro::finish() {
 	g_nmi->_gameLoader->preloadScene(SC_INTRO1, TrubaDown);
 
 	if (g_nmi->_currentScene)
-		g_nmi->_gameLoader->updateSystems(42);
+		g_nmi->_gameLoader->updateContent(42);
 }
 
 ModalIntroDemo::ModalIntroDemo() {
@@ -294,7 +294,7 @@ bool ModalIntroDemo::init(int counterdiff) {
 		}
 
 		if (_introFlags & 0x10)
-			g_nmi->_gameLoader->updateSystems(42);
+			g_nmi->_gameLoader->updateContent(42);
 
 		_introFlags |= 2;
 
@@ -374,7 +374,7 @@ void ModalIntroDemo::finish() {
 	g_nmi->_gameLoader->preloadScene(SC_INTRO1, TrubaDown);
 
 	if (g_nmi->_currentScene)
-		g_nmi->_gameLoader->updateSystems(42);
+		g_nmi->_gameLoader->updateContent(42);
 }
 
 static bool checkSkipVideo(const Common::Event &event) {
@@ -1107,7 +1107,7 @@ ModalFinal::~ModalFinal() {
 
 bool ModalFinal::init(int counterdiff) {
 	if (g_vars->sceneFinal_var01) {
-		g_nmi->_gameLoader->updateSystems(42);
+		g_nmi->_gameLoader->updateContent(42);
 
 		return true;
 	}
@@ -1115,7 +1115,7 @@ bool ModalFinal::init(int counterdiff) {
 	if (_counter > 0) {
 		_flags |= 2u;
 
-		g_nmi->_gameLoader->updateSystems(42);
+		g_nmi->_gameLoader->updateContent(42);
 
 		return true;
 	}

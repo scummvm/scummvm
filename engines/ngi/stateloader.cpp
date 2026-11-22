@@ -255,21 +255,21 @@ bool NGIEngine::loadGam(const char *fname, int scene) {
 
 	if (scene) {
 		_gameLoader->loadScene(726);
-		_gameLoader->gotoScene(726, TrubaLeft);
+		_gameLoader->setScene(726, TrubaLeft);
 
 		if (scene != 726)
 			_gameLoader->preloadScene(726, getSceneEntrance(scene));
 	} else {
 		if (_flgPlayIntro) {
 			_gameLoader->loadScene(SC_INTRO1);
-			_gameLoader->gotoScene(SC_INTRO1, TrubaUp);
+			_gameLoader->setScene(SC_INTRO1, TrubaUp);
 		} else {
 			if (g_nmi->isDemo() && g_nmi->getLanguage() == Common::RU_RUS) {
 				_gameLoader->loadScene(SC_9);
-				_gameLoader->gotoScene(SC_9, TrubaDown);
+				_gameLoader->setScene(SC_9, TrubaDown);
 			} else {
 				_gameLoader->loadScene(SC_1);
-				_gameLoader->gotoScene(SC_1, TrubaLeft);
+				_gameLoader->setScene(SC_1, TrubaLeft);
 			}
 		}
 	}

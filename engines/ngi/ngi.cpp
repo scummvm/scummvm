@@ -208,10 +208,10 @@ void NGIEngine::restartGame() {
 
 	if (_flgPlayIntro) {
 		_gameLoader->loadScene(SC_INTRO1);
-		_gameLoader->gotoScene(SC_INTRO1, TrubaUp);
+		_gameLoader->setScene(SC_INTRO1, TrubaUp);
 	} else {
 		_gameLoader->loadScene(SC_1);
-		_gameLoader->gotoScene(SC_1, TrubaLeft);
+		_gameLoader->setScene(SC_1, TrubaLeft);
 	}
 }
 
@@ -364,7 +364,7 @@ void NGIEngine::updateEvents() {
 							deleteModalObject();
 						}
 					} else {
-						_gameLoader->updateSystems(42);
+						_gameLoader->updateContent(42);
 					}
 					return;
 				}
@@ -500,7 +500,7 @@ void NGIEngine::updateScreen() {
 	//if (inputArFlag)
 	//	updateGame_inputArFlag();
 
-	if (_modalObject || (_flgGameIsRunning && (_gameLoader->updateSystems(42), _modalObject != nullptr))) {
+	if (_modalObject || (_flgGameIsRunning && (_gameLoader->updateContent(42), _modalObject != nullptr))) {
 		if (_flgGameIsRunning) {
 			if (_modalObject->init(42)) {
 				_modalObject->update();

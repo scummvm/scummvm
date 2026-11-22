@@ -91,13 +91,13 @@ class GameLoader : public CObject {
 
 	bool load(MfcArchive &file) override;
 	bool loadScene(int sceneId);
-	bool gotoScene(int sceneId, int entranceId);
+	bool setScene(int sceneId, int entranceId);
 	bool preloadScene(int sceneId, int entranceId);
 	bool unloadScene(int sceneId);
 
 	void addPreloadItem(const PreloadItem &item);
 
-	void updateSystems(int counterdiff);
+	void updateContent(int counterdiff);
 
 	int getSceneTagBySceneId(int sceneId, SceneTag **st);
 	void applyPicAniInfos(Scene *sc, const PicAniInfoList &picAniInfo);

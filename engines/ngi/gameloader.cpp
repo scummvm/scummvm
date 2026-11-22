@@ -176,7 +176,7 @@ bool GameLoader::loadScene(int sceneId) {
 	return false;
 }
 
-bool GameLoader::gotoScene(int sceneId, int entranceId) {
+bool GameLoader::setScene(int sceneId, int entranceId) {
 	SceneTag *st;
 
 	int sc2idx = getSceneTagBySceneId(sceneId, &st);
@@ -554,7 +554,7 @@ PicAniInfoList GameLoader::savePicAniInfos(Scene *sc, int flag1, int flag2) {
 	return res;
 }
 
-void GameLoader::updateSystems(int counterdiff) {
+void GameLoader::updateContent(int counterdiff) {
 	if (g_nmi->_currentScene) {
 		g_nmi->_currentScene->update(counterdiff);
 

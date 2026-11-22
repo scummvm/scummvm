@@ -371,7 +371,7 @@ int global_messageHandler3(Command *cmd) {
 			debugC(0, kDebugEvents, "preload: { %d, %d },", cmd->_parentId, cmd->_param);
 			return g_nmi->_gameLoader->preloadScene(cmd->_parentId, cmd->_param);
 		case 62:
-			return g_nmi->_gameLoader->gotoScene(cmd->_parentId, cmd->_param);
+			return g_nmi->_gameLoader->setScene(cmd->_parentId, cmd->_param);
 		case 64:
 			if (g_nmi->_currentScene && g_nmi->_msgObjectId2
 					&& (!(cmd->_param & 4) || g_nmi->_msgObjectId2 != cmd->_z || g_nmi->_msgId != cmd->_invId)) {

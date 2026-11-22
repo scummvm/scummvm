@@ -40,7 +40,7 @@ bool Console::Cmd_Scene(int argc, const char **argv) {
 	} else {
 		int scene = _vm->convertScene(atoi(argv[1]));
 		_vm->_gameLoader->loadScene(726);
-		_vm->_gameLoader->gotoScene(726, TrubaLeft);
+		_vm->_gameLoader->setScene(726, TrubaLeft);
 
 		if (scene != 726)
 			_vm->_gameLoader->preloadScene(726, _vm->getSceneEntrance(scene));
