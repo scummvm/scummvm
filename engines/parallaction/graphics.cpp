@@ -571,6 +571,7 @@ void Gfx::showFloatingLabel(GfxObj *label) {
 		label->setFlags(kGfxObjVisible);
 
 		_floatingLabel = label;
+		unregisterLabel(label);
 		_labels.push_back(label);
 	}
 }
