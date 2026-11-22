@@ -271,12 +271,12 @@ protected:
 private:
 	/** Decorative pattern code stored for a lily pad. */
 	enum LillyPadPattern : byte {
-		/** Flower decoration. */
-		kLillyPadPattern00_Flower = 0,
+		/** Diamond decoration. */
+		kLillyPadPattern00_Diamond = 0,
 		/** Cross decoration. */
 		kLillyPadPattern01_Cross = 1,
-		/** Diamond decoration. */
-		kLillyPadPattern02_Diamond = 2,
+		/** Flower decoration. */
+		kLillyPadPattern02_Flower = 2,
 	};
 
 	/** Decorative color code stored for a lily pad. */

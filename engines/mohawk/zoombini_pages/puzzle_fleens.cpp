@@ -924,13 +924,14 @@ int16 ZoombiniPuzzleFleens::mapEventToScrsId(SnoidScriptEventType scriptEventTyp
 	}
 }
 
-void ZoombiniPuzzleFleens::startSnoidScript(ZmbSnoid &snoid, SnoidScriptEventType scriptEventType, SnoidCallback callback,
-											ZmbScrsCompletionMode completionMode, const Common::Point *initPos) {
+bool ZoombiniPuzzleFleens::startSnoidScript(ZmbSnoid &snoid, SnoidScriptEventType scriptEventType, SnoidCallback callback, ZmbScrsCompletionMode completionMode, const Common::Point *initPos) {
 	const int16 resourceId = mapEventToScrsId(scriptEventType, &snoid);
 	if (resourceId == 0)
-		return;
-	if (startSnoidScrs(&snoid, ZmbResource(ZmbResource::kPage, resourceId), completionMode, initPos))
-		setSnoidCallback(snoid, callback);
+		return false;
+	if (!startSnoidScrs(&snoid, ZmbResource(ZmbResource::kPage, resourceId), completionMode, initPos))
+		return false;
+	setSnoidCallback(snoid, callback);
+	return true;
 }
 
 ZoombiniPuzzleFleens::SnoidCallback ZoombiniPuzzleFleens::getSnoidCallback(const ZmbSnoid &snoid) const {
@@ -950,8 +951,12 @@ void ZoombiniPuzzleFleens::startInitialLureScript() {
 		return;
 	_pairSelectionInputEnabled = false;
 	_boardingSnoidId = firstSnoid->getId();
-	startSnoidScript(*firstSnoid, SnoidScriptEventType::kInitialLure, SnoidCallback::kSubmitSnoidLureFleenPair,
-					 ZmbScrsCompletionMode::kReturnToIdle, &kFleenLureInitPosition);
+	if (startSnoidScript(*firstSnoid, SnoidScriptEventType::kInitialLure, SnoidCallback::kSubmitSnoidLureFleenPair, ZmbScrsCompletionMode::kReturnToIdle, &kFleenLureInitPosition)) {
+		// The opening lure starts on the next tick, even if the first Snoid was scheduled to walk in.
+		firstSnoid->setDelayUntilFrame(0);
+		if (0 < _vm->_walkersInProgress)
+			_vm->_walkersInProgress -= 1;
+	}
 }
 
 void ZoombiniPuzzleFleens::startBoardingAnimation() {
@@ -1424,7 +1429,7 @@ void ZoombiniPuzzleFleens::onGoButtonActivated() {
 	_departureState = ZmbDepartureState::kAnimating;
 }
 
-void ZoombiniPuzzleFleens::updateDepartureState() {
+void ZoombiniPuzzleFleens::updateDepartState() {
 	if (_departureState == ZmbDepartureState::kAnimating && isDepartSfxDone() &&
 		(_departureWalkPendingCount == 0 || _departureWalkCompletedCount != 0)) {
 		_departureState = ZmbDepartureState::kCompleted;

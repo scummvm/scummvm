@@ -104,7 +104,7 @@ protected:
 	/** Depart with accepted raft occupants after the ferry sequence completes. */
 	void onGoButtonActivated() override;
 	/** Keep the authored raft callbacks in control of the departure state machine. */
-	void updateDepartureState() override;
+	void updateDepartState() override;
 	/** Seat every remaining pack Snoid before the debugger forces departure. */
 	void debugPrepareForDeparture() override;
 	/** Find and describe one full-party seating, using an optional budget. */

@@ -663,24 +663,20 @@ void MohawkEngine_Zoombini::beginQuitEvent(ZoombiniPage *page) {
 void MohawkEngine_Zoombini::processPendingQuitRequest() {
 	switch (_pendingQuitRequest) {
 	case kPendingQuitCloseOptions:
-		if (_dialogPageStack.empty()) {
-			_pendingQuitRequest = kPendingQuitFinalizing;
-			if (!finishV10BrDemoComponent())
-				Engine::quitGame();
-		} else {
+		if (!_dialogPageStack.empty()) {
 			_dialogPageStack.top()->close();
 			_pendingQuitRequest = kPendingQuitWaitForOptionsClose;
+			break;
 		}
-		break;
+		// fall through
 	case kPendingQuitWaitForOptionsClose:
 		if (_dialogPageStack.empty()) {
-			_pendingQuitRequest = kPendingQuitFinalizing;
+			_pendingQuitRequest = kPendingQuitNone;
 			if (!finishV10BrDemoComponent())
-				Engine::quitGame();
+				queueQuitEvent();
 		}
 		break;
 	case kPendingQuitNone:
-	case kPendingQuitFinalizing:
 		break;
 	}
 }
@@ -744,8 +740,8 @@ void MohawkEngine_Zoombini::doFrame() {
 
 	processPendingQuitRequest();
 
-	// Page or dialog callbacks may call @ref Engine::quitGame() after this frame's event polling has finished.
-	// Enter the same close/fade state here so a closed page is never treated as a normal page transition.
+	// A shared GUI may have accepted a quit request and consumed its event inside a modal loop.
+	// Enter the same close/fade state before treating a closed page as a normal transition.
 	if (shouldQuit() && _quitEventState == kQuitEventNone)
 		beginQuitEvent(page);
 
@@ -1738,6 +1734,12 @@ bool MohawkEngine_Zoombini::finishV10BrDemoComponent() {
 	event.type = Common::EVENT_RETURN_TO_LAUNCHER;
 	_system->getEventManager()->pushEvent(event);
 	return true;
+}
+
+void MohawkEngine_Zoombini::queueQuitEvent() {
+	Common::Event event;
+	event.type = Common::EVENT_QUIT;
+	_system->getEventManager()->pushEvent(event);
 }
 
 void MohawkEngine_Zoombini::requestQuit() {

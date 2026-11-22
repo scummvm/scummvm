@@ -77,12 +77,15 @@ public:
 	void initHelpPrompt() override;
 
 protected:
+	/**
+	 * Prefer an individual upper-right landing cheer over effects when the Maze celebration option is enabled.
+	 * The shared sound queue keeps ordinary speech ahead of this optional cheer.
+	 */
+	bool shouldPreferFeatureVoiceOverEffects(const ZmbFeature *feature) const override;
 	/** Interpolate traversal roots across grid notification markers without dispatching their events early. */
 	bool getNextInterpolationMove(const ZmbFeature *feature, Common::Point &delta, uint32 &startFrame, uint32 &durationFrames) const override;
 	/** Select bubbles that share their riding Snoid's deterministic translation. */
 	bool getShapeInterpolationGroup(ZmbFeature *feature, const ZmbHotspot &hotspot, uint32 &key, uint32 &leader) const override;
-	/** Move surviving runners to the accepted exit side for debug Go handling. */
-	void debugPrepareForDeparture() override;
 	/**
 	 * Describe the generated maze and search for a complete launch order.
 	 * @param[in] args Optional time budget in seconds, from 1 through 60; empty uses five seconds.
@@ -661,8 +664,6 @@ private:
 
 	/** Process runner arrival at exit. */
 	void handleArrival(MazeCornerGroup cornerGroup, int16 runnerIdx);
-	/** Seed the per-direction waiting-position counters to their page-setup values. */
-	void resetArrivalPosCounters();
 	/** Sort an exact Snoid flag group by its logical depth and link it after column zero. */
 	void reorderExactFlagSnoidGroupByDepth(uint32 exactFlags);
 

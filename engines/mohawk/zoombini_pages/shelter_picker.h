@@ -196,6 +196,8 @@ protected:
 	bool randomizePreviewTraits(bool randomizeAll);
 	/** Reconcile pending Go state with the current seat occupancy. */
 	void updatePendingGoTransition();
+	/** Serialize the departing party and queue its next page. */
+	void finishGoTransition();
 	/** Return the first empty Picker seat index, or -1 when every seat is occupied. */
 	int16 findFirstEmptySeat() const;
 	/** Compact the generated Zoombinis into their canonical seat positions. */
@@ -225,8 +227,8 @@ protected:
 
 	/** Start the Picker departure sequence after the active pack is complete. */
 	void onGoButtonActivated() override;
-	/** Refresh Go and Map controls from the current Picker state. */
-	void updateDepartureState() override;
+	/** Leave departure timing to @ref ZoombiniShelterPicker::updatePendingGoTransition(). */
+	void updateDepartState() override;
 	/** Handle an attempted Go action while the active pack is incomplete. */
 	void onDisabledGoButtonActivated() override;
 	/** Open the route map from the Picker. */

@@ -315,27 +315,22 @@ bool ZoombiniPuzzleTunnels::runBuiltinDebugAction(BuiltinDebugAction action, Com
 		return false;
 	}
 
-	const char *gatekeeperName = nullptr;
 	int16 runnerIdx = -1;
 	int16 scrbFirst = 0;
 	int16 scrbLast = 0;
 	if (action == BuiltinDebugAction::kCycleCrystal) {
-		gatekeeperName = "Crystal";
 		runnerIdx = 0;
 		scrbFirst = kResScrb4000_Reject0;
 		scrbLast = kResScrb4038_Advance;
 	} else if (action == BuiltinDebugAction::kCycleFerrous) {
-		gatekeeperName = "Ferrous";
 		runnerIdx = 2;
 		scrbFirst = kResScrb4200_Reject0;
 		scrbLast = kResScrb4226_Advance;
 	} else if (action == BuiltinDebugAction::kCycleIgno) {
-		gatekeeperName = "Igno";
 		runnerIdx = 3;
 		scrbFirst = kResScrb4400_Reject0;
 		scrbLast = kResScrb4423_Reject;
 	} else if (action == BuiltinDebugAction::kCycleOnyx) {
-		gatekeeperName = "Onyx";
 		runnerIdx = 1;
 		scrbFirst = kResScrb4600_Reject0;
 		scrbLast = kResScrb4617_Reject;
@@ -351,8 +346,9 @@ bool ZoombiniPuzzleTunnels::runBuiltinDebugAction(BuiltinDebugAction action, Com
 	if (_builtinDebugScrbId < scrbFirst || scrbLast < _builtinDebugScrbId)
 		_builtinDebugScrbId = scrbFirst;
 	playGateActor(runnerIdx, _builtinDebugScrbId, kGateActorCompletionNone00);
-	output = Common::String::format("Tunnels %s SCRB %d loaded.\n", gatekeeperName, _builtinDebugScrbId);
-	showBuiltinDebugText(Common::String::format("SCRB id: %d", _builtinDebugScrbId));
+	const Common::String message = Common::String::format("SCRB id: %d", _builtinDebugScrbId);
+	showBuiltinDebugText(message);
+	output = message + '\n';
 	return false;
 }
 

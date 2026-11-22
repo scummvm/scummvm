@@ -22,7 +22,6 @@
 #include "mohawk/zoombini_pages/interactive_rodmap.h"
 #include "mohawk/zoombini.h"
 #include "mohawk/zoombini_graphics.h"
-#include "mohawk/zoombini_sound.h"
 #include "mohawk/zoombini_state.h"
 #include "mohawk/zoombini_text.h"
 
@@ -268,9 +267,12 @@ void ZoombiniInteractiveRodMap::loadFeatures() {
 	_routeNamesFeature = loadScrbFeature(ZmbResource(ZmbResource::kPage, 0), 0, 0, ZmbFeature::FLAG_00100000_PLAY_ONCE, hooksRouteNames);
 
 	loadRodmapPanelFeatures();
+}
 
-	// SND 998 and 999 are menu UI effects.
-	// The resource layer caches them on first access, so explicit preloading is unnecessary.
+ZmbEventHandleResult ZoombiniInteractiveRodMap::onLButtonDown(const Common::Point &absPos, const Common::Point &relPos) {
+	if (_departPageType != ZoombiniPageType::kNone)
+		return ZmbEventHandleResult::kConsumed;
+	return ZoombiniInteractive::onLButtonDown(absPos, relPos);
 }
 
 ZmbEventHandleResult ZoombiniInteractiveRodMap::onMouseMove(const Common::Point &absPos, const Common::Point &relPos) {
@@ -307,7 +309,7 @@ void ZoombiniInteractiveRodMap::onAnimFrame() {
 }
 
 ZmbEventHandleResult ZoombiniInteractiveRodMap::onKeyDown(const Common::KeyState &kbd, bool kbdRepeat) {
-	if (kbdRepeat)
+	if (kbdRepeat || _departPageType != ZoombiniPageType::kNone)
 		return ZmbEventHandleResult::kConsumed;
 
 	ZmbEventHandleResult result = ZmbEventHandleResult::kConsumed;
@@ -382,18 +384,14 @@ ZoombiniInteractiveRodMap::BuiltinDebugAction ZoombiniInteractiveRodMap::parseBu
 }
 
 bool ZoombiniInteractiveRodMap::runBuiltinDebugAction(BuiltinDebugAction action, char argument, Common::String &output) {
-	if (action == BuiltinDebugAction::kAdd && argument == '\0') {
-		if (_builtinPracticePackCount < 16)
+	if ((action == BuiltinDebugAction::kAdd || action == BuiltinDebugAction::kRemove) && argument == '\0') {
+		if (action == BuiltinDebugAction::kAdd && _builtinPracticePackCount < 16)
 			_builtinPracticePackCount += 1;
-		drawBuiltinDebugText(Common::String::format("Snoids to practice with = %d", _builtinPracticePackCount));
-		output = Common::String::format("RodMap practice pack count: %d.\n", _builtinPracticePackCount);
-		return false;
-	}
-	if (action == BuiltinDebugAction::kRemove && argument == '\0') {
-		if (1 < _builtinPracticePackCount)
+		else if (action == BuiltinDebugAction::kRemove && 1 < _builtinPracticePackCount)
 			_builtinPracticePackCount -= 1;
-		drawBuiltinDebugText(Common::String::format("Snoids to practice with = %d", _builtinPracticePackCount));
-		output = Common::String::format("RodMap practice pack count: %d.\n", _builtinPracticePackCount);
+		const Common::String message = Common::String::format("Snoids to practice with =  %d", _builtinPracticePackCount);
+		drawBuiltinDebugText(message);
+		output = message + '\n';
 		return false;
 	}
 	if (action == BuiltinDebugAction::kXfer && argument != '\0')
@@ -525,7 +523,7 @@ void ZoombiniInteractiveRodMap::togglePracticeMode() {
 
 	refreshModeDependentFeatures(true);
 
-	_vm->_sound->playSound(ZmbResource(ZmbResource::kSystem, kSysResSound0999_ButtonSFX), Audio::Mixer::kSFXSoundType);
+	queueScriptSoundForNextRenderPass(ZmbResource(ZmbResource::kSystem, kSysResSound0999_ButtonSFX));
 }
 
 void ZoombiniInteractiveRodMap::refreshModeDependentFeatures(bool clearHover) {
@@ -563,7 +561,7 @@ void ZoombiniInteractiveRodMap::selectPracticeLevel(ZmbFeature *feature, uint16 
 	// Their shapes depend on the refreshed practice level and must not wait for unrelated dirty coverage.
 	refreshRouteAndPageFeatures();
 	restartRodmapFeature(_modeComboFeature);
-	_vm->_sound->playSound(ZmbResource(ZmbResource::kSystem, kSysResSound0999_ButtonSFX), Audio::Mixer::kSFXSoundType);
+	queueScriptSoundForNextRenderPass(ZmbResource(ZmbResource::kSystem, kSysResSound0999_ButtonSFX));
 }
 
 void ZoombiniInteractiveRodMap::restartRodmapFeature(ZmbFeature *feature) {
@@ -735,6 +733,21 @@ void ZoombiniInteractiveRodMap::patchPageShape1000_preRenderShape(ZmbFeature *fe
 		hs._shapeIdx = pageShapeIdMap[hs._shapeIdx];
 }
 
+void ZoombiniInteractiveRodMap::beginMapDepart(ZoombiniPageType destPageType) {
+	queueScriptSoundForNextRenderPass(ZmbResource(ZmbResource::kSystem, kSysResSound0998_MapDestSFX));
+	_mapDepartStartFrame = _vm->getAnimationFrameCounter(_vm->getTotalPlayTime());
+	_departPageType = destPageType;
+}
+
+void ZoombiniInteractiveRodMap::updateDepartState() {
+	static constexpr uint32 kDepartureDelayTicks = 2;
+	if (_departPageType == ZoombiniPageType::kNone || _currentFrameCounter - _mapDepartStartFrame < kDepartureDelayTicks)
+		return;
+
+	_vm->setNextPage(_departPageType);
+	close();
+}
+
 ZmbEventHandleResult ZoombiniInteractiveRodMap::runPage1000_onLButtonDown(ZmbFeature *feature, const Common::Point &absPos, const Common::Point &relPos) {
 	(void)feature;
 	(void)relPos;
@@ -752,8 +765,7 @@ ZmbEventHandleResult ZoombiniInteractiveRodMap::runPage1000_onLButtonDown(ZmbFea
 				_vm->_state->beginPracticeState();
 			else
 				generatePracticePack();
-			_vm->setNextPage(nextType);
-			close();
+			beginMapDepart(nextType);
 			return ZmbEventHandleResult::kConsumed;
 		}
 
@@ -772,8 +784,7 @@ ZmbEventHandleResult ZoombiniInteractiveRodMap::runPage1000_onLButtonDown(ZmbFea
 			case ZoombiniPageType::kSmoke:
 			case ZoombiniPageType::kMaze:
 				generatePracticePack();
-				_vm->setNextPage(nextType);
-				close();
+				beginMapDepart(nextType);
 				return ZmbEventHandleResult::kConsumed;
 			case ZoombiniPageType::kPicker:
 			case ZoombiniPageType::kBasecamp1:
@@ -790,10 +801,7 @@ ZmbEventHandleResult ZoombiniInteractiveRodMap::runPage1000_onLButtonDown(ZmbFea
 						_vm->_state->endPracticeState();
 						_vm->_state->_practiceLevel = 0;
 						refreshModeDependentFeatures(false);
-						// Materialize the journey map before close freezes the final composite for the fade.
-						renderFeatures();
-						_vm->setNextPage(nextType);
-						close();
+						beginMapDepart(nextType);
 					}
 					return ZmbEventHandleResult::kConsumed;
 				}
@@ -808,8 +816,7 @@ ZmbEventHandleResult ZoombiniInteractiveRodMap::runPage1000_onLButtonDown(ZmbFea
 			case ZoombiniPageType::kBasecamp1:
 			case ZoombiniPageType::kBasecamp2:
 			case ZoombiniPageType::kTown:
-				_vm->setNextPage(nextType);
-				close();
+				beginMapDepart(nextType);
 				return ZmbEventHandleResult::kConsumed;
 			default:
 				break;
@@ -936,7 +943,8 @@ void ZoombiniInteractiveRodMap::optionButton1006_postRender(ZmbFeature *feature)
 		return;
 	_optionButtonState._firePostAnimationEvent = false;
 
-	_vm->openOptionsDialog();
+	if (_departPageType == ZoombiniPageType::kNone)
+		_vm->openOptionsDialog();
 }
 
 void ZoombiniInteractiveRodMap::optionButton1006_renderTlcLabel() {
@@ -980,6 +988,7 @@ ZmbEventHandleResult ZoombiniInteractiveRodMap::optionButton1006_onLButtonDown(Z
 		return ZmbEventHandleResult::kPassthrough;
 
 	_optionButtonState.press(_vm, feature, _currentFrameCounter);
+	queueScriptSoundForNextRenderPass(ZmbResource(ZmbResource::kSystem, kSysResSound0999_ButtonSFX));
 	return ZmbEventHandleResult::kConsumed;
 }
 

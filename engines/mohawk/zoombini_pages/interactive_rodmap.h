@@ -61,12 +61,19 @@ public:
 	/** Advance map hover and animation state by one engine frame. */
 	void onAnimFrame() override;
 
+	/** Dispatch map clicks while no destination transition is pending. */
+	ZmbEventHandleResult onLButtonDown(const Common::Point &absPos, const Common::Point &relPos) override;
 	/** Update hovered page and map controls from mouse movement. */
 	ZmbEventHandleResult onMouseMove(const Common::Point &absPos, const Common::Point &relPos) override;
 	/** Handle keyboard navigation and activation of the selected map control. */
 	ZmbEventHandleResult onKeyDown(const Common::KeyState &kbd, bool kbdRepeat) override;
 
 protected:
+	/** Close the map after its destination cue has had two ticks to play. */
+	void updateDepartState() override;
+	/** Queue the destination cue and start the map's transition timer. */
+	void beginMapDepart(ZoombiniPageType destPageType);
+
 	/** RodMap actions accepted by the built-in debug console and keyboard dispatcher. */
 	enum class BuiltinDebugAction {
 		kInvalid,
@@ -254,6 +261,10 @@ protected:
 
 	/** Page type whose map icon is currently highlighted. */
 	ZoombiniPageType _lastHoveredPageType = ZoombiniPageType::kNone;
+	/** Destination selected by an accepted click, or kNone while idle. */
+	ZoombiniPageType _departPageType = ZoombiniPageType::kNone;
+	/** Logic tick at which the destination cue was queued. */
+	uint32 _mapDepartStartFrame = 0;
 
 	/**
 	 * Baseline layout rectangles are instance members because Common::Rect
@@ -365,10 +376,8 @@ protected:
 	};
 
 	// Option Button SCRB does not have two hotspots, so normal hsId and pressed hsId are equal.
-	/** Button sound resource used by the route-map option control. */
-	ZmbResource soundResId = ZmbResource(ZmbResource::kSystem, kSysResSound0999_ButtonSFX);
 	/** Pressed and normal visual state for the option button. */
-	ButtonState _optionButtonState = ButtonState(soundResId, 0, 0, kResShape1000_OptionButtonNormal93, kResShape1000_OptionButtonPressed92);
+	ButtonState _optionButtonState = ButtonState(ZmbResource(), 0, 0, kResShape1000_OptionButtonNormal93, kResShape1000_OptionButtonPressed92);
 	/** Feature that renders and handles the page icons. */
 	ZmbFeature *_pageIconFeature = nullptr;
 	/** Feature that renders the route segments. */

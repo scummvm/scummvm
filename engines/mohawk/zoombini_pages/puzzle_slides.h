@@ -260,19 +260,16 @@ private:
 	 * Sets up cell states, slot positions, and link configurations.
 	 */
 	void initGridByDifficulty();
-
 	/**
 	 * Build the hex adjacency table.
 	 * This path computes neighbor cell indices and adjacency bit flags for all 117 cells.
 	 */
 	void buildHexAdjacencyTable();
-
 	/**
 	 * Generate trait pairings for matching.
 	 * This path creates trait pairs based on placed Zoombinis.
 	 */
 	void generateTraitPairings();
-
 	/**
 	 * Snapshot each loaded Zoombini's four canonical traits.
 	 */
@@ -284,7 +281,6 @@ private:
 
 	/** End a drag operation and process the drop. */
 	void endDrag(const Common::Point &dropPos) override;
-
 	/**
 	 * Return the drag constraint rect for this puzzle.
 	 * Constrain dragging to the left-bank area.
@@ -303,14 +299,12 @@ private:
 	int16 findCellAtPosition(const Common::Point &pos) const;
 	/** Return the placement-slot index that owns a grid cell, or -1. */
 	int16 findSlotIndexForCell(int16 cellIdx) const;
-
 	/**
 	 * Check if a cell is a valid drop target for a Zoombini.
 	 * @param cellIdx Cell index to check.
 	 * @return true if the cell accepts a Zoombini.
 	 */
 	bool isCellValidDropTarget(int16 cellIdx) const;
-
 	/**
 	 * Assign a Zoombini to a slot cell.
 	 * Updates cell state and runner references.
@@ -320,24 +314,18 @@ private:
 	void assignZmbToSlot(ZmbSnoid *snoid, int16 cellIdx);
 	/** Reserve the next available placement slot associated with a base cell. */
 	int16 assignZmbToSlot(int16 slotBaseCell);
-
 	/** Orphan the accepted suffix after removing a Snoid from a level 1/2 chain. */
 	void orphanLinearChainFromCell(int16 sourceCellIdx);
-
 	/** Move a Zoombini to a cell position. */
 	void moveZmbToCell(ZmbSnoid *snoid, int16 cellIdx);
 	/** Decode a scripted move record and move its Zoombini to the target cell. */
 	int16 moveZmbToCell(int16 moveData);
-
 	/** Clear a cell to empty state. */
 	void clearCellToEmpty(int16 cellIdx);
-
 	/** Reset a cell to inert state and clear all links. */
 	void resetCellToEmpty(int16 cellIdx);
-
 	/** Clear link bits from a cell. */
 	void clearCellLinkBits(uint16 bitMask, int16 linkField, int16 cellIdx);
-
 	/** Update neighbor flags after cell state change. */
 	void updateNeighborFlags();
 	/** Set a cell's match trait when its neighboring cells agree. */
@@ -361,43 +349,37 @@ private:
 
 	/** Build the Slides chain-link sequence. */
 	void buildChainSequence();
-
 	/**
 	 * Validate a chain and mark matched cells.
 	 * @return Number of matches found.
 	 */
 	int16 validateChainAndMarkMatched(int16 startCellIdx);
-
 	/** Find a runner by matching trait. */
 	int16 findRunnerByMatchingTrait(int16 runnerIdx);
-
 	/** Sort Zoombinis by overlap count for optimal pairing. */
 	void sortZmbsByOverlapCount();
-
 	/** Place a matching Zoombini in a cell. */
 	int16 placeMatchingZmbInCell(int16 matchCellIdx, int16 outSlot);
-
 	/** Pick the first matching trait between two occupied cells. */
 	int16 pickRandomMatchingTrait(int16 cellIdx, int16 otherCellIdx) const;
-
 	/** Activate a link in the chain sequence. */
 	void activateChainLink(int16 linkIdx);
-
+	/** Return whether to enter the ZB Zone easter egg. */
+	bool checkZBZoneEasterEgg() const;
+	/** Activate the ZB Zone easter egg palette rotation and draw its message. */
+	void activateZBZoneEasterEgg();
+	/** Rotate the active ZB Zone palette when more than six logic frames have elapsed. */
+	void updateZBZoneEasterEgg();
 	/** Confirm endpoint matches in a chain. */
 	void confirmEndpointMatches();
-
 	/** Check the first matching trait between two sorted Zoombini candidates. */
 	bool checkFirstTraitMatch(int16 leftSortedIdx, int16 rightSortedIdx);
-
 	/** Evaluate trait match and advance chain. */
 	void evalTraitMatchAndAdvance(int16 leadCellIdx, int16 middleCellIdx, int16 tailCellIdx);
-
 	/** Evaluate neighbor states for chain propagation. */
 	void evalNeighborStates(int16 cellIdx);
-
 	/** Propagate match through the chain. */
 	void propagateMatchChain(int16 chainIdx);
-
 	/** Ensure a grid cell has a draw-on-reg feature backing its SCRB transitions. */
 	void ensureCellFeature(int16 cellIdx);
 	/** Register the shared overlay that draws SCRB 7000 cell-link shapes above the cell surfaces. */
@@ -408,42 +390,31 @@ private:
 	void requestCellLinkOverlayRefresh();
 	/** Return SCRB 7000 relationship shapes to their cell runners before the solved rise. */
 	void handoffCellLinksToGridRunners();
-
 	/** Preserve the generated solved placement before initialization hides it. */
 	void snapshotDebugSolution();
 	/** Build a debug solution by satisfying the generated slot constraints. */
 	bool buildDebugSolutionFromConstraints();
 	/** Fill any remaining debug solution positions with unused Snoids. */
 	bool completeDebugSolutionWithUnusedSnoids();
-	bool solveDebugSlotAssignments(int16 slotIdx, const int16 *requiredTraits,
-								   bool *usedSnoids, int16 *assignedSnoids);
+	bool solveDebugSlotAssignments(int16 slotIdx, const int16 *requiredTraits, bool *usedSnoids, int16 *assignedSnoids);
 	/** Return whether two debug candidates share the requested trait. */
 	bool debugSnoidsMatchTrait(int16 leftSnoidIdx, int16 rightSnoidIdx, int16 traitKind) const;
-
 	/** Register the per-slot SCRB 7013 DRAW_ON_REG helpers. */
 	void loadPlacementSlotFeatures();
-
 	/** Restore the six row-layer links after cell SCRB loads. */
 	void relinkGridLayers();
-
 	/** Restore the initial Slides Snoid runner order used before the first click. */
 	void relinkSnoidsBehindForeground();
-
 	/** Restore the Snoid flags saved before the initial foreground-tree relink. */
 	void restoreInitialSnoidFlags();
-
 	/** Find the first backward-side chain link (fields 3, 4, 5). */
 	int16 getBackwardChainLink(int16 cellIdx) const;
-
 	/** Find the first forward-side chain link (fields 8, 7, 6). */
 	int16 getForwardChainLink(int16 cellIdx) const;
-
 	/** Check whether a cell is currently in one of the supplied states. */
 	bool cellStateIs(int16 cellIdx, int16 stateA, int16 stateB = -1, int16 stateC = -1) const;
-
 	/** Compare two occupied cells on a single trait kind. */
 	bool cellsMatchTrait(int16 leftCellIdx, int16 rightCellIdx, int16 traitKind) const;
-
 	/** Set the cell state and reload its visual SCRB when a feature exists. */
 	bool setCellStateAndReload(int16 cellIdx, int16 state, int16 scrbId = kResScrb7000_CellBase);
 
@@ -453,29 +424,23 @@ private:
 
 	/** Reset accepted cell states and rebuild the valid chain from current placements. */
 	void resetAnimStates();
-
 	/** Start the invalid-cell spark/ejection sequence at the grid cell currently under the dragged Snoid. */
 	bool beginZmbTravel(ZmbSnoid *snoid);
-
 	/** Dispatch SCRB 8000-8002 and SCRS 14000-14003 travel-chain events. */
 	void handleZmbTravelEvent(int16 eventCode);
-
 	/**
 	 * Return the Snoid anchor for a grid cell.
 	 * The cell runner is registered at the table point; Snoids stand 24 pixels right and 5 pixels above that point.
 	 */
 	Common::Point getCellSnoidPosition(int16 cellIdx) const;
-
 	/**
 	 * Count cells in the matched or locked state and update the sum of their cell indices.
 	 * This lightweight checksum detects some placement changes when the accepted-cell count is unchanged.
 	 * It is not a complete accepted-cell set comparison and can have collisions.
 	 */
 	int16 countAcceptedCellsAndUpdateChecksum();
-
 	/** Play placement feedback based on the accepted-cell count change. */
 	void playPlacementFeedbackSFX();
-
 	/** Load SCRB data onto a runner feature. */
 	void loadRunnerSCRB(uint16 runnerId, int16 scrbId);
 
@@ -485,25 +450,18 @@ private:
 
 	/** Relink Snoids for solved-rise depth ordering. */
 	void unlockInteractiveSlots();
-
 	/** Place next Zoombini in a cell. */
 	int16 placeNextZmbInCell(int16 cellIdx);
-
 	/** Check if there's a pending Zoombini to place. */
 	bool hasPendingZmb() const;
-
 	/** Scan and reset active cells. */
 	void scanAndResetActiveCells();
-
 	/** Find a matching Zoombini for a cell. */
 	int16 findMatchingZmbForCell(int16 matchCellIdx, int16 outResult);
-
 	/** Reassign dead slots. */
 	void reassignDeadSlots();
-
 	/** Pick next cell for chain linking. */
 	void pickNextCellForLink(int16 cellIdx, int16 nextCell, int16 direction);
-
 	/** Mark matched runners as done. */
 	void markMatchedRunnersDone();
 
@@ -515,16 +473,12 @@ private:
 	void checkVictoryCondition();
 	/** Recompute Go enabled state from whether any active slot contains a locked Snoid. */
 	void refreshGoButtonEnabledState();
-
 	/** Resolve the grid cell that owns a draw-on-reg slot feature. */
 	int16 findCellIdxForFeature(const ZmbFeature *feature) const;
-
 	/** Select the proper pre-render callback for a slot SCRB. */
 	void setCellFeaturePreRenderHook(ZmbFeature *feature, int16 scrbId);
-
 	/** Reload the slot SCRB that matches the current cell state. */
 	void syncCellFeatureScript(int16 cellIdx);
-
 	/** Map Slides hotspot opcodes onto adjacency mask bits. */
 	static uint16 getAdjMaskForCommand(int16 cmd);
 
@@ -533,16 +487,11 @@ private:
 	// =========================================================================
 
 	/** Filter hotspot script for rendering. */
-	void filterHotspotScript(ZmbFeature *feature, ZmbHotspotGroup *hsGroup,
-							 Common::Array<ZmbHotspot> &hotspots);
-
+	void filterHotspotScript(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots);
 	/** Filter command by flags. */
-	void filterCommandByFlags(ZmbFeature *feature, ZmbHotspotGroup *hsGroup,
-							  Common::Array<ZmbHotspot> &hotspots);
-
+	void filterCommandByFlags(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots);
 	/** Process command queue. */
-	void processCommandQueue(ZmbFeature *feature, ZmbHotspotGroup *hsGroup,
-							 Common::Array<ZmbHotspot> &hotspots);
+	void processCommandQueue(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots);
 
 	// =========================================================================
 	// Static Data Tables
@@ -971,6 +920,9 @@ private:
 		103,
 	};
 
+	/** Shape-screen bounds of the ZB Zone easter egg message box. */
+	const Common::Rect _zbZoneMessageRect = Common::Rect(100, 20, 540, 47);
+
 	/**
 	 * Drag constraint rectangle. It is instance-owned because Common::Rect
 	 * requires runtime construction and ScummVM prohibits global C++ constructors.
@@ -1056,10 +1008,10 @@ private:
 	bool _invalidDropTravelActive = false;
 	/** Whether Go is enabled because at least one active slot contains a locked Snoid. */
 	bool _goButtonEnabled = false;
-	/** Whether the Level-4 victory palette rotation is active. */
-	bool _victoryPaletteActive = false;
-	/** Frame of the most recent Level-4 victory palette rotation. */
-	uint32 _lastVictoryPaletteFrame = 0;
+	/** Whether the ZB Zone easter egg has been entered during this visit. */
+	bool _zbZoneActive = false;
+	/** Logic frame of the last ZB Zone easter egg palette rotation or its activation. */
+	uint32 _zbZonePaletteCycleFrame = 0;
 	/** Whether the player may rearrange Snoids on the board or start the solved Go action. */
 	bool _boardInputEnabled = true;
 	/** First solved-rise cell feature that owns the SCRB completion and sound boundary. */

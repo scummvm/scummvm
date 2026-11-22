@@ -451,7 +451,7 @@ void ZoombiniPuzzleSmoke::onGoButtonActivated() {
 	_departureState = _goButtonEnabled ? ZmbDepartureState::kAnimating : ZmbDepartureState::kCompleted;
 }
 
-void ZoombiniPuzzleSmoke::updateDepartureState() {
+void ZoombiniPuzzleSmoke::updateDepartState() {
 	if (_departureState == ZmbDepartureState::kCompleted)
 		executeDeparture();
 }
@@ -736,22 +736,19 @@ ZoombiniPuzzleSmoke::BuiltinDebugAction ZoombiniPuzzleSmoke::parseBuiltinDebugAc
 bool ZoombiniPuzzleSmoke::runBuiltinDebugAction(BuiltinDebugAction action, Common::String &output) {
 	Common::String debugText;
 	if (action == BuiltinDebugAction::kLevel) {
-		const int originalDifficulty = static_cast<int>(_puzzleLevel);
-		output = Common::String::format("Level %d\n", originalDifficulty);
-		debugText = Common::String::format("Level %d ", originalDifficulty);
+		debugText = Common::String::format("Level %d ", static_cast<int>(_puzzleLevel));
 	} else if (action == BuiltinDebugAction::kCheatOn) {
 		_bPreserveFilterHomePositionOrder = true;
-		output = " Cheat on \n";
 		debugText = " Cheat on ";
 	} else if (action == BuiltinDebugAction::kCheatOff) {
 		_bPreserveFilterHomePositionOrder = false;
-		output = "Mirror Machine cheat off.\n";
+		return false;
 	} else {
 		return true;
 	}
 
-	if (!debugText.empty())
-		showBuiltinDebugText(debugText);
+	showBuiltinDebugText(debugText);
+	output = debugText + '\n';
 	return false;
 }
 

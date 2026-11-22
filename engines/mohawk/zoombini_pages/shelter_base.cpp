@@ -508,9 +508,14 @@ void ZoombiniShelterBasecamp::releaseBasecampStorageScroll() {
 	updateBasecampStorageScrollSound(true);
 }
 
-void ZoombiniShelterBasecamp::advanceBasecampStorageScroll() {
+bool ZoombiniShelterBasecamp::advanceBasecampStorageScroll() {
+	if (_currentFrameCounter < _storageNextUpdateFrame)
+		return false;
+
+	_storageNextUpdateFrame = _currentFrameCounter + kStorageScrollInterval;
+	updateHeldBasecampStorageScroll();
 	if (_storageScrollDirection == StorageScrollDirection::kNone)
-		return;
+		return false;
 
 	switch (_storageScrollDirection) {
 	case StorageScrollDirection::kLeftMaximum:
@@ -574,6 +579,7 @@ void ZoombiniShelterBasecamp::advanceBasecampStorageScroll() {
 
 	if (!_storageScrollAnimating)
 		_storageScrollDirection = StorageScrollDirection::kNone;
+	return true;
 }
 
 bool ZoombiniShelterBasecamp::canBasecampStorageScroll(StorageScrollDirection direction) const {

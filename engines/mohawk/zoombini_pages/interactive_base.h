@@ -143,7 +143,7 @@ public:
 	/**
 	 * Debug: finish the current puzzle and depart.
 	 * Called from the console @c puzzle finish command.
-	 * Ferry, Net, Maze, Caves, and Slides use their page-specific completion/Go handling. Other puzzles
+	 * Ferry, Net, Caves, and Slides use their page-specific completion/Go handling. Other puzzles
 	 * serialize every runner as accepted and close directly into Xfer.
 	 */
 	void debugForceFinish();
@@ -589,7 +589,7 @@ protected:
 	 * Advance the common SFX-driven departure after the page render.
 	 * Pages with authored completion gates override this and advance @ref ZoombiniInteractive::_departureState themselves.
 	 */
-	virtual void updateDepartureState();
+	virtual void updateDepartState();
 	/** Return true when the page controller continues during an active departure. */
 	virtual bool runsControllerDuringDeparture() const { return false; }
 	/** Return true when the shared ambient driver continues after departure-time page controller work. */

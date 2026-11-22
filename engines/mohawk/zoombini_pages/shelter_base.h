@@ -216,8 +216,11 @@ protected:
 	void updateHeldBasecampStorageScroll();
 	/** Release the held button and sound while retaining pending storage movement. */
 	void releaseBasecampStorageScroll();
-	/** Advance one page-scheduled tick of the common two-phase storage movement. */
-	void advanceBasecampStorageScroll();
+	/**
+	 * Run the storage timer.
+	 * @return return true when it processes a pending scroll.
+	 */
+	bool advanceBasecampStorageScroll();
 	/** Return whether the selected direction can move from the current viewport. */
 	bool canBasecampStorageScroll(StorageScrollDirection direction) const;
 	/** Update the common scrolling/end sound transaction. */
@@ -331,6 +334,10 @@ protected:
 	StorageScrollDirection _heldStorageScrollDirection = StorageScrollDirection::kNone;
 	/** Pending storage movement retained until its animation phase settles. */
 	StorageScrollDirection _storageScrollDirection = StorageScrollDirection::kNone;
+	/** Logic ticks between the storage runner's animation updates. */
+	static constexpr uint32 kStorageScrollInterval = 6;
+	/** Next frame at which the storage runner can advance. */
+	uint32 _storageNextUpdateFrame = 0;
 	/** Whether the storage grid is showing its intermediate scrolling frame. */
 	bool _storageScrollAnimating = false;
 	/** Whether the boundary-aware storage scrolling sound is active. */

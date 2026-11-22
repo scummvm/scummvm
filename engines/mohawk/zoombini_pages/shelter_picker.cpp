@@ -610,16 +610,24 @@ void ZoombiniShelterPicker::updatePendingGoTransition() {
 	if (_pendingGoRequiresWalkCompletion && !_pendingGoObservedWalkCompletion)
 		return;
 
+	finishGoTransition();
+}
+
+void ZoombiniShelterPicker::finishGoTransition() {
 	_departureState = ZmbDepartureState::kCompleted;
+	_hasDepartSfxHandle = false;
 	_pendingGoRequiresWalkCompletion = false;
 	_pendingGoObservedWalkCompletion = false;
 	_pendingGoWalkers.clear();
+	// The live Picker runners own the party after restoring it from the Map.
+	saveSnoidsToPack();
 	_vm->setNextPage(ZoombiniPageType::kXfer);
 	close();
 }
 
-void ZoombiniShelterPicker::updateDepartureState() {
-	// updatePendingGoTransition() owns the Picker-specific sound and walk gates.
+void ZoombiniShelterPicker::updateDepartState() {
+	// @ref ZoombiniShelterPicker::updatePendingGoTransition() waits for the
+	// departure sound and any required walk to finish before leaving.
 }
 
 ZmbSnoid *ZoombiniShelterPicker::findSnoidAtSeat(int16 seatIdx) {
@@ -736,9 +744,7 @@ void ZoombiniShelterPicker::pickerButtons_onButtonAction(ZmbFeature *feature, ui
 		// Increment total generated count
 		f._zmbGeneratedCount += 1;
 
-		// Immediately enable or disable Go from current departure readiness.
-		// This runs before the shared button pre-render callback,
-		// so the visual updates in the same frame the departure gate changes.
+		// Update Go before the button is drawn so any change is visible this frame.
 		setGoButtonsEnabled(isDepartureReady());
 
 		// Generate a new name for the next preview snoid
@@ -955,13 +961,7 @@ ZmbEventHandleResult ZoombiniShelterPicker::onKeyDown(const Common::KeyState &kb
 ZmbEventHandleResult ZoombiniShelterPicker::onLButtonDown(const Common::Point &absPos, const Common::Point &relPos) {
 	// Complete a pending departure before handling other clicks.
 	if (isDeparturePending()) {
-		_departureState = ZmbDepartureState::kCompleted;
-		_hasDepartSfxHandle = false;
-		_pendingGoRequiresWalkCompletion = false;
-		_pendingGoObservedWalkCompletion = false;
-		_pendingGoWalkers.clear();
-		_vm->setNextPage(ZoombiniPageType::kXfer);
-		close();
+		finishGoTransition();
 		return ZmbEventHandleResult::kConsumed;
 	}
 
@@ -1166,7 +1166,7 @@ void ZoombiniShelterPicker::onGoButtonActivated() {
 	playDepartSfx();
 
 	ZmbStateFile &f = _vm->_state->getCurrentState();
-	// Clear only the Isle pack count; the active pack continues to Xfer and Bridge.
+	// Clear the Isle checkpoint before the party leaves Picker.
 	f._zmbPackIsle.clearEntries();
 
 	// Snoids arriving at the next page will do a turn-around-left animation.
@@ -1487,9 +1487,12 @@ Common::String ZoombiniShelterPicker::debugGetPageCommandHelp() const {
 Common::String ZoombiniShelterPicker::debugGetBuiltinDebugCommandHelp() const {
 	Common::String output;
 	output += Common::String::format("  %-21s (%s)\n", "Shift+Generate button", kBuiltinDebugActionShiftGenerate);
-	output += "    With debug enabled, exact Shift, an empty Picker, and an otherwise enabled Generate action,\n";
-	output += "    set generated and Town-stored counts to 624, then create one normal final visible Zoombini.\n";
-	output += "    This does not fill the seats. ScummVM blocks saving the synthetic state until Load or New Game.\n";
+	output += "    With built-in debug enabled and all seats empty, hold Shift by itself\n";
+	output += "    and click the enabled Generate button.\n";
+	output += "    This sets the generated and Town-stored counts to 624, then creates\n";
+	output += "    one final Zoombini, bringing the generated count to 625.\n";
+	output += "    Shift+Dice fills the empty seats with random Zoombinis.\n";
+	output += "    Saving this synthetic state is blocked until Load or New Game.\n";
 	output += Common::String::format("  %-21s (%s)\n", "Ctrl+W", kBuiltinDebugActionWaveCycle);
 	output += "    Without requiring debug mode, advance 0=both moving, 1=both frozen, 2=waves only, 3=boat only.\n";
 	output += "    Frozen layers remain visible. The selector changes only when both SCRB 4104/4105 runners exist.\n";

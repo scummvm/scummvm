@@ -769,7 +769,8 @@ bool ZoombiniConsole::CmdSub_DrawMsgBox(int argc, const char **argv) {
 		debugPrintf("Render one localized text key in a Yes/No message box.\n");
 		debugPrintf("Usage: %s %s <text-key>\n\n", kCmdDraw, kSubCmdDrawMsgBox);
 		debugPrintf("The text key is a decimal or 0x-prefixed ZoombiniText key.\n");
-		debugPrintf("For example, %s %s 800 displays the debug-save warning.\n", kCmdDraw, kSubCmdDrawMsgBox);
+		debugPrintf("For example, %s %s %u displays the debug-save warning.\n", kCmdDraw, kSubCmdDrawMsgBox,
+					static_cast<uint32>(ZoombiniText::kSvmDialogBodyAskSaveAfterDebugStateMutation));
 		debugPrintf("Use '%s texts' to export the available localized keys.\n\n", kCmdDump);
 		debugPrintf("Options:\n");
 		printHelpOption();
@@ -3180,7 +3181,7 @@ bool ZoombiniConsole::Cmd_BuiltinDebug(int argc, const char **argv) {
 		debugPrintf("In-game activation: press Ctrl+A, type 'go snoids', press Space.\n");
 		debugPrintf("\n");
 		debugPrintf("Direct debugger commands run regardless of the debug flag state.\n");
-		debugPrintf("That debug flag gates only the original in-game debug shortcuts.\n");
+		debugPrintf("The original in-game debug shortcuts require debug mode.\n");
 		debugPrintf("\n");
 		debugPrintf("Usage: %s <action> [arguments]\n\n", kCmdBuiltinDebug);
 		printBuiltinDebugStatus();
@@ -3371,7 +3372,7 @@ bool ZoombiniConsole::CmdSub_Puzzle_Retry(int argc, const char **argv) {
 
 bool ZoombiniConsole::CmdSub_Puzzle_Finish(int argc, const char **argv) {
 	if (hasHelpOption(argc, argv)) {
-		debugPrintf("Trigger the active interactive puzzle's departure path.\n");
+		debugPrintf("Finish the active puzzle with all Zoombinis accepted.\n");
 		debugPrintf("Usage: %s|%s %s\n", kCmdPage, kCmdPuzzle, kSubCmdPagePuzzleFinish);
 		debugPrintf("\n");
 		debugPrintf("This is a live debug action: it marks the game state as changed\n");
@@ -3751,7 +3752,7 @@ bool ZoombiniConsole::Cmd_ManBuiltinDebug(int argc, const char **argv) {
 	debugPrintf("\n[Recovery and reset]\n");
 	debugPrintf("  If ] stops normal screen rendering, press [ to turn Step Mode off and resume it.\n");
 	debugPrintf("  Then press = only if a full redraw is needed to clear direct diagnostics.\n");
-	debugPrintf("  For a full transient reset, run 'debug disable', then 'debug enable'.\n");
+	debugPrintf("  For a full transient reset, run '%s disable', then '%s enable'.\n", kCmdBuiltinDebug, kCmdBuiltinDebug);
 	debugPrintf("  This reset does not change the independent built-in MIDI-test mode.\n");
 
 	debugPrintf("\n[Shared keys: debug mode must be enabled]\n");
@@ -3769,7 +3770,7 @@ bool ZoombiniConsole::Cmd_ManBuiltinDebug(int argc, const char **argv) {
 	debugPrintf("  Ctrl+I      Force every available Zoombini into the active party\n");
 	debugPrintf("  Ctrl+R      Toggle dragged-Zoombini coordinate notifications\n");
 	debugPrintf("  Ctrl+Z      Toggle the palette-14 runner-debug backdrop\n");
-	debugPrintf("  Debugger counterparts: debug -h\n");
+	debugPrintf("  Debugger counterparts: %s -h\n", kCmdBuiltinDebug);
 
 	debugPrintf("\n[MIDI test mode: independent of gameplay.debug]\n");
 	debugPrintf("  Ctrl+A, type lowercase 'midi', Space\n");
@@ -3796,7 +3797,8 @@ bool ZoombiniConsole::Cmd_ManBuiltinDebug(int argc, const char **argv) {
 	debugPrintf("    a             Draw the named lane and traits it accepts; the other lane accepts the complement\n");
 	debugPrintf("                  This is read-only and is unavailable while a pack path walk is pending\n");
 	debugPrintf("    r             Show the last rejection event type and selected page SCRS 1000-1019\n");
-	debugPrintf("                  Values are -1 before the first rejection; wait for the next key or mouse button\n");
+	debugPrintf("                  Before the first rejection, type is -1 and the script number is blank\n");
+	debugPrintf("                  Waits for the next key or mouse button\n");
 	debugPrintf("                  This is read-only and is unavailable while a pack path walk is pending\n");
 	debugPrintf("  Tunnels\n");
 	debugPrintf("    a             Draw the generated orientation and trait conditions (read-only)\n");
@@ -3865,13 +3867,16 @@ bool ZoombiniConsole::Cmd_ManBuiltinDebug(int argc, const char **argv) {
 	debugPrintf("    F5            Resume shuffling later L3/L4 filter home positions\n");
 	debugPrintf("                  Does not reshuffle the current filters; no effect in L1/L2\n");
 	debugPrintf("  Picker\n");
-	debugPrintf("    Shift+Generate With debug enabled and Picker empty, set generated/Town counts to 624\n");
-	debugPrintf("                   Then run one normal Generate for the final visible Zoombini; do not fill seats\n");
-	debugPrintf("                   ScummVM blocks saving this synthetic state until Load or New Game\n");
+	debugPrintf("    Shift+Generate With built-in debug enabled and all seats empty,\n");
+	debugPrintf("                   hold Shift by itself and click the enabled Generate button.\n");
+	debugPrintf("                   This sets the generated and Town-stored counts to 624, then creates\n");
+	debugPrintf("                   one final Zoombini, bringing the generated count to 625.\n");
+	debugPrintf("                   Shift+Dice fills the empty seats with random Zoombinis.\n");
+	debugPrintf("                   Saving this synthetic state is blocked until Load or New Game.\n");
 	debugPrintf("  Town\n");
 	debugPrintf("    Space         Show the 0-16 memorial data selector; 0 is OFF; does not open a card\n");
 	debugPrintf("    f             Stop a nonempty pending celebration queue, or restart its retained count\n");
-	debugPrintf("                  The retained count initially is 0, so initial f displays 0 but queues nothing\n");
+	debugPrintf("                  The initial f waits for input without showing a count or queuing walkers\n");
 	debugPrintf("    Shift+F       Stop a nonempty queue, or advance by 5 (5-100, wrapping) and start it\n");
 	debugPrintf("                  Starting waits for one input; stopping affects pending, not spawned, walkers\n");
 	debugPrintf("    x/z           Decrement / increment the 0-16 memorial data selector without wrapping\n");

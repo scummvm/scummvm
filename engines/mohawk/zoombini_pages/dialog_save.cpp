@@ -197,8 +197,7 @@ ZmbEventHandleResult ZoombiniDialogSave::dialogFrame_onKeyDown(ZmbFeature *featu
 		break;
 	default: // Handle typing of printable characters
 		// Accept key-event text when the backend is not delivering composition commits.
-		// @ref Common::KEYCODE_DELETE passes this check, but it has been handled above.
-		if ((Common::KEYCODE_EXCLAIM <= kbd.keycode && kbd.keycode <= Common::KEYCODE_TILDE) ||
+		if ((Common::KEYCODE_SPACE <= kbd.keycode && kbd.keycode <= Common::KEYCODE_TILDE) ||
 			kbd.keycode == Common::KEYCODE_INVALID ||
 			(Common::KEYCODE_KP0 <= kbd.keycode && kbd.keycode <= Common::KEYCODE_KP9 && (kbd.flags & Common::KBD_NUM)) ||
 			(Common::KEYCODE_KP_PERIOD <= kbd.keycode && kbd.keycode <= Common::KEYCODE_KP_EQUALS && kbd.keycode != Common::KEYCODE_KP_ENTER)) {

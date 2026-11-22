@@ -103,8 +103,8 @@ void ZoombiniPuzzleSlides::initStates() {
 	_celebrationCycleTarget = 0;
 	_fullMatchTriggerCount = 0;
 	_goButtonEnabled = false;
-	_victoryPaletteActive = false;
-	_lastVictoryPaletteFrame = 0;
+	_zbZoneActive = false;
+	_zbZonePaletteCycleFrame = 0;
 	_boardInputEnabled = true;
 	_solvedRiseTimingFeature = nullptr;
 	_departureState = ZmbDepartureState::kIdle;
@@ -413,9 +413,6 @@ void ZoombiniPuzzleSlides::debugPrepareForDeparture() {
 	}
 
 	_goButtonEnabled = 0 < lockedCount;
-	_victoryPaletteActive = (_puzzleLevel == kPuzzleLevel4 && _goButtonEnabled);
-	if (_victoryPaletteActive)
-		_lastVictoryPaletteFrame = getCurrentFrameCounter();
 
 	setGoButtonsEnabled(_goButtonEnabled);
 }
@@ -1170,12 +1167,8 @@ void ZoombiniPuzzleSlides::onPreTickFrame() {
 			return;
 	}
 
-	if (_victoryPaletteActive) {
-		if (6 < getCurrentFrameCounter() - _lastVictoryPaletteFrame) {
-			_vm->_gfx->rotatePaletteRight(243, 3);
-			_lastVictoryPaletteFrame = getCurrentFrameCounter();
-		}
-	}
+	// Handle ZB Zone easter egg if it has been activated.
+	updateZBZoneEasterEgg();
 }
 
 void ZoombiniPuzzleSlides::onPostRenderFrame() {
@@ -2229,22 +2222,46 @@ void ZoombiniPuzzleSlides::activateChainLink(int16 linkIdx) {
 
 	checkVictoryCondition();
 
-	if (_puzzleLevel == kPuzzleLevel4 &&
-		cellStateIs(57, kCellLocked) && cellStateIs(59, kCellLocked) && cellStateIs(61, kCellLocked)) {
-		int16 occupiedSlots = 0;
-		for (int16 i = 0; i < _slotCount; i++) {
-			int16 slotCell = _slotCellIndices[i];
-			if (cellStateIs(slotCell, kCellOccupied, kCellLocked))
-				occupiedSlots += 1;
-		}
+	if (checkZBZoneEasterEgg())
+		activateZBZoneEasterEgg();
+}
 
-		if (!_victoryPaletteActive && occupiedSlots == 4) {
-			_victoryPaletteActive = true;
-			_lastVictoryPaletteFrame = getCurrentFrameCounter();
-			_goButtonEnabled = true;
-		} else if (occupiedSlots != 4) {
-			_victoryPaletteActive = false;
-		}
+bool ZoombiniPuzzleSlides::checkZBZoneEasterEgg() const {
+	if (_zbZoneActive || _puzzleLevel != kPuzzleLevel4 ||
+		!cellStateIs(57, kCellLocked) || !cellStateIs(59, kCellLocked) || !cellStateIs(61, kCellLocked)) // 4 middle slots in a row
+		return false;
+
+	int16 occupiedSlots = 0;
+	for (int16 i = 0; i < _slotCount; i++) {
+		if (cellStateIs(_slotCellIndices[i], kCellOccupied, kCellLocked))
+			occupiedSlots += 1;
+	}
+
+	return occupiedSlots == 4;
+}
+
+void ZoombiniPuzzleSlides::activateZBZoneEasterEgg() {
+	// Draw a ZB Zone easter egg box
+	_vm->_gfx->fillArea(ZoombiniGraphics::kShapeScreen, _zbZoneMessageRect, ZoombiniGraphics::kColor1F_VeryDarkGreen);
+	_vm->_gfx->frameArea(ZoombiniGraphics::kShapeScreen, _zbZoneMessageRect, ZoombiniGraphics::kColor19_Magenta);
+	ZoombiniGraphics::TextConf textConf;
+	textConf._hAlign = Graphics::kTextAlignCenter;
+	textConf._vAlign = Graphics::kTextAlignCenter;
+	textConf._textPalette = ZoombiniGraphics::kColor19_Magenta;
+	_vm->_gfx->drawText(ZoombiniGraphics::kShapeScreen, Common::U32String("You have entered the psychedelic ZB Zone!"), _zbZoneMessageRect, textConf);
+
+	// Activate ZB Zone easter egg palette cycling.
+	_zbZoneActive = true;
+	_zbZonePaletteCycleFrame = _vm->getAnimationFrameCounter(_vm->getTotalPlayTime());
+}
+
+void ZoombiniPuzzleSlides::updateZBZoneEasterEgg() {
+	uint32 currentFrame = getCurrentFrameCounter();
+
+	if (_zbZoneActive && 6 < currentFrame - _zbZonePaletteCycleFrame) {
+		// Cycle the RGB values in palette entries 0x13-0x15 right, wrapping 0x15 back to 0x13.
+		_vm->_gfx->rotatePaletteRight(ZoombiniGraphics::kColor13_LightBlue, 3);
+		_zbZonePaletteCycleFrame = currentFrame;
 	}
 }
 

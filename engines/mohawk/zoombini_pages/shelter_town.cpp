@@ -80,7 +80,7 @@ Common::String ZoombiniShelterTown::debugGetBuiltinDebugCommandHelp() const {
 	output += "    Stop a nonempty pending celebration queue, or restart it with the retained count (initially 0).\n";
 	output += Common::String::format("  %-10s (%s)\n", "Shift+F", kBuiltinDebugActionFireworksNext);
 	output += "    Stop a nonempty queue, or advance the retained count by 5 (5-100, wrapping) and start it.\n";
-	output += "    Starting either fireworks action shows its count and waits for one input; already spawned walkers finish.\n";
+	output += "    Starting either fireworks action waits for one input and shows the count if positive. Already spawned walkers finish.\n";
 	output += Common::String::format("  %-10s (%s)\n", "x", kBuiltinDebugActionMemorialPrevious);
 	output += "    Decrement the memorial data-preview selector and refresh an open card.\n";
 	output += Common::String::format("  %-10s (%s)\n", "z", kBuiltinDebugActionMemorialNext);
@@ -152,29 +152,24 @@ bool ZoombiniShelterTown::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 		showBuiltinCheatTextSelection(output);
 		return false;
 	}
-	if (action == BuiltinDebugAction::kFireworksLast) {
+	if (action == BuiltinDebugAction::kFireworksLast || action == BuiltinDebugAction::kFireworksNext) {
 		if (_developAnimTimer != 0) {
 			_developAnimTimer = 0;
-			output = "Town fireworks stopped.\n";
-		} else {
-			_developAnimTimer = _builtinFireworksCount;
-			output = Common::String::format("Fireworks launching: %d\n", _builtinFireworksCount);
-			showBuiltinDebugText(Common::String::format("Fireworks launching: %d", _builtinFireworksCount), true);
+			return false;
 		}
-		return false;
-	}
-	if (action == BuiltinDebugAction::kFireworksNext) {
-		if (_developAnimTimer != 0) {
-			_developAnimTimer = 0;
-			output = "Town fireworks stopped.\n";
-		} else {
+		if (action == BuiltinDebugAction::kFireworksNext) {
 			_builtinFireworksCount += 5;
 			if (100 < _builtinFireworksCount)
 				_builtinFireworksCount = 5;
-			_developAnimTimer = _builtinFireworksCount;
-			output = Common::String::format("Fireworks launching: %d\n", _builtinFireworksCount);
-			showBuiltinDebugText(Common::String::format("Fireworks launching: %d", _builtinFireworksCount), true);
 		}
+		_developAnimTimer = _builtinFireworksCount;
+		if (_builtinFireworksCount == 0) {
+			waitForBuiltinDebugInput();
+			return false;
+		}
+		const Common::String message = Common::String::format("Fireworks launching:  %d", _builtinFireworksCount);
+		showBuiltinDebugText(message, true);
+		output = message + '\n';
 		return false;
 	}
 	if (action == BuiltinDebugAction::kMemorialPrevious || action == BuiltinDebugAction::kMemorialNext) {
@@ -522,18 +517,13 @@ void ZoombiniShelterTown::loadFeatures() {
 		for (uint16 inhabitantIdx = 0; inhabitantIdx < _inhabitantCount; inhabitantIdx++) {
 			const uint16 posIdx = _vm->_rnd->getNonRepeatRandom(16, positionPoolState);
 
-			const Common::Point anchor = kInhabitantPositions[posIdx];
-			ZmbFeature *inhabitant = loadScrbFeature(
+			// The selected position anchors the first hotspot of the inhabitant snoid's SCRB.
+			loadScrbFeature(
 				ZmbResource(ZmbResource::kPage, kResBitmapShape4000_Inhabitant),
-				kInhabitantScrbTable[posIdx], _vm->_rnd->getRandomNumber(4, 6), anchor,
+				kInhabitantScrbTable[posIdx], _vm->_rnd->getRandomNumber(4, 6), kInhabitantPositions[posIdx],
 				ZmbFeature::FLAG_00000002_TYPE_GRIDWALKER |
 					ZmbFeature::FLAG_00008000_LOOP_ANIM |
 					ZmbFeature::FLAG_00800000_POS_DELTA);
-			if (inhabitant) {
-				// Set both position anchors after loading the SCRB so the initial delta is zero.
-				inhabitant->setPointLoc(anchor);
-				inhabitant->setPointRef(anchor);
-			}
 		}
 	}
 
@@ -1142,9 +1132,7 @@ void ZoombiniShelterTown::spawnCelebrationWalker() {
 
 	if (walker) {
 		const int16 xPos = _vm->_rnd->getRandomNumber(100, 540);
-		const Common::Point sortAnchor(xPos, yPos);
-		walker->setPointLoc(sortAnchor);
-		walker->setPointRef(sortAnchor);
+		walker->setPointLoc(Common::Point(xPos, yPos));
 		// The current runner-order system already places the walker correctly; no additional relink is needed.
 		_celebWalkerFeatures[slot] = walker;
 
@@ -1615,24 +1603,24 @@ void ZoombiniShelterTown::shiftTownEntityForScroll(ZmbFeature *feature, int16 ph
 	markFeatureVisualCoverageDirty(feature, false);
 	addExternalDirtyRect(oldCoverage);
 
-	Common::Point point = feature->getPointLoc();
+	const Common::Point oldPos = feature->getPointLoc();
+	Common::Point pos = oldPos;
 	if (phaseIdx != 0) {
-		point.x -= 320;
-		if (point.x < -320)
-			point.x += 1920;
+		pos.x -= 320;
+		if (pos.x < -320)
+			pos.x += 1920;
 	} else {
-		point.x += 320;
-		if (1599 < point.x)
-			point.x -= 1920;
+		pos.x += 320;
+		if (1599 < pos.x)
+			pos.x -= 1920;
 	}
-	feature->setPointLoc(point);
+	feature->setPointLoc(pos);
+	feature->resetNextRenderFrame();
 
 	ZmbSnoid *snoid = dynamic_cast<ZmbSnoid *>(feature);
-	if (feature == _clockHandsFeature) {
-		// Scrolling expires the clock timer. Its timed pre-render owner rebuilds the
-		// hands and click rectangle on the next graphics pass.
-		feature->resetNextRenderFrame();
-	} else if (snoid) {
+	if (snoid) {
+		// Use the wrapped displacement so the current and later SCRS frames share the new column.
+		snoid->translateScrsAnchors(pos - oldPos);
 		Common::Point sortAnchor = snoid->getAnimTargetPos();
 		if (phaseIdx != 0) {
 			sortAnchor.x -= 320;
@@ -1645,7 +1633,8 @@ void ZoombiniShelterTown::shiftTownEntityForScroll(ZmbFeature *feature, int16 ph
 		}
 		snoid->setAnimTargetPos(sortAnchor);
 		prepareSnoidVisualCoverage(snoid, true);
-	} else {
+	} else if (feature != _clockHandsFeature) {
+		// The clock rebuilds its hands through its timed pre-render callback.
 		prepareFeatureVisualCoverage(feature);
 	}
 

@@ -233,7 +233,10 @@ private:
 	void initDifficultyParams();
 	/** Reset the current difficulty controller and its ledge runner. */
 	void debugReinitDifficulty();
-	/** Return every loaded Zoombini to the waiting area and reset the difficulty controller. */
+	/**
+	 * Move plain Snoid runners to waiting spots in render order,
+	 * clear seat occupancy, and reset the difficulty controller.
+	 */
 	void debugReinitAfterExit();
 	/**
 	 * Rebuild the generated rule and seat every loaded Zoombini for one primary trait kind.

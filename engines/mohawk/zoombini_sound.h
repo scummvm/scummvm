@@ -88,10 +88,10 @@ public:
 	 *
 	 * @param resource Resolved page or system SND resource.
 	 * @param soundType Mixer volume category for this candidate.
-	 * @param forcePriority Select this candidate above every authored page range.
+	 * @param preferOverEffects Play this cue ahead of effects and defer it behind ordinary speech.
 	 */
-	void enqueueScriptSound(ZmbResource resource, Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType, bool forcePriority = false);
-	/** True when at least one new candidate awaits render-pass arbitration. */
+	void enqueueScriptSound(ZmbResource resource, Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType, bool preferOverEffects = false);
+	/** True when a new or pending cue needs arbitration or a preferred cue is playing. */
 	bool hasQueuedScriptSoundThisFrame() const { return _scriptSoundQueuedThisFrame; }
 	/** Select and play the one winning SCRB/SCRS sound for this render frame. */
 	void flushScriptSoundFrame(const ZoombiniPage &page);
@@ -184,8 +184,8 @@ private:
 		bool started = false;
 		/** Whether @ref handle is valid. */
 		bool hasHandle = false;
-		/** Whether this candidate bypasses normal range priority. */
-		bool forcePriority = false;
+		/** Whether ordinary speech has precedence and effects yield to this cue. */
+		bool preferOverEffects = false;
 	};
 
 	struct ActiveZmbSoundEntry {

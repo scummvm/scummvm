@@ -97,7 +97,7 @@ protected:
 	void debugPrepareForDeparture() override;
 	/** Describe the generated bridge toll rule for diagnostics. */
 	Common::String debugGetAnswer(const Common::Array<Common::String> &args = Common::Array<Common::String>()) const override;
-	/** Describe the last rejected Snoid trait and script selected by the bridge. */
+	/** Format the last rejection type and the script number, if selected. */
 	Common::String debugGetLastRejectRoute() const;
 	/** Describe the Allergic Cliffs built-in debug actions. */
 	Common::String debugGetBuiltinDebugCommandHelp() const override;

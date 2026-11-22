@@ -204,18 +204,13 @@ void ZoombiniShelterBasecampOne::loadFeatures() {
 	}
 
 	// [*] SCRB 1111 ~ 1115: Easter Egg Mushrooms
-	// Pre-render clears render activation each frame, but post-render draws non-DEFER_RENDER features regardless,
-	// so these mushrooms remain visible.
-	// Initialization and each click call @ref ZmbFeature::activateRender().
-	// One pre-render pass then applies the selected mushroom color before the skip-render flag deactivates it.
+	// Materialize the saved color on entry. SKIP_RENDER keeps these runners on their selected frame.
 	for (uint32 i = 0; i <= kResScrb1115_EasterEggMushroom5 - kResScrb1111_EasterEggMushroom1; i++) {
 		ZmbFeature::EventHooks hooks;
 		hooks.setSelectRenderFrameFunc(&ZoombiniShelterBasecampOne::easterEggMushroom_selectRenderFrame);
 		hooks.setLButtonDownFunc(&ZoombiniShelterBasecampOne::easterEggMushroom_onLButtonDown);
-		ZmbFeature *feature = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape1100), i + kResScrb1111_EasterEggMushroom1, 0,
-											  ZmbFeature::FLAG_00020000_SKIP_RENDER,
-											  hooks);
-		feature->activateRender(); // Load the initial color on the first pre-render pass.
+		loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape1100), i + kResScrb1111_EasterEggMushroom1, 0,
+						ZmbFeature::FLAG_00020000_SKIP_RENDER, hooks);
 	}
 
 	{ // [*] SCRB 1104: Bonfire (randomly animates; clicking triggers Pod animation)
@@ -408,7 +403,6 @@ void ZoombiniShelterBasecampOne::scroll_preRenderShape(ZmbFeature *feature, ZmbH
 void ZoombiniShelterBasecampOne::scroll_postRender(ZmbFeature *feature) {
 	(void)feature;
 
-	updateHeldBasecampStorageScroll();
 	advanceBasecampStorageScroll();
 	_vm->_state->getCurrentState()._storedChunkBC1.setLeftmostColumnIdx(_storageLeftmostColumnIdx);
 }
@@ -701,9 +695,6 @@ ZmbEventHandleResult ZoombiniShelterBasecampOne::easterEggBonfire_onLButtonDown(
 	return ZmbEventHandleResult::kConsumed;
 }
 
-// Find a mushroom runner by click-rectangle containment.
-// Features without @ref ZmbFeature::FLAG_01000000_DEFER_RENDER remain drawn after pre-render deactivates them.
-// @ref ZmbFeature::activateRender() updates @ref ZmbFeature::_lastFrameIdx from the selected color for one pass.
 int32 ZoombiniShelterBasecampOne::easterEggMushroom_selectRenderFrame(ZmbFeature *feature) {
 	uint16 stateIdx = feature->getId() - kResScrb1111_EasterEggMushroom1;
 	assert(stateIdx <= kResScrb1115_EasterEggMushroom5 - kResScrb1111_EasterEggMushroom1);
@@ -720,13 +711,13 @@ ZmbEventHandleResult ZoombiniShelterBasecampOne::easterEggMushroom_onLButtonDown
 	uint16 mushroomIdx = feature->getId() - kResScrb1111_EasterEggMushroom1;
 	assert(mushroomIdx <= kResScrb1115_EasterEggMushroom5 - kResScrb1111_EasterEggMushroom1);
 
-	uint16 colorCount = static_cast<uint16>(feature->getMaxFrameIdx() + 1);
-	ZmbStateFile &state = _vm->_state->getCurrentState();
-	state._bcOneMushroomColors[mushroomIdx] = (state._bcOneMushroomColors[mushroomIdx] + 1) % colorCount;
+	const uint16 colorCount = static_cast<uint16>(feature->getMaxFrameIdx() + 1);
+	uint16 &color = _vm->_state->getCurrentState()._bcOneMushroomColors[mushroomIdx];
+	color = (color + 1) % colorCount;
 
-	// Activate one pre-render pass to update @ref ZmbFeature::_lastFrameIdx.
-	// The shape remains visible because the feature does not use @ref ZmbFeature::FLAG_01000000_DEFER_RENDER.
-	feature->activateRender();
+	// Repaint the new color through the static runner path without starting a SCRB animation.
+	feature->setLastFrameIdx(color);
+	feature->requestVisualRematerialization();
 
 	int16 soundId = static_cast<int16>(mushroomIdx + kResSound1118_EasterEggMushroom1);
 	_vm->_sound->playSound(ZmbResource(ZmbResource::kPage, soundId), Audio::Mixer::kSFXSoundType, false);

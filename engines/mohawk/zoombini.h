@@ -368,6 +368,8 @@ public:
 	bool finishV10BrDemoComponent();
 	/** Begin the deferred quit sequence, including any required save prompt. */
 	void requestQuit();
+	/** Request quit through the event manager so its confirm can cancel the request. */
+	void queueQuitEvent();
 	/** Defer a game-owned Save or Load dialog until the ScummVM main menu closes. */
 	void requestMainMenuSaveLoadDialog(bool loadDialog);
 	/** Open the save dialog and return its result. */
@@ -649,7 +651,6 @@ private:
 		kPendingQuitNone = 0,
 		kPendingQuitCloseOptions,
 		kPendingQuitWaitForOptionsClose,
-		kPendingQuitFinalizing,
 	};
 	/** Pending quit request owned by the engine-level quit state machine. */
 	PendingQuitRequest _pendingQuitRequest = kPendingQuitNone;

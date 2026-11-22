@@ -994,6 +994,7 @@ public:
 		kSysResSound0997_Intro = 997,
 		kSysResSound0997_IntroMove = 997,
 		kSysResSound0997_MoveSFX = 997,
+		kSysResSound0998_MapDestSFX = 998,
 		kSysResSound0999_ButtonSFX = 999,
 		kSysResSound20000_Base = 20000,
 		kSysResSound20000_Route4_SmokeVoiceA = 20000,
@@ -1243,11 +1244,11 @@ public:
 	 * entry point that removes per-call hardcoding of the render state.
 	 * @param scrsResource Archive-qualified SCRS resource to play.
 	 * @param completionMode Whether the Snoid returns to idle or becomes hidden after the SCRS finishes.
-	 * @param suppressVoiceEvents Ignore voice markers while retaining other script events.
+	 * @param endPos Optional target position for the last positive-shape frame's anchor.
+	 *               If null, the first frame is anchored at the Snoid's current position.
 	 * @return true on success (resource found and playback started).
 	 */
-	bool startSnoidScrs(ZmbSnoid *snoid, ZmbResource scrsResource, ZmbScrsCompletionMode completionMode = ZmbScrsCompletionMode::kReturnToIdle,
-						const Common::Point *endPos = nullptr, bool suppressVoiceEvents = false);
+	bool startSnoidScrs(ZmbSnoid *snoid, ZmbResource scrsResource, ZmbScrsCompletionMode completionMode = ZmbScrsCompletionMode::kReturnToIdle, const Common::Point *endPos = nullptr);
 	/** Notify this page after a Snoid's state-7 path walk reaches its final target. */
 	virtual void onSnoidWalkCompleted(ZmbSnoid *snoid) {
 		(void)snoid;
@@ -1311,6 +1312,11 @@ protected:
 	}
 	/** Return the mixer volume category for a sound submitted by an authored feature. */
 	virtual Audio::Mixer::SoundType getFeatureSoundType(const ZmbFeature *feature, ZmbResource sndRes) const;
+	/** Return whether this feature's voice cue should take priority over effects in the script queue. */
+	virtual bool shouldPreferFeatureVoiceOverEffects(const ZmbFeature *feature) const {
+		(void)feature;
+		return false;
+	}
 	/** Resolve a priority from ranges listed in descending registration order. */
 	static uint8 lookupScriptSoundPriority(ZmbResource resource, const ScriptSoundPriorityRanges &ranges);
 	/** Resolve a sound ID through ranges listed in original registration order. */
@@ -1595,6 +1601,8 @@ protected:
 	public:
 		/** Whether the button's hotspot should be drawn. */
 		bool _drawEnabled = false;
+		/** Whether the press sound competes in the script sound queue. */
+		bool _queuePressSound = false;
 		/** Localized text key rendered over the button. */
 		ZoombiniText::Key _textKey = ZoombiniText::kNone;
 		/** Normal and pressed hotspot IDs. */

@@ -34,8 +34,8 @@ namespace Mohawk {
 constexpr Common::Point ZoombiniPuzzlePizza::kSnoidPositions[16];
 constexpr Common::Point ZoombiniPuzzlePizza::kMachineSeatPosition;
 constexpr int16 ZoombiniPuzzlePizza::kToppingScrbTable[4];
-constexpr int16 ZoombiniPuzzlePizza::kToppingButtonSoundTable[8];
-constexpr int16 ZoombiniPuzzlePizza::kToppingClickRectTable[4][8][4];
+constexpr int16 ZoombiniPuzzlePizza::kToppingButtonSoundTable[kToppingKindCount];
+constexpr int16 ZoombiniPuzzlePizza::kToppingClickRectTable[4][kToppingKindCount][4];
 
 bool ZoombiniPuzzlePizza::isLoadChantSkipEvent(const Common::Event &event) {
 	switch (event.type) {
@@ -503,8 +503,8 @@ bool ZoombiniPuzzlePizza::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 															 _shylerToppings[0], _shylerToppings[1], _shylerToppings[2], _shylerToppings[3],
 															 _shylerToppings[4], _shylerToppings[5], _shylerToppings[6], _shylerToppings[7]);
 		const Common::String meal = Common::String::format("Meal     %d %d %d %d %d %d %d %d",
-														   _submittedMealToppings[0], _submittedMealToppings[1], _submittedMealToppings[2], _submittedMealToppings[3],
-														   _submittedMealToppings[4], _submittedMealToppings[5], _submittedMealToppings[6], _submittedMealToppings[7]);
+														   _selectedMealToppings[0], _selectedMealToppings[1], _selectedMealToppings[2], _selectedMealToppings[3],
+														   _selectedMealToppings[4], _selectedMealToppings[5], _selectedMealToppings[6], _selectedMealToppings[7]);
 
 		drawBuiltinDebugPanel(Common::Rect(400, 1, 600, 80));
 		if (_trollOrderStates[TrollOrderLine::kArno00] == TrollOrderState::kActive01)
@@ -664,11 +664,11 @@ bool ZoombiniPuzzlePizza::debugSetChances(int16 remaining) {
 }
 
 Common::String ZoombiniPuzzlePizza::debugGetAnswer(const Common::Array<Common::String> &) const {
-	// [*] Ingredient identities keep the same mask index at every difficulty.
+	// [*] Topping identities keep the same mask index at every difficulty.
 	// Level 1 uses indices 0-4.
 	// Level 2 uses 0-6 but blocks index 4, leaving four pizza toppings and two sundae toppings.
 	// Level 3 uses indices 0-6, and level 4 uses all indices 0-7.
-	static constexpr SlotInfo kIngredientSlots[8] = {
+	static constexpr SlotInfo kToppingSlotTable[kToppingKindCount] = {
 		{"Pizza", 1, "Olive"},
 		{"Pizza", 2, "Pepper"},
 		{"Pizza", 3, "Salami"},
@@ -687,7 +687,7 @@ Common::String ZoombiniPuzzlePizza::debugGetAnswer(const Common::Array<Common::S
 		for (int i = 0; i < _machineToppingSlotCount; i++) {
 			if (!toppingEnables[i])
 				continue;
-			const SlotInfo &si = kIngredientSlots[i];
+			const SlotInfo &si = kToppingSlotTable[i];
 			if (Common::String(si.category) == "Pizza") {
 				if (!hasPizza) {
 					line += "    Pizza:\n";
@@ -719,8 +719,8 @@ Common::String ZoombiniPuzzlePizza::debugGetAnswer(const Common::Array<Common::S
 
 	// "Not Wanted": slots that are selectable by the player but no troll wants them.
 	// Cheese is blocked at level 2, so its fixed slot is excluded.
-	bool toppingEnables[8] = {false, false, false, false, false, false, false, false};
-	const int forbiddenSlot = (_puzzleLevel == kPuzzleLevel2) ? kMealIngredientCheese04 : -1;
+	bool toppingEnables[kToppingKindCount] = {};
+	const int forbiddenSlot = (_puzzleLevel == kPuzzleLevel2) ? kToppingKindCheese04 : -1;
 	for (int i = 0; i < _machineToppingSlotCount; i++) {
 		if (i != forbiddenSlot && !_arnoToppings[i] && !_willaToppings[i] && !_shylerToppings[i])
 			toppingEnables[i] = true;
@@ -763,7 +763,7 @@ void ZoombiniPuzzlePizza::generateToppingSet() {
 }
 
 // ---------------------------------------------------------------------------
-// Distribute toppings among the ingredient categories.
+// Distribute toppings among the active troll orders.
 // ---------------------------------------------------------------------------
 void ZoombiniPuzzlePizza::distributeToppings() {
 	for (int16 i = 0; i < ARRAYSIZE(_arnoToppings); i++) {
@@ -1427,12 +1427,12 @@ ZmbEventHandleResult ZoombiniPuzzlePizza::onLButtonDown(const Common::Point &abs
 	if (isDragging())
 		return ZmbEventHandleResult::kPassthrough;
 
-	// --- Check ingredient toggle clicks (on topping features) ---
+	// --- Check topping-button clicks ---
 	// Toppings can change only when no exit callback is pending.
 	if (_machinePhase == kPhaseNone) {
 		for (int16 i = 0; i < _machineToppingSlotCount; i++) {
 			if (isToppingButtonAtPoint(i, absPos)) {
-				handleIngredientToggle(i);
+				handleToppingToggle(i);
 				return ZmbEventHandleResult::kConsumed;
 			}
 		}
@@ -1501,20 +1501,20 @@ ZmbEventHandleResult ZoombiniPuzzlePizza::onMouseMove(const Common::Point &absPo
 	return ZoombiniInteractive::onMouseMove(absPos, relPos);
 }
 
-bool ZoombiniPuzzlePizza::hasToppingButtonForIngredient(int16 ingredientIdx) const {
-	if (ingredientIdx < 0 || _machineToppingSlotCount <= ingredientIdx)
+bool ZoombiniPuzzlePizza::hasToppingButton(int16 toppingIdx) const {
+	if (toppingIdx < 0 || _machineToppingSlotCount <= toppingIdx)
 		return false;
 
-	return _puzzleLevel != kPuzzleLevel2 || ingredientIdx != kMealIngredientCheese04;
+	return _puzzleLevel != kPuzzleLevel2 || toppingIdx != kToppingKindCheese04;
 }
 
-int16 ZoombiniPuzzlePizza::getToppingButtonScrbId(int16 ingredientIdx, bool selected) const {
-	if (!hasToppingButtonForIngredient(ingredientIdx))
+int16 ZoombiniPuzzlePizza::getToppingButtonScrbId(int16 toppingIdx, bool selected) const {
+	if (!hasToppingButton(toppingIdx))
 		return -1;
 
-	int16 buttonOrdinal = ingredientIdx;
-	// Level 2 preserves the shared ingredient indices but packs six physical button pairs around the absent cheese slot.
-	if (_puzzleLevel == kPuzzleLevel2 && kMealIngredientCheese04 < ingredientIdx)
+	int16 buttonOrdinal = toppingIdx;
+	// Level 2 preserves the shared topping indices but packs six physical button pairs around the absent cheese slot.
+	if (_puzzleLevel == kPuzzleLevel2 && kToppingKindCheese04 < toppingIdx)
 		buttonOrdinal -= 1;
 
 	return static_cast<int16>(kToppingScrbTable[_puzzleLevel - 1] + buttonOrdinal * 2 + (selected ? 1 : 0));
@@ -1549,26 +1549,26 @@ void ZoombiniPuzzlePizza::updateV2MachineButtonHover() {
 	}
 }
 
-bool ZoombiniPuzzlePizza::isToppingButtonAtPoint(int16 ingredientIdx, const Common::Point &point) const {
-	if (_machineToppingSlotCount <= ingredientIdx || !hasToppingButtonForIngredient(ingredientIdx) || !_toppingButtonFeatures[ingredientIdx])
+bool ZoombiniPuzzlePizza::isToppingButtonAtPoint(int16 toppingIdx, const Common::Point &point) const {
+	if (_machineToppingSlotCount <= toppingIdx || !hasToppingButton(toppingIdx) || !_toppingButtonFeatures[toppingIdx])
 		return false;
 
 	if (!_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20))
-		return _toppingButtonFeatures[ingredientIdx]->findDrawRecordAtPoint(point) != nullptr;
+		return _toppingButtonFeatures[toppingIdx]->findDrawRecordAtPoint(point) != nullptr;
 
-	const int16 *rect = kToppingClickRectTable[_puzzleLevel - 1][ingredientIdx];
+	const int16 *rect = kToppingClickRectTable[_puzzleLevel - 1][toppingIdx];
 	return Common::Rect(rect[0], rect[1], rect[2], rect[3]).contains(point);
 }
 
 // ---------------------------------------------------------------------------
 // Toggle a topping selection.
 // ---------------------------------------------------------------------------
-void ZoombiniPuzzlePizza::handleIngredientToggle(int16 ingredientIdx) {
-	if (!hasToppingButtonForIngredient(ingredientIdx))
+void ZoombiniPuzzlePizza::handleToppingToggle(int16 toppingIdx) {
+	if (!hasToppingButton(toppingIdx))
 		return;
 
-	// Toggle the selected ingredient.
-	_selectedMealToppings[ingredientIdx] = !_selectedMealToppings[ingredientIdx];
+	// Toggle the selected topping.
+	_selectedMealToppings[toppingIdx] = !_selectedMealToppings[toppingIdx];
 
 	// The toggle writes only the live selection.
 	// It must not touch @ref ZoombiniPuzzlePizza::_submittedMealToppings, which snapshots an in-flight delivery.
@@ -1576,19 +1576,19 @@ void ZoombiniPuzzlePizza::handleIngredientToggle(int16 ingredientIdx) {
 	// @ref ZoombiniPuzzlePizza::handleSubmit() refreshes the snapshot when a new delivery starts.
 
 	// Swap the topping SCRB to its off/on visual.
-	const int16 targetScrb = getToppingButtonScrbId(ingredientIdx, _selectedMealToppings[ingredientIdx]);
+	const int16 targetScrb = getToppingButtonScrbId(toppingIdx, _selectedMealToppings[toppingIdx]);
 
-	if (_toppingButtonFeatures[ingredientIdx]) {
-		loadScrbOntoFeature(_toppingButtonFeatures[ingredientIdx], targetScrb);
+	if (_toppingButtonFeatures[toppingIdx]) {
+		loadScrbOntoFeature(_toppingButtonFeatures[toppingIdx], targetScrb);
 	}
 	// TLC v2 topping SCRBs omit the frame sound, so the button queues it separately.
 	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20)) {
-		queueScriptSoundForNextRenderPass(ZmbResource(ZmbResource::kPage, kToppingButtonSoundTable[ingredientIdx]));
+		queueScriptSoundForNextRenderPass(ZmbResource(ZmbResource::kPage, kToppingButtonSoundTable[toppingIdx]));
 	}
 
 	// Refresh the large preview button after toggling.
 	registerProduceButton();
-	debugC(4, MohawkEngine_Zoombini::kDebugPage02, "pizza: topping %d selection is now %d", ingredientIdx, _selectedMealToppings[ingredientIdx] ? 1 : 0);
+	debugC(4, MohawkEngine_Zoombini::kDebugPage02, "pizza: topping %d selection is now %d", toppingIdx, _selectedMealToppings[toppingIdx] ? 1 : 0);
 }
 
 // ---------------------------------------------------------------------------
@@ -2154,7 +2154,7 @@ void ZoombiniPuzzlePizza::runOrderFeatureAmbientIdleDriver() {
 // ---------------------------------------------------------------------------
 byte ZoombiniPuzzlePizza::packToppingBitmask() const {
 	byte mask = 0;
-	for (int16 i = 0; i < 8; i++) {
+	for (int16 i = 0; i < kToppingKindCount; i++) {
 		if (_submittedMealToppings[i])
 			mask |= (1 << i);
 	}
@@ -2184,7 +2184,7 @@ void ZoombiniPuzzlePizza::handleSubmit() {
 	_produceSubmissionEnabled = false;
 
 	// Snapshot the live machine selection for this delivery chain.
-	for (int16 i = 0; i < 8; i++) {
+	for (int16 i = 0; i < kToppingKindCount; i++) {
 		_submittedMealToppings[i] = _selectedMealToppings[i];
 	}
 
@@ -2207,6 +2207,13 @@ void ZoombiniPuzzlePizza::handleSubmit() {
 	// Keep the SCRB 7066 machine feature behind the Produce button while the exit animation is active.
 	// Otherwise its machine-front frames cover the pressed generate button.
 	manualLinkBefore(_machineFeature, _produceButtonFeature);
+
+	// Clear the machine buttons for the next order while the submitted meal is delivered.
+	for (int16 i = 0; i < ARRAYSIZE(_selectedMealToppings); i++) {
+		_selectedMealToppings[i] = false;
+		if (_toppingButtonFeatures[i])
+			loadScrbOntoFeature(_toppingButtonFeatures[i], getToppingButtonScrbId(i, false));
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -3099,7 +3106,7 @@ void ZoombiniPuzzlePizza::finishToppingRunnerRegistration(ZmbFeature *newFeature
 //   Type 6: order 1, SCRB 12019+counter (wraps at 3)
 //   Type 7: order 2, SCRB 12022+counter (wraps at 3)
 //
-// @ref ZmbFeature::setPreRenderShapeFunc() installs the active-ingredient filter.
+// @ref ZmbFeature::setPreRenderShapeFunc() installs the filter for active toppings.
 // ---------------------------------------------------------------------------
 void ZoombiniPuzzlePizza::registerToppingRunner() {
 	if (27 <= _lastToppingRunnerSlotIdx)
@@ -3246,7 +3253,7 @@ bool ZoombiniPuzzlePizza::getShapeInterpolationGroup(ZmbFeature *feature, const 
 
 // ---------------------------------------------------------------------------
 // Prepare topping-runner shapes before rendering.
-// Filter each four-shape authored group in @ref ZoombiniPuzzlePizza::MealShape
+// Filter each four-shape authored group in @ref ZoombiniPuzzlePizza::OverlayToppingShape
 // by the topping mask and difficulty recorded when this runner was created.
 // ---------------------------------------------------------------------------
 void ZoombiniPuzzlePizza::toppingRunner_preRenderShape(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots) {
@@ -3256,26 +3263,28 @@ void ZoombiniPuzzlePizza::toppingRunner_preRenderShape(ZmbFeature *feature, ZmbH
 
 	for (int hotspotIdx = static_cast<int>(hotspots.size()) - 1; 0 <= hotspotIdx; hotspotIdx--) {
 		int16 shapeIdx = hotspots[hotspotIdx]._shapeIdx;
+		// Keep artwork outside the topping ranges visible by default.
+		// Mask and difficulty checks set keep. False removes this shape's hotspot from the frame's copy below.
 		bool keep = true;
 
-		if (kMealShapeCheese05_First <= shapeIdx && shapeIdx <= kMealShapeCheese08_Last) {
-			keep = (activeMask & (1 << kMealIngredientCheese04)) != 0;
-		} else if (kMealShapeMushrooms09_First <= shapeIdx && shapeIdx <= kMealShapeMushrooms12_Last) {
-			keep = (activeMask & (1 << kMealIngredientMushrooms03)) != 0;
-		} else if (kMealShapePepperoni13_First <= shapeIdx && shapeIdx <= kMealShapePepperoni16_Last) {
-			keep = (activeMask & (1 << kMealIngredientPepperoni02)) != 0;
-		} else if (kMealShapePeppers17_First <= shapeIdx && shapeIdx <= kMealShapePeppers20_Last) {
-			keep = (activeMask & (1 << kMealIngredientPeppers01)) != 0;
-		} else if (kMealShapeOlives21_First <= shapeIdx && shapeIdx <= kMealShapeOlives24_Last) {
-			keep = (activeMask & (1 << kMealIngredientOlives00)) != 0;
-		} else if (kMealShapePlainSundae25_First <= shapeIdx && shapeIdx <= kMealShapePlainSundae28_Last) {
+		if (kOverlayToppingShapeCheese05_First <= shapeIdx && shapeIdx <= kOverlayToppingShapeCheese08_Last) {
+			keep = (activeMask & (1 << kToppingKindCheese04)) != 0;
+		} else if (kOverlayToppingShapeMushrooms09_First <= shapeIdx && shapeIdx <= kOverlayToppingShapeMushrooms12_Last) {
+			keep = (activeMask & (1 << kToppingKindMushrooms03)) != 0;
+		} else if (kOverlayToppingShapePepperoni13_First <= shapeIdx && shapeIdx <= kOverlayToppingShapePepperoni16_Last) {
+			keep = (activeMask & (1 << kToppingKindPepperoni02)) != 0;
+		} else if (kOverlayToppingShapePeppers17_First <= shapeIdx && shapeIdx <= kOverlayToppingShapePeppers20_Last) {
+			keep = (activeMask & (1 << kToppingKindPeppers01)) != 0;
+		} else if (kOverlayToppingShapeOlives21_First <= shapeIdx && shapeIdx <= kOverlayToppingShapeOlives24_Last) {
+			keep = (activeMask & (1 << kToppingKindOlives00)) != 0;
+		} else if (kOverlayToppingShapePlainSundae25_First <= shapeIdx && shapeIdx <= kOverlayToppingShapePlainSundae28_Last) {
 			keep = kPuzzleLevel2 <= _puzzleLevel;
-		} else if (kMealShapeChocolateSauce29_First <= shapeIdx && shapeIdx <= kMealShapeChocolateSauce32_Last) {
-			keep = (activeMask & (1 << kMealIngredientChocolateSauce07)) != 0 && _puzzleLevel == kPuzzleLevel4;
-		} else if (kMealShapeWhippedCream33_First <= shapeIdx && shapeIdx <= kMealShapeWhippedCream36_Last) {
-			keep = (activeMask & (1 << kMealIngredientWhippedCream06)) != 0 && kPuzzleLevel2 <= _puzzleLevel;
-		} else if (kMealShapeCherry37_First <= shapeIdx && shapeIdx <= kMealShapeCherry40_Last) {
-			keep = (activeMask & (1 << kMealIngredientCherry05)) != 0 && kPuzzleLevel2 <= _puzzleLevel;
+		} else if (kOverlayToppingShapeChocolateSauce29_First <= shapeIdx && shapeIdx <= kOverlayToppingShapeChocolateSauce32_Last) {
+			keep = (activeMask & (1 << kToppingKindChocolateSauce07)) != 0 && _puzzleLevel == kPuzzleLevel4;
+		} else if (kOverlayToppingShapeWhippedCream33_First <= shapeIdx && shapeIdx <= kOverlayToppingShapeWhippedCream36_Last) {
+			keep = (activeMask & (1 << kToppingKindWhippedCream06)) != 0 && kPuzzleLevel2 <= _puzzleLevel;
+		} else if (kOverlayToppingShapeCherry37_First <= shapeIdx && shapeIdx <= kOverlayToppingShapeCherry40_Last) {
+			keep = (activeMask & (1 << kToppingKindCherry05)) != 0 && kPuzzleLevel2 <= _puzzleLevel;
 		}
 
 		if (!keep)
@@ -3306,9 +3315,9 @@ void ZoombiniPuzzlePizza::hideToppingOverlay() {
 // Install the meal-filter callbacks.
 // @ref ZoombiniPuzzlePizza::attachMealFilter() installs the meal-filter callback.
 // @ref ZoombiniPuzzlePizza::mealFilter_preRenderShape() handles every order runner in the serving and disposal paths.
-// The callback filters the topping ranges in @ref ZoombiniPuzzlePizza::OrderFeatureShape with @ref ZoombiniPuzzlePizza::_submittedMealToppings.
+// The callback filters the topping ranges in @ref ZoombiniPuzzlePizza::TrollToppingShape with @ref ZoombiniPuzzlePizza::_submittedMealToppings.
 // The troll's inspect, carry, and throw animations therefore show exactly the submitted toppings.
-// @ref ZoombiniPuzzlePizza::OrderFeatureShape::kArnoAndStoneOcclusionPatch212 is hidden after Arno accepts his order.
+// @ref ZoombiniPuzzlePizza::TrollToppingShape::kTrollToppingShapeArnoAndStoneOcclusionPatch212 is hidden after Arno accepts his order.
 // ---------------------------------------------------------------------------
 void ZoombiniPuzzlePizza::attachMealFilter(ZmbFeature *feature) {
 	if (feature)
@@ -3320,33 +3329,39 @@ void ZoombiniPuzzlePizza::mealFilter_preRenderShape(ZmbFeature *feature, ZmbHots
 	(void)hsGroup;
 
 	for (int hotspotIdx = static_cast<int>(hotspots.size()) - 1; 0 <= hotspotIdx; hotspotIdx--) {
-		const OrderFeatureShape shapeIdx = static_cast<OrderFeatureShape>(hotspots[hotspotIdx]._shapeIdx);
+		const TrollToppingShape shapeIdx = static_cast<TrollToppingShape>(hotspots[hotspotIdx]._shapeIdx);
 		bool keep = true;
 
-		if (OrderFeatureShape::kCheese156_First <= shapeIdx && shapeIdx <= OrderFeatureShape::kCheese159_Last) {
-			keep = _submittedMealToppings[kMealIngredientCheese04];
-		} else if (OrderFeatureShape::kMushrooms160_First <= shapeIdx && shapeIdx <= OrderFeatureShape::kMushrooms163_Last) {
-			keep = _submittedMealToppings[kMealIngredientMushrooms03];
-		} else if (OrderFeatureShape::kPepperoni164_First <= shapeIdx && shapeIdx <= OrderFeatureShape::kPepperoni167_Last) {
-			keep = _submittedMealToppings[kMealIngredientPepperoni02];
-		} else if (OrderFeatureShape::kPeppers168_First <= shapeIdx && shapeIdx <= OrderFeatureShape::kPeppers171_Last) {
-			keep = _submittedMealToppings[kMealIngredientPeppers01];
-		} else if (OrderFeatureShape::kOlives172_First <= shapeIdx && shapeIdx <= OrderFeatureShape::kOlives175_Last) {
-			keep = _submittedMealToppings[kMealIngredientOlives00];
-		} else if (OrderFeatureShape::kPlainSundae176_First <= shapeIdx && shapeIdx <= OrderFeatureShape::kPlainSundae179_Last) {
+		if (TrollToppingShape::kTrollToppingShapeCheese156_First <= shapeIdx && shapeIdx <= TrollToppingShape::kTrollToppingShapeCheese159_Last) {
+			keep = _submittedMealToppings[kToppingKindCheese04];
+		} else if (TrollToppingShape::kTrollToppingShapeMushrooms160_First <= shapeIdx && shapeIdx <= TrollToppingShape::kTrollToppingShapeMushrooms163_Last) {
+			keep = _submittedMealToppings[kToppingKindMushrooms03];
+		} else if (TrollToppingShape::kTrollToppingShapePepperoni164_First <= shapeIdx && shapeIdx <= TrollToppingShape::kTrollToppingShapePepperoni167_Last) {
+			keep = _submittedMealToppings[kToppingKindPepperoni02];
+		} else if (TrollToppingShape::kTrollToppingShapePeppers168_First <= shapeIdx && shapeIdx <= TrollToppingShape::kTrollToppingShapePeppers171_Last) {
+			keep = _submittedMealToppings[kToppingKindPeppers01];
+		} else if (TrollToppingShape::kTrollToppingShapeOlives172_First <= shapeIdx && shapeIdx <= TrollToppingShape::kTrollToppingShapeOlives175_Last) {
+			keep = _submittedMealToppings[kToppingKindOlives00];
+		} else if (TrollToppingShape::kTrollToppingShapePlainSundae176_First <= shapeIdx &&
+				   shapeIdx <= TrollToppingShape::kTrollToppingShapePlainSundae179_Last) {
 			// Removed only at the lowest difficulty
 			keep = kPuzzleLevel2 <= _puzzleLevel;
-		} else if (OrderFeatureShape::kChocolateSauce180_First <= shapeIdx && shapeIdx <= OrderFeatureShape::kChocolateSauce183_Last) {
-			keep = _submittedMealToppings[kMealIngredientChocolateSauce07] && _puzzleLevel == kPuzzleLevel4;
-		} else if (OrderFeatureShape::kWhippedCream184_First <= shapeIdx && shapeIdx <= OrderFeatureShape::kWhippedCream187_Last) {
-			keep = _submittedMealToppings[kMealIngredientWhippedCream06] && kPuzzleLevel2 <= _puzzleLevel;
-		} else if (OrderFeatureShape::kCherry188_First <= shapeIdx && shapeIdx <= OrderFeatureShape::kCherry191_Last) {
-			keep = _submittedMealToppings[kMealIngredientCherry05] && kPuzzleLevel2 <= _puzzleLevel;
-		} else if (shapeIdx == OrderFeatureShape::kArnoAndStoneOcclusionPatch212) {
+		} else if (TrollToppingShape::kTrollToppingShapeChocolateSauce180_First <= shapeIdx &&
+				   shapeIdx <= TrollToppingShape::kTrollToppingShapeChocolateSauce183_Last) {
+			keep = _submittedMealToppings[kToppingKindChocolateSauce07] && _puzzleLevel == kPuzzleLevel4;
+		} else if (TrollToppingShape::kTrollToppingShapeWhippedCream184_First <= shapeIdx &&
+				   shapeIdx <= TrollToppingShape::kTrollToppingShapeWhippedCream187_Last) {
+			keep = _submittedMealToppings[kToppingKindWhippedCream06] && kPuzzleLevel2 <= _puzzleLevel;
+		} else if (TrollToppingShape::kTrollToppingShapeCherry188_First <= shapeIdx && shapeIdx <= TrollToppingShape::kTrollToppingShapeCherry191_Last) {
+			keep = _submittedMealToppings[kToppingKindCherry05] && kPuzzleLevel2 <= _puzzleLevel;
+		} else if (shapeIdx == TrollToppingShape::kTrollToppingShapeArnoAndStoneOcclusionPatch212) {
 			// Omit Willa's Arno-and-stone occlusion patch after Arno accepts.
 			keep = _trollOrderStates[TrollOrderLine::kArno00] != TrollOrderState::kAccepted03;
 		}
 
+		// Keep unrelated troll artwork visible by default.
+		// The rules below set keep from the submitted toppings, difficulty, and occlusion state.
+		// False removes this shape's hotspot from the frame's copy before rendering.
 		if (!keep)
 			hotspots.remove_at(hotspotIdx);
 	}
@@ -3366,14 +3381,14 @@ void ZoombiniPuzzlePizza::attachOrderFilter(ZmbFeature *feature) {
 // ---------------------------------------------------------------------------
 // Prepare order-feature shapes before rendering.
 // Pre-render callback for the troll-held pizza order features.
-// Filter the topping ranges in @ref ZoombiniPuzzlePizza::OrderFeatureShape so only the requested combination is drawn for each troll.
+// Filter the topping ranges in @ref ZoombiniPuzzlePizza::TrollToppingShape so only the requested combination is drawn for each troll.
 // The combo array is selected by feature identity:
 // @ref ZoombiniPuzzlePizza::_arnoFeature uses @ref ZoombiniPuzzlePizza::_arnoToppings for Arno.
 //   @ref ZoombiniPuzzlePizza::_willaFeature uses @ref ZoombiniPuzzlePizza::_willaToppings for Willa.
 //   @ref ZoombiniPuzzlePizza::_shylerFeature uses @ref ZoombiniPuzzlePizza::_shylerToppings for Shyler.
-// Each four-frame @ref ZoombiniPuzzlePizza::OrderFeatureShape range maps to the corresponding @ref ZoombiniPuzzlePizza::MealIngredient entry.
+// Each four-frame @ref ZoombiniPuzzlePizza::TrollToppingShape range maps to the corresponding @ref ZoombiniPuzzlePizza::ToppingKind entry.
 // The plain-sundae range and sundae toppings require level 2 or higher, with chocolate sauce additionally restricted to level 4 by order generation.
-// @ref ZoombiniPuzzlePizza::OrderFeatureShape::kArnoAndStoneOcclusionPatch212 is hidden after Arno accepts his order.
+// @ref ZoombiniPuzzlePizza::TrollToppingShape::kTrollToppingShapeArnoAndStoneOcclusionPatch212 is hidden after Arno accepts his order.
 // ---------------------------------------------------------------------------
 void ZoombiniPuzzlePizza::orderFeature_preRenderShape(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots) {
 	(void)hsGroup;
@@ -3389,34 +3404,38 @@ void ZoombiniPuzzlePizza::orderFeature_preRenderShape(ZmbFeature *feature, ZmbHo
 	const bool diffEnabled = kPuzzleLevel2 <= _puzzleLevel;
 
 	for (int hotspotIdx = static_cast<int>(hotspots.size()) - 1; 0 <= hotspotIdx; hotspotIdx--) {
-		const OrderFeatureShape shapeIdx = static_cast<OrderFeatureShape>(hotspots[hotspotIdx]._shapeIdx);
-		if (feature == _willaFeature && shapeIdx == OrderFeatureShape::kArnoAndStoneOcclusionPatch212 && _trollOrderStates[TrollOrderLine::kArno00] == TrollOrderState::kAccepted03) {
+		const TrollToppingShape shapeIdx = static_cast<TrollToppingShape>(hotspots[hotspotIdx]._shapeIdx);
+		if (feature == _willaFeature &&
+			shapeIdx == TrollToppingShape::kTrollToppingShapeArnoAndStoneOcclusionPatch212 &&
+			_trollOrderStates[TrollOrderLine::kArno00] == TrollOrderState::kAccepted03) {
 			// Omit Willa's Arno-and-stone occlusion patch after Arno accepts.
 			hotspots.remove_at(hotspotIdx);
 			continue;
 		}
-		if (shapeIdx < OrderFeatureShape::kCheese156_First || OrderFeatureShape::kCherry191_Last < shapeIdx)
+		if (shapeIdx < TrollToppingShape::kTrollToppingShapeCheese156_First || TrollToppingShape::kTrollToppingShapeCherry191_Last < shapeIdx)
 			continue;
 
+		// Use the troll's request flags and difficulty rules to decide whether this topping shape is drawn.
+		// A false result removes its hotspot from this frame's copy below.
 		bool keep = true;
-		if (shapeIdx <= OrderFeatureShape::kCheese159_Last) {
-			keep = combo[kMealIngredientCheese04] != 0;
-		} else if (shapeIdx <= OrderFeatureShape::kMushrooms163_Last) {
-			keep = combo[kMealIngredientMushrooms03] != 0;
-		} else if (shapeIdx <= OrderFeatureShape::kPepperoni167_Last) {
-			keep = combo[kMealIngredientPepperoni02] != 0;
-		} else if (shapeIdx <= OrderFeatureShape::kPeppers171_Last) {
-			keep = combo[kMealIngredientPeppers01] != 0;
-		} else if (shapeIdx <= OrderFeatureShape::kOlives175_Last) {
-			keep = combo[kMealIngredientOlives00] != 0;
-		} else if (shapeIdx <= OrderFeatureShape::kPlainSundae179_Last) {
+		if (shapeIdx <= TrollToppingShape::kTrollToppingShapeCheese159_Last) {
+			keep = combo[kToppingKindCheese04] != 0;
+		} else if (shapeIdx <= TrollToppingShape::kTrollToppingShapeMushrooms163_Last) {
+			keep = combo[kToppingKindMushrooms03] != 0;
+		} else if (shapeIdx <= TrollToppingShape::kTrollToppingShapePepperoni167_Last) {
+			keep = combo[kToppingKindPepperoni02] != 0;
+		} else if (shapeIdx <= TrollToppingShape::kTrollToppingShapePeppers171_Last) {
+			keep = combo[kToppingKindPeppers01] != 0;
+		} else if (shapeIdx <= TrollToppingShape::kTrollToppingShapeOlives175_Last) {
+			keep = combo[kToppingKindOlives00] != 0;
+		} else if (shapeIdx <= TrollToppingShape::kTrollToppingShapePlainSundae179_Last) {
 			keep = diffEnabled;
-		} else if (shapeIdx <= OrderFeatureShape::kChocolateSauce183_Last) {
-			keep = combo[kMealIngredientChocolateSauce07] != 0 && diffEnabled;
-		} else if (shapeIdx <= OrderFeatureShape::kWhippedCream187_Last) {
-			keep = combo[kMealIngredientWhippedCream06] != 0 && diffEnabled;
+		} else if (shapeIdx <= TrollToppingShape::kTrollToppingShapeChocolateSauce183_Last) {
+			keep = combo[kToppingKindChocolateSauce07] != 0 && diffEnabled;
+		} else if (shapeIdx <= TrollToppingShape::kTrollToppingShapeWhippedCream187_Last) {
+			keep = combo[kToppingKindWhippedCream06] != 0 && diffEnabled;
 		} else {
-			keep = combo[kMealIngredientCherry05] != 0 && diffEnabled;
+			keep = combo[kToppingKindCherry05] != 0 && diffEnabled;
 		}
 
 		if (!keep)

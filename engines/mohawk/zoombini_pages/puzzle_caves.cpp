@@ -542,7 +542,7 @@ Common::String ZoombiniPuzzleCaves::debugGetBuiltinDebugCommandHelp() const {
 	output += Common::String::format("  %-7s (%s)\n", "Space", kBuiltinDebugActionReinit);
 	output += "    Reset the level-specific controller, mistake budget, and glyph-panel state while retaining the rule and seat occupancy.\n";
 	output += Common::String::format("  %-7s (%s)\n", "F3", kBuiltinDebugActionReinitAfterExit);
-	output += "    Return every Zoombini to its waiting position, clear all playable seats and Advance state, then perform the Space reset.\n";
+	output += "    Return waiting-area Zoombinis in render order, clear playable seats and Advance state, and perform the Space reset.\n";
 	output += Common::String::format("  %-7s (%s)\n", "Shift+L", kBuiltinDebugActionLevel);
 	output += "    Show the one-based current runtime level without changing it.\n";
 	output += Common::String::format("  %-7s (%s <0-3>)\n", "F5-F8", kBuiltinDebugActionEntrance);
@@ -607,15 +607,19 @@ void ZoombiniPuzzleCaves::debugReinitDifficulty() {
 
 void ZoombiniPuzzleCaves::debugReinitAfterExit() {
 	Common::Array<ZmbSnoid *> snoids;
-	collectPackSnoids(snoids, true);
-	// Zero-based Snoid entries 0 through N - 1 map to the first N waiting-position entries, where N <= 16.
-	for (uint32 waitingPositionIdx = 0; waitingPositionIdx < snoids.size() && waitingPositionIdx < ARRAYSIZE(kWaitingSnoidPositions); waitingPositionIdx++) {
-		ZmbSnoid *snoid = snoids[waitingPositionIdx];
+	collectSnoidsInRunnerOrder(snoids);
+	int16 waitPosIdx = 0;
+	for (ZmbSnoid *snoid : snoids) {
+		if (_pageLoadedZmbCount <= waitPosIdx)
+			break;
+		// Seat-linked Snoids keep their positions.
+		if (snoid->getFlags() != ZmbFeature::FLAG_00000001_TYPE_SNOID)
+			continue;
 		markFeatureVisualCoverageDirty(snoid, false);
-		snoid->_packIsOccupied = false;
 		snoid->clearPreparedRenderHotspots();
-		snoid->setAnimState(kSnoidAnimState000_Idle, &kWaitingSnoidPositions[waitingPositionIdx]);
+		snoid->setAnimState(kSnoidAnimState000_Idle, &kWaitingSnoidPositions[waitPosIdx]);
 		prepareSnoidVisualCoverage(snoid, true);
+		waitPosIdx += 1;
 	}
 
 	memset(_seatOccupants, 0, sizeof(_seatOccupants));
@@ -730,30 +734,25 @@ bool ZoombiniPuzzleCaves::runBuiltinDebugAction(BuiltinDebugAction action, int16
 	if (action == BuiltinDebugAction::kDifficulty) {
 		_puzzleLevel = static_cast<ZmbPuzzleLevel>(argument);
 		debugProcessEntrance(-1);
-		output = Common::String::format("Lion's Lair runtime difficulty set to level %d.\n", argument);
-		showBuiltinDebugText(Common::String::format("Level %d", argument));
-		return false;
-	}
-	if (action == BuiltinDebugAction::kReinit || action == BuiltinDebugAction::kReinitAfterExit) {
+	} else if (action == BuiltinDebugAction::kReinit || action == BuiltinDebugAction::kReinitAfterExit) {
 		if (action == BuiltinDebugAction::kReinitAfterExit)
 			debugReinitAfterExit();
 		else
 			debugReinitDifficulty();
 		output = Common::String::format("Lion's Lair level %d controller reinitialized.\n", static_cast<int>(_puzzleLevel));
 		return false;
-	}
-	if (action == BuiltinDebugAction::kLevel) {
-		output = Common::String::format("Level %d\n", static_cast<int>(_puzzleLevel));
 	} else if (action == BuiltinDebugAction::kEntrance) {
 		debugProcessEntrance(argument);
 		const ZmbTrait::TraitKind traitKind = ZmbTrait::traitKindFromIndex(argument);
 		output = Common::String::format("Rebuilt entrance rules with %s as the primary trait.\n", ZmbTrait::debugTraitKindName(traitKind));
-	} else {
+		return false;
+	} else if (action != BuiltinDebugAction::kLevel) {
 		return true;
 	}
 
-	if (action == BuiltinDebugAction::kLevel)
-		showBuiltinDebugText(Common::String::format("Level %d", static_cast<int>(_puzzleLevel)));
+	const Common::String message = Common::String::format("Level %d ", static_cast<int>(_puzzleLevel));
+	showBuiltinDebugText(message);
+	output = message + '\n';
 	return false;
 }
 

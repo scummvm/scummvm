@@ -269,7 +269,7 @@ void ZoombiniPuzzleNet::initHelpPrompt() {
 void ZoombiniPuzzleNet::onGoButtonActivated() {
 	if (_vm->getRelInfo().isDemo(ZmbReleaseInfo::Family::kTlcV20)) {
 		if (_vm->openMsgBoxDialog(ZoombiniMsgBoxType::kAskReallyQuit) == ZoombiniDialogResult::kYes)
-			Engine::quitGame();
+			_vm->queueQuitEvent();
 		return;
 	}
 

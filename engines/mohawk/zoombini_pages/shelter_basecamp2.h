@@ -403,12 +403,6 @@ protected:
 	/** Number of Zoombinis currently in storage. */
 	int16 _storedCount = 0;
 
-	/** Frame counter threshold for the next storage scroll update. */
-	uint32 _storageNextUpdateFrame = 0;
-
-	/** Per-frame update interval for the storage scroll animation. */
-	static constexpr uint32 kStorageScrollInterval = 2;
-
 	/** Z1-20U/TLC v2.0 release only: yellow-outline hover state for scroll buttons. */
 	bool _scrollButtonHovered[kStorageScrollButtonCount] = {false, false, false, false};
 	/** True when the bonfire-sticks Easter egg has been armed. */

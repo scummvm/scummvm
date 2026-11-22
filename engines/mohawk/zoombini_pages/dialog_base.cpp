@@ -81,8 +81,7 @@ ZmbEventHandleResult ZoombiniDialog::onKeyDown(const Common::KeyState &kbd, bool
 		return result;
 
 	if (!kbdRepeat && kbd.hasFlags(Common::KBD_CTRL) && kbd.keycode == Common::KEYCODE_q) {
-		close();
-		Engine::quitGame();
+		_vm->queueQuitEvent();
 		return ZmbEventHandleResult::kConsumed;
 	}
 

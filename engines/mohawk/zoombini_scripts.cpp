@@ -484,6 +484,12 @@ int32 ZmbFeature::onSelectRenderFrame(ZoombiniPage *page) {
 	return (page->*(_eventHooks._selectRenderFrameFunc))(this);
 }
 
+int32 ZmbFeature::selectInitialRenderFrame(ZoombiniPage *page) {
+	if (_eventHooks._selectRenderFrameFunc == &ZoombiniPage::selectRenderFrame)
+		return 0;
+	return onSelectRenderFrame(page);
+}
+
 void ZmbFeature::onPreRenderShape(ZoombiniPage *page, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots) {
 	if (!_eventHooks._preRenderShapeFunc || !page)
 		return;
@@ -619,6 +625,18 @@ void ZmbFeature::loadScrbData(const ZmbScriptDecoder::DecodedScrb *decodedScrb, 
 		setPreparedRenderHotspots(retainedPreparedRenderHotspots);
 }
 
+void ZmbFeature::clearScrbData(int16 scrbId) {
+	clear();
+	bindDecodedFrames(nullptr);
+	setScrbId(scrbId);
+	setLastFrameIdx(0);
+	setInitialScrbLoadPending(false);
+	invalidateRenderedClickRect();
+	setSortRect(Common::Rect());
+	deactivateAnimate();
+	deactivateRender();
+}
+
 bool ZmbFeature::setDecodedScrs(const ZmbScriptDecoder::DecodedScrs *decodedScrs) {
 	if (!decodedScrs)
 		return false;
@@ -687,14 +705,14 @@ bool ZmbFeature::playOwnedSound(ZmbResource resource, Audio::Mixer::SoundType so
 	return true;
 }
 
-bool ZmbFeature::enqueueFrameSound(int32 frameIdx, bool forcePriority) const {
+bool ZmbFeature::enqueueFrameSound(int32 frameIdx) const {
 	ZmbResource resource;
 	if (!getFrameSoundResource(frameIdx, resource))
 		return false;
 
 	// A feature-level opt-in routes its SFX through the priority queue.
 	// Immediate page feedback remains outside that arbitration.
-	_vm->_sound->enqueueScriptSound(resource, Audio::Mixer::kSFXSoundType, forcePriority);
+	_vm->_sound->enqueueScriptSound(resource, Audio::Mixer::kSFXSoundType);
 	return true;
 }
 
@@ -1131,10 +1149,9 @@ bool ZmbSnoid::loadScrsResource(ZmbResource resource) {
 }
 
 bool ZmbSnoid::startScrsPlayback(ZmbResource resource, ZmbScrsCompletionMode completionMode,
-								 ZmbScrsPlaybackMode playbackMode, const Common::Point *initPos, bool suppressVoiceEvents) {
+								 ZmbScrsPlaybackMode playbackMode, const Common::Point *initPos) {
 	// Save the pre-SCRS position for restoration when playback finishes.
 	_scrsOrigPointLoc = getPointLoc();
-	_scrsVoiceEventsSuppressed = suppressVoiceEvents;
 	_scrsEndEventEnabled = true;
 	clearPreparedRenderHotspots();
 
@@ -1205,6 +1222,14 @@ bool ZmbSnoid::startScrsPlayback(ZmbResource resource, ZmbScrsCompletionMode com
 	return true;
 }
 
+void ZmbSnoid::translateScrsAnchors(const Common::Point &delta) {
+	if (_activeScrsId == 0)
+		return;
+
+	_scrsRenderOffset += delta;
+	_scrsOrigPointLoc += delta;
+}
+
 void ZmbSnoid::syncScrsPointLoc() {
 	const ZmbDecodedScriptFrame *frame = getDecodedScriptFrame(getLastFrameIdx());
 	if (!frame || frame->hotspots.empty())
@@ -1224,7 +1249,6 @@ void ZmbSnoid::finishScrsPlayback(bool restorePosition) {
 	clearPreparedRenderHotspots();
 	_scrsRenderOffset = Common::Point(0, 0);
 	_activeScrsId = 0;
-	_scrsVoiceEventsSuppressed = false;
 	deactivateAnimate();
 }
 

@@ -387,9 +387,7 @@ public:
 		/** Bypass page arbitration and start this runner's sounds immediately. */
 		kImmediate,
 		/** Add this runner's sounds to the render-pass priority arbitration. */
-		kPriorityQueue,
-		/** Add this runner's sounds with priority above every authored range. */
-		kForcedPriorityQueue
+		kPriorityQueue
 	};
 
 	enum Flag : uint32 {
@@ -716,6 +714,8 @@ public:
 	 * @return The frame index to render
 	 */
 	int32 onSelectRenderFrame(ZoombiniPage *page);
+	/** Select the initial SCRB frame without advancing a standard animation. */
+	int32 selectInitialRenderFrame(ZoombiniPage *page);
 	/**
 	 * Invoke the pre-render-shape event hook.
 	 * @param page The page to handle the event
@@ -830,6 +830,8 @@ public:
 	 * @param scheduleRender Whether to activate rendering after the swap.
 	 */
 	void loadScrbData(const ZmbScriptDecoder::DecodedScrb *decodedScrb, int16 scrbId, bool scheduleRender = true);
+	/** Leave the runner in place with a selected SCRB ID and no playable frames. */
+	void clearScrbData(int16 scrbId);
 	/**
 	 * Bind one cached decoded SCRS as this runner's immutable script data.
 	 * The semantic owner retains the trait layout and controls frame timing,
@@ -844,9 +846,8 @@ public:
 	bool playOwnedSound(ZmbResource resource, Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType) const;
 	/**
 	 * Enqueue a frame's embedded SFX for the render-frame priority pass.
-	 * @param forcePriority Select this candidate above every authored page range.
 	 */
-	bool enqueueFrameSound(int32 frameIdx, bool forcePriority = false) const;
+	bool enqueueFrameSound(int32 frameIdx) const;
 	/**
 	 * Set this runner's script-sound policy. Linked sub-features inherit the
 	 * explicit policy so one authored feature chain cannot change dispatch mode
@@ -1592,17 +1593,18 @@ public:
 	 * @param initPos Optional anchor override.
 	 * When non-null, the method finds the last positive-shape anchor and aligns that frame to @p initPos.
 	 * Ferry landing SCRS use this to end at the target instead of starting there.
-	 * @param suppressVoiceEvents Suppress 200..239 voice opcodes for page uses with intentionally silent animation.
 	 * @return Whether the resource was decoded and playback started.
 	 */
 	bool startScrsPlayback(ZmbResource resource, ZmbScrsCompletionMode completionMode,
 						   ZmbScrsPlaybackMode playbackMode = ZmbScrsPlaybackMode::kReject,
-						   const Common::Point *initPos = nullptr, bool suppressVoiceEvents = false);
-	bool allowsScrsVoiceEvents() const { return !_scrsVoiceEventsSuppressed; }
+						   const Common::Point *initPos = nullptr);
 	/** Set whether completion of the current SCRS dispatches the page-owned end event. */
 	void setScrsEndEventEnabled(bool enabled) { _scrsEndEventEnabled = enabled; }
 	/** Return the resource ID of the active SCRS, or zero when unspecified. */
 	int16 getActiveScrsId() const { return _activeScrsId; }
+
+	/** Move the active SCRS render and restoration anchors by the runner's scene displacement. */
+	void translateScrsAnchors(const Common::Point &delta);
 
 	/**
 	 * Clean up after SCRS playback finishes and clear the select-render-frame hook.
@@ -1910,8 +1912,6 @@ private:
 	 * @ref ZoombiniTransitionXfer uses it to hide celebration-animated Snoids after their scripts complete.
 	 */
 	ZmbScrsCompletionMode _scrsCompletionMode = ZmbScrsCompletionMode::kReturnToIdle;
-	/** Whether voice opcodes are suppressed during active SCRS playback. */
-	bool _scrsVoiceEventsSuppressed = false;
 	/** Whether completion of the current SCRS dispatches the page-owned end event. */
 	bool _scrsEndEventEnabled = true;
 	/**

@@ -92,6 +92,24 @@ const ZoombiniPage::ScriptSoundPriorityRanges &ZoombiniPuzzleMaze::getScriptSoun
 	return kRanges;
 }
 
+bool ZoombiniPuzzleMaze::shouldPreferFeatureVoiceOverEffects(const ZmbFeature *feature) const {
+	// Cell and impact effects can win the shared script queue and suppress an individual landing cheer.
+	// With the option enabled, this hook marks that cheer to play ahead of effects. Ordinary speech keeps higher priority.
+	const ZmbSnoid *snoid = dynamic_cast<const ZmbSnoid *>(feature);
+	if (!snoid || !ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionMazeAlwaysPlayCelebrationSfx))
+		return false;
+
+	const int16 runnerIdx = findRunnerBySnoidId(snoid->getId());
+	if (runnerIdx < 0)
+		return false;
+
+	// Stage 3 at the successful upper-right exit is the individual landing celebration.
+	// Match the active feet-specific SCRS to limit this preference to that celebration phase.
+	const MazeRunnerState &runner = _runnerStates[runnerIdx];
+	return runner.boundaryExit && runner.cornerGroup == kUpperRight03 && runner.exitStage == 3 &&
+		   snoid->getActiveScrsId() == kResScrs15090_CelebrationBase + runner.feetTrait;
+}
+
 void ZoombiniPuzzleMaze::open() {
 	openArchive(ZMB_MHK_MAZE2);
 }
@@ -265,72 +283,6 @@ void ZoombiniPuzzleMaze::loadFeatures() {
 
 void ZoombiniPuzzleMaze::initHelpPrompt() {
 	_activeHelpSoundId = ZmbResource(ZmbResource::kSystem, kSysResSound20068_Help);
-}
-
-void ZoombiniPuzzleMaze::debugPrepareForDeparture() {
-	if (isDragging())
-		finishSnoidDrag();
-
-	// Stop any in-progress traversal. A runner that has already fallen into a
-	// whirlpool is render-disabled and is intentionally not restored or saved as
-	// an accepted runner.
-	_launcherSetupQueueSize = 0;
-	_movementQueueSize = 0;
-	_collisionOverlayRelinkQueueSize = 0;
-	_traversalColumnRelinkQueueSize = 0;
-	_acceptedCelebrationQueueSize = 0;
-	_exitCompletionQueueSize = 0;
-	_cellArrivalQueueSize = 0;
-	_collisionPairQueueSize = 0;
-	_queueProcessingEnabled = false;
-	_celebrationTrigger = false;
-	_celebrationsPlayed = 0;
-	_upperLeftArrivalDepthReorderPending = false;
-	_upperRightArrivalDepthReorderPending = false;
-	_placedRunnerCount = 0;
-	// Unlike the other debug-finish paths, Maze must preserve the rejected
-	// runners as non-occupied entries so the shared save routine can route them
-	// away instead of reviving them.
-	_debugFinishAllAccepted = false;
-	_acceptedBoundaryEntryCount = 0;
-	_acceptedExitCompletionCount = 0;
-	resetArrivalPosCounters();
-
-	int16 exitIndex = 0;
-	for (int16 runnerIdx = 0; runnerIdx < _runnerCount; runnerIdx++) {
-		ZmbSnoid *snoid = getSnoid(_runnerSnoidIds[runnerIdx]);
-		const bool survives = snoid && snoid->isPackSnoid() && snoid->isRenderActivated();
-
-		releaseRunnerTraversalVisuals(runnerIdx);
-		_runnerStates[runnerIdx].clear();
-
-		if (!survives)
-			continue;
-
-		const int16 arrivalIndex = CLIP<int16>(exitIndex, 0, 19);
-		const Common::Point exitPos = kArrivalPositions[60 + arrivalIndex];
-		addExternalDirtyRect(snoid->getClickRect());
-		snoid->setPointLoc(exitPos);
-		snoid->setAnimTargetPos(exitPos);
-		snoid->setFlags(ZmbFeature::FLAG_00000001_TYPE_SNOID | ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_04000000_OVERLAY);
-		snoid->setCommonImageIndex(0);
-		snoid->setAnimState(kSnoidAnimState000_Idle);
-		snoid->setupIdleHotspots();
-		snoid->activateRender();
-		snoid->_packIsOccupied = true;
-		snoid->setNeedsRedraw(true);
-		prepareSnoidVisualCoverage(snoid, true);
-		addExternalDirtyRect(snoid->getClickRect());
-
-		_runnerStates[runnerIdx].cornerGroup = kUpperRight03;
-		_runnerStates[runnerIdx].cornerArrivalPosIdx = arrivalIndex;
-		_runnerStates[runnerIdx].feetTrait = snoid->_trait._feet;
-		exitIndex += 1;
-	}
-
-	_acceptedBoundaryEntryCount = exitIndex;
-	_goButtonEnabled = 0 < exitIndex;
-	setGoButtonsEnabled(_goButtonEnabled);
 }
 
 const char *ZoombiniPuzzleMaze::debugMazeDirectionName(int16 direction) {
@@ -5661,9 +5613,6 @@ void ZoombiniPuzzleMaze::onFeatureAnimEvent(ZmbFeature *feature, int16 eventCode
 			return;
 		} else if (eventCode == kAnimEventM1_End) {
 			// The runner SCRS reached its terminal marker; finish or chain the active exit sequence.
-			if (feature->getScriptSoundPolicy() == ZmbFeature::ScriptSoundPolicy::kForcedPriorityQueue) {
-				feature->setScriptSoundPolicy(ZmbFeature::ScriptSoundPolicy::kPriorityQueue);
-			}
 			if (rs.boundaryExit && rs.exitStage == 1) {
 				ZmbSnoid *snoid = static_cast<ZmbSnoid *>(feature);
 				if (snoid->startScrsPlayback(ZmbResource(ZmbResource::kPage, kResScrs14007_RejectAlt), ZmbScrsCompletionMode::kReturnToIdle,
@@ -6273,21 +6222,8 @@ void ZoombiniPuzzleMaze::processAcceptedCelebrationQueue() {
 		MazeRunnerState &rs = _runnerStates[runnerIdx];
 		ZmbSnoid *snoid = getSnoid(_runnerSnoidIds[runnerIdx]);
 		int16 scrsId = static_cast<int16>(rs.feetTrait + kResScrs15090_CelebrationBase);
-		if (snoid) {
-			const bool alwaysPlayCelebrationSfx = ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionMazeAlwaysPlayCelebrationSfx);
-			ZmbFeature::ScriptSoundPolicy soundPolicy;
-			if (alwaysPlayCelebrationSfx)
-				soundPolicy = ZmbFeature::ScriptSoundPolicy::kForcedPriorityQueue;
-			else
-				soundPolicy = ZmbFeature::ScriptSoundPolicy::kPriorityQueue;
-			snoid->setScriptSoundPolicy(soundPolicy);
-			// The original priority queue normally masks this individual arrival voice.
-			// Suppress it explicitly in compatibility mode because the port cannot
-			// reconstruct the discarded candidate after the surrounding SFX have ended.
-			// The later group celebration starts its own SCRS without suppression.
-			if (startSnoidScrs(snoid, ZmbResource(ZmbResource::kPage, scrsId), ZmbScrsCompletionMode::kReturnToIdle, nullptr, !alwaysPlayCelebrationSfx))
-				rs.exitStage = 3;
-		}
+		if (snoid && startSnoidScrs(snoid, ZmbResource(ZmbResource::kPage, scrsId), ZmbScrsCompletionMode::kReturnToIdle))
+			rs.exitStage = 3;
 	}
 }
 
@@ -6342,17 +6278,6 @@ void ZoombiniPuzzleMaze::reorderExactFlagSnoidGroupByDepth(uint32 exactFlags) {
 		manualLinkAfter(snoid, insertionParent);
 		insertionParent = snoid;
 	}
-}
-
-void ZoombiniPuzzleMaze::resetArrivalPosCounters() {
-	// The lower-left waiting positions double as the pack lineup, so slots 0 through 15
-	// are already taken by Zoombinis still queued to launch. Page setup therefore seeds
-	// that direction at 16, which is the first staging slot the lineup never occupies.
-	// The other three corners start empty.
-	_arrivalPosCounter[kLowerLeft00] = kLowerLeftArrivalPosStart;
-	_arrivalPosCounter[kUpperLeft01] = 0;
-	_arrivalPosCounter[kLowerRight02] = 0;
-	_arrivalPosCounter[kUpperRight03] = 0;
 }
 
 void ZoombiniPuzzleMaze::handleArrival(MazeCornerGroup cornerGroup, int16 runnerIdx) {
@@ -6503,9 +6428,7 @@ void ZoombiniPuzzleMaze::finishRunnerExit(int16 runnerIdx) {
 		_acceptedExitCompletionCount += 1;
 		if (_acceptedExitCompletionCount == _pageLoadedZmbCount) {
 			_celebrationTrigger = true;
-			// This one-shot system sound announces the all-loaded phase
-			// after the final incoming (silent) celebration has completed.
-			// It is separate from each waiting Snoid's SCRS voice.
+			// The completion narrator outranks the arrival and group celebration voices in the sound queue.
 			queueCompletionNarratorSound();
 		}
 	}

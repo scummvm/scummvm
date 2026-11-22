@@ -193,69 +193,122 @@ void ZoombiniSound::beginScriptSoundFrame() {
 	}
 }
 
-void ZoombiniSound::enqueueScriptSound(ZmbResource resource, Audio::Mixer::SoundType soundType, bool forcePriority) {
+void ZoombiniSound::enqueueScriptSound(ZmbResource resource, Audio::Mixer::SoundType soundType, bool preferOverEffects) {
 	if (resource._id <= 0)
 		return;
-	// The priority queue holds at most 32 entries.
-	if (_scriptSoundQueue.size() < 32) {
-		ScriptSoundQueueEntry entry;
-		entry.resource = resource;
-		entry.soundType = soundType;
-		entry.forcePriority = forcePriority;
-		_scriptSoundQueue.push_back(entry);
-		_scriptSoundQueuedThisFrame = true;
+
+	// Deferred cues have their own capacity so they cannot fill the authored queue.
+	uint32 candidateCount = 0;
+	for (const ScriptSoundQueueEntry &entry : _scriptSoundQueue) {
+		if (entry.preferOverEffects != preferOverEffects)
+			continue;
+		if (preferOverEffects && entry.resource == resource)
+			return;
+		candidateCount += 1;
 	}
+	if (32 <= candidateCount)
+		return;
+
+	ScriptSoundQueueEntry entry;
+	entry.resource = resource;
+	entry.soundType = soundType;
+	entry.preferOverEffects = preferOverEffects;
+	_scriptSoundQueue.push_back(entry);
+	_scriptSoundQueuedThisFrame = true;
 }
 
 void ZoombiniSound::flushScriptSoundFrame(const ZoombiniPage &page) {
 	// The winning active entry remains in the queue and competes with sounds reached on later render passes
 	// until that SND has finished.
-	if (!_scriptSoundQueuedThisFrame || _scriptSoundQueue.empty())
+	if (_scriptSoundQueue.empty()) {
+		_scriptSoundQueuedThisFrame = false;
+		return;
+	}
+	if (!_scriptSoundQueuedThisFrame)
 		return;
 
-	// Keep the later slot on equal priority.
+	// Authored ties keep the later slot. Preferred cues retain their arrival order.
 	// The loaded-SND test happens before selection, so a newly queued duplicate
 	// of an active sound can win without starting a second mixer stream.
+	bool hasPreferredCue = false;
 	for (ScriptSoundQueueEntry &entry : _scriptSoundQueue) {
 		if (!entry.started && isSoundPlaying(entry.resource))
 			entry.started = true;
+		hasPreferredCue |= entry.preferOverEffects;
 	}
 
-	uint32 selectedIdx = 0;
-	uint8 selectedPriority;
-	if (_scriptSoundQueue[0].forcePriority)
-		selectedPriority = 0xFF;
-	else
-		selectedPriority = page.getScriptSoundPriority(_scriptSoundQueue[0].resource);
-	for (uint32 soundIdx = 1; soundIdx < _scriptSoundQueue.size(); soundIdx++) {
-		uint8 priority;
-		if (_scriptSoundQueue[soundIdx].forcePriority)
-			priority = 0xFF;
-		else
-			priority = page.getScriptSoundPriority(_scriptSoundQueue[soundIdx].resource);
-		if (selectedPriority <= priority) {
+	// Direct speech such as F1 help has its own handle outside the script queue.
+	bool hasIndependentSpeech = false;
+	if (hasPreferredCue) {
+		const ScriptSoundQueueEntry &current = _scriptSoundQueue.front();
+		for (const ActiveZmbSoundEntry &entry : _activeZmbSoundEntries) {
+			if (entry.soundType != Audio::Mixer::kSpeechSoundType || (current.hasHandle && entry.handle == current.handle))
+				continue;
+			if (_vm->_mixer->isSoundHandleActive(entry.handle)) {
+				hasIndependentSpeech = true;
+				break;
+			}
+		}
+	}
+
+	// When an optional cue competes, ordinary speech stays ahead of it.
+	// Authored range order still decides between ordinary speech candidates.
+	const auto getPriority = [&](const ScriptSoundQueueEntry &entry) -> uint16 {
+		static constexpr uint16 kPreferredCuePriority = 0x100;
+		const uint8 authoredPriority = page.getScriptSoundPriority(entry.resource);
+		if (!hasPreferredCue)
+			return authoredPriority;
+		if (entry.preferOverEffects)
+			return kPreferredCuePriority;
+		if (entry.soundType == Audio::Mixer::kSpeechSoundType)
+			return kPreferredCuePriority + 1 + authoredPriority;
+		return authoredPriority;
+	};
+
+	uint32 selectedIdx = _scriptSoundQueue.size();
+	int selectedPriority = -1;
+	for (uint32 soundIdx = 0; soundIdx < _scriptSoundQueue.size(); soundIdx++) {
+		const ScriptSoundQueueEntry &entry = _scriptSoundQueue[soundIdx];
+		if (entry.preferOverEffects && hasIndependentSpeech)
+			continue;
+		const int priority = getPriority(entry);
+		if (selectedPriority < priority || (selectedPriority == priority && !entry.preferOverEffects)) {
 			selectedIdx = soundIdx;
 			selectedPriority = priority;
 		}
 	}
 
-	ScriptSoundQueueEntry selectedEntry = _scriptSoundQueue[selectedIdx];
-	for (const ScriptSoundQueueEntry &entry : _scriptSoundQueue) {
-		if (entry.started && entry.hasHandle && entry.resource == selectedEntry.resource) {
-			selectedEntry.soundType = entry.soundType;
-			selectedEntry.handle = entry.handle;
-			selectedEntry.hasHandle = true;
-			break;
+	ScriptSoundQueueEntry selectedEntry;
+	if (selectedIdx < _scriptSoundQueue.size()) {
+		selectedEntry = _scriptSoundQueue[selectedIdx];
+		for (const ScriptSoundQueueEntry &entry : _scriptSoundQueue) {
+			if (entry.started && entry.hasHandle && entry.resource == selectedEntry.resource) {
+				selectedEntry.soundType = entry.soundType;
+				selectedEntry.handle = entry.handle;
+				selectedEntry.hasHandle = true;
+				break;
+			}
 		}
 	}
 
-	// A newly selected SND replaces the prior queue-owned waveform.
-	for (const ScriptSoundQueueEntry &entry : _scriptSoundQueue) {
+	// Keep unplayed preferred cues in arrival order while the selected sound plays.
+	uint32 pendingCount = 0;
+	for (uint32 soundIdx = 0; soundIdx < _scriptSoundQueue.size(); soundIdx++) {
+		const ScriptSoundQueueEntry &entry = _scriptSoundQueue[soundIdx];
 		if (entry.started && entry.hasHandle && entry.resource != selectedEntry.resource)
 			_vm->_mixer->stopHandle(entry.handle);
+		else if (!entry.started && entry.preferOverEffects && entry.resource != selectedEntry.resource) {
+			_scriptSoundQueue[pendingCount] = entry;
+			pendingCount += 1;
+		}
 	}
 
-	_scriptSoundQueue.clear();
+	const bool hasWinner = selectedEntry.resource.hasId();
+	_scriptSoundQueue.resize(pendingCount + (hasWinner ? 1 : 0));
+	_scriptSoundQueuedThisFrame = pendingCount != 0 || selectedEntry.preferOverEffects;
+	if (!hasWinner)
+		return;
+
 	bool startedNow = false;
 	if (!selectedEntry.started) {
 		Audio::SoundHandle *handle = playSound(selectedEntry.resource, selectedEntry.soundType, Audio::Mixer::kMaxChannelVolume, false);
@@ -266,13 +319,17 @@ void ZoombiniSound::flushScriptSoundFrame(const ZoombiniPage &page) {
 		}
 		selectedEntry.started = true;
 	}
-	// The direct builtin_debug command configures this runtime diagnostic without
-	// requiring the serialized shortcut gate to remain enabled.
+	// The console can enable these notifications with the in-game debug flag off.
 	if (startedNow && _vm->_builtinDebug._soundQueueNotifications) {
-		_vm->showBuiltinNotiBox(Common::U32String::format("snd:%d", selectedEntry.resource._id), true);
+		const int16 soundId = selectedEntry.resource._id;
+		// System narration uses IDs 20000-29999. Music IDs start at 30000.
+		// The original engine streamed these voices and reported them as "s-snd:".
+		const bool narrator = selectedEntry.resource._archiveKind == ZmbResource::kSystem && 20000 <= soundId && soundId < 30000;
+		_vm->showBuiltinNotiBox(Common::U32String::format(narrator ? "s-snd:%d" : "snd:%d", soundId), true);
 	}
-	_scriptSoundQueue.push_back(selectedEntry);
-	_scriptSoundQueuedThisFrame = false;
+	for (uint32 pendingIdx = pendingCount; 0 < pendingIdx; pendingIdx -= 1)
+		_scriptSoundQueue[pendingIdx] = _scriptSoundQueue[pendingIdx - 1];
+	_scriptSoundQueue[0] = selectedEntry;
 }
 
 ZoombiniSound::ZmbSoundQueueHandle ZoombiniSound::createSoundQueue() {

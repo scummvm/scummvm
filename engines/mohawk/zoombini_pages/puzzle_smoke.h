@@ -195,7 +195,7 @@ protected:
 	/** Begin the Mirror Machine departure sequence. */
 	void onGoButtonActivated() override;
 	/** Wait for the authored cart controller to complete the departure state. */
-	void updateDepartureState() override;
+	void updateDepartState() override;
 	/** Keep the authored cart controller active until its transition event fires. */
 	bool runsControllerDuringDeparture() const override { return true; }
 	/** Return the sound priority used by page SCRB playback. */

@@ -472,7 +472,7 @@ public:
 	static bool getFixedMidiSoundtrack(Common::Platform platform, Common::Language language, bool isDemo, bool isUsV10, MidiSoundtrack &soundtrack);
 	/** Enable color-blind presentation adjustments. */
 	constexpr static const char *kOptionColorBlindMode = "color_blind_mode";
-	/** Always play the Maze completion celebration sound. */
+	/** Play individual Maze landing celebrations ahead of ordinary effects. */
 	constexpr static const char *kOptionMazeAlwaysPlayCelebrationSfx = "maze_always_play_celebration_sfx";
 	/** Always play the Town memorial sound. */
 	constexpr static const char *kOptionTownAlwaysPlayMemorialSfx = "town_always_play_memorial_sfx";

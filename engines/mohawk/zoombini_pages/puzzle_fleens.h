@@ -236,7 +236,7 @@ protected:
 	/** Begin departure after all target Fleens have escaped. */
 	void onGoButtonActivated() override;
 	/** Keep the Fleen walk and sound gates in control of the departure state machine. */
-	void updateDepartureState() override;
+	void updateDepartState() override;
 	/** Continue the Fleen controller while the departure sound is active. */
 	bool runsControllerDuringDeparture() const override { return true; }
 	/** Describe the target trait assignments for diagnostics. */
@@ -549,8 +549,11 @@ private:
 
 	/** Map a Snoid script selector to the corresponding SCRS ID. */
 	int16 mapEventToScrsId(SnoidScriptEventType scriptEventType, const ZmbSnoid *snoid) const;
-	/** Start a Snoid script and register its page-local state-machine callback. */
-	void startSnoidScript(ZmbSnoid &snoid, SnoidScriptEventType scriptEventType, SnoidCallback callback,
+	/**
+	 * Start a Snoid script and register its page-local callback.
+	 * @return True on success.
+	 */
+	bool startSnoidScript(ZmbSnoid &snoid, SnoidScriptEventType scriptEventType, SnoidCallback callback,
 						  ZmbScrsCompletionMode completionMode = ZmbScrsCompletionMode::kReturnToIdle, const Common::Point *initPos = nullptr);
 	/** Return the callback currently attached to a Snoid. */
 	SnoidCallback getSnoidCallback(const ZmbSnoid &snoid) const;

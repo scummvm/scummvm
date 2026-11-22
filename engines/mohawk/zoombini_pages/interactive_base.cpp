@@ -159,7 +159,7 @@ ZmbEventHandleResult ZoombiniInteractive::onKeyDown(const Common::KeyState &kbd,
 			}
 			break;
 		case Common::KEYCODE_q: // Quit (CTRL-Q)
-			Engine::quitGame();
+			_vm->queueQuitEvent();
 			return ZmbEventHandleResult::kConsumed;
 		case Common::KEYCODE_u: // Auto-Sticky Mouse (CTRL-U)
 			_vm->_state->toggleAutoStickyMouse();
@@ -338,14 +338,14 @@ bool ZoombiniInteractive::runGlobalDebugAction(GlobalDebugAction action, Common:
 		debugState._stepAdvanceRequested = false;
 		debugState._stepRunnerPosition = 0;
 		showBuiltinDebugText("Step-Mode OFF");
-		output = "Step-Mode OFF.\n";
+		output = "Step-Mode OFF\n";
 	} else if (action == GlobalDebugAction::kStep) {
 		if (!debugState._stepMode) {
 			debugState._stepMode = true;
 			debugState._stepAdvanceRequested = false;
 			debugState._stepRunnerPosition = 0;
 			showBuiltinDebugText("Step-Mode ON");
-			output = "Step-Mode ON.\n";
+			output = "Step-Mode ON\n";
 		} else if (debugState._stepRunnerPosition == 0) {
 			debugState._stepAdvanceRequested = true;
 			output = "One complete render frame requested.\n";
@@ -421,7 +421,7 @@ bool ZoombiniInteractive::runGlobalDebugAction(GlobalDebugAction action, Common:
 			_vm->_state->markSaveBeforeQuitPending();
 		}
 		showBuiltinDebugText("ALL in party");
-		output = "ALL in party.\n";
+		output = "ALL in party\n";
 	} else if (action == GlobalDebugAction::kDragCoords) {
 		debugState._showDragCoordinates = !debugState._showDragCoordinates;
 		updateBuiltinDragNotification();
@@ -607,6 +607,7 @@ void ZoombiniInteractive::setMapButton(const Common::Rect &rect, uint16 shapeNor
 
 	ZmbResource soundResId(ZmbResource::kSystem, kSysResSound0999_ButtonSFX);
 	ButtonState mapButtonState = ButtonState(soundResId, kHotspotMapButtonNormal, kHotspotMapButtonPressed, shapeNormalId, shapePressedId);
+	mapButtonState._queuePressSound = true;
 	_goMapButtonStateMap[kThreeButtons_Map] = mapButtonState;
 	_threeButtonRectMap[kThreeButtons_Map] = rect;
 }
@@ -897,7 +898,6 @@ void ZoombiniInteractive::debugForceFinish() {
 	// Preserve those paths so their debug finish remains visually consistent with a solved puzzle.
 	case ZoombiniPageType::kFerry:
 	case ZoombiniPageType::kNet:
-	case ZoombiniPageType::kMaze:
 	case ZoombiniPageType::kCaves:
 	case ZoombiniPageType::kSlides:
 		debugPrepareForDeparture();
@@ -1504,7 +1504,7 @@ void ZoombiniInteractive::onAnimFrame() {
 			return;
 	}
 
-	updateDepartureState();
+	updateDepartState();
 	if (isClosed() || (isDeparturePending() && !runsControllerDuringDeparture()))
 		return;
 
@@ -1525,7 +1525,7 @@ void ZoombiniInteractive::onModalFrame() {
 		runAmbientSoundDriver();
 }
 
-void ZoombiniInteractive::updateDepartureState() {
+void ZoombiniInteractive::updateDepartState() {
 	if (_departureState == ZmbDepartureState::kAnimating && isDepartSfxDone())
 		_departureState = ZmbDepartureState::kCompleted;
 	if (_departureState != ZmbDepartureState::kCompleted)

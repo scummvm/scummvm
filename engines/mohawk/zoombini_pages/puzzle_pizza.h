@@ -306,88 +306,100 @@ private:
 		kDeliveryEventCode061_StartSnoidScript = 61
 	};
 
-	/** Ingredient-bit positions in a Pizza Pass meal. */
-	enum MealIngredient : int16 {
+	/** Topping bit positions in a Pizza Pass meal. */
+	enum ToppingKind : int16 {
 		/** Black olives on the pizza. */
-		kMealIngredientOlives00 = 0,
+		kToppingKindOlives00 = 0,
 		/** Green peppers on the pizza. */
-		kMealIngredientPeppers01 = 1,
+		kToppingKindPeppers01 = 1,
 		/** Pepperoni on the pizza. */
-		kMealIngredientPepperoni02 = 2,
+		kToppingKindPepperoni02 = 2,
 		/** Mushrooms on the pizza. */
-		kMealIngredientMushrooms03 = 3,
+		kToppingKindMushrooms03 = 3,
 		/** Cheese on the pizza. */
-		kMealIngredientCheese04 = 4,
+		kToppingKindCheese04 = 4,
 		/** Cherry topping on the sundae. */
-		kMealIngredientCherry05 = 5,
+		kToppingKindCherry05 = 5,
 		/** Whipped cream topping on the sundae. */
-		kMealIngredientWhippedCream06 = 6,
+		kToppingKindWhippedCream06 = 6,
 		/** Chocolate sauce topping on the sundae. */
-		kMealIngredientChocolateSauce07 = 7
+		kToppingKindChocolateSauce07 = 7
 	};
 
-	/** Authored four-frame meal-shape ranges filtered by @ref ZoombiniPuzzlePizza::toppingRunner_preRenderShape(). */
-	enum MealShape : int16 {
-		/** Cheese animation frames, selected by @ref kMealIngredientCheese04. */
-		kMealShapeCheese05_First = 5,
-		kMealShapeCheese08_Last = 8,
-		/** Mushroom animation frames, selected by @ref kMealIngredientMushrooms03. */
-		kMealShapeMushrooms09_First = 9,
-		kMealShapeMushrooms12_Last = 12,
-		/** Pepperoni animation frames, selected by @ref kMealIngredientPepperoni02. */
-		kMealShapePepperoni13_First = 13,
-		kMealShapePepperoni16_Last = 16,
-		/** Green-pepper animation frames, selected by @ref kMealIngredientPeppers01. */
-		kMealShapePeppers17_First = 17,
-		kMealShapePeppers20_Last = 20,
-		/** Olive animation frames, selected by @ref kMealIngredientOlives00. */
-		kMealShapeOlives21_First = 21,
-		kMealShapeOlives24_Last = 24,
+	/** Number of topping slots shared by meal state, button features, and topping tables. */
+	static constexpr int16 kToppingKindCount = 8;
+
+	/**
+	 * Shape indices in page tBMP 12000 for standalone pizza and sundae runners.
+	 * Used for the carried meal overlay and the separate pizzas left after delivery.
+	 * @ref ZoombiniPuzzlePizza::toppingRunner_preRenderShape() filters each four-shape topping range using the runner's topping mask.
+	 */
+	enum OverlayToppingShape : int16 {
+		/** Cheese animation frames, selected by @ref ZoombiniPuzzlePizza::kToppingKindCheese04. */
+		kOverlayToppingShapeCheese05_First = 5,
+		kOverlayToppingShapeCheese08_Last = 8,
+		/** Mushroom animation frames, selected by @ref ZoombiniPuzzlePizza::kToppingKindMushrooms03. */
+		kOverlayToppingShapeMushrooms09_First = 9,
+		kOverlayToppingShapeMushrooms12_Last = 12,
+		/** Pepperoni animation frames, selected by @ref ZoombiniPuzzlePizza::kToppingKindPepperoni02. */
+		kOverlayToppingShapePepperoni13_First = 13,
+		kOverlayToppingShapePepperoni16_Last = 16,
+		/** Green-pepper animation frames, selected by @ref ZoombiniPuzzlePizza::kToppingKindPeppers01. */
+		kOverlayToppingShapePeppers17_First = 17,
+		kOverlayToppingShapePeppers20_Last = 20,
+		/** Olive animation frames, selected by @ref ZoombiniPuzzlePizza::kToppingKindOlives00. */
+		kOverlayToppingShapeOlives21_First = 21,
+		kOverlayToppingShapeOlives24_Last = 24,
 		/** Plain-sundae animation frames present from level 2 onward. */
-		kMealShapePlainSundae25_First = 25,
-		kMealShapePlainSundae28_Last = 28,
-		/** Chocolate-sauce animation frames, selected by @ref kMealIngredientChocolateSauce07 at level 4. */
-		kMealShapeChocolateSauce29_First = 29,
-		kMealShapeChocolateSauce32_Last = 32,
-		/** Whipped-cream animation frames, selected by @ref kMealIngredientWhippedCream06 from level 2 onward. */
-		kMealShapeWhippedCream33_First = 33,
-		kMealShapeWhippedCream36_Last = 36,
-		/** Cherry animation frames, selected by @ref kMealIngredientCherry05 from level 2 onward. */
-		kMealShapeCherry37_First = 37,
-		kMealShapeCherry40_Last = 40
+		kOverlayToppingShapePlainSundae25_First = 25,
+		kOverlayToppingShapePlainSundae28_Last = 28,
+		/** Chocolate-sauce animation frames, selected by @ref ZoombiniPuzzlePizza::kToppingKindChocolateSauce07 at level 4. */
+		kOverlayToppingShapeChocolateSauce29_First = 29,
+		kOverlayToppingShapeChocolateSauce32_Last = 32,
+		/** Whipped-cream animation frames, selected by @ref ZoombiniPuzzlePizza::kToppingKindWhippedCream06 from level 2 onward. */
+		kOverlayToppingShapeWhippedCream33_First = 33,
+		kOverlayToppingShapeWhippedCream36_Last = 36,
+		/** Cherry animation frames, selected by @ref ZoombiniPuzzlePizza::kToppingKindCherry05 from level 2 onward. */
+		kOverlayToppingShapeCherry37_First = 37,
+		kOverlayToppingShapeCherry40_Last = 40
 	};
 
-	/** Authored four-frame order-display shape ranges filtered by @ref ZoombiniPuzzlePizza::orderFeature_preRenderShape(). */
-	enum class OrderFeatureShape : int16 {
-		/** Cheese frames, selected by @ref kMealIngredientCheese04. */
-		kCheese156_First = 0x9C,
-		kCheese159_Last = 0x9F,
-		/** Mushroom frames, selected by @ref kMealIngredientMushrooms03. */
-		kMushrooms160_First = 0xA0,
-		kMushrooms163_Last = 0xA3,
-		/** Pepperoni frames, selected by @ref kMealIngredientPepperoni02. */
-		kPepperoni164_First = 0xA4,
-		kPepperoni167_Last = 0xA7,
-		/** Green-pepper frames, selected by @ref kMealIngredientPeppers01. */
-		kPeppers168_First = 0xA8,
-		kPeppers171_Last = 0xAB,
-		/** Olive frames, selected by @ref kMealIngredientOlives00. */
-		kOlives172_First = 0xAC,
-		kOlives175_Last = 0xAF,
+	/**
+	 * Shape indices in troll tBMPs 8000 (Arno), 9000 (Willa), and 10000 (Shyler).
+	 * These four-shape topping ranges are drawn by the troll runners during inspection, disposal, and acceptance.
+	 * @ref ZoombiniPuzzlePizza::mealFilter_preRenderShape() selects the submitted meal's toppings.
+	 * @ref ZoombiniPuzzlePizza::orderFeature_preRenderShape() selects the troll's requested toppings.
+	 */
+	enum class TrollToppingShape : int16 {
+		/** Cheese frames, selected by @ref ZoombiniPuzzlePizza::kToppingKindCheese04. */
+		kTrollToppingShapeCheese156_First = 0x9C,
+		kTrollToppingShapeCheese159_Last = 0x9F,
+		/** Mushroom frames, selected by @ref ZoombiniPuzzlePizza::kToppingKindMushrooms03. */
+		kTrollToppingShapeMushrooms160_First = 0xA0,
+		kTrollToppingShapeMushrooms163_Last = 0xA3,
+		/** Pepperoni frames, selected by @ref ZoombiniPuzzlePizza::kToppingKindPepperoni02. */
+		kTrollToppingShapePepperoni164_First = 0xA4,
+		kTrollToppingShapePepperoni167_Last = 0xA7,
+		/** Green-pepper frames, selected by @ref ZoombiniPuzzlePizza::kToppingKindPeppers01. */
+		kTrollToppingShapePeppers168_First = 0xA8,
+		kTrollToppingShapePeppers171_Last = 0xAB,
+		/** Olive frames, selected by @ref ZoombiniPuzzlePizza::kToppingKindOlives00. */
+		kTrollToppingShapeOlives172_First = 0xAC,
+		kTrollToppingShapeOlives175_Last = 0xAF,
 		/** Plain-sundae frames present from level 2 onward. */
-		kPlainSundae176_First = 0xB0,
-		kPlainSundae179_Last = 0xB3,
-		/** Chocolate-sauce frames, selected by @ref kMealIngredientChocolateSauce07 at level 4. */
-		kChocolateSauce180_First = 0xB4,
-		kChocolateSauce183_Last = 0xB7,
-		/** Whipped-cream frames, selected by @ref kMealIngredientWhippedCream06 from level 2 onward. */
-		kWhippedCream184_First = 0xB8,
-		kWhippedCream187_Last = 0xBB,
-		/** Cherry frames, selected by @ref kMealIngredientCherry05 from level 2 onward. */
-		kCherry188_First = 0xBC,
-		kCherry191_Last = 0xBF,
+		kTrollToppingShapePlainSundae176_First = 0xB0,
+		kTrollToppingShapePlainSundae179_Last = 0xB3,
+		/** Chocolate-sauce frames, selected by @ref ZoombiniPuzzlePizza::kToppingKindChocolateSauce07 at level 4. */
+		kTrollToppingShapeChocolateSauce180_First = 0xB4,
+		kTrollToppingShapeChocolateSauce183_Last = 0xB7,
+		/** Whipped-cream frames, selected by @ref ZoombiniPuzzlePizza::kToppingKindWhippedCream06 from level 2 onward. */
+		kTrollToppingShapeWhippedCream184_First = 0xB8,
+		kTrollToppingShapeWhippedCream187_Last = 0xBB,
+		/** Cherry frames, selected by @ref ZoombiniPuzzlePizza::kToppingKindCherry05 from level 2 onward. */
+		kTrollToppingShapeCherry188_First = 0xBC,
+		kTrollToppingShapeCherry191_Last = 0xBF,
 		/** Arno-and-stone occlusion patch authored into Willa's scripts. */
-		kArnoAndStoneOcclusionPatch212 = 0xD4
+		kTrollToppingShapeArnoAndStoneOcclusionPatch212 = 0xD4
 	};
 
 	/** Identifies the Arno, Willa, and Shyler order lines. */
@@ -453,9 +465,9 @@ private:
 	/** Distribute generated toppings into the authored order lines. */
 	void distributeToppings();
 
-	// --- Ingredient toggle & submit ---
-	/** Toggle one ingredient in the currently prepared pizza. */
-	void handleIngredientToggle(int16 ingredientIdx);
+	// --- Topping toggle & submit ---
+	/** Toggle one topping in the currently prepared meal. */
+	void handleToppingToggle(int16 toppingIdx);
 	/** Submit the current pizza for delivery evaluation. */
 	void handleSubmit();
 
@@ -525,13 +537,13 @@ private:
 	void linkToppingRunners();
 	/** Restore a seated troll's accepted-pizza stack. */
 	void linkSettledAcceptedToppingStack(TrollOrderLine orderLine);
-	/** Prepare topping runner hotspots for the current mask. */
+	/** Filter standalone topping-runner shapes by the runner's topping mask. */
 	void toppingRunner_preRenderShape(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots);
-	/** Prepare order feature hotspots for the current order state. */
+	/** Filter a troll runner's topping shapes by that troll's requested toppings. */
 	void orderFeature_preRenderShape(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots);
 	/** Attach the current order filter to a feature. */
 	void attachOrderFilter(ZmbFeature *feature);
-	/** Prepare meal-filter hotspots for the current order. */
+	/** Filter a troll runner's topping shapes by the submitted meal snapshot. */
 	void mealFilter_preRenderShape(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots);
 	/** Attach the current meal filter to a feature. */
 	void attachMealFilter(ZmbFeature *feature);
@@ -559,14 +571,14 @@ private:
 	FeaturePhase &getTrollPhase(TrollOrderLine orderLine);
 	/** Return one of two troll order lines selected at random. */
 	TrollOrderLine getRandomTargetOrderLine(TrollOrderLine firstOrderLine, TrollOrderLine secondOrderLine);
-	/** Return whether the current difficulty provides a machine button for an ingredient. */
-	bool hasToppingButtonForIngredient(int16 ingredientIdx) const;
-	/** Return the current difficulty's off/on SCRB ID for an ingredient, or -1 when it has no button. */
-	int16 getToppingButtonScrbId(int16 ingredientIdx, bool selected) const;
+	/** Return whether the current difficulty provides a machine button for a topping. */
+	bool hasToppingButton(int16 toppingIdx) const;
+	/** Return the current difficulty's off/on SCRB ID for a topping, or -1 when it has no button. */
+	int16 getToppingButtonScrbId(int16 toppingIdx, bool selected) const;
 	/** Update the TLC v2 machine-button hover state. */
 	void updateV2MachineButtonHover();
 	/** Return whether a point hits one topping button. */
-	bool isToppingButtonAtPoint(int16 ingredientIdx, const Common::Point &point) const;
+	bool isToppingButtonAtPoint(int16 toppingIdx, const Common::Point &point) const;
 	/** Reload a feature's SCRB while preserving its animation owner. */
 	void reloadScrbAnimation(ZmbFeature *feature, int16 scrbId);
 	/** Return the canonical trait index selected by an order slot. */
@@ -619,7 +631,7 @@ private:
 		kResScrb7041_ToppingLevel4Base,
 	};
 	/** TLC v2 topping-button press sounds indexed by topping. */
-	static constexpr int16 kToppingButtonSoundTable[8]{
+	static constexpr int16 kToppingButtonSoundTable[kToppingKindCount]{
 		kResSound7004_ToppingButton0,
 		kResSound7003_ToppingButton1,
 		kResSound7002_ToppingButton2,
@@ -630,7 +642,7 @@ private:
 		kResSound7005_ToppingButton7,
 	};
 	/** TLC v2 topping-button hit rectangles indexed by difficulty and topping. */
-	static constexpr int16 kToppingClickRectTable[4][8][4]{
+	static constexpr int16 kToppingClickRectTable[4][kToppingKindCount][4]{
 		{{48, 185, 100, 210}, {48, 211, 100, 236}, {48, 237, 100, 263}, {48, 264, 100, 288}, {48, 289, 100, 317}, {88, 195, 115, 234}, {88, 236, 115, 273}, {88, 276, 115, 314}},
 		{{33, 196, 85, 221}, {33, 222, 85, 247}, {33, 248, 85, 275}, {33, 276, 85, 301}, {33, 289, 85, 317}, {88, 215, 115, 254}, {88, 255, 115, 294}, {88, 276, 115, 314}},
 		{{33, 182, 85, 210}, {33, 211, 85, 236}, {33, 237, 85, 262}, {33, 263, 85, 288}, {33, 289, 85, 316}, {88, 215, 115, 254}, {88, 255, 115, 295}, {88, 296, 115, 314}},
@@ -649,7 +661,7 @@ private:
 	// Difficulty parameters
 	// -----------------------------------------------------------------------
 
-	/** Number of logical ingredient slots used by the current difficulty. */
+	/** Number of logical topping slots used by the current difficulty. */
 	int16 _machineToppingSlotCount = 5;
 	/** Minimum number of topping categories selected by generation. */
 	int16 _minimumGeneratedToppingCount = 2;
@@ -664,17 +676,17 @@ private:
 	// Topping state arrays
 	// -----------------------------------------------------------------------
 	/** Topping categories distributed among the active troll orders. */
-	bool _generatedToppings[8] = {};
+	bool _generatedToppings[kToppingKindCount] = {};
 	/** Toppings requested by Arno. */
-	bool _arnoToppings[8] = {};
+	bool _arnoToppings[kToppingKindCount] = {};
 	/** Toppings requested by Willa. */
-	bool _willaToppings[8] = {};
+	bool _willaToppings[kToppingKindCount] = {};
 	/** Toppings requested by Shyler. */
-	bool _shylerToppings[8] = {};
+	bool _shylerToppings[kToppingKindCount] = {};
 	/** Machine selection captured for the delivery currently being evaluated. */
-	bool _submittedMealToppings[8] = {};
+	bool _submittedMealToppings[kToppingKindCount] = {};
 	/** Live topping-button selection used to prepare the next meal. */
-	bool _selectedMealToppings[8] = {};
+	bool _selectedMealToppings[kToppingKindCount] = {};
 
 	// -----------------------------------------------------------------------
 	// Troll order state
@@ -704,7 +716,7 @@ private:
 	bool _allTrollOrdersMatched = false;
 	/**
 	 * Whether the player may start a new delivery with Produce.
-	 * Ingredient toggles remain separately available while a delivery chain advances.
+	 * Topping toggles remain separately available while a delivery chain advances.
 	 */
 	bool _produceSubmissionEnabled = false;
 	/** Scratch count incremented for an exact order classification and reset otherwise. */
@@ -846,8 +858,8 @@ private:
 	// -----------------------------------------------------------------------
 	/** Visible Produce-button feature. */
 	ZmbFeature *_produceButtonFeature = nullptr;
-	/** Machine topping-button features indexed by ingredient; unavailable ingredient slots remain null. */
-	ZmbFeature *_toppingButtonFeatures[8] = {};
+	/** Machine topping-button features indexed by topping; unavailable topping slots remain null. */
+	ZmbFeature *_toppingButtonFeatures[kToppingKindCount] = {};
 	/** Most recent pointer position used to recompute TLC v2 button hover. */
 	Common::Point _lastMachineMousePos = Common::Point(-1, -1);
 	/** Willa order and reaction feature. */

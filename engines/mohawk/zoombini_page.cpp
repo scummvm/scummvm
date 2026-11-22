@@ -758,10 +758,8 @@ void ZoombiniPage::dispatchFeatureSound(ZmbFeature *feature, ZmbResource resourc
 	}
 
 	if (shouldQueueFeatureSound(feature)) {
-		const bool forcePriority = feature &&
-								   feature->getScriptSoundPolicy() ==
-									   ZmbFeature::ScriptSoundPolicy::kForcedPriorityQueue;
-		_vm->_sound->enqueueScriptSound(resource, soundType, forcePriority);
+		const bool preferOverEffects = soundType == Audio::Mixer::kSpeechSoundType && shouldPreferFeatureVoiceOverEffects(feature);
+		_vm->_sound->enqueueScriptSound(resource, soundType, preferOverEffects);
 	} else {
 		feature->playOwnedSound(resource, soundType);
 	}
@@ -2231,12 +2229,14 @@ void ZoombiniPage::drawBuiltinRunnerClickRects(bool filterSnoids, bool showIds, 
 			const ZmbSnoid *snoid = dynamic_cast<const ZmbSnoid *>(feature);
 			label = snoid && snoid->_packIsOccupied ? "+" : "-";
 			if (showIds)
-				label += Common::String::format("%u", feature->getId());
-		} else if (showIds) {
-			label = Common::String::format("%u", feature->getId());
+				label += Common::String::format("%u", feature->getRegistrationIndex());
 		} else {
-			label = Common::String::format("%c%u", feature->isRenderActivated() ? '+' : '-', position);
-			if (feature->getId() == UINT16_MAX)
+			const bool tail = feature->getId() == UINT16_MAX;
+			if (showIds)
+				label = tail ? "-1" : Common::String::format("%u", feature->getRegistrationIndex());
+			else
+				label = Common::String::format("%c%u", feature->isRenderActivated() ? '+' : '-', position);
+			if (tail)
 				label += Common::String::format(":%u", _runnerOrder.size() + kBuiltinDebugOriginalRootRunnerCount);
 		}
 		_vm->_gfx->drawText(ZoombiniGraphics::kShapeScreen, Common::U32String(label.c_str()), rect, textConf);
@@ -2286,7 +2286,6 @@ bool ZoombiniPage::shouldQueueFeatureSound(const ZmbFeature *feature) const {
 		case ZmbFeature::ScriptSoundPolicy::kImmediate:
 			return false;
 		case ZmbFeature::ScriptSoundPolicy::kPriorityQueue:
-		case ZmbFeature::ScriptSoundPolicy::kForcedPriorityQueue:
 			return true;
 		case ZmbFeature::ScriptSoundPolicy::kInheritPage:
 			break;
@@ -2297,18 +2296,15 @@ bool ZoombiniPage::shouldQueueFeatureSound(const ZmbFeature *feature) const {
 
 bool ZoombiniPage::hasPriorityQueueFeature() const {
 	for (const ZmbFeature *feature : _scrbFeatures) {
-		if (feature->getScriptSoundPolicy() == ZmbFeature::ScriptSoundPolicy::kPriorityQueue ||
-			feature->getScriptSoundPolicy() == ZmbFeature::ScriptSoundPolicy::kForcedPriorityQueue)
+		if (feature->getScriptSoundPolicy() == ZmbFeature::ScriptSoundPolicy::kPriorityQueue)
 			return true;
 	}
 	for (const ZmbFeature *feature : _subFeatures) {
-		if (feature->getScriptSoundPolicy() == ZmbFeature::ScriptSoundPolicy::kPriorityQueue ||
-			feature->getScriptSoundPolicy() == ZmbFeature::ScriptSoundPolicy::kForcedPriorityQueue)
+		if (feature->getScriptSoundPolicy() == ZmbFeature::ScriptSoundPolicy::kPriorityQueue)
 			return true;
 	}
 	for (const ZmbSnoid *snoid : _snoidMap) {
-		if (snoid->getScriptSoundPolicy() == ZmbFeature::ScriptSoundPolicy::kPriorityQueue ||
-			snoid->getScriptSoundPolicy() == ZmbFeature::ScriptSoundPolicy::kForcedPriorityQueue)
+		if (snoid->getScriptSoundPolicy() == ZmbFeature::ScriptSoundPolicy::kPriorityQueue)
 			return true;
 	}
 	return false;
@@ -2342,9 +2338,6 @@ void ZoombiniPage::dispatchFeatureFrameSoundAndEvent(ZmbFeature *feature, int32 
 	const uint8 adjustedCode = eventCode - 1;
 	ZmbSnoid *snoid = dynamic_cast<ZmbSnoid *>(feature);
 	if (kAnimEvent200_VoiceFirst <= adjustedCode && adjustedCode <= kAnimEvent239_VoiceLast && snoid) {
-		if (!snoid->allowsScrsVoiceEvents())
-			return;
-
 		static constexpr int16 kVoiceGroupMap[18] = {
 			8, 6, 7, 10, 2, 12, 1, 9,
 			0, 4, 5, 3, 11, 13, 14, 15, 16, 17};
@@ -2427,13 +2420,13 @@ void ZoombiniPage::preRenderSnoid(ZmbSnoid *snoid) {
  */
 void ZoombiniPage::preRenderFeature(ZmbFeature *feature) {
 	// A new runner begins with rendering enabled and a click rectangle.
-	// Its first standard pre-render loads SCRB frame zero, then applies deferred flags.
+	// Its first standard pre-render materializes the initial SCRB frame, then applies deferred flags.
 	// Post-render keeps drawing the frozen frame even when DEFER_ANIM disables animation.
 	// DEFER_RENDER suppresses that drawing.
 	if (feature->isInitialScrbLoadPending()) {
 		feature->setInitialScrbLoadPending(false);
-		feature->setLastFrameIdx(0);
-		// Initial registration materializes frame zero synchronously and consumes
+		feature->setLastFrameIdx(feature->selectInitialRenderFrame(this));
+		// Initial registration materializes the frame synchronously and consumes
 		// the loaded-frame hold. Runtime SCRB replacement retains its first hold.
 		feature->clearFirstFrameAdvanceHold();
 		prepareFeatureVisualCoverage(feature);
@@ -3613,7 +3606,7 @@ ZmbScrsPlaybackMode ZoombiniPage::resolveScrsRejectState(int16 scrsId) const {
 }
 
 bool ZoombiniPage::startSnoidScrs(ZmbSnoid *snoid, ZmbResource scrsResource, ZmbScrsCompletionMode completionMode,
-								  const Common::Point *endPos, bool suppressVoiceEvents) {
+								  const Common::Point *endPos) {
 	if (!snoid)
 		return false;
 
@@ -3633,7 +3626,7 @@ bool ZoombiniPage::startSnoidScrs(ZmbSnoid *snoid, ZmbResource scrsResource, Zmb
 	}
 
 	// State 8 vs 9 comes from the registered SCRS group, never a hardcoded flag.
-	if (!snoid->startScrsPlayback(scrsResource, completionMode, resolveScrsRejectState(scrsResource._id), endPos, suppressVoiceEvents))
+	if (!snoid->startScrsPlayback(scrsResource, completionMode, resolveScrsRejectState(scrsResource._id), endPos))
 		return false;
 	prepareSnoidVisualCoverage(snoid, true);
 	const Common::Rect &newClickRect = snoid->getClickRect();
@@ -4199,7 +4192,11 @@ void ZoombiniPage::ButtonState::press(MohawkEngine_Zoombini *vm, ZmbFeature *fea
 	}
 	animate(frameCounter);
 	feature->requestVisualRematerialization();
-	if (_pressSoundId.hasId())
+	if (!_pressSoundId.hasId())
+		return;
+	if (_queuePressSound)
+		vm->_sound->enqueueScriptSound(_pressSoundId, Audio::Mixer::kSFXSoundType);
+	else
 		vm->_sound->playSound(_pressSoundId, Audio::Mixer::kSFXSoundType, false);
 }
 

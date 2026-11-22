@@ -3503,7 +3503,7 @@ Common::String ZoombiniPuzzleLilly::debugGetAnswer(const Common::Array<Common::S
 	};
 
 	const auto padValueName = [](ZmbLillyGridWalker::PadAttrType attrType, int16 value) -> const char * {
-		static constexpr const char *kPatternNames[3] = {"flower", "cross", "diamond"};
+		static constexpr const char *kPatternNames[3] = {"diamond", "cross", "flower"};
 		static constexpr const char *kShapeNames[4] = {"oneCut", "twoCut", "threeLeaf", "fourLeaf"};
 		static constexpr const char *kColorNames[5] = {"magenta", "red", "orange", "cyan", "beige"};
 		switch (attrType) {

@@ -392,11 +392,10 @@ Common::String ZoombiniPuzzleBridge::debugGetAnswer(const Common::Array<Common::
 }
 
 Common::String ZoombiniPuzzleBridge::debugGetLastRejectRoute() const {
-	Common::String s = getDebugBanner();
-	s += "\n";
-	s += Common::String::format("  Type: %d\n", static_cast<int16>(_lastRejectReactionCode));
-	s += Common::String::format("  Snoid Script: %d\n", _lastRejectSnoidScrsId);
-	return s;
+	Common::String message = Common::String::format(" Type: %d Snoid Script:", static_cast<int16>(_lastRejectReactionCode));
+	if (0 < _lastRejectSnoidScrsId)
+		message += Common::String::format(" %d", _lastRejectSnoidScrsId);
+	return message;
 }
 
 Common::String ZoombiniPuzzleBridge::debugGetBuiltinDebugCommandHelp() const {
@@ -405,7 +404,7 @@ Common::String ZoombiniPuzzleBridge::debugGetBuiltinDebugCommandHelp() const {
 	output += "    Draw the lane that accepts any listed trait and its rule sprites; the opposite lane accepts the complement.\n";
 	output += "    This display does not regenerate the rule and is unavailable while a pack path walk is pending.\n";
 	output += Common::String::format("  %-3s (%s)\n", "R/r", kBuiltinDebugActionRoute);
-	output += "    Show the last rejection event type and selected page SCRS 1000-1019; both are -1 before the first rejection.\n";
+	output += "    Show the last rejection event type and selected page SCRS 1000-1019. Before the first rejection, the type is -1 and the script number is blank.\n";
 	output += "    The display waits for the next key or mouse button, does not change the rule, and is unavailable during a pack path walk.\n";
 	return output;
 }
@@ -433,14 +432,12 @@ ZoombiniPuzzleBridge::BuiltinDebugAction ZoombiniPuzzleBridge::parseBuiltinDebug
 }
 
 bool ZoombiniPuzzleBridge::runBuiltinDebugAction(BuiltinDebugAction action, Common::String &output) {
-	if (action == BuiltinDebugAction::kRoute)
-		output = debugGetLastRejectRoute();
-	else
-		output = debugGetAnswer();
-
 	if (action == BuiltinDebugAction::kRoute) {
-		showBuiltinDebugText(Common::String::format(" Type: %d Snoid Script: %d", static_cast<int16>(_lastRejectReactionCode), _lastRejectSnoidScrsId), true);
+		const Common::String message = debugGetLastRejectRoute();
+		showBuiltinDebugText(message, true);
+		output = message + '\n';
 	} else {
+		output = debugGetAnswer();
 		showBuiltinDebugText(_matchingTraitsUseUpperLane ? "Upper bridge accepts:" : "Lower bridge accepts:");
 		for (byte ruleIdx = 0; ruleIdx < _allergyRuleEntryCount; ruleIdx++)
 			drawBuiltinDebugTraitSprite(Common::Point(250 + 30 * ruleIdx, 20), _allergyRuleTraitKindCodes[ruleIdx], _allergyRuleTraitValues[ruleIdx]);

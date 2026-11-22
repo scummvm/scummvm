@@ -282,7 +282,7 @@ void ZoombiniPuzzleFerry::onGoButtonActivated() {
 	_departureState = ZmbDepartureState::kTriggered;
 }
 
-void ZoombiniPuzzleFerry::updateDepartureState() {
+void ZoombiniPuzzleFerry::updateDepartState() {
 	// Raft state advances in @ref Mohawk::ZoombiniPuzzleFerry::onPreTickFrame() and @ref Mohawk::ZoombiniPuzzleFerry::onFeatureAnimEvent().
 }
 
@@ -989,6 +989,7 @@ ZoombiniPuzzleFerry::BuiltinDebugAction ZoombiniPuzzleFerry::parseBuiltinDebugAc
 }
 
 bool ZoombiniPuzzleFerry::runBuiltinDebugAction(BuiltinDebugAction action, Common::String &output) {
+	Common::String message;
 	if (action == BuiltinDebugAction::kAdjacency) {
 		buildAdjacencyMatrix();
 		const int16 seatCount = CLIP<int16>(_drawOnRegCount, 0, 20);
@@ -1005,6 +1006,7 @@ bool ZoombiniPuzzleFerry::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 			}
 		}
 		output = "Raft adjacency graph drawn.\n";
+		return false;
 	} else if (action == BuiltinDebugAction::kCaptain) {
 		if (!_captainRaftFeature) {
 			output = "Captain Cajun runner is not loaded.\n";
@@ -1013,17 +1015,15 @@ bool ZoombiniPuzzleFerry::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 		if (_debugCaptainScrbId < kResScrb1800_RaftBase || kResScrb1832_FlightFidget4 < _debugCaptainScrbId)
 			_debugCaptainScrbId = _captainRaftFeature->getScrbId();
 		loadScrbOntoFeature(_captainRaftFeature, _debugCaptainScrbId, true);
-		output = Common::String::format("Play Caption Cajun SCRB id: %d\n", _debugCaptainScrbId);
+		message = Common::String::format("Play FrogMan SCRB id: %d", _debugCaptainScrbId);
 	} else if (action == BuiltinDebugAction::kLevel) {
-		output = Common::String::format("Level %d\n", static_cast<int>(_puzzleLevel));
+		message = Common::String::format("Level %d", static_cast<int>(_puzzleLevel));
 	} else {
 		return true;
 	}
 
-	if (action == BuiltinDebugAction::kCaptain)
-		showBuiltinDebugText(Common::String::format("Play Caption Cajun SCRB id: %d", _debugCaptainScrbId));
-	else if (action == BuiltinDebugAction::kLevel)
-		showBuiltinDebugText(Common::String::format("Level %d", static_cast<int>(_puzzleLevel)));
+	showBuiltinDebugText(message);
+	output = message + '\n';
 	return false;
 }
 

@@ -290,17 +290,11 @@ void ZoombiniShelterBasecampTwo::onPostRenderFrame() {
 }
 
 bool ZoombiniShelterBasecampTwo::storage_preRender(ZmbFeature *feature) {
-	if (_currentFrameCounter < _storageNextUpdateFrame)
-		return true;
-
-	_storageNextUpdateFrame = _currentFrameCounter + kStorageScrollInterval;
-	updateHeldBasecampStorageScroll();
-	if (_storageScrollDirection == StorageScrollDirection::kNone)
+	if (!advanceBasecampStorageScroll())
 		return true;
 
 	// Mark as rendering (reset sort rect to force re-sort)
 	feature->setSortRect(Common::Rect());
-	advanceBasecampStorageScroll();
 
 	_vm->_state->getCurrentState()._storedChunkBC2.setLeftmostColumnIdx(_storageLeftmostColumnIdx);
 	return true;

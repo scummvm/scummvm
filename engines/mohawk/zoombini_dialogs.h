@@ -325,7 +325,7 @@ private:
 	GUI::PopUpWidget *_midiSoundtrackPopUp = nullptr;
 	/** Color-blind mode option control. */
 	GUI::CheckboxWidget *_colorBlindModeCheckbox;
-	/** Maze celebration SFX option control. */
+	/** Maze landing celebration SFX option control. */
 	GUI::CheckboxWidget *_alwaysMazePlayCelebrationSfxCheckbox = nullptr;
 	/** Town memorial SFX option control. */
 	GUI::CheckboxWidget *_alwaysTownPlayMemorialSfxCheckbox = nullptr;

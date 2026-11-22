@@ -468,9 +468,11 @@ Common::String ZoombiniPuzzleHotel::debugGetBuiltinDebugCommandHelp() const {
 	output += Common::String::format("  %-7s (%s)\n", "Shift+R", kBuiltinDebugActionAllowAll);
 	output += "    Permanently accept the level 2-3 two-axis and level-4 three-axis validation checks for this page instance. Level 1 is unchanged.\n";
 	output += Common::String::format("  %-7s (%s)\n", "W/w", kBuiltinDebugActionCycleRoom);
-	output += "    Replace the shared room/guide runner with SCRB 7000-7009. The first press loads 7000; this selector then wraps independently.\n";
+	output += "    Cycle the room and guide animations 7000-7009, starting at 7000.\n";
+	output += "    W and E advance independently and replace the same on-screen animation.\n";
 	output += Common::String::format("  %-7s (%s)\n", "E/e", kBuiltinDebugActionCycleRoomAlternate);
-	output += "    Replace the same runner with SCRB 7010-7017. The first press loads 7010; this selector then wraps independently.\n";
+	output += "    Cycle the alternate room and guide animations 7010-7017, starting at 7010.\n";
+	output += "    The room or guide animation is hidden while the selected entry is unavailable.\n";
 	return output;
 }
 
@@ -546,6 +548,18 @@ bool ZoombiniPuzzleHotel::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 		if (last < cycle)
 			cycle = first;
 		const int16 scrbId = static_cast<int16>(kResScrb7000_RoomBase + cycle);
+		if (!_vm->hasResource(ID_SCRB, ZmbResource(ZmbResource::kPage, scrbId))) {
+			// The original leaves the runner blank for unused debug selections.
+			if (_ullaAnimFeature) {
+				addExternalDirtyRect(_ullaAnimFeature->getZSortRect());
+				_ullaAnimFeature->clearScrbData(scrbId);
+			}
+			const uint32 featureId = _ullaAnimFeature ? _ullaAnimFeature->getRegistrationIndex() : 0;
+			const Common::String message = Common::String::format("Set Ftr id  %u with bogus script  %d", featureId, scrbId);
+			showBuiltinDebugText(message);
+			output = message + '\n';
+			return false;
+		}
 		if (_ullaAnimFeature) {
 			loadScrbOntoFeature(_ullaAnimFeature, scrbId, true);
 		} else {
@@ -553,7 +567,6 @@ bool ZoombiniPuzzleHotel::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 								   ZmbFeature::FLAG_00008000_LOOP_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_08000000_REGION_TRACK,
 								   kUllaAnimIntro00);
 		}
-		output = Common::String::format("Hotel room SCRB %d loaded.\n", scrbId);
 	} else {
 		return true;
 	}
