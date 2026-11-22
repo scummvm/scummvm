@@ -252,6 +252,11 @@ public:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void reflowLayout() override;
 
+	// Let's accept the focus to prevent the search widget to get it.
+	// This prevents the launcher to start with the virtual keyboard displayed.
+	// We should implement keyboard navigation inside the widget too.
+	bool wantsFocus() override { return true; }
+
 	void cancelDrag() override;
 	void cancelTickle() override;
 
