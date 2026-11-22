@@ -333,7 +333,7 @@ struct MctlAniSub {
 	MG2I _turnS[4];
 };
 
-struct LinkInfo {
+struct LinkOrNode {
 	MovGraphLink *link;
 	MovGraphNode *node;
 };
@@ -386,13 +386,13 @@ public:
 	int getLinkDir(MovGraphLinkList *linkList, int idx, Common::Rect *a3, Common::Point *a4);
 
 	bool fillData(StaticANIObject *obj, MctlAni &item);
-	void generateList(MctlMQ &movinfo, MovGraphLinkList *linkList, LinkInfo *lnkSrc, LinkInfo *lnkDst);
+	void generateList(MctlMQ &movinfo, MovGraphLinkList *linkList, LinkOrNode *lnkSrc, LinkOrNode *lnkDst);
 	MessageQueue *makeWholeQueue(MctlMQ &mctlMQ);
 
 	MovGraphNode *getHitNode(int x, int y, int strictMatch);
 	MovGraphLink *getHitLink(int x, int y, int idx, int fuzzyMatch);
 	MovGraphLink *getNearestLink(int x, int y);
-	double iterate(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, MovGraphLinkList *listObj);
+	double iterate(LinkOrNode *linkInfoSource, LinkOrNode *linkInfoDest, MovGraphLinkList *listObj);
 
 	MessageQueue *makeLineQueue(MctlMQ *movinfo);
 };

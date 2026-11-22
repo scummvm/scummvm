@@ -1862,7 +1862,7 @@ void MctlGraph::attachObject(StaticANIObject *obj) {
 	}
 }
 
-void MctlGraph::generateList(MctlMQ &movinfo, MovGraphLinkList *linkList, LinkInfo *lnkSrc, LinkInfo *lnkDst) {
+void MctlGraph::generateList(MctlMQ &movinfo, MovGraphLinkList *linkList, LinkOrNode *lnkSrc, LinkOrNode *lnkDst) {
 	debugC(4, kDebugPathfinding, "MctlGraph::generateList(...)");
 
 	MctlMQSub *elem;
@@ -2150,8 +2150,8 @@ MessageQueue *MctlGraph::startMove(StaticANIObject *ani, int xpos, int ypos, int
 }
 
 MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
-	LinkInfo linkInfoDest;
-	LinkInfo linkInfoSource;
+	LinkOrNode linkInfoDest;
+	LinkOrNode linkInfoSource;
 	MctlMQ mctlMQ1;
 	PicAniInfo picAniInfo;
 	Common::Point point;
@@ -2754,10 +2754,10 @@ MovGraphLink *MctlGraph::getNearestLink(int x, int y) {
 		return nullptr;
 }
 
-double MctlGraph::iterate(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, MovGraphLinkList *listObj) {
+double MctlGraph::iterate(LinkOrNode *linkInfoSource, LinkOrNode *linkInfoDest, MovGraphLinkList *listObj) {
 	debugC(4, kDebugPathfinding, "MctlGraph::iterate(...)");
 
-	LinkInfo linkInfoWorkSource;
+	LinkOrNode linkInfoWorkSource;
 
 	if (linkInfoSource->link != linkInfoDest->link || linkInfoSource->node != linkInfoDest->node) {
 		double minDistance = -1.0;
