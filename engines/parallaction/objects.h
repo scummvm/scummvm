@@ -333,6 +333,7 @@ public:
 
 	int16 getValue() const;
 	void setValue(int16 value);
+	void forceValue(int16 value);
 };
 
 

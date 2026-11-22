@@ -413,7 +413,13 @@ DECLARE_INSTRUCTION_OPCODE(off) {
 
 
 DECLARE_INSTRUCTION_OPCODE(set) {
-	ctxt._inst->_opA.setValue(ctxt._inst->_opB.getValue());
+	InstructionPtr inst = ctxt._inst;
+
+	// SET doesn't wrap a local variable, unlike INC and DEC
+	if (inst->_opA._flags & kParaLocal)
+		inst->_opA._local->forceValue(inst->_opB.getValue());
+	else
+		inst->_opA.setValue(inst->_opB.getValue());
 }
 
 
