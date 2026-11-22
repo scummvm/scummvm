@@ -36,7 +36,7 @@ class Level;
 class StoryProp : public InteractiveObject {
 public:
 
-	void init(int kind, int subtype, const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &host);
+	void init(int kind, int subtype, const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world);
 
 	int verb(int verb) override;
 	int useItem(int item) override;

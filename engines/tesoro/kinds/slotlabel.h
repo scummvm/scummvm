@@ -33,7 +33,7 @@ class World;
  */
 class SlotLabel : public InteractiveObject {
 public:
-	void init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &host);
+	void init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world);
 
 	void draw(const Camera &camera, Display &display) override;
 

@@ -26,16 +26,16 @@
 
 namespace Tesoro {
 
-/** Game time in milliseconds. The caller passes in the host tick. */
+/** Game time in milliseconds. The caller passes in the tick. */
 class GameClock {
 public:
-	explicit GameClock(uint32 hostTick);
+	explicit GameClock(uint32 tick);
 
 	/** Advances the time by the step since the last call and returns it. */
-	int32 update(uint32 hostTick);
+	int32 update(uint32 tick);
 
 	/** Makes update() return a constant value until unfreeze(), so every object sees the same time. */
-	void freeze(uint32 hostTick);
+	void freeze(uint32 tick);
 
 	void unfreeze() { _frozen = false; }
 
@@ -43,7 +43,7 @@ public:
 	void suspend() { _suspended = true; }
 
 	/** Restarts time, not counting the suspended period. */
-	void resume(uint32 hostTick);
+	void resume(uint32 tick);
 
 	void setSpeed(int speed) { _speed = speed; }
 	int speed() const { return _speed; }
@@ -52,7 +52,7 @@ public:
 	bool isSuspended() const { return _suspended; }
 
 private:
-	void accumulate(uint32 hostTick);
+	void accumulate(uint32 tick);
 
 	/** Maximum step in milliseconds, longer steps are ignored */
 	static const int32 kMaxStep = 500;

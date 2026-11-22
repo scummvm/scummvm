@@ -34,9 +34,9 @@ static uint32 tag(const char *three) {
 	return (byte)three[0] | ((byte)three[1] << 8) | ((byte)three[2] << 16);
 }
 
-void Character::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &host, uint16 stateSize) {
+void Character::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world, uint16 stateSize) {
 	// The text colour and width come first, the clickable object's data follows.
-	InteractiveObject::init(record, roomSortOffset, levelPlayers, now, host, stateSize, 4);
+	InteractiveObject::init(record, roomSortOffset, levelPlayers, now, world, stateSize, 4);
 	_textColour = record.dataByte(0) | (record.dataByte(1) << 8);
 	_textWidth = record.dataByte(2) | (record.dataByte(3) << 8);
 
@@ -58,7 +58,7 @@ void Character::init(const ObjectRecord &record, int16 roomSortOffset, const Com
 }
 
 void Character::face(int facing) {
-	_anim.selectBank(_faceBank, facing - 1, facing - 1, false, false, _host->now());
+	_anim.selectBank(_faceBank, facing - 1, facing - 1, false, false, _world->now());
 }
 
 void Character::prepareToSpeak(uint32 pose) {
@@ -79,7 +79,7 @@ void Character::prepareToSpeak(uint32 pose) {
 		return;
 	}
 	_anim.switchTo(_poses[pose]);
-	_anim.current().setRange(1, 1, false, false, _host->now());
+	_anim.current().setRange(1, 1, false, false, _world->now());
 }
 
 void Character::draw(const Camera &camera, Display &display) {
@@ -102,30 +102,30 @@ void Character::drawSubtitle(const SpeechTable::Line &line) {
 	const byte *text = (const byte *)line.str();
 	const int32 colour = _speaker.colour();
 	if (colour < 1) {
-		_host->queueText(text, (uint16)-(int16)colour, 320, 240, 640);
+		_world->queueText(text, (uint16)-(int16)colour, 320, 240, 640);
 		return;
 	}
-	const Camera &camera = _host->updateCamera(_room->cameraDivisor());
-	_host->queueText(text, (uint16)colour, _anchorX - camera.scaledX(), _anchorY + camera.scaledY(), _textWidth);
+	const Camera &camera = _world->updateCamera(_room->cameraDivisor());
+	_world->queueText(text, (uint16)colour, _anchorX - camera.scaledX(), _anchorY + camera.scaledY(), _textWidth);
 }
 
-int32 Character::SpeakingAdapter::now() { return _ch._host->now(); }
-uint32 Character::SpeakingAdapter::randomNumber(uint32 lo, uint32 hi) { return _ch._host->randomNumber(lo, hi); }
-uint32 Character::SpeakingAdapter::playVoice(uint32 archiveOffset) { return _ch._host->playVoice(archiveOffset); }
-bool Character::SpeakingAdapter::voiceActive(uint32 id) { return _ch._host->voiceActive(id); }
-void Character::SpeakingAdapter::stopVoice(uint32 id) { _ch._host->stopVoice(id); }
-bool Character::SpeakingAdapter::skipPressed() { return _ch._host->skipPressed(); }
-bool Character::SpeakingAdapter::subtitlesOn() { return _ch._host->subtitlesOn(); }
-void Character::SpeakingAdapter::insertInMainList(int priority) { _ch._host->insertInMainList(&_ch, priority); }
+int32 Character::SpeakingAdapter::now() { return _ch._world->now(); }
+uint32 Character::SpeakingAdapter::randomNumber(uint32 lo, uint32 hi) { return _ch._world->randomNumber(lo, hi); }
+uint32 Character::SpeakingAdapter::playVoice(uint32 archiveOffset) { return _ch._world->playVoice(archiveOffset); }
+bool Character::SpeakingAdapter::voiceActive(uint32 id) { return _ch._world->voiceActive(id); }
+void Character::SpeakingAdapter::stopVoice(uint32 id) { _ch._world->stopVoice(id); }
+bool Character::SpeakingAdapter::skipPressed() { return _ch._world->skipPressed(); }
+bool Character::SpeakingAdapter::subtitlesOn() { return _ch._world->subtitlesOn(); }
+void Character::SpeakingAdapter::insertInMainList(int priority) { _ch._world->insertInMainList(&_ch, priority); }
 void Character::SpeakingAdapter::removeFromMainList() {
-	_ch._host->removeFromMainList(&_ch);
+	_ch._world->removeFromMainList(&_ch);
 	_ch.speechCleared();
 }
-void Character::SpeakingAdapter::pauseAnimation() { _ch._anim.current().pause(_ch._host->now()); }
+void Character::SpeakingAdapter::pauseAnimation() { _ch._anim.current().pause(_ch._world->now()); }
 void Character::SpeakingAdapter::stashAnimation() { _ch._anim.stash(); }
 void Character::SpeakingAdapter::prepareToSpeak(uint32 pose) { _ch.prepareToSpeak(pose); }
 void Character::SpeakingAdapter::queueFrame() { _ch.queueFrame(); }
-void Character::SpeakingAdapter::setFrameRange(uint16 first, int32 last) { _ch._anim.current().setRange(first, last, false, false, _ch._host->now()); }
+void Character::SpeakingAdapter::setFrameRange(uint16 first, int32 last) { _ch._anim.current().setRange(first, last, false, false, _ch._world->now()); }
 uint32 Character::SpeakingAdapter::frameCount() { return _ch._anim.current().bank()->stepCount(); }
 bool Character::SpeakingAdapter::animationHeld() { return _ch._anim.isStashed(); }
 void Character::SpeakingAdapter::setAnimationHeld(bool held) { _ch._anim.setStashed(held); }

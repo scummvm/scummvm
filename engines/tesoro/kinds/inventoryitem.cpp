@@ -44,18 +44,18 @@ static byte stateSizeOf(int subtype) {
 	}
 }
 
-static const SpeechTable::Line *phraseAt(World &host, const ObjectRecord &record, uint offset, bool firstIsI) {
+static const SpeechTable::Line *phraseAt(World &world, const ObjectRecord &record, uint offset, bool firstIsI) {
 	char name[13];
 	for (uint i = 0; i < 12; ++i)
 		name[i] = (char)record.dataByte(offset + i);
 	name[12] = '\0';
 	if (firstIsI)
 		name[0] = 'I';
-	return name[0] ? host.phrase(name) : nullptr;
+	return name[0] ? world.phrase(name) : nullptr;
 }
 
-void InventoryItem::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &host) {
-	_host = &host;
+void InventoryItem::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world) {
+	_world = &world;
 	// The data's second byte is the item's number and also what picks the subtype.
 	_subtype = record.dataByte(1);
 	initAnimated(record, roomSortOffset, levelPlayers, stateSizeOf(_subtype));
@@ -76,11 +76,11 @@ void InventoryItem::init(const ObjectRecord &record, int16 roomSortOffset, const
 	_approachX = _x;
 	_approachY = _y;
 	// The level data's first letter of the name is always an I: the items of the interface carry that mark.
-	_hoverName = phraseAt(host, record, 2, true);
+	_hoverName = phraseAt(world, record, 2, true);
 
 	static const int order[kVerbs] = { 0, 1, 3, 4, 5, 2, 6 };
 	for (int i = 0; i < 6; ++i)
-		_verbLine[order[i]] = phraseAt(host, record, 0xe + 12 * i, false);
+		_verbLine[order[i]] = phraseAt(world, record, 0xe + 12 * i, false);
 
 	const uint count = record.dataByte(0x62) | (record.dataByte(0x63) << 8);
 	for (uint i = 0; i < count; ++i) {
@@ -89,14 +89,14 @@ void InventoryItem::init(const ObjectRecord &record, int16 roomSortOffset, const
 			key[c] = (char)record.dataByte(0x7c + 0x18 * i + c);
 		key[12] = '\0';
 		_comboKeys.push_back(nameKey64(key));
-		_comboLines.push_back(phraseAt(host, record, 0x7c + 0x18 * i + 0xc, false));
+		_comboLines.push_back(phraseAt(world, record, 0x7c + 0x18 * i + 0xc, false));
 	}
 	_sortValue += 2;
 	_flags &= ~kActive;
 }
 
 void InventoryItem::setItemActive(int level, const char *name, bool active) {
-	if (Object *object = _host->findObject(level, name))
+	if (Object *object = _world->findObject(level, name))
 		object->setActive(active);
 	else
 		warning("Tesoro: no object %s", name);
@@ -104,7 +104,7 @@ void InventoryItem::setItemActive(int level, const char *name, bool active) {
 
 int InventoryItem::runWith(const char *block, const char *label, byte *variables) {
 	// An item's scripts act in the level Jim is in (their characters are looked up there), not in the interface level.
-	return _host->startScriptInJimLevel(block, label, variables);
+	return _world->startScriptInJimLevel(block, label, variables);
 }
 
 int InventoryItem::run(const char *block, const char *label, bool withState) {
@@ -113,19 +113,19 @@ int InventoryItem::run(const char *block, const char *label, bool withState) {
 
 void InventoryItem::setActive(bool active) {
 	if (!active) {
-		if (_host->pointerItem() == this) {
-			_host->cursorFrame(0, 0);
+		if (_world->pointerItem() == this) {
+			_world->cursorFrame(0, 0);
 			_flags |= kVisible;
-			_host->setPointerItem(nullptr);
+			_world->setPointerItem(nullptr);
 		}
 	} else {
-		if (_host->interfaceCameraX() > 640) {
-			if (InventoryItem *carried = _host->pointerItem())
+		if (_world->interfaceCameraX() > 640) {
+			if (InventoryItem *carried = _world->pointerItem())
 				carried->_flags |= kVisible;
 			_flags &= ~kVisible;
 		}
-		_host->setPointerItem(this);
-		_host->cursorFrame(_itemNumber + 7, _itemNumber + 7);
+		_world->setPointerItem(this);
+		_world->cursorFrame(_itemNumber + 7, _itemNumber + 7);
 	}
 	_flags = (_flags & ~kActive) | (active ? kActive : 0);
 }
@@ -141,9 +141,9 @@ int InventoryItem::verb(int verb) {
 			run("FIPLATO", "mirar", true);
 			return 1;
 		case 19:
-			state()[0] = _host->jimLevel() == _host->levelAt(kKitchen) && _host->isActive(kKitchen, "DICK");
+			state()[0] = _world->jimLevel() == _world->levelAt(kKitchen) && _world->isActive(kKitchen, "DICK");
 			if (state()[0] != 0)
-				_host->hideInventory();
+				_world->hideInventory();
 			run("FIRECET", "mirar", true);
 			return 1;
 		case 28:
@@ -158,10 +158,10 @@ int InventoryItem::verb(int verb) {
 	case 4:
 		switch (_subtype) {
 		case 9:
-			if (_host->jimStep() == 6 && _host->isActive(kInterface, "ILIBRO")) {
-				Object *book = _host->findObject(kInterface, "ILIBRO");
+			if (_world->jimStep() == 6 && _world->isActive(kInterface, "ILIBRO")) {
+				Object *book = _world->findObject(kInterface, "ILIBRO");
 				if (book && !book->stateBlob().empty() && book->stateBlob()[0] != 0) {
-					_host->setJimStep(7);
+					_world->setJimStep(7);
 					flag = 1;
 				}
 			}
@@ -176,7 +176,7 @@ int InventoryItem::verb(int verb) {
 		case 19:
 			return this->verb(1);
 		case 29:
-			if (!_host->isActive(kInterface, "IHORQUILLA"))
+			if (!_world->isActive(kInterface, "IHORQUILLA"))
 				run("FIBOLSO", "abrir", false);
 			return 1;
 		default:
@@ -192,8 +192,8 @@ int InventoryItem::useItem(int item) {
 	byte *s = state();
 	switch (_subtype) {
 	case 16: {
-		if (!_host->isActive(kInterface, "IRECETARIO"))
-			return _host->startScriptInJimLevel("FNOUSAROBJ", "main", nullptr), 1;
+		if (!_world->isActive(kInterface, "IRECETARIO"))
+			return _world->startScriptInJimLevel("FNOUSAROBJ", "main", nullptr), 1;
 		switch (item) {
 		case 8:
 			s[1] |= 4;
@@ -237,13 +237,13 @@ int InventoryItem::useItem(int item) {
 		return 1;
 	}
 	case 28:
-		if (item != 0x29 || _host->isActive(kMap, "RISCO"))
+		if (item != 0x29 || _world->isActive(kMap, "RISCO"))
 			return 0;
 		s[0] = 1;
 		setItemActive(kMap, "CUEVA", true);
 		setItemActive(kMap, "RISCO", true);
-		if (Object *map = _host->findObject(kMap, "MAPA"))
-			_host->playFrames(*map, 1, 1);
+		if (Object *map = _world->findObject(kMap, "MAPA"))
+			_world->playFrames(*map, 1, 1);
 		run("FIMAPA", "mechero", true);
 		return 1;
 	case 33:
@@ -263,11 +263,11 @@ int InventoryItem::useItem(int item) {
 	case 37: {
 		if (item != 0xff)
 			return 0;
-		Object *orzoguei = _host->findObject(kVillage, "ORZOGUEI");
-		if (orzoguei && !orzoguei->stateBlob().empty() && orzoguei->stateBlob()[1] != 0 && _host->jimLevel() == _host->levelAt(kVillage) && s[0] == 0) {
+		Object *orzoguei = _world->findObject(kVillage, "ORZOGUEI");
+		if (orzoguei && !orzoguei->stateBlob().empty() && orzoguei->stateBlob()[1] != 0 && _world->jimLevel() == _world->levelAt(kVillage) && s[0] == 0) {
 			flag = 1;
 			s[0] = 1;
-			if (Object *again = _host->findObject(kVillage, "ORZOGUEI"))
+			if (Object *again = _world->findObject(kVillage, "ORZOGUEI"))
 				again->stateBlob()[0xc] = 1;
 		}
 		runWith("FICUB0MAR", "jim", &flag);
@@ -299,7 +299,7 @@ int InventoryItem::dispatch(int verb) {
 	default:
 		break;
 	}
-	InventoryItem *held = _host->pointerItem();
+	InventoryItem *held = _world->pointerItem();
 	int result = held ? held->useItem(_itemNumber) : 0;
 	if (result != 0)
 		return 1;
@@ -307,11 +307,11 @@ int InventoryItem::dispatch(int verb) {
 }
 
 int InventoryItem::update() {
-	if (!_pending || _host->jimSpeaking())
+	if (!_pending || _world->jimSpeaking())
 		return 0;
-	_host->setPointerActive(true);
+	_world->setPointerActive(true);
 	_pending = false;
-	_host->removeFromMainList(this);
+	_world->removeFromMainList(this);
 	return dispatch(_verb);
 }
 
@@ -344,22 +344,22 @@ int InventoryItem::setVerbAndClick(int verb) {
 	default:
 		break;
 	}
-	InventoryItem *held = _host->pointerItem();
+	InventoryItem *held = _world->pointerItem();
 	if (!held) {
 		warning("Tesoro: an item used on another with nothing carried");
 		return 0;
 	}
 	for (uint i = 0; i < _comboKeys.size(); ++i) {
-		if (_host->findObjectByKey(kInterface, _comboKeys[i]) == held) {
+		if (_world->findObjectByKey(kInterface, _comboKeys[i]) == held) {
 			sayCombination(_comboLines[i]);
-			_host->hideInventory();
+			_world->hideInventory();
 			return 3;
 		}
 	}
 	for (uint i = 0; i < held->_comboKeys.size(); ++i) {
-		if (_host->findObjectByKey(kInterface, held->_comboKeys[i]) == this) {
+		if (_world->findObjectByKey(kInterface, held->_comboKeys[i]) == this) {
 			sayCombination(held->_comboLines[i]);
-			_host->hideInventory();
+			_world->hideInventory();
 			return 3;
 		}
 	}

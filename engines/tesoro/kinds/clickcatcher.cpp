@@ -25,9 +25,9 @@
 
 namespace Tesoro {
 
-void ClickCatcher::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &host) {
+void ClickCatcher::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world) {
 	//
-	_host = &host;
+	_world = &world;
 	initAnimated(record, roomSortOffset, levelPlayers, 0);
 	if (_anim.bankCount() > 0) {
 		AnimPlayer &player = _anim.current();

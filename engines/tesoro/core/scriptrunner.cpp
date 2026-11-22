@@ -33,7 +33,7 @@ namespace Tesoro {
 static const uint32 kSpeechPause = 201;
 static const int kScriptPriority = 30;
 
-ScriptRunner::ScriptRunner(Scripts &host, const ScriptLibrary &library) : _host(host), _library(library) {
+ScriptRunner::ScriptRunner(Scripts &scripts, const ScriptLibrary &library) : _scripts(scripts), _library(library) {
 	_runs.resize(library.blockCount());
 	for (uint32 i = 0; i < library.blockCount(); ++i) {
 		_runs[i].blockIndex = i;
@@ -48,7 +48,7 @@ const ScriptBlock &ScriptRunner::block(const ScriptRun &run) const {
 Object *ScriptRunner::character(ScriptRun &run, int32 index) {
 	Object *&cached = run.characters[index];
 	if (!cached)
-		cached = _host.findObject(run.level, block(run).character(index));
+		cached = _scripts.findObject(run.level, block(run).character(index));
 	return cached;
 }
 
@@ -56,31 +56,31 @@ int ScriptRunner::start(uint32 blockIndex, uint64 label, byte *variables, Level 
 	ScriptRun &r = _runs[blockIndex];
 	const ScriptBlock &b = block(r);
 	for (uint32 i = 0; i < b.characterCount(); ++i)
-		r.characters[i] = _host.findObject(level, b.character(i));
+		r.characters[i] = _scripts.findObject(level, b.character(i));
 	r.menuStart = -1;
 	r.pc = b.findLabel(label);
 	r.level = level;
 	r.variables = variables;
-	_host.insertScript(blockIndex, kScriptPriority);
-	_host.setCursorActive(false);
+	_scripts.insertScript(blockIndex, kScriptPriority);
+	_scripts.setCursorActive(false);
 	execute(r);
 	return 3;
 }
 
 void ScriptRunner::resume(uint32 blockIndex) {
 	ScriptRun &r = _runs[blockIndex];
-	_host.removeObject(r.actor);
-	_host.resumeJim();
+	_scripts.removeObject(r.actor);
+	_scripts.resumeJim();
 	++r.pc;
 	execute(r);
 }
 
 int ScriptRunner::finish(ScriptRun &r) {
-	_host.removeScript(r.blockIndex);
-	_host.setCursorActive(true);
+	_scripts.removeScript(r.blockIndex);
+	_scripts.setCursorActive(true);
 	for (uint32 i = 0; i < r.characters.size(); ++i) {
 		if (r.characters[i])
-			_host.releaseIfBusy(r.characters[i]);
+			_scripts.releaseIfBusy(r.characters[i]);
 	}
 	return 3;
 }
@@ -109,7 +109,7 @@ int ScriptRunner::collectMenu(ScriptRun &r) {
 		}
 		const int16 next = (int16)item.half(4);
 		if (next < 1) {
-			r.actor = _host.jim();
+			r.actor = _scripts.jim();
 			return 3;
 		}
 		r.pc = next;
@@ -129,15 +129,15 @@ int ScriptRunner::execute(ScriptRun &r) {
 			const int32 who = (int32)e.word(8);
 			if (who > 0) {
 				r.actor = character(r, who - 1);
-				_host.say(r.actor, e.word(4), e.word(12));
+				_scripts.say(r.actor, e.word(4), e.word(12));
 			} else {
-				r.actor = _host.jim();
-				_host.sayJim(e.word(4));
+				r.actor = _scripts.jim();
+				_scripts.sayJim(e.word(4));
 			}
 			return 3;
 		}
 		case kScriptSleep:
-			r.sleepStart = _host.now();
+			r.sleepStart = _scripts.now();
 			return 2;
 		case kScriptBreak:
 			if (r.menuStart < 0)
@@ -167,33 +167,33 @@ int ScriptRunner::execute(ScriptRun &r) {
 				start(e.word(4) - 1, e.key(8), r.variables, r.level);
 				return 3;
 			}
-			_host.throneScene(r, e.key(8) == nameKey64("ir") ? 0 : 1);
+			_scripts.throneScene(r, e.key(8) == nameKey64("ir") ? 0 : 1);
 			++r.pc;
 			continue;
 		case kScriptSendMessage: {
-			Level *level = e.word(12) ? _host.levelFromRef(e.word(12)) : r.level;
-			Object *object = _host.findObject(level, e.key(4));
+			Level *level = e.word(12) ? _scripts.levelFromRef(e.word(12)) : r.level;
+			Object *object = _scripts.findObject(level, e.key(4));
 			r.actor = object;
 			switch (e.word(16)) {
 			case kMessagePlay: {
 				const byte mode = e.byteAt(22);
 				const int32 third = mode == 0 ? (int8)e.byteAt(21) : -1;
-				_host.animate(object, e.byteAt(20), (int8)e.byteAt(21), third, mode == 2);
+				_scripts.animate(object, e.byteAt(20), (int8)e.byteAt(21), third, mode == 2);
 				if (mode == 3)
 					return 3;
 				break;
 			}
 			case kMessageWalk:
-				_host.walk(object, (int16)e.half(20), (int16)e.half(22), r.blockIndex);
+				_scripts.walk(object, (int16)e.half(20), (int16)e.half(22), r.blockIndex);
 				return 3;
 			case kMessageLook:
-				_host.look(object, (int8)e.byteAt(20));
+				_scripts.look(object, (int8)e.byteAt(20));
 				break;
 			case kMessageActivate:
-				_host.activate(object, e.byteAt(20) != 0);
+				_scripts.activate(object, e.byteAt(20) != 0);
 				break;
 			case kMessageShow:
-				_host.show(object, e.byteAt(20) != 0);
+				_scripts.show(object, e.byteAt(20) != 0);
 				break;
 			default:
 				break;
@@ -206,19 +206,19 @@ int ScriptRunner::execute(ScriptRun &r) {
 			++r.pc;
 			continue;
 		case kScriptDo:
-			_host.runDo(r, e.word(4));
+			_scripts.runDo(r, e.word(4));
 			++r.pc;
 			continue;
 		case kScriptPlayVideo:
-			_host.playVideo(e.word(4));
+			_scripts.playVideo(e.word(4));
 			++r.pc;
 			continue;
 		case kScriptPlaySound:
-			_host.playSound((const char *)e.data + 4);
+			_scripts.playSound((const char *)e.data + 4);
 			++r.pc;
 			continue;
 		case kScriptPlayTrack:
-			_host.playTrack(e.byteAt(4));
+			_scripts.playTrack(e.byteAt(4));
 			++r.pc;
 			continue;
 		default:
@@ -230,15 +230,15 @@ int ScriptRunner::execute(ScriptRun &r) {
 
 int ScriptRunner::tickMenu(ScriptRun &r) {
 	if (!_menuShown) {
-		_host.beginMenu();
-		_menuChoice = _host.showMenu(_menuPhrases, _menuCount);
+		_scripts.beginMenu();
+		_menuChoice = _scripts.showMenu(_menuPhrases, _menuCount);
 		if (_menuChoice >= 0) {
 			_menuShown = true;
-			r.actor = _host.jim();
-			_host.say(r.actor, _menuPhrases[_menuChoice], 0);
+			r.actor = _scripts.jim();
+			_scripts.say(r.actor, _menuPhrases[_menuChoice], 0);
 		}
-	} else if (!_host.isSpeaking(_host.jim())) {
-		_host.endMenu();
+	} else if (!_scripts.isSpeaking(_scripts.jim())) {
+		_scripts.endMenu();
 		r.pc = _menuResume[_menuChoice];
 		execute(r);
 		return 3;
@@ -253,16 +253,16 @@ int ScriptRunner::tick(uint32 blockIndex) {
 
 	switch (e.op()) {
 	case kScriptSay:
-		if (_host.isSpeaking(r.actor))
+		if (_scripts.isSpeaking(r.actor))
 			return 2;
 		if (_speechEnd == 0)
-			_speechEnd = _host.now();
-		if (_host.now() - _speechEnd < kSpeechPause)
+			_speechEnd = _scripts.now();
+		if (_scripts.now() - _speechEnd < kSpeechPause)
 			return 2;
 		++r.pc;
 		break;
 	case kScriptSleep:
-		if (_host.now() - r.sleepStart < e.word(4))
+		if (_scripts.now() - r.sleepStart < e.word(4))
 			return 2;
 		++r.pc;
 		break;
@@ -270,12 +270,12 @@ int ScriptRunner::tick(uint32 blockIndex) {
 	case kScriptMenuItem:
 		return tickMenu(r);
 	case kScriptRun:
-		_host.setCursorActive(false);
+		_scripts.setCursorActive(false);
 		++r.pc;
 		break;
 	case kScriptSendMessage:
 		// Only an animation order waits, and only while the animation runs.
-		if (e.word(16) != 0 || _host.animationBusy(r.actor))
+		if (e.word(16) != 0 || _scripts.animationBusy(r.actor))
 			return 2;
 		++r.pc;
 		break;
@@ -287,12 +287,12 @@ int ScriptRunner::tick(uint32 blockIndex) {
 	return 2;
 }
 
-int DialogueChoiceMenu::run(Scripts &host, Display &display, const SpeechTable::Line *const *lines, uint32 count) {
+int DialogueChoiceMenu::run(Scripts &scripts, Display &display, const SpeechTable::Line *const *lines, uint32 count) {
 	static const uint32 kWhite = 0xffff, kYellow = 0xffe0;
 	static const uint16 kLayer = 5;
 
-	host.clearLabel();
-	host.showCursorAt(host.mouseX() + 320, 240 - host.mouseY());
+	scripts.clearLabel();
+	scripts.showCursorAt(scripts.mouseX() + 320, 240 - scripts.mouseY());
 
 	TextQueue &texts = display.texts();
 	const uint32 first = texts.lineCount();
@@ -314,10 +314,10 @@ int DialogueChoiceMenu::run(Scripts &host, Display &display, const SpeechTable::
 
 	for (uint32 i = 0; i < count; ++i) {
 		top[i + 1] += shift;
-		const int32 mouseY = host.mouseY();
+		const int32 mouseY = scripts.mouseY();
 		if (top[i] - 240 <= mouseY && mouseY < top[i + 1] - 240) {
-			if (host.leftButton()) {
-				host.removeJimFromMainList();
+			if (scripts.leftButton()) {
+				scripts.removeJimFromMainList();
 				return i;
 			}
 			display.queueText((const byte *)lines[i]->str(), kYellow, 320, top[i], 640, kLayer, false, 0x12);

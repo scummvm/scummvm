@@ -35,7 +35,7 @@ class Level;
  */
 class MapPlace : public InteractiveObject {
 public:
-	void init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &host);
+	void init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world);
 
 	int setVerbAndClick(int verb) override;
 

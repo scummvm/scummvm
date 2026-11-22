@@ -35,7 +35,7 @@ class World;
 class ExitDoor : public InteractiveObject {
 public:
 
-	void init(int subtype, const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &host);
+	void init(int subtype, const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world);
 
 	/** Verb 0 (go through) and, for one subtype, verb 4 (switch on or off). */
 	int verb(int verb) override;

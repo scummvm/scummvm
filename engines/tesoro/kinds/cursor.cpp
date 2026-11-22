@@ -81,37 +81,37 @@ void Cursor::draw(const Camera &camera, Display &display) {
 
 void Cursor::openSaveLoadMenu() {
 	// The menu does not open on the board game's level.
-	const Cursor::Place place = _host->place();
+	const Cursor::Place place = _world->place();
 	if (place == Cursor::kBoard)
 		return;
 
 	if (_heldItem)
 		_heldItem->setVisible(true);
 	_heldItem = nullptr;
-	_anim.selectBank(0, 0, 0, false, false, _host->now());
+	_anim.selectBank(0, 0, 0, false, false, _world->now());
 
 	// The save button works in the first levels of the game only; the subtitle switch shows its setting.
-	const bool savable = _host->levelIndex() < 0x17 && place == Cursor::kGame;
-	if (Object *save = _host->interfaceObject("SALVAR"))
+	const bool savable = _world->levelIndex() < 0x17 && place == Cursor::kGame;
+	if (Object *save = _world->interfaceObject("SALVAR"))
 		save->setActive(savable);
-	if (Object *texts = _host->interfaceObject("TEXTOS")) {
-		const int8 page = (int8)_host->subtitleFrame();
-		texts->animation().selectBank(0, (uint16)page, page, false, false, _host->now());
+	if (Object *texts = _world->interfaceObject("TEXTOS")) {
+		const int8 page = (int8)_world->subtitleFrame();
+		texts->animation().selectBank(0, (uint16)page, page, false, false, _world->now());
 	}
 
-	_host->jimResumeFacing();
+	_world->jimResumeFacing();
 	_label.set(nullptr, 0);
 
 	// move the pointer and the camera far out of the way to capture the scene for the save thumbnail, then restore them.
 	shiftY(-5000);
 	_level->camera().shift(0, -5000);
-	_host->captureThumbnail();
+	_world->captureThumbnail();
 	_level->camera().shift(0, 5000);
 	shiftY(5000);
 
 	// The interface slides to the save screen.
 	_level->camera().shift(-645, 0);
-	_host->menuOpened();
+	_world->menuOpened();
 }
 
 int Cursor::update() {
@@ -119,8 +119,8 @@ int Cursor::update() {
 	if (!_companion)
 		return 0;
 
-	if (!_mouse || !_level || !_playerLevel || !_host) {
-		warning("Cursor: no mouse, levels or host to follow");
+	if (!_mouse || !_level || !_playerLevel || !_world) {
+		warning("Cursor: no mouse, levels or world to follow");
 		return 0;
 	}
 
@@ -130,17 +130,17 @@ int Cursor::update() {
 	const bool right = (_mouse->buttonState(PointerState::kRight) & (PointerState::kPressed | PointerState::kDoublePress)) != 0;
 
 	if (page >= 0 && page < 640) {
-		if (_host->menuKeyPressed()) {
-			_host->acknowledgeKeys();
-			const Cursor::Place place = _host->place();
+		if (_world->menuKeyPressed()) {
+			_world->acknowledgeKeys();
+			const Cursor::Place place = _world->place();
 			if (place == Cursor::kMainMenu) {
-				_host->fadeOut(4, 100);
-				_host->clearMainList();
+				_world->fadeOut(4, 100);
+				_world->clearMainList();
 				return 3;
 			}
 			if (place == Cursor::kNewGameMenu) {
-				_host->enterMainMenu();
-				_host->fadeOut(4, 100);
+				_world->enterMainMenu();
+				_world->fadeOut(4, 100);
 				return 1;
 			}
 			openSaveLoadMenu();
@@ -148,13 +148,13 @@ int Cursor::update() {
 			showInventory();
 		}
 	} else if (page <= 640) {
-		if (_host->menuKeyPressed()) {
-			_host->acknowledgeKeys();
+		if (_world->menuKeyPressed()) {
+			_world->acknowledgeKeys();
 			closeSaveLoadMenu();
 		}
 	} else {
-		if (_host->menuKeyPressed()) {
-			_host->acknowledgeKeys();
+		if (_world->menuKeyPressed()) {
+			_world->acknowledgeKeys();
 			hideInventory();
 			openSaveLoadMenu();
 		}
@@ -196,7 +196,7 @@ int Cursor::update2() {
 
 	// A click on bare ground with the walking pointer sends the player there.
 	if ((left & 8) && result == 0 && verb == 0)
-		_host->walkJimToPointer(_mouse->x, _mouse->y);
+		_world->walkJimToPointer(_mouse->x, _mouse->y);
 
 	return 1;
 }
@@ -297,16 +297,16 @@ void Cursor::hideInventory() {
 
 void Cursor::closeSaveLoadMenu() {
 	_level->camera().shift(645, 0);
-	_host->fadeOut(4, 100);
+	_world->fadeOut(4, 100);
 }
 
 void Cursor::showInventory() {
-	if (_host->place() != Cursor::kGame)
+	if (_world->place() != Cursor::kGame)
 		return;
 
 	if (_heldItem)
 		_heldItem->setVisible(false);
-	_host->jimResumeFacing();
+	_world->jimResumeFacing();
 	_level->camera().shift(640, 0);
 	_label.set(nullptr, 0);
 	shiftActionStrip(640);

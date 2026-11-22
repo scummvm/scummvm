@@ -31,9 +31,9 @@
 
 namespace Tesoro {
 
-void WanderingSprite::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &host) {
+void WanderingSprite::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world) {
 	SpriteObject::init(record, roomSortOffset, levelPlayers, now);
-	_world = &host;
+	_world = &world;
 	for (uint i = 0; i < 12; ++i)
 		_anchorName[i] = (char)record.dataByte(2 + i); // name of the object it anchors to
 	_anchorName[12] = '\0';

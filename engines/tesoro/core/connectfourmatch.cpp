@@ -28,11 +28,11 @@ namespace Tesoro {
 
 enum { kResultVariable = 2, kNoResult = 0xff, kPlayerWins = 2 };
 
-void ConnectFourMatch::start(World &host, byte *variables) {
+void ConnectFourMatch::start(World &world, byte *variables) {
 	// Only the counts are cleared: the cells above a count are never read.
 	for (int column = 0; column < ConnectFour::kColumns; ++column)
 		board.raw()[1 + column * 8] = 0;
-	host.showPieces();
+	world.showPieces();
 	busy = false;
 	state = kPlaying;
 	moveStamp = 0;
@@ -41,25 +41,25 @@ void ConnectFourMatch::start(World &host, byte *variables) {
 	variables[kResultVariable] = kNoResult;
 }
 
-void ConnectFourMatch::finish(World &host, byte result) {
+void ConnectFourMatch::finish(World &world, byte result) {
 	state = result;
 	busy = true;
-	moveStamp = host.now();
-	blinkStamp = host.now();
+	moveStamp = world.now();
+	blinkStamp = world.now();
 }
 
-void ConnectFourMatch::turn(World &host, byte *variables) {
-	host.setPointerActive(true);
+void ConnectFourMatch::turn(World &world, byte *variables) {
+	world.setPointerActive(true);
 
 	if (state != kPlaying) {
 		// The game is over: the winning pieces blink for 3 seconds, then the script learns the result.
-		if ((uint32)(host.now() - moveStamp) > 3000) {
+		if ((uint32)(world.now() - moveStamp) > 3000) {
 			variables[kResultVariable] = _savedResult;
 			if (state == kPlayerWon)
 				variables[kResultVariable] = kPlayerWins;
-			host.setPointerActive(false);
+			world.setPointerActive(false);
 		}
-		host.showPieces();
+		world.showPieces();
 		return;
 	}
 
@@ -67,24 +67,24 @@ void ConnectFourMatch::turn(World &host, byte *variables) {
 		return;
 
 	if (moveStamp != 0) {
-		if ((uint32)(host.now() - moveStamp) > 1500)
+		if ((uint32)(world.now() - moveStamp) > 1500)
 			moveStamp = 0;
 		return;
 	}
 
 	busy = false;
-	switch (board.choose(host, (int8)board.raw()[0])) {
+	switch (board.choose(world, (int8)board.raw()[0])) {
 	case ConnectFour::kPlayerWon:
-		finish(host, kPlayerWon);
+		finish(world, kPlayerWon);
 		break;
 	case ConnectFour::kMachineWon:
 	case ConnectFour::kDraw:
-		finish(host, kMachineWon);
+		finish(world, kMachineWon);
 		break;
 	default:
 		break;
 	}
-	host.showPieces();
+	world.showPieces();
 }
 
 void ConnectFourMatch::showOn(ObjectList &objects, int32 now) {

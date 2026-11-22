@@ -24,14 +24,14 @@
 
 namespace Tesoro {
 
-void NoteObject::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &host) {
-	InteractiveObject::init(record, roomSortOffset, levelPlayers, now, host, 0);
+void NoteObject::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world) {
+	InteractiveObject::init(record, roomSortOffset, levelPlayers, now, world, 0);
 	_data = record.dataByte(1);
 }
 
 int NoteObject::verb(int verb) {
 	if (verb == 1 || verb == 3) {
-		_host->startScript(*this, "FNOTALAB", "mirar", reinterpret_cast<byte *>(&_data));
+		_world->startScript(*this, "FNOTALAB", "mirar", reinterpret_cast<byte *>(&_data));
 		return 3;
 	}
 	return InteractiveObject::verb(verb);

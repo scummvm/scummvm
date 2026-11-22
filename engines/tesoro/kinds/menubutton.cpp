@@ -26,8 +26,8 @@ namespace Tesoro {
 
 enum Action { kPrevious = 0, kNext = 1, kLoad = 2, kSave = 3, kNewGame = 5, kClose = 6, kSubtitles = 7 };
 
-void MenuButton::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &host) {
-	_host = &host;
+void MenuButton::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world) {
+	_world = &world;
 	initAnimated(record, roomSortOffset, levelPlayers, 0);
 	if (_anim.bankCount() > 0) {
 		AnimPlayer &player = _anim.current();
@@ -40,45 +40,45 @@ void MenuButton::init(const ObjectRecord &record, int16 roomSortOffset, const Co
 }
 
 bool MenuButton::acceptsPointer() {
-	_host->setHoverText(nullptr);
+	_world->setHoverText(nullptr);
 	if (_action != kSubtitles && _anim.bankCount() > 0)
-		_anim.current().setRange(1, 1, false, false, _host->now());
+		_anim.current().setRange(1, 1, false, false, _world->now());
 	showHoverText();
 	return true;
 }
 
 int MenuButton::clearHoverText() {
 	if (_action != kSubtitles && _anim.bankCount() > 0)
-		_anim.current().setRange(0, 0, false, false, _host->now());
+		_anim.current().setRange(0, 0, false, false, _world->now());
 	return 1;
 }
 
 int MenuButton::setVerbAndClick(int verb) {
 	switch (_action) {
 	case kPrevious:
-		_host->previousSlot();
+		_world->previousSlot();
 		break;
 	case kNext:
-		_host->nextSlot();
+		_world->nextSlot();
 		break;
 	case kLoad:
-		_host->loadSlot();
+		_world->loadSlot();
 		break;
 	case kSave:
-		_host->saveSlot();
-		_host->fadeOut(4, 100);
+		_world->saveSlot();
+		_world->fadeOut(4, 100);
 		break;
 	case kNewGame:
-		_host->fadeOut(4, 100);
-		_host->clearMainList();
+		_world->fadeOut(4, 100);
+		_world->clearMainList();
 		return 3;
 	case kClose:
-		_host->closeSaveLoadMenu();
+		_world->closeSaveLoadMenu();
 		break;
 	case kSubtitles: {
-		const int on = _host->toggleSubtitles() ? 1 : 0;
+		const int on = _world->toggleSubtitles() ? 1 : 0;
 		if (_anim.bankCount() > 0)
-			_anim.current().setRange(on, on, false, false, _host->now());
+			_anim.current().setRange(on, on, false, false, _world->now());
 		break;
 	}
 	default:

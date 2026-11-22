@@ -23,34 +23,34 @@
 
 namespace Tesoro {
 
-GameClock::GameClock(uint32 hostTick) : _elapsed(0), _speed(1), _frozenValue(0), _lastTick(hostTick), _frozen(false), _suspended(false) {
+GameClock::GameClock(uint32 tick) : _elapsed(0), _speed(1), _frozenValue(0), _lastTick(tick), _frozen(false), _suspended(false) {
 }
 
-void GameClock::accumulate(uint32 hostTick) {
-	const int32 step = int32(hostTick - _lastTick);
+void GameClock::accumulate(uint32 tick) {
+	const int32 step = int32(tick - _lastTick);
 	if (step < kMaxStep)
 		_elapsed += step * _speed;
-	_lastTick = hostTick;
+	_lastTick = tick;
 }
 
-int32 GameClock::update(uint32 hostTick) {
+int32 GameClock::update(uint32 tick) {
 	if (!_suspended) {
-		accumulate(hostTick);
+		accumulate(tick);
 		if (_frozen)
 			return _frozenValue;
 	}
 	return _elapsed;
 }
 
-void GameClock::freeze(uint32 hostTick) {
+void GameClock::freeze(uint32 tick) {
 	if (!_suspended)
-		accumulate(hostTick);
+		accumulate(tick);
 	_frozen = true;
 	_frozenValue = _elapsed;
 }
 
-void GameClock::resume(uint32 hostTick) {
-	_lastTick = hostTick;
+void GameClock::resume(uint32 tick) {
+	_lastTick = tick;
 	_suspended = false;
 }
 

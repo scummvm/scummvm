@@ -38,7 +38,7 @@ public:
 	enum { kVerbs = 7 };
 
 	/** Built from its level record. */
-	void init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &host, uint16 stateSize = 0, uint dataStart = 0);
+	void init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world, uint16 stateSize = 0, uint dataStart = 0);
 
 	int update() override;
 	int setVerbAndClick(int verb) override;
@@ -72,7 +72,7 @@ protected:
 	/** Runs the verb the pointer carries. */
 	int runVerb();
 
-	World *_host = nullptr;
+	World *_world = nullptr;
 	bool _pending = false;
 	bool _answered = false;
 	int _facing = 0;

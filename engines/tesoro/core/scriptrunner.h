@@ -45,7 +45,7 @@ struct ScriptRun;
 class DialogueChoiceMenu {
 public:
 	/** Returns the number of the chosen line, or -1 while none is clicked. */
-	static int run(Scripts &host, Display &display, const SpeechTable::Line *const *lines, uint32 count);
+	static int run(Scripts &scripts, Display &display, const SpeechTable::Line *const *lines, uint32 count);
 };
 
 /** What one script block keeps while it runs. */
@@ -63,7 +63,7 @@ struct ScriptRun {
 /** Runs the compiled script blocks. */
 class ScriptRunner {
 public:
-	ScriptRunner(Scripts &host, const ScriptLibrary &library);
+	ScriptRunner(Scripts &scripts, const ScriptLibrary &library);
 
 	ScriptRun &run(uint32 blockIndex) { return _runs[blockIndex]; }
 
@@ -82,7 +82,7 @@ private:
 	Object *character(ScriptRun &run, int32 index);
 	const ScriptBlock &block(const ScriptRun &run) const;
 
-	Scripts &_host;
+	Scripts &_scripts;
 	const ScriptLibrary &_library;
 	Common::Array<ScriptRun> _runs;
 

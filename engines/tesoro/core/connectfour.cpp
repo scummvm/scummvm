@@ -77,7 +77,7 @@ int ConnectFour::score(int column, int who) {
 	return best;
 }
 
-int ConnectFour::bestMove(World &host, int &bestScore, int who) {
+int ConnectFour::bestMove(World &world, int &bestScore, int who) {
 	int candidates[kColumns];
 	int n = 0;
 	bestScore = 0;
@@ -116,10 +116,10 @@ int ConnectFour::bestMove(World &host, int &bestScore, int who) {
 		if (reply == kColumns)
 			return col;
 	}
-	return candidates[host.randomNumber(0, n - 1)];
+	return candidates[world.randomNumber(0, n - 1)];
 }
 
-ConnectFour::Outcome ConnectFour::choose(World &host, int lastColumn) {
+ConnectFour::Outcome ConnectFour::choose(World &world, int lastColumn) {
 	if (score(lastColumn, 1) == 4)
 		return kPlayerWon;
 	for (int col = 0; col < kColumns; ++col) {
@@ -131,10 +131,10 @@ ConnectFour::Outcome ConnectFour::choose(World &host, int lastColumn) {
 		--_mem[kPad + 1 + col * 8];
 	}
 	int playerScore = 0, machineScore = 0;
-	const int blocking = bestMove(host, playerScore, 1);
+	const int blocking = bestMove(world, playerScore, 1);
 	if (blocking < 0)
 		return kDraw;
-	const int attacking = bestMove(host, machineScore, 2);
+	const int attacking = bestMove(world, machineScore, 2);
 	dropPiece(machineScore <= playerScore ? blocking : attacking, 2);
 	return kMoved;
 }

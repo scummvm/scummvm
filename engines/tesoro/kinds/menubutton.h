@@ -35,7 +35,7 @@ class World;
  */
 class MenuButton : public InteractiveObject {
 public:
-	void init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &host);
+	void init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world);
 
 	bool acceptsPointer() override;
 	int showHoverText() override { return 1; }

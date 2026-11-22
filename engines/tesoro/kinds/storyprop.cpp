@@ -33,7 +33,7 @@ static const byte kState12[12] = { 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0 };
 static const byte kState17[17] = { 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0 };
 static const byte kState20[31] = { 1, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1 };
 
-void StoryProp::init(int kind, int subtype, const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &host) {
+void StoryProp::init(int kind, int subtype, const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world) {
 	_propKind = kind;
 	_subtype = subtype;
 	uint16 stateSize = 0;
@@ -43,13 +43,13 @@ void StoryProp::init(int kind, int subtype, const ObjectRecord &record, int16 ro
 		stateSize = kState17[subtype];
 	else if (kind == 20 && subtype >= 0 && subtype < 31)
 		stateSize = kState20[subtype];
-	InteractiveObject::init(record, roomSortOffset, levelPlayers, now, host, stateSize);
+	InteractiveObject::init(record, roomSortOffset, levelPlayers, now, world, stateSize);
 	if (kind == 17 && subtype == 13)
 		_flags |= kVisible;
 }
 
 byte StoryProp::stateOf(int level, const char *name, uint index) {
-	Object *object = _host->findObject(level, name);
+	Object *object = _world->findObject(level, name);
 	if (!object || index >= object->stateBlob().size()) {
 		warning("Tesoro: no state byte %u in %s", index, name);
 		return 0;
@@ -58,7 +58,7 @@ byte StoryProp::stateOf(int level, const char *name, uint index) {
 }
 
 void StoryProp::setItemActive(int level, const char *name, bool active) {
-	if (Object *object = _host->findObject(level, name))
+	if (Object *object = _world->findObject(level, name))
 		object->setActive(active);
 	else
 		warning("Tesoro: no object %s", name);
@@ -70,7 +70,7 @@ void StoryProp::pickUp(const char *item) {
 }
 
 int StoryProp::runWith(const char *block, const char *label, byte *variables) {
-	return _host->startScript(*this, block, label, variables);
+	return _world->startScript(*this, block, label, variables);
 }
 
 int StoryProp::run(const char *block, const char *label, bool withState) {
@@ -108,7 +108,7 @@ int StoryProp::verb12(int verb) {
 	switch (_subtype) {
 	case 0:
 		if (verb == 3 || verb == 6) {
-			s[0] = _host->isActive(kOffice, "JARRON");
+			s[0] = _world->isActive(kOffice, "JARRON");
 			run("FTABURETE", verb == 3 ? "coger" : "mover", true);
 			return 1;
 		}
@@ -121,14 +121,14 @@ int StoryProp::verb12(int verb) {
 		break;
 	case 2:
 		if (verb == 1) {
-			Object *captain = _host->findObject(kOffice, "CAPITAN");
+			Object *captain = _world->findObject(kOffice, "CAPITAN");
 			runWith("FCARTA", "mirar", captain && !captain->stateBlob().empty() ? captain->stateBlob().data() : nullptr);
 			return 1;
 		}
 		break;
 	case 3:
 		if (verb == 4) {
-			Object *captain = _host->findObject(kOffice, "CAPITAN");
+			Object *captain = _world->findObject(kOffice, "CAPITAN");
 			if (captain && captain->animation().bankIndex() == 2)
 				run("FCAJON", "abrir", true);
 			else
@@ -148,10 +148,10 @@ int StoryProp::verb12(int verb) {
 			return 1;
 		}
 		if (verb == 3) {
-			Object *captain = _host->findObject(kOffice, "CAPITAN");
+			Object *captain = _world->findObject(kOffice, "CAPITAN");
 			runWith("FBOLI", "coger", captain && !captain->stateBlob().empty() ? captain->stateBlob().data() : nullptr);
-			if (_host->pointerHasItem())
-				_host->clearPointerItem();
+			if (_world->pointerHasItem())
+				_world->clearPointerItem();
 			return 1;
 		}
 		if (verb == 4) {
@@ -162,7 +162,7 @@ int StoryProp::verb12(int verb) {
 	case 6:
 	case 10:
 		if (verb == 3) {
-			Object *captain = _host->findObject(kOffice, "CAPITAN");
+			Object *captain = _world->findObject(kOffice, "CAPITAN");
 			if (!captain || captain->animation().bankIndex() != 2) {
 				run("FNOCOGER", "coger", false);
 				if (_subtype == 10)
@@ -201,7 +201,7 @@ int StoryProp::verb12(int verb) {
 		break;
 	case 11:
 		if (verb == 0) {
-			Object *captain = _host->findObject(kOffice, "CAPITAN");
+			Object *captain = _world->findObject(kOffice, "CAPITAN");
 			run("FPUERTARARA", captain && captain->animation().bankIndex() == 2 ? "ir1" : "ir2", false);
 			return 1;
 		}
@@ -229,7 +229,7 @@ int StoryProp::verb17(int verb) {
 	switch (_subtype) {
 	case 0:
 		if (verb == 1 || verb == 3) {
-			Object *table = _host->findObject(kCabin, "MESA");
+			Object *table = _world->findObject(kCabin, "MESA");
 			flag = table && !table->stateBlob().empty() && (int8)table->stateBlob()[0] > 0;
 			runWith("FLIBRO", verb == 1 ? "mirar" : "coger", &flag);
 			return 1;
@@ -243,21 +243,21 @@ int StoryProp::verb17(int verb) {
 		break;
 	case 2:
 		if (verb == 1) {
-			s[0] = (byte)_host->randomNumber(0, 4);
+			s[0] = (byte)_world->randomNumber(0, 4);
 			run("FLIBROS", "mirar", true);
 			return 1;
 		}
 		break;
 	case 3:
 		if (verb == 3) {
-			s[0] = _host->jimStep() == 8;
+			s[0] = _world->jimStep() == 8;
 			run("FALFOMBRA", "coger", true);
 			return 1;
 		}
 		break;
 	case 4:
 		if (verb == 1) {
-			if (_host->isActive(kInterface, "IPAPELES") && (int8)s[0] < 1)
+			if (_world->isActive(kInterface, "IPAPELES") && (int8)s[0] < 1)
 				s[0] = 1;
 			run("FMESA", "mirar", true);
 			return 1;
@@ -271,35 +271,35 @@ int StoryProp::verb17(int verb) {
 		break;
 	case 6:
 		if (verb == 0) {
-			flag = _host->isActive(kInterface, "IMAPA");
+			flag = _world->isActive(kInterface, "IMAPA");
 			runWith("FVENTOPEN", "mirar", &flag);
 			return 1;
 		}
 		break;
 	case 7:
 		if (verb == 3) {
-			s[0] = _host->isActive(kInterface, "ICIRUELA") || _host->isActive(kInterface, "ICIRUELABRT");
+			s[0] = _world->isActive(kInterface, "ICIRUELA") || _world->isActive(kInterface, "ICIRUELABRT");
 			run("FCIRUELAS", "coger", true);
 			return 1;
 		}
 		break;
 	case 8:
 		if (verb == 1) {
-			s[0] = _host->jimStep() == 4;
+			s[0] = _world->jimStep() == 4;
 			run("FCOFRE", "mirar", true);
 			return 1;
 		}
 		if (verb == 3) {
-			s[0] = _host->jimStep() == 4;
-			if (_host->jimStep() == 4)
-				_host->setJimStep(5);
+			s[0] = _world->jimStep() == 4;
+			if (_world->jimStep() == 4)
+				_world->setJimStep(5);
 			run("FCOFRE", "coger", true);
 			return 1;
 		}
 		break;
 	case 9:
 		if (verb == 3) {
-			s[0] = _host->isActive(kInterface, "ICUERDANUDO");
+			s[0] = _world->isActive(kInterface, "ICUERDANUDO");
 			if (s[0] == 0)
 				setItemActive(19, "CUERDA", false);
 			run("FCUERDA", "coger", true);
@@ -308,7 +308,7 @@ int StoryProp::verb17(int verb) {
 		break;
 	case 10:
 		if (verb == 3) {
-			s[0] = _host->jimLevel() != _host->levelAt(20);
+			s[0] = _world->jimLevel() != _world->levelAt(20);
 			run("FPATATAS", "coger", true);
 			return 1;
 		}
@@ -327,7 +327,7 @@ int StoryProp::verb17(int verb) {
 		break;
 	case 13:
 		if (verb == 3) {
-			s[0] = _host->jimStep() == 6;
+			s[0] = _world->jimStep() == 6;
 			run("FPAPELES", "coger", true);
 			return 1;
 		}
@@ -346,8 +346,8 @@ int StoryProp::verb17(int verb) {
 		break;
 	case 16:
 		if (verb == 4) {
-			if (_host->jimStep() == 2) {
-				_host->setJimStep(3);
+			if (_world->jimStep() == 2) {
+				_world->setJimStep(3);
 				run("FBAUL", "main", false);
 				return 1;
 			}
@@ -390,7 +390,7 @@ int StoryProp::verb20(int verb) {
 		break;
 	case 3:
 		if (verb == 0) {
-			s[0] = _host->isActive(kInterface, "ICOCOABIERT");
+			s[0] = _world->isActive(kInterface, "ICOCOABIERT");
 			run("FCHOZA", "ir", true);
 			return 1;
 		}
@@ -401,14 +401,14 @@ int StoryProp::verb20(int verb) {
 		break;
 	case 4:
 		if (verb == 1) {
-			Object *orzoguei = _host->findObject(kVillage, "ORZOGUEI");
+			Object *orzoguei = _world->findObject(kVillage, "ORZOGUEI");
 			runWith("FTABLERO", "mirar", orzoguei && !orzoguei->stateBlob().empty() ? orzoguei->stateBlob().data() : nullptr);
 			return 1;
 		}
 		break;
 	case 5:
 		if (verb == 0) {
-			flag = _host->isActive(kVolcano, "JUSTINO");
+			flag = _world->isActive(kVolcano, "JUSTINO");
 			runWith("FENTVOLCAN", "ir", &flag);
 			return 1;
 		}
@@ -443,7 +443,7 @@ int StoryProp::verb20(int verb) {
 			return 1;
 		}
 		if (verb == 3) {
-			Object *hut = _host->findObject(kVillage, "CHOZA");
+			Object *hut = _world->findObject(kVillage, "CHOZA");
 			runWith("FCAMPMAPA", "coger", hut && !hut->stateBlob().empty() ? hut->stateBlob().data() + 1 : nullptr);
 			return 1;
 		}
@@ -466,14 +466,14 @@ int StoryProp::verb20(int verb) {
 		break;
 	case 20:
 		if (verb == 0) {
-			s[0] = _host->isActive(kBeach, "CANOA");
+			s[0] = _world->isActive(kBeach, "CANOA");
 			run("FBARCO", "ir", true);
 			return 1;
 		}
 		break;
 	case 22:
 		if (verb == 3) {
-			s[0] = _host->isActive(kInterface, "IMECHERO");
+			s[0] = _world->isActive(kInterface, "IMECHERO");
 			run("FSOUVENIR", "coger", true);
 			return 1;
 		}
@@ -493,7 +493,7 @@ int StoryProp::verb20(int verb) {
 		break;
 	case 25:
 		if (verb == 1) {
-			Object *suicida = _host->findObject(18, "SUICIDA");
+			Object *suicida = _world->findObject(18, "SUICIDA");
 			runWith("FNOTARIP", "mirar", suicida && !suicida->stateBlob().empty() ? suicida->stateBlob().data() : nullptr);
 			return 1;
 		}
@@ -520,7 +520,7 @@ int StoryProp::verb20(int verb) {
 	case 30:
 		if (verb == 0) {
 			s[0] = 1;
-			if (Object *exit = _host->findObject(kBeach, "SALIDA"))
+			if (Object *exit = _world->findObject(kBeach, "SALIDA"))
 				exit->verb(0);
 			return 1;
 		}
@@ -535,9 +535,9 @@ int StoryProp::use20(int item) {
 	byte flag = 0;
 	switch (_subtype) {
 	case 0:
-		if (_level != _host->levelAt(kBeach) || item != 27)
+		if (_level != _world->levelAt(kBeach) || item != 27)
 			break;
-		flag = _host->isActive(kBeach, "RESINA");
+		flag = _world->isActive(kBeach, "RESINA");
 		runWith("FIPIEDRAA", "cocotero", &flag);
 		return 1;
 	case 1:
@@ -556,11 +556,11 @@ int StoryProp::use20(int item) {
 			return 1;
 		}
 		if (item == 27) {
-			const bool rama = _host->isActive(kInterface, "IRAMA");
-			const bool resina = _host->isActive(kInterface, "IRAMARESINA");
-			const bool tapon = _host->isActive(kInterface, "ICUBOTAPON");
-			const bool mar = _host->isActive(kInterface, "ICUBOMAR");
-			const bool pant = _host->isActive(kInterface, "ICUBOPANT");
+			const bool rama = _world->isActive(kInterface, "IRAMA");
+			const bool resina = _world->isActive(kInterface, "IRAMARESINA");
+			const bool tapon = _world->isActive(kInterface, "ICUBOTAPON");
+			const bool mar = _world->isActive(kInterface, "ICUBOMAR");
+			const bool pant = _world->isActive(kInterface, "ICUBOPANT");
 			flag = pant || rama || resina || tapon || mar;
 			runWith("FIPIEDRAA", "rocas", &flag);
 			return 1;
@@ -586,19 +586,19 @@ int StoryProp::use20(int item) {
 	case 11:
 		if (item != 30)
 			break;
-		_host->jimShow(true);
-		_level = _host->levelAt(11);
-		if (Object *floor = _host->findObject(11, "SUELO"))
-			_host->putJimInLevel(_level, floor->x(), floor->y());
-		_host->jimFace(4);
-		_host->clearPointerItem();
+		_world->jimShow(true);
+		_level = _world->levelAt(11);
+		if (Object *floor = _world->findObject(11, "SUELO"))
+			_world->putJimInLevel(_level, floor->x(), floor->y());
+		_world->jimFace(4);
+		_world->clearPointerItem();
 		return 3;
 	case 14:
 		if (item != 38)
 			break;
 		if (stateOf(kVillage, "ORZOGUEI", 1) == 0)
 			return InteractiveObject::useItem(38);
-		if (Object *orzoguei = _host->findObject(kVillage, "ORZOGUEI"))
+		if (Object *orzoguei = _world->findObject(kVillage, "ORZOGUEI"))
 			orzoguei->stateBlob()[0xd] = 1;
 		return run("FIPOMEZ", "geiser", false);
 	case 16:

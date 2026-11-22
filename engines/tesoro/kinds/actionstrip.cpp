@@ -31,8 +31,8 @@ namespace Tesoro {
 	// position constants for the action strip
 enum { kHiddenY = 480, kRise = 85, kHoverReach = 35 };
 
-void ActionStrip::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &host) {
-	InteractiveObject::init(record, roomSortOffset, levelPlayers, now, host, 0, 0);
+void ActionStrip::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world) {
+	InteractiveObject::init(record, roomSortOffset, levelPlayers, now, world, 0, 0);
 	_slot = 0;
 }
 
@@ -44,7 +44,7 @@ void ActionStrip::onAttach() {
 	}
 	if (_room)
 		_room->insertSorted(this);
-	_host->actionStripReady(this);
+	_world->actionStripReady(this);
 }
 
 bool ActionStrip::isPicture(const Object *object) const {
@@ -62,11 +62,11 @@ void ActionStrip::movePictures(int32 dy) {
 }
 
 bool ActionStrip::acceptsPointer() {
-	if (!_host->actionStripAvailable())
+	if (!_world->actionStripAvailable())
 		return false;
 
-	const int32 now = _host->now();
-	_host->setHoverText(nullptr);
+	const int32 now = _world->now();
+	_world->setHoverText(nullptr);
 	_anim.selectBank(0, 1, 1, false, false, now);
 	if (_group) {
 		const Common::Array<Object *> &members = static_cast<ObjectGroup *>(_group)->members();
@@ -86,7 +86,7 @@ int ActionStrip::showHoverText() {
 	if (!_square || !_group || (_square->animation().current().flags() & AnimPlayer::kPlaying))
 		return 1;
 
-	const int32 now = _host->now();
+	const int32 now = _world->now();
 	const Common::Array<Object *> &members = static_cast<ObjectGroup *>(_group)->members();
 
 	// Pictures above the screen slide down into view.
@@ -125,7 +125,7 @@ int ActionStrip::clearHoverText() {
 	if (!_group)
 		return 1;
 
-	const int32 now = _host->now();
+	const int32 now = _world->now();
 	const Common::Array<Object *> &members = static_cast<ObjectGroup *>(_group)->members();
 	if (!members.empty() && members[0] && members[0]->y() < kHiddenY)
 		movePictures(kRise);
@@ -142,8 +142,8 @@ int ActionStrip::clearHoverText() {
 
 int ActionStrip::setVerbAndClick(int verb) {
 	if (_slot >= 0) {
-		_host->returnPointerItem();
-		_host->cursorFrame(_slot, _slot);
+		_world->returnPointerItem();
+		_world->cursorFrame(_slot, _slot);
 	}
 	return 1;
 }

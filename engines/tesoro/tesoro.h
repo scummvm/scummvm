@@ -96,7 +96,7 @@ private:
 	/** Makes a menu level the one shown, with its camera on the origin. */
 	void showMenu(Level *menu);
 
-	/** Hands the menu items of a level this engine as their host. */
+	/** Hands the menu items of a level this engine for their clicks. */
 	void hookMenuItems(Level *level);
 
 	void handleEvent(const Common::Event &e);

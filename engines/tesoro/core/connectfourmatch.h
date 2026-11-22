@@ -49,14 +49,14 @@ public:
 	/** When the player's piece was dropped, or when the game ended; 0 once the machine has been given its turn. */
 	int32 moveStamp = 0;
 
-	void start(World &host, byte *variables);
+	void start(World &world, byte *variables);
 	/** One frame of the game: the machine answers 1.5 seconds after the player, and a finished game ends 3 seconds later. */
-	void turn(World &host, byte *variables);
+	void turn(World &world, byte *variables);
 
 	void showOn(ObjectList &objects, int32 now);
 
 private:
-	void finish(World &host, byte result);
+	void finish(World &world, byte result);
 
 	byte _savedResult = 0;
 };

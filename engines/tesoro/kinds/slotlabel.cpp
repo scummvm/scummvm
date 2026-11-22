@@ -27,8 +27,8 @@
 
 namespace Tesoro {
 
-void SlotLabel::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &host) {
-	_host = &host;
+void SlotLabel::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world) {
+	_world = &world;
 	initAnimated(record, roomSortOffset, levelPlayers, 0);
 	if (_anim.bankCount() > 0) {
 		AnimPlayer &player = _anim.current();
@@ -45,22 +45,22 @@ void SlotLabel::init(const ObjectRecord &record, int16 roomSortOffset, const Com
 }
 
 void SlotLabel::draw(const Camera &camera, Display &display) {
-	if (_caption && _host->interfaceCameraX() < 0) {
-		const int slot = _host->selectedSlot();
+	if (_caption && _world->interfaceCameraX() < 0) {
+		const int slot = _world->selectedSlot();
 		if (slot == 0) {
-			_host->drawMenuText("POSICION VACIA", 0xffff, 0x136, 300, 200);
+			_world->drawMenuText("POSICION VACIA", 0xffff, 0x136, 300, 200);
 		} else {
 			char number[16];
 			snprintf(number, sizeof number, "%u", (uint)slot);
-			_host->drawMenuText(number, 0xf800, 450, 255, 200);
+			_world->drawMenuText(number, 0xf800, 450, 255, 200);
 			// The date is shown in two pieces: the first ten characters (day), and the rest from the twelfth (time).
-			const char *date = _host->slotTime();
+			const char *date = _world->slotTime();
 			const size_t length = strlen(date);
 			char day[11];
 			strncpy(day, date, 10);
 			day[length < 10 ? length : 10] = '\0';
-			_host->drawMenuText(day, 0xffff, 450, 300, 200);
-			_host->drawMenuText(length > 11 ? date + 11 : "", 0xffff, 450, 0x159, 200);
+			_world->drawMenuText(day, 0xffff, 450, 300, 200);
+			_world->drawMenuText(length > 11 ? date + 11 : "", 0xffff, 450, 0x159, 200);
 		}
 	}
 	InteractiveObject::draw(camera, display);

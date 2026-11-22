@@ -34,7 +34,7 @@ class World;
  */
 class WanderingSprite : public SpriteObject {
 public:
-	void init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &host);
+	void init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world);
 
 	void updateAnimation(int32 now) override;
 	void draw(const Camera &camera, Display &display) override;

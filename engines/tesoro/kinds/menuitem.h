@@ -35,8 +35,8 @@ class MenuItem : public Object {
 public:
 	void init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now);
 
-	/** Where the clicks go. Without a host a click does nothing. */
-	void setHost(TesoroEngine *host) { _host = host; }
+	/** Where the clicks go. Without an engine a click does nothing. */
+	void setEngine(TesoroEngine *engine) { _engine = engine; }
 
 	/** The number from the level data that picks the item's action. */
 	uint32 action() const { return _action; }
@@ -55,7 +55,7 @@ public:
 
 private:
 	uint32 _action = 0;
-	TesoroEngine *_host = nullptr;
+	TesoroEngine *_engine = nullptr;
 };
 
 } // End of namespace Tesoro

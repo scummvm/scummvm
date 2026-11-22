@@ -33,7 +33,7 @@ class World;
  */
 class ClickCatcher : public InteractiveObject {
 public:
-	void init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &host);
+	void init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world);
 
 	int setVerbAndClick(int verb) override { return 1; }
 	int showHoverText() override { return 1; }

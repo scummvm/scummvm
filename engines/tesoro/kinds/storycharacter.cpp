@@ -30,17 +30,17 @@ namespace Tesoro {
 static const byte kStateSize[17] = { 4, 14, 4, 0, 10, 3, 6, 4, 3, 0, 1, 1, 0, 15, 2, 11, 7 };
 static const bool kLooping[17] = { false, true, true, false, true, false, true, false, false, false, false, false, false, false, false, false, false };
 
-void StoryCharacter::init(int subtype, const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &host) {
+void StoryCharacter::init(int subtype, const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world) {
 	_subtype = subtype;
 	// A subtype the game does not use (12 and beyond 16) is built like subtype 9: no state.
 	const uint16 stateSize = subtype >= 0 && subtype <= 16 && subtype != 12 ? kStateSize[subtype] : 0;
-	Character::init(record, roomSortOffset, levelPlayers, now, host, stateSize);
+	Character::init(record, roomSortOffset, levelPlayers, now, world, stateSize);
 	if (subtype >= 0 && subtype <= 16 && kLooping[subtype])
 		_anim.selectBank(0, 0, -1, true, false, now);
 }
 
 byte StoryCharacter::stateOf(int level, const char *name, uint index) {
-	Object *object = _host->findObject(level, name);
+	Object *object = _world->findObject(level, name);
 	if (!object || index >= object->stateBlob().size()) {
 		warning("Tesoro: no state byte %u in %s", index, name);
 		return 0;
@@ -49,7 +49,7 @@ byte StoryCharacter::stateOf(int level, const char *name, uint index) {
 }
 
 int StoryCharacter::run(const char *block, const char *label, bool withState) {
-	return _host->startScript(*this, block, label, withState && !_stateBlob.empty() ? _stateBlob.data() : nullptr);
+	return _world->startScript(*this, block, label, withState && !_stateBlob.empty() ? _stateBlob.data() : nullptr);
 }
 
 int StoryCharacter::verb(int verb) {
@@ -67,14 +67,14 @@ int StoryCharacter::verb(int verb) {
 			break;
 		if ((int8)s[0] < 4 && stateOf(kOffice, "CAPITAN", 0) != 0)
 			s[0] = 4;
-		if ((int8)s[0] < 6 && _host->isActive(kInterface, "IHALFDOBLON"))
+		if ((int8)s[0] < 6 && _world->isActive(kInterface, "IHALFDOBLON"))
 			s[0] = 6;
 		run("FRECLUTADOR", "hablar", true);
 		return 1;
 	case 2:
 		if (verb != 2)
 			break;
-		if (_host->isActive(kInterface, "IDOBLON"))
+		if (_world->isActive(kInterface, "IDOBLON"))
 			s[0] = 2;
 		run("FDICKTABER", "hablar", true);
 		return 1;
@@ -86,13 +86,13 @@ int StoryCharacter::verb(int verb) {
 	case 4:
 		if (verb != 2)
 			break;
-		s[1] = _host->isActive(kInterface, "ICUERDA");
-		s[2] = _host->isActive(kInterface, "IJARRALLENA");
+		s[1] = _world->isActive(kInterface, "ICUERDA");
+		s[2] = _world->isActive(kInterface, "IJARRALLENA");
 		if (s[4] == 0)
 			s[4] = stateOf(kPort, "RECLUTADOR", 0xb);
 		run("FNUDERO", "hablar", true);
 		if (stateOf(kTavern, "TONTO", 0) == 0) {
-			Object *tonto = _host->findObject(kTavern, "TONTO");
+			Object *tonto = _world->findObject(kTavern, "TONTO");
 			if (tonto && !tonto->stateBlob().empty())
 				tonto->stateBlob()[0] = 1;
 		}
@@ -105,7 +105,7 @@ int StoryCharacter::verb(int verb) {
 	case 6:
 		if (verb != 2)
 			break;
-		if (s[0] == 0 && _host->isActive(kInterface, "IPLATO") && s[3] == 0)
+		if (s[0] == 0 && _world->isActive(kInterface, "IPLATO") && s[3] == 0)
 			s[3] = 1;
 		run("FLUDOPATA", "hablar", true);
 		return 1;
@@ -131,7 +131,7 @@ int StoryCharacter::verb(int verb) {
 			return run("FORZOGUEI", "mirar", true);
 		}
 		if (verb == 2) {
-			s[3] = _host->isActive(kInterface, "ICUBOBARRO");
+			s[3] = _world->isActive(kInterface, "ICUBOBARRO");
 			if (s[0] == 0)
 				s[0] = stateOf(kVillage, "CHOZA", 1);
 			if (s[0xb] && s[0xc] && s[0xd] && s[0xe])
@@ -156,7 +156,7 @@ int StoryCharacter::verb(int verb) {
 		if (verb != 2)
 			break;
 		{
-			const bool cubo = _host->isActive(kInterface, "ICUBOBARRO");
+			const bool cubo = _world->isActive(kInterface, "ICUBOBARRO");
 			const byte orzoguei = stateOf(kVillage, "ORZOGUEI", 4);
 			s[2] = (orzoguei | (cubo ? 1 : 0)) & 1;
 		}
@@ -167,7 +167,7 @@ int StoryCharacter::verb(int verb) {
 		if (verb != 2)
 			break;
 		s[0] = stateOf(kVolcano, "JUSTINO", 1);
-		if (_host->isActive(kInterface, "IMECHERO") && (int8)s[1] < 2)
+		if (_world->isActive(kInterface, "IMECHERO") && (int8)s[1] < 2)
 			s[1] = 2;
 		run("FTIENDA", "hablar", true);
 		return 1;
@@ -189,7 +189,7 @@ int StoryCharacter::useItem(int item) {
 	case 1:
 		if ((int8)s[0] < 4 && stateOf(kOffice, "CAPITAN", 0) != 0)
 			s[0] = 4;
-		if ((int8)s[0] < 6 && _host->isActive(kInterface, "IHALFDOBLON"))
+		if ((int8)s[0] < 6 && _world->isActive(kInterface, "IHALFDOBLON"))
 			s[0] = 6;
 		if (item == 0)
 			run("FIBOLI", "reclutador", false);
@@ -206,7 +206,7 @@ int StoryCharacter::useItem(int item) {
 			run("FIBOLI", "dick", false);
 			break;
 		case 3:
-			if (_host->isActive(kInterface, "IDOBLON"))
+			if (_world->isActive(kInterface, "IDOBLON"))
 				s[0] = 2;
 			run("FIJARRA", "dick", true);
 			break;
@@ -251,9 +251,9 @@ int StoryCharacter::useItem(int item) {
 		if (item == 7)
 			return run("FICNUDO", "dick", true);
 		if (item == 12) {
-			Object *loro = _host->findObject(kKitchen, "LOROPOCHO");
+			Object *loro = _world->findObject(kKitchen, "LOROPOCHO");
 			byte *vars = loro && !loro->stateBlob().empty() ? loro->stateBlob().data() : nullptr;
-			return _host->startScript(*this, "FIREVITALIZA", "loro", vars);
+			return _world->startScript(*this, "FIREVITALIZA", "loro", vars);
 		}
 		break;
 	case 8:
@@ -268,9 +268,9 @@ int StoryCharacter::useItem(int item) {
 		break;
 	case 14:
 		if (item == 26) {
-			Object *canto = _host->findObject(kInterface, "ICANTORODD");
+			Object *canto = _world->findObject(kInterface, "ICANTORODD");
 			byte *vars = canto && !canto->stateBlob().empty() ? canto->stateBlob().data() : nullptr;
-			return _host->startScript(*this, "FICANTO", "obtusu", vars);
+			return _world->startScript(*this, "FICANTO", "obtusu", vars);
 		}
 		if (item == 27)
 			return run("FIPIEDRAA", "obtusu", false);
@@ -284,14 +284,14 @@ int StoryCharacter::useItem(int item) {
 void StoryCharacter::prepareToSpeak(uint32 pose) {
 	Character::prepareToSpeak(pose);
 	if (_subtype == 3) {
-		if (Object *dick = _host->findObject(kTavern, "DICK"))
+		if (Object *dick = _world->findObject(kTavern, "DICK"))
 			dick->setVisible(false);
 	}
 }
 
 void StoryCharacter::speechCleared() {
 	if (_subtype == 3) {
-		if (Object *dick = _host->findObject(kTavern, "DICK"))
+		if (Object *dick = _world->findObject(kTavern, "DICK"))
 			dick->setVisible(true);
 	}
 }

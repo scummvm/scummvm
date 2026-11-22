@@ -26,37 +26,37 @@
 
 namespace Tesoro {
 
-void BoardColumn::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &host) {
-	_host = &host;
+void BoardColumn::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world) {
+	_world = &world;
 	initAnimated(record, roomSortOffset, levelPlayers, 0);
 	_column = record.dataByte(2);
 
 	const Common::String name = Common::String::format("OBJCOL%d", _column + 1);
-	_hoverName = host.phrase(name.c_str());
+	_hoverName = world.phrase(name.c_str());
 
 	// Never visible; it takes the pointer, collides and sits in the room list.
 	_flags = (_flags & ~kVisible) | kCollidable | kInRoomList | kHitter;
 }
 
 int BoardColumn::setVerbAndClick(int verb) {
-	if (_host->boardBusy())
+	if (_world->boardBusy())
 		return 1;
 	if (_column >= ConnectFour::kColumns) {
 		warning("Tesoro: board column %d is outside the board", _column);
 		return 1;
 	}
 
-	byte *board = _host->board().raw();
+	byte *board = _world->board().raw();
 	byte *column = board + 1 + _column * 8;
 	if (column[0] == ConnectFour::kHeight)
 		return 0;
 
-	_host->setBoardBusy();
+	_world->setBoardBusy();
 	column[1 + (int8)column[0]] = 1;
 	++column[0];
 	board[0] = (byte)_column;
-	_host->stampMoveTime();
-	_host->showPieces();
+	_world->stampMoveTime();
+	_world->showPieces();
 	return 1;
 }
 

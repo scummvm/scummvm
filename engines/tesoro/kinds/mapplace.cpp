@@ -28,8 +28,8 @@ namespace Tesoro {
 
 enum { kFirstPlace = 7, kSacredIsland = 15, kCanoaLevel = 7 };
 
-void MapPlace::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &host) {
-	_host = &host;
+void MapPlace::init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world) {
+	_world = &world;
 	initAnimated(record, roomSortOffset, levelPlayers, 0);
 
 	// The data's third byte is the level; the first levels of the list are not places.
@@ -40,7 +40,7 @@ void MapPlace::init(const ObjectRecord &record, int16 roomSortOffset, const Comm
 		for (uint i = 0; i < 12; ++i)
 			name[i] = (char)record.dataByte(3 + i);
 		name[12] = '\0';
-		_hoverName = host.phrase(name);
+		_hoverName = world.phrase(name);
 	}
 
 	if (_anim.bankCount() > 0) {
@@ -57,24 +57,24 @@ int MapPlace::setVerbAndClick(int verb) {
 		return 0;
 
 	if (_destination == kSacredIsland) {
-		Object *canoe = _host->findObject(kCanoaLevel, "CANOA");
+		Object *canoe = _world->findObject(kCanoaLevel, "CANOA");
 		if (!canoe)
 			warning("Tesoro: the map place of the sacred island found no canoe");
 		else if (!canoe->stateBlob().empty() && canoe->stateBlob()[0] == 0) {
-			_host->startScript(*this, "FMAPA", "tsagrada", nullptr);
+			_world->startScript(*this, "FMAPA", "tsagrada", nullptr);
 			return 1;
 		}
 	}
 
-	Level *level = _host->levelAt(_destination);
-	Object *exit = _host->findObject(_destination, "SALIDA");
+	Level *level = _world->levelAt(_destination);
+	Object *exit = _world->findObject(_destination, "SALIDA");
 	if (!exit) {
 		warning("Tesoro: a map place leads to a level without an exit");
 		return 0;
 	}
-	_host->putJimInLevel(level, exit->approachX(), exit->approachY());
-	_host->jimFace(((exit->facing() - 1) ^ 1) + 1);
-	_host->setHoverText(nullptr);
+	_world->putJimInLevel(level, exit->approachX(), exit->approachY());
+	_world->jimFace(((exit->facing() - 1) ^ 1) + 1);
+	_world->setHoverText(nullptr);
 	exit->exitArrival();
 	return 3;
 }

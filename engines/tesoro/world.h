@@ -74,7 +74,7 @@ public:
 	bool jimEntered() { return _jimEntered; }
 	void setJimEntered(bool entered) { _jimEntered = entered; }
 
-	/** Reads a level file and builds its objects, hosted by this world. */
+	/** Reads a level file and builds its objects. */
 	Level *loadLevelFile(const char *name, int mode, int index = -1);
 	/** The level at a place of the game's list, loaded on first use (null when it cannot be read). */
 	Level *level(int index);
@@ -214,7 +214,7 @@ public:
 	void setCursor(Cursor *cursor) {
 		_cursor = cursor;
 		if (_cursor) {
-			_cursor->setHost(this);
+			_cursor->setWorld(this);
 			if (_actionStrip)
 				_cursor->setActionStrip(static_cast<ActionStrip *>(_actionStrip));
 		}

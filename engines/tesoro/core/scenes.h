@@ -33,7 +33,7 @@ struct SceneAdapter;
 class SceneRoutines {
 public:
 	/** Runs the DO line `ordinal` of a block of the given type. */
-	static bool run(SceneAdapter &host, uint32 type, uint32 ordinal);
+	static bool run(SceneAdapter &scene, uint32 type, uint32 ordinal);
 };
 
 } // End of namespace Tesoro

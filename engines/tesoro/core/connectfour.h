@@ -52,9 +52,9 @@ public:
 
 	int score(int column, int who);
 
-	int bestMove(World &host, int &bestScore, int who);
+	int bestMove(World &world, int &bestScore, int who);
 
-	Outcome choose(World &host, int lastColumn);
+	Outcome choose(World &world, int lastColumn);
 
 private:
 	enum { kPad = 8, kSize = kPad + 57 + 8 };

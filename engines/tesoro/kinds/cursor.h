@@ -59,7 +59,7 @@ public:
 	/** The mouse to follow, and the level the player is in (the companion lives there). */
 	void setSurroundings(const PointerState *mouse, Level *playerLevel) { _mouse = mouse; _playerLevel = playerLevel; }
 
-	void setHost(World *host) { _host = host; }
+	void setWorld(World *world) { _world = world; }
 	void setActionStrip(ActionStrip *strip) { _actionStrip = strip; }
 
 	enum { kThumbWidth = 213, kThumbHeight = 160 };
@@ -110,7 +110,7 @@ private:
 	Cursor *_owner = nullptr;		// for the companion: the main pointer
 	const PointerState *_mouse = nullptr;
 	Level *_playerLevel = nullptr;
-	World *_host = nullptr;
+	World *_world = nullptr;
 	ActionStrip *_actionStrip = nullptr;
 };
 

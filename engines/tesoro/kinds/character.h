@@ -40,7 +40,7 @@ class Character : public InteractiveObject {
 public:
 	enum { kMaxPoses = 4 };
 
-	void init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &host, uint16 stateSize);
+	void init(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world, uint16 stateSize);
 
 	void say(const SpeechTable::Line &line, int32 colour, uint32 pose) { _speaker.say(line, colour, pose); }
 

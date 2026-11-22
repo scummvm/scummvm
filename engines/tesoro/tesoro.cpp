@@ -229,7 +229,7 @@ void TesoroEngine::hookMenuItems(Level *level) {
 	ObjectList &objects = level->objects();
 	for (uint i = 0; i < objects.size(); ++i) {
 		if (objects[i]->kindId() == 25)
-			static_cast<MenuItem *>(objects[i])->setHost(this);
+			static_cast<MenuItem *>(objects[i])->setEngine(this);
 	}
 }
 

@@ -53,31 +53,31 @@ void MenuItem::draw(const Camera &camera, Display &display) {
 }
 
 int MenuItem::update() {
-	if (_host)
-		updateBounds(_host->now());
+	if (_engine)
+		updateBounds(_engine->now());
 	return 1;
 }
 
 int MenuItem::setVerbAndClick(int verb) {
 	switch (_action) {
 	case 0:
-		_host->fadeOut(4, 100);
-		_host->enterNewGameMenu();
-		_host->startScript("FANMMENU", "nuevo");
+		_engine->fadeOut(4, 100);
+		_engine->enterNewGameMenu();
+		_engine->startScript("FANMMENU", "nuevo");
 		return 3;
 	case 1:
-		_host->fadeOut(4, 100);
-		_host->openSavedGames();
+		_engine->fadeOut(4, 100);
+		_engine->openSavedGames();
 		return 1;
 	case 2:
-		_host->startScript("FANMMENU", "facil");
+		_engine->startScript("FANMMENU", "facil");
 		return 1;
 	case 3:
-		_host->fadeOut(4, 100);
-		_host->startGame();
+		_engine->fadeOut(4, 100);
+		_engine->startGame();
 		return 3;
 	case 4:
-		_host->startScript("FANMMENU", "dificil");
+		_engine->startScript("FANMMENU", "dificil");
 		return 1;
 	default:
 		return 1;
@@ -89,8 +89,8 @@ int MenuItem::doubleClick(int verb) {
 }
 
 int MenuItem::clearHoverText() {
-	if (_host)
-		_host->clearHoverText();
+	if (_engine)
+		_engine->clearHoverText();
 	return 1;
 }
 
