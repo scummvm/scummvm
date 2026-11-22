@@ -368,7 +368,7 @@ struct GmctlAni { // 744
 
 class MctlGraph : public MovGraph {
 public:
-	Common::Array<GmctlAni> _items2;
+	Common::Array<GmctlAni> _aniData;
 
 public:
 	void attachObject(AniObject *obj) override;
