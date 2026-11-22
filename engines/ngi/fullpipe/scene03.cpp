@@ -103,7 +103,7 @@ void sceneHandler03_eaterFat() {
 	g_vars->scene03_eggeater->startMovement(MV_EGTR_FATASK, 0, -1);
 }
 
-void sceneHandler03_swallowEgg(int item) {
+void sceneHandler03_addLastEaten(int item) {
 	debugC(2, kDebugSceneLogic, "scene03: swallowEgg");
 
 	if (!g_vars->swallowedEgg1->_value.intValue) {
@@ -128,7 +128,7 @@ void sceneHandler03_giveItem(Command *ex) {
 	if (ex->_parentId == ANI_INV_EGGAPL || ex->_parentId == ANI_INV_EGGDOM ||
 		ex->_parentId == ANI_INV_EGGCOIN || ex->_parentId == ANI_INV_EGGBOOT ||
 		ex->_parentId == ANI_INV_EGGGLS)
-		sceneHandler03_swallowEgg(ex->_parentId);
+		sceneHandler03_addLastEaten(ex->_parentId);
 }
 
 int sceneHandler03_swallowedEgg1State() {
@@ -187,7 +187,7 @@ void sceneHandler03_releaseEgg() {
 	g_vars->scene03_eggeater->show1(-1, -1, -1, 0);
 }
 
-void sceneHandler03_takeEgg(Command *ex) {
+void sceneHandler03_doTakeEgg(Command *ex) {
 	debugC(2, kDebugSceneLogic, "scene03: taking egg");
 
 	MessageQueue *mq = g_nmi->_globalMessageQueueList->getMessageQueueById(ex->_parId);
@@ -257,7 +257,7 @@ int sceneHandler03(Command *ex) {
 		break;
 
 	case MSG_SC3_TAKEEGG:
-		sceneHandler03_takeEgg(ex);
+		sceneHandler03_doTakeEgg(ex);
 		break;
 
 	case MSG_LIFT_GO:
