@@ -108,11 +108,11 @@ public:
 	MessageQueue *makeQueue(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) override;
 
 	void initMctlGraph();
-	MctlConnectionPoint *findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, double *minDistancePtr);
+	MctlConnectionPoint *getNextPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, double *minDistancePtr);
 	void replaceNodeX(int from, int to);
 
-	uint getMotionControllerCount() { return _motionControllers.size(); }
-	MotionController *getMotionController(int num) { return _motionControllers[num]->_motionControllerObj.get(); }
+	uint getNumChildren() { return _motionControllers.size(); }
+	MotionController *getChild(int num) { return _motionControllers[num]->_motionControllerObj.get(); }
 };
 
 struct MctlLadderMovementVars {

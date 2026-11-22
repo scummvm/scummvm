@@ -42,8 +42,8 @@ void MotionController::enableLinks(const char *linkName, bool enable) {
 
 	MctlCompound *obj = static_cast<MctlCompound *>(this);
 
-	for (uint i = 0;  i < obj->getMotionControllerCount(); i++) {
-		MotionController *con = obj->getMotionController(i);
+	for (uint i = 0;  i < obj->getNumChildren(); i++) {
+		MotionController *con = obj->getChild(i);
 
 		if (con->_objtype == kObjTypeMovGraph) {
 			MovGraph *gr = static_cast<MovGraph *>(con);
@@ -70,8 +70,8 @@ MovGraphLink *MotionController::getLinkByName(const char *name) {
 	if (_objtype == kObjTypeMctlCompound) {
 		MctlCompound *obj = static_cast<MctlCompound *>(this);
 
-		for (uint i = 0;  i < obj->getMotionControllerCount(); i++) {
-			MotionController *con = obj->getMotionController(i);
+		for (uint i = 0;  i < obj->getNumChildren(); i++) {
+			MotionController *con = obj->getChild(i);
 
 			if (con->_objtype == kObjTypeMovGraph) {
 				MovGraph *gr = static_cast<MovGraph *>(con);
@@ -227,7 +227,7 @@ MessageQueue *MctlCompound::startMove(StaticANIObject *ani, int sourceX, int sou
 		return _motionControllers[idx]->_motionControllerObj->startMove(ani, sourceX, sourceY, fuzzyMatch, staticsId);
 
 	double dist;
-	MctlConnectionPoint *cp = findClosestConnectionPoint(ani->_ox, ani->_oy, idx, sourceX, sourceY, sourceIdx, &dist);
+	MctlConnectionPoint *cp = getNextPoint(ani->_ox, ani->_oy, idx, sourceX, sourceY, sourceIdx, &dist);
 
 	if (!cp)
 		return nullptr;
@@ -298,7 +298,7 @@ MessageQueue *MctlCompound::makeQueue(StaticANIObject *subj, int xpos, int ypos,
 		return _motionControllers[match1]->_motionControllerObj->makeQueue(subj, xpos, ypos, fuzzyMatch, staticsId);
 
 	double dist;
-	MctlConnectionPoint *closestP = findClosestConnectionPoint(subj->_ox, subj->_oy, match1, xpos, ypos, match2, &dist);
+	MctlConnectionPoint *closestP = getNextPoint(subj->_ox, subj->_oy, match1, xpos, ypos, match2, &dist);
 
 	if (!closestP)
 		return nullptr;
@@ -660,7 +660,7 @@ MessageQueue *MctlLadder::controllerWalkTo(StaticANIObject *ani, int off) {
 	return makeQueue(ani, _ladderX + off * _width, _ladderY + off * _height, 1, 0);
 }
 
-MctlConnectionPoint *MctlCompound::findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIdx, double *minDistancePtr) {
+MctlConnectionPoint *MctlCompound::getNextPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIdx, double *minDistancePtr) {
 	if (destIndex == sourceIdx) {
 		*minDistancePtr = sqrt((double)((oy - connectionY) * (oy - connectionY) + (ox - connectionX) * (ox - connectionX)));
 
@@ -677,7 +677,7 @@ MctlConnectionPoint *MctlCompound::findClosestConnectionPoint(int ox, int oy, in
 				MctlConnectionPoint *pt = _motionControllers[sourceIdx]->_connectionPoints[i];
 
 				if (_motionControllers[j]->_movGraphReactObj->hitTest(pt->_x, pt->_y)) {
-					MctlConnectionPoint *npt = findClosestConnectionPoint(ox, oy, destIndex, pt->_x, pt->_y, j, &currDistance);
+					MctlConnectionPoint *npt = getNextPoint(ox, oy, destIndex, pt->_x, pt->_y, j, &currDistance);
 
 					if (currDistance < minDistance) {
 						minDistance = currDistance;
