@@ -221,6 +221,32 @@ private:
 					XML_PROP(y, false)
 					XML_PROP(locale, false)
 				KEY_END()
+				XML_KEY(MOVEMENT)
+					XML_PROP(id, true)
+					XML_PROP(title, false)
+					XML_PROP(x, false)
+					XML_PROP(y, false)
+					XML_PROP(z, false)
+					XML_PROP(flags, false)
+					XML_PROP(locale, false)
+					XML_PROP(nIdPrev, true)
+					XML_PROP(nIdNext, true)
+					XML_PROP(nPrevStepX, false)
+					XML_PROP(nPrevStepY, false)
+					XML_PROP(nNextStepX, false)
+					XML_PROP(nNextStepY, false)
+					XML_PROP(dwLoopDelay, false)
+					XML_PROP(link, false)
+					XML_KEY(PHASE)
+						XML_PROP(x, false)
+						XML_PROP(y, false)
+						XML_PROP(flags, false)
+						XML_PROP(delay, false)
+						XML_PROP(delayRelative, false)
+						XML_PROP(sound, false)
+						XML_PROP(cycled, false)
+					KEY_END()
+				KEY_END()
 			KEY_END()
 		KEY_END()
 	} PARSER_END()
@@ -303,6 +329,59 @@ private:
 				(!object._statics || static_cast<uint16>(pose->_staticsId) < static_cast<uint16>(object._statics->_staticsId)))
 			object._statics = pose.get();
 		object._staticsList.push_back(pose.release());
+		return true;
+	}
+
+	bool parserCallback_MOVEMENT(ParserNode *node) {
+		AniObject &object = *_scene._aniObjects.back();
+		int16 prevId;
+		int16 nextId;
+		if (!readId(node->values["nIdPrev"], prevId) || !readId(node->values["nIdNext"], nextId))
+			return parserError("Unknown statics ID in movement '" + node->values["id"] + "'");
+
+		Statics *previous = object.getStatic(prevId);
+		Statics *next = object.getStatic(nextId);
+		if (!previous || !next)
+			return parserError("Missing statics for movement '" + node->values["id"] + "'");
+
+		Common::ScopedPtr<Movement> movement(new Movement());
+		if (!parseObject(*movement, *node))
+			return false;
+
+		movement->_prevStatic = previous;
+		movement->_nextStatic = next;
+		movement->_prevStepX = atoi(node->values.getValOrDefault("nPrevStepX").c_str());
+		movement->_prevStepY = atoi(node->values.getValOrDefault("nPrevStepY").c_str());
+		movement->_nextStepX = atoi(node->values.getValOrDefault("nNextStepX").c_str());
+		movement->_nextStepY = atoi(node->values.getValOrDefault("nNextStepY").c_str());
+		movement->_loopDelay = atoi(node->values.getValOrDefault("dwLoopDelay", "42").c_str());
+		const Common::String &link = node->values.getValOrDefault("link");
+		movement->_link = link.empty() || link == "true" || link == "1";
+
+		// Movement owns its phases except for the terminal statics shared with the animation.
+		movement->_phases.push_back(next);
+		movement->_framePosOffsets.push_back(Common::Point(movement->_nextStepX, movement->_nextStepY));
+		object._movements.push_back(movement.release());
+		return true;
+	}
+
+	bool parserCallback_PHASE(ParserNode *node) {
+		AniObject &animation = *_scene._aniObjects.back();
+		Movement &movement = *animation._movements.back();
+		const uint index = movement._phases.size() - 1;
+		const uint16 movementId = static_cast<uint16>(movement._id);
+		const Common::String resource = Common::String::format("%08hu/%08hu/%08hu/%08hu.%03u",
+			static_cast<uint16>(_scene._sceneId), static_cast<uint16>(animation._id), movementId, movementId, index);
+		Common::ScopedPtr<Phase> phase(new Phase());
+		phase->_flags = atoi(node->values.getValOrDefault("flags").c_str());
+		phase->_delay = atoi(node->values.getValOrDefault("delay").c_str());
+		phase->_x = atoi(node->values.getValOrDefault("x").c_str());
+		phase->_y = atoi(node->values.getValOrDefault("y").c_str());
+		if (!loadTexture(*phase, resource, isLocalized(*getParentNode(node))))
+			return false;
+
+		movement._framePosOffsets.insert_at(index, Common::Point(phase->_x, phase->_y));
+		movement._phases.insert_at(index, phase.release());
 		return true;
 	}
 

@@ -1438,7 +1438,7 @@ Movement::~Movement() {
 		}
 
 		// FIXME: At this point, the last entry in _phases is invalid
-		for (uint i = 0; i < _phases.size() - 1; i++) {
+		for (uint i = 0; i + 1 < _phases.size(); i++) {
 			Phase *phase = _phases[i];
 			if (phase != _prevStatic && phase != _nextStatic)
 				delete phase;
