@@ -571,6 +571,8 @@ void World::walkJimToPointer(int32 mouseX, int32 mouseY) {
 	Level *where = _jim ? _jim->level() : nullptr;
 	if (!where)
 		return;
+	if (_jim->speaker().speaking())
+		_jim->speaker().clearSpeech();
 	const Camera &camera = where->camera();
 	_jim->walkTo(mouseX + camera.x(), camera.y() - mouseY, nullptr, false);
 }

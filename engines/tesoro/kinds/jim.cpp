@@ -356,7 +356,7 @@ void Jim::loadState(Common::ReadStream &stream) {
 	_flags = stream.readUint32LE();
 }
 
-int Jim::useItem(int item) { return 0; }
+int Jim::useItem(int item) { return item == 37 ? _world.useItemOnInterface() : 0; }
 int Jim::setVerbAndClick(int verb) { return _world.jimClicked(verb); }
 int Jim::doubleClick(int verb) { return _world.jimClicked(verb); }
 bool Jim::findPath(int32 destX, int32 destY, WalkTarget *target) { return _world.findPath(destX, destY, target); }
