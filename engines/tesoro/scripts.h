@@ -178,12 +178,13 @@ public:
 	}
 
 	void beginMenu() {
-		Cursor *cursor = _w._engine._cursor;
-		if (!cursor)
+		if (!_w._cursor)
 			return;
-		_savedStep = cursor->currentPlayer()->current();
-		// The held item is put back here once the inventory exists (9e).
-		cursor->animation().selectBank(0, 0, 0, false, false, _w.now());
+		_savedStep = _w._cursor->currentPlayer()->current();
+		if (InventoryItem *held = _w.pointerItem())
+			held->setVisible(true);
+		_w.setPointerItem(nullptr);
+		_w.cursorFrame(0, 0);
 	}
 
 	int showMenu(const uint32 *phrases, uint32 count) {
