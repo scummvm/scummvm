@@ -232,7 +232,7 @@ void sceneHandler06_mumsyBallTake() {
 	g_nmi->_aniMan2 = nullptr;
 }
 
-void sceneHandler06_spinHandle() {
+void sceneHandler06_onSpinHandle() {
 	int tummy = g_nmi->getStateId(sO_TummyTrampie);
 
 	if (tummy == g_nmi->getStateValue(sO_TummyTrampie, sO_IsEating))
@@ -273,7 +273,7 @@ void sceneHandler06_showNextBall() {
 	}
 }
 
-void sceneHandler06_installHandle() {
+void sceneHandler06_doInstHandle() {
 	runQueue(QU_SC6_SHOWHANDLE, 0);
 }
 
@@ -590,7 +590,7 @@ int sceneHandler06(Command *ex) {
 		break;
 
 	case MSG_SPINHANDLE:
-		sceneHandler06_spinHandle();
+		sceneHandler06_onSpinHandle();
 		break;
 
 	case MSG_LIFT_GO:
@@ -610,7 +610,7 @@ int sceneHandler06(Command *ex) {
 		break;
 
 	case MSG_SC6_INSTHANDLE:
-		sceneHandler06_installHandle();
+		sceneHandler06_doInstHandle();
 		break;
 
 	case MSG_SC6_ENABLEDROPS:
