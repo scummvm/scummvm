@@ -1245,7 +1245,7 @@ bool CreditsController::init(int counterdiff) {
 
 		g_nmi->_modalObject = menu;
 
-		menu->_mfield_34 = 1;
+		menu->_restartOnContinue = 1;
 	}
 
 	return true;
@@ -1277,7 +1277,7 @@ void CreditsController::update() {
 MainMenu::MainMenu() {
 	_lastArea = nullptr;
 	_hoverAreaId = 0;
-	_mfield_34 = 0;
+	_restartOnContinue = 0;
 	_scene = g_nmi->findScene(SC_MAINMENU);
 	_debugKeyCount = 0;
 	_sliderOffset = 0;
@@ -1470,7 +1470,7 @@ bool MainMenu::init(int counterdiff) {
 		return false;
 
 	case PIC_MNU_CONTINUE_L:
-		if (!_mfield_34) {
+		if (!_restartOnContinue) {
 			g_nmi->_gameLoader->unloadScene(SC_MAINMENU);
 			_areas.clear();
 			_scene = nullptr;

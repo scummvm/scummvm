@@ -210,7 +210,7 @@ public:
 	int _musicSliderIdx;
 	MenuArea *_lastArea;
 	int _sliderOffset;
-	int _mfield_34;
+	int _restartOnContinue;
 	Common::Rect _screct;
 	int _bgX;
 	int _bgY;
