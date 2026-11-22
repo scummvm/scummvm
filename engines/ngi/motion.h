@@ -116,12 +116,12 @@ public:
 };
 
 struct MctlLadderMovementVars {
-	int varUpGo;
-	int varDownGo;
-	int varUpStop;
-	int varDownStop;
-	int varUpStart;
-	int varDownStart;
+	int upGoId;
+	int downGoId;
+	int upStopId;
+	int downStopId;
+	int upStartId;
+	int downStartId;
 };
 
 struct LmctlAni {

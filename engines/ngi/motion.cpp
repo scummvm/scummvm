@@ -409,24 +409,24 @@ bool MctlLadder::fillData(AniObject *ani, LmctlAni *movement) {
 	if (!v)
 		return false;
 
-	movement->movementIds->varUpStart = v->getSubVarAsInt("Start");
-	movement->movementIds->varUpGo = v->getSubVarAsInt("Go");
-	movement->movementIds->varUpStop = v->getSubVarAsInt("Stop");
+	movement->movementIds->upStartId = v->getSubVarAsInt("Start");
+	movement->movementIds->upGoId = v->getSubVarAsInt("Go");
+	movement->movementIds->upStopId = v->getSubVarAsInt("Stop");
 
-	movement->staticIds[0] = ani->getMovement(movement->movementIds->varUpStart)->_prevStatic->_staticsId;
-	movement->staticIds[2] = ani->getMovement(movement->movementIds->varUpGo)->_prevStatic->_staticsId;
+	movement->staticIds[0] = ani->getMovement(movement->movementIds->upStartId)->_prevStatic->_staticsId;
+	movement->staticIds[2] = ani->getMovement(movement->movementIds->upGoId)->_prevStatic->_staticsId;
 
 	v = l->getSubVarByName("Down");
 
 	if (!v)
 		return false;
 
-	movement->movementIds->varDownStart = v->getSubVarAsInt("Start");
-	movement->movementIds->varDownGo = v->getSubVarAsInt("Go");
-	movement->movementIds->varDownStop = v->getSubVarAsInt("Stop");
+	movement->movementIds->downStartId = v->getSubVarAsInt("Start");
+	movement->movementIds->downGoId = v->getSubVarAsInt("Go");
+	movement->movementIds->downStopId = v->getSubVarAsInt("Stop");
 
-	movement->staticIds[1] = ani->getMovement(movement->movementIds->varDownStart)->_prevStatic->_staticsId;
-	movement->staticIds[3] = ani->getMovement(movement->movementIds->varDownGo)->_prevStatic->_staticsId;
+	movement->staticIds[1] = ani->getMovement(movement->movementIds->downStartId)->_prevStatic->_staticsId;
+	movement->staticIds[3] = ani->getMovement(movement->movementIds->downGoId)->_prevStatic->_staticsId;
 
 	movement->aniId = ani->_id;
 
@@ -518,7 +518,7 @@ MessageQueue *MctlLadder::makeQueue(AniObject *ani, int xpos, int ypos, int fuzz
 		mkQueue.y1 = normy;
 		mkQueue.destZ = _z;
 		mkQueue.flags = 14;
-		mkQueue.movementId = direction ? _ladmovements[pos]->movementIds->varDownGo : _ladmovements[pos]->movementIds->varUpGo;
+		mkQueue.movementId = direction ? _ladmovements[pos]->movementIds->downGoId : _ladmovements[pos]->movementIds->upGoId;
 
 		return _aniHandler.makeRunQueue(&mkQueue);
 	}
@@ -536,7 +536,7 @@ MessageQueue *MctlLadder::makeQueue(AniObject *ani, int xpos, int ypos, int fuzz
 			mkQueue.y1 = normy;
 			mkQueue.destZ = _z;
 			mkQueue.flags = 14;
-			mkQueue.movementId = _ladmovements[pos]->movementIds->varUpGo;
+			mkQueue.movementId = _ladmovements[pos]->movementIds->upGoId;
 
 			return _aniHandler.makeRunQueue(&mkQueue);
 		}
@@ -544,7 +544,7 @@ MessageQueue *MctlLadder::makeQueue(AniObject *ani, int xpos, int ypos, int fuzz
 		int ox = ani->_x;
 		int oy = ani->_y;
 
-		point = ani->getMovement(_ladmovements[pos]->movementIds->varUpStop)->getMovementSize(0, -1);
+		point = ani->getMovement(_ladmovements[pos]->movementIds->upStopId)->getMovementSize(0, -1);
 
 		mkQueue.ani = ani;
 
@@ -560,11 +560,11 @@ MessageQueue *MctlLadder::makeQueue(AniObject *ani, int xpos, int ypos, int fuzz
 		mkQueue.x2 = point.x + ox;
 		mkQueue.flags = 63;
 		mkQueue.staticsId1 = _ladmovements[pos]->staticIds[0];
-		mkQueue.movementId = _ladmovements[pos]->movementIds->varDownGo;
+		mkQueue.movementId = _ladmovements[pos]->movementIds->downGoId;
 
 		mq = _aniHandler.makeRunQueue(&mkQueue);
 
-		ex = new Command(ani->_id, 1, _ladmovements[pos]->movementIds->varUpStop, 0, 0, 0, 1, 0, 0, 0);
+		ex = new Command(ani->_id, 1, _ladmovements[pos]->movementIds->upStopId, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = ani->_copyId;
 		ex->_excFlags |= 2;
 
@@ -608,7 +608,7 @@ MessageQueue *MctlLadder::makeQueue(AniObject *ani, int xpos, int ypos, int fuzz
 		int nx = ani->_x;
 		int ny = ani->_y;
 
-		point = ani->getMovement(_ladmovements[pos]->movementIds->varDownStop)->getMovementSize(0, -1);
+		point = ani->getMovement(_ladmovements[pos]->movementIds->downStopId)->getMovementSize(0, -1);
 
 		nx += point.x;
 		ny += point.y;
@@ -626,11 +626,11 @@ MessageQueue *MctlLadder::makeQueue(AniObject *ani, int xpos, int ypos, int fuzz
 		mkQueue.x2 = nx;
 		mkQueue.flags = 63;
 		mkQueue.staticsId1 = _ladmovements[pos]->staticIds[1];
-		mkQueue.movementId = _ladmovements[pos]->movementIds->varUpGo;
+		mkQueue.movementId = _ladmovements[pos]->movementIds->upGoId;
 
 		mq = _aniHandler.makeRunQueue(&mkQueue);
 
-		ex = new Command(ani->_id, 1, _ladmovements[pos]->movementIds->varDownStop, 0, 0, 0, 1, 0, 0, 0);
+		ex = new Command(ani->_id, 1, _ladmovements[pos]->movementIds->downStopId, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = ani->_copyId;
 		ex->_excFlags |= 2;
 
@@ -651,7 +651,7 @@ MessageQueue *MctlLadder::makeQueue(AniObject *ani, int xpos, int ypos, int fuzz
 	mkQueue.y1 = normy;
 	mkQueue.destZ = _z;
 	mkQueue.flags = 14;
-	mkQueue.movementId = _ladmovements[pos]->movementIds->varDownGo;
+	mkQueue.movementId = _ladmovements[pos]->movementIds->downGoId;
 
 	return _aniHandler.makeRunQueue(&mkQueue);
 }
