@@ -603,6 +603,7 @@ private:
 	ScreenBounds getScreenBounds() const;
 	void collisionHandlerCallback(Actor *other) const;
 	void updateWalk();
+	void walkPathTo(const Math::Vector3d &pos);
 	void walkForwardEMI(float dist, bool backwards);
 	void updateMovement();
 	Math::Angle turnHeadingToYaw(const Math::Angle &yaw, float maxStep);
@@ -613,17 +614,6 @@ private:
 	void stopTalking();
 	bool stopMumbleChore();
 	void drawCostume(Costume *costume);
-	/**
-	 * Given a start point and a destination this function returns a position
-	 * that doesn't collide with any actor.
-	 */
-	Math::Vector3d handleCollisionTo(const Math::Vector3d &from, const Math::Vector3d &pos) const;
-	/**
-	 * Check if the line from pos to dest collides with this actor's bounding
-	 * box, and if yes return a point that, together with pos, defines a line
-	 * tangent with the bounding box.
-	 */
-	Math::Vector3d getTangentPos(const Math::Vector3d &pos, const Math::Vector3d &dest) const;
 
 	Math::Vector3d getSimplePuckVector() const;
 	void calculateOrientation(const Math::Vector3d &pos, Math::Angle *pitch, Math::Angle *yaw, Math::Angle *roll);
