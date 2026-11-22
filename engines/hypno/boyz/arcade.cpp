@@ -478,7 +478,7 @@ char BoyzEngine::selectDirection() {
 							drawImage(*mapFrames[1], 0, 0, true);
 						}
 						viewingMap = !viewingMap;
-					} else if (!viewingMap && mousePos.x <= _screenH / 2) {
+					} else if (!viewingMap && mousePos.x <= _screenW / 2) {
 						screen->free();
 						delete screen;
 						return 'L';
