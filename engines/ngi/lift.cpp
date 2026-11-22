@@ -286,15 +286,15 @@ void NGIEngine::lift_closedoorSeq() {
 		if (_lift->_movement->_id == MV_LFT_CLOSE) {
 			_lift->queueMessageQueue(nullptr);
 		} else if (_lift->_movement->_id == MV_LFT_OPEN) {
-			int ph = _lift->_movement->_currDynamicPhaseIndex;
+			int ph = _lift->_movement->_curFrame;
 
 			_lift->changeStatics2(ST_LFT_OPEN_NEW);
 			_lift->startAnim(MV_LFT_CLOSE, 0, -1);
 
 			if (_lift->_movement->_currMovement)
-				_lift->_movement->setDynamicPhaseIndex(_lift->_movement->_currMovement->_dynamicPhases.size() - ph);
+				_lift->_movement->setCurFrame(_lift->_movement->_currMovement->_phases.size() - ph);
 			else
-				_lift->_movement->setDynamicPhaseIndex(_lift->_movement->_dynamicPhases.size() - ph);
+				_lift->_movement->setCurFrame(_lift->_movement->_phases.size() - ph);
 		} else {
 			_lift->changeStatics2(ST_LFT_OPEN_NEW);
 
@@ -366,15 +366,15 @@ void NGIEngine::lift_openLift() {
 		if (_lift->_movement->_id == MV_LFT_OPEN) {
 			_lift->queueMessageQueue(nullptr);
 		} else if (_lift->_movement->_id == MV_LFT_CLOSE) {
-			int idx = _lift->_movement->_currDynamicPhaseIndex;
+			int idx = _lift->_movement->_curFrame;
 
 			_lift->changeStatics2(ST_LFT_CLOSED);
 			_lift->startAnim(MV_LFT_OPEN, 0, -1);
 
 			if (_lift->_movement->_currMovement)
-				_lift->_movement->setDynamicPhaseIndex(_lift->_movement->_currMovement->_dynamicPhases.size() - idx);
+				_lift->_movement->setCurFrame(_lift->_movement->_currMovement->_phases.size() - idx);
 			else
-				_lift->_movement->setDynamicPhaseIndex(_lift->_movement->_dynamicPhases.size() - idx);
+				_lift->_movement->setCurFrame(_lift->_movement->_phases.size() - idx);
 		} else {
 			_lift->changeStatics2(ST_LFT_CLOSED);
 			_lift->startAnim(MV_LFT_OPEN, 0, -1);

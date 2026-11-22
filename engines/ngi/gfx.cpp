@@ -342,7 +342,7 @@ bool GameObject::getPicAniInfo(PicAniInfo &info) {
 
 		if (ani->_movement) {
 			info.movementId = ani->_movement->_id;
-			info.dynamicPhaseIndex = ani->_movement->_currDynamicPhaseIndex;
+			info.dynamicPhaseIndex = ani->_movement->_curFrame;
 		}
 
 		info.someDynamicPhaseIndex = ani->_someDynamicPhaseIndex;
@@ -387,7 +387,7 @@ bool GameObject::setPicAniInfo(const PicAniInfo &picAniInfo) {
 		if (picAniInfo.movementId) {
 			ani->_movement = ani->getMovementById(picAniInfo.movementId);
 			if (ani->_movement)
-				ani->_movement->setDynamicPhaseIndex(picAniInfo.dynamicPhaseIndex);
+				ani->_movement->setCurFrame(picAniInfo.dynamicPhaseIndex);
 		} else {
 			ani->_movement = nullptr;
 		}
@@ -1142,20 +1142,20 @@ void Shadows::initMovement(Movement *mov) {
 	uint num;
 
 	if (mov->_currMovement)
-		num = mov->_currMovement->_dynamicPhases.size();
+		num = mov->_currMovement->_phases.size();
 	else
-		num = mov->_dynamicPhases.size();
+		num = mov->_phases.size();
 
 	_items.clear();
 	_items.resize(num);
 
-	_items[0].dynPhase = mov->_staticsObj1;
+	_items[0].dynPhase = mov->_prevStatic;
 	Dims dims = _items[0].dynPhase->getDimensions();
 	_items[0].width = dims.x;
 	_items[0].height = dims.y;
 
 	for (uint i = 1; i < num; i++) {
-		_items[i].dynPhase = mov->getDynamicPhaseByIndex(i - 1);
+		_items[i].dynPhase = mov->getPhase(i - 1);
 		dims = _items[i].dynPhase->getDimensions();
 		_items[i].width = dims.x;
 		_items[i].height = dims.y;

@@ -55,7 +55,7 @@ void scene10_initScene(Scene *sc) {
 bool sceneHandler10_inflaterIsBlind() {
 	return g_vars->scene10_inflater->_movement
 		&& g_vars->scene10_inflater->_movement->_id == MV_NDV_BLOW2
-		&& g_vars->scene10_inflater->_movement->_currDynamicPhaseIndex < 42;
+		&& g_vars->scene10_inflater->_movement->_curFrame < 42;
 }
 
 int scene10_updateCursor() {

@@ -105,14 +105,14 @@ void scene19_setMovements(Scene *sc, int entranceId) {
 	}
 
 	if (g_vars->scene18_whirlgig->_movement) {
-		g_vars->scene18_whirlgigMovMum = g_vars->scene18_whirlgig->_movement->_currDynamicPhaseIndex + 1;
+		g_vars->scene18_whirlgigMovMum = g_vars->scene18_whirlgig->_movement->_curFrame + 1;
 
 		int mx;
 
 		if (g_vars->scene18_whirlgig->_movement->_currMovement)
-			mx = g_vars->scene18_whirlgig->_movement->_currMovement->_dynamicPhases.size();
+			mx = g_vars->scene18_whirlgig->_movement->_currMovement->_phases.size();
 		else
-			mx = g_vars->scene18_whirlgig->_movement->_dynamicPhases.size();
+			mx = g_vars->scene18_whirlgig->_movement->_phases.size();
 
 		if (g_vars->scene18_whirlgigMovMum > mx - 1)
 			g_vars->scene18_whirlgigMovMum = -1;
@@ -180,7 +180,7 @@ void scene18_setupSwingers(StaticANIObject *ani, Scene *sc) {
 		else
 			ani->startAnim(MV_KSL_SWING, 0, -1);
 
-		ani->_movement->setDynamicPhaseIndex(g_nmi->_rnd.getRandomNumber(17));
+		ani->_movement->setCurFrame(g_nmi->_rnd.getRandomNumber(17));
 
 		g_vars->scene18_swingers.push_back(swinger);
 	}
@@ -236,7 +236,7 @@ void scene18_initScene1(Scene *sc) {
 
 	if (g_vars->scene18_bridgeIsConvoluted && g_vars->scene18_whirlgigMovMum != -1) {
 		g_vars->scene18_whirlgig->startAnim(sc->_sceneId != SC_18 ? MV_WHR19_SPIN : MV_WHR18_SPIN, 0, -1);
-		g_vars->scene18_whirlgig->_movement->setDynamicPhaseIndex(g_vars->scene18_whirlgigMovMum);
+		g_vars->scene18_whirlgig->_movement->setCurFrame(g_vars->scene18_whirlgigMovMum);
 	}
 
 	int sndid;

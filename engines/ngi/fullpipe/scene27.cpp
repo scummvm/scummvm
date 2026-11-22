@@ -249,7 +249,7 @@ void sceneHandler27_startAiming() {
 
 	g_nmi->_aniMan->_callback2 = nullptr; // Really NULL
 
-	g_vars->scene27_launchPhase = g_nmi->_aniMan->_movement->_currDynamicPhaseIndex - 6;
+	g_vars->scene27_launchPhase = g_nmi->_aniMan->_movement->_curFrame - 6;
 
 	int phase = 21 - g_vars->scene27_launchPhase;
 
@@ -261,7 +261,7 @@ void sceneHandler27_startAiming() {
 
 	g_nmi->playSound(SND_27_044, 0);
 
-	g_nmi->_aniMan->_movement->setDynamicPhaseIndex(phase);
+	g_nmi->_aniMan->_movement->setCurFrame(phase);
 }
 
 void sceneHandler27_initAiming(ExCommand *cmd) {
@@ -281,7 +281,7 @@ void sceneHandler27_aimDude() {
 		phase = 11;
 
 	if (g_nmi->_aniMan->_movement)
-		g_nmi->_aniMan->_movement->setDynamicPhaseIndex(phase);
+		g_nmi->_aniMan->_movement->setCurFrame(phase);
 }
 
 void sceneHandler27_wipeDo() {

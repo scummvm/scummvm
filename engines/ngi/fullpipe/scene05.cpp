@@ -118,7 +118,7 @@ void sceneHandler05_makeWackoFeedback() {
 	}
 
 	if (g_vars->scene05_wacko->_movement)
-		g_vars->scene05_wacko->changeStatics2(g_vars->scene05_wacko->_movement->_staticsObj2->_staticsId);
+		g_vars->scene05_wacko->changeStatics2(g_vars->scene05_wacko->_movement->_nextStatic->_staticsId);
 
 	if (staticsId1 == g_vars->scene05_wacko->_statics->_staticsId) {
 		g_vars->scene05_wacko->startAnim(staticsId2, 0, -1);
@@ -209,7 +209,7 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 	StaticANIObject *wacko = g_nmi->_currentScene->getStaticANIObject1ById(ANI_OTMOROZ, -1);
 
 	if (wacko->_movement)
-		wacko->changeStatics2(wacko->_movement->_staticsObj2->_staticsId);
+		wacko->changeStatics2(wacko->_movement->_nextStatic->_staticsId);
 
 	if (g_nmi->getObjectState(sO_WeirdWacko) == g_nmi->getObjectEnumState(sO_WeirdWacko, sO_InGlasses)) {
 		MessageQueue *mq = g_nmi->_globalMessageQueueList->getMessageQueueById(inex->_parId);

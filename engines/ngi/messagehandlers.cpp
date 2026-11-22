@@ -34,11 +34,11 @@ namespace NGI {
 
 void global_messageHandler_KickStucco() {
 	Movement *mov = g_nmi->_aniMan->getMovementById(MV_MAN_HMRKICK);
-	int end = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+	int end = mov->_currMovement ? mov->_currMovement->_phases.size() : mov->_phases.size();
 	bool flip = false;
 
 	for (int i = 0; i < end; i++) {
-		ExCommand *ex = mov->getDynamicPhaseByIndex(i)->getExCommand();
+		ExCommand *ex = mov->getPhase(i)->getExCommand();
 
 		if (ex && ex->_messageKind == 35 && ex->_messageNum == SND_CMN_015) {
 			if (flip) {
@@ -51,11 +51,11 @@ void global_messageHandler_KickStucco() {
 	}
 
 	mov = g_nmi->_aniMan->getMovementById(MV_MAN_HMRKICK_COINLESS);
-	end = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+	end = mov->_currMovement ? mov->_currMovement->_phases.size() : mov->_phases.size();
 	flip = false;
 
 	for (int i = 0; i < end; i++) {
-		ExCommand *ex = mov->getDynamicPhaseByIndex(i)->getExCommand();
+		ExCommand *ex = mov->getPhase(i)->getExCommand();
 
 		if (ex && ex->_messageKind == 35 && ex->_messageNum == SND_CMN_015) {
 			if (flip) {
@@ -70,10 +70,10 @@ void global_messageHandler_KickStucco() {
 
 void global_messageHandler_KickMetal() {
 	Movement *mov = g_nmi->_aniMan->getMovementById(MV_MAN_HMRKICK);
-	int end = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+	int end = mov->_currMovement ? mov->_currMovement->_phases.size() : mov->_phases.size();
 
 	for (int i = 0; i < end; i++) {
-		ExCommand *ex = mov->getDynamicPhaseByIndex(i)->getExCommand();
+		ExCommand *ex = mov->getPhase(i)->getExCommand();
 
 		if (ex && ex->_messageKind == 35) {
 			if (ex->_messageNum == SND_CMN_054 || ex->_messageNum == SND_CMN_055)
@@ -82,10 +82,10 @@ void global_messageHandler_KickMetal() {
 	}
 
 	mov = g_nmi->_aniMan->getMovementById(MV_MAN_HMRKICK_COINLESS);
-	end = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+	end = mov->_currMovement ? mov->_currMovement->_phases.size() : mov->_phases.size();
 
 	for (int i = 0; i < end; i++) {
-		ExCommand *ex = mov->getDynamicPhaseByIndex(i)->getExCommand();
+		ExCommand *ex = mov->getPhase(i)->getExCommand();
 
 		if (ex && ex->_messageKind == 35) {
 			if (ex->_messageNum == SND_CMN_054 || ex->_messageNum == SND_CMN_055)
@@ -313,7 +313,7 @@ int global_messageHandler2(ExCommand *cmd) {
 		if (ani) {
 			Movement *mov = ani->_movement;
 			if (mov)
-				mov->_currDynamicPhase->_field_68 = 0;
+				mov->_curPhase->_field_68 = 0;
 		}
 		break;
 
@@ -794,7 +794,7 @@ int MovGraph::messageHandler(ExCommand *cmd) {
 	}
 
 	if (ani->_movement) {
-		ani->_movement->_currDynamicPhase->_rect.top = 255 - top;
+		ani->_movement->_curPhase->_rect.top = 255 - top;
 		return 0;
 	}
 

@@ -66,17 +66,17 @@ void scene08_initScene(Scene *sc) {
 		g_vars->scene08_batuta->changeStatics2(ST_BTT_NOSPOON);
 
 		g_vars->scene08_clock->startAnim(MV_CLK8_GO, 0, -1);
-		g_vars->scene08_clock->_movement->setDynamicPhaseIndex(3);
+		g_vars->scene08_clock->_movement->setCurFrame(3);
 	} else if (batuta== g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsScratchingBelly)) {
 		g_vars->scene08_batuta->changeStatics2(ST_BTT_CHESHET);
 
 		g_vars->scene08_clock->startAnim(MV_CLK8_GO, 0, -1);
-		g_vars->scene08_clock->_movement->setDynamicPhaseIndex(8);
+		g_vars->scene08_clock->_movement->setCurFrame(8);
 	} else if (batuta == g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsSleeping)) {
 		g_vars->scene08_batuta->changeStatics2(ST_BTT_SLEEPS);
 
 		g_vars->scene08_clock->startAnim(MV_CLK8_GO, 0, -1);
-		g_vars->scene08_clock->_movement->setDynamicPhaseIndex(2);
+		g_vars->scene08_clock->_movement->setCurFrame(2);
 
 		if (lock)
 			lock->_flags |= 0x20000000;
@@ -373,7 +373,7 @@ void sceneHandler08_calcFlight() {
 	} else if (g_nmi->_aniMan->_oy > 236 || g_vars->scene08_stairsVisible
 				|| !g_nmi->_aniMan->_statics || g_nmi->_aniMan->_statics->_staticsId != ST_MAN8_HANDSUP) {
 		if (g_nmi->_aniMan->_movement || g_nmi->_aniMan->_oy < 660
-			|| (g_vars->scene08_vmyats->_movement && g_vars->scene08_vmyats->_movement->_currDynamicPhaseIndex > 0)
+			|| (g_vars->scene08_vmyats->_movement && g_vars->scene08_vmyats->_movement->_curFrame > 0)
 			|| abs(g_vars->scene08_manOffsetY) > 2) {
 			if (g_vars->scene08_manOffsetY >= 0 && !g_nmi->_aniMan->_movement) {
 				if (g_nmi->_aniMan->_statics->_staticsId == ST_MAN8_HANDSUP)
@@ -521,10 +521,10 @@ int sceneHandler08(ExCommand *cmd) {
 				Movement *mov = g_nmi->_aniMan->_movement;
 
 				if (mov) {
-					if (mov->_id == MV_MAN_TOLADDERD && mov->_currDynamicPhaseIndex == 8)
+					if (mov->_id == MV_MAN_TOLADDERD && mov->_curFrame == 8)
 						g_nmi->_aniMan->_priority = 2;
 
-					if (mov && mov->_id == MV_MAN_FROMLADDERUP && mov->_currDynamicPhaseIndex == 13)
+					if (mov && mov->_id == MV_MAN_FROMLADDERUP && mov->_curFrame == 13)
 						g_nmi->_aniMan->_priority = 20;
 				}
 

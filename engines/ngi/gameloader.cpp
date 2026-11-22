@@ -260,11 +260,11 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 			int sz;
 
 			if (pbar->_movement->_currMovement)
-				sz = pbar->_movement->_currMovement->_dynamicPhases.size();
+				sz = pbar->_movement->_currMovement->_phases.size();
 			else
-				sz = pbar->_movement->_dynamicPhases.size();
+				sz = pbar->_movement->_phases.size();
 
-			pbar->_movement->setDynamicPhaseIndex(flag * (sz - 1) / 100);
+			pbar->_movement->setCurFrame(flag * (sz - 1) / 100);
 		}
 
 		g_nmi->updateMap(&pre);

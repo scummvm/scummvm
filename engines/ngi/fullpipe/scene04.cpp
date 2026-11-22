@@ -91,13 +91,13 @@ void scene04_initScene(Scene *sc) {
 	if (koz) {
 		Movement *kozmov = koz->getMovementById(MV_KZW_JUMP);
 		if (kozmov) {
-			uint kozsize = kozmov->_currMovement ? kozmov->_currMovement->_dynamicPhases.size() : kozmov->_dynamicPhases.size();
+			uint kozsize = kozmov->_currMovement ? kozmov->_currMovement->_phases.size() : kozmov->_phases.size();
 
 			for (uint i = 0; i < kozsize; i++) {
-				kozmov->setDynamicPhaseIndex(i);
+				kozmov->setCurFrame(i);
 
 				if (kozmov->_framePosOffsets.size()) {
-					g_vars->scene04_jumpingKozyawki[i] = kozmov->_framePosOffsets[kozmov->_currDynamicPhaseIndex];
+					g_vars->scene04_jumpingKozyawki[i] = kozmov->_framePosOffsets[kozmov->_curFrame];
 				} else {
 					kozmov->_somePoint.x = 0;
 					kozmov->_somePoint.y = 0;
@@ -108,13 +108,13 @@ void scene04_initScene(Scene *sc) {
 
 		kozmov = koz->getMovementById(MV_KZW_JUMPROTATE);
 		if (kozmov) {
-			uint kozsize = kozmov->_currMovement ? kozmov->_currMovement->_dynamicPhases.size() : kozmov->_dynamicPhases.size();
+			uint kozsize = kozmov->_currMovement ? kozmov->_currMovement->_phases.size() : kozmov->_phases.size();
 
 			for (uint i = 0; i < kozsize; i++) {
-				kozmov->setDynamicPhaseIndex(i);
+				kozmov->setCurFrame(i);
 
 				if (kozmov->_framePosOffsets.size()) {
-					g_vars->scene04_jumpRotateKozyawki[i] = kozmov->_framePosOffsets[kozmov->_currDynamicPhaseIndex];
+					g_vars->scene04_jumpRotateKozyawki[i] = kozmov->_framePosOffsets[kozmov->_curFrame];
 				} else {
 					kozmov->_somePoint.x = 0;
 					kozmov->_somePoint.y = 0;
@@ -229,8 +229,8 @@ bool sceneHandler04_friesAreWalking() {
 			if (!g_vars->scene04_walkingKozyawka
 				 || (koz = g_vars->scene04_walkingKozyawka->_movement) == nullptr
 				 || koz->_id != MV_KZW_WALKPLANK
-				 || koz->_currDynamicPhaseIndex < 10
-				 || koz->_currDynamicPhaseIndex > 41)
+				 || koz->_curFrame < 10
+				 || koz->_curFrame > 41)
 				return true;
 		}
 	}
@@ -274,7 +274,7 @@ void sceneHandler04_checkBigBallClick() {
 
 	if (ball)
 		for (uint i = 0; i < ball->_movements.size(); i++)
-			ball->_movements[i]->_counterMax = 73;
+			ball->_movements[i]->_loopDelay = 73;
 
 	g_vars->scene04_bigBallIn = true;
 }
@@ -289,8 +289,8 @@ void sceneHandler04_clickButton() {
 
 	if (but) {
 		if (!g_vars->scene04_clock->_movement ||
-			(g_vars->scene04_clock->_movement->_id == MV_CLK_GO && g_vars->scene04_clock->_movement->_currDynamicPhaseIndex > 3 &&
-			 g_vars->scene04_clock->_movement->_currDynamicPhaseIndex < 105)) {
+			(g_vars->scene04_clock->_movement->_id == MV_CLK_GO && g_vars->scene04_clock->_movement->_curFrame > 3 &&
+			 g_vars->scene04_clock->_movement->_curFrame < 105)) {
 			if (!g_vars->scene04_hand->_movement && !g_vars->scene04_bottleIsTaken) {
 				but->startAnim(MV_BTN_CLICK, 0, -1);
 				g_vars->scene04_hand->startAnim(MV_HND_POINT, 0, -1);
@@ -743,11 +743,11 @@ MessageQueue *sceneHandler04_kozFly6(StaticANIObject *ani) {
 
 void sceneHandler04_kozMove(Movement *mov, int from, int to, Common::Point *points, double phase) {
 	for (int i = from; i < to; i++) {
-		mov->setDynamicPhaseIndex(i);
+		mov->setCurFrame(i);
 
 		Common::Point *p;
 		if (mov->_framePosOffsets.size()) {
-			p = &mov->_framePosOffsets[mov->_currDynamicPhaseIndex];
+			p = &mov->_framePosOffsets[mov->_curFrame];
 		} else {
 			p = &mov->_somePoint;
 			p->x = 0;
@@ -845,7 +845,7 @@ void sceneHandler04_shootKozyawka() {
 
 	if (g_vars->scene04_walkingKozyawka->_movement) {
 		if (g_vars->scene04_walkingKozyawka->_movement->_id == MV_KZW_WALKPLANK) {
-			int dphase = g_vars->scene04_walkingKozyawka->_movement->_currDynamicPhaseIndex;
+			int dphase = g_vars->scene04_walkingKozyawka->_movement->_curFrame;
 
 			if (dphase < 41) {
 				int col = 3 * dphase / 15;
@@ -1008,7 +1008,7 @@ void sceneHandler04_springWobble() {
 		if (!g_vars->scene04_spring->_movement)
 			g_vars->scene04_spring->startAnim(MV_SPR_LOWER, 0, -1);
 
-		g_vars->scene04_spring->_movement->setDynamicPhaseIndex(g_vars->scene04_dynamicPhaseIndex);
+		g_vars->scene04_spring->_movement->setCurFrame(g_vars->scene04_dynamicPhaseIndex);
 	} else {
 		g_vars->scene04_spring->changeStatics2(ST_SPR_UP);
 	}
@@ -1126,7 +1126,7 @@ void sceneHandler04_bigBallOut() {
 
 	if (ball && ball->_flags & 4)
 		for (uint i = 0; i < ball->_movements.size(); i++)
-			ball->_movements[i]->_counterMax = 0;
+			ball->_movements[i]->_loopDelay = 0;
 
 	g_vars->scene04_bigBallIn = false;
 }

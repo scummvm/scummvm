@@ -286,7 +286,7 @@ void sceneHandler09_cycleHangers() {
 			if (idx < 1)
 				idx = 1;
 
-			mov->setDynamicPhaseIndex(idx);
+			mov->setCurFrame(idx);
 		}
 	}
 }

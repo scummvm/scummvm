@@ -70,7 +70,7 @@ void scene13_initScene(Scene *sc) {
 		g_vars->scene13_whirlgig->startAnim(MV_WHR13_SPIN, 0, -1);
 
 		if (g_vars->scene13_whirlgig->_movement)
-			g_vars->scene13_whirlgig->_movement->setDynamicPhaseIndex(30);
+			g_vars->scene13_whirlgig->_movement->setCurFrame(30);
 
 		g_nmi->playSound(SND_13_037, 1);
 	}
@@ -90,14 +90,14 @@ void sceneHandler13_openBridge() {
 		int sz;
 
 		if (mov->_currMovement)
-			sz = mov->_currMovement->_dynamicPhases.size();
+			sz = mov->_currMovement->_phases.size();
 		else
-			sz = mov->_dynamicPhases.size();
+			sz = mov->_phases.size();
 
 		g_vars->scene13_bridge->changeStatics2(ST_BDG_CLOSED);
 		g_vars->scene13_bridge->startAnim(MV_BDG_OPEN, 0, -1);
 
-		mov->setDynamicPhaseIndex(sz - mov->_currDynamicPhaseIndex);
+		mov->setCurFrame(sz - mov->_curFrame);
 	} else {
 		g_vars->scene13_bridge->changeStatics2(ST_BDG_CLOSED);
 		g_vars->scene13_bridge->startAnim(MV_BDG_OPEN, 0, -1);
@@ -141,14 +141,14 @@ void sceneHandler13_closeBridge() {
 		int sz;
 
 		if (mov->_currMovement)
-			sz = mov->_currMovement->_dynamicPhases.size();
+			sz = mov->_currMovement->_phases.size();
 		else
-			sz = mov->_dynamicPhases.size();
+			sz = mov->_phases.size();
 
 		g_vars->scene13_bridge->changeStatics2(ST_BDG_OPEN2);
 		g_vars->scene13_bridge->startAnim(MV_BDG_CLOSE, 0, -1);
 
-		mov->setDynamicPhaseIndex(sz - mov->_currDynamicPhaseIndex);
+		mov->setCurFrame(sz - mov->_curFrame);
 	} else {
 		g_vars->scene13_bridge->changeStatics2(ST_BDG_OPEN2);
 		g_vars->scene13_bridge->startAnim(MV_BDG_CLOSE, 0, -1);
@@ -158,7 +158,7 @@ void sceneHandler13_closeBridge() {
 void sceneHandler13_closeFast() {
 	g_vars->scene13_bridge->changeStatics2(ST_BDG_OPEN2);
 	g_vars->scene13_bridge->startAnim(MV_BDG_CLOSE, 0, -1);
-	g_vars->scene13_bridge->_movement->setDynamicPhaseIndex(21);
+	g_vars->scene13_bridge->_movement->setCurFrame(21);
 }
 
 void sceneHandler13_stopWhirlgig() {
@@ -181,7 +181,7 @@ void sceneHandler13_startWhirlgig() {
 void sceneHandler13_openFast() {
 	g_vars->scene13_bridge->changeStatics2(ST_BDG_CLOSED);
 	g_vars->scene13_bridge->startAnim(MV_BDG_OPEN, 0, -1);
-	g_vars->scene13_bridge->_movement->setDynamicPhaseIndex(15);
+	g_vars->scene13_bridge->_movement->setCurFrame(15);
 }
 
 void sceneHandler13_uneatGum() {

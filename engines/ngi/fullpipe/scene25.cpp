@@ -440,7 +440,7 @@ void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, Messa
 
 	if (flag) {
 		if (ani->_movement) {
-			point = ani->_movement->calcSomeXY(0, ani->_movement->_currDynamicPhaseIndex);
+			point = ani->_movement->getMovementSize(0, ani->_movement->_curFrame);
 			newx = point.x;
 			aniY = ani->_oy - point.y;
 		}
@@ -477,7 +477,7 @@ void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, Messa
 				newy = pnty;
 			}
 
-			point = ani->getMovementById(ex->_messageNum)->calcSomeXY(0, -1);
+			point = ani->getMovementById(ex->_messageNum)->getMovementSize(0, -1);
 			pntx += point.x;
 			pnty += point.y;
 		}
@@ -498,19 +498,19 @@ void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, Messa
 		mq->deleteExCommandByIndex(0, 1);
 
 		int movId = ani->_movement->_id;
-		int idx = ani->_movement->_currDynamicPhaseIndex;
+		int idx = ani->_movement->_curFrame;
 
-		ani->changeStatics2(ani->_movement->_staticsObj1->_staticsId);
+		ani->changeStatics2(ani->_movement->_prevStatic->_staticsId);
 		ani->setOXY(newx, newy);
 
 		ani->startAnim(movId, mq->_id, -1);
 
-		ani->_movement->setDynamicPhaseIndex(idx);
+		ani->_movement->setCurFrame(idx);
 	} else {
 		if (!lastEx)
 			error("sceneHandler25_walkOnLadder(): Incorrect state. Please report this to sev");
 
-		ani->changeStatics2(ani->getMovementById(lastEx->_messageNum)->_staticsObj1->_staticsId);
+		ani->changeStatics2(ani->getMovementById(lastEx->_messageNum)->_prevStatic->_staticsId);
 		ani->setOXY(newx, newy);
 		ani->restartMessageQueue(mq);
 	}

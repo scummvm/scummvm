@@ -217,7 +217,7 @@ bool sceneHandler29_checkRedBallHit(StaticANIObject *ani, int maxx) {
 	if (!g_nmi->_aniMan->_movement)
 		return true;
 
-	int phase = g_nmi->_aniMan->_movement->_currDynamicPhaseIndex;
+	int phase = g_nmi->_aniMan->_movement->_curFrame;
 
 	if (g_nmi->_aniMan->_movement->_id != MV_MAN29_BEND && g_nmi->_aniMan->_movement->_id != MV_MAN29_RUN
 		&& (g_nmi->_aniMan->_movement->_id != MV_MAN29_JUMP || (phase >= 3 && phase <= 6)))
@@ -257,7 +257,7 @@ bool sceneHandler29_checkGreenBallHit(StaticANIObject *ani, int maxx) {
 		return true;
 
 	if (g_nmi->_aniMan->_movement->_id == MV_MAN29_BEND) {
-		if (g_nmi->_aniMan->_movement->_currDynamicPhaseIndex < 1 || g_nmi->_aniMan->_movement->_currDynamicPhaseIndex > 5)
+		if (g_nmi->_aniMan->_movement->_curFrame < 1 || g_nmi->_aniMan->_movement->_curFrame > 5)
 			return true;
 	}
 

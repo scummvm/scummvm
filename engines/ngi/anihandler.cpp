@@ -48,7 +48,7 @@ MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int,
 	int stid;
 #endif
 		if (ani->_movement) {
-			stid = ani->_movement->_staticsObj2->_staticsId;
+			stid = ani->_movement->_nextStatic->_staticsId;
 		} else {
 			if (!ani->_statics)
 				return nullptr;
@@ -85,16 +85,16 @@ MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int,
 	do {
 		subidx = startidx + endidx * _items[idx].statics.size();
 
-		point = _items[idx].subItems[subidx].movement->calcSomeXY(0, -1);
+		point = _items[idx].subItems[subidx].movement->getMovementSize(0, -1);
 
 #if 0
 		if (pointArr) {
 			int sz;
 
 			if (_items[idx].subItems[subidx].movement->_currMovement)
-				sz = _items[idx].subItems[subidx].movement->_currMovement->_dynamicPhases.size();
+				sz = _items[idx].subItems[subidx].movement->_currMovement->_phases.size();
 			else
-				sz = _items[idx].subItems[subidx].movement->_dynamicPhases.size();
+				sz = _items[idx].subItems[subidx].movement->_phases.size();
 
 			ex = new ExCommand2(20, ani->_id, &pointArr[i], sz);
 
@@ -123,9 +123,9 @@ MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int,
 		uint step;
 
 		if (_items[idx].subItems[subidx].movement->_currMovement)
-			step = _items[idx].subItems[subidx].movement->_currMovement->_dynamicPhases.size();
+			step = _items[idx].subItems[subidx].movement->_currMovement->_phases.size();
 		else
-			step = _items[idx].subItems[subidx].movement->_dynamicPhases.size();
+			step = _items[idx].subItems[subidx].movement->_phases.size();
 
 		i += step;
 #endif
@@ -212,7 +212,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 
 	if (!(mkQueue->flags & 1)) {
 		if (mov)
-			mkQueue->staticsId1 = mov->_staticsObj2->_staticsId;
+			mkQueue->staticsId1 = mov->_nextStatic->_staticsId;
 		else
 			mkQueue->staticsId1 = mkQueue->ani->_statics->_staticsId;
 	}
@@ -245,8 +245,8 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 
 	int itemIdx = getIndex(mkQueue->ani->_id);
 	int subIdx = getStaticsIndexById(itemIdx, mkQueue->staticsId1);
-	int st2idx = getStaticsIndexById(itemIdx, mov->_staticsObj1->_staticsId);
-	int st1idx = getStaticsIndexById(itemIdx, mov->_staticsObj2->_staticsId);
+	int st2idx = getStaticsIndexById(itemIdx, mov->_prevStatic->_staticsId);
+	int st1idx = getStaticsIndexById(itemIdx, mov->_nextStatic->_staticsId);
 	int subOffset = getStaticsIndexById(itemIdx, mkQueue->staticsId2);
 
 	debugC(3, kDebugPathfinding, "AniHandler::genMovement. (1) movements1 sz: %d movements2 sz: %d", _items[itemIdx].movements1.size(), _items[itemIdx].movements2.size());
@@ -268,7 +268,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 	int n1x = mkQueue->x1 - mkQueue->x2 - sub1.x - sub2.x;
 	int n1y = mkQueue->y1 - mkQueue->y2 - sub1.y - sub2.y;
 
-	const Common::Point point1 = mov->calcSomeXY(0, -1);
+	const Common::Point point1 = mov->getMovementSize(0, -1);
 
 	int n2x = point1.x;
 	int n2y = point1.y;
@@ -435,8 +435,8 @@ void AniHandler::putObjectToStatics(StaticANIObject *ani, int staticsId) {
 
 	if (ani->_movement) {
 		ani->queueMessageQueue(nullptr);
-		ani->_movement->gotoLastFrame();
-		ani->_statics = ani->_movement->_staticsObj2;
+		ani->_movement->setLast();
+		ani->_statics = ani->_movement->_nextStatic;
 
 		int x = ani->_movement->_ox;
 		int y = ani->_movement->_oy;
@@ -546,15 +546,15 @@ int AniHandler::seekWay(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 	for (uint i = 0; i < item.movements1.size(); i++) {
 		Movement *mov = item.movements1[i];
 
-		if (mov->_staticsObj1 == item.statics[st1idx]) {
-			if (item.movements2[i] || (flop && !mov->_field_50))
+		if (mov->_prevStatic == item.statics[st1idx]) {
+			if (item.movements2[i] || (flop && !mov->_link))
 				continue;
 
 			item.movements2[i] = 1;
 
-			int stidx = getStaticsIndex(idx, mov->_staticsObj2);
+			int stidx = getStaticsIndex(idx, mov->_nextStatic);
 			int recalc = seekWay(idx, stidx, st2idx, flip, flop);
-			int sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+			int sz = mov->_currMovement ? mov->_currMovement->_phases.size() : mov->_phases.size();
 			debugC(1, kDebugPathfinding, "AniHandler::seekWay, want idx: %d, off: %d (%d + %d), sz: %d", idx, stidx + st2idx * _items[idx].statics.size(), stidx, st2idx, item.subItems.size());
 
 			int newsz = sz + item.subItems[stidx + st2idx * _items[idx].statics.size()].field_C;
@@ -569,21 +569,21 @@ int AniHandler::seekWay(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 				item.subItems[subIdx].field_8 = recalc + 1;
 				item.subItems[subIdx].field_C = newsz;
 
-				point = mov->calcSomeXY(0, -1);
+				point = mov->getMovementSize(0, -1);
 
 				item.subItems[subIdx].x = item.subItems[stidx + st2idx * _items[idx].statics.size()].x + point.x;
 				item.subItems[subIdx].y = item.subItems[stidx + st2idx * _items[idx].statics.size()].y + point.y;
 			}
 		} else if (flip) {
-			if (mov->_staticsObj2 != item.statics[st1idx])
+			if (mov->_nextStatic != item.statics[st1idx])
 				continue;
 
-			if (item.movements2[i] || (flop && !mov->_field_50))
+			if (item.movements2[i] || (flop && !mov->_link))
 				continue;
 
 			item.movements2[i] = 1;
 
-			int stidx = getStaticsIndex(idx, mov->_staticsObj1);
+			int stidx = getStaticsIndex(idx, mov->_prevStatic);
 			int recalc = seekWay(idx, stidx, st2idx, flip, flop);
 
 			if (recalc < 0)
@@ -594,11 +594,11 @@ int AniHandler::seekWay(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 				item.subItems[subIdx].staticsIndex = stidx;
 				item.subItems[subIdx].field_8 = recalc + 1;
 
-				int sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+				int sz = mov->_currMovement ? mov->_currMovement->_phases.size() : mov->_phases.size();
 
 				item.subItems[subIdx].field_C = sz + item.subItems[stidx + st2idx * _items[idx].statics.size()].field_C;
 
-				point = mov->calcSomeXY(0, -1);
+				point = mov->getMovementSize(0, -1);
 
 				item.subItems[subIdx].x = item.subItems[stidx + st2idx * _items[idx].statics.size()].x - point.x;
 				item.subItems[subIdx].y = item.subItems[stidx + st2idx * _items[idx].statics.size()].y - point.y;
@@ -636,17 +636,17 @@ int AniHandler::getNumMovements(int objectId, int idx1, int idx2) {
 }
 
 Common::Point AniHandler::getNumCycles(Movement *mov, int x, int y, int *mult, int *len, int flag) {
-	Common::Point point = mov->calcSomeXY(0, -1);
+	Common::Point point = mov->getMovementSize(0, -1);
 	int p1x = point.x;
 	int p1y = point.y;
 
 	int newmult = 0;
 
 	if (abs(p1y) > abs(p1x)) {
-		if (mov->calcSomeXY(0, -1).y)
-			newmult = (int)((double)y / mov->calcSomeXY(0, -1).y);
-	} else if (mov->calcSomeXY(0, -1).x) {
-		newmult = (int)((double)x / mov->calcSomeXY(0, -1).x);
+		if (mov->getMovementSize(0, -1).y)
+			newmult = (int)((double)y / mov->getMovementSize(0, -1).y);
+	} else if (mov->getMovementSize(0, -1).x) {
+		newmult = (int)((double)x / mov->getMovementSize(0, -1).x);
 	}
 
 	if (newmult < 0)
@@ -659,8 +659,8 @@ Common::Point AniHandler::getNumCycles(Movement *mov, int x, int y, int *mult, i
 
 	if (flag) {
 		if (abs(p1y) > abs(p1x)) {
-			while (abs(p1y * newmult + mov->calcSomeXY(0, phase).y) < abs(y)) {
-				sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+			while (abs(p1y * newmult + mov->getMovementSize(0, phase).y) < abs(y)) {
+				sz = mov->_currMovement ? mov->_currMovement->_phases.size() : mov->_phases.size();
 
 				if (phase > sz)
 					break;
@@ -668,8 +668,8 @@ Common::Point AniHandler::getNumCycles(Movement *mov, int x, int y, int *mult, i
 				phase++;
 			}
 		} else {
-			while (abs(p1x * newmult + mov->calcSomeXY(0, phase).x) < abs(x)) {
-				sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
+			while (abs(p1x * newmult + mov->getMovementSize(0, phase).x) < abs(x)) {
+				sz = mov->_currMovement ? mov->_currMovement->_phases.size() : mov->_phases.size();
 
 				if (phase >= sz)
 					break;
@@ -692,7 +692,7 @@ Common::Point AniHandler::getNumCycles(Movement *mov, int x, int y, int *mult, i
 	if (*len > 0) {
 		++*mult;
 
-		point = mov->calcSomeXY(0, *len);
+		point = mov->getMovementSize(0, *len);
 		p2x = point.x;
 		p2y = point.y;
 
@@ -711,9 +711,9 @@ ExCommand2 *AniHandler::createCommand(Movement *mov, int objId, int x1, int y1, 
 	uint cnt;
 
 	if (mov->_currMovement)
-		cnt = mov->_currMovement->_dynamicPhases.size();
+		cnt = mov->_currMovement->_phases.size();
 	else
-		cnt = mov->_dynamicPhases.size();
+		cnt = mov->_phases.size();
 
 	if (len > 0 && cnt > (uint)len)
 		cnt = len;
@@ -721,7 +721,7 @@ ExCommand2 *AniHandler::createCommand(Movement *mov, int objId, int x1, int y1, 
 	PointList points(cnt);
 
 	for (uint i = 0; i < cnt; i++) {
-		int flags = mov->getDynamicPhaseByIndex(i)->getDynFlags();
+		int flags = mov->getPhase(i)->getDynFlags();
 
 		if (flags & 1) {
 			points[i].x = x1 + x2.x;

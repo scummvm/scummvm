@@ -93,11 +93,11 @@ void Floaters::genFlies(Scene *sc, int x, int y, int priority, int flags) {
 	int nummoves;
 
 	if (ani->_movement->_currMovement)
-		nummoves = ani->_movement->_currMovement->_dynamicPhases.size();
+		nummoves = ani->_movement->_currMovement->_phases.size();
 	else
-		nummoves = ani->_movement->_dynamicPhases.size();
+		nummoves = ani->_movement->_phases.size();
 
-	ani->_movement->setDynamicPhaseIndex(g_nmi->_rnd.getRandomNumber(nummoves - 1));
+	ani->_movement->setCurFrame(g_nmi->_rnd.getRandomNumber(nummoves - 1));
 
 	_array2.push_back(FloaterArray2());
 	FloaterArray2 &arr2 = _array2.back();

@@ -330,18 +330,18 @@ void sceneHandler06_takeBall() {
 
 void sceneHandler06_aiming() {
 	if (g_vars->scene06_ballInHands) {
-		g_vars->scene06_ballDeltaX = 4 * g_nmi->_aniMan->_movement->_currDynamicPhaseIndex + 16;
-		g_vars->scene06_ballDeltaY = 5 * (g_nmi->_aniMan->_movement->_currDynamicPhaseIndex + 4);
+		g_vars->scene06_ballDeltaX = 4 * g_nmi->_aniMan->_movement->_curFrame + 16;
+		g_vars->scene06_ballDeltaY = 5 * (g_nmi->_aniMan->_movement->_curFrame + 4);
 
-		if (g_nmi->_aniMan->_movement->_currDynamicPhaseIndex < 4) {
-			g_nmi->_aniMan->_movement->setDynamicPhaseIndex(11);
+		if (g_nmi->_aniMan->_movement->_curFrame < 4) {
+			g_nmi->_aniMan->_movement->setCurFrame(11);
 
 			g_vars->scene06_aimingBall = false;
 
 			return;
 		}
 
-		g_nmi->_aniMan->_movement->setDynamicPhaseIndex(9);
+		g_nmi->_aniMan->_movement->setCurFrame(9);
 	}
 
 	g_vars->scene06_aimingBall = false;
@@ -437,24 +437,24 @@ void sceneHandler06_catchBall() {
 			Common::Point point;
 
 			if (g_vars->scene06_mumsy->_movement->_id == MV_MOM_JUMPFW) {
-				if (g_vars->scene06_mumsy->_movement->_currDynamicPhaseIndex <= 5) {
-					point = g_vars->scene06_mumsy->_movement->calcSomeXY(0, g_vars->scene06_mumsy->_movement->_currDynamicPhaseIndex);
+				if (g_vars->scene06_mumsy->_movement->_curFrame <= 5) {
+					point = g_vars->scene06_mumsy->_movement->getMovementSize(0, g_vars->scene06_mumsy->_movement->_curFrame);
 
 					point.x = -point.x;
 					point.y = -point.y;
 				} else {
-					point = g_vars->scene06_mumsy->_movement->calcSomeXY(1, -1);
+					point = g_vars->scene06_mumsy->_movement->getMovementSize(1, -1);
 
 					g_vars->scene06_mumsyPos++;
 				}
 			} else if (g_vars->scene06_mumsy->_movement->_id == MV_MOM_JUMPBK) {
-				if (g_vars->scene06_mumsy->_movement->_currDynamicPhaseIndex <= 4) {
-					point = g_vars->scene06_mumsy->_movement->calcSomeXY(0, g_vars->scene06_mumsy->_movement->_currDynamicPhaseIndex);
+				if (g_vars->scene06_mumsy->_movement->_curFrame <= 4) {
+					point = g_vars->scene06_mumsy->_movement->getMovementSize(0, g_vars->scene06_mumsy->_movement->_curFrame);
 
 					point.x = -point.x;
 					point.y = -point.y;
 				} else {
-					point = g_vars->scene06_mumsy->_movement->calcSomeXY(1, -1);
+					point = g_vars->scene06_mumsy->_movement->getMovementSize(1, -1);
 
 					g_vars->scene06_mumsyPos--;
 				}

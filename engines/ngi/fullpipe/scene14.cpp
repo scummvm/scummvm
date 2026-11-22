@@ -162,7 +162,7 @@ void sceneHandler14_exitScene() {
 	g_vars->scene14_arcadeIsOn = false;
 
 	if (g_nmi->_aniMan->_movement)
-		g_nmi->_aniMan->_movement->gotoLastFrame();
+		g_nmi->_aniMan->_movement->setLast();
 
 	g_nmi->_aniMan->stopAnim_maybe();
 
@@ -388,7 +388,7 @@ void sceneHandler14_kickAnimation() {
 		sceneHandler14_clearCallback();
 
 		if (g_vars->scene14_flyingBall && g_vars->scene14_dudeX - g_vars->scene14_flyingBall->_ox < 180) {
-			g_nmi->_aniMan->changeStatics2(g_nmi->_aniMan->_movement->_staticsObj2->_staticsId);
+			g_nmi->_aniMan->changeStatics2(g_nmi->_aniMan->_movement->_nextStatic->_staticsId);
 			g_nmi->_aniMan->startAnim(MV_MAN14_KICK, 0, -1);
 
 			g_vars->scene14_ballIsFlying = false;
@@ -396,7 +396,7 @@ void sceneHandler14_kickAnimation() {
 			g_vars->scene14_flyingBall->stopAnim_maybe();
 			g_vars->scene14_flyingBall->hide();
 		} else {
-			g_nmi->_aniMan->changeStatics2(g_nmi->_aniMan->_movement->_staticsObj2->_staticsId);
+			g_nmi->_aniMan->changeStatics2(g_nmi->_aniMan->_movement->_nextStatic->_staticsId);
 			g_nmi->_aniMan->startAnim(MV_MAN14_KICKAIR, 0, -1);
 		}
 	}
@@ -758,7 +758,7 @@ int sceneHandler14(ExCommand *cmd) {
 				g_vars->scene14_dudeY = mov->_oy;
 
 				if (mov->_id == MV_MAN14_KICK)
-					g_vars->scene14_dudeX = mov->_ox + 2 * g_nmi->_aniMan->_movement->_currDynamicPhaseIndex;
+					g_vars->scene14_dudeX = mov->_ox + 2 * g_nmi->_aniMan->_movement->_curFrame;
 			} else {
 				g_vars->scene14_dudeX = g_nmi->_aniMan->_ox;
 				g_vars->scene14_dudeY = g_nmi->_aniMan->_oy;

@@ -50,10 +50,10 @@ void scene32_initScene(Scene *sc) {
 	g_vars->scene32_button = sc->getStaticANIObject1ById(ANI_BUTTON_32, -1);
 
 	g_vars->scene32_massOrange->startAnim(MV_TSTO_FLOW, 0, -1);
-	g_vars->scene32_massOrange->_movement->setDynamicPhaseIndex(15);
+	g_vars->scene32_massOrange->_movement->setCurFrame(15);
 
 	g_vars->scene32_massGreen->startAnim(MV_TSTG_FLOW, 0, -1);
-	g_vars->scene32_massGreen->_movement->setDynamicPhaseIndex(26);
+	g_vars->scene32_massGreen->_movement->setCurFrame(26);
 
 	Scene *oldsc = g_nmi->_currentScene;
 	StaticANIObject *ani;

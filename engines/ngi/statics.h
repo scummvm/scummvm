@@ -110,24 +110,24 @@ class Movement : public GameObject {
 	int _lastFrameSpecialFlag;
 	int _flipFlag;
 	int _updateFlag1;
-	Statics *_staticsObj1;
-	Statics *_staticsObj2;
-	int _mx;
-	int _my;
-	int _m2x;
-	int _m2y;
-	int _field_50;
-	int _counterMax;
+	Statics *_prevStatic;
+	Statics *_nextStatic;
+	int _prevStepX;
+	int _prevStepY;
+	int _nextStepX;
+	int _nextStepY;
+	int _link;
+	int _loopDelay;
 	int _counter;
 	/** a confusing mix of owned and unowned items */
-	Common::Array<DynamicPhase *> _dynamicPhases;
+	Common::Array<DynamicPhase *> _phases;
 	int _field_78;
 	PointList _framePosOffsets;
 	Movement *_currMovement;
 	int _field_84;
-	DynamicPhase *_currDynamicPhase;
+	DynamicPhase *_curPhase;
 	int _field_8C;
-	int _currDynamicPhaseIndex;
+	int _curFrame;
 	int _field_94;
 
   public:
@@ -142,29 +142,29 @@ class Movement : public GameObject {
 
 	Common::Point getCurrDynamicPhaseXY() const;
 	Common::Point getCenter() const;
-	Dims getDimensionsOfPhase(int phaseIndex) const;
+	Dims getPhaseSize(int phaseIndex) const;
 
-	Common::Point calcSomeXY(int idx, int dynidx);
+	Common::Point getMovementSize(int idx, int dynidx);
 
 	void initStatics(StaticANIObject *ani);
 	void updateCurrDynamicPhase();
 
 	void setAlpha(int alpha);
 
-	void setDynamicPhaseIndex(int index);
-	DynamicPhase *getDynamicPhaseByIndex(int idx);
+	void setCurFrame(int index);
+	DynamicPhase *getPhase(int idx);
 
 	int calcDuration();
 	int countPhasesWithFlag(int maxidx, int flag);
 
 	void removeFirstPhase();
-	bool gotoNextFrame(void (*_callback1)(int, Common::Point *point, int, int), void (*callback2)(int *));
+	bool setNext(void (*_callback1)(int, Common::Point *point, int, int), void (*callback2)(int *));
 	bool gotoPrevFrame();
 	void gotoFirstFrame();
-	void gotoLastFrame();
+	void setLast();
 
-	void loadPixelData();
-	void freePixelData();
+	void load();
+	void unload();
 
 	void draw(bool flipFlag, int angle);
 };

@@ -396,7 +396,7 @@ void Scene::preloadMovements(GameVar *var) {
 					Movement *mov = ani->getMovementByName(subVars->_varName);
 
 					if (mov)
-						mov->loadPixelData();
+						mov->load();
 				}
 			} else {
 				ani->loadMovementsPixelData();

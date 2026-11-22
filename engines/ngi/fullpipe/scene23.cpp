@@ -39,22 +39,22 @@ bool sceneHandler23_testCalendar() {
 	int cal0, cal1, cal2, cal3;
 
 	if (g_vars->scene23_calend0->_movement)
-		cal0 = g_vars->scene23_calend0->_movement->_staticsObj2->_staticsId;
+		cal0 = g_vars->scene23_calend0->_movement->_nextStatic->_staticsId;
 	else
 		cal0 = g_vars->scene23_calend0->_statics->_staticsId;
 
 	if (g_vars->scene23_calend1->_movement)
-		cal1 = g_vars->scene23_calend1->_movement->_staticsObj2->_staticsId;
+		cal1 = g_vars->scene23_calend1->_movement->_nextStatic->_staticsId;
 	else
 		cal1 = g_vars->scene23_calend1->_statics->_staticsId;
 
 	if (g_vars->scene23_calend2->_movement)
-		cal2 = g_vars->scene23_calend2->_movement->_staticsObj2->_staticsId;
+		cal2 = g_vars->scene23_calend2->_movement->_nextStatic->_staticsId;
 	else
 		cal2 = g_vars->scene23_calend2->_statics->_staticsId;
 
 	if (g_vars->scene23_calend3->_movement)
-		cal3 = g_vars->scene23_calend3->_movement->_staticsObj2->_staticsId;
+		cal3 = g_vars->scene23_calend3->_movement->_nextStatic->_staticsId;
 	else
 		cal3 = g_vars->scene23_calend3->_statics->_staticsId;
 

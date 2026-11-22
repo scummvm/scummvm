@@ -247,7 +247,7 @@ void sceneHandler11_manToSwing() {
 	g_vars->scene11_dudeOnSwing->show1(690, 215, MV_MAN11_SWING_0, 0);
 	g_vars->scene11_dudeOnSwing->_priority = 20;
 	g_vars->scene11_dudeOnSwing->startAnim(MV_MAN11_SWING_0, 0, -1);
-	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(45);
+	g_vars->scene11_dudeOnSwing->_movement->setCurFrame(45);
 
 	g_vars->scene11_aniHandler.attachObject(g_nmi->_aniMan->_id);
 
@@ -334,12 +334,12 @@ void sceneHandler11_jumpFromSwing() {
 void sceneHandler11_swing0() {
 	debugC(1, kDebugSceneLogic, "sceneHandler11_swing0()");
 
-	int phase = g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex;
+	int phase = g_vars->scene11_dudeOnSwing->_movement->_curFrame;
 	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStaticsById(ST_MAN11_EMPTY);
 	g_vars->scene11_dudeOnSwing->_movement = nullptr;
 	g_vars->scene11_dudeOnSwing->show1(690, 215, MV_MAN11_SWING_0, 0);
 	g_vars->scene11_dudeOnSwing->startAnim(MV_MAN11_SWING_0, 0, -1);
-	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(phase);
+	g_vars->scene11_dudeOnSwing->_movement->setCurFrame(phase);
 
 	g_vars->scene11_swingDirection = 0;
 	g_vars->scene11_swingMaxAngle = 45;
@@ -349,12 +349,12 @@ void sceneHandler11_swing0() {
 void sceneHandler11_swing1() {
 	debugC(1, kDebugSceneLogic, "sceneHandler11_swing1()");
 
-	int phase = g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex;
+	int phase = g_vars->scene11_dudeOnSwing->_movement->_curFrame;
 	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStaticsById(ST_MAN11_EMPTY);
 	g_vars->scene11_dudeOnSwing->_movement = nullptr;
 	g_vars->scene11_dudeOnSwing->show1(690, 215, MV_MAN11_SWING_1, 0);
 	g_vars->scene11_dudeOnSwing->startAnim(MV_MAN11_SWING_1, 0, -1);
-	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(phase);
+	g_vars->scene11_dudeOnSwing->_movement->setCurFrame(phase);
 
 	g_vars->scene11_swingDirection = 1;
 	g_vars->scene11_swingMaxAngle = 42;
@@ -364,12 +364,12 @@ void sceneHandler11_swing1() {
 void sceneHandler11_swing2() {
 	debugC(1, kDebugSceneLogic, "sceneHandler11_swing2()");
 
-	int phase = g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex;
+	int phase = g_vars->scene11_dudeOnSwing->_movement->_curFrame;
 	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStaticsById(ST_MAN11_EMPTY);
 	g_vars->scene11_dudeOnSwing->_movement = nullptr;
 	g_vars->scene11_dudeOnSwing->show1(690, 215, MV_MAN11_SWING_2, 0);
 	g_vars->scene11_dudeOnSwing->startAnim(MV_MAN11_SWING_2, 0, -1);
-	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(phase);
+	g_vars->scene11_dudeOnSwing->_movement->setCurFrame(phase);
 
 	g_vars->scene11_swingDirection = 2;
 	g_vars->scene11_swingMaxAngle = 48;
@@ -377,7 +377,7 @@ void sceneHandler11_swing2() {
 }
 
 void sceneHandler11_emptySwing() {
-	int phase = g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex;
+	int phase = g_vars->scene11_dudeOnSwing->_movement->_curFrame;
 	if (g_vars->scene11_swingDirection)
 		sceneHandler11_swing0();
 
@@ -387,7 +387,7 @@ void sceneHandler11_emptySwing() {
 	g_vars->scene11_dudeOnSwing->show1(-1, -1, -1, 0);
 	g_vars->scene11_dudeOnSwing->changeStatics2(ST_KCH_EMPTY);
 	g_vars->scene11_dudeOnSwing->startAnim(MV_KCH_MOVE2, 0, -1);
-	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(phase);
+	g_vars->scene11_dudeOnSwing->_movement->setCurFrame(phase);
 
 	g_vars->scene11_swingInertia = 0.03; //1.9881250;
 }
@@ -513,7 +513,7 @@ void sceneHandler11_jumpHit(double angle) {
 
 void sceneHandler11_swingLogic() {
 	if (g_vars->scene11_dudeOnSwing->_movement) {
-		int ph = g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex;
+		int ph = g_vars->scene11_dudeOnSwing->_movement->_curFrame;
 		if (ph > 53 && ph < 90) {
 			if (ph < 70 && g_vars->scene11_swingSpeed >= 22.0) {
 				sceneHandler11_jumpOver((double)ph * 0.01428571428571429);  // = 1 / 70
@@ -539,7 +539,7 @@ void sceneHandler11_setSwingDirection() {
 	else if (g_vars->scene11_swingDirection == 1)
 		g_vars->scene11_swingDirectionPrevTurn = 2;
 	else
-		g_vars->scene11_swingDirectionPrevTurn = (g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex <= 45 ? 1 : 0) + 1;
+		g_vars->scene11_swingDirectionPrevTurn = (g_vars->scene11_dudeOnSwing->_movement->_curFrame <= 45 ? 1 : 0) + 1;
 }
 
 void sceneHandler11_swingieSit() {
@@ -711,7 +711,7 @@ int sceneHandler11(ExCommand *cmd) {
 
 			if (!g_vars->scene11_arcadeIsOn && !g_vars->scene11_swingIsSwinging) {
 				if (g_vars->scene11_swingSpeed == 0.0
-					&& g_vars->scene11_dudeOnSwing->_movement && g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex == 45) {
+					&& g_vars->scene11_dudeOnSwing->_movement && g_vars->scene11_dudeOnSwing->_movement->_curFrame == 45) {
 					g_vars->scene11_dudeOnSwing->changeStatics2(ST_KCH_STATIC);
 				}
 			}
