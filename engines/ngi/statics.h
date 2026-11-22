@@ -48,11 +48,11 @@ class StepArray : public CObject {
 
 class StaticPhase : public Picture {
  public:
-	int16 _initialCountdown;
+	int16 _delay;
 	int16 _countdown;
 	int16 _field_68;
 	int16 _field_6A;
-	Common::ScopedPtr<ExCommand> _exCommand;
+	Common::ScopedPtr<ExCommand> _command;
 
   public:
 	StaticPhase();
@@ -61,7 +61,7 @@ class StaticPhase : public Picture {
 
 	virtual Common::String toXML();
 
-	ExCommand *getExCommand() { return _exCommand.get(); }
+	ExCommand *getCommand() { return _command.get(); }
 };
 
 class Phase : public StaticPhase {

@@ -38,7 +38,7 @@ void global_messageHandler_KickStucco() {
 	bool flip = false;
 
 	for (int i = 0; i < end; i++) {
-		ExCommand *ex = mov->getPhase(i)->getExCommand();
+		ExCommand *ex = mov->getPhase(i)->getCommand();
 
 		if (ex && ex->_messageKind == 35 && ex->_messageNum == SND_CMN_015) {
 			if (flip) {
@@ -55,7 +55,7 @@ void global_messageHandler_KickStucco() {
 	flip = false;
 
 	for (int i = 0; i < end; i++) {
-		ExCommand *ex = mov->getPhase(i)->getExCommand();
+		ExCommand *ex = mov->getPhase(i)->getCommand();
 
 		if (ex && ex->_messageKind == 35 && ex->_messageNum == SND_CMN_015) {
 			if (flip) {
@@ -73,7 +73,7 @@ void global_messageHandler_KickMetal() {
 	int end = mov->_currMovement ? mov->_currMovement->_phases.size() : mov->_phases.size();
 
 	for (int i = 0; i < end; i++) {
-		ExCommand *ex = mov->getPhase(i)->getExCommand();
+		ExCommand *ex = mov->getPhase(i)->getCommand();
 
 		if (ex && ex->_messageKind == 35) {
 			if (ex->_messageNum == SND_CMN_054 || ex->_messageNum == SND_CMN_055)
@@ -85,7 +85,7 @@ void global_messageHandler_KickMetal() {
 	end = mov->_currMovement ? mov->_currMovement->_phases.size() : mov->_phases.size();
 
 	for (int i = 0; i < end; i++) {
-		ExCommand *ex = mov->getPhase(i)->getExCommand();
+		ExCommand *ex = mov->getPhase(i)->getCommand();
 
 		if (ex && ex->_messageKind == 35) {
 			if (ex->_messageNum == SND_CMN_054 || ex->_messageNum == SND_CMN_055)

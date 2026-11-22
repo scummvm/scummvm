@@ -757,9 +757,9 @@ void StaticANIObject::update(int counterdiff) {
 			}
 
 			Phase *dyn = _movement->_curPhase;
-			if (dyn->_initialCountdown == dyn->_countdown) {
+			if (dyn->_delay == dyn->_countdown) {
 
-				ex = dyn->getExCommand();
+				ex = dyn->getCommand();
 				if (ex && ex->_messageKind != 35) {
 					newex = ex->createClone();
 					newex->_excFlags |= 2;
@@ -774,7 +774,7 @@ void StaticANIObject::update(int counterdiff) {
 				}
 			}
 
-			if (dyn->_initialCountdown == dyn->_countdown && dyn->_field_68 != 0) {
+			if (dyn->_delay == dyn->_countdown && dyn->_field_68 != 0) {
 				newex = new ExCommand(_id, 17, dyn->_field_68, 0, 0, 0, 1, 0, 0, 0);
 				newex->_excFlags = 2;
 				newex->_param = _odelay;
@@ -790,8 +790,8 @@ void StaticANIObject::update(int counterdiff) {
 				setOXY(_movement->_ox, _movement->_oy);
 				_counter = _initialCounter;
 
-				if (dyn->_initialCountdown == dyn->_countdown) {
-					ex = dyn->getExCommand();
+				if (dyn->_delay == dyn->_countdown) {
+					ex = dyn->getCommand();
 					if (ex) {
 						if (ex->_messageKind == 35) {
 							newex = ex->createClone();
@@ -1066,7 +1066,7 @@ void StaticANIObject::show1(int x, int y, int movId, int mqId) {
 	_statics->_x = x - point.x;
 	_statics->_y = y - point.y;
 
-	_statics->_countdown = _statics->_initialCountdown;
+	_statics->_countdown = _statics->_delay;
 
 	_flags |= 4;
 	_ox = x;
@@ -1176,7 +1176,7 @@ void StaticANIObject::startAnimSteps(int movementId, int messageQueueId, int x, 
 			newy += point.y + _movement->_prevStepY;
 			_stepArray.gotoNextPoint();
 
-			ExCommand *ex = _movement->_curPhase->getExCommand();
+			ExCommand *ex = _movement->_curPhase->getCommand();
 
 			if (ex) {
 				if (ex->_messageKind == 35) {
@@ -1199,7 +1199,7 @@ void StaticANIObject::startAnimSteps(int movementId, int messageQueueId, int x, 
 
 	_flags |= 1;
 	_messageQueueId = messageQueueId;
-	_movement->_curPhase->_countdown = _movement->_curPhase->_initialCountdown;
+	_movement->_curPhase->_countdown = _movement->_curPhase->_delay;
 	_movement->_counter = 0;
 	_counter = _initialCounter;
 	_someDynamicPhaseIndex = someDynamicPhaseIndex;
@@ -1286,7 +1286,7 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 
 			_stepArray.gotoNextPoint();
 
-			ExCommand *ex = _movement->_curPhase->getExCommand();
+			ExCommand *ex = _movement->_curPhase->getCommand();
 			if (ex) {
 				if (ex->_messageKind == 35) {
 					ExCommand *newex = ex->createClone();
@@ -1308,7 +1308,7 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 	_flags |= 1;
 
 	_messageQueueId = messageQueueId;
-	_movement->_curPhase->_countdown = _movement->_curPhase->_initialCountdown;
+	_movement->_curPhase->_countdown = _movement->_curPhase->_delay;
 	_movement->_counter = 0;
 
 	_counter = _initialCounter;
@@ -1774,11 +1774,11 @@ int Movement::calcDuration() {
 
 	if (_currMovement)
 		for (uint i = 0; i < _currMovement->_phases.size(); i++) {
-			res += _currMovement->_phases[i]->_initialCountdown + 1;
+			res += _currMovement->_phases[i]->_delay + 1;
 		}
 	else
 		for (uint i = 0; i < _phases.size(); i++) {
-			res += _phases[i]->_initialCountdown + 1;
+			res += _phases[i]->_delay + 1;
 		}
 
 	return res;
@@ -1985,7 +1985,7 @@ bool Movement::setNext(void (*callback1)(int, Common::Point *point, int, int), v
 	_ox += point.x;
 	_oy += point.y;
 
-	_curPhase->_countdown = _curPhase->_initialCountdown;
+	_curPhase->_countdown = _curPhase->_delay;
 
 	return result;
 }
@@ -2124,12 +2124,12 @@ Phase::Phase(Phase *src, bool reverse) {
 	_height = src->_height;
 	_field_7C = src->_field_7C;
 
-	if (src->getExCommand())
-		_exCommand.reset(src->getExCommand()->createClone());
+	if (src->getCommand())
+		_command.reset(src->getCommand()->createClone());
 	else
-		_exCommand.reset();
+		_command.reset();
 
-	_initialCountdown = src->_initialCountdown;
+	_delay = src->_delay;
 	_field_6A = src->_field_6A;
 	_flags = src->_flags;
 
@@ -2171,13 +2171,13 @@ bool Phase::load(MfcArchive &file) {
 
 StaticPhase::StaticPhase() {
 	_field_6A = 1;
-	_initialCountdown = 0;
+	_delay = 0;
 	_countdown = 0;
 	_field_68 = 0;
 }
 
 Common::String StaticPhase::toXML() {
-	return Common::String::format("countdown=%d f6a=%d", _initialCountdown, _field_6A);
+	return Common::String::format("countdown=%d f6a=%d", _delay, _field_6A);
 }
 
 bool StaticPhase::load(MfcArchive &file) {
@@ -2185,12 +2185,12 @@ bool StaticPhase::load(MfcArchive &file) {
 
 	Picture::load(file);
 
-	_initialCountdown = file.readUint16LE();
+	_delay = file.readUint16LE();
 	_field_6A = file.readUint16LE();
 
 	assert(g_nmi->_gameProjectVersion >= 12);
 
-	_exCommand.reset(file.readClass<ExCommand>());
+	_command.reset(file.readClass<ExCommand>());
 
 	return true;
 }
