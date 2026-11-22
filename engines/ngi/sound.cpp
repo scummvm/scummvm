@@ -67,7 +67,7 @@ bool SoundList::loadFile(const Common::Path &fname, const Common::Path &libname)
 	return load(archive, libname);
 }
 
-Sound *SoundList::getSoundItemById(int id) {
+Sound *SoundList::getSound(int id) {
 	for (uint i = 0; i < _soundItems.size(); ++i) {
 		if (_soundItems[i].getId() == id)
 			return &_soundItems[i];
@@ -380,7 +380,7 @@ void NGIEngine::playSound(int id, int flag) {
 	Sound *sound = nullptr;
 
 	for (int i = 0; i < _currSoundListCount; i++) {
-		sound = _currSoundList1[i]->getSoundItemById(id);
+		sound = _currSoundList1[i]->getSound(id);
 
 		if (sound)
 			break;
@@ -460,7 +460,7 @@ void global_messageHandler_handleSound(Command *cmd) {
 	Sound *snd = nullptr;
 
 	for (int i = 0; i < g_nmi->_currSoundListCount; i++)
-		if ((snd = g_nmi->_currSoundList1[i]->getSoundItemById(cmd->_messageNum)) != nullptr)
+		if ((snd = g_nmi->_currSoundList1[i]->getSound(cmd->_messageNum)) != nullptr)
 			break;
 
 	if (!snd)
@@ -504,7 +504,7 @@ void NGIEngine::stopAllSoundStreams() {
 
 void NGIEngine::stopAllSoundInstances(int id) {
 	for (int i = 0; i < _currSoundListCount; i++) {
-		Sound *sound = _currSoundList1[i]->getSoundItemById(id);
+		Sound *sound = _currSoundList1[i]->getSound(id);
 
 		if (sound)
 			sound->stop();

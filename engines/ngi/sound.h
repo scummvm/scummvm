@@ -69,7 +69,7 @@ class SoundList : public CObject {
 
 	int getCount() { return _soundItems.size(); }
 	Sound &getSoundByIndex(int idx) { return _soundItems[idx]; }
-	Sound *getSoundItemById(int id);
+	Sound *getSound(int id);
 };
 
 } // End of namespace NGI
