@@ -276,9 +276,9 @@ private:
 	typedef ObList<MovGraphLink> LinkList;
 	NodeList _nodes;
 	LinkList _links;
-	int _field_44;
+	int _linkItemOffset;
 	Common::Array<MovGraphItem> _items;
-	MovArr *(*_callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter);
+	MovArr *(*_selFunc)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter);
 	AniHandler _aniHandler;
 
 public:
@@ -295,7 +295,7 @@ public:
 	Common::Array<MovItem *> *getPaths(StaticANIObject *ani, int x, int y, int flag1, int *rescount) override;
 	bool setPosImmediate(StaticANIObject *obj, int x, int y) override;
 	MessageQueue *startMove(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) override;
-	void setSelFunc(MovArr *(*_callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter)) override;
+	void setSelFunc(MovArr *(*_selFunc)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter)) override;
 	bool resetPosition(StaticANIObject *ani, int flag) override;
 	bool canDropInventory(StaticANIObject *ani, int x, int y) override;
 	MessageQueue *makeQueue(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) override;
@@ -304,7 +304,7 @@ public:
 	double putToLink(Common::Point *point, MovGraphLink *link, int fuzzyMatch);
 	void recalcLinkParams();
 	bool getNearestPoint(int unusedArg, Common::Point *p, MovArr *movarr);
-	MovGraphNode *calcOffset(int ox, int oy);
+	MovGraphNode *findNearestNode(int ox, int oy);
 	int getObjectIndex(StaticANIObject *ani);
 	Common::Array<MovArr *> *getHitPoints(int x, int y, int *arrSize, int flag1, int flag2);
 	void findAllPaths(MovGraphLink *lnk, MovGraphLink *lnk2, MovGraphLinkList &tempObList1, MovGraphLinkList &tempObList2);

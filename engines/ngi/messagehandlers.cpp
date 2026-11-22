@@ -790,7 +790,7 @@ int MovGraph::messageHandler(ExCommand *cmd) {
 
 		top = off + (int)(sqrt(sq) * off2 / link->_length);
 	} else {
-		top = (gr->calcOffset(ani->_ox, ani->_oy)->_z >> 8) & 0xff;
+		top = (gr->findNearestNode(ani->_ox, ani->_oy)->_z >> 8) & 0xff;
 	}
 
 	if (ani->_movement) {

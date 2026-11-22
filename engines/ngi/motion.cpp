@@ -763,7 +763,7 @@ void MovGraphItem::free() {
 	mi_movitems = nullptr;
 }
 
-MovArr *movGraphCallback(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter) {
+MovArr *getPreferredPath(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter) {
 	int residx = 0;
 	int itemidx = 0;
 
@@ -779,8 +779,8 @@ MovArr *movGraphCallback(StaticANIObject *ani, Common::Array<MovItem *> *items, 
 }
 
 MovGraph::MovGraph() {
-	_callback1 = movGraphCallback;
-	_field_44 = 0;
+	_selFunc = getPreferredPath;
+	_linkItemOffset = 0;
 	insertMessageHandler(MovGraph::messageHandler, getMessageHandlersCount() - 1, 129);
 
 	_objtype = kObjTypeMovGraph;
@@ -981,11 +981,11 @@ MessageQueue *MovGraph::startMove(StaticANIObject *ani, int xpos, int ypos, int 
 		movitems = _items[idx].mi_movitems;
 	}
 
-	return method50(ani, _callback1(ani, movitems, count), staticsId);
+	return method50(ani, _selFunc(ani, movitems, count), staticsId);
 }
 
 void MovGraph::setSelFunc(MovArr *(*callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter)) {
-	_callback1 = callback1;
+	_selFunc = callback1;
 }
 
 bool MovGraph::resetPosition(StaticANIObject *ani, int flag) {
@@ -1009,14 +1009,14 @@ bool MovGraph::resetPosition(StaticANIObject *ani, int flag) {
 		Statics *st;
 
 		if (ani->_statics) {
-			int t = _aniHandler.getNumMovements(ani->_id, ani->_statics->_staticsId, movarr._link->_staticsIds[_field_44]);
-			if (t > _aniHandler.getNumMovements(ani->_id, ani->_statics->_staticsId, movarr._link->_staticsIds[_field_44 + 1]))
-				st = ani->getStaticsById(movarr._link->_staticsIds[_field_44 + 1]);
+			int t = _aniHandler.getNumMovements(ani->_id, ani->_statics->_staticsId, movarr._link->_staticsIds[_linkItemOffset]);
+			if (t > _aniHandler.getNumMovements(ani->_id, ani->_statics->_staticsId, movarr._link->_staticsIds[_linkItemOffset + 1]))
+				st = ani->getStaticsById(movarr._link->_staticsIds[_linkItemOffset + 1]);
 			else
-				st = ani->getStaticsById(movarr._link->_staticsIds[_field_44]);
+				st = ani->getStaticsById(movarr._link->_staticsIds[_linkItemOffset]);
 		} else {
 			ani->stopAnim_maybe();
-			st = ani->getStaticsById(movarr._link->_staticsIds[_field_44]);
+			st = ani->getStaticsById(movarr._link->_staticsIds[_linkItemOffset]);
 		}
 
 		ani->_statics = st;
@@ -1036,7 +1036,7 @@ bool MovGraph::canDropInventory(StaticANIObject *ani, int x, int y) {
 			Common::Array<MovItem *> *movitem = getPaths(ani, x, y, 0, &counter);
 
 			if (movitem) {
-				MovArr *movarr = _callback1(ani, movitem, counter);
+				MovArr *movarr = _selFunc(ani, movitem, counter);
 				int cnt = movarr->_movStepCount;
 
 				if (cnt > 0) {
@@ -1063,7 +1063,7 @@ MessageQueue *MovGraph::makeQueue(StaticANIObject *subj, int xpos, int ypos, int
 	subj->getPicAniInfo(picAniInfo);
 
 	if (movitem) {
-		MovArr *goal = _callback1(subj, movitem, ss);
+		MovArr *goal = _selFunc(subj, movitem, ss);
 		int idx = getObjectIndex(subj);
 
 		for (int i = 0; i < _items[idx].count; i++) {
@@ -1091,7 +1091,7 @@ MessageQueue *MovGraph::makeQueue(StaticANIObject *subj, int xpos, int ypos, int
 
 	movitem = getPaths(subj, xpos, ypos, fuzzyMatch, &ss);
 	if (movitem) {
-		MovArr *goal = _callback1(subj, movitem, ss);
+		MovArr *goal = _selFunc(subj, movitem, ss);
 		int idx = getObjectIndex(subj);
 
 		if (_items[idx].count > 0) {
@@ -1155,7 +1155,7 @@ MessageQueue *MovGraph::sub1(StaticANIObject *ani, int x, int y, int stid, int x
 
 	MessageQueue *res = nullptr;
 
-	MovArr *goal = _callback1(ani, movitems, rescount);
+	MovArr *goal = _selFunc(ani, movitems, rescount);
 	int idx = getObjectIndex(ani);
 
 	MovGraphItem &movgitem = _items[idx];
@@ -1194,23 +1194,23 @@ MessageQueue *MovGraph::makeWholeQueue(StaticANIObject *ani, MovArr *movarr, int
 
 	for (int i = 0; i < movarr->_movStepCount; i++) {
 		while (i < movarr->_movStepCount - 1) {
-			if (movarr->_movSteps[i    ]->link->_movementIds[movarr->_movSteps[i - 1]->sfield_0 + _field_44] !=
-				movarr->_movSteps[i + 1]->link->_movementIds[movarr->_movSteps[i    ]->sfield_0 + _field_44])
+			if (movarr->_movSteps[i    ]->link->_movementIds[movarr->_movSteps[i - 1]->sfield_0 + _linkItemOffset] !=
+				movarr->_movSteps[i + 1]->link->_movementIds[movarr->_movSteps[i    ]->sfield_0 + _linkItemOffset])
 				break;
 			i++;
 		}
 
 		MovStep *st = movarr->_movSteps[i];
 
-		ani->getMovementById(st->link->_movementIds[_field_44 + st->sfield_0]);
+		ani->getMovementById(st->link->_movementIds[_linkItemOffset + st->sfield_0]);
 
 		if (i == movarr->_movStepCount - 1 && staticsId) {
 			id2 = staticsId;
 		} else {
 			if (i < movarr->_movStepCount - 1)
-				id2 = ani->getMovementById(movarr->_movSteps[i + 1]->link->_movementIds[_field_44 + st->sfield_0])->_staticsObj1->_staticsId;
+				id2 = ani->getMovementById(movarr->_movSteps[i + 1]->link->_movementIds[_linkItemOffset + st->sfield_0])->_staticsObj1->_staticsId;
 			else
-				id2 = st->link->_staticsIds[_field_44 + st->sfield_0];
+				id2 = st->link->_staticsIds[_linkItemOffset + st->sfield_0];
 		}
 
 		int nx, ny, nd;
@@ -1242,7 +1242,7 @@ MessageQueue *MovGraph::makeWholeQueue(StaticANIObject *ani, MovArr *movarr, int
 		mkQueue.y2 = oy;
 		mkQueue.y1 = ny;
 		mkQueue.field_1C = nd;
-		mkQueue.movementId = st->link->_movementIds[_field_44 + st->sfield_0];
+		mkQueue.movementId = st->link->_movementIds[_linkItemOffset + st->sfield_0];
 
 		mkQueue.flags = 0xe;
 		if (mq)
@@ -1609,14 +1609,14 @@ bool MovGraph::getHitPoint(int idx, int x, int y, MovArr *arr, int a6) {
 	int offmin = 100;
 
 	for (int i = 0; i < arrSize; i++) {
-		int off = _aniHandler.getNumMovements(_items[idx].ani->_id, staticsId, (*movarr)[i]->_link->_staticsIds[_field_44]);
+		int off = _aniHandler.getNumMovements(_items[idx].ani->_id, staticsId, (*movarr)[i]->_link->_staticsIds[_linkItemOffset]);
 
 		if (off < offmin) {
 			offmin = off;
 			idxmin = i;
 		}
 
-		off = _aniHandler.getNumMovements(_items[idx].ani->_id, staticsId, (*movarr)[i]->_link->_staticsIds[_field_44 + 1]);
+		off = _aniHandler.getNumMovements(_items[idx].ani->_id, staticsId, (*movarr)[i]->_link->_staticsIds[_linkItemOffset + 1]);
 		if (off < offmin) {
 			offmin = off;
 			idxmin = i;
@@ -2829,7 +2829,7 @@ double MctlGraph::iterate(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, MovG
 	}
 }
 
-MovGraphNode *MovGraph::calcOffset(int ox, int oy) {
+MovGraphNode *MovGraph::findNearestNode(int ox, int oy) {
 	MovGraphNode *res = nullptr;
 	double mindist = 1.0e10;
 
