@@ -45,7 +45,9 @@ private:
 	void applyCustomHotspotState() override;
 	void walkHangar(Common::Point target, byte facing);
 	uint studFrame() const;
-	void startHangarTaunt();
+	void updateStud(uint32 delta);
+	void startHangarSpeech(uint16 cue, byte variation);
+	void showHangarSpeechLine();
 	void handleAnimationFrameHook() override;
 	void drawRoomComposite(Graphics::ManagedSurface &viewport, bool foreground);
 	void advanceCustomGameplayLoop(uint32 delta) override;
@@ -60,6 +62,10 @@ private:
 	RunawayAnimation _studAnimation, _drowsyStudAnimation, _lulaAnimation;
 	Common::Array<RunawayHotspot> _hotspots;
 	RunawaySpeech _hangarSpeech;
+	SceneSpeechCue _hangarCue;
+	byte _hangarLine = 0;
+	uint _studStep = 0, _studElapsed = 0;
+	byte _studState = 0xff;
 	byte _hangarShot = 0, _hangarShotCount = 0, _hangarShotFrame = 88;
 	uint _hangarShotElapsed = 0;
 	bool _hangarThrowing = false;

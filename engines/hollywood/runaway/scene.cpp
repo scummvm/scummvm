@@ -462,7 +462,9 @@ void RunawayRoomScene::sayInventory(const RunawayInventory::Reply &reply) {
 	if (_game == kRunawayFullGame && !desertChapter() && !townChapter() && !hopiChapter() && !finaleChapter() &&
 			(museumChapter() ? sayMuseumInventory(reply) : sayHospitalInventory(reply)))
 		return;
-	say(reply.cue, reply.variation, true);
+	for (RunawayInventory::Reply line = reply; line.cue; line = _inventory.nextReply(line)) {
+		say(line.cue, line.variation, true);
+	}
 }
 
 void RunawayRoomScene::skipSpeech() {

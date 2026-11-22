@@ -44,9 +44,10 @@ public:
 	struct Reply {
 		uint16 cue;
 		byte variation;
+		byte lastVariation;
 		byte nextVariation = 0xff;
 		uint16 action = 0;
-		Reply(uint16 c = 1, byte v = 0) : cue(c), variation(v) {}
+		Reply(uint16 c = 1, byte v = 0, byte last = 0) : cue(c), variation(v), lastVariation(last) {}
 		static Reply fromAction(uint16 action) {
 			Reply reply;
 			reply.action = action;
@@ -76,7 +77,8 @@ public:
 	static Reply randomReply(Common::RandomSource &random);
 	uint icon(byte item) const;
 	uint cursor(byte item) const;
-	Reply examine(byte item) const;
+	Reply examine(byte item, const RunawaySaveState &state) const;
+	Reply nextReply(const Reply &reply) const;
 	Reply combine(byte first, byte second);
 	byte clothState() const { return _clothState; }
 	void soilCloth() { _clothState = 2; }

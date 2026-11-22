@@ -211,7 +211,7 @@ RunawayRoomScene::ActionResult Scene5170::dispatchCustomSceneAction(uint16 actio
 		}
 		return kBackgroundChanged;
 	case 307: // Look at the door mechanism.
-		say(6, _desert.crank != 0);
+		say(6, _desert.crank);
 		if (!_desert.crank) {
 			_desert.crank = 1;
 		}

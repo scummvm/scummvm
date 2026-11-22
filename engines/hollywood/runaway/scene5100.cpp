@@ -106,7 +106,7 @@ namespace Runaway {
 
 Scene5100::Scene5100(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game),
-	_hangarSpeech(audio, _random, RunawaySpeech::kNoLipSync) {}
+	_hangarSpeech(audio, _random) {}
 
 const char *Scene5100::actionCaptionVariant(byte id, bool look, byte item) const {
 	if (!item && id == 2) {
@@ -422,7 +422,13 @@ RunawayRoomScene::ActionResult Scene5100::dispatchCustomSceneAction(uint16 actio
 		_desert.guard = 0;
 		_desert.insideBarn = 0;
 		walkHangar(Common::Point(1322, 339), 5);
+		if (_hangarShotCount < 5) {
+			deferDesertAction(520);
+		}
 		return kBackgroundChanged;
+	case 520: // Confirm Stud's return after abandoning the distraction.
+		say(13, 1);
+		break;
 	case 400: { // Arrive with Lula and the concealed walkie-talkie.
 		_desert.visited[6] = 1;
 		_desert.insideBarn = 1;
@@ -623,15 +629,52 @@ uint Scene5100::studFrame() const {
 	if (_roomAction == 478) {
 		return 150;
 	}
-	return kStudFrames[(_now / 80) % ARRAYSIZE(kStudFrames)];
+	return kStudFrames[_studStep];
 }
 
-void Scene5100::startHangarTaunt() {
-	// These one-line taunts play in the background while Brian remains controllable.
-	const SceneSpeechCue cue = _text.stageCue(_hangarShotCount & 1 ? 94 : 95, 7 + _random.getRandomNumber(4));
-	if (cue.valid()) {
-		_hangarSpeech.start(Common::U32String(_text.largeTextRecord(cue.textRecordId), Common::kDos850), cue.voiceSampleId, false, _now);
+void Scene5100::updateStud(uint32 delta) {
+	if (_studState != _desert.guard) {
+		_studState = _desert.guard;
+		_studStep = _desert.guard == 2 ? 161 : 0;
+		_studElapsed = 0;
 	}
+	if (_desert.guard == 1 || _hangarIntroduction || _roomAction || _hospitalExit.scene ||
+			_inventoryOpen || !_hangarSpeech.subtitle().empty()) {
+		return;
+	}
+	_studElapsed += delta;
+	while (_studElapsed >= 80) {
+		_studElapsed -= 80;
+		if (_desert.guard == 2) {
+			if (++_studStep > 251) {
+				_studStep = 161;
+				if (!speaking()) {
+					startHangarSpeech(93, _random.getRandomNumber(5));
+					return;
+				}
+			}
+		} else {
+			_studStep = (_studStep + 1) % ARRAYSIZE(kStudFrames);
+			// Native 0x48f440 gives Stud a chance to speak after drinking or throwing.
+			if ((_studStep == 129 || _studStep == 259) && !speaking() && !_random.getRandomBit()) {
+				startHangarSpeech(_studStep == 129 ? 91 : 92, _random.getRandomNumber(2));
+				return;
+			}
+		}
+	}
+}
+
+void Scene5100::startHangarSpeech(uint16 cue, byte variation) {
+	_hangarCue = _text.stageCue(cue, variation);
+	_hangarLine = 0;
+	if (_hangarCue.valid()) {
+		showHangarSpeechLine();
+	}
+}
+
+void Scene5100::showHangarSpeechLine() {
+	_hangarSpeech.start(Common::U32String(_text.largeTextRecord(_hangarCue.textRecordId + _hangarLine), Common::kDos850),
+		_hangarCue.voiceSampleId + _hangarLine, false, _now);
 }
 
 void Scene5100::handleAnimationFrameHook() {
@@ -682,13 +725,15 @@ void Scene5100::drawRoomComposite(Graphics::ManagedSurface &viewport, bool foreg
 	}
 	const uint frame = studFrame();
 	const bool guardAnimation = drawingRoomAnimation() && (_roomAction == 460 || _roomAction == 468 || _roomAction == 488);
+	const bool studSpeaking = speaker() == 1 || (_desert.guard != 1 && !_hangarSpeech.subtitle().empty());
+	const byte studMouth = speaker() == 1 ? speechFrame() : _hangarSpeech.frame(_now);
 	if (!guardAnimation) {
 		if (_desert.guard == 2) {
-			_drowsyStudAnimation.draw(viewport, speaker() == 1 ? 118 + speechFrame() % 6 : 110, _camera.x, -_camera.y);
+			_drowsyStudAnimation.draw(viewport, studSpeaking ? 118 + studMouth % 6 : 110, _camera.x, -_camera.y);
 		} else if (!_desert.guard) {
 			uint pose = _hangarIntroduction ? 92 : frame;
-			if (speaker() == 1) {
-				pose = 92 + speechFrame() % 6;
+			if (studSpeaking) {
+				pose = 92 + studMouth % 6;
 			}
 			_studAnimation.draw(viewport, pose, _camera.x, -_camera.y);
 		}
@@ -710,6 +755,14 @@ void Scene5100::drawRoomComposite(Graphics::ManagedSurface &viewport, bool foreg
 }
 
 void Scene5100::advanceCustomGameplayLoop(uint32 delta) {
+	if (!_hangarSpeech.subtitle().empty() && _hangarSpeech.finished(_now)) {
+		if (++_hangarLine < MAX<uint>(1, _hangarCue.continuationCount)) {
+			showHangarSpeechLine();
+		} else {
+			stopAmbientSpeech();
+		}
+	}
+	updateStud(delta);
 	const uint frame = studFrame();
 	byte canHotspot = 12;
 	if (!_desert.guard && (frame < 82 || frame > 92)) {
@@ -719,9 +772,6 @@ void Scene5100::advanceCustomGameplayLoop(uint32 delta) {
 		if (_originalMaps[256 + i] == 12) {
 			_maps[256 + i] = canHotspot;
 		}
-	}
-	if (!_hangarSpeech.subtitle().empty() && _hangarSpeech.finished(_now)) {
-		_hangarSpeech.stop();
 	}
 	if (_desert.guard != 1 || _hangarIntroduction || _roomAction || _hospitalExit.scene || speaking() || _inventoryOpen) {
 		return;
@@ -743,7 +793,7 @@ void Scene5100::advanceCustomGameplayLoop(uint32 delta) {
 				execute(500);
 				return;
 			}
-			startHangarTaunt();
+			startHangarSpeech(_hangarShotCount & 1 ? 94 : 95, 7 + _random.getRandomNumber(4));
 			return;
 		}
 		if (_hangarShotFrame == 9 || _hangarShotFrame == 32 || _hangarShotFrame == 70 || _hangarShotFrame == 84) {
@@ -768,6 +818,8 @@ void Scene5100::stopAmbientSpeech() {
 	if (!_hangarSpeech.subtitle().empty()) {
 		_hangarSpeech.stop();
 	}
+	_hangarCue = SceneSpeechCue();
+	_hangarLine = 0;
 }
 
 const Common::U32String &Scene5100::subtitle() const {

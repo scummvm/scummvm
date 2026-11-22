@@ -490,7 +490,8 @@ Common::Error RunawayEngine::run() {
 					_scene->click(command.mouse, command.verb, command.item);
 					break;
 				case RunawayUI::Command::kExamineItem:
-					_scene->sayInventory(_inventory->examine(command.target));
+					_scene->captureState(_state);
+					_scene->sayInventory(_inventory->examine(command.target, _state));
 					break;
 				case RunawayUI::Command::kCombine:
 					_scene->sayInventory(_inventory->combine(command.item, command.target));

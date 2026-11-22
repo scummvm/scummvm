@@ -414,9 +414,7 @@ void Scene5030::sayInventory(const RunawayInventory::Reply &reply) {
 	_speechRow = row;
 	_speechEnd = row + MAX<uint>(1, count) - 1;
 	_speechSample = sample;
-	if (speech.nextVariation != 0xff) {
-		_nextInventoryReply = RunawayInventory::Reply(speech.cue, speech.nextVariation);
-	}
+	_nextInventoryReply = _inventory.nextReply(speech);
 	showSpeechRow();
 }
 
