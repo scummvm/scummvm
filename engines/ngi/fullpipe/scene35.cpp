@@ -136,13 +136,13 @@ void sceneHandler35_genFlies() {
 		int numFlies = g_nmi->_rnd.getRandomNumber(3) + 1;
 
 		while (numFlies--) {
-			g_nmi->_floaters->genFlies(g_nmi->_currentScene, g_nmi->_rnd.getRandomNumber(55) + 1057,  g_nmi->_rnd.getRandomNumber(60) + x + xoff, 4, 1);
+			g_nmi->_floaters->addFly(g_nmi->_currentScene, g_nmi->_rnd.getRandomNumber(55) + 1057,  g_nmi->_rnd.getRandomNumber(60) + x + xoff, 4, 1);
 
 			xoff += 40;
 
-			g_nmi->_floaters->_array2[g_nmi->_floaters->_array2.size() - 1].val2 = 1084;
-			g_nmi->_floaters->_array2[g_nmi->_floaters->_array2.size() - 1].val3 = y;
-			g_nmi->_floaters->_array2[g_nmi->_floaters->_array2.size() - 1].val11 = 8.0;
+			g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].val2 = 1084;
+			g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].val3 = y;
+			g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].val11 = 8.0;
 		}
 
 		g_vars->scene35_fliesCounter = 0;
@@ -250,7 +250,7 @@ int sceneHandler35(Command *cmd) {
 		if (g_vars->scene35_fliesCounter >= 160)
 			sceneHandler35_genFlies();
 
-		g_nmi->_floaters->update();
+		g_nmi->_floaters->onUpdate();
 
 		g_nmi->_behaviorManager->update();
 		g_nmi->startSceneTrack();

@@ -83,8 +83,8 @@ void scene20_initScene(Scene *sc) {
 	g_nmi->_floaters->init(g_nmi->getGameLoaderGameVar()->getSubVarByName("SC_20"));
 
 	for (int i = 0; i < 3; i++) {
-		g_nmi->_floaters->genFlies(sc, g_nmi->_rnd.getRandomNumber(101) + 70, g_nmi->_rnd.getRandomNumber(51) + 175, 100, 0);
-		g_nmi->_floaters->_array2[g_nmi->_floaters->_array2.size() - 1].val13 = g_nmi->_rnd.getRandomNumber(9);
+		g_nmi->_floaters->addFly(sc, g_nmi->_rnd.getRandomNumber(101) + 70, g_nmi->_rnd.getRandomNumber(51) + 175, 100, 0);
+		g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].val13 = g_nmi->_rnd.getRandomNumber(9);
 	}
 
 	g_nmi->_currentScene = oldsc;
@@ -93,22 +93,22 @@ void scene20_initScene(Scene *sc) {
 }
 
 void sceneHandler20_updateFlies() {
-	int sz = g_nmi->_floaters->_array2.size();
+	int sz = g_nmi->_floaters->_flies.size();
 
 	if (sz < 3) {
-		g_nmi->_floaters->genFlies(g_nmi->_currentScene, 253, 650, 200, 0);
-		g_nmi->_floaters->_array2[sz - 1].val2 = 250;
-		g_nmi->_floaters->_array2[sz - 1].val3 = 200;
+		g_nmi->_floaters->addFly(g_nmi->_currentScene, 253, 650, 200, 0);
+		g_nmi->_floaters->_flies[sz - 1].val2 = 250;
+		g_nmi->_floaters->_flies[sz - 1].val3 = 200;
 	} else {
 		int idx = g_nmi->_rnd.getRandomNumber(sz);
 
-		g_nmi->_floaters->_array2[idx].countdown = 0;
-		g_nmi->_floaters->_array2[idx].fflags |= 4u;
-		g_nmi->_floaters->_array2[idx].val2 = 250;
-		g_nmi->_floaters->_array2[idx].val3 = 200;
-		g_nmi->_floaters->_array2[idx].val6 = 253;
-		g_nmi->_floaters->_array2[idx].val7 = 650;
-		g_nmi->_floaters->_array2[idx].ani->_z = 200;
+		g_nmi->_floaters->_flies[idx].countdown = 0;
+		g_nmi->_floaters->_flies[idx].fflags |= 4u;
+		g_nmi->_floaters->_flies[idx].val2 = 250;
+		g_nmi->_floaters->_flies[idx].val3 = 200;
+		g_nmi->_floaters->_flies[idx].val6 = 253;
+		g_nmi->_floaters->_flies[idx].val7 = 650;
+		g_nmi->_floaters->_flies[idx].ani->_z = 200;
 	}
 
 	g_vars->scene20_fliesCountdown = g_nmi->_rnd.getRandomNumber(200) + 400;
@@ -139,7 +139,7 @@ int sceneHandler20(Command *cmd) {
 		if (g_vars->scene20_fliesCountdown <= 0)
 			sceneHandler20_updateFlies();
 
-		g_nmi->_floaters->update();
+		g_nmi->_floaters->onUpdate();
 
 		g_nmi->_behaviorManager->update();
 

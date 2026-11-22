@@ -157,11 +157,11 @@ void sceneHandler34_climb() {
 }
 
 void sceneHandler34_genFlies() {
-	g_nmi->_floaters->genFlies(g_nmi->_currentScene, 1072, -50, 100, 4);
+	g_nmi->_floaters->addFly(g_nmi->_currentScene, 1072, -50, 100, 4);
 
-	g_nmi->_floaters->_array2[g_nmi->_floaters->_array2.size() - 1].countdown = 1;
-	g_nmi->_floaters->_array2[g_nmi->_floaters->_array2.size() - 1].val6 = 1072;
-	g_nmi->_floaters->_array2[g_nmi->_floaters->_array2.size() - 1].val7 = -50;
+	g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].countdown = 1;
+	g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].val6 = 1072;
+	g_nmi->_floaters->_flies[g_nmi->_floaters->_flies.size() - 1].val7 = -50;
 
 	g_vars->scene34_fliesCountdown = g_nmi->_rnd.getRandomNumber(500) + 500;
 }
@@ -463,7 +463,7 @@ int sceneHandler34(Command *cmd) {
 		if (!g_vars->scene34_fliesCountdown)
 			sceneHandler34_genFlies();
 
-		g_nmi->_floaters->update();
+		g_nmi->_floaters->onUpdate();
 
 		g_nmi->_behaviorManager->update();
 

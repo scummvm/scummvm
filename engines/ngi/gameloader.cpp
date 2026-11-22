@@ -281,7 +281,7 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 			setInputDisabled(1);
 		}
 
-		g_nmi->_floaters->stopAll();
+		g_nmi->_floaters->deleteAllFlies();
 
 		if (g_nmi->_soundEnabled) {
 			g_nmi->_currSoundListCount = 1;

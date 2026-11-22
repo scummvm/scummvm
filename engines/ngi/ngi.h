@@ -83,7 +83,7 @@ class Inventory;
 struct Cursor;
 struct Entrance;
 class Command;
-class Floaters;
+class FlyPack;
 class GameProject;
 class GameObject;
 class GlobalMessageQueueList;
@@ -249,7 +249,7 @@ public:
 
 	Common::ScopedPtr<MovTable> _movTable;
 
-	Common::ScopedPtr<Floaters> _floaters;
+	Common::ScopedPtr<FlyPack> _floaters;
 	Common::ScopedPtr<AniHandler> _aniHandler;
 
 	Common::Array<Common::Point> _arcadeKeys;

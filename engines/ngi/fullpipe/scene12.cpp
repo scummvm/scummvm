@@ -47,11 +47,11 @@ void scene12_initScene(Scene *sc) {
 }
 
 void sceneHandler12_updateFloaters() {
-	g_nmi->_floaters->genFlies(g_nmi->_currentScene, 397, -50, 100, 6);
+	g_nmi->_floaters->addFly(g_nmi->_currentScene, 397, -50, 100, 6);
 
-	g_nmi->_floaters->_array2[0].countdown = g_nmi->_rnd.getRandomNumber(6) + 4;
-	g_nmi->_floaters->_array2[0].val6 = 397;
-	g_nmi->_floaters->_array2[0].val7 = -50;
+	g_nmi->_floaters->_flies[0].countdown = g_nmi->_rnd.getRandomNumber(6) + 4;
+	g_nmi->_floaters->_flies[0].val6 = 397;
+	g_nmi->_floaters->_flies[0].val7 = -50;
 }
 
 int sceneHandler12(Command *cmd) {
@@ -73,7 +73,7 @@ int sceneHandler12(Command *cmd) {
 		if (!g_vars->scene12_flyCountdown)
 			sceneHandler12_updateFloaters();
 
-		g_nmi->_floaters->update();
+		g_nmi->_floaters->onUpdate();
 
 		g_nmi->_behaviorManager->update();
 	}

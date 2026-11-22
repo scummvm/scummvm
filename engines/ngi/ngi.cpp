@@ -180,7 +180,7 @@ NGIEngine::~NGIEngine() {
 }
 
 void NGIEngine::restartGame() {
-	_floaters->stopAll();
+	_floaters->deleteAllFlies();
 
 	clearGlobalMessageQueueList();
 	clearMessages();
@@ -257,7 +257,7 @@ Common::Error NGIEngine::run() {
 	_sceneRect.right = 799;
 	_sceneRect.bottom = 599;
 
-	_floaters.reset(new Floaters);
+	_floaters.reset(new FlyPack);
 	_aniHandler.reset(new AniHandler);
 	_globalPalette = &_defaultPalette;
 
@@ -460,7 +460,7 @@ void NGIEngine::updateEvents() {
 
 void NGIEngine::freeGameLoader() {
 	setCursor(0);
-	_floaters->stopAll();
+	_floaters->deleteAllFlies();
 	_gameLoader.reset();
 	_currentScene = nullptr;
 	_scene2 = nullptr;

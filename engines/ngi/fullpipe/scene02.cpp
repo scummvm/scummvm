@@ -111,21 +111,21 @@ int sceneHandler02(Command *ex) {
 		if (g_vars->scene02_boxOpen) {
 			if (g_vars->scene02_boxDelay >= 1) {
 				--g_vars->scene02_boxDelay;
-			} else if (g_nmi->_floaters->_array2.size() >= 1) {
-				if (g_nmi->_floaters->_array2[0].val5 == -50) {
-					g_nmi->_floaters->stopAll();
+			} else if (g_nmi->_floaters->_flies.size() >= 1) {
+				if (g_nmi->_floaters->_flies[0].val5 == -50) {
+					g_nmi->_floaters->deleteAllFlies();
 					g_vars->scene02_boxOpen = false;
 					g_vars->scene02_boxDelay = 100 * g_nmi->_rnd.getRandomNumber(32767) + 150;
 				} else {
-					g_nmi->_floaters->_array2[0].val3 = -50;
+					g_nmi->_floaters->_flies[0].val3 = -50;
 				}
 			} else {
-				g_nmi->_floaters->genFlies(g_nmi->_currentScene, g_nmi->_rnd.getRandomNumber(700) + 100, -50, 0, 0);
+				g_nmi->_floaters->addFly(g_nmi->_currentScene, g_nmi->_rnd.getRandomNumber(700) + 100, -50, 0, 0);
 				g_vars->scene02_boxDelay = 500 * g_nmi->_rnd.getRandomNumber(32767) + 1000;
 			}
 		}
 
-		g_nmi->_floaters->update();
+		g_nmi->_floaters->onUpdate();
 		g_nmi->_behaviorManager->update();
 
 		g_nmi->startSceneTrack();

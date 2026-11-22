@@ -111,7 +111,7 @@ void scene23_initScene(Scene *sc) {
 
 		sc->findAniObjectById(ANI_LUK23_U, -1)->setStatic(ST_LUK23U_CLOSED);
 
-		g_nmi->_floaters->genFlies(sc, 600, 90, 0, 0);
+		g_nmi->_floaters->addFly(sc, 600, 90, 0, 0);
 	}
 
 	if (g_nmi->getStateId(sO_LowerHatch_23) == g_nmi->getStateValue(sO_LowerHatch_23, sO_Opened)) {
@@ -485,7 +485,7 @@ int sceneHandler23(Command *cmd) {
 				g_nmi->_currentScene->_x = x + 300 - g_nmi->_sceneRect.right;
 		}
 
-		g_nmi->_floaters->update();
+		g_nmi->_floaters->onUpdate();
 		g_nmi->_behaviorManager->update();
 
 		g_nmi->startSceneTrack();

@@ -154,11 +154,11 @@ void sceneHandler17_moonshineFill() {
 }
 
 void sceneHandler17_updateFlies() {
-	g_nmi->_floaters->genFlies(g_nmi->_currentScene, 239, -50, 20, 4);
+	g_nmi->_floaters->addFly(g_nmi->_currentScene, 239, -50, 20, 4);
 
-	g_nmi->_floaters->_array2[0].countdown = g_nmi->_rnd.getRandomNumber(5) + 6;
-	g_nmi->_floaters->_array2[0].val6 = 239;
-	g_nmi->_floaters->_array2[0].val7 = -50;
+	g_nmi->_floaters->_flies[0].countdown = g_nmi->_rnd.getRandomNumber(5) + 6;
+	g_nmi->_floaters->_flies[0].val6 = 239;
+	g_nmi->_floaters->_flies[0].val7 = -50;
 }
 
 
@@ -268,7 +268,7 @@ int sceneHandler17(Command *cmd) {
 			if (!g_vars->scene17_flyCountdown)
 				sceneHandler17_updateFlies();
 
-			g_nmi->_floaters->update();
+			g_nmi->_floaters->onUpdate();
 
 			g_nmi->_behaviorManager->update();
 

@@ -58,16 +58,16 @@ struct FloaterArray2 {
 		val9(0.0), val11(0.0), val13(0), countdown(0), val15(0), fflags(0) {}
 };
 
-class Floaters {
+class FlyPack {
 public:
-	Common::ScopedPtr<ReactPolygonal> _hRgn;
-	Common::Array<FloaterArray1> _array1;
-	Common::Array<FloaterArray2> _array2;
+	Common::ScopedPtr<ReactPolygonal> _idleRegion;
+	Common::Array<FloaterArray1> _idlePoints;
+	Common::Array<FloaterArray2> _flies;
 
 	void init(GameVar *var);
-	void genFlies(Scene *sc, int x, int y, int priority, int flags);
-	void update();
-	void stopAll();
+	void addFly(Scene *sc, int x, int y, int priority, int flags);
+	void onUpdate();
+	void deleteAllFlies();
 };
 
 } // End of namespace NGI

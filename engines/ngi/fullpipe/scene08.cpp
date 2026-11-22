@@ -101,7 +101,7 @@ void scene08_initScene(Scene *sc) {
 	g_nmi->_currentScene = oldsc;
 
 	g_nmi->_floaters->init(g_nmi->getGameLoaderGameVar()->getSubVarByName("SC_8"));
-	g_nmi->_floaters->genFlies(sc, 100, 100, 0, 0);
+	g_nmi->_floaters->addFly(sc, 100, 100, 0, 0);
 
 	g_nmi->setArcadeOverlay(PIC_CSR_ARCADE3);
 }
@@ -512,7 +512,7 @@ int sceneHandler08(Command *cmd) {
 				}
 			}
 
-			g_nmi->_floaters->update();
+			g_nmi->_floaters->onUpdate();
 
 			if (g_vars->scene08_inArcade) {
 				if (g_vars->scene08_inAir)
