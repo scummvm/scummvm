@@ -276,8 +276,8 @@ void sceneHandler29_manHit() {
 	mkQueue.staticsId2 = ST_MAN29_SITR;
 	mkQueue.y1 = 463;
 	mkQueue.x1 = g_vars->scene29_manX <= 638 ? 351 : 0;
-	mkQueue.field_1C = 10;
-	mkQueue.field_10 = 1;
+	mkQueue.destZ = 10;
+	mkQueue.cycleCount = 1;
 	mkQueue.flags = (g_vars->scene29_manX <= 638 ? 2 : 0) | 0x44;
 	mkQueue.movementId = MV_MAN29_HIT;
 

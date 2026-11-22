@@ -63,10 +63,10 @@ struct MakeQueueStruct {
 	int staticsId1;
 	int staticsId2;
 	int movementId;
-	int field_10;
+	int cycleCount;
 	int x1;
 	int y1;
-	int field_1C;
+	int destZ;
 	int x2;
 	int y2;
 	int flags;
@@ -78,10 +78,10 @@ struct MakeQueueStruct {
 		staticsId1 = 0;
 		staticsId2 = 0;
 		movementId = 0;
-		field_10 = 0;
+		cycleCount = 0;
 		x1 = 0;
 		y1 = 0;
-		field_1C = 0;
+		destZ = 0;
 		x2 = 0;
 		y2 = 0;
 		flags = 0;

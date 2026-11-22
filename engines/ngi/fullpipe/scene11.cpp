@@ -401,12 +401,12 @@ void sceneHandler11_jumpHitAndWin() {
 						  MV_MAN11_JUMPHIT, 0);
 	g_nmi->_aniMan->_z = 10;
 
-	mkQueue.field_1C = 10;
+	mkQueue.destZ = 10;
 	mkQueue.ani = g_nmi->_aniMan;
 	mkQueue.staticsId2 = ST_MAN_1PIX;
 	mkQueue.x1 = 1400;
 	mkQueue.y1 = 0;
-	mkQueue.field_10 = 1;
+	mkQueue.cycleCount = 1;
 	mkQueue.flags = 66;
 	mkQueue.movementId = MV_MAN11_JUMPHIT;
 
@@ -450,8 +450,8 @@ void sceneHandler11_jumpOver(double angle) {
 	mkQueue.ani = g_nmi->_aniMan;
 	mkQueue.x1 = 1163;
 	mkQueue.y1 = 837 - (int)(angle * 153.0);
-	mkQueue.field_1C = 0;
-	mkQueue.field_10 = 1;
+	mkQueue.destZ = 0;
+	mkQueue.cycleCount = 1;
 	mkQueue.flags = 78;
 	mkQueue.movementId = MV_MAN11_JUMPOVER;
 
@@ -490,8 +490,8 @@ void sceneHandler11_jumpHit(double angle) {
 	mkQueue.ani = g_nmi->_aniMan;
 	mkQueue.x1 = 1017 - (int)(angle * -214.0);
 	mkQueue.y1 = 700;
-	mkQueue.field_1C = 0;
-	mkQueue.field_10 = 1;
+	mkQueue.destZ = 0;
+	mkQueue.cycleCount = 1;
 	mkQueue.flags = 78;
 	mkQueue.movementId = MV_MAN11_JUMPHIT;
 

@@ -516,7 +516,7 @@ MessageQueue *MctlLadder::makeQueue(AniObject *ani, int xpos, int ypos, int fuzz
 
 		mkQueue.x1 = normx;
 		mkQueue.y1 = normy;
-		mkQueue.field_1C = _ladder_field_14;
+		mkQueue.destZ = _ladder_field_14;
 		mkQueue.flags = 14;
 		mkQueue.movementId = direction ? _ladmovements[pos]->movVars->varDownGo : _ladmovements[pos]->movVars->varUpGo;
 
@@ -534,7 +534,7 @@ MessageQueue *MctlLadder::makeQueue(AniObject *ani, int xpos, int ypos, int fuzz
 
 			mkQueue.x1 = normx;
 			mkQueue.y1 = normy;
-			mkQueue.field_1C = _ladder_field_14;
+			mkQueue.destZ = _ladder_field_14;
 			mkQueue.flags = 14;
 			mkQueue.movementId = _ladmovements[pos]->movVars->varUpGo;
 
@@ -553,7 +553,7 @@ MessageQueue *MctlLadder::makeQueue(AniObject *ani, int xpos, int ypos, int fuzz
 		else
 			mkQueue.staticsId2 = _ladmovements[pos]->staticIds[1];
 
-		mkQueue.field_1C = _ladder_field_14;
+		mkQueue.destZ = _ladder_field_14;
 		mkQueue.x1 = normx;
 		mkQueue.y1 = normy;
 		mkQueue.y2 = point.y + oy;
@@ -619,7 +619,7 @@ MessageQueue *MctlLadder::makeQueue(AniObject *ani, int xpos, int ypos, int fuzz
 		else
 			mkQueue.staticsId2 = _ladmovements[pos]->staticIds[0];
 
-		mkQueue.field_1C = _ladder_field_14;
+		mkQueue.destZ = _ladder_field_14;
 		mkQueue.x1 = normx;
 		mkQueue.y1 = normy;
 		mkQueue.y2 = ny;
@@ -649,7 +649,7 @@ MessageQueue *MctlLadder::makeQueue(AniObject *ani, int xpos, int ypos, int fuzz
 
 	mkQueue.x1 = normx;
 	mkQueue.y1 = normy;
-	mkQueue.field_1C = _ladder_field_14;
+	mkQueue.destZ = _ladder_field_14;
 	mkQueue.flags = 14;
 	mkQueue.movementId = _ladmovements[pos]->movVars->varDownGo;
 
@@ -1241,7 +1241,7 @@ MessageQueue *MovGraph::makeWholeQueue(AniObject *ani, MovArr *movarr, int stati
 		mkQueue.x2 = ox;
 		mkQueue.y2 = oy;
 		mkQueue.y1 = ny;
-		mkQueue.field_1C = nd;
+		mkQueue.destZ = nd;
 		mkQueue.movementId = st->link->_movementIds[_linkItemOffset + st->sfield_0];
 
 		mkQueue.flags = 0xe;
@@ -2013,12 +2013,12 @@ MessageQueue *MctlGraph::makeWholeQueue(GmctlMqStruct &mctlMQ) {
 				mkQueue.staticsId2 = mg2i->_mov->_nextStatic->_staticsId;
 				mkQueue.x1 = mctlMQ.items[i + 1].x;
 				mkQueue.y1 = mctlMQ.items[i + 1].y;
-				mkQueue.field_1C = mctlMQ.items[i + 1].z;
+				mkQueue.destZ = mctlMQ.items[i + 1].z;
 				mkQueue.staticsId1 = mg2i->_mov->_prevStatic->_staticsId;
 
 				mkQueue.x2 = mctlMQ.items[i].x;
 				mkQueue.y2 = mctlMQ.items[i].y;
-				mkQueue.field_10 = 1;
+				mkQueue.cycleCount = 1;
 				mkQueue.flags = 0x7f;
 				mkQueue.movementId = mg2i->_movementId;
 

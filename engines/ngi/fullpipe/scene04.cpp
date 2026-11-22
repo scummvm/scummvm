@@ -429,8 +429,8 @@ void sceneHandler04_jumpOnLadder() {
 	mkQueue.staticsId2 = ST_MAN_ONPLANK;
 	mkQueue.x1 = 938;
 	mkQueue.y1 = 442;
-	mkQueue.field_1C = 10;
-	mkQueue.field_10 = 1;
+	mkQueue.destZ = 10;
+	mkQueue.cycleCount = 1;
 	mkQueue.flags = 78;
 	mkQueue.movementId = MV_MAN_JUMPONPLANK;
 
@@ -494,8 +494,8 @@ void sceneHandler04_gotoLadder(ExCommand *ex) {
 	mkQueue.staticsId2 = ST_MAN_UP;
 	mkQueue.x1 = 1095;
 	mkQueue.y1 = 434;
-	mkQueue.field_1C = 12;
-	mkQueue.field_10 = 1;
+	mkQueue.destZ = 12;
+	mkQueue.cycleCount = 1;
 	mkQueue.flags = 78;
 	mkQueue.movementId = MV_MAN_PLANKTOLADDER;
 
@@ -586,8 +586,8 @@ MessageQueue *sceneHandler04_kozFly3(AniObject *ani, double phase) {
 	mkQueue.staticsId2 = ST_KZW_SIT;
 	mkQueue.x1 = (int)(723.0 - phase * 185.0);
 	mkQueue.y1 = 486;
-	mkQueue.field_1C = 10;
-	mkQueue.field_10 = 1;
+	mkQueue.destZ = 10;
+	mkQueue.cycleCount = 1;
 	mkQueue.flags = 78;
 	mkQueue.movementId = MV_KZW_JUMP;
 
@@ -637,8 +637,8 @@ MessageQueue *sceneHandler04_kozFly5(AniObject *ani, double phase) {
 	mkQueue.staticsId2 = ST_KZW_JUMPOUT;
 	mkQueue.x1 = 525;
 	mkQueue.y1 = (int)(344.0 - (double)(320 - g_vars->scene04_bottle->_y) * phase);
-	mkQueue.field_1C = 10;
-	mkQueue.field_10 = 1;
+	mkQueue.destZ = 10;
+	mkQueue.cycleCount = 1;
 	mkQueue.flags = 78;
 	mkQueue.movementId = MV_KZW_JUMPHIT;
 
@@ -651,8 +651,8 @@ MessageQueue *sceneHandler04_kozFly5(AniObject *ani, double phase) {
 	mkQueue.x2 = 525;
 	mkQueue.y2 = (int)(344.0 - (double)(320 - g_vars->scene04_bottle->_y) * phase);
 	mkQueue.y1 = 486;
-	mkQueue.field_1C = 10;
-	mkQueue.field_10 = 1;
+	mkQueue.destZ = 10;
+	mkQueue.cycleCount = 1;
 	mkQueue.flags = 117;
 	mkQueue.movementId = MV_KZW_JUMPOUT;
 
@@ -709,9 +709,9 @@ MessageQueue *sceneHandler04_kozFly6(AniObject *ani) {
 	mkQueue.ani = ani;
 	mkQueue.staticsId2 = ST_KZW_SIT;
 	mkQueue.x1 = 397 - 4 * g_nmi->_rnd.getRandomNumber(1);
-	mkQueue.field_1C = ani->_z;
+	mkQueue.destZ = ani->_z;
 	mkQueue.y1 = g_vars->scene04_bottle->_y - 4 * g_nmi->_rnd.getRandomNumber(1) + 109;
-	mkQueue.field_10 = 1;
+	mkQueue.cycleCount = 1;
 	mkQueue.flags = 78;
 	mkQueue.movementId = MV_KZW_JUMPROTATE;
 
@@ -770,8 +770,8 @@ MessageQueue *sceneHandler04_kozFly7(AniObject *ani, double phase) {
 	mkQueue.staticsId2 = 560;
 	mkQueue.x1 = (int)(250.0 - phase * 100.0);
 	mkQueue.y1 = 455;
-	mkQueue.field_1C = 10;
-	mkQueue.field_10 = 1;
+	mkQueue.destZ = 10;
+	mkQueue.cycleCount = 1;
 	mkQueue.flags = 78;
 	mkQueue.movementId = MV_KZW_JUMPROTATE;
 

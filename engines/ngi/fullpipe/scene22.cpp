@@ -246,11 +246,11 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 				mkQueue.staticsId2 = ST_MAN_RIGHT;
 				mkQueue.x1 = 934;
 				mkQueue.y1 = 391;
-				mkQueue.field_1C = 10;
+				mkQueue.destZ = 10;
 				mkQueue.staticsId1 = 0x4145;
 				mkQueue.x2 = 981;
 				mkQueue.y2 = 390;
-				mkQueue.field_10 = 1;
+				mkQueue.cycleCount = 1;
 				mkQueue.flags = 127;
 				mkQueue.movementId = rMV_MAN_TURN_SRL;
 

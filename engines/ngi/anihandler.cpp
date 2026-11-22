@@ -276,7 +276,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 	int len = -1;
 
 	if (mkQueue->flags & 0x40) {
-		mult = mkQueue->field_10;
+		mult = mkQueue->cycleCount;
 		len = -1;
 		n2x *= mult;
 		n2y *= mult;
@@ -398,7 +398,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 
 	ExCommand *ex = new ExCommand(mkQueue->ani->_id, 5, -1, mkQueue->x1, mkQueue->y1, 0, 1, 0, 0, 0);
 
-	ex->_z = mkQueue->field_1C;
+	ex->_z = mkQueue->destZ;
 	ex->_param = mkQueue->ani->_copyId;
 	ex->_field_24 = 0;
 	ex->_excFlags |= 3;
