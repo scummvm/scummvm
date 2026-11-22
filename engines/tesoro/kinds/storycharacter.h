@@ -36,9 +36,6 @@ class World;
  */
 class StoryCharacter : public Character {
 public:
-	/** The levels the subtypes look into, by their place in the game's list of levels. */
-	enum Level { kInterface = -1, kOffice = 0, kPort = 1, kTavern = 2, kKitchen = 6, kVillage = 9, kVolcano = 12, kEarth = 15 };
-
 	/** Built like a character; the subtype decides how much state it keeps and how it starts. */
 	void init(int subtype, const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now, World &world);
 

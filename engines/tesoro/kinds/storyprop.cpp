@@ -21,12 +21,11 @@
 
 #include "common/textconsole.h"
 
+#include "tesoro/core/levelnumber.h"
 #include "tesoro/kinds/storyprop.h"
 #include "tesoro/world.h"
 
 namespace Tesoro {
-
-enum Place { kInterface = -1, kOffice = 0, kPort = 1, kTavern = 2, kCabin = 4, kKitchen = 6, kBeach = 7, kVillage = 9, kSwamp = 10, kVolcano = 12 };
 
 // The state bytes each subtype keeps (kinds 12, 17 and 20).
 static const byte kState12[12] = { 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0 };

@@ -21,6 +21,7 @@
 
 #include "tesoro/core/display.h"
 #include "tesoro/core/level.h"
+#include "tesoro/core/levelnumber.h"
 #include "tesoro/core/namekey.h"
 #include "tesoro/kinds/cameraframe.h"
 #include "tesoro/kinds/jim.h"
@@ -30,7 +31,6 @@ namespace Tesoro {
 
 static const int kLevelPriority = 20;
 static const int kWalkPriority = 5;
-static const int kMapLevel = 8;
 static const int kScreenMiddleX = 320;
 static const int kScreenMiddleY = 240;
 static const int kSubtitleGap = 50;	// above the top of his hit rectangle
@@ -207,7 +207,7 @@ void Jim::enterLevel(Level *level, Room *room, int32 x, int32 y) {
 
 	_x = _previousX = x;
 	_y = _previousY = y;
-	_flags = (_flags & ~kHitter) | (level->index() != kMapLevel ? kHitter : 0);
+	_flags = (_flags & ~kHitter) | (level->index() != kMap ? kHitter : 0);
 
 	level->cameraMoveTo(x, y, 0, now);
 	update();

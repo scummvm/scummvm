@@ -21,6 +21,7 @@
 
 #include "common/textconsole.h"
 
+#include "tesoro/core/levelnumber.h"
 #include "tesoro/kinds/storycharacter.h"
 #include "tesoro/world.h"
 

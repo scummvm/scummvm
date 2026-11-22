@@ -22,13 +22,12 @@
 #include "common/textconsole.h"
 
 #include "tesoro/core/animbank.h"
+#include "tesoro/core/levelnumber.h"
 #include "tesoro/core/namekey.h"
 #include "tesoro/kinds/inventoryitem.h"
 #include "tesoro/world.h"
 
 namespace Tesoro {
-
-enum Place { kInterface = -1, kKitchen = 6, kMap = 8, kVillage = 9 };
 
 // The state bytes each subtype keeps.
 static byte stateSizeOf(int subtype) {
