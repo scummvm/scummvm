@@ -37,7 +37,7 @@ namespace NGI {
 struct Hanger {
 	AniObject *ani;
 	int field_4;
-	int field_8;
+	int phaseVelocity;
 	int phase;
 };
 
@@ -82,7 +82,7 @@ void scene09_initScene(Scene *sc) {
 	hng->ani = hanger;
 	hng->phase = 0;
 	hng->field_4 = 0;
-	hng->field_8 = 0;
+	hng->phaseVelocity = 0;
 
 	g_vars->scene09_hangers.push_back(hng);
 
@@ -97,7 +97,7 @@ void scene09_initScene(Scene *sc) {
 		hng->ani = ani;
 		hng->phase = 0;
 		hng->field_4 = 0;
-		hng->field_8 = 0;
+		hng->phaseVelocity = 0;
 
 		g_vars->scene09_hangers.push_back(hng);
 	}
@@ -294,7 +294,7 @@ void sceneHandler09_cycleHangers() {
 void sceneHandler09_limitHangerPhase() {
 	for (int i = 0; i < g_vars->scene09_numMovingHangers; i++) {
 		if (i != g_vars->scene09_interactingHanger) {
-			g_vars->scene09_hangers[i]->phase += g_vars->scene09_hangers[i]->field_8;
+			g_vars->scene09_hangers[i]->phase += g_vars->scene09_hangers[i]->phaseVelocity;
 
 			if (g_vars->scene09_hangers[i]->phase > 85)
 				g_vars->scene09_hangers[i]->phase = 85;
@@ -303,10 +303,10 @@ void sceneHandler09_limitHangerPhase() {
 				g_vars->scene09_hangers[i]->phase = -85;
 
 			if (g_vars->scene09_hangers[i]->phase < 0)
-				g_vars->scene09_hangers[i]->field_8++;
+				g_vars->scene09_hangers[i]->phaseVelocity++;
 
 			if (g_vars->scene09_hangers[i]->phase > 0)
-				g_vars->scene09_hangers[i]->field_8--;
+				g_vars->scene09_hangers[i]->phaseVelocity--;
 		}
 	}
 }
@@ -395,7 +395,7 @@ void sceneHandler09_hangerStartCycle() {
 
 	if (ani->_movement) {
 		ani->startMovement(MV_VSN_CYCLE2, 0, -1);
-		g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->field_8 = 0;
+		g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->phaseVelocity = 0;
 		g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->phase = g_vars->scene09_intHangerPhase + (g_nmi->_mouseScreenPos.y - g_vars->scene09_clickY) / 2;
 
 		if (g_vars->scene09_intHangerMaxPhase != -1000 && g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->phase != g_vars->scene09_intHangerMaxPhase) {
