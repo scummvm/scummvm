@@ -77,7 +77,7 @@ void scene03_initScene(Scene *sc) {
 }
 
 void scene03_setEaterState() {
-	if (g_nmi->getObjectState(sO_EggGulperGaveCoin) == g_nmi->getObjectEnumState(sO_EggGulperGaveCoin, sO_Yes)) {
+	if (g_nmi->getStateId(sO_EggGulperGaveCoin) == g_nmi->getStateValue(sO_EggGulperGaveCoin, sO_Yes)) {
 		g_nmi->_behaviorManager->enableAni(g_vars->scene03_eggeater, ST_EGTR_SLIM, QU_EGTR_SLIMSHOW, 0);
 		g_nmi->_behaviorManager->enableAni(g_vars->scene03_eggeater, ST_EGTR_MID1, QU_EGTR_MD1_SHOW, 0);
 		g_nmi->_behaviorManager->enableAni(g_vars->scene03_eggeater, ST_EGTR_MID2, QU_EGTR_MD2_SHOW, 0);
@@ -116,7 +116,7 @@ void sceneHandler03_swallowEgg(int item) {
 		g_vars->swallowedEgg3->_value.intValue = item;
 		debugC(2, kDebugSceneLogic, "scene03: setting egg3: %d", g_vars->swallowedEgg3->_value.intValue);
 
-		g_nmi->setObjectState(sO_EggGulperGaveCoin, g_nmi->getObjectEnumState(sO_EggGulperGaveCoin, sO_Yes));
+		g_nmi->setState(sO_EggGulperGaveCoin, g_nmi->getStateValue(sO_EggGulperGaveCoin, sO_Yes));
 
 		scene03_setEaterState();
 	}
@@ -211,7 +211,7 @@ void sceneHandler03_takeEgg(Command *ex) {
 			if (ex1->_objtype == kObjTypeObjstateCommand) {
 				ObjstateCommand *com = static_cast<ObjstateCommand *>(ex1);
 
-				com->_value = g_nmi->getObjectEnumState(sO_EggGulper, sO_WantsNothing);
+				com->_value = g_nmi->getStateValue(sO_EggGulper, sO_WantsNothing);
 			}
 		}
 	}

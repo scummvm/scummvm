@@ -58,7 +58,7 @@ void scene32_initScene(Scene *sc) {
 	Scene *oldsc = g_nmi->_currentScene;
 	AniObject *ani;
 
-	if (g_nmi->getObjectState(sO_ClockHandle) == g_nmi->getObjectEnumState(sO_ClockHandle, sO_In_32_Lies)) {
+	if (g_nmi->getStateId(sO_ClockHandle) == g_nmi->getStateValue(sO_ClockHandle, sO_In_32_Lies)) {
 		ani = sc->findAniObjectById(ANI_INV_HANDLE, -1);
 		if (ani) {
 			g_nmi->_currentScene = sc;
@@ -66,7 +66,7 @@ void scene32_initScene(Scene *sc) {
 			ani->setStatic(ST_HDL_LAID);
 		}
 	} else {
-		if (g_nmi->getObjectState(sO_ClockHandle) == g_nmi->getObjectEnumState(sO_ClockHandle, sO_In_32_Sticks)) {
+		if (g_nmi->getStateId(sO_ClockHandle) == g_nmi->getStateValue(sO_ClockHandle, sO_In_32_Sticks)) {
 			ani = sc->findAniObjectById(ANI_INV_HANDLE, -1);
 
 			g_nmi->_currentScene = sc;
@@ -80,7 +80,7 @@ void scene32_initScene(Scene *sc) {
 
 	g_nmi->_currentScene = oldsc;
 
-	if (g_nmi->getObjectState(sO_Cube) == g_nmi->getObjectEnumState(sO_Cube, sO_In_32)) {
+	if (g_nmi->getStateId(sO_Cube) == g_nmi->getStateValue(sO_Cube, sO_In_32)) {
 		MessageQueue *mq = new MessageQueue(sc->findMessageQueue(QU_KBK32_START), 0, 0);
 
 		mq->next();
@@ -91,7 +91,7 @@ void scene32_initScene(Scene *sc) {
 
 	g_nmi->initArcadeKeys("SC_32");
 
-	if (g_nmi->getObjectState(sO_Cactus) == g_nmi->getObjectEnumState(sO_Cactus, sO_HasGrown)) {
+	if (g_nmi->getStateId(sO_Cactus) == g_nmi->getStateValue(sO_Cactus, sO_HasGrown)) {
 		g_nmi->_currentScene = sc;
 
 		g_vars->scene32_cactus->setStatic(ST_CTS_GROWUP);
@@ -116,7 +116,7 @@ int scene32_updateCursor() {
 }
 
 void sceneHandler32_tryCube() {
-	if (g_nmi->getObjectState(sO_Cube) == g_nmi->getObjectEnumState(sO_Cube, sO_In_33))
+	if (g_nmi->getStateId(sO_Cube) == g_nmi->getStateValue(sO_Cube, sO_In_33))
 		runQueue(QU_KBK32_GO, 0);
 }
 
@@ -203,7 +203,7 @@ void sceneHandler32_trySit(Command *cmd) {
 }
 
 void sceneHandler32_buttonPush() {
-	if (g_nmi->getObjectState(sO_ClockHandle) == g_nmi->getObjectEnumState(sO_ClockHandle, sO_In_32_Sticks)) {
+	if (g_nmi->getStateId(sO_ClockHandle) == g_nmi->getStateValue(sO_ClockHandle, sO_In_32_Sticks)) {
 		AniObject *ani = g_nmi->_currentScene->findAniObjectById(ANI_INV_HANDLE, -1);
 		if (ani)
 			ani->setStatic(ST_HDL_PLUGGED);

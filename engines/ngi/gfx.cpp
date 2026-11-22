@@ -1128,7 +1128,7 @@ bool Shadows::load(MfcArchive &file) {
 }
 
 void Shadows::init() {
-	Scene *scene = g_nmi->accessScene(_sceneId);
+	Scene *scene = g_nmi->findScene(_sceneId);
 
 	AniObject *st;
 	Movement *mov;

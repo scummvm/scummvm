@@ -39,7 +39,7 @@ void scene31_initScene(Scene *sc) {
 	g_vars->scene31_chantingCountdown = 0;
 	g_vars->scene31_cactus = sc->findAniObjectById(ANI_CACTUS_31, -1);
 
-	if (g_nmi->getObjectState(sO_Cactus) == g_nmi->getObjectEnumState(sO_Cactus, sO_HasGrown)) {
+	if (g_nmi->getStateId(sO_Cactus) == g_nmi->getStateValue(sO_Cactus, sO_HasGrown)) {
 		Scene *oldsc = g_nmi->_currentScene;
 		g_nmi->_currentScene = sc;
 
@@ -53,7 +53,7 @@ void scene31_initScene(Scene *sc) {
 
 	g_vars->scene31_plusMinus = sc->findAniObjectById(ANI_PLUSMINUS, -1);
 
-	if (g_nmi->getObjectState(sO_Guard_3) == g_nmi->getObjectEnumState(sO_Guard_3, sO_Off))
+	if (g_nmi->getStateId(sO_Guard_3) == g_nmi->getStateValue(sO_Guard_3, sO_Off))
 		g_vars->scene31_plusMinus->_statics = g_vars->scene31_plusMinus->getStatic(ST_PMS_MINUS);
 	else
 		g_vars->scene31_plusMinus->_statics = g_vars->scene31_plusMinus->getStatic(ST_PMS_PLUS);

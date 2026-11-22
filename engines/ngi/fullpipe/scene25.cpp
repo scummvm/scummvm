@@ -52,7 +52,7 @@ void scene25_initScene(Scene *sc, int entranceId) {
 	g_vars->scene25_drop->setAlpha(0xa0);
 	g_vars->scene25_dudeIsOnBoard = false;
 
-	if (g_nmi->getObjectState(sO_Pool) < g_nmi->getObjectEnumState(sO_Pool, sO_HalfFull)) {
+	if (g_nmi->getStateId(sO_Pool) < g_nmi->getStateValue(sO_Pool, sO_HalfFull)) {
 		g_vars->scene25_waterIsPresent = false;
 
 		g_vars->scene25_water->hide();
@@ -62,23 +62,23 @@ void scene25_initScene(Scene *sc, int entranceId) {
 		g_nmi->playSound(SND_25_006, 1);
 	}
 
-	int boardState = g_nmi->getObjectState(sO_Board_25);
+	int boardState = g_nmi->getStateId(sO_Board_25);
 
 	if (entranceId == TrubaRight) {
-		if (boardState == g_nmi->getObjectEnumState(sO_Board_25, sO_FarAway)) {
+		if (boardState == g_nmi->getStateValue(sO_Board_25, sO_FarAway)) {
 			scene25_showBoardOnRightFar();
 
 			g_nmi->playSound(SND_25_029, 0);
 
 			g_vars->scene25_boardIsSelectable = false;
 		} else {
-			if (boardState == g_nmi->getObjectEnumState(sO_Board_25, sO_Nearby)
-				|| boardState == g_nmi->getObjectEnumState(sO_Board_25, sO_WithDudeOnRight))
+			if (boardState == g_nmi->getStateValue(sO_Board_25, sO_Nearby)
+				|| boardState == g_nmi->getStateValue(sO_Board_25, sO_WithDudeOnRight))
 				scene25_showBoardOnRightClose();
 			g_vars->scene25_boardIsSelectable = false;
 		}
 	} else {
-		if (boardState == g_nmi->getObjectEnumState(sO_Board_25, sO_WithDudeOnLeft)) {
+		if (boardState == g_nmi->getStateValue(sO_Board_25, sO_WithDudeOnLeft)) {
 			if (!getGameLoaderInventory()->getCountItemsWithId(ANI_INV_BOARD)) {
 				getGameLoaderInventory()->addItem(ANI_INV_BOARD, 1);
 				getGameLoaderInventory()->recalcItemPos();
@@ -132,7 +132,7 @@ void sceneHandler25_startBearders() {
 	g_vars->scene25_bearders.clear();
 	g_vars->scene25_beardersCounter = 0;
 
-	AniObject *bearded = g_nmi->accessScene(SC_COMMON)->findAniObjectById(ANI_BEARDED_CMN, -1);
+	AniObject *bearded = g_nmi->findScene(SC_COMMON)->findAniObjectById(ANI_BEARDED_CMN, -1);
 
 	for (int i = 0; i < 3; i++) {
 		AniObject *ani = new AniObject(bearded);

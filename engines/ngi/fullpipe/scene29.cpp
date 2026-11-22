@@ -80,7 +80,7 @@ void scene29_initScene(Scene *sc) {
 
 	g_vars->scene29_bearders.clear();
 
-	ani = new AniObject(g_nmi->accessScene(SC_COMMON)->findAniObjectById(ANI_BEARDED_CMN, -1));
+	ani = new AniObject(g_nmi->findScene(SC_COMMON)->findAniObjectById(ANI_BEARDED_CMN, -1));
 
 	ani->_statics = ani->getStatic(ST_BRDCMN_EMPTY);
 
@@ -143,7 +143,7 @@ void sceneHandler29_winArcade() {
 		runQueue(QU_SC29_ESCAPE, 1);
 	}
 
-	g_nmi->setObjectState(sO_LeftPipe_29, g_nmi->getObjectEnumState(sO_LeftPipe_29, sO_IsOpened));
+	g_nmi->setState(sO_LeftPipe_29, g_nmi->getStateValue(sO_LeftPipe_29, sO_IsOpened));
 }
 
 void sceneHandler29_shootGreen() {
@@ -551,7 +551,7 @@ void sceneHandler29_shootersEscape() {
 			g_vars->scene29_ass->setQueue(nullptr);
 			g_vars->scene29_ass->hide();
 
-			g_nmi->setObjectState(sO_LeftPipe_29, g_nmi->getObjectEnumState(sO_LeftPipe_29, sO_IsOpened));
+			g_nmi->setState(sO_LeftPipe_29, g_nmi->getStateValue(sO_LeftPipe_29, sO_IsOpened));
 		}
 	} else if (g_vars->scene29_manIsRiding) {
 		g_vars->scene29_manX -= 4;

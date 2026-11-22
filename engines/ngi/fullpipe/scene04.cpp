@@ -128,7 +128,7 @@ void scene04_initScene(Scene *sc) {
 	if (plank)
 		plank->_flags |= 8;
 
-	if (g_nmi->getObjectState(sO_Jar_4) == g_nmi->getObjectEnumState(sO_Jar_4, sO_UpsideDown)) {
+	if (g_nmi->getStateId(sO_Jar_4) == g_nmi->getStateValue(sO_Jar_4, sO_UpsideDown)) {
 		debugC(2, kDebugSceneLogic, "scene04: Jar is upside down");
 
 		g_vars->scene04_bottleObjList.clear();
@@ -192,7 +192,7 @@ void scene04_initScene(Scene *sc) {
 
 	g_vars->scene04_kozyawkiAni.clear();
 
-	g_nmi->setObjectState(sO_LowerPipe, g_nmi->getObjectEnumState(sO_LowerPipe, sO_IsClosed));
+	g_nmi->setState(sO_LowerPipe, g_nmi->getStateValue(sO_LowerPipe, sO_IsClosed));
 
 	g_vars->scene04_var07 = false;
 	g_vars->scene04_ladderClickable = false;
@@ -205,7 +205,7 @@ void scene04_initScene(Scene *sc) {
 	g_vars->scene04_bigBallCounter = 0;
 	g_vars->scene04_bigBallFromLeft = true;
 
-	if (g_nmi->getObjectState(sO_BigMumsy) != g_nmi->getObjectEnumState(sO_BigMumsy, sO_IsGone))
+	if (g_nmi->getStateId(sO_BigMumsy) != g_nmi->getStateValue(sO_BigMumsy, sO_IsGone))
 		g_vars->scene04_mamasha->hide();
 
 	g_vars->scene04_speaker = sc->findAniObjectById(ANI_SPEAKER_4, -1);
@@ -1067,7 +1067,7 @@ void sceneHandler04_liftBottle() {
 		g_vars->scene04_springOffset = 10;
 		g_vars->scene04_bottleIsTaken = false;
 
-		g_nmi->setObjectState(sO_LowerPipe, g_nmi->getObjectEnumState(sO_LowerPipe, sO_IsClosed));
+		g_nmi->setState(sO_LowerPipe, g_nmi->getStateValue(sO_LowerPipe, sO_IsClosed));
 	}
 }
 
@@ -1271,7 +1271,7 @@ void sceneHandler04_takeBottle() {
 	g_vars->scene04_bottleIsTaken = true;
 	g_vars->scene04_hand->_z = 5;
 
-	g_nmi->setObjectState(sO_LowerPipe, g_nmi->getObjectEnumState(sO_LowerPipe, sO_IsOpened));
+	g_nmi->setState(sO_LowerPipe, g_nmi->getStateValue(sO_LowerPipe, sO_IsOpened));
 }
 
 void sceneHandler04_takeKozyawka() {
@@ -1328,7 +1328,7 @@ void sceneHandler04_updateBottle() {
 }
 
 void sceneHandler04_winArcade() {
-	if (g_nmi->getObjectState(sO_LowerPipe) == g_nmi->getObjectEnumState(sO_LowerPipe, sO_IsClosed)
+	if (g_nmi->getStateId(sO_LowerPipe) == g_nmi->getStateValue(sO_LowerPipe, sO_IsClosed)
 		&& g_vars->scene04_soundPlaying) {
 		g_vars->scene04_clock->setStatic(ST_CLK_CLOSED);
 		g_vars->scene04_hand->setStatic(ST_HND_EMPTY);

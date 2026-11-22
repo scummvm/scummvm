@@ -44,7 +44,7 @@ void scene17_initScene(Scene *sc) {
 }
 
 void scene17_restoreState() {
-	if (g_nmi->getObjectState(sO_UsherHand) == g_nmi->getObjectEnumState(sO_UsherHand, sO_WithCoin)) {
+	if (g_nmi->getStateId(sO_UsherHand) == g_nmi->getStateValue(sO_UsherHand, sO_WithCoin)) {
 		g_nmi->_behaviorManager->enableAni(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 0);
 		g_nmi->_behaviorManager->enableAni(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 0);
 
@@ -58,7 +58,7 @@ void scene17_restoreState() {
 
 	g_nmi->_floaters->init(g_nmi->getGameLoaderGameVar()->getSubVarByName("SC_17"));
 
-	g_vars->scene17_flyState = g_nmi->getObjectState(sO_Fly_17);
+	g_vars->scene17_flyState = g_nmi->getStateId(sO_Fly_17);
 
 	if (g_vars->scene17_flyState <= 0 ) {
 		g_vars->scene17_flyCountdown = g_nmi->_rnd.getRandomNumber(600) + 600;
@@ -66,7 +66,7 @@ void scene17_restoreState() {
 		g_vars->scene17_flyState = g_nmi->_rnd.getRandomNumber(4) + 1;
 	}
 
-	g_nmi->setObjectState(sO_Fly_17, g_vars->scene17_flyState - 1);
+	g_nmi->setState(sO_Fly_17, g_vars->scene17_flyState - 1);
 }
 
 int scene17_updateCursor() {
@@ -172,7 +172,7 @@ int sceneHandler17(Command *cmd) {
 		break;
 
 	case MSG_SC17_UPDATEHAND:
-		if (g_nmi->getObjectState(sO_UsherHand) == g_nmi->getObjectEnumState(sO_UsherHand, sO_WithCoin)) {
+		if (g_nmi->getStateId(sO_UsherHand) == g_nmi->getStateValue(sO_UsherHand, sO_WithCoin)) {
 			g_nmi->_behaviorManager->enableAni(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_ASK, 0);
 			g_nmi->_behaviorManager->enableAni(g_vars->scene17_hand, ST_HND17_EMPTY, QU_HND17_TOCYCLE, 0);
 

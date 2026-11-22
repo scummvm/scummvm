@@ -70,15 +70,15 @@ int scene06_updateCursor() {
 void sceneHandler06_setExits(Scene *sc) {
 	MotionController *mc = getSc2MctlCompoundBySceneId(sc->_sceneId);
 
-	mc->lockLink(sO_CloseThing, (g_nmi->getObjectState(sO_BigMumsy) != g_nmi->getObjectEnumState(sO_BigMumsy, sO_IsGone)));
+	mc->lockLink(sO_CloseThing, (g_nmi->getStateId(sO_BigMumsy) != g_nmi->getStateValue(sO_BigMumsy, sO_IsGone)));
 	mc->lockLink(sO_CloseThing2, g_vars->scene06_arcadeEnabled);
 }
 
 void sceneHandler06_winArcade() {
-	g_nmi->setObjectState(sO_BigMumsy, g_nmi->getObjectEnumState(sO_BigMumsy, sO_IsGone));
+	g_nmi->setState(sO_BigMumsy, g_nmi->getStateValue(sO_BigMumsy, sO_IsGone));
 
-	if (g_nmi->getObjectState(sO_ClockAxis) == g_nmi->getObjectEnumState(sO_ClockAxis, sO_IsNotAvailable))
-		g_nmi->setObjectState(sO_ClockAxis, g_nmi->getObjectEnumState(sO_ClockAxis, sO_WithoutHandle));
+	if (g_nmi->getStateId(sO_ClockAxis) == g_nmi->getStateValue(sO_ClockAxis, sO_IsNotAvailable))
+		g_nmi->setState(sO_ClockAxis, g_nmi->getStateValue(sO_ClockAxis, sO_WithoutHandle));
 
 	if (g_vars->scene06_arcadeEnabled) {
 		g_nmi->_aniMan->_callback2 = nullptr; // Really NULL
@@ -125,7 +125,7 @@ void sceneHandler06_enableDrops() {
 	runQueue(QU_SC6_DROPS, 0);
 
 	g_vars->scene06_mumsy->setStatic(ST_MOM_SITS);
-	g_nmi->setObjectState(sO_BigMumsy, g_nmi->getObjectEnumState(sO_BigMumsy, sO_IsPlaying));
+	g_nmi->setState(sO_BigMumsy, g_nmi->getStateValue(sO_BigMumsy, sO_IsPlaying));
 
 	runQueue(QU_MOM_STANDUP, 1);
 
@@ -169,10 +169,10 @@ void sceneHandler06_mumsyBallTake() {
 	mq->addCommandToEnd(ex);
 
 	if (g_vars->scene06_mumsyNumBalls >= 5) {
-		g_nmi->setObjectState(sO_BigMumsy, g_nmi->getObjectEnumState(sO_BigMumsy, sO_IsGone));
+		g_nmi->setState(sO_BigMumsy, g_nmi->getStateValue(sO_BigMumsy, sO_IsGone));
 
-		if (g_nmi->getObjectState(sO_ClockAxis) == g_nmi->getObjectEnumState(sO_ClockAxis, sO_IsNotAvailable))
-			g_nmi->setObjectState(sO_ClockAxis, g_nmi->getObjectEnumState(sO_ClockAxis, sO_WithoutHandle));
+		if (g_nmi->getStateId(sO_ClockAxis) == g_nmi->getStateValue(sO_ClockAxis, sO_IsNotAvailable))
+			g_nmi->setState(sO_ClockAxis, g_nmi->getStateValue(sO_ClockAxis, sO_WithoutHandle));
 
 		ex = new Command(ANI_MAMASHA, 1, momAni, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
@@ -233,16 +233,16 @@ void sceneHandler06_mumsyBallTake() {
 }
 
 void sceneHandler06_spinHandle() {
-	int tummy = g_nmi->getObjectState(sO_TummyTrampie);
+	int tummy = g_nmi->getStateId(sO_TummyTrampie);
 
-	if (tummy == g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsEating))
-		g_nmi->setObjectState(sO_TummyTrampie, g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsSleeping));
-	else if (tummy == g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsSleeping))
-		g_nmi->setObjectState(sO_TummyTrampie, g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsDrinking));
-	else if (tummy == g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsDrinking))
-		g_nmi->setObjectState(sO_TummyTrampie, g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsScratchingBelly));
-	else if (tummy == g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsScratchingBelly))
-		g_nmi->setObjectState(sO_TummyTrampie, g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsEating));
+	if (tummy == g_nmi->getStateValue(sO_TummyTrampie, sO_IsEating))
+		g_nmi->setState(sO_TummyTrampie, g_nmi->getStateValue(sO_TummyTrampie, sO_IsSleeping));
+	else if (tummy == g_nmi->getStateValue(sO_TummyTrampie, sO_IsSleeping))
+		g_nmi->setState(sO_TummyTrampie, g_nmi->getStateValue(sO_TummyTrampie, sO_IsDrinking));
+	else if (tummy == g_nmi->getStateValue(sO_TummyTrampie, sO_IsDrinking))
+		g_nmi->setState(sO_TummyTrampie, g_nmi->getStateValue(sO_TummyTrampie, sO_IsScratchingBelly));
+	else if (tummy == g_nmi->getStateValue(sO_TummyTrampie, sO_IsScratchingBelly))
+		g_nmi->setState(sO_TummyTrampie, g_nmi->getStateValue(sO_TummyTrampie, sO_IsEating));
 }
 
 void sceneHandler06_uPipeClick() {
@@ -520,10 +520,10 @@ void scene06_initScene(Scene *sc) {
 		g_vars->scene06_balls.push_back(ball2);
 	}
 
-	if (g_nmi->getObjectState(sO_BigMumsy) == g_nmi->getObjectEnumState(sO_BigMumsy, sO_IsPlaying))
-		g_nmi->setObjectState(sO_BigMumsy, g_nmi->getObjectEnumState(sO_BigMumsy, sO_IsSleeping));
+	if (g_nmi->getStateId(sO_BigMumsy) == g_nmi->getStateValue(sO_BigMumsy, sO_IsPlaying))
+		g_nmi->setState(sO_BigMumsy, g_nmi->getStateValue(sO_BigMumsy, sO_IsSleeping));
 
-	if (g_nmi->getObjectState(sO_BigMumsy) != g_nmi->getObjectEnumState(sO_BigMumsy, sO_IsSleeping))
+	if (g_nmi->getStateId(sO_BigMumsy) != g_nmi->getStateValue(sO_BigMumsy, sO_IsSleeping))
 		g_vars->scene06_mumsy->hide();
 
 	g_nmi->lift_setButton(sO_Level3, ST_LBN_3N);
@@ -564,7 +564,7 @@ int sceneHandler06(Command *ex) {
 		break;
 
 	case MSG_SC6_STARTDROPS:
-		if (g_nmi->getObjectState(sO_BigMumsy) == g_nmi->getObjectEnumState(sO_BigMumsy, sO_IsSleeping))
+		if (g_nmi->getStateId(sO_BigMumsy) == g_nmi->getStateValue(sO_BigMumsy, sO_IsSleeping))
 			sceneHandler06_enableDrops();
 		break;
 

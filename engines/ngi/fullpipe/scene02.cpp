@@ -39,7 +39,7 @@ namespace NGI {
 void scene02_initScene(Scene *sc) {
 	g_vars->scene02_guvTheDrawer = sc->findAniObjectById(ANI_DADAYASHIK, -1);
 
-	if (g_nmi->getObjectState(sO_GuvTheDrawer) == g_nmi->getObjectEnumState(sO_GuvTheDrawer, sO_IsSleeping)) {
+	if (g_nmi->getStateId(sO_GuvTheDrawer) == g_nmi->getStateValue(sO_GuvTheDrawer, sO_IsSleeping)) {
 		Scene *s = g_nmi->_currentScene;
 
 		g_nmi->_currentScene = sc;

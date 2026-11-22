@@ -38,7 +38,7 @@ namespace NGI {
 void scene30_enablePass(Scene *sc) {
 	MovGraphLink *lnk = getSc2MctlCompoundBySceneId(sc->_sceneId)->getGraphLink(sO_WayToPipe);
 
-	if (g_nmi->getObjectState(sO_Leg) == g_nmi->getObjectEnumState(sO_Leg, sO_WithAll))
+	if (g_nmi->getStateId(sO_Leg) == g_nmi->getStateValue(sO_Leg, sO_WithAll))
 		lnk->_flags &= 0xDFFFFFFF;
 	else
 		lnk->_flags |= 0x20000000;
@@ -50,15 +50,15 @@ void scene30_initScene(Scene *sc, int flag) {
 	g_vars->scene30_leg = sc->findAniObjectById(ANI_LEG, -1);
 	g_nmi->_currentScene = sc;
 
-	if (g_nmi->getObjectState(sO_Leg) == g_nmi->getObjectEnumState(sO_Leg, sO_ShowingHeel))
+	if (g_nmi->getStateId(sO_Leg) == g_nmi->getStateValue(sO_Leg, sO_ShowingHeel))
 		g_vars->scene30_leg->setStatic(ST_LEG_UP);
-	else if (g_nmi->getObjectState(sO_Leg) == g_nmi->getObjectEnumState(sO_Leg, sO_WithoutJugs))
+	else if (g_nmi->getStateId(sO_Leg) == g_nmi->getStateValue(sO_Leg, sO_WithoutJugs))
 		g_vars->scene30_leg->setStatic(ST_LEG_DOWN);
-	else if (g_nmi->getObjectState(sO_Leg) == g_nmi->getObjectEnumState(sO_Leg, sO_WithBig))
+	else if (g_nmi->getStateId(sO_Leg) == g_nmi->getStateValue(sO_Leg, sO_WithBig))
 		g_vars->scene30_leg->setStatic(ST_LEG_DOWN1);
-	else if (g_nmi->getObjectState(sO_Leg) == g_nmi->getObjectEnumState(sO_Leg, sO_WithSmall))
+	else if (g_nmi->getStateId(sO_Leg) == g_nmi->getStateValue(sO_Leg, sO_WithSmall))
 		g_vars->scene30_leg->setStatic(ST_LEG_DOWN2);
-	else if (g_nmi->getObjectState(sO_Leg) == g_nmi->getObjectEnumState(sO_Leg, sO_WithAll))
+	else if (g_nmi->getStateId(sO_Leg) == g_nmi->getStateValue(sO_Leg, sO_WithAll))
 		g_vars->scene30_leg->setStatic(ST_LEG_EMPTY);
 
 	g_nmi->_currentScene = oldsc;

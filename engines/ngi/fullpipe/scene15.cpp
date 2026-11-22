@@ -43,37 +43,37 @@ void scene15_initScene(Scene *sc) {
 	Scene *oldsc = g_nmi->_currentScene;
 	g_nmi->_currentScene = sc;
 
-	int grandmaState = g_nmi->getObjectState(sO_Grandma);
+	int grandmaState = g_nmi->getStateId(sO_Grandma);
 
-	if (grandmaState == g_nmi->getObjectEnumState(sO_Grandma, sO_In_15)) {
+	if (grandmaState == g_nmi->getStateValue(sO_Grandma, sO_In_15)) {
 		grandma->setStatic(ST_GMS_BOOT);
 		grandma->setPos(97, 399);
-		g_nmi->setObjectState(sO_LeftPipe_15, g_nmi->getObjectEnumState(sO_LeftPipe_15, sO_IsClosed));
-	} else if (grandmaState == g_nmi->getObjectEnumState(sO_Grandma, sO_In_15_1)) {
+		g_nmi->setState(sO_LeftPipe_15, g_nmi->getStateValue(sO_LeftPipe_15, sO_IsClosed));
+	} else if (grandmaState == g_nmi->getStateValue(sO_Grandma, sO_In_15_1)) {
 		grandma->setStatic(ST_GMS_BOOT);
 		grandma->setPos(86, 399);
-		g_nmi->setObjectState(sO_LeftPipe_15, g_nmi->getObjectEnumState(sO_LeftPipe_15, sO_IsClosed));
-	} else if (grandmaState == g_nmi->getObjectEnumState(sO_Grandma, sO_In_15_2)) {
+		g_nmi->setState(sO_LeftPipe_15, g_nmi->getStateValue(sO_LeftPipe_15, sO_IsClosed));
+	} else if (grandmaState == g_nmi->getStateValue(sO_Grandma, sO_In_15_2)) {
 		grandma->setStatic(ST_GMS_BOOT);
 		grandma->setPos(71, 399);
-		g_nmi->setObjectState(sO_LeftPipe_15, g_nmi->getObjectEnumState(sO_LeftPipe_15, sO_IsClosed));
-	} else if (grandmaState == g_nmi->getObjectEnumState(sO_Grandma, sO_In_15_3)) {
+		g_nmi->setState(sO_LeftPipe_15, g_nmi->getStateValue(sO_LeftPipe_15, sO_IsClosed));
+	} else if (grandmaState == g_nmi->getStateValue(sO_Grandma, sO_In_15_3)) {
 		grandma->setStatic(ST_GMS_BOOT);
 		grandma->setPos(49, 399);
-		g_nmi->setObjectState(sO_LeftPipe_15, g_nmi->getObjectEnumState(sO_LeftPipe_15, sO_IsClosed));
-	} else if (grandmaState == g_nmi->getObjectEnumState(sO_Grandma, sO_WithoutBoot)) {
+		g_nmi->setState(sO_LeftPipe_15, g_nmi->getStateValue(sO_LeftPipe_15, sO_IsClosed));
+	} else if (grandmaState == g_nmi->getStateValue(sO_Grandma, sO_WithoutBoot)) {
 		grandma->setStatic(ST_GMS_BOOT);
 		grandma->setPos(97, 399);
 		grandma->setStatic(ST_GMS_BOOTLESS2);
-		g_nmi->setObjectState(sO_LeftPipe_15, g_nmi->getObjectEnumState(sO_LeftPipe_15, sO_IsClosed));
+		g_nmi->setState(sO_LeftPipe_15, g_nmi->getStateValue(sO_LeftPipe_15, sO_IsClosed));
 	} else {
 		grandma->hide();
-		g_nmi->setObjectState(sO_LeftPipe_15, g_nmi->getObjectEnumState(sO_LeftPipe_15, sO_IsOpened));
+		g_nmi->setState(sO_LeftPipe_15, g_nmi->getStateValue(sO_LeftPipe_15, sO_IsOpened));
 	}
 
 	g_vars->scene15_plusminus = sc->findAniObjectById(ANI_PLUSMINUS, -1);
 
-	if (g_nmi->getObjectState(sO_Guard_2) == g_nmi->getObjectEnumState(sO_Guard_2, sO_Off))
+	if (g_nmi->getStateId(sO_Guard_2) == g_nmi->getStateValue(sO_Guard_2, sO_Off))
 		g_vars->scene15_plusminus->_statics = g_vars->scene15_plusminus->getStatic(ST_PMS_MINUS);
 	else
 		g_vars->scene15_plusminus->_statics = g_vars->scene15_plusminus->getStatic(ST_PMS_PLUS);
@@ -81,7 +81,7 @@ void scene15_initScene(Scene *sc) {
 	g_vars->scene15_ladder = sc->findPictureObjectById(PIC_SC15_LADDER, 0);
 	g_vars->scene15_boot = sc->findAniObjectById(ANI_BOOT_15, -1);
 
-	if (g_nmi->getObjectState(sO_Boot_15) != g_nmi->getObjectEnumState(sO_Boot_15, sO_IsPresent))
+	if (g_nmi->getStateId(sO_Boot_15) != g_nmi->getStateValue(sO_Boot_15, sO_IsPresent))
 		g_vars->scene15_boot->_flags &= 0xFFFB;
 
 	g_nmi->_currentScene = oldsc;

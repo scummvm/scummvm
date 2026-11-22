@@ -40,11 +40,11 @@ namespace NGI {
 
 void sceneFinal_initScene() {
 	g_nmi->_gameLoader->loadScene(SC_FINAL2);
-	g_nmi->accessScene(SC_FINAL2)->setPictureObjectsFlag4();
+	g_nmi->findScene(SC_FINAL2)->setPictureObjectsFlag4();
 	g_nmi->_gameLoader->loadScene(SC_FINAL3);
-	g_nmi->accessScene(SC_FINAL3)->setPictureObjectsFlag4();
+	g_nmi->findScene(SC_FINAL3)->setPictureObjectsFlag4();
 	g_nmi->_gameLoader->loadScene(SC_FINAL4);
-	g_nmi->accessScene(SC_FINAL4)->setPictureObjectsFlag4();
+	g_nmi->findScene(SC_FINAL4)->setPictureObjectsFlag4();
 
 	getGameLoaderInventory()->setIsLocked(false);
 	getGameLoaderInventory()->slideIn();
@@ -77,7 +77,7 @@ void sceneHandlerFinal_startMusic(const char *track) {
 }
 
 void sceneHandlerFinal_goto4() {
-	g_nmi->_currentScene = g_nmi->accessScene(SC_FINAL4);
+	g_nmi->_currentScene = g_nmi->findScene(SC_FINAL4);
 
 	g_nmi->_gameLoader->loadScene(SC_FINAL4);
 
@@ -85,13 +85,13 @@ void sceneHandlerFinal_goto4() {
 }
 
 void sceneHandlerFinal_goto3() {
-	g_nmi->_currentScene = g_nmi->accessScene(SC_FINAL3);
+	g_nmi->_currentScene = g_nmi->findScene(SC_FINAL3);
 
 	runQueue(QU_FN3_DOFINAL, 1);
 }
 
 void sceneHandlerFinal_goto2() {
-	g_nmi->_currentScene = g_nmi->accessScene(SC_FINAL2);
+	g_nmi->_currentScene = g_nmi->findScene(SC_FINAL2);
 
 	runQueue(QU_FN2_DOFINAL, 1);
 }

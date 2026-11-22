@@ -54,25 +54,25 @@ void scene08_initScene(Scene *sc) {
 	Scene *oldsc = g_nmi->_currentScene;
 	g_nmi->_currentScene = sc;
 
-	int batuta = g_nmi->getObjectState(sO_TummyTrampie);
+	int batuta = g_nmi->getStateId(sO_TummyTrampie);
 	MovGraphLink *lock = getSc2MctlCompoundBySceneId(sc->_sceneId)->getGraphLink(sO_CloseThing);
 
 	if (lock)
 		lock->_flags &= 0xDFFFFFFF;
 
-	if (batuta == g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsEating)) {
+	if (batuta == g_nmi->getStateValue(sO_TummyTrampie, sO_IsEating)) {
 		g_vars->scene08_batuta->setStatic(ST_BTT_SPOON);
-	} else if (batuta == g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsDrinking)) {
+	} else if (batuta == g_nmi->getStateValue(sO_TummyTrampie, sO_IsDrinking)) {
 		g_vars->scene08_batuta->setStatic(ST_BTT_NOSPOON);
 
 		g_vars->scene08_clock->startMovement(MV_CLK8_GO, 0, -1);
 		g_vars->scene08_clock->_movement->setCurFrame(3);
-	} else if (batuta== g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsScratchingBelly)) {
+	} else if (batuta== g_nmi->getStateValue(sO_TummyTrampie, sO_IsScratchingBelly)) {
 		g_vars->scene08_batuta->setStatic(ST_BTT_CHESHET);
 
 		g_vars->scene08_clock->startMovement(MV_CLK8_GO, 0, -1);
 		g_vars->scene08_clock->_movement->setCurFrame(8);
-	} else if (batuta == g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsSleeping)) {
+	} else if (batuta == g_nmi->getStateValue(sO_TummyTrampie, sO_IsSleeping)) {
 		g_vars->scene08_batuta->setStatic(ST_BTT_SLEEPS);
 
 		g_vars->scene08_clock->startMovement(MV_CLK8_GO, 0, -1);
@@ -86,7 +86,7 @@ void scene08_initScene(Scene *sc) {
 
 	g_vars->scene08_clock->_callback2 = scene08_clockCallback;
 
-	if (g_nmi->getObjectState(sO_StairsUp_8) == g_nmi->getObjectEnumState(sO_StairsUp_8, sO_Broken)) {
+	if (g_nmi->getStateId(sO_StairsUp_8) == g_nmi->getStateValue(sO_StairsUp_8, sO_Broken)) {
 		g_vars->scene08_stairsVisible = false;
 
 		sc->findPictureObjectById(PIC_SC8_LADDER, 0)->_flags &= 0xFFFB;
@@ -107,7 +107,7 @@ void scene08_initScene(Scene *sc) {
 }
 
 void scene08_setupMusic() {
-	if (g_nmi->getObjectState(sO_TummyTrampie) == g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsSleeping))
+	if (g_nmi->getStateId(sO_TummyTrampie) == g_nmi->getStateValue(sO_TummyTrampie, sO_IsSleeping))
 		g_nmi->playTrack(g_nmi->getGameLoaderGameVar()->getSubVarByName("SC_8"), "MUSIC_ARCADE", 1);
 }
 
@@ -165,7 +165,7 @@ void sceneHandler08_hideLadder() {
 void sceneHandler08_arcadeNow() {
 	MovGraphLink *lnk = getCurrSceneSc2MotionController()->getGraphLink(sO_Stairway);
 
-	g_nmi->setObjectState(sO_TummyTrampie, g_nmi->getObjectEnumState(sO_TummyTrampie, sO_IsSleeping));
+	g_nmi->setState(sO_TummyTrampie, g_nmi->getStateValue(sO_TummyTrampie, sO_IsSleeping));
 
 	g_vars->scene08_batuta->setStatic(ST_BTT_SLEEPS);
 
@@ -325,7 +325,7 @@ void sceneHandler08_badLuck() {
 	mq->setFlags(mq->getFlags() | 1);
 	mq->run(nullptr);
 
-	g_nmi->setObjectState(sO_StairsUp_8, g_nmi->getObjectEnumState(sO_StairsUp_8, sO_NotBroken));
+	g_nmi->setState(sO_StairsUp_8, g_nmi->getStateValue(sO_StairsUp_8, sO_NotBroken));
 
 	g_vars->scene08_inAir = false;
 }

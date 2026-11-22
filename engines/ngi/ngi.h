@@ -310,13 +310,13 @@ public:
 	void setCursor(int id);
 	void updateCursorCommon();
 
-	int getObjectState(const Common::String &objname);
-	void setObjectState(const Common::String &name, int state);
-	int getObjectEnumState(const Common::String &name, const char *state);
+	int getStateId(const Common::String &objname);
+	void setState(const Common::String &name, int state);
+	int getStateValue(const Common::String &name, const char *state);
 
 	void sceneAutoScrolling();
-	bool sceneSwitcher(const EntranceInfo &entrance);
-	Scene *accessScene(int sceneId);
+	bool doSetScene(const EntranceInfo &entrance);
+	Scene *findScene(int sceneId);
 	void setSceneMusicParameters(GameVar *var);
 	int convertScene(int scene);
 	int getSceneEntrance(int scene);

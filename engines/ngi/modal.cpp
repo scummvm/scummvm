@@ -51,7 +51,7 @@ ModalIntro::ModalIntro() {
 		_introFlags = 33;
 		_countDown = 150;
 
-		PictureObject *pict = g_nmi->accessScene(SC_INTRO1)->findPictureObjectById(PIC_IN1_PIPETITLE, 0);
+		PictureObject *pict = g_nmi->findScene(SC_INTRO1)->findPictureObjectById(PIC_IN1_PIPETITLE, 0);
 		pict->setFlags(pict->_flags & 0xFFFB);
 	}
 
@@ -170,7 +170,7 @@ bool ModalIntro::init(int counterdiff) {
 
 		_countDown = 150;
 		_introFlags = (_introFlags & 0xf7) | 0x21;
-		g_nmi->accessScene(SC_INTRO1)->findPictureObjectById(PIC_IN1_PIPETITLE, 0)->_flags &= 0xfffb;
+		g_nmi->findScene(SC_INTRO1)->findPictureObjectById(PIC_IN1_PIPETITLE, 0)->_flags &= 0xfffb;
 	}
 
 	if (!(_introFlags & 0x20)) {
@@ -178,8 +178,8 @@ bool ModalIntro::init(int counterdiff) {
 			if (!_stillRunning) {
 				_introFlags |= 1;
 
-				g_nmi->accessScene(SC_INTRO1)->findPictureObjectById(PIC_IN1_PIPETITLE, 0)->_flags &= 0xfffb;
-				g_nmi->accessScene(SC_INTRO1)->findPictureObjectById(PIC_IN1_GAMETITLE, 0)->_flags &= 0xfffb;
+				g_nmi->findScene(SC_INTRO1)->findPictureObjectById(PIC_IN1_PIPETITLE, 0)->_flags &= 0xfffb;
+				g_nmi->findScene(SC_INTRO1)->findPictureObjectById(PIC_IN1_GAMETITLE, 0)->_flags &= 0xfffb;
 
 				runQueue(QU_INTR_STARTINTRO, 1);
 			}
@@ -199,7 +199,7 @@ bool ModalIntro::init(int counterdiff) {
 
 		_introFlags = (_introFlags & 0xdf) | 0x10;
 
-		g_nmi->accessScene(SC_INTRO1)->findPictureObjectById(PIC_IN1_GAMETITLE, 0)->_flags &= 0xfffb;
+		g_nmi->findScene(SC_INTRO1)->findPictureObjectById(PIC_IN1_GAMETITLE, 0)->_flags &= 0xfffb;
 
 		_stillRunning = 0;
 	}
@@ -236,7 +236,7 @@ void ModalIntro::update() {
 void ModalIntro::finish() {
 	g_nmi->_gameLoader->unloadScene(SC_INTRO2);
 
-	g_nmi->_currentScene = g_nmi->accessScene(SC_INTRO1);
+	g_nmi->_currentScene = g_nmi->findScene(SC_INTRO1);
 	g_nmi->_gameLoader->preloadScene(SC_INTRO1, TrubaDown);
 
 	if (g_nmi->_currentScene)
@@ -314,7 +314,7 @@ bool ModalIntroDemo::init(int counterdiff) {
 
 		_countDown = 150;
 		_introFlags = (_introFlags & 0xf7) | 0x21;
-		g_nmi->accessScene(SC_INTRO1)->findPictureObjectById(522, 0)->_flags &= 0xfffb;
+		g_nmi->findScene(SC_INTRO1)->findPictureObjectById(522, 0)->_flags &= 0xfffb;
 	} else {
 		if (!(_introFlags & 0x20))
 			return true;
@@ -370,7 +370,7 @@ void ModalIntroDemo::update() {
 }
 
 void ModalIntroDemo::finish() {
-	g_nmi->_currentScene = g_nmi->accessScene(SC_INTRO1);
+	g_nmi->_currentScene = g_nmi->findScene(SC_INTRO1);
 	g_nmi->_gameLoader->preloadScene(SC_INTRO1, TrubaDown);
 
 	if (g_nmi->_currentScene)
@@ -658,7 +658,7 @@ bool ModalMap::handleMessage(Command *cmd) {
 void ModalMap::initMap() {
 	_isRunning = 1;
 
-	_mapScene = g_nmi->accessScene(SC_MAP);
+	_mapScene = g_nmi->findScene(SC_MAP);
 
 	if (!_mapScene)
 		error("ModalMap::initMap(): error accessing scene SC_MAP");
@@ -1023,7 +1023,7 @@ bool ModalMap::checkScenePass(PreloadItem *item) {
 		break;
 
 	case SC_25:
-		if (g_nmi->getObjectState(sO_Board_25) != g_nmi->getObjectEnumState(sO_Board_25, sO_NearDudesStairs)) {
+		if (g_nmi->getStateId(sO_Board_25) != g_nmi->getStateValue(sO_Board_25, sO_NearDudesStairs)) {
 			res = false;
 		}
 		break;
@@ -1046,8 +1046,8 @@ bool ModalMap::checkScenePass(PreloadItem *item) {
 		break;
 
 	case SC_25:
-		if (g_nmi->getObjectState(sO_Pool) != g_nmi->getObjectEnumState(sO_Pool, sO_Empty)) {
-			if (g_nmi->getObjectState(sO_Pool) != g_nmi->getObjectEnumState(sO_Pool, sO_HalfFull))
+		if (g_nmi->getStateId(sO_Pool) != g_nmi->getStateValue(sO_Pool, sO_Empty)) {
+			if (g_nmi->getStateId(sO_Pool) != g_nmi->getStateValue(sO_Pool, sO_HalfFull))
 				res = false;
 		}
 		break;
@@ -1065,7 +1065,7 @@ bool ModalMap::checkScenePass(PreloadItem *item) {
 	}
 
 	if ((item->sceneId != SC_37 && item->preloadId1 != SC_37)
-		|| (g_nmi->getObjectState(sO_Jawcrucnher) != g_nmi->getObjectEnumState(sO_Jawcrucnher, sO_WithoutCarpet))) {
+		|| (g_nmi->getStateId(sO_Jawcrucnher) != g_nmi->getStateValue(sO_Jawcrucnher, sO_WithoutCarpet))) {
 			return res;
 	} else {
 		res = false;
@@ -1095,7 +1095,7 @@ ModalFinal::~ModalFinal() {
 		g_nmi->_gameLoader->unloadScene(SC_FINAL3);
 		g_nmi->_gameLoader->unloadScene(SC_FINAL4);
 
-		g_nmi->_currentScene = g_nmi->accessScene(SC_FINAL1);
+		g_nmi->_currentScene = g_nmi->findScene(SC_FINAL1);
 
 		g_nmi->stopAllSounds();
 
@@ -1132,7 +1132,7 @@ void ModalFinal::unloadScenes() {
 	g_nmi->_gameLoader->unloadScene(SC_FINAL3);
 	g_nmi->_gameLoader->unloadScene(SC_FINAL4);
 
-	g_nmi->_currentScene = g_nmi->accessScene(SC_FINAL1);
+	g_nmi->_currentScene = g_nmi->findScene(SC_FINAL1);
 
 	g_nmi->stopAllSounds();
 }
@@ -1181,7 +1181,7 @@ void ModalFinal::update() {
 }
 
 ModalCredits::ModalCredits() {
-	_sceneTitles = g_nmi->accessScene(SC_TITLES);
+	_sceneTitles = g_nmi->findScene(SC_TITLES);
 
 	_creditsPic = _sceneTitles->findPictureObjectById(PIC_TTL_CREDITS, 0);
 	_creditsPic->_flags |= 4;
@@ -1278,7 +1278,7 @@ ModalMainMenu::ModalMainMenu() {
 	_lastArea = nullptr;
 	_hoverAreaId = 0;
 	_mfield_34 = 0;
-	_scene = g_nmi->accessScene(SC_MAINMENU);
+	_scene = g_nmi->findScene(SC_MAINMENU);
 	_debugKeyCount = 0;
 	_sliderOffset = 0;
 	_screct.left = g_nmi->_sceneRect.left;
@@ -1512,8 +1512,8 @@ bool ModalMainMenu::init(int counterdiff) {
 			if (_hoverAreaId == PIC_MNU_SAVE_L)
 				mode = 1;
 
-			sg->setup(g_nmi->accessScene(SC_MAINMENU), mode);
-			sg->setScene(g_nmi->accessScene(SC_MAINMENU));
+			sg->setup(g_nmi->findScene(SC_MAINMENU), mode);
+			sg->setScene(g_nmi->findScene(SC_MAINMENU));
 
 			sg->_rect = _screct;
 			sg->_oldBgX = _bgX;
@@ -1839,7 +1839,7 @@ void ModalHelp::update() {
 }
 
 void ModalHelp::launch() {
-	_mainMenuScene = g_nmi->accessScene(SC_MAINMENU);
+	_mainMenuScene = g_nmi->findScene(SC_MAINMENU);
 
 	if (_mainMenuScene) {
 		if (g_nmi->isDemo() && g_nmi->getLanguage() == Common::RU_RUS)
@@ -2393,7 +2393,7 @@ ModalDemo::~ModalDemo() {
 }
 
 bool ModalDemo::launch() {
-	Scene *sc = g_nmi->accessScene(SC_MAINMENU);
+	Scene *sc = g_nmi->findScene(SC_MAINMENU);
 
 	if (g_nmi->getLanguage() == Common::RU_RUS) {
 		_scene = sc;
@@ -2557,7 +2557,7 @@ void NGIEngine::openMainMenu() {
 	if (isDemo() && getLanguage() == Common::RU_RUS) {
 		ModalQuery *q = new ModalQuery;
 
-		Scene *sc = accessScene(SC_MAINMENU);
+		Scene *sc = findScene(SC_MAINMENU);
 
 		q->create(sc, nullptr, 0);
 

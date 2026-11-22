@@ -38,12 +38,12 @@ void scene07_initScene(Scene *sc) {
 	g_vars->scene07_lukePercent = 0;
 	g_vars->scene07_plusMinus = sc->findAniObjectById(ANI_PLUSMINUS, -1);
 
-	if (g_nmi->getObjectState(sO_Guard_1) == g_nmi->getObjectEnumState(sO_Guard_1, sO_Off))
+	if (g_nmi->getStateId(sO_Guard_1) == g_nmi->getStateValue(sO_Guard_1, sO_Off))
 		g_vars->scene07_plusMinus->_statics = g_vars->scene07_plusMinus->getStatic(ST_PMS_MINUS);
 	else
 		g_vars->scene07_plusMinus->_statics = g_vars->scene07_plusMinus->getStatic(ST_PMS_PLUS);
 
-	if (g_nmi->getObjectState(sO_HareTheNooksiter) == g_nmi->getObjectEnumState(sO_HareTheNooksiter, sO_WithoutHandle)) {
+	if (g_nmi->getStateId(sO_HareTheNooksiter) == g_nmi->getStateValue(sO_HareTheNooksiter, sO_WithoutHandle)) {
 		Scene *oldsc = g_nmi->_currentScene;
 
 		g_nmi->_currentScene = sc;

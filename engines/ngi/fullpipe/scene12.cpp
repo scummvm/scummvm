@@ -38,12 +38,12 @@ void scene12_initScene(Scene *sc) {
 	GameVar *var = g_nmi->getGameLoaderGameVar()->getSubVarByName("SC_12");
 	g_nmi->_floaters->init(var);
 
-	g_vars->scene12_fly = g_nmi->getObjectState(sO_Fly_12);
+	g_vars->scene12_fly = g_nmi->getStateId(sO_Fly_12);
 
 	if (g_vars->scene12_fly)
 		g_vars->scene12_flyCountdown = g_nmi->_rnd.getRandomNumber(600) + 600;
 
-	g_nmi->setObjectState(sO_Fly_12, g_nmi->_rnd.getRandomNumber(1));
+	g_nmi->setState(sO_Fly_12, g_nmi->_rnd.getRandomNumber(1));
 }
 
 void sceneHandler12_updateFloaters() {

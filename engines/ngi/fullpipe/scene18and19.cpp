@@ -72,7 +72,7 @@ void scene18_setupEntrance() {
 }
 
 void scene19_setSugarState(Scene *sc) {
-	if (g_nmi->getObjectState(sO_Sugar) != g_nmi->getObjectEnumState(sO_Sugar, sO_Present)) {
+	if (g_nmi->getStateId(sO_Sugar) != g_nmi->getStateValue(sO_Sugar, sO_Present)) {
 		Scene *oldsc = g_nmi->_currentScene;
 
 		g_nmi->_currentScene = sc;
@@ -194,7 +194,7 @@ void scene18_initScene1(Scene *sc) {
 	int oldx = g_vars->scene18_wheelCenterX;
 	int oldy = g_vars->scene18_wheelCenterY;
 
-	g_vars->scene18_girlIsSwinging = (g_nmi->getObjectState(sO_Girl) == g_nmi->getObjectEnumState(sO_Girl, sO_IsSwinging));
+	g_vars->scene18_girlIsSwinging = (g_nmi->getStateId(sO_Girl) == g_nmi->getStateValue(sO_Girl, sO_IsSwinging));
 
 	if (sc->_sceneId == SC_18) {
 		g_vars->scene18_whirlgig = sc->findAniObjectById(ANI_WHIRLIGIG_18, -1);
@@ -308,9 +308,9 @@ void scene18_initScene2(Scene *sc) {
 
 	armchair->loadMovements();
 
-	g_vars->scene18_girlIsSwinging = (g_nmi->getObjectState(sO_Girl) == g_nmi->getObjectEnumState(sO_Girl, sO_IsSwinging));
+	g_vars->scene18_girlIsSwinging = (g_nmi->getStateId(sO_Girl) == g_nmi->getStateValue(sO_Girl, sO_IsSwinging));
 
-	if (g_nmi->getObjectState(sO_Bridge) == g_nmi->getObjectEnumState(sO_Bridge, sO_Convoluted)) {
+	if (g_nmi->getStateId(sO_Bridge) == g_nmi->getStateValue(sO_Bridge, sO_Convoluted)) {
 		g_vars->scene18_bridgeIsConvoluted = true;
 		g_nmi->playSound(SND_18_006, 1);
 	} else {
@@ -810,7 +810,7 @@ void sceneHandler19_updateNumRides() {
 	int numRides = g_nmi->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarAsInt(sO_DudeSwinged) + 1;
 
 	if (numRides > 1) {
-		g_nmi->setObjectState(sO_Girl, g_nmi->getObjectEnumState(sO_Girl, sO_IsSwinging));
+		g_nmi->setState(sO_Girl, g_nmi->getStateValue(sO_Girl, sO_IsSwinging));
 
 		g_vars->scene18_kidIsOnWheel = 1;
 		g_vars->scene18_girlIsOnWheel++;

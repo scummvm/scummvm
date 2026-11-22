@@ -41,7 +41,7 @@ void scene21_initScene(Scene *sc) {
 	g_vars->scene21_giraffeBottom = sc->findAniObjectById(ANI_GIRAFFE_BOTTOM, -1);
 	g_nmi->_currentScene = sc;
 
-	if (g_nmi->getObjectState(sO_LowerPipe_21) == g_nmi->getObjectEnumState(sO_LowerPipe_21, sO_IsOpened)) {
+	if (g_nmi->getStateId(sO_LowerPipe_21) == g_nmi->getStateValue(sO_LowerPipe_21, sO_IsOpened)) {
 		g_vars->scene21_giraffeBottom->setStatic(ST_GRFB_HANG);
 		g_vars->scene21_pipeIsOpen = true;
 		g_vars->scene21_wigglePos = 0.0;
@@ -85,14 +85,14 @@ int sceneHandler21(Command *cmd) {
 
 	switch (cmd->_messageNum) {
 	case MSG_SC21_UPDATEASS:
-		if (g_nmi->getObjectState(sO_LowerPipe_21) == g_nmi->getObjectEnumState(sO_LowerPipe_21, sO_IsOpened)) {
+		if (g_nmi->getStateId(sO_LowerPipe_21) == g_nmi->getStateValue(sO_LowerPipe_21, sO_IsOpened)) {
 			g_vars->scene21_giraffeBottom->setStatic(ST_GRFB_HANG);
 			g_vars->scene21_giraffeBottom->setPos(g_vars->scene21_giraffeBottomX, g_vars->scene21_giraffeBottomY);
 			g_vars->scene21_giraffeBottom->setStatic(ST_GRFB_SIT);
 
 			g_vars->scene21_pipeIsOpen = false;
 
-			g_nmi->setObjectState(sO_LowerPipe_21, g_nmi->getObjectEnumState(sO_LowerPipe_21, sO_IsClosed));
+			g_nmi->setState(sO_LowerPipe_21, g_nmi->getStateValue(sO_LowerPipe_21, sO_IsClosed));
 		}
 
 		break;

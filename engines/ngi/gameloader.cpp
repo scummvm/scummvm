@@ -207,7 +207,7 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 	if (sg || (sg = _gameVar->getSubVarByName("OBJSTATES")->addSubVarAsInt("SAVEGAME", 0)) != nullptr)
 		sg->setSubVarAsInt("Entrance", entranceId);
 
-	if (!g_nmi->sceneSwitcher(_sc2array[sc2idx]._entranceData[entranceIdx]))
+	if (!g_nmi->doSetScene(_sc2array[sc2idx]._entranceData[entranceIdx]))
 		return false;
 
 	g_nmi->_msgObjectId2 = 0;
@@ -285,7 +285,7 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 
 		if (g_nmi->_soundEnabled) {
 			g_nmi->_currSoundListCount = 1;
-			g_nmi->_currSoundList1[0] = g_nmi->accessScene(SC_COMMON)->_soundList.get();
+			g_nmi->_currSoundList1[0] = g_nmi->findScene(SC_COMMON)->_soundList.get();
 		}
 
 		g_vars->scene18_inScene18p1 = false;
@@ -298,7 +298,7 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 				g_nmi->_scene3 = nullptr;
 			}
 		} else {
-			scene19_setMovements(g_nmi->accessScene(pre.preloadId1), pre.param);
+			scene19_setMovements(g_nmi->findScene(pre.preloadId1), pre.param);
 
 			g_vars->scene18_inScene18p1 = true;
 
@@ -316,7 +316,7 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 
 		if (!g_nmi->_loaderScene) {
 			g_nmi->_gameLoader->loadScene(SC_LDR);
-			g_nmi->_loaderScene = g_nmi->accessScene(SC_LDR);
+			g_nmi->_loaderScene = g_nmi->findScene(SC_LDR);
 		}
 
 		AniObject *pbar = g_nmi->_loaderScene->findAniObjectById(ANI_PBAR, -1);
@@ -476,7 +476,7 @@ void GameLoader::applyPicAniInfos(Scene *sc, const PicAniInfoList &picAniInfo) {
 			if (!(info.type & 1))
 				continue;
 
-			Scene *scNew = g_nmi->accessScene(info.sceneId);
+			Scene *scNew = g_nmi->findScene(info.sceneId);
 			if (!scNew)
 				continue;
 

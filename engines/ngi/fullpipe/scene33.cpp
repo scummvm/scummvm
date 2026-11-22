@@ -44,7 +44,7 @@ void scene33_initScene(Scene *sc) {
 	g_vars->scene33_cubeX = -1;
 	g_vars->scene33_handleIsDown = false;
 
-	if (g_nmi->getObjectState(sO_Cube) == g_nmi->getObjectEnumState(sO_Cube, sO_In_33)) {
+	if (g_nmi->getStateId(sO_Cube) == g_nmi->getStateValue(sO_Cube, sO_In_33)) {
 		MessageQueue *mq = new MessageQueue(sc->findMessageQueue(QU_KBK33_START), 0, 0);
 
 		mq->next();
@@ -119,7 +119,7 @@ void sceneHandler33_processVents() {
 }
 
 void sceneHandler33_tryCube() {
-	if (g_nmi->getObjectState(sO_Cube) == g_nmi->getObjectEnumState(sO_Cube, sO_In_32))
+	if (g_nmi->getStateId(sO_Cube) == g_nmi->getStateValue(sO_Cube, sO_In_32))
 		runQueue(QU_KBK33_GO, 0);
 }
 

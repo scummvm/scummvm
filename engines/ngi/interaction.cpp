@@ -495,20 +495,20 @@ bool Interact::canRun(GameObject *obj1, GameObject *obj2, int invId) {
 
 	if (_objectState1) {
 		if (_flags & 0x10) {
-			if ((g_nmi->getObjectState(obj1->getName()) & _objectState1) == 0)
+			if ((g_nmi->getStateId(obj1->getName()) & _objectState1) == 0)
 				return false;
 		} else {
-			if (g_nmi->getObjectState(obj1->getName()) != _objectState1)
+			if (g_nmi->getStateId(obj1->getName()) != _objectState1)
 				return false;
 		}
 	}
 
 	if (_objectState2) {
 		if (_flags & 0x10) {
-			if ((g_nmi->getObjectState(obj2->getName()) & _objectState2) == 0)
+			if ((g_nmi->getStateId(obj2->getName()) & _objectState2) == 0)
 				return false;
 		} else {
-			if (g_nmi->getObjectState(obj2->getName()) != _objectState2)
+			if (g_nmi->getStateId(obj2->getName()) != _objectState2)
 				return false;
 		}
 	}

@@ -272,7 +272,7 @@ void BehaviorAni::initObjectBehavior(GameVar *var, Scene *sc, AniObject *ani) {
 		if (v1 == var)
 			return;
 
-		sc = g_nmi->accessScene(ani->_sceneId);
+		sc = g_nmi->findScene(ani->_sceneId);
 		clear();
 		var = v1;
 		_animsCount = var->getSubVarsCount();

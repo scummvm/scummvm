@@ -49,7 +49,7 @@ void sceneIntroDemo_initScene(Scene *sc) {
 }
 
 void sceneHandlerIntroDemo_part1() {
-	g_nmi->_currentScene = g_nmi->accessScene(SC_INTRO1);
+	g_nmi->_currentScene = g_nmi->findScene(SC_INTRO1);
 	runQueue(QU_INTR_FINISH, 0);
 }
 

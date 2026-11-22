@@ -47,7 +47,7 @@ void scene16_initScene(Scene *sc) {
 	g_vars->scene16_girlIsLaughing = false;
 	g_vars->scene16_sound = SND_16_034;
 
-	if (g_nmi->getObjectState(sO_Bridge) == g_nmi->getObjectEnumState(sO_Bridge, sO_Convoluted)) {
+	if (g_nmi->getStateId(sO_Bridge) == g_nmi->getStateValue(sO_Bridge, sO_Convoluted)) {
 		g_vars->scene16_placeIsOccupied = true;
 
 		AniObject *boy[2];
@@ -79,24 +79,24 @@ void scene16_initScene(Scene *sc) {
 				idx = 0;
 		}
 	} else {
-		g_nmi->setObjectState(sO_Girl, g_nmi->getObjectEnumState(sO_Girl, sO_IsSwinging));
+		g_nmi->setState(sO_Girl, g_nmi->getStateValue(sO_Girl, sO_IsSwinging));
 
 		g_vars->scene16_placeIsOccupied = false;
 
-		AniObject *ani = new AniObject(g_nmi->accessScene(SC_COMMON)->findAniObjectById(ANI_BEARDED_CMN, -1));
+		AniObject *ani = new AniObject(g_nmi->findScene(SC_COMMON)->findAniObjectById(ANI_BEARDED_CMN, -1));
 		ani->_movement = nullptr;
 		ani->_statics = ani->_staticsList[0];
 		sc->addAni(ani, 1);
 	}
 
-	if (g_nmi->getObjectState(sO_Girl) == g_nmi->getObjectEnumState(sO_Girl, sO_IsLaughing)) {
+	if (g_nmi->getStateId(sO_Girl) == g_nmi->getStateValue(sO_Girl, sO_IsLaughing)) {
 		AniObject *girl = sc->findAniObjectById(ANI_GIRL, -1);
 
 		girl->show1(554, 432, MV_GRL_LAUGH_POPA, 0);
 		girl->_z = 20;
 	}
 
-	if (g_nmi->getObjectState(sO_Cup) == g_nmi->getObjectEnumState(sO_Cup, sO_In_16)) {
+	if (g_nmi->getStateId(sO_Cup) == g_nmi->getStateValue(sO_Cup, sO_In_16)) {
 		g_vars->scene16_mug->_statics = g_vars->scene16_mug->getStatic(ST_MUG_EMPTY);
 		g_vars->scene16_mug->_movement = nullptr;
 		g_vars->scene16_mug->setPos(409, 459);
@@ -143,7 +143,7 @@ void sceneHandler16_laughSound() {
 }
 
 void sceneHandler16_showBearded() {
-	if (g_nmi->getObjectState(sO_Bridge) == g_nmi->getObjectEnumState(sO_Bridge, sO_Unconvoluted)) {
+	if (g_nmi->getStateId(sO_Bridge) == g_nmi->getStateValue(sO_Bridge, sO_Unconvoluted)) {
 		AniObject *brd = g_nmi->_currentScene->findAniObjectById(ANI_BEARDED_CMN, -1);
 
 		if (!brd || !(brd->_flags & 4))
@@ -166,7 +166,7 @@ void sceneHandler16_fillMug() {
 
 				g_vars->scene16_mug->show1(-1, -1, -1, 0);
 
-				g_nmi->setObjectState(sO_Cup, g_nmi->getObjectEnumState(sO_Cup, sO_DudeHas));
+				g_nmi->setState(sO_Cup, g_nmi->getStateValue(sO_Cup, sO_DudeHas));
 			}
 		}
 		return;
@@ -367,7 +367,7 @@ void sceneHandler16_putOnWheel() {
 			g_vars->scene16_walkingBoy = ani;
 			g_vars->scene16_walkingGirl = nullptr;
 		} else if (ani->_id == ANI_GIRL) {
-			if (g_nmi->getObjectState(sO_Girl) == g_nmi->getObjectEnumState(sO_Girl, sO_IsSwinging)) {
+			if (g_nmi->getStateId(sO_Girl) == g_nmi->getStateValue(sO_Girl, sO_IsSwinging)) {
 				mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(QU_SC16_GOGIRL), 0, 1);
 
 				mq->setObjectCopy(-1, ani->_copyId);

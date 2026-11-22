@@ -510,7 +510,7 @@ int global_messageHandler3(Command *cmd) {
 		if (cmd->_objtype == kObjTypeObjstateCommand) {
 			ObjstateCommand *c = static_cast<ObjstateCommand *>(cmd);
 			result = 1;
-			g_nmi->setObjectState(c->_objCommandName.c_str(), c->_value);
+			g_nmi->setState(c->_objCommandName.c_str(), c->_value);
 		}
 		return result;
 	default:
@@ -661,7 +661,7 @@ int global_messageHandler4(Command *cmd) {
 
 	case 27:
 		if (!g_nmi->_currentScene || g_nmi->_currentScene->findAniObjectById(cmd->_parentId, cmd->_param) == nullptr) {
-			ani = g_nmi->accessScene(cmd->_invId)->findAniObjectById(cmd->_parentId, -1);
+			ani = g_nmi->findScene(cmd->_invId)->findAniObjectById(cmd->_parentId, -1);
 			if (ani) {
 				ani = new AniObject(ani);
 				g_nmi->_currentScene->addAni(ani, 1);

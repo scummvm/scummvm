@@ -38,11 +38,11 @@ namespace NGI {
 void scene20_setExits(Scene *sc) {
 	int thingpar;
 
-	if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_OnStool)
-		|| g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_OnTheFloor))
+	if (g_nmi->getStateId(sO_Grandma) == g_nmi->getStateValue(sO_Grandma, sO_OnStool)
+		|| g_nmi->getStateId(sO_Grandma) == g_nmi->getStateValue(sO_Grandma, sO_OnTheFloor))
 		thingpar = 1;
-	else if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_NearPipe)
-			 || g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_NearPipeWithStool)) {
+	else if (g_nmi->getStateId(sO_Grandma) == g_nmi->getStateValue(sO_Grandma, sO_NearPipe)
+			 || g_nmi->getStateId(sO_Grandma) == g_nmi->getStateValue(sO_Grandma, sO_NearPipeWithStool)) {
 		getSc2MctlCompoundBySceneId(sc->_sceneId)->lockLink(sO_CloseThing, true);
 		getSc2MctlCompoundBySceneId(sc->_sceneId)->lockLink(sO_CloseThing2, true);
 		getSc2MctlCompoundBySceneId(sc->_sceneId)->lockLink(sO_CloseThing3, false);
@@ -64,15 +64,15 @@ void scene20_initScene(Scene *sc) {
 
 	g_nmi->_currentScene = sc;
 
-	if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_OnTheFloor))
-		g_nmi->setObjectState(sO_Grandma, g_nmi->getObjectEnumState(sO_Grandma, sO_NearPipe));
+	if (g_nmi->getStateId(sO_Grandma) == g_nmi->getStateValue(sO_Grandma, sO_OnTheFloor))
+		g_nmi->setState(sO_Grandma, g_nmi->getStateValue(sO_Grandma, sO_NearPipe));
 
-	if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_OnStool)) {
+	if (g_nmi->getStateId(sO_Grandma) == g_nmi->getStateValue(sO_Grandma, sO_OnStool)) {
 		g_vars->scene20_grandma->setStatic(ST_GMA20_STOOL);
-	} else if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_OnTheFloor)) {
+	} else if (g_nmi->getStateId(sO_Grandma) == g_nmi->getStateValue(sO_Grandma, sO_OnTheFloor)) {
 		g_vars->scene20_grandma->setStatic(ST_GMA20_FLOOR);
-	} else if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_NearPipe)
-				|| g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_NearPipeWithStool)) {
+	} else if (g_nmi->getStateId(sO_Grandma) == g_nmi->getStateValue(sO_Grandma, sO_NearPipe)
+				|| g_nmi->getStateId(sO_Grandma) == g_nmi->getStateValue(sO_Grandma, sO_NearPipeWithStool)) {
 		g_vars->scene20_grandma->setStatic(ST_GMA20_STAND);
 	} else {
 		g_vars->scene20_grandma->hide();

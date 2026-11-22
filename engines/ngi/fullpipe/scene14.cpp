@@ -49,7 +49,7 @@ void scene14_initScene(Scene *sc) {
 	g_vars->scene14_flyingBall = nullptr;
 	g_vars->scene14_balls.clear();
 
-	if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_In_14)) {
+	if (g_nmi->getStateId(sO_Grandma) == g_nmi->getStateValue(sO_Grandma, sO_In_14)) {
 		g_vars->scene14_grandmaIsHere = true;
 
 		AniObject *ball = sc->findAniObjectById(ANI_BALL14, -1);
@@ -323,8 +323,8 @@ void sceneHandler14_winArcade() {
 
 		g_vars->scene14_grandmaIsHere = false;
 
-		if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_In_14)) {
-			g_nmi->setObjectState(sO_Grandma, g_nmi->getObjectEnumState(sO_Grandma, sO_In_15));
+		if (g_nmi->getStateId(sO_Grandma) == g_nmi->getStateValue(sO_Grandma, sO_In_14)) {
+			g_nmi->setState(sO_Grandma, g_nmi->getStateValue(sO_Grandma, sO_In_15));
 			g_vars->scene14_grandma->setStatic(ST_GMA_SIT);
 			g_vars->scene14_grandma->_flags &= 0xFFFB;
 		}

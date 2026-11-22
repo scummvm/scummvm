@@ -41,9 +41,9 @@ void scene26_initScene(Scene *sc) {
 	g_vars->scene26_sockPic = sc->findPictureObjectById(PIC_SC26_SOCK, 0);
 	g_vars->scene26_sock = sc->findAniObjectById(ANI_SOCK_26, -1);
 
-	if (g_nmi->getObjectState(sO_Hatch_26) == g_nmi->getObjectEnumState(sO_Hatch_26, sO_WithSock)) {
-		g_nmi->setObjectState(sO_Hatch_26, g_nmi->getObjectEnumState(sO_Hatch_26, sO_Closed));
-		g_nmi->setObjectState(sO_Sock_26, g_nmi->getObjectEnumState(sO_Sock_26, sO_HangsOnPipe));
+	if (g_nmi->getStateId(sO_Hatch_26) == g_nmi->getStateValue(sO_Hatch_26, sO_WithSock)) {
+		g_nmi->setState(sO_Hatch_26, g_nmi->getStateValue(sO_Hatch_26, sO_Closed));
+		g_nmi->setState(sO_Sock_26, g_nmi->getStateValue(sO_Sock_26, sO_HangsOnPipe));
 	}
 
 	Interact *inter = getGameLoaderInteractionController()->getInteractionByObjectIds(ANI_LUK26, ANI_MAN, ANI_INV_SOCK);
@@ -53,12 +53,12 @@ void scene26_initScene(Scene *sc) {
 	else
 		inter->_flags |= 0x20000;
 
-	if (g_nmi->getObjectState(sO_Sock_26) == g_nmi->getObjectEnumState(sO_Sock_26, sO_HangsOnPipe))
+	if (g_nmi->getStateId(sO_Sock_26) == g_nmi->getStateValue(sO_Sock_26, sO_HangsOnPipe))
 		g_vars->scene26_sockPic->_flags |= 4;
 	else
 		g_vars->scene26_sockPic->_flags &= 0xFFFB;
 
-	if (g_nmi->getObjectState(sO_Valve1_26) == g_nmi->getObjectEnumState(sO_Valve1_26, sO_Opened))
+	if (g_nmi->getStateId(sO_Valve1_26) == g_nmi->getStateValue(sO_Valve1_26, sO_Opened))
 		g_nmi->playSound(SND_26_018, 1);
 }
 
@@ -81,7 +81,7 @@ int scene26_updateCursor() {
 }
 
 void sceneHandler26_updateDrop() {
-	if (g_nmi->getObjectState(sO_Valve5_26) == g_nmi->getObjectEnumState(sO_Valve5_26, sO_Closed))
+	if (g_nmi->getStateId(sO_Valve5_26) == g_nmi->getStateValue(sO_Valve5_26, sO_Closed))
 		g_nmi->_behaviorManager->enableAllQueuesForAni(g_vars->scene26_drop, 0);
 	else
 		g_nmi->_behaviorManager->enableAllQueuesForAni(g_vars->scene26_drop, 1);
@@ -98,19 +98,19 @@ void sceneHandler26_showChi() {
 }
 
 void sceneHandler26_updatePool() {
-	if (g_nmi->getObjectState(sO_Valve1_26) == g_nmi->getObjectEnumState(sO_Valve1_26, sO_Opened))
-		g_nmi->setObjectState(sO_Pool, g_nmi->getObjectEnumState(sO_Pool, sO_Overfull));
-	else if (g_nmi->getObjectState(sO_Pool) == g_nmi->getObjectEnumState(sO_Pool, sO_Overfull))
-		g_nmi->setObjectState(sO_Pool, g_nmi->getObjectEnumState(sO_Pool, sO_Full));
+	if (g_nmi->getStateId(sO_Valve1_26) == g_nmi->getStateValue(sO_Valve1_26, sO_Opened))
+		g_nmi->setState(sO_Pool, g_nmi->getStateValue(sO_Pool, sO_Overfull));
+	else if (g_nmi->getStateId(sO_Pool) == g_nmi->getStateValue(sO_Pool, sO_Overfull))
+		g_nmi->setState(sO_Pool, g_nmi->getStateValue(sO_Pool, sO_Full));
 
-	if (g_nmi->getObjectState(sO_Valve2_26) == g_nmi->getObjectEnumState(sO_Valve2_26, sO_Opened)) {
-		if (g_nmi->getObjectState(sO_Pool) >= g_nmi->getObjectEnumState(sO_Pool, sO_Full))
-			g_nmi->setObjectState(sO_Pool, g_nmi->getObjectEnumState(sO_Pool, sO_HalfFull));
+	if (g_nmi->getStateId(sO_Valve2_26) == g_nmi->getStateValue(sO_Valve2_26, sO_Opened)) {
+		if (g_nmi->getStateId(sO_Pool) >= g_nmi->getStateValue(sO_Pool, sO_Full))
+			g_nmi->setState(sO_Pool, g_nmi->getStateValue(sO_Pool, sO_HalfFull));
 	}
 
-	if (g_nmi->getObjectState(sO_Valve3_26) == g_nmi->getObjectEnumState(sO_Valve3_26, sO_Opened)) {
-		if (g_nmi->getObjectState(sO_Pool) >= g_nmi->getObjectEnumState(sO_Pool, sO_HalfFull))
-			g_nmi->setObjectState(sO_Pool, g_nmi->getObjectEnumState(sO_Pool, sO_Empty));
+	if (g_nmi->getStateId(sO_Valve3_26) == g_nmi->getStateValue(sO_Valve3_26, sO_Opened)) {
+		if (g_nmi->getStateId(sO_Pool) >= g_nmi->getStateValue(sO_Pool, sO_HalfFull))
+			g_nmi->setState(sO_Pool, g_nmi->getStateValue(sO_Pool, sO_Empty));
 	}
 }
 
@@ -125,49 +125,49 @@ void sceneHandler26_testVent() {
 		return;
 
 	if (g_vars->scene26_activeVent->_copyId == 0) {
-		if (g_nmi->getObjectState(sO_Valve1_26) == g_nmi->getObjectEnumState(sO_Valve1_26, sO_Opened))
+		if (g_nmi->getStateId(sO_Valve1_26) == g_nmi->getStateValue(sO_Valve1_26, sO_Opened))
 			g_nmi->stopAllSoundInstances(SND_26_018);
 		else
 			g_nmi->playSound(SND_26_018, 1);
 
-		if (g_nmi->getObjectState(sO_Valve2_26) == g_nmi->getObjectEnumState(sO_Valve2_26, sO_Opened)) {
+		if (g_nmi->getStateId(sO_Valve2_26) == g_nmi->getStateValue(sO_Valve2_26, sO_Opened)) {
 			runQueue(QU_SC26_AUTOCLOSE2, 0);
 
 			g_nmi->playSound(SND_26_020, 0);
 		}
 
-		if (g_nmi->getObjectState(sO_Valve3_26) == g_nmi->getObjectEnumState(sO_Valve3_26, sO_Opened)) {
+		if (g_nmi->getStateId(sO_Valve3_26) == g_nmi->getStateValue(sO_Valve3_26, sO_Opened)) {
 			runQueue(QU_SC26_AUTOCLOSE3, 0);
 
 			g_nmi->playSound(SND_26_020, 0);
 		}
 	} else if (g_vars->scene26_activeVent->_copyId == 1) {
-		if (g_nmi->getObjectState(sO_Valve2_26) == g_nmi->getObjectEnumState(sO_Valve2_26, sO_Opened))
+		if (g_nmi->getStateId(sO_Valve2_26) == g_nmi->getStateValue(sO_Valve2_26, sO_Opened))
 			g_nmi->playSound(SND_26_020, 0);
 		else
 			g_nmi->playSound(SND_26_019, 0);
 
-		if (g_nmi->getObjectState(sO_Pool) == g_nmi->getObjectEnumState(sO_Pool, sO_Overfull)
-			|| g_nmi->getObjectState(sO_Pool) == g_nmi->getObjectEnumState(sO_Pool, sO_Full))
+		if (g_nmi->getStateId(sO_Pool) == g_nmi->getStateValue(sO_Pool, sO_Overfull)
+			|| g_nmi->getStateId(sO_Pool) == g_nmi->getStateValue(sO_Pool, sO_Full))
 			g_nmi->playSound(SND_26_003, 0);
 
-		if (g_nmi->getObjectState(sO_Valve1_26) == g_nmi->getObjectEnumState(sO_Valve1_26, sO_Opened)) {
+		if (g_nmi->getStateId(sO_Valve1_26) == g_nmi->getStateValue(sO_Valve1_26, sO_Opened)) {
 			g_nmi->stopAllSoundInstances(SND_26_018);
 
 			runQueue(QU_SC26_AUTOCLOSE1, 0);
 		}
 	} else if (g_vars->scene26_activeVent->_copyId == 2) {
-		if (g_nmi->getObjectState(sO_Valve3_26) == g_nmi->getObjectEnumState(sO_Valve3_26, sO_Opened))
+		if (g_nmi->getStateId(sO_Valve3_26) == g_nmi->getStateValue(sO_Valve3_26, sO_Opened))
 			g_nmi->playSound(SND_26_020, 0);
 		else
 			g_nmi->playSound(SND_26_019, 0);
 
-		if (g_nmi->getObjectState(sO_Pool) == g_nmi->getObjectEnumState(sO_Pool, sO_Overfull)
-			 || g_nmi->getObjectState(sO_Pool) == g_nmi->getObjectEnumState(sO_Pool, sO_Full)
-			 || g_nmi->getObjectState(sO_Pool) == g_nmi->getObjectEnumState(sO_Pool, sO_HalfFull))
+		if (g_nmi->getStateId(sO_Pool) == g_nmi->getStateValue(sO_Pool, sO_Overfull)
+			 || g_nmi->getStateId(sO_Pool) == g_nmi->getStateValue(sO_Pool, sO_Full)
+			 || g_nmi->getStateId(sO_Pool) == g_nmi->getStateValue(sO_Pool, sO_HalfFull))
 			g_nmi->playSound(SND_26_003, 0);
 
-		if (g_nmi->getObjectState(sO_Valve1_26) == g_nmi->getObjectEnumState(sO_Valve1_26, sO_Opened)) {
+		if (g_nmi->getStateId(sO_Valve1_26) == g_nmi->getStateValue(sO_Valve1_26, sO_Opened)) {
 			g_nmi->stopAllSoundInstances(SND_26_018);
 
 			runQueue(QU_SC26_AUTOCLOSE1, 0);
@@ -201,7 +201,7 @@ void sceneHandler26_animateVents(AniObject *ani) {
 
 	switch (ani->_copyId) {
 	case 0:
-		if (g_nmi->getObjectState(sO_Valve1_26) == g_nmi->getObjectEnumState(sO_Valve1_26, sO_Closed)) {
+		if (g_nmi->getStateId(sO_Valve1_26) == g_nmi->getStateValue(sO_Valve1_26, sO_Closed)) {
 			qId = QU_SC26_OPEN1;
 		} else {
 			qId = QU_SC26_CLOSE1;
@@ -209,7 +209,7 @@ void sceneHandler26_animateVents(AniObject *ani) {
 		break;
 
 	case 1:
-		if (g_nmi->getObjectState(sO_Valve2_26) == g_nmi->getObjectEnumState(sO_Valve2_26, sO_Closed)) {
+		if (g_nmi->getStateId(sO_Valve2_26) == g_nmi->getStateValue(sO_Valve2_26, sO_Closed)) {
 			qId = QU_SC26_OPEN2;
 		} else {
 			qId = QU_SC26_CLOSE2;
@@ -217,7 +217,7 @@ void sceneHandler26_animateVents(AniObject *ani) {
 		break;
 
 	case 2:
-		if (g_nmi->getObjectState(sO_Valve3_26) == g_nmi->getObjectEnumState(sO_Valve3_26, sO_Closed)) {
+		if (g_nmi->getStateId(sO_Valve3_26) == g_nmi->getStateValue(sO_Valve3_26, sO_Closed)) {
 			qId = QU_SC26_OPEN3;
 		} else {
 			qId = QU_SC26_CLOSE3;
@@ -225,7 +225,7 @@ void sceneHandler26_animateVents(AniObject *ani) {
 		break;
 
 	case 3:
-		if (g_nmi->getObjectState(sO_Valve4_26) == g_nmi->getObjectEnumState(sO_Valve4_26, sO_Closed)) {
+		if (g_nmi->getStateId(sO_Valve4_26) == g_nmi->getStateValue(sO_Valve4_26, sO_Closed)) {
 			qId = QU_SC26_OPEN4;
 		} else {
 			qId = QU_SC26_CLOSE4;
@@ -233,7 +233,7 @@ void sceneHandler26_animateVents(AniObject *ani) {
 		break;
 
 	case 4:
-		if (g_nmi->getObjectState(sO_Valve5_26) == g_nmi->getObjectEnumState(sO_Valve5_26, sO_Closed)) {
+		if (g_nmi->getStateId(sO_Valve5_26) == g_nmi->getStateValue(sO_Valve5_26, sO_Closed)) {
 			qId = QU_SC26_OPEN5;
 		} else {
 			qId = QU_SC26_CLOSE5;
@@ -253,7 +253,7 @@ void sceneHandler26_animateVents(AniObject *ani) {
 }
 
 void sceneHandler26_clickVent(AniObject *ani, Command *cmd) {
-	if (ani->_copyId || g_nmi->getObjectState(sO_Hatch_26) != g_nmi->getObjectEnumState(sO_Hatch_26, sO_Opened)) {
+	if (ani->_copyId || g_nmi->getStateId(sO_Hatch_26) != g_nmi->getStateValue(sO_Hatch_26, sO_Opened)) {
 		if (g_nmi->_aniMan->isIdle() && !(g_nmi->_aniMan->_flags & 0x100)) {
 			g_vars->scene26_activeVent = ani;
 

@@ -44,7 +44,7 @@ struct Hanger {
 void scene09_setupGrit(Scene *sc) {
 	if (g_vars->scene09_grit->_statics->_staticsId == ST_GRT9_GRIT) {
 		if (!getGameLoaderInventory()->getCountItemsWithId(ANI_INV_COIN)) {
-			if (g_nmi->getObjectState(sO_CoinSlot_1) == g_nmi->getObjectEnumState(sO_CoinSlot_1, sO_Empty)
+			if (g_nmi->getStateId(sO_CoinSlot_1) == g_nmi->getStateValue(sO_CoinSlot_1, sO_Empty)
 				&& (g_vars->swallowedEgg1->_value.intValue == ANI_INV_EGGBOOT || g_vars->swallowedEgg2->_value.intValue == ANI_INV_EGGBOOT || g_vars->swallowedEgg3->_value.intValue == ANI_INV_EGGBOOT)) {
 				Scene *oldsc = g_nmi->_currentScene;
 				g_nmi->_currentScene = sc;
@@ -118,7 +118,7 @@ void scene09_initScene(Scene *sc) {
 
 	delete newball1;
 
-	g_nmi->setObjectState(sO_RightStairs_9, g_nmi->getObjectEnumState(sO_RightStairs_9, sO_IsClosed));
+	g_nmi->setState(sO_RightStairs_9, g_nmi->getStateValue(sO_RightStairs_9, sO_IsClosed));
 
 	GameVar *eggvar = g_nmi->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->getSubVarByName(sO_GulpedEggs);
 
@@ -167,8 +167,8 @@ void sceneHandler09_winArcade() {
 		g_vars->scene09_gulper->setStatic(ST_GLT_SIT);
 		g_vars->scene09_gulper->startMovement(MV_GLT_FLYAWAY, 0, -1);
 
-		g_nmi->setObjectState(sO_Jug, g_nmi->getObjectEnumState(sO_Jug, sO_Unblocked));
-		g_nmi->setObjectState(sO_RightStairs_9, g_nmi->getObjectEnumState(sO_RightStairs_9, sO_IsOpened));
+		g_nmi->setState(sO_Jug, g_nmi->getStateValue(sO_Jug, sO_Unblocked));
+		g_nmi->setState(sO_RightStairs_9, g_nmi->getStateValue(sO_RightStairs_9, sO_IsOpened));
 
 		g_vars->scene09_gulperIsPresent = false;
 	}
@@ -246,8 +246,8 @@ void sceneHandler09_eatBall() {
 				mq->addCommandToEnd(ex);
 			}
 
-			g_nmi->setObjectState(sO_Jug, g_nmi->getObjectEnumState(sO_Jug, sO_Unblocked));
-			g_nmi->setObjectState(sO_RightStairs_9, g_nmi->getObjectEnumState(sO_RightStairs_9, sO_IsOpened));
+			g_nmi->setState(sO_Jug, g_nmi->getStateValue(sO_Jug, sO_Unblocked));
+			g_nmi->setState(sO_RightStairs_9, g_nmi->getStateValue(sO_RightStairs_9, sO_IsOpened));
 
 			g_vars->scene09_gulperIsPresent = false;
 		}

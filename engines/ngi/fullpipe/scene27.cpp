@@ -78,11 +78,11 @@ void scene27_initScene(Scene *sc) {
 	Scene *oldsc = g_nmi->_currentScene;
 	g_nmi->_currentScene = sc;
 
-	if (g_nmi->getObjectState(sO_Maid) == g_nmi->getObjectEnumState(sO_Maid, sO_WithSwab)) {
+	if (g_nmi->getStateId(sO_Maid) == g_nmi->getStateValue(sO_Maid, sO_WithSwab)) {
 		g_vars->scene27_maid->setStatic(ST_MID_SWAB2);
-	} else if (g_nmi->getObjectState(sO_Maid) == g_nmi->getObjectEnumState(sO_Maid, sO_WithBroom)) {
+	} else if (g_nmi->getStateId(sO_Maid) == g_nmi->getStateValue(sO_Maid, sO_WithBroom)) {
 		g_vars->scene27_maid->setStatic(ST_MID_BROOM);
-	} else if (g_nmi->getObjectState(sO_Maid) == g_nmi->getObjectEnumState(sO_Maid, sO_WithSpade)) {
+	} else if (g_nmi->getStateId(sO_Maid) == g_nmi->getStateValue(sO_Maid, sO_WithSpade)) {
 		g_vars->scene27_maid->setStatic(ST_MID_SPADE);
 	}
 
@@ -120,7 +120,7 @@ void sceneHandler27_driverGiveVent() {
 }
 
 void sceneHandler27_winArcade() {
-	if (g_nmi->getObjectState(sO_Driver) == g_nmi->getObjectEnumState(sO_Driver, sO_WithSteering)) {
+	if (g_nmi->getStateId(sO_Driver) == g_nmi->getStateValue(sO_Driver, sO_WithSteering)) {
 		g_vars->scene27_dudeIsAiming = false;
 
 		g_nmi->_aniMan->_callback2 = nullptr; // Really NULL
@@ -131,7 +131,7 @@ void sceneHandler27_winArcade() {
 }
 
 void sceneHandler27_takeVent() {
-	if (g_nmi->getObjectState(sO_Maid) == g_nmi->getObjectEnumState(sO_Maid, sO_WithSwab)) {
+	if (g_nmi->getStateId(sO_Maid) == g_nmi->getStateValue(sO_Maid, sO_WithSwab)) {
 		if (g_vars->scene27_maid->isIdle()) {
 			if (g_vars->scene27_maid->_flags & 4) {
 				g_vars->scene27_maid->setStatic(ST_MID_SWAB2);
@@ -217,7 +217,7 @@ void sceneHandler27_maidSwab() {
 #if DBG
 	return;
 #endif
-	if (g_nmi->getObjectState(sO_Maid) == g_nmi->getObjectEnumState(sO_Maid, sO_WithSwab))
+	if (g_nmi->getStateId(sO_Maid) == g_nmi->getStateValue(sO_Maid, sO_WithSwab))
 		g_vars->scene27_maid->setStatic(ST_MID_SWAB);
 }
 
@@ -421,7 +421,7 @@ void sceneHandler27_batSetColors(int batn) {
 void sceneHandler27_driverPushButton() {
 	debugC(2, kDebugSceneLogic, "scene27: driverPushButton");
 
-	if (g_nmi->getObjectState(sO_Driver) == g_nmi->getObjectEnumState(sO_Driver, sO_WithSteering)) {
+	if (g_nmi->getStateId(sO_Driver) == g_nmi->getStateValue(sO_Driver, sO_WithSteering)) {
 		g_vars->scene27_driver->setStatic(ST_DRV_VENT);
 		runQueue(QU_DRV_PUSHBUTTON, 1);
 
@@ -438,7 +438,7 @@ void sceneHandler27_driverPushButton() {
 
 void sceneHandler27_maidSwitchback() {
 #ifndef DBG
-	if (g_nmi->getObjectState(sO_Maid) == g_nmi->getObjectEnumState(sO_Maid, sO_WithSwab)) {
+	if (g_nmi->getStateId(sO_Maid) == g_nmi->getStateValue(sO_Maid, sO_WithSwab)) {
 		g_vars->scene27_maid->setStatic(ST_MID_SWAB);
 		g_vars->scene27_maid->startMQIfIdle(QU_MID_SWITCHBACK, 1);
 	}
@@ -513,7 +513,7 @@ void sceneHandler27_calcWinArcade() {
 		}
 
 		if (numHilite >= 3) {
-			if (g_nmi->getObjectState(sO_Driver) == g_nmi->getObjectEnumState(sO_Driver, sO_WithSteering)) {
+			if (g_nmi->getStateId(sO_Driver) == g_nmi->getStateValue(sO_Driver, sO_WithSteering)) {
 				sceneHandler27_driverGiveVent();
 				sceneHandler27_maidSwitchback();
 

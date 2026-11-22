@@ -52,12 +52,12 @@ void sceneIntro_initScene(Scene *sc) {
 }
 
 void sceneHandlerIntro_part1() {
-	g_nmi->_currentScene = g_nmi->accessScene(SC_INTRO1);
+	g_nmi->_currentScene = g_nmi->findScene(SC_INTRO1);
 	runQueue(QU_INTR_FINISH, 0);
 }
 
 void sceneHandlerIntro_part2() {
-	g_nmi->_currentScene = g_nmi->accessScene(SC_INTRO2);
+	g_nmi->_currentScene = g_nmi->findScene(SC_INTRO2);
 	runQueue(QU_IN2_DO, 0);
 }
 

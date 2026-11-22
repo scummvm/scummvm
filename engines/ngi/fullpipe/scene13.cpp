@@ -52,7 +52,7 @@ void scene13_initScene(Scene *sc) {
 
 	g_nmi->_currentScene = sc;
 
-	if (g_nmi->getObjectState(sO_Bridge) == g_nmi->getObjectEnumState(sO_Bridge, sO_Convoluted)) {
+	if (g_nmi->getStateId(sO_Bridge) == g_nmi->getStateValue(sO_Bridge, sO_Convoluted)) {
 		g_vars->scene13_bridge->setStatic(ST_BDG_CLOSED);
 
 		lnk->_flags |= 0x20000000u;
@@ -84,7 +84,7 @@ void scene13_initScene(Scene *sc) {
 
 void sceneHandler13_openBridge() {
 	Movement *mov = g_vars->scene13_bridge->_movement;
-	g_nmi->setObjectState(sO_Bridge, g_nmi->getObjectEnumState(sO_Bridge, sO_IsFree));
+	g_nmi->setState(sO_Bridge, g_nmi->getStateValue(sO_Bridge, sO_IsFree));
 
 	if (mov && mov->_id == MV_BDG_CLOSE) {
 		int sz;
@@ -212,7 +212,7 @@ void sceneHandler13_updateBridge() {
 	MovGraphLink *lnk = getCurrSceneSc2MotionController()->getGraphLink(sO_Bridge);
 
 	if (lnk) {
-		if (g_nmi->getObjectState(sO_Bridge) == g_nmi->getObjectEnumState(sO_Bridge, sO_Convoluted))
+		if (g_nmi->getStateId(sO_Bridge) == g_nmi->getStateValue(sO_Bridge, sO_Convoluted))
 			lnk->_flags |= 0x20000000;
 		else
 			lnk->_flags &= 0xDFFFFFFF;

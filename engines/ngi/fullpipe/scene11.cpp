@@ -88,7 +88,7 @@ void scene11_dudeSwingCallback(int *arg) {
 }
 
 void scene11_setupMusic() {
-	if (g_nmi->getObjectState(sO_DudeHasJumped) == g_nmi->getObjectEnumState(sO_DudeHasJumped, sO_Yes))
+	if (g_nmi->getStateId(sO_DudeHasJumped) == g_nmi->getStateValue(sO_DudeHasJumped, sO_Yes))
 		g_nmi->playTrack(g_nmi->getGameLoaderGameVar()->getSubVarByName("SC_11"), "MUSIC2", 1);
 }
 
@@ -123,10 +123,10 @@ void scene11_initScene(Scene *sc) {
 
 	g_nmi->_currentScene = sc;
 
-	int swingie = g_nmi->getObjectState(sO_Swingie);
+	int swingie = g_nmi->getStateId(sO_Swingie);
 
-	if (swingie == g_nmi->getObjectEnumState(sO_Swingie, sO_IsSwinging)
-		|| swingie == g_nmi->getObjectEnumState(sO_Swingie, sO_IsSwingingWithBoot)) {
+	if (swingie == g_nmi->getStateValue(sO_Swingie, sO_IsSwinging)
+		|| swingie == g_nmi->getStateValue(sO_Swingie, sO_IsSwingingWithBoot)) {
 		g_vars->scene11_swingIsSwinging = true;
 		g_vars->scene11_swingieStands = false;
 
@@ -135,8 +135,8 @@ void scene11_initScene(Scene *sc) {
 		getCurrSceneSc2MotionController()->lockLink(sO_CloseThing3, 0);
 		getCurrSceneSc2MotionController()->replaceNodeX(805, 905);
 		getSc2MctlCompoundBySceneId(sc->_sceneId)->replaceNodeX(303, 353);
-	} else if (swingie == g_nmi->getObjectEnumState(sO_Swingie, sO_IsStandingInBoots)
-				|| swingie == g_nmi->getObjectEnumState(sO_Swingie, sO_IsStandingInCorner)) {
+	} else if (swingie == g_nmi->getStateValue(sO_Swingie, sO_IsStandingInBoots)
+				|| swingie == g_nmi->getStateValue(sO_Swingie, sO_IsStandingInCorner)) {
 		g_vars->scene11_swingIsSwinging = false;
 		g_vars->scene11_swingieStands = true;
 
@@ -150,7 +150,7 @@ void scene11_initScene(Scene *sc) {
 		g_vars->scene11_swingIsSwinging = false;
 		g_vars->scene11_swingieStands = false;
 
-		if (swingie == g_nmi->getObjectEnumState(sO_Swingie, sO_IsSitting)) {
+		if (swingie == g_nmi->getStateValue(sO_Swingie, sO_IsSitting)) {
 			g_vars->scene11_swingie->_movement = nullptr;
 			g_vars->scene11_swingie->_statics = g_vars->scene11_swingie->getStatic(ST_SWR_SIT);
 			g_vars->scene11_swingie->setPos(144, 389);
@@ -430,10 +430,10 @@ void sceneHandler11_jumpHitAndWin() {
 			delete mq;
 
 
-		if (g_nmi->getObjectState(sO_Swingie) == g_nmi->getObjectEnumState(sO_Swingie, sO_IsStandingInCorner))
-			g_nmi->setObjectState(sO_Swingie, g_nmi->getObjectEnumState(sO_Swingie, sO_IsSitting));
+		if (g_nmi->getStateId(sO_Swingie) == g_nmi->getStateValue(sO_Swingie, sO_IsStandingInCorner))
+			g_nmi->setState(sO_Swingie, g_nmi->getStateValue(sO_Swingie, sO_IsSitting));
 
-		g_nmi->setObjectState(sO_DudeHasJumped, g_nmi->getObjectEnumState(sO_DudeHasJumped, sO_Yes));
+		g_nmi->setState(sO_DudeHasJumped, g_nmi->getStateValue(sO_DudeHasJumped, sO_Yes));
 	}
 }
 
@@ -543,14 +543,14 @@ void sceneHandler11_setSwingDirection() {
 }
 
 void sceneHandler11_swingieSit() {
-	if (g_nmi->getObjectState(sO_Swingie) == g_nmi->getObjectEnumState(sO_Swingie, sO_IsStandingInBoots)) {
+	if (g_nmi->getStateId(sO_Swingie) == g_nmi->getStateValue(sO_Swingie, sO_IsStandingInBoots)) {
 		g_vars->scene11_swingIsSwinging = false;
 		g_vars->scene11_swingieStands = false;
 
 		g_vars->scene11_swingie->setStatic(ST_SWR_SIT);
 		g_vars->scene11_swingie->setPos(144, 389);
 
-		g_nmi->setObjectState(sO_Swingie, g_nmi->getObjectEnumState(sO_Swingie, sO_IsSitting));
+		g_nmi->setState(sO_Swingie, g_nmi->getStateValue(sO_Swingie, sO_IsSitting));
 
 		getCurrSceneSc2MotionController()->lockLink(sO_CloseThing1, 0);
 		getCurrSceneSc2MotionController()->lockLink(sO_CloseThing2, 0);
@@ -597,9 +597,9 @@ int sceneHandler11(Command *cmd) {
 		break;
 
 	case MSG_SC11_SITSWINGER:
-		if (g_nmi->getObjectState(sO_Swingie) == g_nmi->getObjectEnumState(sO_Swingie, sO_IsStandingInBoots)
-				|| g_nmi->getObjectState(sO_Swingie) == g_nmi->getObjectEnumState(sO_Swingie, sO_IsStandingInCorner)) {
-			g_nmi->setObjectState(sO_Swingie, g_nmi->getObjectEnumState(sO_Swingie, sO_IsSitting));
+		if (g_nmi->getStateId(sO_Swingie) == g_nmi->getStateValue(sO_Swingie, sO_IsStandingInBoots)
+				|| g_nmi->getStateId(sO_Swingie) == g_nmi->getStateValue(sO_Swingie, sO_IsStandingInCorner)) {
+			g_nmi->setState(sO_Swingie, g_nmi->getStateValue(sO_Swingie, sO_IsSitting));
 		}
 		break;
 

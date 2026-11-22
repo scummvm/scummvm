@@ -78,7 +78,7 @@ void Floaters::init(GameVar *var) {
 }
 
 void Floaters::genFlies(Scene *sc, int x, int y, int priority, int flags) {
-	AniObject *ani = new AniObject(g_nmi->accessScene(SC_COMMON)->findAniObjectById(ANI_FLY, -1));
+	AniObject *ani = new AniObject(g_nmi->findScene(SC_COMMON)->findAniObjectById(ANI_FLY, -1));
 
 	ani->_statics = ani->getStatic(ST_FLY_FLY);
 	ani->_movement = nullptr;

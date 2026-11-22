@@ -46,11 +46,11 @@ void scene22_initScene(Scene *sc) {
 	g_vars->scene22_interactionIsDisabled = false;
 	g_vars->scene22_craneIsOut = true;
 
-	if (g_nmi->getObjectState(sO_Bag_22) == g_nmi->getObjectEnumState(sO_Bag_22, sO_NotFallen))
+	if (g_nmi->getStateId(sO_Bag_22) == g_nmi->getStateValue(sO_Bag_22, sO_NotFallen))
 		g_vars->scene22_numBagFalls = 0;
-	else if (g_nmi->getObjectState(sO_Bag_22) == g_nmi->getObjectEnumState(sO_Bag_22, sO_FallenOnce))
+	else if (g_nmi->getStateId(sO_Bag_22) == g_nmi->getStateValue(sO_Bag_22, sO_FallenOnce))
 		g_vars->scene22_numBagFalls = 1;
-	else if ( g_nmi->getObjectState(sO_Bag_22) == g_nmi->getObjectEnumState(sO_Bag_22, sO_FallenTwice))
+	else if ( g_nmi->getStateId(sO_Bag_22) == g_nmi->getStateValue(sO_Bag_22, sO_FallenTwice))
 		g_vars->scene22_numBagFalls = 2;
 	else {
 		g_vars->scene22_numBagFalls = 3;
@@ -58,7 +58,7 @@ void scene22_initScene(Scene *sc) {
 	}
 
 
-	if ( g_nmi->getObjectState(sO_LowerPipe_21) == g_nmi->getObjectEnumState(sO_LowerPipe_21, sO_IsOpened))
+	if ( g_nmi->getStateId(sO_LowerPipe_21) == g_nmi->getStateValue(sO_LowerPipe_21, sO_IsOpened))
 		g_vars->scene22_giraffeMiddle->setStatic(ST_GRFM_AFTER);
 	else
 		g_vars->scene22_giraffeMiddle->setStatic(ST_GRFM_NORM);
@@ -129,17 +129,17 @@ void sceneHandler22_handleDown() {
 
 		if (g_vars->scene22_numBagFalls) {
 			if (g_vars->scene22_numBagFalls == 1) {
-				state = g_nmi->getObjectEnumState(sO_Bag_22, sO_FallenOnce);
+				state = g_nmi->getStateValue(sO_Bag_22, sO_FallenOnce);
 			} else if (g_vars->scene22_numBagFalls == 2) {
-				state = g_nmi->getObjectEnumState(sO_Bag_22, sO_FallenTwice);
+				state = g_nmi->getStateValue(sO_Bag_22, sO_FallenTwice);
 			} else {
-				state = g_nmi->getObjectEnumState(sO_Bag_22, sO_BrushHasFallen);
+				state = g_nmi->getStateValue(sO_Bag_22, sO_BrushHasFallen);
 			}
 		} else {
-			state = g_nmi->getObjectEnumState(sO_Bag_22, sO_NotFallen);
+			state = g_nmi->getStateValue(sO_Bag_22, sO_NotFallen);
 		}
 
-		g_nmi->setObjectState(sO_Bag_22, state);
+		g_nmi->setState(sO_Bag_22, state);
 	}
 
 	g_vars->scene22_craneIsOut = true;
@@ -300,8 +300,8 @@ int sceneHandler22(Command *cmd) {
 		break;
 
 	case MSG_SC22_CHECKGMABOOT:
-		if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_In_15)) {
-			g_nmi->setObjectState(sO_Boot_15, g_nmi->getObjectEnumState(sO_Boot_15, sO_IsPresent));
+		if (g_nmi->getStateId(sO_Grandma) == g_nmi->getStateValue(sO_Grandma, sO_In_15)) {
+			g_nmi->setState(sO_Boot_15, g_nmi->getStateValue(sO_Boot_15, sO_IsPresent));
 		}
 		break;
 

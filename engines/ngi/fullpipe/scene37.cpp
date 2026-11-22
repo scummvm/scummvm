@@ -94,7 +94,7 @@ void scene37_initScene(Scene *sc) {
 	ring->state = false;
 	g_vars->scene37_rings.push_back(ring);
 
-	g_nmi->setObjectState(sO_LeftPipe_37, g_nmi->getObjectEnumState(sO_LeftPipe_37, sO_IsClosed));
+	g_nmi->setState(sO_LeftPipe_37, g_nmi->getStateValue(sO_LeftPipe_37, sO_IsClosed));
 
 	Scene *oldsc = g_nmi->_currentScene;
 
@@ -107,7 +107,7 @@ void scene37_initScene(Scene *sc) {
 	for (int i = 0; i < g_vars->scene37_rings[0]->numSubRings; i++) {
 		ani = g_nmi->_currentScene->findAniObjectById(ANI_RING, g_vars->scene37_rings[0]->subRings[i]);
 
-		if (g_nmi->getObjectState(sO_Guard_1) == g_nmi->getObjectEnumState(sO_Guard_1, sO_On)) {
+		if (g_nmi->getStateId(sO_Guard_1) == g_nmi->getStateValue(sO_Guard_1, sO_On)) {
 			g_vars->scene37_plusMinus1->_statics = g_vars->scene37_plusMinus1->getStatic(ST_PMS_PLUS);
 			ani->setStatic(ST_RNG_OPEN);
 		} else {
@@ -121,7 +121,7 @@ void scene37_initScene(Scene *sc) {
 	for (int i = 0; i < g_vars->scene37_rings[1]->numSubRings; i++) {
 		ani = g_nmi->_currentScene->findAniObjectById(ANI_RING, g_vars->scene37_rings[1]->subRings[i]);
 
-		if (g_nmi->getObjectState(sO_Guard_2) == g_nmi->getObjectEnumState(sO_Guard_2, sO_On)) {
+		if (g_nmi->getStateId(sO_Guard_2) == g_nmi->getStateValue(sO_Guard_2, sO_On)) {
 			g_vars->scene37_plusMinus2->_statics = g_vars->scene37_plusMinus2->getStatic(ST_PMS_PLUS);
 			ani->setStatic(ST_RNG_OPEN);
 		} else {
@@ -135,7 +135,7 @@ void scene37_initScene(Scene *sc) {
 	for (int i = 0; i < g_vars->scene37_rings[2]->numSubRings; i++) {
 		ani = g_nmi->_currentScene->findAniObjectById(ANI_RING, g_vars->scene37_rings[2]->subRings[i]);
 
-		if (g_nmi->getObjectState(sO_Guard_3) == g_nmi->getObjectEnumState(sO_Guard_3, sO_On)) {
+		if (g_nmi->getStateId(sO_Guard_3) == g_nmi->getStateValue(sO_Guard_3, sO_On)) {
 			g_vars->scene37_plusMinus3->_statics = g_vars->scene37_plusMinus3->getStatic(ST_PMS_PLUS);
 			ani->setStatic(ST_RNG_OPEN);
 		} else {
@@ -202,11 +202,11 @@ void sceneHandler37_updateRing(int ringNum) {
 	int state;
 
 	if (g_vars->scene37_pipeIsOpen)
-		state = g_nmi->getObjectEnumState(sO_LeftPipe_37, sO_IsOpened);
+		state = g_nmi->getStateValue(sO_LeftPipe_37, sO_IsOpened);
 	else
-		state = g_nmi->getObjectEnumState(sO_LeftPipe_37, sO_IsClosed);
+		state = g_nmi->getStateValue(sO_LeftPipe_37, sO_IsClosed);
 
-	g_nmi->setObjectState(sO_LeftPipe_37, state);
+	g_nmi->setState(sO_LeftPipe_37, state);
 }
 
 void sceneHandler37_setRingsState() {
@@ -292,22 +292,22 @@ int sceneHandler37(Command *cmd) {
 
 	case MSG_SC37_PULL:
 		if (g_vars->scene37_rings[0]->ani->_movement && g_vars->scene37_rings[0]->ani->_movement->_id == MV_GRD37_PULL) {
-			if ((g_nmi->getObjectState(sO_Guard_1) == g_nmi->getObjectEnumState(sO_Guard_1, sO_On) && !g_vars->scene37_rings[0]->state)
-				|| (g_nmi->getObjectState(sO_Guard_1) == g_nmi->getObjectEnumState(sO_Guard_1, sO_Off) && g_vars->scene37_rings[0]->state)) {
+			if ((g_nmi->getStateId(sO_Guard_1) == g_nmi->getStateValue(sO_Guard_1, sO_On) && !g_vars->scene37_rings[0]->state)
+				|| (g_nmi->getStateId(sO_Guard_1) == g_nmi->getStateValue(sO_Guard_1, sO_Off) && g_vars->scene37_rings[0]->state)) {
 				g_vars->scene37_plusMinus1->_statics = g_vars->scene37_plusMinus1->getStatic(ST_PMS_PLUS);
 			} else {
 				g_vars->scene37_plusMinus1->_statics = g_vars->scene37_plusMinus1->getStatic(ST_PMS_MINUS);
 			}
 		} else if (g_vars->scene37_rings[1]->ani->_movement && g_vars->scene37_rings[1]->ani->_movement->_id == MV_GRD37_PULL) {
-			if ((g_nmi->getObjectState(sO_Guard_2) == g_nmi->getObjectEnumState(sO_Guard_2, sO_On) && !g_vars->scene37_rings[1]->state)
-				|| (g_nmi->getObjectState(sO_Guard_2) == g_nmi->getObjectEnumState(sO_Guard_2, sO_Off) && g_vars->scene37_rings[1]->state)) {
+			if ((g_nmi->getStateId(sO_Guard_2) == g_nmi->getStateValue(sO_Guard_2, sO_On) && !g_vars->scene37_rings[1]->state)
+				|| (g_nmi->getStateId(sO_Guard_2) == g_nmi->getStateValue(sO_Guard_2, sO_Off) && g_vars->scene37_rings[1]->state)) {
 				g_vars->scene37_plusMinus2->_statics = g_vars->scene37_plusMinus2->getStatic(ST_PMS_PLUS);
 			} else {
 				g_vars->scene37_plusMinus2->_statics = g_vars->scene37_plusMinus2->getStatic(ST_PMS_MINUS);
 			}
 		} else if (g_vars->scene37_rings[2]->ani->_movement && g_vars->scene37_rings[2]->ani->_movement->_id == MV_GRD37_PULL) {
-			if ((g_nmi->getObjectState(sO_Guard_3) == g_nmi->getObjectEnumState(sO_Guard_3, sO_On) && !g_vars->scene37_rings[2]->state)
-				|| (g_nmi->getObjectState(sO_Guard_3) == g_nmi->getObjectEnumState(sO_Guard_3, sO_Off) && g_vars->scene37_rings[2]->state)) {
+			if ((g_nmi->getStateId(sO_Guard_3) == g_nmi->getStateValue(sO_Guard_3, sO_On) && !g_vars->scene37_rings[2]->state)
+				|| (g_nmi->getStateId(sO_Guard_3) == g_nmi->getStateValue(sO_Guard_3, sO_Off) && g_vars->scene37_rings[2]->state)) {
 				g_vars->scene37_plusMinus3->_statics = g_vars->scene37_plusMinus3->getStatic(ST_PMS_PLUS);
 			} else {
 				g_vars->scene37_plusMinus3->_statics = g_vars->scene37_plusMinus3->getStatic(ST_PMS_MINUS);

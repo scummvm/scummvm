@@ -48,7 +48,7 @@ void scene01_initScene(Scene *sc, int entrance) {
 	g_vars->scene01_picSc01Osk2 = sc->findPictureObjectById(PIC_SC1_OSK2, 0);
 	g_vars->scene01_picSc01Osk2->_flags &= 0xFFFB;
 
-	if (g_nmi->getObjectState(sO_EggCracker) == g_nmi->getObjectEnumState(sO_EggCracker, sO_DidNotCrackEgg)) {
+	if (g_nmi->getStateId(sO_EggCracker) == g_nmi->getStateValue(sO_EggCracker, sO_DidNotCrackEgg)) {
 		PictureObject *pic = sc->findPictureObjectById(PIC_SC1_KUCHKA, 0);
 		if (pic)
 			pic->_flags &= 0xFFFB;

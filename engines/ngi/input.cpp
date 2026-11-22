@@ -305,8 +305,8 @@ void NGIEngine::setArcadeOverlay(int picId) {
 	_arcadeOverlayX = 800;
 	_arcadeOverlayY = 545;
 
-	_arcadeOverlayHelper = accessScene(SC_INV)->findPictureObjectById(PIC_CSR_HELPERBGR, 0);
-	_arcadeOverlay = accessScene(SC_INV)->findPictureObjectById(picId, 0);
+	_arcadeOverlayHelper = findScene(SC_INV)->findPictureObjectById(PIC_CSR_HELPERBGR, 0);
+	_arcadeOverlay = findScene(SC_INV)->findPictureObjectById(picId, 0);
 
 	const Dims dims = _arcadeOverlay->getFullSize();
 	const Dims dims2 = _arcadeOverlayHelper->getFullSize();

@@ -34,7 +34,7 @@
 
 namespace NGI {
 
-Scene *NGIEngine::accessScene(int sceneId) {
+Scene *NGIEngine::findScene(int sceneId) {
 	SceneTag *t = nullptr;
 
 	for (SceneTagList::iterator s = _gameProject->_sceneTagList->begin(); s != _gameProject->_sceneTagList->end(); ++s) {

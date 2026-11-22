@@ -529,7 +529,7 @@ void NGIEngine::updateScreen() {
 	++_updateTicks;
 }
 
-int NGIEngine::getObjectEnumState(const Common::String &name, const char *state) {
+int NGIEngine::getStateValue(const Common::String &name, const char *state) {
 	GameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
 
 	if (!var) {
@@ -546,7 +546,7 @@ int NGIEngine::getObjectEnumState(const Common::String &name, const char *state)
 	return 0;
 }
 
-int NGIEngine::getObjectState(const Common::String &objname) {
+int NGIEngine::getStateId(const Common::String &objname) {
 	GameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
 
 	if (var)
@@ -555,7 +555,7 @@ int NGIEngine::getObjectState(const Common::String &objname) {
   return 0;
 }
 
-void NGIEngine::setObjectState(const Common::String &name, int state) {
+void NGIEngine::setState(const Common::String &name, int state) {
 	GameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
 
 	if (!var) {

@@ -161,7 +161,7 @@ void Inventory::removeItem2(Scene *sceneObj, int itemId, int x, int y, int prior
 		if (_inventoryItems[idx].count) {
 			removeItem(itemId, 1);
 
-			Scene *sc = g_nmi->accessScene(_sceneId);
+			Scene *sc = g_nmi->findScene(_sceneId);
 
 			if (sc) {
 				AniObject *ani = new AniObject(sc->findAniObjectById(itemId, -1));
@@ -221,7 +221,7 @@ int Inventory::getItemFlags(int itemId) {
 void Inventory::recalcItemPos() {
 	debugC(2, kDebugInventory, "recalcItemPos()");
 
-	_scene = g_nmi->accessScene(_sceneId);
+	_scene = g_nmi->findScene(_sceneId);
 
 	if (!_scene)
 		return;

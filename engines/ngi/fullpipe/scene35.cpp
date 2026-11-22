@@ -51,7 +51,7 @@ void scene35_initScene(Scene *sc) {
 
 	int sndId = 0;
 
-	if (g_nmi->getObjectState(sO_Valve_35) == g_nmi->getObjectEnumState(sO_Valve_35, sO_TurnedOn)) {
+	if (g_nmi->getStateId(sO_Valve_35) == g_nmi->getStateValue(sO_Valve_35, sO_TurnedOn)) {
 		if ((g_vars->scene35_hose->_flags & 4) && g_vars->scene35_hose->_statics->_staticsId == ST_HZE_NORM) {
 			sndId = SND_35_012;
 		} else if (g_vars->scene35_bellyInflater->_statics->_staticsId == ST_PDV_SMALL) {
@@ -71,7 +71,7 @@ void scene35_initScene(Scene *sc) {
 }
 
 void sceneHandler35_stopFlow() {
-	g_nmi->setObjectState(sO_Valve_35, g_nmi->getObjectEnumState(sO_Valve_35, sO_TurnedOff));
+	g_nmi->setState(sO_Valve_35, g_nmi->getStateValue(sO_Valve_35, sO_TurnedOff));
 	g_nmi->stopAllSoundInstances(SND_35_011);
 	g_nmi->playSound(SND_35_026, 0);
 }
@@ -81,7 +81,7 @@ void sceneHandler35_shrink() {
 }
 
 void sceneHandler35_startFlow() {
-	if (g_nmi->getObjectState(sO_Valve_35) == g_nmi->getObjectEnumState(sO_Valve_35, sO_TurnedOn)) {
+	if (g_nmi->getStateId(sO_Valve_35) == g_nmi->getStateValue(sO_Valve_35, sO_TurnedOn)) {
 		if ((g_vars->scene35_hose->_flags & 4) && g_vars->scene35_hose->_statics->_staticsId == ST_HZE_NORM) {
 			g_nmi->_behaviorManager->enableAni(g_vars->scene35_bellyInflater, ST_PDV_SMALL, QU_PDV_SML_BLINK, 0);
 			g_nmi->_behaviorManager->enableAni(g_vars->scene35_bellyInflater, ST_PDV_SMALL, QU_PDV_SML_TRY, 0);
@@ -175,7 +175,7 @@ int sceneHandler35(Command *cmd) {
 		break;
 
 	case MSG_SC35_CHECKPIPESOUND:
-		if (g_nmi->getObjectState(sO_Valve_35) == g_nmi->getObjectEnumState(sO_Valve_35, sO_TurnedOn)) {
+		if (g_nmi->getStateId(sO_Valve_35) == g_nmi->getStateValue(sO_Valve_35, sO_TurnedOn)) {
 			g_nmi->stopAllSoundInstances(SND_35_011);
 			g_nmi->playSound(SND_35_012, 1);
 

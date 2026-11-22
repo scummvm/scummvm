@@ -38,23 +38,23 @@ namespace NGI {
 void sceneHandler34_setExits() {
 	int state;
 
-	if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_NearPipeWithStool)) {
-		if (g_nmi->getObjectState(sO_Hatch_34) == g_nmi->getObjectEnumState(sO_Hatch_34, sO_Closed))
-			state = g_nmi->getObjectEnumState(sO_Plank_34, sO_ClosedWithBoot);
+	if (g_nmi->getStateId(sO_Grandma) == g_nmi->getStateValue(sO_Grandma, sO_NearPipeWithStool)) {
+		if (g_nmi->getStateId(sO_Hatch_34) == g_nmi->getStateValue(sO_Hatch_34, sO_Closed))
+			state = g_nmi->getStateValue(sO_Plank_34, sO_ClosedWithBoot);
 		else
-			state = g_nmi->getObjectEnumState(sO_Plank_34, sO_OpenedWithBoot);
+			state = g_nmi->getStateValue(sO_Plank_34, sO_OpenedWithBoot);
 	} else {
-		if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_OnStool)) {
-			if (g_nmi->getObjectState(sO_Hatch_34) == g_nmi->getObjectEnumState(sO_Hatch_34, sO_Closed))
-				state = g_nmi->getObjectEnumState(sO_Plank_34, sO_IsClosed);
+		if (g_nmi->getStateId(sO_Grandma) == g_nmi->getStateValue(sO_Grandma, sO_OnStool)) {
+			if (g_nmi->getStateId(sO_Hatch_34) == g_nmi->getStateValue(sO_Hatch_34, sO_Closed))
+				state = g_nmi->getStateValue(sO_Plank_34, sO_IsClosed);
 			else
-				state = g_nmi->getObjectEnumState(sO_Plank_34, sO_IsOpened);
+				state = g_nmi->getStateValue(sO_Plank_34, sO_IsOpened);
 		} else {
-			state = g_nmi->getObjectEnumState(sO_Plank_34, sO_Passive);
+			state = g_nmi->getStateValue(sO_Plank_34, sO_Passive);
 		}
 	}
 
-	g_nmi->setObjectState(sO_Plank_34, state);
+	g_nmi->setState(sO_Plank_34, state);
 }
 
 void scene34_initScene(Scene *sc) {
@@ -63,7 +63,7 @@ void scene34_initScene(Scene *sc) {
 	g_vars->scene34_hatch = sc->findAniObjectById(ANI_LUK_34, -1);
 	g_vars->scene34_boot = sc->findAniObjectById(ANI_BOOT_34, -1);
 
-	if (g_nmi->getObjectState(sO_Cactus) == g_nmi->getObjectEnumState(sO_Cactus, sO_HasGrown)) {
+	if (g_nmi->getStateId(sO_Cactus) == g_nmi->getStateValue(sO_Cactus, sO_HasGrown)) {
 		Scene *oldsc = g_nmi->_currentScene;
 
 		g_nmi->_currentScene = sc;
@@ -78,8 +78,8 @@ void scene34_initScene(Scene *sc) {
 		g_nmi->_currentScene = oldsc;
 	}
 
-	if (g_nmi->getObjectState(sO_Grandma) == g_nmi->getObjectEnumState(sO_Grandma, sO_Strolling))
-		g_nmi->setObjectState(sO_Grandma, g_nmi->getObjectEnumState(sO_Grandma, sO_OnStool));
+	if (g_nmi->getStateId(sO_Grandma) == g_nmi->getStateValue(sO_Grandma, sO_Strolling))
+		g_nmi->setState(sO_Grandma, g_nmi->getStateValue(sO_Grandma, sO_OnStool));
 
 	sceneHandler34_setExits();
 

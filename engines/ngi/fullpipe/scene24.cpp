@@ -46,7 +46,7 @@ void scene24_initScene(Scene *sc) {
 	Scene *oldsc = g_nmi->_currentScene;
 	g_nmi->_currentScene = sc;
 
-	if (g_nmi->getObjectState(sO_Pool) == g_nmi->getObjectEnumState(sO_Pool, sO_Overfull)) {
+	if (g_nmi->getStateId(sO_Pool) == g_nmi->getStateValue(sO_Pool, sO_Overfull)) {
 		g_vars->scene24_jetIsOn = true;
 		g_vars->scene24_flowIsLow = false;
 	} else {
@@ -59,33 +59,33 @@ void scene24_initScene(Scene *sc) {
 		g_vars->scene24_flowIsLow = true;
 	}
 
-	if (g_nmi->getObjectState(sO_Pool) < g_nmi->getObjectEnumState(sO_Pool, sO_Full)) {
+	if (g_nmi->getStateId(sO_Pool) < g_nmi->getStateValue(sO_Pool, sO_Full)) {
 		g_vars->scene24_waterIsOn = false;
 
 		g_vars->scene24_water->hide();
 
-		g_nmi->setObjectState(sO_StairsDown_24, g_nmi->getObjectEnumState(sO_StairsDown_24, sO_IsOpened));
+		g_nmi->setState(sO_StairsDown_24, g_nmi->getStateValue(sO_StairsDown_24, sO_IsOpened));
 	} else {
 		g_vars->scene24_waterIsOn = true;
 
-		g_nmi->setObjectState(sO_StairsDown_24, g_nmi->getObjectEnumState(sO_StairsDown_24, sO_IsClosed));
+		g_nmi->setState(sO_StairsDown_24, g_nmi->getStateValue(sO_StairsDown_24, sO_IsClosed));
 	}
 
 	g_nmi->_currentScene = oldsc;
 }
 
 void scene24_setPoolState() {
-	if (g_nmi->getObjectState(sO_Pool) == g_nmi->getObjectEnumState(sO_Pool, sO_Overfull)) {
+	if (g_nmi->getStateId(sO_Pool) == g_nmi->getStateValue(sO_Pool, sO_Overfull)) {
 		g_nmi->_behaviorManager->enableAllQueuesForAni(g_vars->scene24_drop, 0);
 
 		g_nmi->playSound(SND_24_007, 1);
-	} else if (g_nmi->getObjectState(sO_Pool) == g_nmi->getObjectEnumState(sO_Pool, sO_Full)) {
+	} else if (g_nmi->getStateId(sO_Pool) == g_nmi->getStateValue(sO_Pool, sO_Full)) {
 		g_nmi->_behaviorManager->enableAni(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOFLOOR, 0);
 		g_nmi->_behaviorManager->enableAni(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOWATER, 1);
 		g_nmi->_behaviorManager->enableAni(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOWATER2, 0);
 
 		g_nmi->playSound(SND_24_006, 1);
-	} else if (g_nmi->getObjectState(sO_Pool) == g_nmi->getObjectEnumState(sO_Pool, sO_HalfFull)) {
+	} else if (g_nmi->getStateId(sO_Pool) == g_nmi->getStateValue(sO_Pool, sO_HalfFull)) {
 		g_nmi->_behaviorManager->enableAni(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOFLOOR, 0);
 		g_nmi->_behaviorManager->enableAni(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOWATER, 0);
 		g_nmi->_behaviorManager->enableAni(g_vars->scene24_drop, ST_DRP24_EMPTY, QU_DRP24_TOWATER2, 1);

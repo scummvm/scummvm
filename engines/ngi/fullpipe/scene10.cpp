@@ -44,7 +44,7 @@ void scene10_initScene(Scene *sc) {
 	g_nmi->lift_setButton(sO_Level1, ST_LBN_1N);
 	g_nmi->lift_init(sc, QU_SC10_ENTERLIFT, QU_SC10_EXITLIFT);
 
-	if (g_nmi->getObjectState(sO_Inflater) == g_nmi->getObjectEnumState(sO_Inflater, sO_WithGum)) {
+	if (g_nmi->getStateId(sO_Inflater) == g_nmi->getStateValue(sO_Inflater, sO_WithGum)) {
 		g_vars->scene10_hasGum = 1;
 	} else {
 		g_vars->scene10_hasGum = 0;
@@ -98,7 +98,7 @@ void sceneHandler10_clickGum() {
 		} else {
 			g_vars->scene10_inflater->setStatic(ST_NDV_SIT);
 
-			if (g_nmi->getObjectState(sO_Inflater) == g_nmi->getObjectEnumState(sO_Inflater, sO_WithGum))
+			if (g_nmi->getStateId(sO_Inflater) == g_nmi->getStateValue(sO_Inflater, sO_WithGum))
 				g_vars->scene10_inflater->startMovement(MV_NDV_DENIES, 0, -1);
 			else
 				g_vars->scene10_inflater->startMovement(MV_NDV_DENY_NOGUM, 0, -1);

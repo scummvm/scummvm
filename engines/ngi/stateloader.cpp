@@ -227,23 +227,23 @@ bool NGIEngine::loadGam(const char *fname, int scene) {
 	for (uint i = 0; i < _inventory->getScene()->_picObjList.size(); i++)
 		_inventory->getScene()->_picObjList[i]->_picture->MemoryObject::load();
 
-	// _sceneSwitcher = sceneSwitcher; // substituted with direct call
+	// _sceneSwitcher = doSetScene; // substituted with direct call
 	_gameLoader->_preloadCallback = preloadCallback;
 	_gameLoader->_savegameCallback = gameLoaderSavegameCallback;
 
-	_aniMan = accessScene(SC_COMMON)->getAniMan();
+	_aniMan = findScene(SC_COMMON)->getAniMan();
 	_scene2 = nullptr;
 
 	_movTable.reset(_aniMan->countMovements());
 
 	_aniMan->setSpeed(1);
 
-	PictureObject *pic = accessScene(SC_INV)->findPictureObjectById(PIC_INV_MENU, 0);
+	PictureObject *pic = findScene(SC_INV)->findPictureObjectById(PIC_INV_MENU, 0);
 
 	pic->setFlags(pic->_flags & 0xFFFB);
 
 	// Not used in full game
-	//_evalVersionPic = accessScene(SC_COMMON)->findPictureObjectById(PIC_CMN_EVAL, 0);
+	//_evalVersionPic = findScene(SC_COMMON)->findPictureObjectById(PIC_CMN_EVAL, 0);
 
 	initMap();
 	initCursors();

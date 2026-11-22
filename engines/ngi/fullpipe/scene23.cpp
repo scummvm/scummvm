@@ -77,7 +77,7 @@ void scene23_initScene(Scene *sc) {
 	Scene *oldsc = g_nmi->_currentScene;
 	g_nmi->_currentScene = sc;
 
-	if (g_nmi->getObjectState(sO_UpperHatch_23) == g_nmi->getObjectEnumState(sO_UpperHatch_23, sO_Opened)) {
+	if (g_nmi->getStateId(sO_UpperHatch_23) == g_nmi->getStateValue(sO_UpperHatch_23, sO_Opened)) {
 		sc->findPictureObjectById(PIC_SC23_BOXOPEN, 0)->_flags |= 4;
 		sc->findPictureObjectById(PIC_SC23_BOXCLOSED, 0)->_flags &= 0xFFFB;
 		sc->findPictureObjectById(PIC_SC23_BTN1, 0)->_flags |= 4;
@@ -114,15 +114,15 @@ void scene23_initScene(Scene *sc) {
 		g_nmi->_floaters->genFlies(sc, 600, 90, 0, 0);
 	}
 
-	if (g_nmi->getObjectState(sO_LowerHatch_23) == g_nmi->getObjectEnumState(sO_LowerHatch_23, sO_Opened)) {
+	if (g_nmi->getStateId(sO_LowerHatch_23) == g_nmi->getStateValue(sO_LowerHatch_23, sO_Opened)) {
 		g_vars->scene23_giraffeTop->show1(-1, -1, -1, 0);
 		g_vars->scene23_giraffeTop->setStatic(ST_GRFU_UP);
 
-		if (g_nmi->getObjectState(sO_LowerPipe_21) == g_nmi->getObjectEnumState(sO_LowerPipe_21, sO_IsOpened)) {
+		if (g_nmi->getStateId(sO_LowerPipe_21) == g_nmi->getStateValue(sO_LowerPipe_21, sO_IsOpened)) {
 			g_vars->scene23_giraffeTop->setStatic(ST_GRFU_KISS);
 			g_vars->scene23_giraffee->hide();
 		} else {
-			if (g_nmi->getObjectState(sO_UpperHatch_23) == g_nmi->getObjectEnumState(sO_UpperHatch_23, sO_Opened)
+			if (g_nmi->getStateId(sO_UpperHatch_23) == g_nmi->getStateValue(sO_UpperHatch_23, sO_Opened)
 				&& (g_vars->scene23_giraffee->_flags & 4))
 				g_vars->scene23_giraffeTop->setPos(614, 362);
 			else
@@ -134,7 +134,7 @@ void scene23_initScene(Scene *sc) {
 
 		sc->findAniObjectById(ANI_LUK23_D, -1)->setStatic(ST_LUK23_OPEN);
 
-		if (g_nmi->getObjectState(sO_Lever_23) == g_nmi->getObjectEnumState(sO_Lever_23, sO_Taken))
+		if (g_nmi->getStateId(sO_Lever_23) == g_nmi->getStateValue(sO_Lever_23, sO_Taken))
 			sc->findAniObjectById(ANI_INV_LEVERHANDLE, -1)->hide();
 
 		sc->findAniObjectById(ANI_HANDLE23, -1)->hide();
@@ -150,7 +150,7 @@ void scene23_initScene(Scene *sc) {
 }
 
 void scene23_setGiraffeState() {
-	if (g_nmi->getObjectState(sO_UpperHatch_23) == g_nmi->getObjectEnumState(sO_UpperHatch_23, sO_Opened)) {
+	if (g_nmi->getStateId(sO_UpperHatch_23) == g_nmi->getStateValue(sO_UpperHatch_23, sO_Opened)) {
 		g_nmi->_behaviorManager->enableAni(g_vars->scene23_giraffeTop, ST_GRFU_UP, QU_GRFU_TURN_UL, 0);
 		g_nmi->_behaviorManager->enableAni(g_vars->scene23_giraffeTop, ST_GRFU_UP, QU_GRFU_TURN_UD, 0);
 	}

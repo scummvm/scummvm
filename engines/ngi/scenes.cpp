@@ -529,11 +529,11 @@ void NGIEngine::sceneAutoScrolling() {
 	}
 }
 
-bool NGIEngine::sceneSwitcher(const EntranceInfo &entrance) {
+bool NGIEngine::doSetScene(const EntranceInfo &entrance) {
 	GameVar *sceneVar;
 	Common::Point sceneDim;
 
-	Scene *scene = accessScene(entrance._sceneId);
+	Scene *scene = findScene(entrance._sceneId);
 
 	if (!scene)
 		return 0;
@@ -572,7 +572,7 @@ bool NGIEngine::sceneSwitcher(const EntranceInfo &entrance) {
 	if (_soundEnabled) {
 		if (scene->_soundList) {
 			_currSoundListCount = 2;
-			_currSoundList1[0] = accessScene(SC_COMMON)->_soundList.get();
+			_currSoundList1[0] = findScene(SC_COMMON)->_soundList.get();
 			_currSoundList1[1] = scene->_soundList.get();
 
 			for (int i = 0; i < scene->_soundList->getCount(); i++) {
@@ -580,7 +580,7 @@ bool NGIEngine::sceneSwitcher(const EntranceInfo &entrance) {
 			}
 		} else {
 			_currSoundListCount = 1;
-			_currSoundList1[0] = accessScene(SC_COMMON)->_soundList.get();
+			_currSoundList1[0] = findScene(SC_COMMON)->_soundList.get();
 		}
 	}
 
@@ -605,7 +605,7 @@ bool NGIEngine::sceneSwitcher(const EntranceInfo &entrance) {
 	for (uint i = 0; i < scene->_aniObjects.size(); i++)
 		scene->_aniObjects[i]->_flags &= 0xFE7F;
 
-	PictureObject *p = accessScene(SC_INV)->findPictureObjectById(PIC_INV_MENU, 0);
+	PictureObject *p = findScene(SC_INV)->findPictureObjectById(PIC_INV_MENU, 0);
 	p->setFlags(p->_flags & 0xFFFB);
 
 	removeMessageHandler(2, -1);
@@ -848,7 +848,7 @@ bool NGIEngine::sceneSwitcher(const EntranceInfo &entrance) {
 
 	case SC_19:
 		if (!g_nmi->_scene3) {
-			g_nmi->_scene3 = accessScene(SC_18);
+			g_nmi->_scene3 = findScene(SC_18);
 			g_nmi->_gameLoader->loadScene(SC_18);
 
 			scene18_initScene2(g_nmi->_scene3);
@@ -1314,7 +1314,7 @@ void NGIEngine::updateMap(PreloadItem *pre) {
 		break;
 
 	case SC_23:
-		if (getObjectState(sO_UpperHatch_23) == getObjectEnumState(sO_UpperHatch_23, sO_Opened)) {
+		if (getStateId(sO_UpperHatch_23) == getStateValue(sO_UpperHatch_23, sO_Opened)) {
 			updateMapPiece(PIC_MAP_S23_1, 0);
 			updateMapPiece(PIC_MAP_S23_2, 1);
 			updateMapPiece(PIC_MAP_P07, 1);
@@ -1387,7 +1387,7 @@ void NGIEngine::updateMap(PreloadItem *pre) {
 	case SC_31:
 		updateMapPiece(PIC_MAP_S31_2, 1);
 
-		if (getObjectState(sO_Cactus) == getObjectEnumState(sO_Cactus, sO_HasGrown))
+		if (getStateId(sO_Cactus) == getStateValue(sO_Cactus, sO_HasGrown))
 			updateMapPiece(PIC_MAP_S31_1, 1);
 
 		if (pre->param == TrubaRight)
@@ -1398,7 +1398,7 @@ void NGIEngine::updateMap(PreloadItem *pre) {
 	case SC_32:
 		updateMapPiece(PIC_MAP_S32_2, 1);
 
-		if (getObjectState(sO_Cactus) == getObjectEnumState(sO_Cactus, sO_HasGrown))
+		if (getStateId(sO_Cactus) == getStateValue(sO_Cactus, sO_HasGrown))
 			updateMapPiece(PIC_MAP_S32_1, 1);
 
 		break;

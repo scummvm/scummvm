@@ -45,7 +45,7 @@ void scene38_setBottleState(Scene *sc) {
 			g_vars->scene38_bottle->setPos(ex->_x, ex->_y);
 			g_vars->scene38_bottle->_z = ex->_z;
 
-			g_nmi->setObjectState(sO_Bottle_38, g_nmi->getObjectEnumState(sO_Bottle_38, sO_Blocked));
+			g_nmi->setState(sO_Bottle_38, g_nmi->getStateValue(sO_Bottle_38, sO_Blocked));
 		}
 	}
 }
@@ -70,7 +70,7 @@ void scene38_initScene(Scene *sc) {
 
 	scene38_setBottleState(sc);
 
-	if (g_nmi->getObjectState(sO_Boss) == g_nmi->getObjectEnumState(sO_Boss, sO_IsSleeping)) {
+	if (g_nmi->getStateId(sO_Boss) == g_nmi->getStateValue(sO_Boss, sO_IsSleeping)) {
 		g_vars->scene38_shorty->_flags &= 0xFFFB;
 
 		g_vars->scene38_tally->stopMovement();
