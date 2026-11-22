@@ -303,8 +303,12 @@ byte Scene5030::hotspotAt(Common::Point mouse) const {
 	return id < ARRAYSIZE(kHotspots) && !_pickedUp[id] ? id : 0;
 }
 
-void Scene5030::walkTo(Common::Point target) {
-	_walkPath.findPath(RunawayWalkMap(kRoomWidth, kRoomHeight, _mask, _maps), target);
+void Scene5030::walkTo(Common::Point target, bool scripted) {
+	if (scripted) {
+		_walkPath.setTarget(target);
+	} else {
+		_walkPath.findPath(RunawayWalkMap(kRoomWidth, kRoomHeight, _mask, _maps), target);
+	}
 	_walkElapsed = _lastFootstep = 0;
 	if (!_walkPath.active())
 		arrive();
@@ -647,11 +651,11 @@ void Scene5030::waitForSpeech(uint16 cue, byte variation, Action next) {
 	sayCue(cue, variation);
 }
 
-void Scene5030::walkForAction(Common::Point target, byte facing, Action next) {
+void Scene5030::walkForAction(Common::Point target, byte facing, Action next, bool scripted) {
 	startAction(kWalkingAction);
 	_afterWalk = next;
 	_actionFacing = facing;
-	walkTo(target);
+	walkTo(target, scripted);
 }
 
 void Scene5030::setPosition(Common::Point position, byte facing) {
@@ -795,7 +799,9 @@ void Scene5030::startAction(Action action) {
 		applyPatch(23);
 		break;
 	case kFinishMoving:
-		walkForAction(Common::Point(1215, 542), 7, kHatchFound);
+		// The push ends outside the walking mask. Native 0x474ed0 treats
+		// (1156, 468) as zone 5 and walks directly back to the trap door.
+		walkForAction(Common::Point(1215, 542), 7, kHatchFound, true);
 		break;
 	case kHatchFound:
 		_action = kNone;
@@ -965,8 +971,9 @@ void Scene5030::updateAction() {
 			startAction(kCleanWindowClimb);
 	} else if (_action == kCleanWindowClimb) {
 		_step = elapsed / 60;
-		if (_step >= 18)
+		if (_step >= 19) {
 			startAction(kCleanWindowVideo);
+		}
 	} else if (playingVideo()) {
 		_step = (uint64)elapsed * 24 / 1000;
 		// Both demo movies run at 24 fps. Dispatch callbacks on crossing a
@@ -994,8 +1001,9 @@ void Scene5030::updateAction() {
 			_audio.playEffect(16, 204, 1);
 			applyPatch(11);
 		}
-		if (_step >= 81)
+		if (_step >= 82) {
 			finishAction();
+		}
 	} else if (_action != kNone && _action != kWalkingAction) {
 		_step = elapsed / 60;
 		uint length = 0;
@@ -1021,6 +1029,9 @@ void Scene5030::updateAction() {
 			length = 83;
 			if (previousStep < 45 && _step >= 45) {
 				_audio.playEffectAt(83, Common::Point(1273, 200));
+			}
+			if (previousStep < 47 && _step >= 47) {
+				drawPatch(_unplugPatch);
 			}
 			break;
 		case kTryMoveCooler:
@@ -1165,10 +1176,11 @@ void Scene5030::draw() {
 		_actionAnimation.draw(_screen, _step, _cameraX, kRoomTop);
 	} else if (_action == kDrainCooler) {
 		const uint frame = _step <= 47 ? (_step ? _step - 1 : 0) : 82 - _step;
-		_actionAnimation.draw(_screen, frame, _cameraX, kRoomTop);
 		const uint elapsed = _now - _actionStarted;
-		if (elapsed >= 2700)
+		if (elapsed >= 2700 && _step == 45) {
 			_water.draw(_screen, MIN<uint>(96, (elapsed - 2700) / 80), _cameraX, kRoomTop);
+		}
+		_actionAnimation.draw(_screen, frame, _cameraX, kRoomTop);
 	} else if (_action == kPryHatch) {
 		const uint frame = _step <= 43 ? (_step ? _step - 1 : 0) : 56 - _step;
 		_actionAnimation.draw(_screen, frame, _cameraX, kRoomTop);
