@@ -478,8 +478,12 @@ void Parallaction_br::changeCharacter(const char *name) {
 		_char._ani->gfxobj = _gfx->loadCharacterAnim(name);
 		_char._talk = _disk->loadTalk(name);
 
-		_inventory = findInventory(name);
-		_inventoryRenderer->setInventory(_inventory);
+		// characters without an inventory keep the current one
+		Inventory *targetInventory = findInventory(name);
+		if (targetInventory) {
+			_inventory = targetInventory;
+			_inventoryRenderer->setInventory(_inventory);
+		}
 
 		_input->setCharacterPointer(name);
 	}
