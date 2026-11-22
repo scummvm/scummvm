@@ -66,6 +66,7 @@ public:
 	virtual Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const = 0;
 	virtual const Common::U32String &committedCaption() const = 0;
 	virtual const Common::U32String &subtitle() const = 0;
+	virtual byte subtitleColor() const { return 11; }
 	virtual bool busy() const = 0;
 	virtual bool speaking() const = 0;
 	virtual byte speechFrame() const { return 0; }
@@ -116,6 +117,7 @@ public:
 	Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const override;
 	const Common::U32String &committedCaption() const override { return _caption; }
 	const Common::U32String &subtitle() const override;
+	byte subtitleColor() const override { return _sequence.active() ? _sequence.subtitleColor() : _speech.subtitleColor(); }
 	bool busy() const override { return _sequence.active() || _pendingHotspot != 0 || _transition.scene || _hospitalExit.scene || _arrivalFacing != 0xff || _roomAction || _conversation || speaking(); }
 	bool speaking() const override { return _sequence.active() ? !_sequence.subtitle().empty() : !_speech.subtitle().empty(); }
 	byte speechFrame() const override { return _sequence.active() ? _sequence.speechFrame() : _speech.frame(_now); }
@@ -202,7 +204,7 @@ protected:
 	void execute(uint16 action);
 	void executeItemAction(uint16 action);
 	void useItem(byte item, byte hotspot);
-	void say(uint16 cue, byte variation = 0, bool global = false, byte speaker = 0);
+	void say(uint16 cue, byte variation = 0, bool global = false, byte speaker = 0, byte color = 0);
 	void showLine();
 	void changeFloor(bool upper, Common::Point position);
 	void updateCamera();
@@ -304,9 +306,11 @@ protected:
 		Common::U32String text;
 		uint16 sample;
 		bool global;
-		byte speaker;
+		byte speaker, color;
 	};
 	Common::Array<SpeechLine> _lines;
+	// Local animation speaker IDs map to the original font palette.
+	byte _speechColors[7] = {11, 11, 11, 11, 11, 11, 11};
 	Common::U32String _caption;
 	Common::Point _position, _camera;
 	uint _lineIndex = 0;

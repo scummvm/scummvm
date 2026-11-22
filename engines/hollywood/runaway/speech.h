@@ -33,12 +33,13 @@ public:
 	enum LipSync { kNoLipSync, kTextLipSync, kRecordedLipSync };
 	RunawaySpeech(RunawayAudio &audio, Common::RandomSource &random, LipSync mode = kRecordedLipSync) :
 		_audio(audio), _random(random), _mode(mode) {}
-	void start(const Common::U32String &text, uint16 sample, bool global, uint32 now, uint minimumDuration = 1000);
+	void start(const Common::U32String &text, uint16 sample, bool global, uint32 now, byte color = 11, uint minimumDuration = 1000);
 	void stop();
 	// Scene preparation must not stop audio belonging to the active scene.
 	void reset();
 	bool finished(uint32 now) const { return (int32)(now - _deadline) >= 0; }
 	const Common::U32String &subtitle() const { return _subtitle; }
+	byte subtitleColor() const { return _color; }
 	byte frame(uint32 now) const { return _lipSync.frame(now); }
 	uint frameDuration() const { return _lipSync.frameDuration(); }
 
@@ -48,6 +49,7 @@ private:
 	const LipSync _mode;
 	RunawayLipSync _lipSync;
 	Common::U32String _subtitle;
+	byte _color = 11; // Brian's white speech in the original font palette.
 	uint32 _deadline = 0;
 };
 

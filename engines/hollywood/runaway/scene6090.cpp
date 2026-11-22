@@ -63,7 +63,9 @@ const RunawayRoom kRunawayScene6090 = {
 namespace Runaway {
 
 Scene6090::Scene6090(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
-	RunawayRoomScene(audio, inventory, strings, game), _oscar(true) {}
+	RunawayRoomScene(audio, inventory, strings, game), _oscar(true) {
+	_speechColors[1] = 32; // Oscar.
+}
 
 bool Scene6090::loadCustomResources() {
 	return _oscarAnimation.load(_archive, 6, 113) && loadForeground(0, 4);

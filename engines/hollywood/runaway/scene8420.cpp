@@ -34,7 +34,10 @@ const RunawayRoom kRunawayScene8420 = {
 namespace Runaway {
 
 Scene8420::Scene8420(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
-	RunawayRoomScene(audio, inventory, strings, game) {}
+	RunawayRoomScene(audio, inventory, strings, game) {
+	_speechColors[1] = 14; // Gina.
+	_speechColors[2] = 38; // Johnny.
+}
 
 bool Scene8420::loadCustomResources() {
 	if (!_ambient[0].load(_archive, 4, 30) || !_ambient[1].load(_archive, 5, 30) || !_gina.load(_archive, 7, 74)) {
@@ -278,7 +281,7 @@ RunawayRoomScene::ActionResult Scene8420::dispatchCustomSceneAction(uint16 actio
 		typedef RunawaySequence S;
 		static const S::Command nightmare[] = {
 			{S::kOpen, 6}, {S::kMusic, 26, 255},
-			{S::kSpeech, 44, 2, 6}, {S::kPlay, 0, 163}, {S::kWaitSpeech},
+			{S::kSpeech, 44, 2, 4, 0, 38}, {S::kSpeech, 44, 5, 6}, {S::kPlay, 0, 163}, {S::kWaitSpeech},
 			{S::kMusic, 16, 255, 1}, {S::kEnd}
 		};
 		_film = kNightmare;
@@ -364,7 +367,7 @@ void Scene8420::startConfession() {
 	_filmCommands.push_back(S::Command(S::kOpen, 8));
 	_filmCommands.push_back(S::Command(S::kStill, 0, gog));
 	for (uint i = 4; i <= 6; ++i) {
-		_filmCommands.push_back(S::Command(S::kTalk, 51, i, 1));
+		_filmCommands.push_back(S::Command(S::kTalk, 51, i, 1, 0, 14));
 		if (gog) {
 			_filmCommands.push_back(S::Command(S::kStill, i == 6 ? 0 : 1, 1));
 		}
@@ -373,18 +376,18 @@ void Scene8420::startConfession() {
 			_filmCommands.push_back(S::Command(S::kStill, 0, 1));
 		}
 	}
-	_filmCommands.push_back(S::Command(S::kTalk, 51, 7, 1));
+	_filmCommands.push_back(S::Command(S::kTalk, 51, 7, 1, 0, 14));
 	_filmCommands.push_back(S::Command(S::kMusic, 33, 255));
 	if (!gog) {
 		_filmCommands.push_back(S::Command(S::kPlay, 24, 24));
 	}
-	_filmCommands.push_back(S::Command(S::kSpeech, 51, 8, 8));
+	_filmCommands.push_back(S::Command(S::kSpeech, 51, 8, 8, 0, 14));
 	_filmCommands.push_back(S::Command(S::kPlay, gog ? 0 : 25, gog ? 237 : 261));
 	_filmCommands.push_back(S::Command(S::kMusic, 34, 255, 1));
 	_filmCommands.push_back(S::Command(S::kWaitSpeech, 0, 0, 5));
 	_filmCommands.push_back(S::Command(S::kEffect, 57, 26));
 	_filmCommands.push_back(S::Command(S::kPlay, gog ? 238 : 282, gog ? 244 : 289));
-	_filmCommands.push_back(S::Command(S::kSpeech, 51, 9, 9));
+	_filmCommands.push_back(S::Command(S::kSpeech, 51, 9, 9, 0, 14));
 	_filmCommands.push_back(S::Command(S::kPlay, gog ? 245 : 290, gog ? 1057 : 1101));
 	_filmCommands.push_back(S::Command(S::kWaitSpeech, 0, 0, 3, 1));
 	_filmCommands.push_back(S::Command(S::kMusic, 16, 255, 1));
@@ -399,7 +402,7 @@ void Scene8420::startConfession() {
 		if (gog) {
 			_filmCommands.push_back(S::Command(S::kStill, offscreen ? 1 : 0, 1));
 		}
-		_filmCommands.push_back(S::Command(S::kTalk, 51, i + 1, offscreen ? 3 : 1, offscreen));
+		_filmCommands.push_back(S::Command(S::kTalk, 51, i + 1, offscreen ? 3 : 1, offscreen, 14));
 	}
 	_filmCommands.push_back(S::Command(S::kEnd));
 	_film = kConfession;

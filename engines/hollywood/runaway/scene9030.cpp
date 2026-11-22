@@ -104,7 +104,7 @@ void Scene9030::nextLine() {
 	const Common::U32String text(_text.largeTextRecord(_cue.textRecordId + _line), Common::kDos850);
 	const uint16 sample = _cue.voiceSampleId ? _cue.voiceSampleId + _line : 0;
 	++_line;
-	_speech.start(text, sample, true, _now, 0);
+	_speech.start(text, sample, true, _now, _step == kGinaRequest ? 14 : 11, 0);
 }
 
 void Scene9030::enter(Step step) {

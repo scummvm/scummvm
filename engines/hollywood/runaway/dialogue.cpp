@@ -42,6 +42,7 @@ void RunawayRoomScene::buildDialogueChoices() {
 		finishConversation();
 		return;
 	}
+	bool selectable = false;
 	for (uint i = 0; i < 8; ++i) {
 		if (!_dialogue[page][i].enabled) {
 			continue;
@@ -51,6 +52,7 @@ void RunawayRoomScene::buildDialogueChoices() {
 		if (!text.empty()) {
 			_choices.push_back(text);
 			_choiceIndices.push_back(i);
+			selectable |= _dialogue[page][i].selectable != 255;
 		}
 	}
 	if (_choices.empty()) {
@@ -61,6 +63,9 @@ void RunawayRoomScene::buildDialogueChoices() {
 		} else {
 			finishConversation();
 		}
+	} else if (!selectable) {
+		// Nodes containing only automatic replies do not open the choice menu.
+		chooseDialogue(0);
 	}
 }
 

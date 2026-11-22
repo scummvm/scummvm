@@ -310,7 +310,7 @@ Common::Error RunawayEngine::playIntro(RunawayMenu &menu, byte chapter, RunawayI
 		intro.draw();
 		_presentationMouse.update(true);
 		if (!ConfMan.hasKey("subtitles") || ConfMan.getBool("subtitles") || ConfMan.getBool("speech_mute"))
-			_ui->drawSubtitle(intro.screen(), intro.subtitle());
+			_ui->drawSubtitle(intro.screen(), intro.subtitle(), intro.subtitleColor());
 		const Graphics::ManagedSurface &screen = intro.screen();
 		present(screen);
 		_system->delayMillis(10);
@@ -616,11 +616,11 @@ Common::Error RunawayEngine::run() {
 		const bool subtitles = _museum || !ConfMan.hasKey("subtitles") || ConfMan.getBool("subtitles") || ConfMan.getBool("speech_mute");
 		if (_scene->playingVideo()) {
 			if (subtitles) {
-				_ui->drawSubtitle(screen, _scene->subtitle());
+				_ui->drawSubtitle(screen, _scene->subtitle(), _scene->subtitleColor());
 			}
 		} else {
 			_ui->draw(screen, _scene->actionCaption(_scene->hotspotAt(mouse), _ui->verb(), _inventory->selected()),
-				_scene->committedCaption(), _scene->subtitle(), subtitles);
+				_scene->committedCaption(), _scene->subtitle(), _scene->subtitleColor(), subtitles);
 		}
 		present(screen);
 		_system->delayMillis(16);

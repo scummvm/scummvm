@@ -415,12 +415,13 @@ void RunawayRoomScene::click(Common::Point mouse, RunawayVerb verb, byte item) {
 
 void RunawayRoomScene::showLine() {
 	const SpeechLine &line = _lines[_lineIndex];
-	_speech.start(line.text, line.sample, line.global, _now);
+	_speech.start(line.text, line.sample, line.global, _now, line.color);
 	if (_game == kRunawayFullGame)
 		_idleHead.reset(_now);
 }
 
-void RunawayRoomScene::say(uint16 cue, byte variation, bool global, byte speaker) {
+void RunawayRoomScene::say(uint16 cue, byte variation, bool global, byte speaker, byte color) {
+	assert(speaker < ARRAYSIZE(_speechColors));
 	stopAmbientSpeech();
 	SceneSpeechCue speech;
 	if (global)
@@ -435,6 +436,7 @@ void RunawayRoomScene::say(uint16 cue, byte variation, bool global, byte speaker
 		line.sample = _game == kRunawayFullGame && speech.voiceSampleId ? speech.voiceSampleId + i : 0;
 		line.global = global;
 		line.speaker = speaker;
+		line.color = color ? color : _speechColors[speaker];
 		if (!line.text.empty())
 			_lines.push_back(line);
 	}

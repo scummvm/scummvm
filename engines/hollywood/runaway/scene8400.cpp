@@ -76,7 +76,10 @@ const RunawayRoom kRunawayScene8400 = {
 namespace Runaway {
 
 Scene8400::Scene8400(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
-	RunawayRoomScene(audio, inventory, strings, game) {}
+	RunawayRoomScene(audio, inventory, strings, game) {
+	_speechColors[1] = 27; // Gustav.
+	_speechColors[2] = 22; // Feodor.
+}
 
 bool Scene8400::loadCustomResources() {
 	return _door.load(_archive, 4, 3) && _scenery.load(_archive, 9, 123) &&

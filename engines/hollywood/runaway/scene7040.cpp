@@ -73,20 +73,20 @@ typedef RunawaySequence S;
 const S::Command kCryptVisit[] = {
 	{S::kOpen, 3}, {S::kEffect, 32, 255}, {S::kPlay, 0, 511},
 	// Wupuchim welcomes Brian into the sanctuary.
-	{S::kTalk, 20, 0, 1}, {S::kTalk, 20, 1, 3, 1},
-	{S::kTalk, 20, 2, 3}, {S::kTalk, 20, 3, 3, 1}, {S::kTalk, 20, 4, 3},
+	{S::kTalk, 20, 0, 1, 0, 33}, {S::kTalk, 20, 1, 3, 1},
+	{S::kTalk, 20, 2, 3, 0, 33}, {S::kTalk, 20, 3, 3, 1}, {S::kTalk, 20, 4, 3, 0, 33},
 	{S::kEffect, 33, 255}, {S::kPlay, 524, 608},
-	{S::kTalk, 20, 5, 5}, {S::kTalk, 20, 6, 5, 1},
+	{S::kTalk, 20, 5, 5}, {S::kTalk, 20, 6, 5, 1, 33},
 	// Reveal the bottle and explain why Brian must take it away.
-	{S::kPlay, 627, 686}, {S::kSpeech, 20, 7, 8}, {S::kPlay, 687, 747}, {S::kWaitSpeech},
-	{S::kTalk, 20, 9, 3}, {S::kTalk, 20, 10, 5},
-	{S::kTalk, 20, 11, 3}, {S::kTalk, 20, 12, 5},
-	{S::kTalk, 20, 13, 5, 1}, {S::kTalk, 20, 14, 5},
-	{S::kTalk, 20, 15, 3}, {S::kTalk, 20, 16, 3, 1},
+	{S::kPlay, 627, 686}, {S::kSpeech, 20, 7, 7, 0, 11}, {S::kSpeech, 20, 8, 8, 0, 33}, {S::kPlay, 687, 747}, {S::kWaitSpeech},
+	{S::kTalk, 20, 9, 3, 0, 33}, {S::kTalk, 20, 10, 5},
+	{S::kTalk, 20, 11, 3, 0, 33}, {S::kTalk, 20, 12, 5},
+	{S::kTalk, 20, 13, 5, 1, 33}, {S::kTalk, 20, 14, 5},
+	{S::kTalk, 20, 15, 3, 0, 33}, {S::kTalk, 20, 16, 3, 1},
 	// Leave the sacred key with Wupuchim and return to Gina.
-	{S::kTalk, 20, 17, 3}, {S::kTalk, 20, 18, 3, 1},
-	{S::kTalk, 20, 19, 3}, {S::kTalk, 20, 20, 7},
-	{S::kTalk, 20, 21, 3}, {S::kTalk, 20, 22, 7},
+	{S::kTalk, 20, 17, 3, 0, 33}, {S::kTalk, 20, 18, 3, 1},
+	{S::kTalk, 20, 19, 3, 0, 33}, {S::kTalk, 20, 20, 7},
+	{S::kTalk, 20, 21, 3, 0, 33}, {S::kTalk, 20, 22, 7},
 	{S::kEffect, 34, 255}, {S::kPlay, 760, 933}, {S::kEnd}
 };
 

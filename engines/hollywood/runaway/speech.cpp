@@ -24,8 +24,9 @@
 
 namespace Hollywood {
 
-void RunawaySpeech::start(const Common::U32String &text, uint16 sample, bool global, uint32 now, uint minimumDuration) {
+void RunawaySpeech::start(const Common::U32String &text, uint16 sample, bool global, uint32 now, byte color, uint minimumDuration) {
 	_subtitle = text;
+	_color = color;
 	const uint32 duration = sample ? _audio.playSpeech(sample, global) : 0;
 	_deadline = now + (duration ? MAX<uint>(minimumDuration, duration + 150) : MAX<uint>(3000, _subtitle.size() * 55));
 	if (_mode != kNoLipSync)

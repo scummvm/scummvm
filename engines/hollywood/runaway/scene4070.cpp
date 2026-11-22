@@ -41,7 +41,9 @@ const RunawayRoom kRunawayScene4070 = {
 namespace Runaway {
 
 Scene4070::Scene4070(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
-	RunawayRoomScene(audio, inventory, strings, game) {}
+	RunawayRoomScene(audio, inventory, strings, game) {
+	_speechColors[1] = 19; // Willy.
+}
 
 bool Scene4070::loadCustomResources() {
 	return _willyAnimation.load(_archive, 4, 188);

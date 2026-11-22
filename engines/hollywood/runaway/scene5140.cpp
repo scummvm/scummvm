@@ -111,7 +111,11 @@ const RunawayRoom kRunawayScene5140 = {
 namespace Runaway {
 
 Scene5140::Scene5140(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
-	RunawayRoomScene(audio, inventory, strings, game) {}
+	RunawayRoomScene(audio, inventory, strings, game) {
+	_speechColors[4] = 24; // Carla.
+	_speechColors[5] = 28; // Lula.
+	_speechColors[6] = 25; // Mariola.
+}
 
 bool Scene5140::loadCustomResources() {
 	return _brianAnimation.load(_archive, 1, 130) &&

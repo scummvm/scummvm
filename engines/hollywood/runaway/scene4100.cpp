@@ -102,7 +102,10 @@ const RunawayRoom kRunawayScene4100 = {
 namespace Runaway {
 
 Scene4100::Scene4100(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
-	RunawayRoomScene(audio, inventory, strings, game) {}
+	RunawayRoomScene(audio, inventory, strings, game) {
+	_speechColors[1] = 18; // Voice lock.
+	_speechColors[2] = 17; // Recorded Susan.
+}
 
 const char *Scene4100::actionCaptionVariant(byte id, bool look, byte item) const {
 	if (!look && !item && id == 3) {
@@ -425,14 +428,14 @@ void Scene4100::finishCustomAnimation(uint16 action) {
 			error("Cannot load Runaway Clive animation");
 		}
 		_cliveVisible = true;
-		say(92, 0, false, 1);
+		say(92, 0, false, 1, 20); // Clive uses the same animation speaker as the voice lock.
 		holdRoomAnimation(417, 24, 28, 4);
 		break;
 	case 417: // Brian turns to listen.
 		beginRoomAnimationRange(418, 24, 28, 5, 9);
 		break;
 	case 418: // Clive warns about Gina.
-		say(92, 1, false, 1);
+		say(92, 1, false, 1, 20);
 		holdRoomAnimation(419, 24, 28, 9);
 		break;
 	case 419: { // Clive leaves the laboratory.

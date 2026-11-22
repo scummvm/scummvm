@@ -33,7 +33,9 @@ const RunawayRoom kRunawayScene6370 = {
 namespace Runaway {
 
 Scene6370::Scene6370(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
-	RunawayRoomScene(audio, inventory, strings, game) {}
+	RunawayRoomScene(audio, inventory, strings, game) {
+	_speechColors[1] = 30; // Sushi.
+}
 
 bool Scene6370::usesAlternateActor() const {
 	return false;

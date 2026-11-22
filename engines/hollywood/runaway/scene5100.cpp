@@ -108,7 +108,10 @@ namespace Runaway {
 
 Scene5100::Scene5100(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game),
-	_hangarSpeech(audio, _random) {}
+	_hangarSpeech(audio, _random) {
+	_speechColors[1] = 26; // Stud.
+	_speechColors[2] = 28; // Lula.
+}
 
 const char *Scene5100::actionCaptionVariant(byte id, bool look, byte item) const {
 	if (!item && id == 2) {
@@ -683,7 +686,7 @@ void Scene5100::startHangarSpeech(uint16 cue, byte variation) {
 
 void Scene5100::showHangarSpeechLine() {
 	_hangarSpeech.start(Common::U32String(_text.largeTextRecord(_hangarCue.textRecordId + _hangarLine), Common::kDos850),
-		_hangarCue.voiceSampleId + _hangarLine, false, _now);
+		_hangarCue.voiceSampleId + _hangarLine, false, _now, _speechColors[1]);
 }
 
 void Scene5100::handleAnimationFrameHook() {
@@ -836,6 +839,13 @@ const Common::U32String &Scene5100::subtitle() const {
 		return _hangarSpeech.subtitle();
 	}
 	return RunawayRoomScene::subtitle();
+}
+
+byte Scene5100::subtitleColor() const {
+	if (!_sequence.active() && !speaking()) {
+		return _hangarSpeech.subtitleColor();
+	}
+	return RunawayRoomScene::subtitleColor();
 }
 
 } // End of namespace Runaway

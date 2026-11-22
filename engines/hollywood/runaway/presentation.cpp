@@ -219,7 +219,8 @@ void RunawayInterrogation::nextPhrase() {
 }
 
 void RunawayInterrogation::showSpeechRow() {
-	_speech.start(Common::U32String(_text.largeTextRecord(_row), Common::kDos850), _sample, false, _now);
+	static const byte colors[] = {27, 22, 14}; // Gustav, Feodor, Gina.
+	_speech.start(Common::U32String(_text.largeTextRecord(_row), Common::kDos850), _sample, false, _now, colors[_speakers[_phrase]]);
 	const uint actor = kInterrogationSpeakerActor[_speakers[_phrase]];
 	_frames[actor] = kInterrogationMouthBase[actor] + _speech.frame(_now);
 	_idle[actor] = true;

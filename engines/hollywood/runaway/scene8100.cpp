@@ -53,7 +53,9 @@ const RunawayRoom kRunawayScene8100 = {
 namespace Runaway {
 
 Scene8100::Scene8100(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
-	RunawayRoomScene(audio, inventory, strings, game) {}
+	RunawayRoomScene(audio, inventory, strings, game) {
+	_speechColors[1] = 34; // Mama Dorita.
+}
 
 bool Scene8100::loadCustomResources() {
 	Common::Array<byte> patch;
@@ -244,7 +246,7 @@ RunawayRoomScene::ActionResult Scene8100::dispatchCustomSceneAction(uint16 actio
 		_filmCommands.push_back({S::kOpen, _mediumTest});
 		_filmCommands.push_back({S::kPlay, 0, last});
 		_filmCommands.push_back({S::kStill, last});
-		_filmCommands.push_back({S::kSpeech, 90, response, response});
+		_filmCommands.push_back({S::kSpeech, 90, response, response, 0, 34});
 		_filmCommands.push_back(S::Command(S::kWaitSpeech));
 		_filmCommands.push_back(S::Command(S::kEnd));
 		_sequence.start(_filmCommands.data(), _text, _now, 'H');
@@ -458,31 +460,31 @@ void Scene8100::startSeance() {
 	typedef RunawaySequence S;
 	static const S::Command commands[] = {
 		{S::kOpen, 4}, {S::kMusic, 30, 96, 1},
-		{S::kPlay, 0, 9}, {S::kSpeech, 20, 0}, {S::kPlay, 10, 58}, {S::kWaitSpeech},
-		{S::kTalk, 20, 1, 1},
+		{S::kPlay, 0, 9}, {S::kSpeech, 20, 0, 0, 0, 34}, {S::kPlay, 10, 58}, {S::kWaitSpeech},
+		{S::kTalk, 20, 1, 1, 0, 34},
 		{S::kSpeech, 20, 2, 2}, {S::kPlay, 1128, 1253, S::kLoopDuringSpeech},
-		{S::kSpeech, 20, 3, 3}, {S::kPlay, 59, 299, S::kLoopDuringSpeech},
-		{S::kPlay, 300, 344}, {S::kTalk, 20, 4, 1},
-		{S::kSpeech, 21, 4, 4}, {S::kPlay, 345, 583, S::kLoopDuringSpeech},
-		{S::kSpeech, 20, 5, 5}, {S::kPlay, 589, 708, S::kLoopDuringSpeech},
-		{S::kTalk, 20, 6, 5},
-		{S::kSpeech, 20, 7, 7}, {S::kPlay, 589, 708, S::kLoopDuringSpeech},
+		{S::kSpeech, 20, 3, 3, 0, 34}, {S::kPlay, 59, 299, S::kLoopDuringSpeech},
+		{S::kPlay, 300, 344}, {S::kTalk, 20, 4, 1, 0, 34},
+		{S::kSpeech, 21, 4, 4, 0, 34}, {S::kPlay, 345, 583, S::kLoopDuringSpeech},
+		{S::kSpeech, 20, 5, 5, 0, 14}, {S::kPlay, 589, 708, S::kLoopDuringSpeech},
+		{S::kTalk, 20, 6, 5, 0, 14},
+		{S::kSpeech, 20, 7, 7, 0, 14}, {S::kPlay, 589, 708, S::kLoopDuringSpeech},
 		{S::kMusic, 31, 96}, {S::kPlay, 709, 749},
-		{S::kSpeech, 20, 8, 8}, {S::kPlay, 750, 1107}, {S::kWaitSpeech},
+		{S::kSpeech, 20, 8, 8, 0, 38}, {S::kPlay, 750, 1107}, {S::kWaitSpeech},
 		{S::kMusic, 30, 96, 1},
-		{S::kTalk, 20, 9, 5}, {S::kTalk, 20, 10, 3}, {S::kTalk, 20, 11, 5},
-		{S::kSpeech, 20, 12, 12}, {S::kPlay, 1266, 1516, S::kLoopDuringSpeech},
-		{S::kSpeech, 20, 13, 13}, {S::kPlay, 1517, 1557}, {S::kWaitSpeech},
-		{S::kSpeech, 20, 14, 14}, {S::kPlay, 1266, 1516, S::kLoopDuringSpeech},
-		{S::kTalk, 20, 15, 5}, {S::kTalk, 20, 16, 3},
-		{S::kSpeech, 20, 17, 17}, {S::kPlay, 1517, 1557}, {S::kWaitSpeech},
-		{S::kSpeech, 20, 18, 18}, {S::kPlay, 1266, 1516, S::kLoopDuringSpeech},
-		{S::kTalk, 20, 19, 5}, {S::kTalk, 20, 20, 3},
-		{S::kSpeech, 20, 21, 21}, {S::kPlay, 1517, 1557}, {S::kWaitSpeech},
-		{S::kSpeech, 20, 22, 22}, {S::kPlay, 1266, 1516, S::kLoopDuringSpeech},
-		{S::kTalk, 20, 23, 5}, {S::kTalk, 20, 24, 1},
-		{S::kSpeech, 20, 25, 25}, {S::kPlay, 345, 583, S::kLoopDuringSpeech},
-		{S::kTalk, 20, 26, 1}, {S::kPlay, 1558, 1615}, {S::kEnd}
+		{S::kTalk, 20, 9, 5, 0, 14}, {S::kTalk, 20, 10, 3, 0, 38}, {S::kTalk, 20, 11, 5, 0, 14},
+		{S::kSpeech, 20, 12, 12, 0, 38}, {S::kPlay, 1266, 1516, S::kLoopDuringSpeech},
+		{S::kSpeech, 20, 13, 13, 0, 14}, {S::kPlay, 1517, 1557}, {S::kWaitSpeech},
+		{S::kSpeech, 20, 14, 14, 0, 38}, {S::kPlay, 1266, 1516, S::kLoopDuringSpeech},
+		{S::kTalk, 20, 15, 5, 0, 14}, {S::kTalk, 20, 16, 3, 0, 38},
+		{S::kSpeech, 20, 17, 17, 0, 14}, {S::kPlay, 1517, 1557}, {S::kWaitSpeech},
+		{S::kSpeech, 20, 18, 18, 0, 38}, {S::kPlay, 1266, 1516, S::kLoopDuringSpeech},
+		{S::kTalk, 20, 19, 5, 0, 14}, {S::kTalk, 20, 20, 3, 0, 38},
+		{S::kSpeech, 20, 21, 21, 0, 14}, {S::kPlay, 1517, 1557}, {S::kWaitSpeech},
+		{S::kSpeech, 20, 22, 22, 0, 38}, {S::kPlay, 1266, 1516, S::kLoopDuringSpeech},
+		{S::kTalk, 20, 23, 5, 0, 14}, {S::kTalk, 20, 24, 1, 0, 34},
+		{S::kSpeech, 20, 25, 25, 0, 34}, {S::kPlay, 345, 583, S::kLoopDuringSpeech},
+		{S::kTalk, 20, 26, 1, 0, 34}, {S::kPlay, 1558, 1615}, {S::kEnd}
 	};
 	_seanceFilm = true;
 	if (!Common::File::exists("DATAVC00.000")) {

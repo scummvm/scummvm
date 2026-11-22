@@ -36,16 +36,16 @@ const S::Command kBankSequence[] = {
 
 const S::Command kGangstersSequence[] = {
 	{S::kOpen, 2}, {S::kMusic, 34, 255, 1}, {S::kPlay, 0, 67},
-	{S::kTalk, 1, 0, 1}, {S::kTalk, 1, 1, 5}, {S::kTalk, 1, 2, 1},
-	{S::kTalk, 1, 3, 5}, {S::kTalk, 1, 4, 1}, {S::kTalk, 1, 5, 7},
-	{S::kTalk, 1, 6, 3}, {S::kTalk, 1, 7, 1},
-	{S::kEffect, 59, 255}, {S::kPlay, 115, 218}, {S::kTalk, 1, 8, 9},
-	{S::kEffect, 60, 255}, {S::kPlay, 230, 352}, {S::kDelay, 2000}, {S::kTalk, 1, 9},
-	{S::kPlay, 353, 385}, {S::kTalk, 1, 10, 11},
+	{S::kTalk, 1, 0, 1, 0, 36}, {S::kTalk, 1, 1, 5, 0, 22}, {S::kTalk, 1, 2, 1, 0, 36},
+	{S::kTalk, 1, 3, 5, 0, 22}, {S::kTalk, 1, 4, 1, 0, 36}, {S::kTalk, 1, 5, 7, 0, 27},
+	{S::kTalk, 1, 6, 3, 0, 37}, {S::kTalk, 1, 7, 1, 0, 36},
+	{S::kEffect, 59, 255}, {S::kPlay, 115, 218}, {S::kTalk, 1, 8, 9, 0, 36},
+	{S::kEffect, 60, 255}, {S::kPlay, 230, 352}, {S::kDelay, 2000}, {S::kTalk, 1, 9, 0, 0, 37},
+	{S::kPlay, 353, 385}, {S::kTalk, 1, 10, 11, 0, 37},
 	{S::kEffect, 61, 255}, {S::kPlay, 398, 445},
-	{S::kSpeech, 1, 11, 11}, {S::kPlay, 446, 572},
-	{S::kSpeech, 1, 12, 12}, {S::kPlay, 573, 747}, {S::kWaitSpeech},
-	{S::kTalk, 1, 13, 13}, {S::kPlay, 760, 780}, {S::kTalk, 1, 14, 15},
+	{S::kSpeech, 1, 11, 11, 0, 27}, {S::kPlay, 446, 572},
+	{S::kSpeech, 1, 12, 12, 0, 36}, {S::kPlay, 573, 747}, {S::kWaitSpeech},
+	{S::kTalk, 1, 13, 13, 0, 36}, {S::kPlay, 760, 780}, {S::kTalk, 1, 14, 15, 0, 37},
 	{S::kPlay, 793, 829}, {S::kEnd}
 };
 

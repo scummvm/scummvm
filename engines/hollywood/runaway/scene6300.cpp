@@ -81,7 +81,9 @@ const RunawayRoom kRunawayScene6300 = {
 namespace Runaway {
 
 Scene6300::Scene6300(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
-	RunawayRoomScene(audio, inventory, strings, game) {}
+	RunawayRoomScene(audio, inventory, strings, game) {
+	_speechColors[1] = 31; // Saturn.
+}
 
 const char *Scene6300::actionCaptionVariant(byte id, bool look, byte item) const {
 	if (!look && !item) {

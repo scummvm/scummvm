@@ -121,7 +121,9 @@ const RunawayRoom kRunawayScene4050 = {
 namespace Runaway {
 
 Scene4050::Scene4050(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
-	RunawayRoomScene(audio, inventory, strings, game), _susanSpeech(audio, _random, RunawaySpeech::kRecordedLipSync) {}
+	RunawayRoomScene(audio, inventory, strings, game), _susanSpeech(audio, _random, RunawaySpeech::kRecordedLipSync) {
+	_speechColors[1] = 17; // Susan.
+}
 
 const char *Scene4050::actionCaptionVariant(byte id, bool look, byte item) const {
 	if (item == 14 && id == 4) {
@@ -259,7 +261,7 @@ void Scene4050::advanceSusanIdle() {
 			if (idle) {
 				const SceneSpeechCue cue = _text.stageCue(33, _random.getRandomNumber(3));
 				if (cue.valid()) {
-					_susanSpeech.start(Common::U32String(_text.largeTextRecord(cue.textRecordId), Common::kDos850), cue.voiceSampleId, false, _now);
+					_susanSpeech.start(Common::U32String(_text.largeTextRecord(cue.textRecordId), Common::kDos850), cue.voiceSampleId, false, _now, _speechColors[1]);
 					_susanFrame = 52;
 					_susanTalking = true;
 				}
@@ -300,6 +302,13 @@ const Common::U32String &Scene4050::subtitle() const {
 		return _susanSpeech.subtitle();
 	}
 	return RunawayRoomScene::subtitle();
+}
+
+byte Scene4050::subtitleColor() const {
+	if (!_sequence.active() && !speaking() && !_susanSpeech.subtitle().empty()) {
+		return _susanSpeech.subtitleColor();
+	}
+	return RunawayRoomScene::subtitleColor();
 }
 
 void Scene4050::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
@@ -702,7 +711,7 @@ void Scene4050::startSusanConversation(bool introduction) {
 	memcpy(_dialogue[11], susan[2], sizeof(susan[2]));
 	memcpy(_dialogue[20], susan[3], sizeof(susan[3]));
 	if (ConfMan.getBool("restored_content")) {
-		// Follow Susan's first mention of the laser, then return to her work topic.
+		// The automatic follow-up node returns to her work topic after the laser explanation.
 		_dialogue[11][0].node = 0;
 		_dialogue[11][0].transition = 1;
 		_dialogue[20][0].node = 1;

@@ -97,7 +97,11 @@ const RunawayRoom kRunawayScene8380 = {
 namespace Runaway {
 
 Scene8380::Scene8380(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
-	RunawayRoomScene(audio, inventory, strings, game) {}
+	RunawayRoomScene(audio, inventory, strings, game) {
+	_speechColors[1] = 30; // Sushi.
+	_speechColors[2] = 36; // Sandretti.
+	_speechColors[3] = 14; // Recorded Gina.
+}
 
 bool Scene8380::loadCustomResources() {
 	static const uint frames[] = {48, 48, 6, 4, 11, 48, 11, 11, 11, 4, 4, 4, 6, 6, 6, 6};

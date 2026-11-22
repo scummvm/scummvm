@@ -92,6 +92,7 @@ public:
 	bool finished() const { return _phrase >= _phraseCount; }
 	bool speaking() const { return _row != 0; }
 	const Common::U32String &subtitle() const { return _speech.subtitle(); }
+	byte subtitleColor() const { return _speech.subtitleColor(); }
 
 private:
 	void nextPhrase();

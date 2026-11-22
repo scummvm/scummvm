@@ -62,7 +62,9 @@ const RunawayRoom kRunawayScene8090 = {
 namespace Runaway {
 
 Scene8090::Scene8090(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
-	RunawayRoomScene(audio, inventory, strings, game), _oscar(true, 6) {}
+	RunawayRoomScene(audio, inventory, strings, game), _oscar(true, 6) {
+	_speechColors[1] = 32; // Oscar.
+}
 
 const char *Scene8090::actionCaptionVariant(byte id, bool look, byte item) const {
 	if (!look && !item && (id == 2 || id == 6) && _finale.oscarAway) {

@@ -66,7 +66,7 @@ void RunawaySequence::advance() {
 	_started = _now;
 }
 
-void RunawaySequence::speak(uint cue, uint variation, uint lastVariation, bool global) {
+void RunawaySequence::speak(uint cue, uint variation, uint lastVariation, bool global, byte color) {
 	for (uint v = variation; v <= MAX(variation, lastVariation); ++v) {
 		SceneSpeechCue speech;
 		if (global) {
@@ -81,6 +81,7 @@ void RunawaySequence::speak(uint cue, uint variation, uint lastVariation, bool g
 			line.text = Common::U32String(_text->largeTextRecord(speech.textRecordId + i), Common::kDos850);
 			line.sample = speech.voiceSampleId ? speech.voiceSampleId + i : 0;
 			line.global = global;
+			line.color = color;
 			if (!line.text.empty())
 				_lines.push_back(line);
 		}
@@ -97,7 +98,7 @@ void RunawaySequence::nextLine() {
 		return;
 	}
 	const Line &line = _lines[_line++];
-	_speech.start(line.text, line.sample, line.global, _now, 0);
+	_speech.start(line.text, line.sample, line.global, _now, line.color, 0);
 }
 
 void RunawaySequence::finishPreparation() {
@@ -289,7 +290,7 @@ void RunawaySequence::update(uint32 now) {
 				break;
 			}
 			case kSpeech:
-				speak(command.a, command.b, command.c, command.d != 0);
+				speak(command.a, command.b, command.c, command.d != 0, command.speechColor);
 				break;
 			case kMusic:
 				_audio.playMusic(command.a, command.c != 0);
@@ -316,7 +317,7 @@ void RunawaySequence::update(uint32 now) {
 				finishPreparation();
 			}
 			if (command.operation == kTalk) {
-				speak(command.a, command.b);
+				speak(command.a, command.b, command.b, false, command.speechColor);
 			}
 			_entered = true;
 		}

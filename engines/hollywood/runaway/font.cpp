@@ -52,6 +52,25 @@ const byte kGlyphMap[256] = {
 
 } // End of anonymous namespace
 
+uint16 RunawayFont::getColor(byte index) {
+	// Original font palette, shared by captions, dialogue choices and speech.
+	static const byte colors[][3] = {
+		{255, 255, 255}, {0, 0, 0}, {255, 223, 206}, {189, 166, 148},
+		{140, 125, 107}, {255, 255, 255}, {148, 174, 206}, {99, 117, 140},
+		{66, 65, 66}, {189, 166, 148}, {255, 223, 206}, {255, 255, 255},
+		{0, 0, 0}, {158, 167, 0}, {255, 124, 165}, {189, 166, 148},
+		{255, 223, 206}, {202, 78, 167}, {107, 189, 200}, {83, 216, 63},
+		{57, 186, 240}, {216, 213, 63}, {168, 128, 210}, {63, 47, 47},
+		{242, 36, 103}, {255, 146, 70}, {147, 188, 242}, {186, 219, 149},
+		{193, 242, 36}, {228, 151, 255}, {43, 237, 247}, {81, 162, 255},
+		{165, 223, 193}, {255, 224, 74}, {134, 229, 255}, {82, 236, 27},
+		{228, 54, 54}, {189, 149, 49}, {252, 106, 46}
+	};
+	assert(index < ARRAYSIZE(colors));
+	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	return format.RGBToColor(colors[index][0], colors[index][1], colors[index][2]);
+}
+
 bool RunawayFont::load(bool menuFont, bool museum) {
 	Common::Array<byte> metrics;
 	if (museum) {

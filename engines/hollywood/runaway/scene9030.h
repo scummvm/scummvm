@@ -36,6 +36,7 @@ public:
 	void update(uint32 now, int scrollDirection, bool inventoryOpen) override;
 	void draw() override;
 	const Common::U32String &subtitle() const override { return _speech.subtitle(); }
+	byte subtitleColor() const override { return _speech.subtitleColor(); }
 	void skipSpeech() override;
 	void skipVideo() override;
 	bool escaped() const override { return _step == kFinished; }

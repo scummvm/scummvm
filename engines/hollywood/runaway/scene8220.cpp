@@ -70,7 +70,9 @@ const RunawayRoom kRunawayScene8220 = {
 namespace Runaway {
 
 Scene8220::Scene8220(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
-	RunawayRoomScene(audio, inventory, strings, game), _oscar(false, 6) {}
+	RunawayRoomScene(audio, inventory, strings, game), _oscar(false, 6) {
+	_speechColors[1] = 32; // Oscar.
+}
 
 bool Scene8220::loadCustomResources() {
 	return _oscarAnimation.load(_archive, 7, 107) && _brianAnimation.load(_archive, 8, 33) &&
@@ -417,6 +419,7 @@ RunawayRoomScene::ActionResult Scene8220::dispatchCustomSceneAction(uint16 actio
 	}
 	case 1414: { // Show Sushi, Saturn and Rutger watching Brian leave.
 		typedef RunawaySequence S;
+		static const byte colors[] = {30, 31, 35};
 		const bool gog = Common::File::exists("DATAVC00.000");
 		_filmCommands.clear();
 		_filmCommands.push_back({S::kOpen, 9});
@@ -426,7 +429,7 @@ RunawayRoomScene::ActionResult Scene8220::dispatchCustomSceneAction(uint16 actio
 			if (gog) {
 				_filmCommands.push_back(S::Command(S::kStill, 45 + i));
 			}
-			_filmCommands.push_back(S::Command(S::kTalk, 40, i, 1 + i * 2));
+			_filmCommands.push_back(S::Command(S::kTalk, 40, i, 1 + i * 2, 0, colors[i]));
 		}
 		_filmCommands.push_back(S::Command(S::kPlay, gog ? 48 : 63, gog ? 105 : 120));
 		_filmCommands.push_back(S::Command(S::kEnd));
@@ -449,7 +452,7 @@ RunawayRoomScene::ActionResult Scene8220::dispatchCustomSceneAction(uint16 actio
 
 void Scene8220::finishCustomFilm() {
 	_farewell = true;
-	say(40, 3, false, 1);
+	say(40, 3, false, 1, 35); // Rutger's offscreen farewell.
 	deferAction(415);
 }
 

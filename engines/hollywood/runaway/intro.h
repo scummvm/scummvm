@@ -44,6 +44,7 @@ public:
 	bool finished() const { return _phase == kFinished; }
 	bool failed() const { return _opening.failed(); }
 	const Common::U32String &subtitle() const { return _opening.subtitle(); }
+	byte subtitleColor() const { return _opening.subtitleColor(); }
 	Graphics::ManagedSurface &screen() { return _screen; }
 
 private:

@@ -59,9 +59,9 @@ public:
 	void captureState(RunawaySaveState &state) const;
 	void restoreState(const RunawaySaveState &state, uint32 now);
 	void setPointerSound(bool enabled) { _pointerSound = enabled; }
-	void drawSubtitle(Graphics::ManagedSurface &screen, const Common::U32String &text) const;
+	void drawSubtitle(Graphics::ManagedSurface &screen, const Common::U32String &text, byte color = 11) const;
 	void draw(Graphics::ManagedSurface &screen, const Common::U32String &roomCaption,
-		const Common::U32String &committedCaption, const Common::U32String &subtitle, bool showSubtitles);
+		const Common::U32String &committedCaption, const Common::U32String &subtitle, byte subtitleColor, bool showSubtitles);
 
 private:
 	Common::Rect itemRect(uint slot) const;

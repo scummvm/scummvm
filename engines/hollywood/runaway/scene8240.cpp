@@ -94,7 +94,9 @@ const RunawayRoom kRunawayScene8240 = {
 namespace Runaway {
 
 Scene8240::Scene8240(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
-	Scene6240(audio, inventory, strings, game) {}
+	Scene6240(audio, inventory, strings, game) {
+	_speechColors[1] = 35; // Rutger.
+}
 
 bool Scene8240::loadCustomResources() {
 	_brew = _entryScene == 8243;
@@ -353,7 +355,7 @@ RunawayRoomScene::ActionResult Scene8240::dispatchCustomSceneAction(uint16 actio
 	case 415: { // Cut to black as Brian leaves for his final medium test.
 		typedef RunawaySequence S;
 		static const S::Command commands[] = {
-			{S::kDelay, 500}, {S::kSpeech, 18, 7, 7}, {S::kWaitSpeech}, {S::kEnd}
+			{S::kDelay, 500}, {S::kSpeech, 18, 7, 7, 0, 35}, {S::kWaitSpeech}, {S::kEnd}
 		};
 		_film = kLeaveAfterBrew;
 		_sequence.start(commands, _text, _now, 'H');

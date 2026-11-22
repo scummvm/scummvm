@@ -112,7 +112,10 @@ const RunawayRoom kRunawayScene8200 = {
 namespace Runaway {
 
 Scene8200::Scene8200(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
-	RunawayRoomScene(audio, inventory, strings, game), _tauntSpeech(audio, _random) {}
+	RunawayRoomScene(audio, inventory, strings, game), _tauntSpeech(audio, _random) {
+	_speechColors[1] = 22; // Feodor.
+	_speechColors[2] = 27; // Gustav.
+}
 
 bool Scene8200::usesAlternateActor() const {
 	return false;
@@ -327,7 +330,7 @@ void Scene8200::startTaunt(uint index, byte variation) {
 void Scene8200::showTauntLine() {
 	const Common::U32String text(_text.largeTextRecord(_tauntCue.textRecordId + _tauntLine), Common::kDos850);
 	const uint16 sample = _tauntCue.voiceSampleId ? _tauntCue.voiceSampleId + _tauntLine : 0;
-	_tauntSpeech.start(text, sample, false, _now);
+	_tauntSpeech.start(text, sample, false, _now, _speechColors[_tauntSpeaker]);
 }
 
 void Scene8200::stopAmbientSpeech() {
@@ -342,6 +345,10 @@ const Common::U32String &Scene8200::subtitle() const {
 		return _tauntSpeech.subtitle();
 	}
 	return RunawayRoomScene::subtitle();
+}
+
+byte Scene8200::subtitleColor() const {
+	return _tauntSpeaker ? _tauntSpeech.subtitleColor() : RunawayRoomScene::subtitleColor();
 }
 
 void Scene8200::sayInventory(const RunawayInventory::Reply &reply) {

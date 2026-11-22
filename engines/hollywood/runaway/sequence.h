@@ -56,11 +56,12 @@ public:
 	};
 	enum Playback { kOnce, kLoopDuringSpeech, kIdleDuringSpeech, kUntilSpeechEnds };
 	struct Command {
-		constexpr Command(Operation op, uint16 first = 0, uint16 second = 0, byte third = 0, byte fourth = 0) :
-			operation(op), a(first), b(second), c(third), d(fourth) {}
+		constexpr Command(Operation op, uint16 first = 0, uint16 second = 0, byte third = 0, byte fourth = 0, byte color = 11) :
+			operation(op), a(first), b(second), c(third), d(fourth), speechColor(color) {}
 		Operation operation;
 		uint16 a, b;
 		byte c, d;
+		byte speechColor;
 	};
 	explicit RunawaySequence(RunawayAudio &audio) : _audio(audio), _random("runawaySequence"), _speech(audio, _random) {}
 	void start(const Command *commands, const SceneTextStore &text, uint32 now, char chapter = 'B', bool keepEffects = false);
@@ -72,11 +73,12 @@ public:
 	bool active() const { return _commands != nullptr; }
 	bool skipped() const { return _skipFilm; }
 	const Common::U32String &subtitle() const { return _speech.subtitle(); }
+	byte subtitleColor() const { return _speech.subtitleColor(); }
 	byte speechFrame() const { return _speech.frame(_now); }
 
 private:
 	void advance();
-	void speak(uint cue, uint variation, uint lastVariation = 0, bool global = false);
+	void speak(uint cue, uint variation, uint lastVariation, bool global, byte color);
 	void nextLine();
 	void finishPreparation();
 	void cacheRevisitedFrames();
@@ -108,6 +110,7 @@ private:
 		Common::U32String text;
 		uint16 sample;
 		bool global;
+		byte color;
 	};
 	Common::Array<Line> _lines;
 	uint _line = 0;

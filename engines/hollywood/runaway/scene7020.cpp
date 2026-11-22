@@ -81,9 +81,9 @@ const RunawayItemAction kItemActions[] = {
 typedef RunawaySequence S;
 const S::Command kGinaStory[] = {
 	{S::kOpen, 2}, {S::kMusic, 17, 255, 1}, {S::kEffect, 30, 255},
-	{S::kSpeech, 0, 5, 5}, {S::kPlay, 0, 240}, {S::kWaitSpeech},
-	{S::kSpeech, 0, 6, 6}, {S::kPlay, 241, 693}, {S::kWaitSpeech},
-	{S::kSpeech, 0, 7, 7}, {S::kPlay, 694, 870}, {S::kWaitSpeech},
+	{S::kSpeech, 0, 5, 5, 0, 14}, {S::kPlay, 0, 240}, {S::kWaitSpeech},
+	{S::kSpeech, 0, 6, 6, 0, 14}, {S::kPlay, 241, 693}, {S::kWaitSpeech},
+	{S::kSpeech, 0, 7, 7, 0, 14}, {S::kPlay, 694, 870}, {S::kWaitSpeech},
 	{S::kMusic, 11, 255}, {S::kEnd}
 };
 
@@ -108,7 +108,9 @@ const RunawayRoom kRunawayScene7020 = {
 namespace Runaway {
 
 Scene7020::Scene7020(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
-	RunawayRoomScene(audio, inventory, strings, game) {}
+	RunawayRoomScene(audio, inventory, strings, game) {
+	_speechColors[1] = 14; // Gina.
+}
 
 bool Scene7020::loadCustomResources() {
 	return _ginaArrival.load(_archive, 4, 1) && _gina.load(_archive, 7, 151) && _rope.load(_archive, 8, 32);

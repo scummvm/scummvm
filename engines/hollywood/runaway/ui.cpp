@@ -482,10 +482,11 @@ void RunawayUI::drawInventory(Graphics::ManagedSurface &screen) {
 void RunawayUI::setDialogueChoices(const Common::Array<Common::U32String> &choices) {
 	_choices.clear();
 	_choiceRects.clear();
+	const int textWidth = 968 - _font.getCharWidth('~');
 	int height = 0;
 	for (uint i = 0; i < choices.size(); ++i) {
 		Common::Array<Common::U32String> lines;
-		_font.wordWrapText(choices[i], 968, lines);
+		_font.wordWrapText(choices[i], textWidth, lines);
 		const uint lineHeight = MAX<uint>(1, lines.size()) * 28 + 8;
 		_choiceRects.push_back(Common::Rect(20, height, 1004, height + lineHeight));
 		height += lineHeight;
@@ -495,31 +496,31 @@ void RunawayUI::setDialogueChoices(const Common::Array<Common::U32String> &choic
 		_choiceRects[i].translate(0, kRunawayScreenHeight - 12 - height);
 }
 
-void RunawayUI::drawSubtitle(Graphics::ManagedSurface &screen, const Common::U32String &text) const {
+void RunawayUI::drawSubtitle(Graphics::ManagedSurface &screen, const Common::U32String &text, byte color) const {
 	Common::Array<Common::U32String> lines;
 	_font.wordWrapText(text, 984, lines);
 	for (uint i = 0; i < MIN<uint>(3, lines.size()); ++i)
 		_font.drawString(screen.surfacePtr(), lines[i], 20, 684 + i * 28, 984,
-			kUIFormat.RGBToColor(255, 223, 206), Graphics::kTextAlignCenter);
+			RunawayFont::getColor(color), Graphics::kTextAlignCenter);
 }
 
 void RunawayUI::draw(Graphics::ManagedSurface &screen, const Common::U32String &roomCaption,
-		const Common::U32String &committedCaption, const Common::U32String &subtitle, bool showSubtitles) {
+		const Common::U32String &committedCaption, const Common::U32String &subtitle, byte subtitleColor, bool showSubtitles) {
 	if (_inventoryOpen) {
 		drawInventory(screen);
 	}
 	const Graphics::ManagedSurface &button = _inventoryOpen ? _returnButton : _inventoryButton;
 	screen.copyRectToSurface(button, kButtonX, 0, Common::Rect(_buttonFrame * 100, 0, (_buttonFrame + 1) * 100, 74));
 	screen.copyRectToSurface(_optionsButton, 612, 0, Common::Rect(_optionsFrame * 100, 0, (_optionsFrame + 1) * 100, 74));
-	if (_speaking) {
+	if (!subtitle.empty()) {
 		if (showSubtitles)
-			drawSubtitle(screen, subtitle);
+			drawSubtitle(screen, subtitle, subtitleColor);
 	} else {
 		Common::U32String caption;
-		uint16 color = kUIFormat.RGBToColor(189, 166, 148);
+		uint16 color = RunawayFont::getColor(9);
 		if (!_inventoryOpen && !committedCaption.empty()) {
 			caption = committedCaption;
-			color = kUIFormat.RGBToColor(255, 223, 206);
+			color = RunawayFont::getColor(10);
 		} else if (!_blocked && !busy()) {
 			caption = overOptions() ? _strings.text(RunawayStrings::kOptions) :
 				overButton() ? _strings.text(_inventoryOpen ? RunawayStrings::kResume : RunawayStrings::kInventory) :
@@ -529,11 +530,14 @@ void RunawayUI::draw(Graphics::ManagedSurface &screen, const Common::U32String &
 	}
 	if (!_choices.empty() && !_speaking) {
 		screen.fillRect(Common::Rect(0, _choiceRects[0].top - 8, kRunawayScreenWidth, kRunawayScreenHeight), 0);
+		// The original font stores the dialogue bullet in the '~' glyph.
+		const int markerWidth = _font.getCharWidth('~');
 		for (uint i = 0; i < _choices.size(); ++i) {
-			const uint16 color = _choiceRects[i].contains(_mouse) ?
-				kUIFormat.RGBToColor(255, 223, 206) : kUIFormat.RGBToColor(189, 166, 148);
-			for (uint j = 0; j < _choices[i].size(); ++j)
-				_font.drawString(screen.surfacePtr(), _choices[i][j], 28, _choiceRects[i].top + j * 28, 968, color);
+			const uint16 color = RunawayFont::getColor(_choiceRects[i].contains(_mouse) ? 16 : 15);
+			_font.drawChar(screen.surfacePtr(), '~', 28, _choiceRects[i].top, color);
+			for (uint j = 0; j < _choices[i].size(); ++j) {
+				_font.drawString(screen.surfacePtr(), _choices[i][j], 28 + markerWidth, _choiceRects[i].top + j * 28, 968 - markerWidth, color);
+			}
 		}
 	}
 	// Native 0x4020b0 copies the demo logo to the bottom-right corner.

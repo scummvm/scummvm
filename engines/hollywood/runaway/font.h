@@ -32,6 +32,7 @@ namespace Hollywood {
 class RunawayFont : public Graphics::Font {
 public:
 	bool load(bool menuFont = false, bool museum = false);
+	static uint16 getColor(byte index);
 	int getFontHeight() const override { return 28; }
 	int getMaxCharWidth() const override { return 28; }
 	int getCharWidth(uint32 chr) const override;

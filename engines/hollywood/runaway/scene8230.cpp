@@ -70,7 +70,9 @@ const RunawayRoom kRunawayScene8230 = {
 namespace Runaway {
 
 Scene8230::Scene8230(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
-	RunawayRoomScene(audio, inventory, strings, game) {}
+	RunawayRoomScene(audio, inventory, strings, game) {
+	_speechColors[1] = 35; // Rutger.
+}
 
 bool Scene8230::loadCustomResources() {
 	if (!loadForeground(0, 4) || !_plants.load(_archive, 5, 36) || !_rutger.load(_archive, 6, 101)) {
