@@ -50,10 +50,10 @@ struct MGMSubItem {
 
 struct MGMItem {
 	int16 objId;
-	Common::Array<MGMSubItem> subItems;
+	Common::Array<MGMSubItem> transitions;
 	Common::Array<Statics *> statics;
-	Common::Array<Movement *> movements1;
-	Common::Array<int> movements2;
+	Common::Array<Movement *> movements;
+	Common::Array<int> visitedMovements;
 
 	MGMItem();
 };
