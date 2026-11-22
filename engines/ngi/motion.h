@@ -338,11 +338,11 @@ struct LinkOrNode {
 	MovGraphNode *node;
 };
 
-struct MctlMQSub {
-	int subIndex;
+struct GmctlPathItem {
+	int direction;
 	int x;
 	int y;
-	int distance;
+	int z;
 };
 
 struct GmctlMqStruct {
@@ -353,7 +353,7 @@ struct GmctlMqStruct {
 	int destZ;
 	int sourceDir;
 	int destDir;
-	Common::Array<MctlMQSub> items;
+	Common::Array<GmctlPathItem> items;
 	int flags;
 
 	GmctlMqStruct() { clear(); }
