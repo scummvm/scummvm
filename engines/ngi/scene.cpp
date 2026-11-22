@@ -366,7 +366,7 @@ void Scene::deletePictureObject(PictureObject *obj) {
 
 MessageQueue *Scene::getMessageQueueById(int messageId) {
 	for (uint i = 0; i < _messageQueueList.size(); i++)
-		if (_messageQueueList[i]->_dataId == messageId)
+		if (_messageQueueList[i]->_queueId == messageId)
 			return _messageQueueList[i];
 
 	return nullptr;
@@ -374,7 +374,7 @@ MessageQueue *Scene::getMessageQueueById(int messageId) {
 
 MessageQueue *Scene::getMessageQueueByName(const Common::String &name) {
 	for (uint i = 0; i < _messageQueueList.size(); i++)
-		if (_messageQueueList[i]->_queueName == name)
+		if (_messageQueueList[i]->_title == name)
 			return _messageQueueList[i];
 
 	return nullptr;

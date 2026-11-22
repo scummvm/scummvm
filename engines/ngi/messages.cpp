@@ -251,7 +251,7 @@ ObjstateCommand *ObjstateCommand::createClone() {
 MessageQueue::MessageQueue() {
 	_field_14 = nullptr;
 	_parId = 0;
-	_dataId = 0;
+	_queueId = 0;
 	_id = 0;
 	_isFinished = 0;
 	_flags = 0;
@@ -263,7 +263,7 @@ MessageQueue::MessageQueue() {
 MessageQueue::MessageQueue(int dataId) {
 	_field_14 = nullptr;
 	_parId = 0;
-	_dataId = dataId;
+	_queueId = dataId;
 	_id = g_nmi->_globalMessageQueueList->compact();
 	_isFinished = 0;
 	_flags = 0;
@@ -276,11 +276,11 @@ MessageQueue::MessageQueue(MessageQueue *src, int parId, int field_38) {
 	_counter = 0;
 	_field_38 = (field_38 == 0);
 
-	for (Common::List<ExCommand *>::iterator it = src->_exCommands.begin(); it != src->_exCommands.end(); ++it) {
+	for (Common::List<ExCommand *>::iterator it = src->_commands.begin(); it != src->_commands.end(); ++it) {
 		ExCommand *ex = (*it)->createClone();
 		ex->_excFlags |= 2;
 
-		_exCommands.push_back(ex);
+		_commands.push_back(ex);
 	}
 	_field_14 = src->_field_14;
 
@@ -290,9 +290,9 @@ MessageQueue::MessageQueue(MessageQueue *src, int parId, int field_38) {
 		_parId = src->_parId;
 
 	_id = g_nmi->_globalMessageQueueList->compact();
-	_dataId = src->_dataId;
+	_queueId = src->_queueId;
 	_flags = src->_flags & ~kInGlobalQueue;
-	_queueName = "";
+	_title = "";
 
 	g_nmi->_globalMessageQueueList->addMessageQueue(this);
 
@@ -301,7 +301,7 @@ MessageQueue::MessageQueue(MessageQueue *src, int parId, int field_38) {
 }
 
 MessageQueue::~MessageQueue() {
-	for (Common::List<ExCommand *>::iterator it = _exCommands.begin(); it != _exCommands.end(); ++it) {
+	for (Common::List<ExCommand *>::iterator it = _commands.begin(); it != _commands.end(); ++it) {
 		ExCommand *ex = *it;
 
 		if (ex && ex->_excFlags & 2)
@@ -321,18 +321,18 @@ MessageQueue::~MessageQueue() {
 bool MessageQueue::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "MessageQueue::load()");
 
-	_dataId = file.readUint16LE();
+	_queueId = file.readUint16LE();
 
 	int count = file.readUint16LE();
 
 	assert(g_nmi->_gameProjectVersion >= 12);
 
-	_queueName = file.readPascalString();
+	_title = file.readPascalString();
 
 	for (int i = 0; i < count; i++) {
 		ExCommand *tmp = file.readClass<ExCommand>();
 		tmp->_excFlags |= 2;
-		_exCommands.push_back(tmp);
+		_commands.push_back(tmp);
 	}
 
 	_id = -1;
@@ -343,7 +343,7 @@ bool MessageQueue::load(MfcArchive &file) {
 	return true;
 }
 
-bool MessageQueue::chain(AniObject *ani) {
+bool MessageQueue::run(AniObject *ani) {
 	if (checkGlobalExCommandList1() && checkGlobalExCommandList2()) {
 		if (!(getFlags() & kInGlobalQueue)) {
 			g_nmi->_globalMessageQueueList->addMessageQueue(this);
@@ -351,7 +351,7 @@ bool MessageQueue::chain(AniObject *ani) {
 		if (ani) {
 			ani->setQueue(this);
 		} else {
-			sendNextCommand();
+			next();
 		}
 		return true;
 	}
@@ -363,7 +363,7 @@ void MessageQueue::update() {
 		_counter--;
 
 	if (getCount()) {
-		sendNextCommand();
+		next();
 	} else if (_counter == 0) {
 		_isFinished = 1;
 		finish();
@@ -385,28 +385,28 @@ void MessageQueue::messageQueueCallback1(int par) {
 	}
 }
 
-void MessageQueue::addExCommand(ExCommand *ex) {
-	_exCommands.push_front(ex);
+void MessageQueue::addCommandToFront(ExCommand *ex) {
+	_commands.push_front(ex);
 }
 
-void MessageQueue::addExCommandToEnd(ExCommand *ex) {
-	_exCommands.push_back(ex);
+void MessageQueue::addCommandToEnd(ExCommand *ex) {
+	_commands.push_back(ex);
 }
 
-void MessageQueue::insertExCommandAt(int pos, ExCommand *ex) {
-	Common::List<ExCommand *>::iterator it = _exCommands.begin();
+void MessageQueue::addCommand(int pos, ExCommand *ex) {
+	Common::List<ExCommand *>::iterator it = _commands.begin();
 
 	for (int i = pos; i > 0; i--)
 		++it;
 
-	_exCommands.insert(it, ex);
+	_commands.insert(it, ex);
 }
 
-ExCommand *MessageQueue::getExCommandByIndex(uint idx) {
+ExCommand *MessageQueue::getCommandByIndex(uint idx) {
 	if (idx >= getCount())
 		return nullptr;
 
-	Common::List<ExCommand *>::iterator it = _exCommands.begin();
+	Common::List<ExCommand *>::iterator it = _commands.begin();
 
 	while (idx) {
 		++it;
@@ -416,11 +416,11 @@ ExCommand *MessageQueue::getExCommandByIndex(uint idx) {
 	return *it;
 }
 
-void MessageQueue::deleteExCommandByIndex(uint idx, bool doFree) {
+void MessageQueue::removeCommand(uint idx, bool doFree) {
 	if (idx >= getCount())
 		return;
 
-	Common::List<ExCommand *>::iterator it = _exCommands.begin();
+	Common::List<ExCommand *>::iterator it = _commands.begin();
 
 	while (idx) {
 		++it;
@@ -430,24 +430,24 @@ void MessageQueue::deleteExCommandByIndex(uint idx, bool doFree) {
 	if (doFree)
 		delete *it;
 
-	_exCommands.erase(it);
+	_commands.erase(it);
 }
 
 void MessageQueue::mergeQueue(MessageQueue *mq) { // Original belongs to AniHandler
-	while (mq->_exCommands.size()) {
-		_exCommands.push_back(mq->_exCommands.front());
-		mq->_exCommands.pop_front();
+	while (mq->_commands.size()) {
+		_commands.push_back(mq->_commands.front());
+		mq->_commands.pop_front();
 	}
 }
 
-void MessageQueue::sendNextCommand() {
+void MessageQueue::next() {
 	if (getCount()) {
 		if (!(_flags & 4) && (_flags & 1)) {
 			messageQueueCallback1(16);
 		}
-		ExCommand *ex = _exCommands.front();
+		ExCommand *ex = _commands.front();
 
-		_exCommands.pop_front();
+		_commands.pop_front();
 
 		_counter++;
 		ex->_parId = _id;
@@ -465,7 +465,7 @@ bool MessageQueue::checkGlobalExCommandList1() {
 	ExCommand *ex, *ex1;
 
 	for (uint i = 0; i < getCount(); i++) {
-		ex = getExCommandByIndex(i);
+		ex = getCommandByIndex(i);
 
 		if (ex->_messageKind != 1 && ex->_messageKind != 20 && ex->_messageKind != 5 && ex->_messageKind != 27)
 			continue;
@@ -497,7 +497,7 @@ bool MessageQueue::checkGlobalExCommandList2() {
 	ExCommand *ex, *ex1;
 
 	for (uint i = 0; i < getCount(); i++) {
-		ex = getExCommandByIndex(i);
+		ex = getCommandByIndex(i);
 
 		if (ex->_messageKind != 1 && ex->_messageKind != 20 && ex->_messageKind != 5 && ex->_messageKind != 27)
 			continue;
@@ -557,13 +557,13 @@ void MessageQueue::finish() {
 
 	mq->_counter--;
 
-	if (!mq->_counter && !mq->_exCommands.size())
+	if (!mq->_counter && !mq->_commands.size())
 		mq->update();
 }
 
-void MessageQueue::setParamInt(int key1, int key2) {
+void MessageQueue::setObjectCopy(int key1, int key2) {
 	for (uint i = 0; i < getCount(); i++) {
-		ExCommand *ex = getExCommandByIndex(i);
+		ExCommand *ex = getCommandByIndex(i);
 		int k = ex->_messageKind;
 		if ((k == 1 || k == 20 || k == 5 || k == 6 || k == 2 || k == 18 || k == 19 || k == 22 || k == 55)
 					&& ex->_param == key1)
@@ -577,7 +577,7 @@ int MessageQueue::calcDuration(AniObject *obj) {
 	Movement *mov;
 
 	for (uint i = 0; i < getCount(); i++) {
-		ex = getExCommandByIndex(i);
+		ex = getCommandByIndex(i);
 		if (ex->_parentId == obj->_id) {
 			if (ex->_messageKind == 1 || ex->_messageKind == 20) {
 				if ((mov = obj->getMovement(ex->_messageNum)) != nullptr) {
@@ -593,15 +593,15 @@ int MessageQueue::calcDuration(AniObject *obj) {
 	return res;
 }
 
-void MessageQueue::changeParam28ForObjectId(int objId, int oldParam28, int newParam28) {
+void MessageQueue::setObjectCopyForId(int objId, int oldCopyId, int newCopyId) {
 	for (uint i = 0; i < getCount(); i++) {
-		ExCommand *ex = getExCommandByIndex(i);
+		ExCommand *ex = getCommandByIndex(i);
 		int k = ex->_messageKind;
 
 		if ((k == 1 || k == 20 || k == 5 || k == 6 || k == 2 || k == 18 || k == 19 || k == 22 || k == 55)
-			 && ex->_param == oldParam28
+			 && ex->_param == oldCopyId
 			 && ex->_parentId == objId)
-			ex->_param = newParam28;
+			ex->_param = newCopyId;
 	}
 }
 
@@ -609,7 +609,7 @@ int MessageQueue::activateExCommandsByKind(int kind) {
 	int res = 0;
 
 	for (uint i = 0; i < getCount(); i++) {
-		ExCommand *ex = getExCommandByIndex(i);
+		ExCommand *ex = getCommandByIndex(i);
 
 		if (ex->_messageKind == kind) {
 			ex->_messageKind = 0;
@@ -923,7 +923,7 @@ bool chainQueue(int queueId, int flags) {
 
 	nmq->_flags |= flags;
 
-	if (!nmq->chain(nullptr)) {
+	if (!nmq->run(nullptr)) {
 		g_nmi->_globalMessageQueueList->deleteQueueById(nmq->_id);
 		return false;
 	}
@@ -941,7 +941,7 @@ bool chainObjQueue(AniObject *obj, int queueId, int flags) {
 
 	nmq->_flags |= flags;
 
-	if (!nmq->chain(obj)) {
+	if (!nmq->run(obj)) {
 		g_nmi->_globalMessageQueueList->deleteQueueById(nmq->_id);
 		return false;
 	}

@@ -83,7 +83,7 @@ void scene32_initScene(Scene *sc) {
 	if (g_nmi->getObjectState(sO_Cube) == g_nmi->getObjectEnumState(sO_Cube, sO_In_32)) {
 		MessageQueue *mq = new MessageQueue(sc->getMessageQueueById(QU_KBK32_START), 0, 0);
 
-		mq->sendNextCommand();
+		mq->next();
 	}
 
 	g_nmi->lift_setButton(sO_Level9, ST_LBN_9N);
@@ -131,7 +131,7 @@ void sceneHandler32_spin(ExCommand *cmd) {
 	if (!mq || mq->getCount() == 0)
 		return;
 
-	ExCommand *ex = mq->getExCommandByIndex(0);
+	ExCommand *ex = mq->getCommandByIndex(0);
 	ExCommand *newex;
 
 	if ((g_vars->scene32_cactus->_movement && g_vars->scene32_cactus->_movement->_id == MV_CTS_DEFAULT)
@@ -139,7 +139,7 @@ void sceneHandler32_spin(ExCommand *cmd) {
 		for (int i = 0; i < 12; i++) {
 			newex = ex->createClone();
 			newex->_excFlags |= 2;
-			mq->insertExCommandAt(1, newex);
+			mq->addCommand(1, newex);
 		}
 
 		g_vars->scene32_cactus->setStatic(ST_CTS_GROWUP);
@@ -155,7 +155,7 @@ void sceneHandler32_spin(ExCommand *cmd) {
 		for (int i = 0; i < 2; i++) {
 			newex = ex->createClone();
 			newex->_excFlags |= 2;
-			mq->insertExCommandAt(1, newex);
+			mq->addCommand(1, newex);
 		}
 
 		chainQueue(QU_KDK_DRIZZLE, 0);
@@ -182,7 +182,7 @@ void sceneHandler32_trySit(ExCommand *cmd) {
 	if (!mq || mq->getCount() == 0)
 		return;
 
-	ExCommand *ex = mq->getExCommandByIndex(0);
+	ExCommand *ex = mq->getCommandByIndex(0);
 
 	if (g_vars->scene32_cactusIsGrowing || g_vars->scene32_cactus->_movement
 		|| g_vars->scene32_cactus->_statics->_staticsId != ST_CTS_EMPTY
@@ -234,12 +234,12 @@ void sceneHandler32_ladderLogic(ExCommand *cmd) {
 	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC32_FROMLADDER), 0, 0);
 
 	if (g_nmi->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) != PIC_SC32_LADDER)
-		mq->addExCommandToEnd(cmd->createClone());
+		mq->addCommandToEnd(cmd->createClone());
 
 	mq->setFlags(mq->getFlags() | 1);
 
 	g_nmi->_aniMan->setStatic(ST_MAN_STANDLADDER);
-	if (!mq->chain(g_nmi->_aniMan))
+	if (!mq->run(g_nmi->_aniMan))
 		delete mq;
 
 	g_vars->scene32_dudeOnLadder = false;
@@ -256,15 +256,15 @@ void sceneHandler32_potLogic(ExCommand *cmd) {
 
 		ex->_excFlags |= 2;
 
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 		AniObject *ani = g_nmi->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 		if (!ani || ani->_id != ANI_KADKA)
-			mq->addExCommandToEnd(cmd->createClone());
+			mq->addCommandToEnd(cmd->createClone());
 
 		mq->setFlags(mq->getFlags() | 1);
-		mq->chain(nullptr);
+		mq->run(nullptr);
 
 		getCurrSceneSc2MotionController()->activate();
 		getGameLoaderInteractionController()->enableFlag24();

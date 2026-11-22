@@ -110,7 +110,7 @@ MessageQueue *AniHandler::makeQueue(AniObject *ani, int staticsIndex, int, int *
 		ex->_field_3C = 1;
 		ex->_field_24 = 1;
 
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 #if 0
 		if (resStatId)
@@ -364,7 +364,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 		ex2->_parId = mq->_id;
 		ex2->_param = mkQueue->ani->_copyId;
 
-		mq->addExCommandToEnd(ex2);
+		mq->addCommandToEnd(ex2);
 
 		i = s.staticsIndex;
 	}
@@ -381,7 +381,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 		ex2->_parId = mq->_id;
 		ex2->_param = mkQueue->ani->_copyId;
 
-		mq->addExCommandToEnd(ex2);
+		mq->addCommandToEnd(ex2);
 	}
 
 	for (int j = st1idx; j != subOffset;) {
@@ -391,7 +391,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 		ex2->_parId = mq->_id;
 		ex2->_param = mkQueue->ani->_copyId;
 
-		mq->addExCommandToEnd(ex2);
+		mq->addCommandToEnd(ex2);
 
 		j = s.staticsIndex;
 	}
@@ -403,7 +403,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 	ex->_field_24 = 0;
 	ex->_excFlags |= 3;
 
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
 	debugC(3, kDebugPathfinding, "AniHandler::genMovement. (2) movements1 sz: %d movements2 sz: %d", _items[itemIdx].movements1.size(), _items[itemIdx].movements2.size());
 

@@ -230,12 +230,12 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 			ex->_messageNum = 0;
 			ex->_excFlags |= 3;
 
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 		}
 
 		mq->setFlags(mq->getFlags() | 1);
 
-		if (!mq->chain(nullptr)) {
+		if (!mq->run(nullptr)) {
 			delete mq;
 
 			return false;

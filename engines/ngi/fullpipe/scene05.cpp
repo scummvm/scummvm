@@ -100,7 +100,7 @@ void sceneHandler05_makeManFlight() {
 
 	mq->setFlags(mq->getFlags() | 1);
 
-	mq->chain(nullptr);
+	mq->run(nullptr);
 }
 
 void sceneHandler05_makeWackoFeedback() {
@@ -132,7 +132,7 @@ void sceneHandler05_makeWackoFeedback() {
 
 			ex->_excFlags |= 2;
 
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 			mq->_isFinished = 0;
 		}
 	}
@@ -215,7 +215,7 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 		MessageQueue *mq = g_nmi->_globalMessageQueueList->getMessageQueueById(inex->_parId);
 
 		if (mq)
-			mq->deleteExCommandByIndex(mq->getCount() - 1, 1);
+			mq->removeCommand(mq->getCount() - 1, 1);
 
 		if (wacko->_statics->_staticsId != ST_OTM_GLS_LEFT) {
 			mq = wacko->moveToStatic(ST_OTM_GLS_LEFT);
@@ -229,12 +229,12 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 
 			ex = new ExCommand(ANI_OTMOROZ, 1, MV_OTM_HANDLEUP, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2u;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 
 			ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
 			ex->_param = TrubaLeft;
 			ex->_excFlags |= 2;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 
 			mq->_isFinished = 0;
 			return;
@@ -245,20 +245,20 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 
 		ex = new ExCommand(ANI_OTMOROZ, 1, MV_OTM_HANDLEUP, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 		ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = TrubaLeft;
 		ex->_excFlags |= 2;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
-		if (!mq->chain(wacko))
+		if (!mq->run(wacko))
 			delete mq;
 	} else if (g_nmi->getObjectState(sO_WeirdWacko) == g_nmi->getObjectEnumState(sO_WeirdWacko, sO_WithDrawer)) {
 		MessageQueue *mq = g_nmi->_globalMessageQueueList->getMessageQueueById(inex->_parId);
 
 		if (mq)
-			mq->deleteExCommandByIndex(mq->getCount() - 1, 1);
+			mq->removeCommand(mq->getCount() - 1, 1);
 
 		if (wacko->_statics->_staticsId != ST_OTM_BOX_LEFT) {
 			mq = wacko->moveToStatic(ST_OTM_BOX_LEFT);
@@ -271,16 +271,16 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 
 			ex = new ExCommand(ANI_OTMOROZ, 1, MV_OTM_BOXHANDLEUP, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 
 			ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
 			ex->_param = TrubaLeft;
 			ex->_excFlags |= 2;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 
 			mq->_isFinished = 0;
 
-			if (!mq->chain(wacko))
+			if (!mq->run(wacko))
 				delete mq;
 
 			return;
@@ -291,14 +291,14 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 
 		ex = new ExCommand(ANI_OTMOROZ, 1, MV_OTM_BOXHANDLEUP, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 		ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = TrubaLeft;
 		ex->_excFlags |= 2;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
-		if (!mq->chain(wacko))
+		if (!mq->run(wacko))
 			delete mq;
 
 		return;

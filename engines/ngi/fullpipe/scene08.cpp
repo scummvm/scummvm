@@ -283,7 +283,7 @@ void sceneHandler08_finishArcade() {
 void sceneHandler08_jumpOff(ExCommand *cmd) {
 	MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 
-	mq->addExCommandToEnd(cmd->createClone());
+	mq->addCommandToEnd(cmd->createClone());
 	mq->setFlags(mq->getFlags() | 1);
 
 	g_nmi->_globalMessageQueueList->addMessageQueue(mq);
@@ -320,10 +320,10 @@ void sceneHandler08_badLuck() {
 	ExCommand *ex = new ExCommand(g_nmi->_aniMan->_id, 1, MV_MAN8_BADLUCK, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags |= 2;
 	ex->_param = g_nmi->_aniMan->_copyId;
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
 	mq->setFlags(mq->getFlags() | 1);
-	mq->chain(nullptr);
+	mq->run(nullptr);
 
 	g_nmi->setObjectState(sO_StairsUp_8, g_nmi->getObjectEnumState(sO_StairsUp_8, sO_NotBroken));
 

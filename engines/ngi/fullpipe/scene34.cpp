@@ -180,13 +180,13 @@ void sceneHandler34_fromCactus(ExCommand *cmd) {
 	ex->_messageNum = 0;
 	ex->_excFlags |= 3;
 	ex->_z = 256;
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
 	ex = cmd->createClone();
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
 	mq->setFlags(mq->getFlags() | 1);
-	mq->chain(nullptr);
+	mq->run(nullptr);
 
 	g_nmi->_aniMan->_flags |= 0x100;
 }
@@ -195,9 +195,9 @@ void sceneHandler34_animateLeaveBoard(ExCommand *cmd) {
 	if (!g_nmi->_aniMan->_movement) {
 		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC34_LEAVEBOARD), 0, 0);
 
-		mq->addExCommandToEnd(cmd->createClone());
+		mq->addCommandToEnd(cmd->createClone());
 		mq->setFlags(mq->getFlags() | 1);
-		mq->chain(nullptr);
+		mq->run(nullptr);
 	}
 
 	cmd->_messageKind = 0;
@@ -226,8 +226,8 @@ void sceneHandler34_animateAction(ExCommand *cmd) {
 			if (oy == 286) {
 				MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC34_FROMBOX), 0, 0);
 
-				mq->addExCommandToEnd(cmd->createClone());
-				mq->chain(nullptr);
+				mq->addCommandToEnd(cmd->createClone());
+				mq->run(nullptr);
 
 				sceneHandler34_setExits();
 
@@ -243,8 +243,8 @@ void sceneHandler34_animateAction(ExCommand *cmd) {
 		if (qId) {
 			MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(qId), 0, 0);
 
-			mq->addExCommandToEnd(cmd->createClone());
-			mq->chain(nullptr);
+			mq->addCommandToEnd(cmd->createClone());
+			mq->run(nullptr);
 		}
 
 		return;

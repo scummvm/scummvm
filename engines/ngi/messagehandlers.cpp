@@ -530,7 +530,7 @@ int global_messageHandler4(ExCommand *cmd) {
 		else
 			mq->_flag1 = 0;
 
-		mq->sendNextCommand();
+		mq->next();
 		break;
 	}
 	case 2:
@@ -629,7 +629,7 @@ int global_messageHandler4(ExCommand *cmd) {
 		MessageQueue *mq = ani->getMessageQueue();
 		MessageQueue *mq2 = ani->moveToStatic(cmd->_messageNum);
 
-		if (!mq2 || !mq2->getExCommandByIndex(0) || !mq)
+		if (!mq2 || !mq2->getCommandByIndex(0) || !mq)
 			break;
 
 		mq2->_parId = mq->_id;

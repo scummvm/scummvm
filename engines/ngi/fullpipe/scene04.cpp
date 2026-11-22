@@ -311,14 +311,14 @@ void sceneHandler04_walkClimbLadder(ExCommand *ex) {
 	ex1->_param = g_nmi->_aniMan->_copyId;
 	ex1->_excFlags |= 2;
 
-	mq->addExCommandToEnd(ex1);
+	mq->addCommandToEnd(ex1);
 
 	ExCommand *ex2 = new ExCommand(ANI_MAN, 1, MV_MAN_STOPLADDER, 0, 0, 0, 1, 0, 0, 0);
 
 	ex2->_param = g_nmi->_aniMan->_copyId;
 	ex2->_excFlags |= 2;
 
-	mq->addExCommandToEnd(ex2);
+	mq->addCommandToEnd(ex2);
 
 	ExCommand *ex3;
 
@@ -329,11 +329,11 @@ void sceneHandler04_walkClimbLadder(ExCommand *ex) {
 		ex3->_excFlags |= 3;
 	}
 
-	mq->addExCommandToEnd(ex3);
+	mq->addCommandToEnd(ex3);
 
 	mq->setFlags(mq->getFlags() | 1);
 
-	mq->chain(nullptr);
+	mq->run(nullptr);
 
 	g_vars->scene04_dudeOnLadder = 1;
 
@@ -398,7 +398,7 @@ void sceneHandler04_clickLadder() {
 					ExCommand *ex = new ExCommand(0, 17, MSG_SC4_CLICKLADDER, 0, 0, 0, 1, 0, 0, 0);
 
 					ex->_excFlags = 3;
-					mq->addExCommandToEnd(ex);
+					mq->addCommandToEnd(ex);
 
 					postExCommand(g_nmi->_aniMan->_id, 2, 1095, 434, 0, -1);
 				}
@@ -439,7 +439,7 @@ void sceneHandler04_jumpOnLadder() {
 	if (mq) {
 		mq->_flags |= 1;
 
-		if (!mq->chain(g_nmi->_aniMan))
+		if (!mq->run(g_nmi->_aniMan))
 			delete mq;
 
 		g_nmi->_aniMan->_z = 10;
@@ -502,35 +502,35 @@ void sceneHandler04_gotoLadder(ExCommand *ex) {
 	MessageQueue *mq = aniHandler.makeRunQueue(&mkQueue);
 
 	if (mq) {
-		mq->deleteExCommandByIndex(mq->getCount() - 1, 1);
+		mq->removeCommand(mq->getCount() - 1, 1);
 
 		ExCommand *ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_TOLADDER, 0, 0, 0, 1, 0, 0, 0);
 		ex1->_excFlags = 2;
 		ex1->_field_24 = 1;
 		ex1->_param = -1;
-		mq->addExCommandToEnd(ex1);
+		mq->addCommandToEnd(ex1);
 
 		ExCommand *ex2 = new ExCommand(ANI_MAN, 1, MV_MAN_STOPLADDER, 0, 0, 0, 1, 0, 0, 0);
 		ex2->_excFlags = 2;
 		ex2->_field_24 = 1;
 		ex2->_param = -1;
-		mq->addExCommandToEnd(ex2);
+		mq->addCommandToEnd(ex2);
 
 		ExCommand *ex3 = new ExCommand(g_nmi->_aniMan->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 		ex3->_z = 256;
 		ex3->_messageNum = 0;
 		ex3->_excFlags |= 3;
-		mq->addExCommandToEnd(ex3);
+		mq->addCommandToEnd(ex3);
 
 		if (ex) {
 			ExCommand *ex4 = ex->createClone();
 
-			mq->addExCommandToEnd(ex4);
+			mq->addCommandToEnd(ex4);
 		}
 
 		mq->setFlags(mq->getFlags() | 1);
 
-		if (mq->chain(g_nmi->_aniMan)) {
+		if (mq->run(g_nmi->_aniMan)) {
 			g_nmi->_aniMan->_z = 12;
 			g_nmi->_aniMan->_flags |= 0x100;
 		} else {
@@ -597,29 +597,29 @@ MessageQueue *sceneHandler04_kozFly3(AniObject *ani, double phase) {
 		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
 		ex->_param = ani->_copyId;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_TURN, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
 		ex->_param = ani->_copyId;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 		for (int i = 0; i < 5; i++) {
 			ex = new ExCommand(ANI_KOZAWKA, 1, rMV_KZW_GOR, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
 			ex->_param = ani->_copyId;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 		}
 
 		ex = new ExCommand(ANI_KOZAWKA, 6, 0, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
 		ex->_param = ani->_copyId;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 17, MSG_KOZAWRESTART, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
 		ex->_param = ani->_copyId;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 	}
 
 	return mq;
@@ -659,7 +659,7 @@ MessageQueue *sceneHandler04_kozFly5(AniObject *ani, double phase) {
 	MessageQueue *mq2 = aniHandler.makeRunQueue(&mkQueue);
 
 	if (mq1 && mq2) {
-		mq1->addExCommandToEnd(mq2->getExCommandByIndex(0)->createClone());
+		mq1->addCommandToEnd(mq2->getCommandByIndex(0)->createClone());
 
 		delete mq2;
 		mq2 = nullptr;
@@ -667,29 +667,29 @@ MessageQueue *sceneHandler04_kozFly5(AniObject *ani, double phase) {
 		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
 		ex->_param = ani->_copyId;
-		mq1->addExCommandToEnd(ex);
+		mq1->addCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_TURN, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
 		ex->_param = ani->_copyId;
-		mq1->addExCommandToEnd(ex);
+		mq1->addCommandToEnd(ex);
 
 		for (int i = 0; i < 5; i++) {
 			ex = new ExCommand(ANI_KOZAWKA, 1, rMV_KZW_GOR, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
 			ex->_param = ani->_copyId;
-			mq1->addExCommandToEnd(ex);
+			mq1->addCommandToEnd(ex);
 		}
 
 		ex = new ExCommand(ANI_KOZAWKA, 6, 0, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
 		ex->_param = ani->_copyId;
-		mq1->addExCommandToEnd(ex);
+		mq1->addCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 17, MSG_KOZAWRESTART, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
 		ex->_param = ani->_copyId;
-		mq1->addExCommandToEnd(ex);
+		mq1->addCommandToEnd(ex);
 	}
 
 	if (mq2)
@@ -718,22 +718,22 @@ MessageQueue *sceneHandler04_kozFly6(AniObject *ani) {
 	MessageQueue *mq = aniHandler.makeRunQueue(&mkQueue);
 
 	if (mq) {
-		mq->deleteExCommandByIndex(mq->getCount() - 1, 1);
+		mq->removeCommand(mq->getCount() - 1, 1);
 
 		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
 		ex->_param = ani->_copyId;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_GOR, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
 		ex->_param = ani->_copyId;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_RAISEHEAD, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
 		ex->_param = ani->_copyId;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 		g_vars->scene04_kozHeadRaised = true;
 	}
@@ -785,29 +785,29 @@ MessageQueue *sceneHandler04_kozFly7(AniObject *ani, double phase) {
 		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
 		ex->_param = ani->_copyId;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_TURN, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
 		ex->_param = ani->_copyId;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 		for (int i = 0; i < 2; i++) {
 			ex = new ExCommand(ANI_KOZAWKA, 1, rMV_KZW_GOR, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
 			ex->_param = ani->_copyId;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 		}
 
 		ex = new ExCommand(ANI_KOZAWKA, 6, 0, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
 		ex->_param = ani->_copyId;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 17, MSG_KOZAWRESTART, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
 		ex->_param = ani->_copyId;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 	}
 
 	return mq;
@@ -892,7 +892,7 @@ void sceneHandler04_shootKozyawka() {
 				if (mq) {
 					g_vars->scene04_lastKozyawka = g_vars->scene04_walkingKozyawka;
 
-					if (!mq->chain(g_vars->scene04_walkingKozyawka) )
+					if (!mq->run(g_vars->scene04_walkingKozyawka) )
 						delete mq;
 				}
 			}
@@ -929,11 +929,11 @@ void sceneHandler04_animOutOfBottle(ExCommand *ex) {
 	if (ex) {
 		ExCommand *newex = ex->createClone();
 
-		mq->addExCommandToEnd(newex);
+		mq->addCommandToEnd(newex);
 	  }
 
 	mq->_flags |= 1;
-	mq->chain(nullptr);
+	mq->run(nullptr);
 
 	g_vars->scene04_dudeInBottle = false;
 	g_nmi->_behaviorManager->setFlagByStaticAniObject(g_nmi->_aniMan, 1);
@@ -949,8 +949,8 @@ void sceneHandler04_walkKozyawka() {
 		g_vars->scene04_kozyawkiObjList.pop_front();
 
 		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_KOZAW_WALK), 0, 1);
-		mq->setParamInt(-1, g_vars->scene04_walkingKozyawka->_copyId);
-		mq->chain(nullptr);
+		mq->setObjectCopy(-1, g_vars->scene04_walkingKozyawka->_copyId);
+		mq->run(nullptr);
 	}
 }
 
@@ -1025,8 +1025,8 @@ void sceneHandler04_leaveScene() {
 	ExCommand *ex = nullptr;
 
 	for (uint i = 0; i < mq->getCount(); i++) {
-		if (mq->getExCommandByIndex(i)->_messageKind == 27) {
-			ex = mq->getExCommandByIndex(i);
+		if (mq->getCommandByIndex(i)->_messageKind == 27) {
+			ex = mq->getCommandByIndex(i);
 			break;
 		}
 	}
@@ -1037,7 +1037,7 @@ void sceneHandler04_leaveScene() {
 
 	ex->_y = g_vars->scene04_bottle->_y - 304;
 
-	mq->chain(nullptr);
+	mq->run(nullptr);
 
 	g_vars->scene04_var07 = false;
 	g_vars->scene04_dudeOnLadder = 0;
@@ -1144,9 +1144,9 @@ void sceneHandler04_leaveLadder(ExCommand *ex) {
 					MessageQueue *mq = g_vars->scene04_ladder->controllerWalkTo(g_nmi->_aniMan, 0);
 
 					if (mq) {
-						mq->addExCommandToEnd(ex->createClone());
+						mq->addCommandToEnd(ex->createClone());
 
-						if (mq->chain(g_nmi->_aniMan) )
+						if (mq->run(g_nmi->_aniMan) )
 							ex->_messageKind = 0;
 						else
 							delete mq;
@@ -1164,25 +1164,25 @@ void sceneHandler04_leaveLadder(ExCommand *ex) {
 						ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_LOOKLADDERRV, 0, 0, 0, 1, 0, 0, 0);
 						ex1->_param = g_nmi->_aniMan->_copyId;
 						ex1->_excFlags |= 2;
-						mq->addExCommandToEnd(ex1);
+						mq->addCommandToEnd(ex1);
 					}
 
 					ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_STARTLADDERD, 0, 0, 0, 1, 0, 0, 0);
 					ex1->_param = g_nmi->_aniMan->_copyId;
 					ex1->_excFlags |= 2;
-					mq->addExCommandToEnd(ex1);
+					mq->addCommandToEnd(ex1);
 
 					ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_FROMLADDER, 0, 0, 0, 1, 0, 0, 0);
 					ex1->_param = g_nmi->_aniMan->_copyId;
 					ex1->_excFlags |= 2;
-					mq->addExCommandToEnd(ex1);
+					mq->addCommandToEnd(ex1);
 
 					ex1 = ex->createClone();
-					mq->addExCommandToEnd(ex1);
+					mq->addCommandToEnd(ex1);
 
 					mq->setFlags(mq->getFlags() | 1);
 
-					if (mq->chain(g_nmi->_aniMan)) {
+					if (mq->run(g_nmi->_aniMan)) {
 						if (g_vars->scene04_ladder)
 							delete g_vars->scene04_ladder;
 
@@ -1306,9 +1306,9 @@ void sceneHandler04_testPlank(ExCommand *ex) {
 		return;
 
 	if (g_vars->scene04_plank->_movement || !g_vars->scene04_plank->_statics || g_vars->scene04_plank->_statics->_staticsId != ST_PNK_WEIGHTLEFT) {
-		mq->getExCommandByIndex(0)->_messageNum = MV_KZW_TOHOLERV;
+		mq->getCommandByIndex(0)->_messageNum = MV_KZW_TOHOLERV;
 	} else {
-		mq->getExCommandByIndex(0)->_messageNum = MV_KZW_WALKPLANK;
+		mq->getCommandByIndex(0)->_messageNum = MV_KZW_WALKPLANK;
 	}
 }
 

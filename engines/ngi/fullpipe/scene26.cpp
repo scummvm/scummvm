@@ -248,7 +248,7 @@ void sceneHandler26_animateVents(AniObject *ani) {
 		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(qId), 0, 0);
 
 		mq->setFlags(mq->getFlags() | 1);
-		mq->chain(nullptr);
+		mq->run(nullptr);
 	}
 }
 
@@ -269,7 +269,7 @@ void sceneHandler26_clickVent(AniObject *ani, ExCommand *cmd) {
 					ex->_excFlags |= 3;
 					ex->_param = ani->_copyId;
 
-					mq->addExCommandToEnd(ex);
+					mq->addCommandToEnd(ex);
 
 					postExCommand(g_nmi->_aniMan->_id, 2, x, y, 0, -1);
 				}

@@ -126,13 +126,13 @@ void BehaviorManager::updateBehavior(BehaviorInfo &behaviorInfo, BehaviorAnim &e
 			if (bhi._flags & 2) {
 				MessageQueue *mq = new MessageQueue(bhi._messageQueue, 0, 1);
 
-				mq->sendNextCommand();
+				mq->next();
 
 				bhi._flags &= 0xFFFFFFFD;
 			} else if (behaviorInfo._counter >= bhi._delay && bhi._percent && g_nmi->_rnd.getRandomNumber(32767) <= entry._behaviorMoves[i]._percent) {
 				MessageQueue *mq = new MessageQueue(bhi._messageQueue, 0, 1);
 
-				mq->sendNextCommand();
+				mq->next();
 
 				behaviorInfo._counter = 0;
 			}
@@ -171,8 +171,8 @@ void BehaviorManager::updateStaticAniBehavior(AniObject &ani, int delay, const B
 	}
 
 	if (mq) {
-		mq->setParamInt(-1, ani._copyId);
-		if (!mq->chain(&ani)) {
+		mq->setObjectCopy(-1, ani._copyId);
+		if (!mq->run(&ani)) {
 			g_nmi->_globalMessageQueueList->deleteQueueById(mq->_id);
 		}
 	}
@@ -211,7 +211,7 @@ BehaviorMove *BehaviorManager::getBehaviorMoveByMessageQueueDataId(AniObject *an
 			for (uint j = 0; j < _behaviors[i]._behaviorAnims.size(); j++) {
 				if (_behaviors[i]._behaviorAnims[j]._staticsId == id1) {
 					for (uint k = 0; k < _behaviors[i]._behaviorAnims[j]._behaviorMoves.size(); k++) {
-						if (_behaviors[i]._behaviorAnims[j]._behaviorMoves[k]._messageQueue->_dataId == id2)
+						if (_behaviors[i]._behaviorAnims[j]._behaviorMoves[k]._messageQueue->_queueId == id2)
 							return &_behaviors[i]._behaviorAnims[j]._behaviorMoves[k];
 					}
 				}

@@ -85,7 +85,7 @@ void sceneHandler10_clickGum() {
 					if (mq) {
 						ExCommand *ex = new ExCommand(0, 17, MSG_SC10_CLICKGUM, 0, 0, 0, 1, 0, 0, 0);
 						ex->_excFlags = 2;
-						mq->addExCommandToEnd(ex);
+						mq->addCommandToEnd(ex);
 
 						postExCommand(g_nmi->_aniMan->_id, 2, x, y, 0, -1);
 					}

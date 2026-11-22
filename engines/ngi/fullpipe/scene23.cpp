@@ -298,16 +298,16 @@ void sceneHandler23_pushButton(ExCommand *cmd) {
 					MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, 276, 438, 1, ST_MAN_RIGHT);
 
 					if (mq) {
-						mq->addExCommandToEnd(cmd->createClone());
+						mq->addCommandToEnd(cmd->createClone());
 
 						postExCommand(g_nmi->_aniMan->_id, 2, 276, 438, 0, -1);
 					}
 				} else {
 					MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC23_TOCALENDAR), 0, 0);
 
-					mq->addExCommandToEnd(cmd->createClone());
+					mq->addCommandToEnd(cmd->createClone());
 					mq->setFlags(mq->getFlags() | 1);
-					mq->chain(nullptr);
+					mq->run(nullptr);
 				}
 
 				if (!g_vars->scene23_topReached)
@@ -394,9 +394,9 @@ void sceneHandler23_fromCalendar(ExCommand *cmd) {
 		&& !g_nmi->_aniMan->getMessageQueue() && !(g_nmi->_aniMan->_flags & 0x100)) {
 		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC23_FROMCALENDAR), 0, 0);
 
-		mq->addExCommandToEnd(cmd->createClone());
+		mq->addCommandToEnd(cmd->createClone());
 		mq->setFlags(mq->getFlags() | 1);
-		mq->chain(nullptr);
+		mq->run(nullptr);
 
 		g_vars->scene23_topReached = false;
 		g_vars->scene23_someVar = 0;
@@ -407,9 +407,9 @@ void sceneHandler23_fromStool(ExCommand *cmd) {
 	if (!g_nmi->_aniMan->getMessageQueue() && !(g_nmi->_aniMan->_flags & 0x100)) {
 		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC23_FROMSTOOL), 0, 0);
 
-		mq->addExCommandToEnd(cmd->createClone());
+		mq->addCommandToEnd(cmd->createClone());
 		mq->setFlags(mq->getFlags() | 1);
-		mq->chain(nullptr);
+		mq->run(nullptr);
 
 		cmd->_messageKind = 0;
 	}

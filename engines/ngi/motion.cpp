@@ -238,11 +238,11 @@ MessageQueue *MctlCompound::startMove(AniObject *ani, int sourceX, int sourceY, 
 		return nullptr;
 
 	for (uint i = 0; i < cp->_messageQueueObj->getCount(); i++) {
-		ExCommand *ex = new ExCommand(cp->_messageQueueObj->getExCommandByIndex(i));
+		ExCommand *ex = new ExCommand(cp->_messageQueueObj->getCommandByIndex(i));
 
 		ex->_excFlags |= 2;
 
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 	}
 
 	ExCommand *ex = new ExCommand(ani->_id, 51, 0, sourceX, sourceY, 0, 1, 0, 0, 0);
@@ -251,9 +251,9 @@ MessageQueue *MctlCompound::startMove(AniObject *ani, int sourceX, int sourceY, 
 	ex->_invId = fuzzyMatch;
 	ex->_param = ani->_copyId;
 
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
-	if (!mq->chain(ani)) {
+	if (!mq->run(ani)) {
 		delete mq;
 		return nullptr;
 	}
@@ -309,9 +309,9 @@ MessageQueue *MctlCompound::makeQueue(AniObject *subj, int xpos, int ypos, int f
 
 	if (mq) {
 		for (uint i = 0; i < closestP->_messageQueueObj->getCount(); i++) {
-			ex = closestP->_messageQueueObj->getExCommandByIndex(i)->createClone();
+			ex = closestP->_messageQueueObj->getCommandByIndex(i)->createClone();
 			ex->_excFlags |= 2;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 		}
 
 		ex = new ExCommand(subj->_id, 51, 0, xpos, ypos, 0, 1, 0, 0, 0);
@@ -320,7 +320,7 @@ MessageQueue *MctlCompound::makeQueue(AniObject *subj, int xpos, int ypos, int f
 		ex->_param = subj->_copyId;
 		ex->_excFlags |= 2;
 
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 	}
 
 	return mq;
@@ -452,7 +452,7 @@ MessageQueue *MctlLadder::startMove(AniObject *subj, int xpos, int ypos, int fuz
 	MessageQueue *mq = makeQueue(subj, xpos, ypos, fuzzyMatch, staticsId);
 
 	if (mq) {
-		if (mq->chain(subj))
+		if (mq->run(subj))
 			return mq;
 	}
 
@@ -568,7 +568,7 @@ MessageQueue *MctlLadder::makeQueue(AniObject *ani, int xpos, int ypos, int fuzz
 		ex->_param = ani->_copyId;
 		ex->_excFlags |= 2;
 
-		mq->insertExCommandAt(0, ex);
+		mq->addCommand(0, ex);
 
 		return mq;
 	}
@@ -634,7 +634,7 @@ MessageQueue *MctlLadder::makeQueue(AniObject *ani, int xpos, int ypos, int fuzz
 		ex->_param = ani->_copyId;
 		ex->_excFlags |= 2;
 
-		mq->insertExCommandAt(0, ex);
+		mq->addCommand(0, ex);
 
 		return mq;
 	}
@@ -941,10 +941,10 @@ MessageQueue *MovGraph::startMove(AniObject *ani, int xpos, int ypos, int fuzzyM
 
 		MessageQueue *mq = sub1(ani, ani->_x - point.x, ani->_y - point.y, ani->_movement->_prevStatic->_staticsId, xpos, ypos, 0, fuzzyMatch);
 
-		if (!mq || !mq->getExCommandByIndex(0))
+		if (!mq || !mq->getCommandByIndex(0))
 			return nullptr;
 
-		ExCommand *ex = mq->getExCommandByIndex(0);
+		ExCommand *ex = mq->getCommandByIndex(0);
 
 		if ((ex->_messageKind != 1 && ex->_messageKind != 20) || ex->_messageNum != ani->_movement->_id ||
 			(ex->_z >= 1 && ex->_z <= ani->_movement->_curFrame)) {
@@ -954,16 +954,16 @@ MessageQueue *MovGraph::startMove(AniObject *ani, int xpos, int ypos, int fuzzyM
 			ex->_param = ani->_copyId;
 			ex->_field_3C = 1;
 			ex->_field_24 = 0;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 
 			ex = new ExCommand(ani->_id, 51, 0, xpos, ypos, 0, 1, 0, 0, 0);
 			ex->_param = ani->_copyId;
 			ex->_field_3C = 1;
 			ex->_field_24 = 0;
 			ex->_invId = fuzzyMatch;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 
-			if (mq->chain(nullptr))
+			if (mq->run(nullptr))
 				return mq;
 
 			delete mq;
@@ -1075,10 +1075,10 @@ MessageQueue *MovGraph::makeQueue(AniObject *subj, int xpos, int ypos, int fuzzy
 
 					MessageQueue *mq = sub1(subj, subj->_x - point.x, subj->_y - point.y, subj->_movement->_prevStatic->_staticsId, xpos, ypos, 0, fuzzyMatch);
 
-					if (!mq || !mq->getExCommandByIndex(0))
+					if (!mq || !mq->getCommandByIndex(0))
 						return nullptr;
 
-					ExCommand *ex = mq->getExCommandByIndex(0);
+					ExCommand *ex = mq->getCommandByIndex(0);
 
 					if ((ex->_messageKind != 1 && ex->_messageKind != 20) ||
 						ex->_messageNum != subj->_movement->_id ||
@@ -1119,7 +1119,7 @@ MessageQueue *MovGraph::makeQueue(AniObject *subj, int xpos, int ypos, int fuzzy
 				ex->_messageNum = 54;
 				ex->_parentId = subj->_id;
 				ex->_field_3C = 1;
-				mq->addExCommandToEnd(ex);
+				mq->addCommandToEnd(ex);
 			}
 			subj->setPicAniInfo(picAniInfo);
 
@@ -1316,9 +1316,9 @@ MessageQueue *MovGraph::method50(AniObject *ani, MovArr *movarr, int staticsId) 
 	ex->_messageNum = 54;
 	ex->_parentId = ani->_id;
 	ex->_field_3C = 1;
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
-	if (!mq->chain(ani)) {
+	if (!mq->run(ani)) {
 		delete mq;
 
 		return nullptr;
@@ -2000,7 +2000,7 @@ MessageQueue *MctlGraph::makeWholeQueue(GmctlMqStruct &mctlMQ) {
 				ex->_param = _items2[mctlMQ.objectIndex]._ani->_copyId;
 				ex->_field_24 = 1;
 				ex->_z = -1;
-				mq->addExCommandToEnd(ex);
+				mq->addCommandToEnd(ex);
 
 				curX += mg2i->_mx;
 				curY += mg2i->_my;
@@ -2121,7 +2121,7 @@ MessageQueue *MctlGraph::startMove(AniObject *ani, int xpos, int ypos, int fuzzy
 		return nullptr;
 
 	if (ani->_movement) {
-		if (mq->getCount() <= 1 || mq->getExCommandByIndex(0)->_messageKind != 22) {
+		if (mq->getCount() <= 1 || mq->getCommandByIndex(0)->_messageKind != 22) {
 			PicAniInfo picAniInfo;
 
 			ani->getPicAniInfo(picAniInfo);
@@ -2140,7 +2140,7 @@ MessageQueue *MctlGraph::startMove(AniObject *ani, int xpos, int ypos, int fuzzy
 		}
 	}
 
-	if (!mq->chain(ani)) {
+	if (!mq->run(ani)) {
 		delete mq;
 
 		return nullptr;
@@ -2235,20 +2235,20 @@ MessageQueue *MctlGraph::makeQueue(AniObject *obj, int xpos, int ypos, int fuzzy
 			ex->_param = picAniInfo.field_8;
 			ex->_excFlags |= 2;
 
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 		} else {
 			ExCommand *ex = new ExCommand(picAniInfo.objectId, 22, obj->_statics->_staticsId, 0, 0, 0, 1, 0, 0, 0);
 
 			ex->_param = picAniInfo.field_8;
 			ex->_excFlags |= 3;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 
 			ex = new ExCommand(picAniInfo.objectId, 5, -1, obj->_x, obj->_y, 0, 1, 0, 0, 0);
 
 			ex->_z = -1;
 			ex->_param = picAniInfo.field_8;
 			ex->_excFlags |= 3;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 		}
 
 		obj->setPicAniInfo(picAniInfo);
@@ -2360,24 +2360,24 @@ MessageQueue *MctlGraph::makeQueue(AniObject *obj, int xpos, int ypos, int fuzzy
 
 	if (fuzzyMatch || linkInfoDest.link || linkInfoDest.node) {
 		if (mq && mq->getCount() > 0 && picAniInfo.movementId) {
-			ExCommand *ex = mq->getExCommandByIndex(0);
+			ExCommand *ex = mq->getCommandByIndex(0);
 
 			if (ex && (ex->_messageKind == 1 || ex->_messageKind == 20)
 					&& picAniInfo.movementId == ex->_messageNum
 					&& picAniInfo.someDynamicPhaseIndex == ex->_z) {
-				mq->deleteExCommandByIndex(0, 1);
+				mq->removeCommand(0, 1);
 			} else {
 				ex = new ExCommand(picAniInfo.objectId, 5, ex->_messageNum, obj->_x, obj->_y, 0, 1, 0, 0, 0);
 				ex->_z = -1;
 				ex->_param = picAniInfo.field_8;
 				ex->_excFlags |= 2;
-				mq->addExCommand(ex);
+				mq->addCommandToFront(ex);
 
 				ex = new ExCommand(picAniInfo.objectId, 22, _items2[idx]._directions[idxsub]._staticsId1, 0, 0, 0, 1, 0, 0, 0);
 
 				ex->_param = picAniInfo.field_8;
 				ex->_excFlags |= 3;
-				mq->addExCommand(ex);
+				mq->addCommandToFront(ex);
 			}
 		}
 	} else {
@@ -2610,7 +2610,7 @@ MessageQueue *MctlGraph::makeLineQueue(GmctlMqStruct *info) {
 		ex->_param = _items2[info->objectIndex]._ani->_copyId;
 		ex->_field_24 = 1;
 		ex->_excFlags |= 2;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 		ex = _aniHandler.createCommand(
 								  _items2[info->objectIndex]._directions[info->sourceDir]._walk[0]._mov,
@@ -2624,7 +2624,7 @@ MessageQueue *MctlGraph::makeLineQueue(GmctlMqStruct *info) {
 		ex->_param = _items2[info->objectIndex]._ani->_copyId;
 	}
 
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
 	for (int i = 0; i < mgmLen; ++i) {
 		int par;
@@ -2644,7 +2644,7 @@ MessageQueue *MctlGraph::makeLineQueue(GmctlMqStruct *info) {
 								  par);
 		ex->_parId = mq->_id;
 		ex->_param = _items2[info->objectIndex]._ani->_copyId;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 	}
 
 	if (!(info->flags & 4)) {
@@ -2659,7 +2659,7 @@ MessageQueue *MctlGraph::makeLineQueue(GmctlMqStruct *info) {
 		ex->_parId = mq->_id;
 		ex->_param = _items2[info->objectIndex]._ani->_copyId;
 
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 	}
 
 	ex = new ExCommand(_items2[info->objectIndex]._objectId, 5, -1, info->destPos.x, info->destPos.y, 0, 1, 0, 0, 0);
@@ -2669,7 +2669,7 @@ MessageQueue *MctlGraph::makeLineQueue(GmctlMqStruct *info) {
 	ex->_field_24 = 0;
 	ex->_excFlags |= 2;
 
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
 	return mq;
 }

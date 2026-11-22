@@ -189,7 +189,7 @@ bool InteractionController::handleInteraction(AniObject *subj, GameObject *obj, 
 					ex->_excFlags = 3;
 					ex->_z = (obj->_objtype != kObjTypePictureObject);
 					ex->_invId = invId;
-					mq->addExCommandToEnd(ex);
+					mq->addCommandToEnd(ex);
 
 					if (mq->_isFinished) {
 						mq->_isFinished = 0;
@@ -206,9 +206,9 @@ bool InteractionController::handleInteraction(AniObject *subj, GameObject *obj, 
 
 		if (inter->_messageQueue) {
 			mq = new MessageQueue(inter->_messageQueue, 0, 1);
-			mq->changeParam28ForObjectId(obj->_id, -1, obj->_copyId);
+			mq->setObjectCopyForId(obj->_id, -1, obj->_copyId);
 
-			if (!mq->chain(nullptr))
+			if (!mq->run(nullptr))
 				return false;
 		}
 
@@ -224,7 +224,7 @@ bool InteractionController::handleInteraction(AniObject *subj, GameObject *obj, 
 				if (subj->isIdle()) {
 					mq = new MessageQueue(inter->_messageQueue, 0, 1);
 
-					if (!mq->chain(subj)) {
+					if (!mq->run(subj)) {
 						delete mq;
 
 						return false;
@@ -254,7 +254,7 @@ bool InteractionController::handleInteraction(AniObject *subj, GameObject *obj, 
 		subj->setPos(inter->_xOffs + obj->_x, inter->_yOffs + obj->_y);
 
 		mq = new MessageQueue(inter->_messageQueue, 0, 1);
-		mq->changeParam28ForObjectId(obj->_id, -1, obj->_copyId);
+		mq->setObjectCopyForId(obj->_id, -1, obj->_copyId);
 		mq->_flags |= 1;
 
 		if (!(inter->_flags & 0x10000)) {
@@ -263,7 +263,7 @@ bool InteractionController::handleInteraction(AniObject *subj, GameObject *obj, 
 			ex->_z = 0x80;
 			ex->_messageNum = 0;
 			ex->_excFlags = 3;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 		}
 
 		ex = new ExCommand(obj->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
@@ -271,21 +271,21 @@ bool InteractionController::handleInteraction(AniObject *subj, GameObject *obj, 
 		ex->_z = 0x100;
 		ex->_messageNum = 0;
 		ex->_excFlags = 3;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 		ex = new ExCommand(subj->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = subj->_copyId;
 		ex->_z = 0x100;
 		ex->_messageNum = 0;
 		ex->_excFlags = 3;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 		ex = new ExCommand(subj->_id, 17, 0x40, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
 		ex->_param = 0;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
-		if (!mq->chain(subj)) {
+		if (!mq->run(subj)) {
 			delete mq;
 
 			return false;
@@ -325,7 +325,7 @@ bool InteractionController::handleInteraction(AniObject *subj, GameObject *obj, 
 			ex->_excFlags = 3;
 			ex->_invId = invId;
 			ex->_z = (obj->_objtype != kObjTypePictureObject);
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 
 			someFlag = true;
 
@@ -368,14 +368,14 @@ bool InteractionController::handleInteraction(AniObject *subj, GameObject *obj, 
 						ex->_z = 0x80;
 						ex->_param = ani->_copyId;
 						ex->_excFlags = 3;
-						mq->addExCommandToEnd(ex);
+						mq->addCommandToEnd(ex);
 					}
 				}
 				ex = new ExCommand(ani->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
 				ex->_param = ani->_copyId;
 				ex->_z = 0x100;
 				ex->_excFlags = 3;
-				mq->addExCommandToEnd(ex);
+				mq->addCommandToEnd(ex);
 			} else {
 				ex = new ExCommand(subj->_id, 55, 0, 0, 0, 0, 1, 0, 0, 0);
 				ex->_x = ani->_id;
@@ -384,7 +384,7 @@ bool InteractionController::handleInteraction(AniObject *subj, GameObject *obj, 
 				ex->_excFlags = 2;
 				ex->_z = (obj->_objtype != kObjTypePictureObject);
 				ex->_invId = invId;
-				mq->addExCommandToEnd(ex);
+				mq->addCommandToEnd(ex);
 
 				if (!mq->_isFinished)
 					return true;
@@ -434,8 +434,8 @@ Interaction::Interaction() {
 
 Interaction::~Interaction() {
 	if (_messageQueue) {
-		while (_messageQueue->getExCommandByIndex(0))
-			_messageQueue->deleteExCommandByIndex(0, 1);
+		while (_messageQueue->getCommandByIndex(0))
+			_messageQueue->removeCommand(0, 1);
 	}
 
 	delete _messageQueue;

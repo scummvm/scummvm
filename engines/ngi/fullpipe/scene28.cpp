@@ -88,7 +88,7 @@ void sceneHandler28_makeFaces(ExCommand *cmd) {
 			while (frames[pos = g_nmi->_rnd.getRandomNumber(4)] == 0)
 				;
 
-			mq->getExCommandByIndex(i)->_messageNum = frames[pos];
+			mq->getCommandByIndex(i)->_messageNum = frames[pos];
 
 			frames[pos] = 0;
 		}
@@ -103,18 +103,18 @@ void sceneHandler28_trySecondaryPers() {
 		if (g_vars->scene28_beardedDirection) {
 			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_BRD28_GOR), 0, 1);
 
-			mq->getExCommandByIndex(0)->_x = g_nmi->_sceneRect.left - 20;
-			mq->getExCommandByIndex(0)->_param = 1;
-			mq->setParamInt(-1, 1);
-			mq->chain(nullptr);
+			mq->getCommandByIndex(0)->_x = g_nmi->_sceneRect.left - 20;
+			mq->getCommandByIndex(0)->_param = 1;
+			mq->setObjectCopy(-1, 1);
+			mq->run(nullptr);
 
 			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_BRD28_GOR), 0, 1);
 
-			mq->getExCommandByIndex(0)->_x = g_nmi->_sceneRect.left - 40;
-			mq->getExCommandByIndex(0)->_y += 20;
-			mq->getExCommandByIndex(0)->_param = 2;
-			mq->setParamInt(-1, 2);
-			mq->chain(nullptr);
+			mq->getCommandByIndex(0)->_x = g_nmi->_sceneRect.left - 40;
+			mq->getCommandByIndex(0)->_y += 20;
+			mq->getCommandByIndex(0)->_param = 2;
+			mq->setObjectCopy(-1, 2);
+			mq->run(nullptr);
 
 			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_BRD28_GOR), 0, 1);
 
@@ -122,29 +122,29 @@ void sceneHandler28_trySecondaryPers() {
 		} else {
 			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_BRD28_GOL), 0, 1);
 
-			mq->getExCommandByIndex(0)->_x = g_nmi->_sceneRect.right + 20;
-			mq->getExCommandByIndex(0)->_param = 1;
-			mq->setParamInt(-1, 1);
-			mq->chain(nullptr);
+			mq->getCommandByIndex(0)->_x = g_nmi->_sceneRect.right + 20;
+			mq->getCommandByIndex(0)->_param = 1;
+			mq->setObjectCopy(-1, 1);
+			mq->run(nullptr);
 
 			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_BRD28_GOL), 0, 1);
 
-			mq->getExCommandByIndex(0)->_x = g_nmi->_sceneRect.right + 40;
-			mq->getExCommandByIndex(0)->_y += 20;
-			mq->getExCommandByIndex(0)->_param = 2;
-			mq->setParamInt(-1, 2);
-			mq->chain(nullptr);
+			mq->getCommandByIndex(0)->_x = g_nmi->_sceneRect.right + 40;
+			mq->getCommandByIndex(0)->_y += 20;
+			mq->getCommandByIndex(0)->_param = 2;
+			mq->setObjectCopy(-1, 2);
+			mq->run(nullptr);
 
 			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_BRD28_GOL), 0, 1);
 
 			x = g_nmi->_sceneRect.right + 60;
 		}
 
-		mq->getExCommandByIndex(0)->_x = x;
-		mq->getExCommandByIndex(0)->_y += 40;
-		mq->getExCommandByIndex(0)->_param = 3;
-		mq->setParamInt(-1, 3);
-		mq->chain( nullptr);
+		mq->getCommandByIndex(0)->_x = x;
+		mq->getCommandByIndex(0)->_y += 40;
+		mq->getCommandByIndex(0)->_param = 3;
+		mq->setObjectCopy(-1, 3);
+		mq->run( nullptr);
 
 		g_vars->scene28_beardedDirection = !g_vars->scene28_beardedDirection;
 	} else {
@@ -158,8 +158,8 @@ void sceneHandler28_trySecondaryPers() {
 			x = g_nmi->_sceneRect.right + 40;
 		}
 
-		mq->getExCommandByIndex(0)->_x = x;
-		mq->chain(nullptr);
+		mq->getCommandByIndex(0)->_x = x;
+		mq->run(nullptr);
 
 		g_vars->scene28_headDirection = !g_vars->scene28_headDirection;
 	}
@@ -270,7 +270,7 @@ void sceneHandler28_clickLift(int numLift) {
 			ex->_excFlags |= 3;
 			ex->_param = numLift;
 
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 
 			postExCommand(g_nmi->_aniMan->_id, 2, x, 472, 0, -1);
 		}

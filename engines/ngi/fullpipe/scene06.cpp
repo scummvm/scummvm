@@ -166,7 +166,7 @@ void sceneHandler06_mumsyBallTake() {
 	ExCommand *ex = new ExCommand(ANI_MAMASHA, 2, 50, 0, 0, 0, 1, 0, 0, 0);
 
 	ex->_excFlags = 2u;
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
 	if (g_vars->scene06_mumsyNumBalls >= 5) {
 		g_nmi->setObjectState(sO_BigMumsy, g_nmi->getObjectEnumState(sO_BigMumsy, sO_IsGone));
@@ -176,55 +176,55 @@ void sceneHandler06_mumsyBallTake() {
 
 		ex = new ExCommand(ANI_MAMASHA, 1, momAni, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 		if (g_vars->scene06_mumsyPos + 3 >= 0) {
 			ex = new ExCommand(ANI_MAMASHA, 1, MV_MOM_STARTBK, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2u;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 
 			for (int i = 0; i < g_vars->scene06_mumsyPos + 3; i++) {
 				ex = new ExCommand(ANI_MAMASHA, 1, MV_MOM_CYCLEBK, 0, 0, 0, 1, 0, 0, 0);
 				ex->_excFlags |= 2;
-				mq->addExCommandToEnd(ex);
+				mq->addCommandToEnd(ex);
 			}
 
 			ex = new ExCommand(ANI_MAMASHA, 1, MV_MOM_STOPBK, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 		}
 
 		ex = new ExCommand(0, 18, QU_MOM_TOLIFT, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 	} else {
 		if (momAni) {
 			ex = new ExCommand(ANI_MAMASHA, 1, momAni, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 		}
 
 		if (g_vars->scene06_mumsyPos < 0) {
 			for (int i = 0; i > g_vars->scene06_mumsyPos; i--) {
 				ex = new ExCommand(ANI_MAMASHA, 1, MV_MOM_JUMPFW, 0, 0, 0, 1, 0, 0, 0);
 				ex->_excFlags |= 2;
-				mq->addExCommandToEnd(ex);
+				mq->addCommandToEnd(ex);
 			}
 		} else if (g_vars->scene06_mumsyPos > 0) {
 			for (int i = 0; i < g_vars->scene06_mumsyPos; i++) {
 				ex = new ExCommand(ANI_MAMASHA, 1, MV_MOM_JUMPBK, 0, 0, 0, 1, 0, 0, 0);
 				ex->_excFlags |= 2;
-				mq->addExCommandToEnd(ex);
+				mq->addCommandToEnd(ex);
 			}
 		}
 
 		ex = new ExCommand(0, 18, QU_MOM_SITDOWN, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3u;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 	}
 
 	mq->setFlags(mq->getFlags() | 1);
-	mq->chain(nullptr);
+	mq->run(nullptr);
 
 	g_vars->scene06_mumsyNumBalls = 0;
 	g_vars->scene06_arcadeEnabled = false;
@@ -266,8 +266,8 @@ void sceneHandler06_showNextBall() {
 
 		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC6_SHOWNEXTBALL), 0, 1);
 
-		mq->setParamInt(-1, g_vars->scene06_currentBall->_copyId);
-		mq->chain(nullptr);
+		mq->setObjectCopy(-1, g_vars->scene06_currentBall->_copyId);
+		mq->run(nullptr);
 
 		++g_vars->scene06_numBallsGiven;
 	}
@@ -318,7 +318,7 @@ void sceneHandler06_takeBall() {
 			if (mq) {
 				ExCommand *ex = new ExCommand(0, 17, MSG_SC6_TAKEBALL, 0, 0, 0, 1, 0, 0, 0);
 				ex->_excFlags |= 3;
-				mq->addExCommandToEnd(ex);
+				mq->addCommandToEnd(ex);
 
 				postExCommand(g_nmi->_aniMan->_id, 2, 1158, 452, 0, -1);
 			}
@@ -412,8 +412,8 @@ void sceneHandler06_fallBall() {
 
 	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC6_FALLBALL), 0, 1);
 
-	mq->setParamInt(-1, g_vars->scene06_flyingBall->_copyId);
-	mq->chain(nullptr);
+	mq->setObjectCopy(-1, g_vars->scene06_flyingBall->_copyId);
+	mq->run(nullptr);
 
 	g_vars->scene06_balls.push_back(g_vars->scene06_flyingBall);
 

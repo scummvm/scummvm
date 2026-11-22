@@ -233,25 +233,25 @@ void sceneHandler25_animateBearders() {
 
 		mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC25_BEARDED), 0, 1);
 
-		mq->setParamInt(-1, g_vars->scene25_bearders[0]->_copyId);
-		mq->getExCommandByIndex(0)->_x = g_nmi->_rnd.getRandomNumber(650) + 100;
-		mq->chain(nullptr);
+		mq->setObjectCopy(-1, g_vars->scene25_bearders[0]->_copyId);
+		mq->getCommandByIndex(0)->_x = g_nmi->_rnd.getRandomNumber(650) + 100;
+		mq->run(nullptr);
 
 		g_vars->scene25_beardersCounter = 0;
 
 		if (g_nmi->_rnd.getRandomNumber(32767) < 0x1FFF) {
 			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC25_BEARDED2), 0, 1);
 
-			mq->setParamInt(-1, g_vars->scene25_bearders[1]->_copyId);
-			mq->getExCommandByIndex(0)->_x = g_nmi->_rnd.getRandomNumber(650) + 100;
-			mq->chain(nullptr);
+			mq->setObjectCopy(-1, g_vars->scene25_bearders[1]->_copyId);
+			mq->getCommandByIndex(0)->_x = g_nmi->_rnd.getRandomNumber(650) + 100;
+			mq->run(nullptr);
 
 			if (g_nmi->_rnd.getRandomNumber(32767) < 8191) {
 				mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC25_BEARDED3), 0, 1);
 
-				mq->setParamInt(-1, g_vars->scene25_bearders[2]->_copyId);
-				mq->getExCommandByIndex(0)->_x = g_nmi->_rnd.getRandomNumber(650) + 100;
-				mq->chain(nullptr);
+				mq->setObjectCopy(-1, g_vars->scene25_bearders[2]->_copyId);
+				mq->getCommandByIndex(0)->_x = g_nmi->_rnd.getRandomNumber(650) + 100;
+				mq->run(nullptr);
 			}
 		}
 	}
@@ -455,7 +455,7 @@ void sceneHandler25_walkOnLadder(AniObject *ani, Common::Point *pnt, MessageQueu
 	for (uint i = 0; i < mq->getCount(); i++) {
 		int curDistance = abs(pnty - aniY);
 
-		ex = mq->getExCommandByIndex(i);
+		ex = mq->getCommandByIndex(i);
 
 		if (ex->_messageKind == 1 && ani->_id == ex->_parentId) {
 			if (ex->_excFlags & 0x10000) {
@@ -484,7 +484,7 @@ void sceneHandler25_walkOnLadder(AniObject *ani, Common::Point *pnt, MessageQueu
 	}
 
 	for (int i = 0; i < numObsolete; i++)
-		mq->deleteExCommandByIndex(0, 1);
+		mq->removeCommand(0, 1);
 
 	ex = new ExCommand(ani->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 
@@ -492,10 +492,10 @@ void sceneHandler25_walkOnLadder(AniObject *ani, Common::Point *pnt, MessageQueu
 	ex->_messageNum = 0;
 	ex->_excFlags |= 3;
 
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
-	if (flag && ani->_movement && ani->_movement->_id == mq->getExCommandByIndex(0)->_messageNum) {
-		mq->deleteExCommandByIndex(0, 1);
+	if (flag && ani->_movement && ani->_movement->_id == mq->getCommandByIndex(0)->_messageNum) {
+		mq->removeCommand(0, 1);
 
 		int movId = ani->_movement->_id;
 		int idx = ani->_movement->_curFrame;

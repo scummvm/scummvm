@@ -152,9 +152,9 @@ void sceneHandler22_fromStool(ExCommand *cmd) {
 	if (g_nmi->_aniMan->isIdle() && !(g_nmi->_aniMan->_flags & 0x100)) {
 		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC22_FROMSTOOL), 0, 0);
 
-		mq->addExCommandToEnd(cmd->createClone());
+		mq->addCommandToEnd(cmd->createClone());
 		mq->setFlags(mq->getFlags() | 1);
-		mq->chain(nullptr);
+		mq->run(nullptr);
 	}
 }
 
@@ -195,7 +195,7 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 				if (!mq)
 					return;
 
-				mq->addExCommandToEnd(cmd->createClone());
+				mq->addCommandToEnd(cmd->createClone());
 
 				postExCommand(g_nmi->_aniMan->_id, 2, 841, 449, 0, -1);
 				return;
@@ -256,17 +256,17 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 
 				mq = mgm.makeRunQueue(&mkQueue);
 
-				ExCommand *ex = mq->getExCommandByIndex(0);
+				ExCommand *ex = mq->getCommandByIndex(0);
 
-				mq->deleteExCommandByIndex(0, 0);
+				mq->removeCommand(0, 0);
 
 				delete mq;
 
 				mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC22_TOSTOOL_R), 0, 0);
 
-				mq->insertExCommandAt(2, ex);
+				mq->addCommand(2, ex);
 				mq->setFlags(mq->getFlags() | 1);
-				mq->chain(nullptr);
+				mq->run(nullptr);
 
 				g_vars->scene22_interactionIsDisabled = true;
 			} else {
@@ -280,7 +280,7 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 				mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, 1010, 443, 1, ST_MAN_UP);
 
 				if (mq) {
-					mq->addExCommandToEnd(cmd->createClone());
+					mq->addCommandToEnd(cmd->createClone());
 
 					postExCommand(g_nmi->_aniMan->_id, 2, 1010, 443, 0, -1);
 					return;

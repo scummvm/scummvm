@@ -289,11 +289,11 @@ void sceneHandler29_manHit() {
 			ex = new ExCommand(ANI_MAN, 1, MV_MAN29_STANDUP_NORM, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags = 2;
 			ex->_param = g_nmi->_aniMan->_copyId;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 
 			ex = new ExCommand(0, 17, MSG_SC29_STOPRIDE, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags = 2;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 
 			g_vars->scene29_manIsRiding = false;
 			g_vars->scene29_arcadeIsOn = false;
@@ -303,12 +303,12 @@ void sceneHandler29_manHit() {
 			ex = new ExCommand(ANI_MAN, 1, MV_MAN29_STANDUP, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags = 2;
 			ex->_param = g_nmi->_aniMan->_copyId;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 		}
 
 		mq->setFlags(mq->getFlags() | 1);
 
-		if (!mq->chain(g_nmi->_aniMan))
+		if (!mq->run(g_nmi->_aniMan))
 			delete mq;
 	}
 }
@@ -486,7 +486,7 @@ void sceneHandler29_clickPorter(ExCommand *cmd) {
 				MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, 351, 443, 1, ST_MAN_RIGHT);
 
 				if (mq) {
-					mq->addExCommandToEnd(cmd->createClone());
+					mq->addCommandToEnd(cmd->createClone());
 
 					postExCommand(g_nmi->_aniMan->_id, 2, 351, 443, 0, -1);
 				}
@@ -504,7 +504,7 @@ void sceneHandler29_clickPorter(ExCommand *cmd) {
 				MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, 1582, 445, 1, (0x4000 | ST_MAN_RIGHT));
 
 				if (mq) {
-					mq->addExCommandToEnd(cmd->createClone());
+					mq->addCommandToEnd(cmd->createClone());
 
 					postExCommand(g_nmi->_aniMan->_id, 2, 1582, 445, 0, -1);
 				}
@@ -600,8 +600,8 @@ void sceneHandler29_animBearded() {
 				if (x - g_vars->scene29_manX < 100 || !g_vars->scene29_arcadeIsOn) {
 					mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC29_BRDOUT1), 0, 1);
 
-					mq->setParamInt(-1, ani->_copyId);
-					mq->chain(nullptr);
+					mq->setObjectCopy(-1, ani->_copyId);
+					mq->run(nullptr);
 
 					g_vars->scene29_bearders[i]->wbflag = 0;
 					g_vars->scene29_bearders[i]->wbcounter = 0;
@@ -620,8 +620,8 @@ void sceneHandler29_animBearded() {
 
 						mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC29_BRDOUT2), 0, 1);
 
-						mq->setParamInt(-1, ani->_copyId);
-						mq->chain(nullptr);
+						mq->setObjectCopy(-1, ani->_copyId);
+						mq->run(nullptr);
 
 						g_vars->scene29_bearders[i]->wbflag = 0;
 						g_vars->scene29_bearders[i]->wbcounter = 0;
@@ -660,9 +660,9 @@ void sceneHandler29_animBearded() {
 				newx = g_vars->scene29_manX + 350;
 			}
 
-			mq->getExCommandByIndex(0)->_x = newx;
-			mq->setParamInt(-1, ani->_copyId);
-			mq->chain(nullptr);
+			mq->getCommandByIndex(0)->_x = newx;
+			mq->setObjectCopy(-1, ani->_copyId);
+			mq->run(nullptr);
 
 			g_vars->scene29_bearders[i]->wbflag = 1;
 			g_vars->scene29_bearders[i]->wbcounter = 0;

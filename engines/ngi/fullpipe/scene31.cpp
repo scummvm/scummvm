@@ -64,11 +64,11 @@ void sceneHandler31_testCactus(ExCommand *cmd) {
 		MessageQueue *mq = g_nmi->_globalMessageQueueList->getMessageQueueById(cmd->_parId);
 
 		if (mq) {
-			mq->getExCommandByIndex(0)->_messageKind = 0;
-			mq->getExCommandByIndex(0)->_excFlags |= 1;
+			mq->getCommandByIndex(0)->_messageKind = 0;
+			mq->getCommandByIndex(0)->_excFlags |= 1;
 
-			mq->getExCommandByIndex(1)->_messageKind = 0;
-			mq->getExCommandByIndex(1)->_excFlags |= 1;
+			mq->getCommandByIndex(1)->_messageKind = 0;
+			mq->getCommandByIndex(1)->_excFlags |= 1;
 		}
 	}
 }

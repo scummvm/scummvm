@@ -109,8 +109,8 @@ class MessageQueue : public CObject {
   public:
 	int _id;
 	int _flags;
-	Common::String _queueName;
-	int16 _dataId;
+	Common::String _title;
+	int16 _queueId;
 	CObject *_field_14;
 	int _counter;
 	int _field_38;
@@ -119,7 +119,7 @@ class MessageQueue : public CObject {
 	int _flag1;
 
   private:
-	Common::List<ExCommand *> _exCommands;
+	Common::List<ExCommand *> _commands;
 
  public:
 	MessageQueue();
@@ -132,22 +132,22 @@ class MessageQueue : public CObject {
 	int getFlags() { return _flags; }
 	void setFlags(int flags) { _flags = flags; }
 
-	uint getCount() { return _exCommands.size(); }
+	uint getCount() { return _commands.size(); }
 
-	void addExCommand(ExCommand *ex);
-	void addExCommandToEnd(ExCommand *ex);
-	void insertExCommandAt(int pos, ExCommand *ex);
-	ExCommand *getExCommandByIndex(uint idx);
-	void deleteExCommandByIndex(uint idx, bool doFree);
+	void addCommandToFront(ExCommand *ex);
+	void addCommandToEnd(ExCommand *ex);
+	void addCommand(int pos, ExCommand *ex);
+	ExCommand *getCommandByIndex(uint idx);
+	void removeCommand(uint idx, bool doFree);
 
 	void mergeQueue(MessageQueue *mq);
 
-	void setParamInt(int key1, int key2);
+	void setObjectCopy(int key1, int key2);
 
-	/** `ani` will own `this` if `chain` returns true */
-	bool chain(AniObject *ani);
+	/** `ani` will own `this` if `run` returns true */
+	bool run(AniObject *ani);
 	void update();
-	void sendNextCommand();
+	void next();
 	void finish();
 
 	void messageQueueCallback1(int par);
@@ -156,7 +156,7 @@ class MessageQueue : public CObject {
 	bool checkGlobalExCommandList2();
 
 	int calcDuration(AniObject *obj);
-	void changeParam28ForObjectId(int objId, int oldParam28, int newParam28);
+	void setObjectCopyForId(int objId, int oldCopyId, int newCopyId);
 
 	int activateExCommandsByKind(int kind);
 };

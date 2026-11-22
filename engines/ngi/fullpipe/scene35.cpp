@@ -99,9 +99,9 @@ void sceneHandler35_startFlow() {
 			cmd->_z = 256;
 			cmd->_messageNum = 0;
 
-			mq->addExCommandToEnd(cmd);
+			mq->addCommandToEnd(cmd);
 
-			if (!mq->chain(g_vars->scene35_bellyInflater))
+			if (!mq->run(g_vars->scene35_bellyInflater))
 				delete mq;
 
 			g_vars->scene35_bellyInflater->_flags |= 0x100;

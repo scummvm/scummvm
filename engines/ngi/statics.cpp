@@ -265,7 +265,7 @@ bool AniObject::setQueue(MessageQueue *mq) {
 			if (_movement)
 				_messageQueueId = mq->_id;
 			else
-				mq->sendNextCommand();
+				mq->next();
 		} else {
 			_messageQueueId = 0;
 		}
@@ -275,16 +275,16 @@ bool AniObject::setQueue(MessageQueue *mq) {
 }
 
 void AniObject::restartMessageQueue(MessageQueue *mq) {
-	ExCommand *ex = mq->getExCommandByIndex(0);
+	ExCommand *ex = mq->getCommandByIndex(0);
 	if (ex) {
 		while (ex->_messageKind != 1 || ex->_parentId != _id) {
 			ex->_parId = 0;
 			ex->_excFlags |= 2;
 			ex->handleMessage();
 
-			mq->deleteExCommandByIndex(0, 0);
+			mq->removeCommand(0, 0);
 
-			ex = mq->getExCommandByIndex(0);
+			ex = mq->getCommandByIndex(0);
 
 			if (!ex)
 				return;
@@ -292,7 +292,7 @@ void AniObject::restartMessageQueue(MessageQueue *mq) {
 
 		if (ex) {
 			startMovement(ex->_messageNum, mq->_id, -1);
-			mq->deleteExCommandByIndex(0, 1);
+			mq->removeCommand(0, 1);
 		}
 	}
 }
@@ -326,7 +326,7 @@ void AniObject::startMQIfIdle(int qId, int flag) {
 
 		mq->setFlags(mq->getFlags() | flag);
 
-		ExCommand *ex = mq->getExCommandByIndex(0);
+		ExCommand *ex = mq->getCommandByIndex(0);
 
 		if (ex) {
 			while (ex->_messageKind != 1 || ex->_parentId != _id) {
@@ -334,9 +334,9 @@ void AniObject::startMQIfIdle(int qId, int flag) {
 				ex->_excFlags |= 2;
 				ex->handleMessage();
 
-				mq->deleteExCommandByIndex(0, 0);
+				mq->removeCommand(0, 0);
 
-				ex = mq->getExCommandByIndex(0);
+				ex = mq->getCommandByIndex(0);
 
 				if (!ex)
 					return;
@@ -344,7 +344,7 @@ void AniObject::startMQIfIdle(int qId, int flag) {
 
 			if (ex) {
 				startMovement(ex->_messageNum, mq->_id, -1);
-				mq->deleteExCommandByIndex(0, 1);
+				mq->removeCommand(0, 1);
 			}
 		}
 	}

@@ -47,7 +47,7 @@ void scene33_initScene(Scene *sc) {
 	if (g_nmi->getObjectState(sO_Cube) == g_nmi->getObjectEnumState(sO_Cube, sO_In_33)) {
 		MessageQueue *mq = new MessageQueue(sc->getMessageQueueById(QU_KBK33_START), 0, 0);
 
-		mq->sendNextCommand();
+		mq->next();
 	}
 
 
@@ -78,14 +78,14 @@ void sceneHandler33_processJettie(ExCommand *cmd) {
 	MessageQueue *mq = g_nmi->_globalMessageQueueList->getMessageQueueById(cmd->_parId);
 
 	if (mq && g_vars->scene33_jettie->_movement) {
-		ExCommand *ex = mq->getExCommandByIndex(0);
+		ExCommand *ex = mq->getCommandByIndex(0);
 
 		if (ex) {
 			ex->_messageKind = 0;
 			ex->_excFlags |= 1;
 		}
 
-		ex = mq->getExCommandByIndex(1);
+		ex = mq->getCommandByIndex(1);
 
 		if (ex) {
 			ex->_messageKind = 0;

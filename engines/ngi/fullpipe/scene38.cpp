@@ -36,11 +36,11 @@
 namespace NGI {
 
 void scene38_setBottleState(Scene *sc) {
-	ExCommand *ex = sc->getMessageQueueById(QU_SC38_SHOWBOTTLE_ONTABLE)->getExCommandByIndex(0);
+	ExCommand *ex = sc->getMessageQueueById(QU_SC38_SHOWBOTTLE_ONTABLE)->getCommandByIndex(0);
 
 	if (g_vars->scene38_bottle->_x == ex->_x && g_vars->scene38_bottle->_y == ex->_y) {
 		if (g_nmi->lift_checkButton(sO_Level5) ) {
-			ex = sc->getMessageQueueById(QU_SC38_SHOWBOTTLE)->getExCommandByIndex(0);
+			ex = sc->getMessageQueueById(QU_SC38_SHOWBOTTLE)->getCommandByIndex(0);
 
 			g_vars->scene38_bottle->setPos(ex->_x, ex->_y);
 			g_vars->scene38_bottle->_z = ex->_z;
@@ -219,7 +219,7 @@ void sceneHandler38_animateAlcoholics() {
 				if (bossAnim > 0) {
 					mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(bossAnim), 0, 0);
 
-					mq->chain(nullptr);
+					mq->run(nullptr);
 
 					g_vars->scene38_bossCounter = 0;
 				}
@@ -267,7 +267,7 @@ void sceneHandler38_animateAlcoholics() {
 		if (tallyAnim > 0) {
 			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(tallyAnim), 0, 0);
 
-			mq->chain(nullptr);
+			mq->run(nullptr);
 			g_vars->scene38_tallyCounter = 0;
 		}
 	}
@@ -311,7 +311,7 @@ void sceneHandler38_animateAlcoholics() {
 	if (shortyAnim > 0) {
 		mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(shortyAnim), 0, 0);
 
-		mq->chain(nullptr);
+		mq->run(nullptr);
 
 		g_vars->scene38_shortyCounter = 0;
 	}

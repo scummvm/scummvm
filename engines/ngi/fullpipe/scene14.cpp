@@ -145,13 +145,13 @@ void sceneHandler14_showBallGrandmaHit() {
 		ex->_param = g_vars->scene14_flyingBall->_copyId;
 		ex->_excFlags |= 2;
 		ex->_field_24 = 1;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_BALL14, 6, 0, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = g_vars->scene14_flyingBall->_copyId;
 		ex->_excFlags |= 3;
-		mq->addExCommandToEnd(ex);
-		mq->chain(nullptr);
+		mq->addCommandToEnd(ex);
+		mq->run(nullptr);
 
 		g_vars->scene14_balls.push_back(g_vars->scene14_flyingBall);
 		g_vars->scene14_flyingBall = nullptr;
@@ -187,13 +187,13 @@ void sceneHandler14_showBallMan() {
 		ex->_param = g_vars->scene14_flyingBall->_copyId;
 		ex->_excFlags |= 2;
 		ex->_field_24 = 1;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_BALL14, 6, 0, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = g_vars->scene14_flyingBall->_copyId;
 		ex->_excFlags |= 3;
-		mq->addExCommandToEnd(ex);
-		mq->chain(nullptr);
+		mq->addCommandToEnd(ex);
+		mq->run(nullptr);
 
 		g_vars->scene14_flyingBall->startMovement(MV_BAL14_TOGMA, 0, -1);
 
@@ -463,7 +463,7 @@ bool sceneHandler14_arcadeProcessClick(ExCommand *cmd) {
 	ExCommand *ex = new ExCommand(0, 17, MSG_SC14_STARTARCADE, 0, 0, 0, 1, 0, 0, 0);
 
 	ex->_excFlags |= 3;
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 	mq->setFlags(mq->getFlags() | 1);
 
 	postExCommand(g_nmi->_aniMan->_id, 2, 1237, 451, 0, -1);
@@ -482,13 +482,13 @@ void sceneHandler14_grandmaThrow() {
 	ExCommand *ex = new ExCommand(ANI_GRANDMA, 2, 30, 0, 0, 0, 1, 0, 0, 0);
 
 	ex->_excFlags |= 2;
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
 	ex = new ExCommand(ANI_GRANDMA, 1, MV_GMA_THROW, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags |= 2;
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
-	mq->chain(nullptr);
+	mq->run(nullptr);
 }
 
 void sceneHandler14_passToGrandma() {
@@ -501,13 +501,13 @@ void sceneHandler14_passToGrandma() {
 	ex->_param = g_vars->scene14_flyingBall->_copyId;
 	ex->_excFlags |= 2;
 	ex->_field_24 = 1;
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
 	ex = new ExCommand(ANI_BALL14, 6, 0, 0, 0, 0, 1, 0, 0, 0);
 	ex->_param = g_vars->scene14_flyingBall->_copyId;
 	ex->_excFlags |= 3;
-	mq->addExCommandToEnd(ex);
-	mq->chain(nullptr);
+	mq->addCommandToEnd(ex);
+	mq->run(nullptr);
 
 	g_vars->scene14_balls.push_back(g_vars->scene14_flyingBall);
 	g_vars->scene14_flyingBall = nullptr;
@@ -522,17 +522,17 @@ void sceneHandler14_grandmaJumpThrow() {
 	ExCommand *ex = new ExCommand(ANI_GRANDMA, 2, 30, 0, 0, 0, 1, 0, 0, 0);
 
 	ex->_excFlags |= 2;
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
 	ex = new ExCommand(ANI_GRANDMA, 1, MV_GMA_JUMPFW, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags |= 2;
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
 	ex = new ExCommand(ANI_GRANDMA, 1, MV_GMA_THROW, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags |= 2;
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
-	mq->chain(nullptr);
+	mq->run(nullptr);
 
 	g_vars->scene14_dude2X += 71;
 	g_nmi->_currentScene->_x = 71;
@@ -592,25 +592,25 @@ void sceneHandler14_arcadeLogic() {
 
 			ex = new ExCommand(ANI_GRANDMA, 1, MV_GMA_BACKOFF, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 
 			ex = new ExCommand(ANI_GRANDMA, 1, MV_GMA_THROW, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 
-			mq->chain(nullptr);
+			mq->run(nullptr);
 		} else {
 			MessageQueue *mq = new MessageQueue(g_nmi->_globalMessageQueueList->compact());
 
 			ex = new ExCommand(ANI_GRANDMA, 1, MV_GMA_BACKOFF2, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 
 			ex = new ExCommand(ANI_GRANDMA, 1, MV_GMA_THROW, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 
-			mq->chain(nullptr);
+			mq->run(nullptr);
 		}
 
 		sceneHandler14_grandmaStepForward();

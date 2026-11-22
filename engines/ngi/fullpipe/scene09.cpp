@@ -177,8 +177,8 @@ void sceneHandler09_winArcade() {
 void sceneHandler09_startAuntie() {
 	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_TTA9_GOL), 0, 1);
 
-	mq->getExCommandByIndex(0)->_x = g_nmi->_sceneRect.right + 30;
-	mq->chain(nullptr);
+	mq->getCommandByIndex(0)->_x = g_nmi->_sceneRect.right + 30;
+	mq->run(nullptr);
 }
 
 void sceneHandler09_spitterClick() {
@@ -202,7 +202,7 @@ void sceneHandler09_spitterClick() {
 			if (mq) {
 				ExCommand *ex = new ExCommand(0, 17, MSG_SC9_PLVCLICK, 0, 0, 0, 1, 0, 0, 0);
 				ex->_excFlags = 2;
-				mq->addExCommandToEnd(ex);
+				mq->addCommandToEnd(ex);
 
 				postExCommand(g_nmi->_aniMan->_id, 2, x, y, 0, -1);
 			}
@@ -243,7 +243,7 @@ void sceneHandler09_eatBall() {
 				ExCommand *ex = new ExCommand(ANI_GLOTATEL, 1, MV_GLT_FLYAWAY, 0, 0, 0, 1, 0, 0, 0);
 				ex->_excFlags |= 2;
 
-				mq->addExCommandToEnd(ex);
+				mq->addCommandToEnd(ex);
 			}
 
 			g_nmi->setObjectState(sO_Jug, g_nmi->getObjectEnumState(sO_Jug, sO_Unblocked));
@@ -324,7 +324,7 @@ void sceneHandler09_collideBall(uint num) {
 
 			mq->setFlags(mq->getFlags() | 1);
 
-			if (!mq->chain(g_vars->scene09_gulper))
+			if (!mq->run(g_vars->scene09_gulper))
 				delete mq;
 		}
 	}
@@ -339,9 +339,9 @@ void sceneHandler09_ballExplode(uint num) {
 
 	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC9_BALLEXPLODE), 0, 1);
 
-	mq->setParamInt(-1, ball->_copyId);
+	mq->setObjectCopy(-1, ball->_copyId);
 
-	if (!mq->chain(ball))
+	if (!mq->run(ball))
 		delete mq;
 }
 

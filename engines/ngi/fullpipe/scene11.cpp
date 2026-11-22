@@ -199,7 +199,7 @@ void sceneHandler11_hitMan() {
 		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC11_MANFALL), 0, 0);
 
 		mq->setFlags(mq->getFlags() | 1);
-		if (!mq->chain(g_nmi->_aniMan))
+		if (!mq->run(g_nmi->_aniMan))
 			delete mq;
 
 		getCurrSceneSc2MotionController()->replaceNodeX(353, 303);
@@ -275,7 +275,7 @@ void sceneHandler11_putBoot() {
 			ExCommand *ex = new ExCommand(0, 17, MSG_SC11_PUTBOOT, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 3;
 
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 
 			postExCommand(g_nmi->_aniMan->_id, 2, 353, 498, 0, -1);
 		}
@@ -318,7 +318,7 @@ void sceneHandler11_jumpFromSwing() {
 	ex->_z = 256;
 	ex->_messageNum = 0;
 	ex->_excFlags |= 3;
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 	mq->setFlags(mq->getFlags() | 1);
 
 	g_nmi->_globalMessageQueueList->addMessageQueue(mq);
@@ -418,15 +418,15 @@ void sceneHandler11_jumpHitAndWin() {
 		ex->_param = -1;
 		ex->_excFlags = 2;
 
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 		ex = new ExCommand(SC_11, 17, 61, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = TrubaRight;
 		ex->_excFlags = 3;
 
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
-		if (!mq->chain(g_nmi->_aniMan))
+		if (!mq->run(g_nmi->_aniMan))
 			delete mq;
 
 
@@ -463,9 +463,9 @@ void sceneHandler11_jumpOver(double angle) {
 		ExCommand *ex = new ExCommand(0, 17, MSG_SC11_RESTARTMAN, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags = 2;
 
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
-		if (!mq->chain(g_nmi->_aniMan))
+		if (!mq->run(g_nmi->_aniMan))
 			delete mq;
 	}
 }
@@ -503,9 +503,9 @@ void sceneHandler11_jumpHit(double angle) {
 		ExCommand *ex = new ExCommand(0, 17, MSG_SC11_RESTARTMAN, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags = 2;
 
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
-		if (!mq->chain(g_nmi->_aniMan))
+		if (!mq->run(g_nmi->_aniMan))
 			delete mq;
 
 	}
@@ -563,7 +563,7 @@ void sceneHandler11_swingieJumpDown() {
 
 	mq->setFlags(mq->getFlags() | 1);
 
-	if (!mq->chain(g_vars->scene11_swingie))
+	if (!mq->run(g_vars->scene11_swingie))
 		delete mq;
 
 	g_vars->scene11_swingIsSwinging = false;

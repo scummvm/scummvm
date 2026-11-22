@@ -383,7 +383,7 @@ void sceneHandler18_clickBoard() {
 
 		ex->_excFlags = 2;
 
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 		postExCommand(g_nmi->_aniMan->_id, 2, 967, 379, 0, -1);
 	} else {
@@ -438,7 +438,7 @@ void sceneHandler18and19_showManJump() {
 		g_vars->scene18_enteredTrubaRight = false;
 
 		mq->setFlags(mq->getFlags() | 1);
-		mq->chain(nullptr);
+		mq->run(nullptr);
 	}
 
 	g_vars->scene18_swingers[g_vars->scene18_manWheelPos]->sflags = 1;

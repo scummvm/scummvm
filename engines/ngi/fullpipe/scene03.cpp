@@ -141,8 +141,8 @@ void sceneHandler03_giveCoin(ExCommand *ex) {
 	MessageQueue *mq = g_nmi->_globalMessageQueueList->getMessageQueueById(ex->_parId);
 
 	if (mq && mq->getCount() > 0) {
-		ExCommand *ex0 = mq->getExCommandByIndex(0);
-		ExCommand *ex1 = mq->getExCommandByIndex(1);
+		ExCommand *ex0 = mq->getCommandByIndex(0);
+		ExCommand *ex1 = mq->getCommandByIndex(1);
 
 		if (sceneHandler03_swallowedEgg1State()) {
 			ex0->_messageKind = 1;
@@ -193,8 +193,8 @@ void sceneHandler03_takeEgg(ExCommand *ex) {
 	MessageQueue *mq = g_nmi->_globalMessageQueueList->getMessageQueueById(ex->_parId);
 
 	if (mq && mq->getCount() > 0) {
-		ExCommand *ex0 = mq->getExCommandByIndex(0);
-		ExCommand *ex1 = mq->getExCommandByIndex(1);
+		ExCommand *ex0 = mq->getCommandByIndex(0);
+		ExCommand *ex1 = mq->getCommandByIndex(1);
 
 		int egg1 = sceneHandler03_swallowedEgg1State();
 

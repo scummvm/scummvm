@@ -181,8 +181,8 @@ void sceneHandler16_fillMug() {
 		if (g_vars->scene16_walkingBoy) {
 			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC16_BOYOUT), 0, 1);
 
-			mq->setParamInt(-1, g_vars->scene16_walkingBoy->_copyId);
-			if (mq->chain(g_vars->scene16_walkingBoy))
+			mq->setObjectCopy(-1, g_vars->scene16_walkingBoy->_copyId);
+			if (mq->run(g_vars->scene16_walkingBoy))
 				return;
 		} else {
 			if (!g_vars->scene16_walkingGirl)
@@ -190,8 +190,8 @@ void sceneHandler16_fillMug() {
 
 			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC16_GIRLOUT), 0, 1);
 
-			mq->setParamInt(-1, g_vars->scene16_walkingGirl->_copyId);
-			if (mq->chain(g_vars->scene16_walkingGirl))
+			mq->setObjectCopy(-1, g_vars->scene16_walkingGirl->_copyId);
+			if (mq->run(g_vars->scene16_walkingGirl))
 				return;
 		}
 		delete mq;
@@ -208,7 +208,7 @@ void sceneHandler16_fillMug() {
 	if (g_vars->scene16_walkingBoy) {
 		mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC16_BOYOUT), 0, 1);
 
-		mq->setParamInt(-1, g_vars->scene16_walkingBoy->_copyId);
+		mq->setObjectCopy(-1, g_vars->scene16_walkingBoy->_copyId);
 
 		ani = g_vars->scene16_walkingBoy;
 	} else {
@@ -217,11 +217,11 @@ void sceneHandler16_fillMug() {
 
 		mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC16_GIRLOUT), 0, 1);
 
-		mq->setParamInt(-1, g_vars->scene16_walkingGirl->_copyId);
+		mq->setObjectCopy(-1, g_vars->scene16_walkingGirl->_copyId);
 		ani = g_vars->scene16_walkingGirl;
 	}
 
-	if (!mq->chain(ani))
+	if (!mq->run(ani))
 		delete mq;
 }
 
@@ -232,9 +232,9 @@ void sceneHandler16_startLaugh() {
 
 	MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC16_GIRLLAUGH), 0, 1);
 
-	mq->setParamInt(-1, girl->_copyId);
+	mq->setObjectCopy(-1, girl->_copyId);
 	mq->setFlags(mq->getFlags() | 1);
-	mq->chain(nullptr);
+	mq->run(nullptr);
 
 	g_nmi->getGameLoaderGameVar()->getSubVarByName("OBJSTATES")->setSubVarAsInt(sO_DudeSwinged, 0);
 
@@ -258,16 +258,16 @@ void sceneHandler16_drink() {
 
 							mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC16_BOYKICK), 0, 1);
 
-							mq->setParamInt(-1, g_vars->scene16_walkingBoy->_copyId);
+							mq->setObjectCopy(-1, g_vars->scene16_walkingBoy->_copyId);
 
 							ex = new ExCommand(ANI_MAN, 34, 384, 0, 0, 0, 1, 0, 0, 0);
 							ex->_excFlags |= 3u;
 							ex->_z = 384;
 							ex->_messageNum = 0;
 
-							mq->insertExCommandAt(2, ex);
+							mq->addCommand(2, ex);
 							mq->setFlags(mq->getFlags() | 1);
-							mq->chain(nullptr);
+							mq->run(nullptr);
 						} else {
 							g_nmi->_aniMan->_flags |= 0x100;
 
@@ -278,9 +278,9 @@ void sceneHandler16_drink() {
 							ex->_z = 256;
 							ex->_messageNum = 0;
 
-							mq->addExCommandToEnd(ex);
+							mq->addCommandToEnd(ex);
 							mq->setFlags(mq->getFlags() | 1);
-							mq->chain(nullptr);
+							mq->run(nullptr);
 
 							g_nmi->_currentScene->getStaticANIObject1ById(ANI_GIRL, -1)->setStatic(ST_GRL_STAND);
 						}
@@ -303,7 +303,7 @@ void sceneHandler16_mugClick() {
 		if (mq) {
 			ExCommand *ex = new ExCommand(0, 17, MSG_SC16_MUGCLICK, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags = 2;
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 
 			postExCommand(g_nmi->_aniMan->_id, 2, 310, 449, 0, -1);
 		}
@@ -361,8 +361,8 @@ void sceneHandler16_putOnWheel() {
 		if (ani->_id == ANI_BOY) {
 			mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC16_GOBOY), 0, 1);
 
-			mq->setParamInt(-1, ani->_copyId);
-			mq->chain(nullptr);
+			mq->setObjectCopy(-1, ani->_copyId);
+			mq->run(nullptr);
 
 			g_vars->scene16_walkingBoy = ani;
 			g_vars->scene16_walkingGirl = nullptr;
@@ -370,8 +370,8 @@ void sceneHandler16_putOnWheel() {
 			if (g_nmi->getObjectState(sO_Girl) == g_nmi->getObjectEnumState(sO_Girl, sO_IsSwinging)) {
 				mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC16_GOGIRL), 0, 1);
 
-				mq->setParamInt(-1, ani->_copyId);
-				mq->chain(nullptr);
+				mq->setObjectCopy(-1, ani->_copyId);
+				mq->run(nullptr);
 
 				g_vars->scene16_walkingBoy = nullptr;
 				g_vars->scene16_walkingGirl = ani;

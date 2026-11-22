@@ -183,7 +183,7 @@ void NGIEngine::lift_init(Scene *sc, int enterSeq, int exitSeq) {
 	if (!_liftExitMQ)
 		return;
 
-	ExCommand *ex = _liftEnterMQ->getExCommandByIndex(0);
+	ExCommand *ex = _liftEnterMQ->getCommandByIndex(0);
 
 	if (!ex)
 		return;
@@ -235,24 +235,24 @@ void NGIEngine::lift_exitSeq(ExCommand *cmd) {
 	ex->_z = 256;
 	ex->_messageNum = 256;
 	ex->_excFlags |= 3;
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
 	if (!cmd) {
 		ex = new ExCommand(_aniMan->_id, 2, 40, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = _aniMan->_copyId;
 		ex->_excFlags |= 2;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 	}
 
 	ex = new ExCommand(_lift->_id, 1, MV_LFT_OPEN, 0, 0, 0, 1, 0, 0, 0);
 	ex->_param = _lift->_copyId;
 	ex->_excFlags |= 2;
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
 	ex = new ExCommand(_aniMan->_id, 1, MV_MAN_STARTD, 0, 0, 0, 1, 0, 0, 0);
 	ex->_param = _aniMan->_copyId;
 	ex->_excFlags |= 2;
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
 	ex = new ExCommand(_aniMan->_id, 5, -1, 0, 0, 0, 1, 0, 0, 0);
 	ex->_param = _aniMan->_copyId;
@@ -260,25 +260,25 @@ void NGIEngine::lift_exitSeq(ExCommand *cmd) {
 	ex->_x = -1;
 	ex->_y = -1;
 	ex->_excFlags |= 3;
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
 	ex = new ExCommand(_aniMan->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags |= 3;
 	ex->_z = 256;
 	ex->_messageNum = 0;
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
 	ex = new ExCommand(0, 17, MSG_LIFT_STARTEXITQUEUE, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags |= 3;
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
 	ex = new ExCommand(_lift->_id, 1, MV_LFT_CLOSE, 0, 0, 0, 1, 0, 0, 0);
 	ex->_param = _lift->_copyId;
 	ex->_excFlags |= 2;
 
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
-	mq->chain(nullptr);
+	mq->run(nullptr);
 }
 
 void NGIEngine::lift_closedoorSeq() {
@@ -312,9 +312,9 @@ void NGIEngine::lift_closedoorSeq() {
 	ExCommand *ex = new ExCommand(0, 17, MSG_LIFT_GO, 0, 0, 0, 1, 0, 0, 0);
 
 	ex->_excFlags |= 3;
-	mq->addExCommandToEnd(ex);
+	mq->addCommandToEnd(ex);
 
-	if (!mq->chain(_lift))
+	if (!mq->run(_lift))
 		delete mq;
 }
 
@@ -329,7 +329,7 @@ void NGIEngine::lift_walkAndGo() {
 			ex = new ExCommand(0, 17, MSG_LIFT_CLICKBUTTON, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 3;
 
-			mq->addExCommandToEnd(ex);
+			mq->addCommandToEnd(ex);
 		}
 	} else {
 		lift_openLift();
@@ -341,7 +341,7 @@ void NGIEngine::lift_walkAndGo() {
 		ex = new ExCommand(_aniMan->_id, 2, 15, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = _aniMan->_copyId;
 		ex->_excFlags |= 2;
-		mq->addExCommand(ex);
+		mq->addCommandToFront(ex);
 
 		ex = new ExCommand(_aniMan->_id, 5, -1, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = _aniMan->_copyId;
@@ -349,13 +349,13 @@ void NGIEngine::lift_walkAndGo() {
 		ex->_x = -1;
 		ex->_y = -1;
 		ex->_excFlags |= 3;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 		ex = new ExCommand(0, 17, MSG_LIFT_CLOSEDOOR, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
-		mq->chain(nullptr);
+		mq->run(nullptr);
 
 		_aniMan->_flags |= 0x100;
 	}
@@ -413,18 +413,18 @@ void NGIEngine::lift_goAnimation() {
 				ex->_field_24 = 1;
 				ex->_excFlags |= 2;
 
-				mq->addExCommandToEnd(ex);
+				mq->addCommandToEnd(ex);
 
 				ex = new ExCommand(parentId, 17, 61, 0, 0, 0, 1, 0, 0, 0);
 
 				ex->_param = buttonId;
 				ex->_excFlags |= 3;
 
-				mq->addExCommandToEnd(ex);
+				mq->addCommandToEnd(ex);
 
 				_aniMan->_flags &= ~0x100;
 
-				if (!mq->chain(_aniMan))
+				if (!mq->run(_aniMan))
 					delete mq;
 
 				_aniMan->_flags |= 0x100;
@@ -482,7 +482,7 @@ void NGIEngine::lift_animateButton(AniObject *button) {
 void NGIEngine::lift_startExitQueue() {
 	MessageQueue *mq = new MessageQueue(_liftExitMQ, 0, 0);
 
-	mq->chain(nullptr);
+	mq->run(nullptr);
 }
 
 void NGIEngine::lift_hoverButton(ExCommand *cmd) {

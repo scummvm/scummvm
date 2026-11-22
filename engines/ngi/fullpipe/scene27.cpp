@@ -145,8 +145,8 @@ void sceneHandler27_showNextBat() {
 	if (g_vars->scene27_bat) {
 		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->getMessageQueueById(QU_SC27_SHOWBET), 0, 1);
 
-		mq->setParamInt(-1, g_vars->scene27_bat->_copyId);
-		mq->chain(nullptr);
+		mq->setObjectCopy(-1, g_vars->scene27_bat->_copyId);
+		mq->run(nullptr);
 	}
 
 	g_vars->scene27_batHandler->_z = 1045;
@@ -204,7 +204,7 @@ void sceneHandler27_clickBat(ExCommand *cmd) {
 		MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_nmi->_aniMan, bx, by, 1, ST_MAN_RIGHT);
 
 		if (mq) {
-			mq->addExCommandToEnd(cmd->createClone());
+			mq->addCommandToEnd(cmd->createClone());
 
 			postExCommand(g_nmi->_aniMan->_id, 2, bx, by, 0, -1);
 		}
@@ -491,13 +491,13 @@ void sceneHandler27_batLogic() {
 
 		ExCommand *ex = new ExCommand(g_vars->scene27_batHandler->_id, 1, mv, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
 		ex = new ExCommand(0, 17, MSG_SC27_CLICKBET, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		mq->addExCommandToEnd(ex);
+		mq->addCommandToEnd(ex);
 
-		mq->chain(nullptr);
+		mq->run(nullptr);
 	} else {
 		g_vars->scene27_bat = nullptr;
 	}
