@@ -161,10 +161,16 @@ Common::Error WWEngine::run() {
 	_isSaveAllowed = true;
 
 	while (!shouldQuit() && !(_logic->_r8_flags & 0x20)) {
+		const uint32 oldTick = g_system->getMillis();
+
 		handleMapPalette();
 		updateGame();
 		updateRoomAnimations();
 		g_system->updateScreen();
+
+		const uint32 elapsed = g_system->getMillis() - oldTick;
+		if (elapsed < 10)
+			g_system->delayMillis(10 - elapsed);
 	}
 
 	if (_logic->_r8_flags & 0x20) {
