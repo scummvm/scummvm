@@ -234,8 +234,8 @@ void Inventory::recalcItemPos() {
 	int itemX = 9;
 	int itemY = 0;
 
-	for (uint i = 0; i < _scene->_picObjList.size(); i++) {
-		PictureObject *pic = _scene->_picObjList[i];
+	for (uint i = 0; i < _scene->_pictureObjects.size(); i++) {
+		PictureObject *pic = _scene->_pictureObjects[i];
 
 		for (uint j = 0; j < _itemsPool.size(); j++) {
 			if (_itemsPool[j].pictureObjectNormal == pic->_id) {

@@ -191,7 +191,7 @@ bool Scene::load(MfcArchive &file) {
 
 	_libHandle.reset(g_nmi->_currArchive);
 
-	if (_picObjList.size() > 0 && !_bgname.empty()) {
+	if (_pictureObjects.size() > 0 && !_bgname.empty()) {
 		char fname[260];
 
 		Common::strlcpy(fname, _bgname.c_str(), 260);
@@ -252,8 +252,8 @@ void Scene::init() {
 
 	g_nmi->_sceneRect.moveTo(0, 0);
 
-	for (uint i = 0; i < _picObjList.size(); i++)
-		_picObjList[i]->clearFlags();
+	for (uint i = 0; i < _pictureObjects.size(); i++)
+		_pictureObjects[i]->clearFlags();
 
 	for (uint i = 0; i < _aniObjects.size(); i++)
 		_aniObjects[i]->clearFlags();
@@ -325,8 +325,8 @@ void Scene::addAni(AniObject *obj, bool addList2) {
 }
 
 void Scene::setPictureObjectsFlag4() {
-	for (uint i = 0; i < _picObjList.size(); i++) {
-		_picObjList[i]->_flags |= 4;
+	for (uint i = 0; i < _pictureObjects.size(); i++) {
+		_pictureObjects[i]->_flags |= 4;
 	}
 }
 
@@ -336,27 +336,27 @@ void Scene::stopAllSounds() {
 }
 
 PictureObject *Scene::findPictureObjectById(int objId, int flags) {
-	for (uint i = 1; i < _picObjList.size(); i++) {
-		if (_picObjList[i]->_id == objId && _picObjList[i]->_copyId == flags)
-			return _picObjList[i];
+	for (uint i = 1; i < _pictureObjects.size(); i++) {
+		if (_pictureObjects[i]->_id == objId && _pictureObjects[i]->_copyId == flags)
+			return _pictureObjects[i];
 	}
 
 	return nullptr;
 }
 
 PictureObject *Scene::getPictureObjectByName(const Common::String &objName, int flags) {
-	for (uint i = 0; i < _picObjList.size(); i++) {
-		if ((_picObjList[i]->_title == objName) && (_picObjList[i]->_copyId == flags || flags == -1))
-			return _picObjList[i];
+	for (uint i = 0; i < _pictureObjects.size(); i++) {
+		if ((_pictureObjects[i]->_title == objName) && (_pictureObjects[i]->_copyId == flags || flags == -1))
+			return _pictureObjects[i];
 	}
 
 	return nullptr;
 }
 
 void Scene::removePicture(PictureObject *obj) {
-	for (uint i = 0; i < _picObjList.size(); i++) {
-		if (_picObjList[i] == obj) {
-			_picObjList.remove_at(i);
+	for (uint i = 0; i < _pictureObjects.size(); i++) {
+		if (_pictureObjects[i] == obj) {
+			_pictureObjects.remove_at(i);
 			delete obj;
 
 			return;
@@ -541,7 +541,7 @@ void Scene::updateScrolling() {
 	}
 
 	// Might happen very early in the game
-	if (!_picObjList.size())
+	if (!_pictureObjects.size())
 		return;
 
 	if (_x || _y) {
@@ -549,7 +549,7 @@ void Scene::updateScrolling() {
 		int offsetY = 0;
 
 		if (_x < 0) {
-			if (!g_nmi->_sceneRect.left && !(_picObjList[0]->_flags & 2))
+			if (!g_nmi->_sceneRect.left && !(_pictureObjects[0]->_flags & 2))
 				_x = 0;
 
 			if (_x <= -g_nmi->_scrollSpeed) {
@@ -580,12 +580,12 @@ void Scene::updateScrolling() {
 }
 
 void Scene::updateScrolling2() {
-	if (_picObjList.size()) {
+	if (_pictureObjects.size()) {
 		int offsetY = 0;
 		int offsetX = 0;
 
-		const Dims dims = _picObjList[0]->getFullSize();
-		const int flags = _picObjList[0]->_flags;
+		const Dims dims = _pictureObjects[0]->getFullSize();
+		const int flags = _pictureObjects[0]->_flags;
 
 		if (g_nmi->_sceneRect.left < 0 && !(flags & 2))
 			offsetX = -g_nmi->_sceneRect.left;
@@ -621,8 +621,8 @@ AniObject *Scene::findAniObjectAtPos(int x, int y) {
 PictureObject *Scene::findPictureObjectAtPos(int x, int y) {
 	PictureObject *res = nullptr;
 
-	for (uint i = 0; i < _picObjList.size(); i++) {
-		PictureObject *p = _picObjList[i];
+	for (uint i = 0; i < _pictureObjects.size(); i++) {
+		PictureObject *p = _pictureObjects[i];
 		if ((p->_objectFlags & 0x100) && (p->_flags & 4) &&
 				p->hit(x, y) &&
 				(!res || res->_z >= p->_z))
@@ -636,8 +636,8 @@ int Scene::getPictureObjectIdAtPos(int x, int y) {
 	PictureObject *resp = nullptr;
 	int res = 0;
 
-	for (uint i = 0; i < _picObjList.size(); i++) {
-		PictureObject *p = _picObjList[i];
+	for (uint i = 0; i < _pictureObjects.size(); i++) {
+		PictureObject *p = _pictureObjects[i];
 		if ((p->_objectFlags & 0x100) && (p->_flags & 4) &&
 				p->hit(x, y) &&
 				(!res || resp->_z >= p->_z)) {
@@ -657,7 +657,7 @@ void Scene::update(int counterdiff) {
 }
 
 void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
-	if (!_picObjList.size() && !_bigPictureXDim)
+	if (!_pictureObjects.size() && !_bigPictureXDim)
 		return;
 
 	if (_palette.size) {
@@ -667,15 +667,15 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 	debugC(1, kDebugDrawing, "Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
 
 #if 0
-	if (_picObjList.size() > 2) { // We need to z-sort them
-		sortRenderables(_picObjList, true);
+	if (_pictureObjects.size() > 2) { // We need to z-sort them
+		sortRenderables(_pictureObjects, true);
 	}
 #else
-	sortRenderables(_picObjList, 1);
+	sortRenderables(_pictureObjects, 1);
 #endif
 
-	if (minPri == -1 && _picObjList.size())
-		minPri = _picObjList.back()->_z - 1;
+	if (minPri == -1 && _pictureObjects.size())
+		minPri = _pictureObjects.back()->_z - 1;
 
 	if (maxPri == -1)
 		maxPri = 60000;
@@ -684,9 +684,9 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 
 	Dims dims;
 
-	debugC(1, kDebugDrawing, "_bigPict: %d objlist: %d", _bigPictureXDim, _picObjList.size());
+	debugC(1, kDebugDrawing, "_bigPict: %d objlist: %d", _bigPictureXDim, _pictureObjects.size());
 
-	if (drawBg && _bigPictureXDim && _picObjList.size()) {
+	if (drawBg && _bigPictureXDim && _pictureObjects.size()) {
 
 		dims = _bigPictureArray[0]->getDimensions();
 
@@ -695,7 +695,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 
 		debugC(8, kDebugDrawing, "w: %d h:%d", width, height);
 
-		dims = _picObjList[0]->getFullSize();
+		dims = _pictureObjects[0]->getFullSize();
 
 		debugC(8, kDebugDrawing, "w2: %d h2:%d", dims.x, dims.y);
 
@@ -727,7 +727,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 					v25++;
 
 					if (v25 >= _bigPictureYDim) {
-						if (!(_picObjList[0]->_flags & 0x20))
+						if (!(_pictureObjects[0]->_flags & 0x20))
 							break;
 						v25 = 0;
 					}
@@ -738,7 +738,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 				bgNumX++;
 
 				if (bgNumX >= (int)_bigPictureXDim) {
-					if (!(_picObjList[0]->_flags & 0x2))
+					if (!(_pictureObjects[0]->_flags & 0x2))
 						break;
 					bgNumX = 0;
 				}
@@ -749,8 +749,8 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 	}
 
 
-	for (uint i = 1; i < _picObjList.size(); i++) {
-		PictureObject *obj = _picObjList[i];
+	for (uint i = 1; i < _pictureObjects.size(); i++) {
+		PictureObject *obj = _pictureObjects[i];
 
 		if (obj->_z < minPri || obj->_z >= maxPri)
 			continue;

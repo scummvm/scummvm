@@ -697,7 +697,7 @@ int global_messageHandler4(Command *cmd) {
 		break;
 
 	case 7: {
-		if (!g_nmi->_currentScene->_picObjList.size())
+		if (!g_nmi->_currentScene->_pictureObjects.size())
 			break;
 
 		int offX = g_nmi->_scrollSpeed * (cmd->_x / g_nmi->_scrollSpeed);

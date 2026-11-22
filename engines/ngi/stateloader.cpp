@@ -224,8 +224,8 @@ bool NGIEngine::loadGam(const char *fname, int scene) {
 
 	_inventory->recalcItemPos();
 
-	for (uint i = 0; i < _inventory->getScene()->_picObjList.size(); i++)
-		_inventory->getScene()->_picObjList[i]->_picture->MemoryObject::load();
+	for (uint i = 0; i < _inventory->getScene()->_pictureObjects.size(); i++)
+		_inventory->getScene()->_pictureObjects[i]->_picture->MemoryObject::load();
 
 	// _sceneSwitcher = doSetScene; // substituted with direct call
 	_gameLoader->_preloadCallback = preloadCallback;

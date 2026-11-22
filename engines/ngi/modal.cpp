@@ -2398,11 +2398,11 @@ bool ModalDemo::launch() {
 	if (g_nmi->getLanguage() == Common::RU_RUS) {
 		_scene = sc;
 
-		for (uint i = 1; i < sc->_picObjList.size(); i++) {
-			if (sc->_picObjList[i]->_id == 399)
-				sc->_picObjList[i]->_flags |= 4;
+		for (uint i = 1; i < sc->_pictureObjects.size(); i++) {
+			if (sc->_pictureObjects[i]->_id == 399)
+				sc->_pictureObjects[i]->_flags |= 4;
 			else
-				sc->_picObjList[i]->_flags &= 0xFFFB;
+				sc->_pictureObjects[i]->_flags &= 0xFFFB;
 		}
 
 		_button = sc->findPictureObjectById(443, 0);

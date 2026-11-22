@@ -40,7 +40,7 @@ Background::Background() {
 }
 
 Background::~Background() {
-	Common::for_each(_picObjList.begin(), _picObjList.end(), Common::DefaultDeleter<PictureObject>());
+	Common::for_each(_pictureObjects.begin(), _pictureObjects.end(), Common::DefaultDeleter<PictureObject>());
 	Common::for_each(_bigPictureArray.begin(), _bigPictureArray.end(), Common::DefaultDeleter<BigPicture>());
 }
 
@@ -54,7 +54,7 @@ bool Background::load(MfcArchive &file) {
 		PictureObject *pct = new PictureObject();
 
 		pct->load(file, i == 0);
-		addPictureObject(pct);
+		addPicture(pct);
 	}
 
 	assert(g_nmi->_gameProjectVersion >= 5);
@@ -72,21 +72,21 @@ bool Background::load(MfcArchive &file) {
 	return true;
 }
 
-void Background::addPictureObject(PictureObject *pct) {
+void Background::addPicture(PictureObject *pct) {
 	if (pct->_copyId)
-		pct->assignCopyId(&_picObjList);
+		pct->assignCopyId(&_pictureObjects);
 
 	bool inserted = false;
-	for (uint i = 1; i < _picObjList.size(); i++) {
-		if (_picObjList[i]->_z <= pct->_z) {
-			_picObjList.insert_at(i, pct);
+	for (uint i = 1; i < _pictureObjects.size(); i++) {
+		if (_pictureObjects[i]->_z <= pct->_z) {
+			_pictureObjects.insert_at(i, pct);
 			inserted = true;
 			break;
 		}
 	}
 
 	if (!inserted) {
-		_picObjList.push_back(pct);
+		_pictureObjects.push_back(pct);
 	}
 }
 

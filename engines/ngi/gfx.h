@@ -196,7 +196,7 @@ private:
 class Background : public CObject {
 public:
 	/** list items are owned */
-	Common::Array<PictureObject *> _picObjList;
+	Common::Array<PictureObject *> _pictureObjects;
 
 	Common::String _bgname;
 	int _x;
@@ -213,7 +213,7 @@ public:
 	~Background() override;
 
 	bool load(MfcArchive &file) override;
-	void addPictureObject(PictureObject *pct);
+	void addPicture(PictureObject *pct);
 
 	BigPicture *getBigPicture(int x, int y) { return _bigPictureArray[y * _bigPictureXDim + x]; }
 };
