@@ -333,8 +333,8 @@ MctlLadder::MctlLadder() {
 	_y = 0;
 	_z = 0;
 
-	_ladder_field_20 = 0;
-	_ladder_field_24 = 0;
+	_entryOffsetX = 0;
+	_entryOffsetY = 0;
 }
 
 MctlLadder::~MctlLadder() {

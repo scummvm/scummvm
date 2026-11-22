@@ -300,7 +300,7 @@ void sceneHandler04_clickButton() {
 }
 
 void sceneHandler04_downLadder(int x, int y) {
-	g_vars->scene04_ladder->startMove(g_nmi->_aniMan, x + g_vars->scene04_ladder->_ladder_field_20, y + g_vars->scene04_ladder->_ladder_field_24, 0, 0);
+	g_vars->scene04_ladder->startMove(g_nmi->_aniMan, x + g_vars->scene04_ladder->_entryOffsetX, y + g_vars->scene04_ladder->_entryOffsetY, 0, 0);
 }
 
 void sceneHandler04_walkClimbLadder(Command *ex) {
@@ -343,8 +343,8 @@ void sceneHandler04_walkClimbLadder(Command *ex) {
 	g_vars->scene04_ladder->_z = 12;
 	g_vars->scene04_ladder->_stepX = 0;
 	g_vars->scene04_ladder->_stepY = -40;
-	g_vars->scene04_ladder->_ladder_field_20 = 0;
-	g_vars->scene04_ladder->_ladder_field_24 = -60;
+	g_vars->scene04_ladder->_entryOffsetX = 0;
+	g_vars->scene04_ladder->_entryOffsetY = -60;
 
 	g_vars->scene04_ladder->attachObject(g_nmi->_aniMan);
 
@@ -376,7 +376,7 @@ void sceneHandler04_clickLadder() {
 		} else {
 			int h3 = 3 * g_vars->scene04_ladder->_stepY;
 			int half = abs(g_vars->scene04_ladder->_stepY) / 2;
-			int start = g_vars->scene04_ladder->_y - g_vars->scene04_ladder->_ladder_field_24;
+			int start = g_vars->scene04_ladder->_y - g_vars->scene04_ladder->_entryOffsetY;
 			int min = 2 * h3 + start + half + 1;
 			int max =     h3 + start - half - 1;
 

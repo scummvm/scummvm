@@ -138,8 +138,8 @@ public:
 	int _z;
 	int _stepX;
 	int _stepY;
-	int _ladder_field_20;
-	int _ladder_field_24;
+	int _entryOffsetX;
+	int _entryOffsetY;
 	Common::Array<LmctlAni *> _ladmovements;
 	AniHandler _aniHandler;
 
