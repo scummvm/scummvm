@@ -214,7 +214,7 @@ void GameVar::save(MfcArchive &file) {
 	file.writeObject(_parentVarObj);
 	file.writeObject(_prevVarObj);
 	file.writeObject(_nextVarObj);
-	file.writeObject(_field_14);
+	file.writeObject(_firstChild);
 	file.writeObject(_subVars);
 }
 

@@ -79,7 +79,7 @@ class GameVar : public CObject {
 	GameVar *_prevVarObj;
 	GameVar *_parentVarObj;
 	GameVar *_subVars;
-	GameVar *_field_14;
+	GameVar *_firstChild;
 	Common::String _varName;
 	VarValue _value;
 	int _varType;

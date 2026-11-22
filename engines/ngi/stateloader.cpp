@@ -326,7 +326,7 @@ GameVar::GameVar() {
 	_parentVarObj = nullptr;
 	_nextVarObj = nullptr;
 	_prevVarObj = nullptr;
-	_field_14 = nullptr;
+	_firstChild = nullptr;
 	_varType = 0;
 	_value.floatValue = 0;
 
@@ -340,8 +340,8 @@ GameVar::~GameVar() {
 	if (_parentVarObj && !_prevVarObj ) {
 		if (_parentVarObj->_subVars == this) {
 			_parentVarObj->_subVars = _nextVarObj;
-		} else if (_parentVarObj->_field_14 == this) {
-			_parentVarObj->_field_14 = _nextVarObj;
+		} else if (_parentVarObj->_firstChild == this) {
+			_parentVarObj->_firstChild = _nextVarObj;
 		} else {
 			_parentVarObj = nullptr;
 		}
@@ -363,11 +363,11 @@ GameVar::~GameVar() {
 		s = _subVars;
 	}
 
-	s = _field_14;
+	s = _firstChild;
 
 	while (s) {
 		delete s;
-		s = _field_14;
+		s = _firstChild;
 	}
 }
 
@@ -405,7 +405,7 @@ bool GameVar::load(MfcArchive &file) {
 	_parentVarObj = file.readClass<GameVar>();
 	_prevVarObj = file.readClass<GameVar>();
 	_nextVarObj = file.readClass<GameVar>();
-	_field_14 = file.readClass<GameVar>();
+	_firstChild = file.readClass<GameVar>();
 	_subVars = file.readClass<GameVar>();
 	file.decLevel();
 
