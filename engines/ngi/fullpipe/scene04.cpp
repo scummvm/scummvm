@@ -457,7 +457,7 @@ void sceneHandler04_clickPlank() {
 		runQueue(QU_PNK_CLICK, 0);
 }
 
-void sceneHandler04_dropBottle() {
+void sceneHandler04_doDropBottle() {
 	g_vars->scene04_bottleIsDropped = true;
 	g_vars->scene04_bottleY = 10;
 	g_vars->scene04_bottleWeight = 0;
@@ -905,7 +905,7 @@ void sceneHandler04_shootKozyawka() {
 	g_vars->scene04_kozyawkaOnLadder = true;
 }
 
-void sceneHandler04_showCoin() {
+void sceneHandler04_doShowCoin() {
 	AniObject *ani = g_nmi->_currentScene->findAniObjectById(ANI_SC4_COIN, -1);
 
 	if (ani) {
@@ -1267,7 +1267,7 @@ void sceneHandler04_bigBallWalkIn() {
 	}
 }
 
-void sceneHandler04_takeBottle() {
+void sceneHandler04_doTakeBottle() {
 	g_vars->scene04_bottleIsTaken = true;
 	g_vars->scene04_hand->_z = 5;
 
@@ -1327,7 +1327,7 @@ void sceneHandler04_updateBottle() {
 	g_vars->scene04_spring->setPos(g_vars->scene04_spring->_x, newy);
 }
 
-void sceneHandler04_winArcade() {
+void sceneHandler04_doWinArcade() {
 	if (g_nmi->getStateId(sO_LowerPipe) == g_nmi->getStateValue(sO_LowerPipe, sO_IsClosed)
 		&& g_vars->scene04_soundPlaying) {
 		g_vars->scene04_clock->setStatic(ST_CLK_CLOSED);
@@ -1559,7 +1559,7 @@ int sceneHandler04(Command *ex) {
 		break;
 
 	case MSG_CMN_WINARCADE:
-		sceneHandler04_winArcade();
+		sceneHandler04_doWinArcade();
 		break;
 
 	case MSG_SC4_HANDOVER:
@@ -1568,7 +1568,7 @@ int sceneHandler04(Command *ex) {
 		break;
 
 	case MSG_SC4_DROPBOTTLE:
-		sceneHandler04_dropBottle();
+		sceneHandler04_doDropBottle();
 		break;
 
 	case MSG_SC4_COINOUT:
@@ -1619,11 +1619,11 @@ int sceneHandler04(Command *ex) {
 		break;
 
 	case MSG_SHOWCOIN:
-		sceneHandler04_showCoin();
+		sceneHandler04_doShowCoin();
 		break;
 
 	case MSG_TAKEBOTTLE:
-		sceneHandler04_takeBottle();
+		sceneHandler04_doTakeBottle();
 		break;
 
 	case MSG_GOTOLADDER:
