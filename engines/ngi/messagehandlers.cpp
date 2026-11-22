@@ -396,7 +396,7 @@ int global_messageHandler3(Command *cmd) {
 			}
 			return result;
 		case 29:
-			if (g_nmi->_gameLoader->_interactionController->_flag24 && g_nmi->_currentScene) {
+			if (g_nmi->_gameLoader->_interactionController->_enabled && g_nmi->_currentScene) {
 				ani = g_nmi->_currentScene->findAniObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 				ani2 = g_nmi->_currentScene->findAniObjectById(g_nmi->_gameLoader->_field_FA, -1);
 

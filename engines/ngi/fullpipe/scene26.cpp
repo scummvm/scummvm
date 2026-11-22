@@ -46,7 +46,7 @@ void scene26_initScene(Scene *sc) {
 		g_nmi->setState(sO_Sock_26, g_nmi->getStateValue(sO_Sock_26, sO_HangsOnPipe));
 	}
 
-	Interact *inter = getGameLoaderInteractionController()->getInteractionByObjectIds(ANI_LUK26, ANI_MAN, ANI_INV_SOCK);
+	Interact *inter = getGameLoaderInteractionController()->findInteraction(ANI_LUK26, ANI_MAN, ANI_INV_SOCK);
 
 	if (getGameLoaderInventory()->getCountItemsWithId(ANI_INV_VENT) == 0)
 		inter->_flags &= 0xFFFDFFFF;

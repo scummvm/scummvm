@@ -405,7 +405,7 @@ bool InteractionController::handleInteraction(AniObject *subj, GameObject *obj, 
 	return true;
 }
 
-Interact *InteractionController::getInteractionByObjectIds(int obId, int obId2, int obId3) {
+Interact *InteractionController::findInteraction(int obId, int obId2, int obId3) {
 	for (InteractionList::iterator i = _interactions.begin(); i != _interactions.end(); ++i) {
 		Interact *intr = *i;
 

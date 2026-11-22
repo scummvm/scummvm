@@ -597,7 +597,7 @@ bool NGIEngine::doSetScene(const Entrance &entrance) {
 	cmp->initMctlGraph();
 	cmp->attachObject(_aniMan);
 	cmp->activate();
-	getGameLoaderInteractionController()->enableFlag24();
+	getGameLoaderInteractionController()->enable();
 	setInputDisabled(0);
 
 	scene->setPictureObjectsFlag4();

@@ -431,14 +431,14 @@ int sceneHandler09(Command *cmd) {
 
 	case MSG_SC9_FROMLADDER:
 		getCurrSceneSc2MotionController()->activate();
-		getGameLoaderInteractionController()->enableFlag24();
+		getGameLoaderInteractionController()->enable();
 
 		g_vars->scene09_dudeIsOnLadder = false;
 		break;
 
 	case MSG_SC9_TOLADDER:
 		getCurrSceneSc2MotionController()->deactivate();
-		getGameLoaderInteractionController()->disableFlag24();
+		getGameLoaderInteractionController()->disable();
 
 		g_vars->scene09_dudeIsOnLadder = true;
 		break;

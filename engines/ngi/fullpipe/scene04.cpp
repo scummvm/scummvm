@@ -124,7 +124,7 @@ void scene04_initScene(Scene *sc) {
 		}
 	}
 
-	Interact *plank = getGameLoaderInteractionController()->getInteractionByObjectIds(ANI_PLANK, 0, 0);
+	Interact *plank = getGameLoaderInteractionController()->findInteraction(ANI_PLANK, 0, 0);
 	if (plank)
 		plank->_flags |= 8;
 
@@ -363,7 +363,7 @@ void sceneHandler04_walkClimbLadder(Command *ex) {
 	g_nmi->_aniMan->_z = 12;
 
 	getSc2MctlCompoundBySceneId(g_nmi->_currentScene->_sceneId)->deactivate();
-	getGameLoaderInteractionController()->disableFlag24();
+	getGameLoaderInteractionController()->disable();
 }
 
 void sceneHandler04_clickLadder() {
@@ -559,7 +559,7 @@ void sceneHandler04_manFromBottle() {
 	g_vars->scene04_ladder = nullptr;
 
 	getSc2MctlCompoundBySceneId(g_nmi->_currentScene->_sceneId)->activate();
-	getGameLoaderInteractionController()->enableFlag24();
+	getGameLoaderInteractionController()->enable();
 }
 
 void sceneHandler04_manToBottle() {
@@ -1192,7 +1192,7 @@ void sceneHandler04_leaveLadder(Command *ex) {
 						ex->_cmd = 0;
 
 						mc->activate();
-						getGameLoaderInteractionController()->enableFlag24();
+						getGameLoaderInteractionController()->enable();
 					} else {
 						delete mq;
 					}
@@ -1348,7 +1348,7 @@ void sceneHandler04_winArcade() {
 
 		getSc2MctlCompoundBySceneId(g_nmi->_currentScene->_sceneId)->activate();
 
-		getGameLoaderInteractionController()->enableFlag24();
+		getGameLoaderInteractionController()->enable();
 
 		g_nmi->stopSoundStream2();
 	}

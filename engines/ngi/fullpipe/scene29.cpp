@@ -402,7 +402,7 @@ void sceneHandler29_manFromL() {
 
 	if (g_vars->scene29_manX < 497 && !g_vars->scene29_scrollingDisabled) {
 		getCurrSceneSc2MotionController()->activate();
-		getGameLoaderInteractionController()->enableFlag24();
+		getGameLoaderInteractionController()->enable();
 
 		g_nmi->_aniMan->setStatic(ST_MAN_RIGHT | 0x4000);
 		runQueue(QU_SC29_MANFROM_L, 1);
@@ -417,7 +417,7 @@ void sceneHandler29_manFromR() {
 	debugC(2, kDebugSceneLogic, "scene29: manFromR");
 
 	getCurrSceneSc2MotionController()->activate();
-	getGameLoaderInteractionController()->enableFlag24();
+	getGameLoaderInteractionController()->enable();
 
 	runQueue(QU_SC29_MANFROM_R, 1);
 
@@ -440,7 +440,7 @@ void sceneHandler29_manToL() {
 	debugC(2, kDebugSceneLogic, "scene29: manToL");
 
 	getCurrSceneSc2MotionController()->deactivate();
-	getGameLoaderInteractionController()->disableFlag24();
+	getGameLoaderInteractionController()->disable();
 
 	runQueue(QU_SC29_MANTO_L, 1);
 
@@ -458,7 +458,7 @@ void sceneHandler29_manToR() {
 	debugC(2, kDebugSceneLogic, "scene29: manToR");
 
 	getCurrSceneSc2MotionController()->deactivate();
-	getGameLoaderInteractionController()->disableFlag24();
+	getGameLoaderInteractionController()->disable();
 
 	runQueue(QU_SC29_MANTO_R, 1);
 
@@ -727,7 +727,7 @@ int sceneHandler29(Command *cmd) {
 		debugC(2, kDebugSceneLogic, "scene29: stopRide");
 
 		getCurrSceneSc2MotionController()->activate();
-		getGameLoaderInteractionController()->enableFlag24();
+		getGameLoaderInteractionController()->enable();
 		break;
 
 	case MSG_SC29_DISABLERIDEBACK:

@@ -65,26 +65,26 @@ class InteractionController : public CObject {
 
 public:
 	typedef ObList<Interact> InteractionList;
-	bool _flag24;
+	bool _enabled;
 
  private:
 	InteractionList _interactions;
 	static bool compareInteractions(const Interact *i1, const Interact *i2);
 
  public:
-	InteractionController() : _flag24(true) {}
+	InteractionController() : _enabled(true) {}
 	~InteractionController() override;
 
 	bool load(MfcArchive &file) override;
 
-	void enableFlag24() { _flag24 = true; }
-	void disableFlag24() { _flag24 = false; }
+	void enable() { _enabled = true; }
+	void disable() { _enabled = false; }
 
 	void sortInteractions(int sceneId);
 
 	bool handleInteraction(AniObject *subj, GameObject *obj, int invId);
 
-	Interact *getInteractionByObjectIds(int obId, int obId2, int obId3);
+	Interact *findInteraction(int obId, int obId2, int obId3);
 };
 
 struct Entrance {

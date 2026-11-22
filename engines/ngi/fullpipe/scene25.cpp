@@ -521,7 +521,7 @@ void sceneHandler25_walkOnLadder(AniObject *ani, Common::Point *pnt, MessageQueu
 bool sceneHandler25_isOnLadder(Command *cmd) {
 	if ((g_nmi->_aniMan->_movement && g_nmi->_aniMan->_movement->_id == MV_MAN_GOLADDERDOWN)
 		|| g_nmi->_aniMan->_statics->_staticsId == ST_MAN_GOLADDERD) {
-		Interact *inter = getGameLoaderInteractionController()->getInteractionByObjectIds(PIC_SC25_LADDERDOWN, ANI_MAN, cmd->_param);
+		Interact *inter = getGameLoaderInteractionController()->findInteraction(PIC_SC25_LADDERDOWN, ANI_MAN, cmd->_param);
 
 		if (!inter)
 			return 0;

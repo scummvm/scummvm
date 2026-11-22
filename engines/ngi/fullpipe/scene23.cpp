@@ -424,7 +424,7 @@ int sceneHandler23(Command *cmd) {
 		g_vars->scene23_isOnStool = false;
 
 		getCurrSceneSc2MotionController()->activate();
-		getGameLoaderInteractionController()->enableFlag24();
+		getGameLoaderInteractionController()->enable();
 
 		g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 1);
 		break;
@@ -438,7 +438,7 @@ int sceneHandler23(Command *cmd) {
 		g_vars->scene23_isOnStool = true;
 
 		getCurrSceneSc2MotionController()->deactivate();
-		getGameLoaderInteractionController()->disableFlag24();
+		getGameLoaderInteractionController()->disable();
 
 		g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 0);
 		break;

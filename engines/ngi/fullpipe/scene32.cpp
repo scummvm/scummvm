@@ -198,7 +198,7 @@ void sceneHandler32_trySit(Command *cmd) {
 		g_vars->scene32_dudeIsSitting = true;
 
 		getCurrSceneSc2MotionController()->deactivate();
-		getGameLoaderInteractionController()->disableFlag24();
+		getGameLoaderInteractionController()->disable();
 	}
 }
 
@@ -245,7 +245,7 @@ void sceneHandler32_ladderLogic(Command *cmd) {
 	g_vars->scene32_dudeOnLadder = false;
 
 	getCurrSceneSc2MotionController()->activate();
-	getGameLoaderInteractionController()->enableFlag24();
+	getGameLoaderInteractionController()->enable();
 }
 
 void sceneHandler32_potLogic(Command *cmd) {
@@ -267,7 +267,7 @@ void sceneHandler32_potLogic(Command *cmd) {
 		mq->run(nullptr);
 
 		getCurrSceneSc2MotionController()->activate();
-		getGameLoaderInteractionController()->enableFlag24();
+		getGameLoaderInteractionController()->enable();
 
 		g_vars->scene32_dudeIsSitting = false;
 	}
@@ -339,7 +339,7 @@ int sceneHandler32(Command *cmd) {
 		g_vars->scene32_dudeOnLadder = true;
 
 		getCurrSceneSc2MotionController()->deactivate();
-		getGameLoaderInteractionController()->disableFlag24();
+		getGameLoaderInteractionController()->disable();
 		break;
 
 	case MSG_SC6_BTNPUSH:

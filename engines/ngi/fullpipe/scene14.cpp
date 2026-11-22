@@ -172,7 +172,7 @@ void sceneHandler14_exitScene() {
 
 	runQueue(QU_SC14_ENDARCADE, 0);
 
-	getGameLoaderInteractionController()->disableFlag24();
+	getGameLoaderInteractionController()->disable();
 	getCurrSceneSc2MotionController()->deactivate();
 }
 
@@ -282,7 +282,7 @@ void sceneHandler14_endArcade() {
 
 	setInputDisabled(0);
 
-	getGameLoaderInteractionController()->enableFlag24();
+	getGameLoaderInteractionController()->enable();
 	getCurrSceneSc2MotionController()->activate();
 
 	BehaviorMove *beh = g_nmi->_behaviorManager->getAniQueue(g_vars->scene14_grandma, ST_GMA_SIT, QU_GMA_BLINK);
@@ -365,7 +365,7 @@ void sceneHandler14_startArcade() {
 	}
 
 	getCurrSceneSc2MotionController()->deactivate();
-	getGameLoaderInteractionController()->disableFlag24();
+	getGameLoaderInteractionController()->disable();
 
 	g_nmi->_aniMan2 = nullptr;
 	g_vars->scene14_sceneDeltaX = 50;
@@ -471,7 +471,7 @@ bool sceneHandler14_arcadeProcessClick(Command *cmd) {
 	cmd->_cmd = 0;
 
 	getCurrSceneSc2MotionController()->deactivate();
-	getGameLoaderInteractionController()->disableFlag24();
+	getGameLoaderInteractionController()->disable();
 	return true;
 }
 

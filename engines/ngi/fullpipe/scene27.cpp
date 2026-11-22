@@ -114,7 +114,7 @@ void sceneHandler27_driverGiveVent() {
 	g_vars->scene27_driverHasVent = false;
 
 	getCurrSceneSc2MotionController()->activate();
-	getGameLoaderInteractionController()->enableFlag24();
+	getGameLoaderInteractionController()->enable();
 
 	g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 1);
 }
@@ -155,7 +155,7 @@ void sceneHandler27_showNextBat() {
 int sceneHandler27_updateScreenCallback() {
 	int res;
 
-	res = g_nmi->drawArcadeOverlay(getGameLoaderInteractionController()->_flag24 == 0);
+	res = g_nmi->drawArcadeOverlay(getGameLoaderInteractionController()->_enabled == 0);
 
 	if (!res)
 		g_nmi->_updateScreenCallback = nullptr;
@@ -173,7 +173,7 @@ void sceneHandler27_aniManCallback(int *phase) {
 }
 
 void sceneHandler27_throwBat() {
-	if (getGameLoaderInteractionController()->_flag24)
+	if (getGameLoaderInteractionController()->_enabled)
 		g_nmi->_updateScreenCallback = sceneHandler27_updateScreenCallback;
 
 	g_nmi->_aniMan->_callback2 = sceneHandler27_aniManCallback;
@@ -181,7 +181,7 @@ void sceneHandler27_throwBat() {
 	g_nmi->_aniMan->startMovement(MV_MAN27_THROWBET, 0, -1);
 
 	getCurrSceneSc2MotionController()->deactivate();
-	getGameLoaderInteractionController()->disableFlag24();
+	getGameLoaderInteractionController()->disable();
 
 	g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 0);
 
@@ -478,7 +478,7 @@ void sceneHandler27_batLogic() {
 			runQueue(QU_SC27_RESTARTBETS, 1);
 
 			getCurrSceneSc2MotionController()->activate();
-			getGameLoaderInteractionController()->enableFlag24();
+			getGameLoaderInteractionController()->enable();
 
 			g_nmi->_behaviorManager->enableAllQueuesForAni(g_nmi->_aniMan, 1);
 

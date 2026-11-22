@@ -100,7 +100,7 @@ void sceneHandlerFinal_startFinal() {
 	g_vars->sceneFinal_var01 = 1;
 
 	getCurrSceneSc2MotionController()->deactivate();
-	getGameLoaderInteractionController()->disableFlag24();
+	getGameLoaderInteractionController()->disable();
 
 	g_nmi->_aniMan2 = nullptr;
 

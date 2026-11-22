@@ -118,7 +118,7 @@ void sceneHandler06_winArcade() {
 	sceneHandler06_setExits(g_nmi->_currentScene);
 
 	getCurrSceneSc2MotionController()->activate();
-	getGameLoaderInteractionController()->enableFlag24();
+	getGameLoaderInteractionController()->enable();
 }
 
 void sceneHandler06_enableDrops() {
@@ -246,7 +246,7 @@ void sceneHandler06_spinHandle() {
 }
 
 void sceneHandler06_uPipeClick() {
-	if (getGameLoaderInteractionController()->_flag24)
+	if (getGameLoaderInteractionController()->_enabled)
 		handleObjectInteraction(g_nmi->_aniMan2, g_nmi->_currentScene->findPictureObjectById(PIC_SC6_LADDER, 0), 0);
 }
 
@@ -301,7 +301,7 @@ void sceneHandler06_startAiming() {
 			g_nmi->_updateScreenCallback = sceneHandler06_updateScreenCallback;
 
 		getCurrSceneSc2MotionController()->deactivate();
-		getGameLoaderInteractionController()->disableFlag24();
+		getGameLoaderInteractionController()->disable();
 
 		g_vars->scene06_ballDrop->setQueue(nullptr);
 	}
@@ -559,7 +559,7 @@ int sceneHandler06(Command *ex) {
 	case MSG_SC6_RESTORESCROLL:
 		g_nmi->_aniMan2 = g_nmi->_aniMan;
 		getCurrSceneSc2MotionController()->activate();
-		getGameLoaderInteractionController()->enableFlag24();
+		getGameLoaderInteractionController()->enable();
 		sceneHandler06_setExits(g_nmi->_currentScene);
 		break;
 

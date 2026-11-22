@@ -225,7 +225,7 @@ void sceneHandler08_startArcade() {
 	g_vars->scene08_flyingUp = false;
 	g_vars->scene08_onBelly = false;
 
-	getGameLoaderInteractionController()->disableFlag24();
+	getGameLoaderInteractionController()->disable();
 	getCurrSceneSc2MotionController()->deactivate();
 
 	g_vars->scene08_batuta->stopMovement();
@@ -276,7 +276,7 @@ void sceneHandler08_airMoves() {
 void sceneHandler08_finishArcade() {
 	g_vars->scene08_inArcade = false;
 
-	getGameLoaderInteractionController()->enableFlag24();
+	getGameLoaderInteractionController()->enable();
 	getCurrSceneSc2MotionController()->activate();
 }
 

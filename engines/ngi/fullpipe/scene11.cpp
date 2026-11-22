@@ -186,7 +186,7 @@ void scene11_initScene(Scene *sc) {
 void sceneHandler11_restartMan() {
 	runQueueByIdWithAni(nullptr, QU_SC11_RESTARTMAN, 1);
 
-	getGameLoaderInteractionController()->enableFlag24();
+	getGameLoaderInteractionController()->enable();
 	getCurrSceneSc2MotionController()->activate();
 
 	g_vars->scene11_scrollIsEnabled = false;
@@ -233,7 +233,7 @@ void sceneHandler11_manToSwing() {
 	g_vars->scene11_arcadeIsOn = true;
 
 	getCurrSceneSc2MotionController()->deactivate();
-	getGameLoaderInteractionController()->disableFlag24();
+	getGameLoaderInteractionController()->disable();
 
 	g_nmi->_aniMan2->hide();
 
@@ -298,7 +298,7 @@ void sceneHandler11_jumpFromSwing() {
 	g_vars->scene11_scrollIsEnabled = false;
 
 	getCurrSceneSc2MotionController()->activate();
-	getGameLoaderInteractionController()->enableFlag24();
+	getGameLoaderInteractionController()->enable();
 
 	g_vars->scene11_swingOldAngle = 0.0;
 	g_vars->scene11_swingAngleDiff = 0.0;
