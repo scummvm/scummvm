@@ -407,7 +407,7 @@ Texture::Texture() :
 	_x(0),
 	_y(0),
 	_field_44(0),
-	_field_54(0),
+	_hasMirroredBitmap(0),
 	_alpha(-1),
 	_width(0),
 	_height(0) {}
@@ -420,7 +420,7 @@ void Texture::freePicture() {
 	debugC(5, kDebugMemory, "Texture::freePicture(): file: %s", _memfilename.toString().c_str());
 
 	if (_bitmap) {
-		if (testFlags() && !_field_54) {
+		if (testFlags() && !_hasMirroredBitmap) {
 			freeData();
 		}
 		_bitmap.reset();

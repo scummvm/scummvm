@@ -2110,7 +2110,7 @@ Phase::Phase(Phase *src, bool reverse) {
 		_libHandle = src->_libHandle;
 
 		if (src->_bitmap) {
-			_field_54 = 1;
+			_hasMirroredBitmap = 1;
 			_bitmap.reset(src->_bitmap->reverseImage(false));
 		}
 

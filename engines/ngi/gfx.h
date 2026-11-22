@@ -120,7 +120,7 @@ protected:
 	int _width;
 	int _height;
 	Common::ScopedPtr<Bitmap> _bitmap;
-	int _field_54;
+	int _hasMirroredBitmap;
 	Common::ScopedPtr<MemoryObject2> _memoryObject2;
 	int _alpha;
 	Palette _paletteData;
