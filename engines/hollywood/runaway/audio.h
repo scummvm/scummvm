@@ -54,9 +54,11 @@ public:
 	void playPointer();
 	void playMenuMusic();
 	void stopMusic();
+	void pauseMusic(bool paused);
 	void stopSpeech();
 	void stopEffect();
 	void stopEffect(byte channel);
+	void pauseEffect(byte channel, bool paused);
 	bool musicPlaying() const;
 	bool speechPlaying() const;
 	bool effectPlaying(byte channel = 0) const;

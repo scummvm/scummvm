@@ -79,7 +79,7 @@ private:
 	bool _noteSoundPlayed = false;
 	byte _notes[5] = {}, _noteCount = 0, _pressedNote = 0;
 	uint _joshuaChunk = 10;
-	uint32 _noteStarted = 0;
+	uint32 _noteStarted = 0, _noteReleaseStarted = 0;
 };
 
 } // End of namespace Runaway

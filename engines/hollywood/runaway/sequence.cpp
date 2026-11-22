@@ -299,6 +299,9 @@ void RunawaySequence::update(uint32 now) {
 			case kEffect:
 				_audio.playEffect(command.a, command.b, command.c, command.d != 0);
 				break;
+			case kPauseEffect:
+				_audio.pauseEffect(command.a, command.b != 0);
+				break;
 			case kMusicVolume:
 				_audio.setMusicVolume(command.a);
 				break;

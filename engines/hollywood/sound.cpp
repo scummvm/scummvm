@@ -49,6 +49,14 @@ void SoundChannel::stop() {
 		_mixer->stopHandle(_handle);
 		_mixer = nullptr;
 	}
+	_paused = false;
+}
+
+void SoundChannel::pause(bool paused) {
+	if (_mixer && _paused != paused) {
+		_mixer->pauseHandle(_handle, paused);
+		_paused = paused;
+	}
 }
 
 bool SoundChannel::isPlaying() const {

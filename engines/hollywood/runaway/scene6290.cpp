@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/events.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "hollywood/runaway/scene6290.h"
@@ -150,10 +152,16 @@ void Scene6290::runCustomEntrySequence() {
 void Scene6290::advanceCustomGameplayLoop(uint32 delta) {
 	if (_keyboard && _pressedNote) {
 		if (!_noteSoundPlayed && _now - _noteStarted >= 18 * 80) {
-			_audio.playMusicEffect(30 + _pressedNote);
+			_audio.playMusicEffect(30 + _pressedNote, 255, 0, true);
 			_noteSoundPlayed = true;
 		}
-		if (_now - _noteStarted >= 27 * 80) {
+		// Hold the note for at least twelve ticks, then wait for the mouse release.
+		const bool pressed = g_system->getEventManager()->getButtonState() & Common::EventManager::LBUTTON;
+		if (!_noteReleaseStarted && _now - _noteStarted >= 30 * 80 && !pressed) {
+			_noteReleaseStarted = _now;
+		}
+		if (_noteReleaseStarted && _now - _noteReleaseStarted >= 9 * 80) {
+			_audio.stopEffect(0);
 			_pressedNote = 0;
 			if (_noteCount == ARRAYSIZE(_notes)) {
 				leaveKeyboard(true);
@@ -270,19 +278,28 @@ void Scene6290::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport
 		uint brian = 0, button = 0, light = 0;
 		if (_pressedNote) {
 			const uint note = _pressedNote - 1;
-			const uint step = MIN<uint>(26, (_now - _noteStarted) / 80);
-			if (step < 10) {
-				brian = step;
-			} else if (step < 18) {
-				brian = note ? 27 + (note - 1) * 14 + MIN<uint>(6, step - 10) : MIN<uint>(17, step);
+			if (_noteReleaseStarted) {
+				const uint step = MIN<uint>(8, (_now - _noteReleaseStarted) / 80);
+				if (note && step < 5) {
+					brian = 34 + (note - 1) * 14 + step;
+				} else if (step < 8) {
+					brian = 18 + step;
+				}
+				button = step ? 0 : note * 4 + 2;
+				light = note * 6 + (step < 5 ? 5 - step : 0);
 			} else {
-				brian = note ? 34 + (note - 1) * 14 + MIN<uint>(6, step - 18) : step;
-			}
-			if (step >= 15 && step < 18) {
-				button = note * 4 + step - 14;
-			}
-			if (step >= 18 && step < 24) {
-				light = note * 6 + step - 17;
+				const uint step = (_now - _noteStarted) / 80;
+				if (step < 10) {
+					brian = step;
+				} else {
+					brian = note ? 27 + (note - 1) * 14 + MIN<uint>(6, step - 10) : MIN<uint>(17, step);
+				}
+				if (step >= 15) {
+					button = note * 4 + MIN<uint>(4, step - 14);
+				}
+				if (step >= 18) {
+					light = note * 6 + MIN<uint>(5, step - 18);
+				}
 			}
 		}
 		_lightsAnimation.draw(viewport, light, _camera.x, 0);
@@ -359,6 +376,7 @@ void Scene6290::click(Common::Point mouse, RunawayVerb verb, byte item) {
 		_pressedNote = id - 19;
 		_notes[_noteCount++] = id - 20;
 		_noteStarted = _now;
+		_noteReleaseStarted = 0;
 		_noteSoundPlayed = false;
 	}
 }
@@ -377,6 +395,7 @@ void Scene6290::startKeyboard() {
 }
 
 void Scene6290::leaveKeyboard(bool review) {
+	_audio.stopEffect(0);
 	_keyboard = false;
 	_pressedNote = 0;
 	_reviewingMelody = review;

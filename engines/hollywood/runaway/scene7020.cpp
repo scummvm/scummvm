@@ -81,7 +81,8 @@ const RunawayItemAction kItemActions[] = {
 typedef RunawaySequence S;
 const S::Command kGinaStory[] = {
 	{S::kOpen, 2}, {S::kMusic, 17, 255, 1}, {S::kEffect, 30, 255},
-	{S::kSpeech, 0, 5, 5, 0, 14}, {S::kPlay, 0, 240}, {S::kWaitSpeech},
+	{S::kSpeech, 0, 5, 5, 0, 14}, {S::kPlay, 0, 240},
+	{S::kPauseEffect, 0, 1}, {S::kWaitSpeech}, {S::kPauseEffect, 0, 0},
 	{S::kSpeech, 0, 6, 6, 0, 14}, {S::kPlay, 241, 693}, {S::kWaitSpeech},
 	{S::kSpeech, 0, 7, 7, 0, 14}, {S::kPlay, 694, 870}, {S::kWaitSpeech},
 	{S::kMusic, 11, 255}, {S::kEnd}

@@ -503,6 +503,10 @@ void Scene5060::handleAnimationFrameHook() {
 	} else if (_roomAction == 404 || _roomAction == 419) {
 		playLulaFootstep(frame);
 	}
+	if ((_roomAction == 404 || _roomAction == 419 || _roomAction == 414) && frame == 109) {
+		_audio.playEffectAt(11, Common::Point(158, 200));
+		_audio.pauseMusic(_roomAction != 414);
+	}
 	if (_roomAction == 481) {
 		if (_actionStep == 3 || _actionStep == 12 || _actionStep == 17 || _actionStep == 25 || _actionStep == 29) {
 			_audio.playFootstep(4, _random.getRandomBit(), 153);

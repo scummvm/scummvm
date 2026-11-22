@@ -217,6 +217,7 @@ void Scene4050::resumeAmbientAudio(bool entering) {
 	if (entering || !_audio.musicPlaying()) {
 		_audio.playMusic(13, false);
 	}
+	updateSusanToolSound();
 }
 
 void Scene4050::advanceCustomGameplayLoop(uint32 delta) {
@@ -244,6 +245,20 @@ void Scene4050::advanceCustomGameplayLoop(uint32 delta) {
 		}
 		// A missed attempt is retried later, not as soon as Brian becomes idle.
 		_nextLaser = _now + (25 + _random.getRandomNumber(5)) * 1000;
+	}
+	updateSusanToolSound();
+}
+
+void Scene4050::updateSusanToolSound() {
+	const bool working = !_museum.susan && !_conversation && !speaker() &&
+		_roomAction != 450 && _roomAction != 451 && _roomAction != 452 && _roomAction != 333 &&
+		(_susanFrame < 15 || (_susanFrame >= 29 && _susanFrame <= 39));
+	if (working) {
+		if (!_audio.effectPlaying(1)) {
+			_audio.playEffectAt(14, Common::Point(474, 200), 77, 1, true);
+		}
+	} else {
+		_audio.stopEffect(1);
 	}
 }
 
@@ -605,6 +620,15 @@ void Scene4050::handleAnimationFrameHook() {
 	}
 	if ((_roomAction == 328 || _roomAction == 428) && (_actionStep == 4 || _actionStep == 2)) {
 		_audio.playEffect(37, 204);
+	}
+	if (_roomAction == 333) {
+		if (_actionStep == 15) {
+			_audio.playEffectAt(44, Common::Point(474, 200), 179);
+		} else if (_actionStep == 21) {
+			_audio.playEffectAt(14, Common::Point(474, 200), 128, 0, true);
+		} else if (_actionStep == 127) {
+			_audio.stopEffect(0);
+		}
 	}
 	// The original updates the bench as Susan leaves and returns.
 	if ((_roomAction == 450 || _roomAction == 452) && _actionStep == 8) {

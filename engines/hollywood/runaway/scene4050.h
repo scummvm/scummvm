@@ -57,6 +57,7 @@ private:
 
 	void startSusanConversation(bool introduction);
 	void advanceSusanIdle();
+	void updateSusanToolSound();
 
 	RunawayAnimation _susanAnimation, _susanLegsAnimation, _susanBenchPatch;
 	RunawaySpeech _susanSpeech;

@@ -45,6 +45,7 @@ public:
 		byte volume, const Common::Point *position = nullptr, int listenerX = 0, float rolloff = 1.0f,
 		PositionMode mode = kSpatial);
 	void stop();
+	void pause(bool paused);
 	bool isPlaying() const;
 	void setVolume(byte volume);
 	void setListenerPosition(int x);
@@ -56,6 +57,7 @@ private:
 	Audio::Mixer *_mixer = nullptr;
 	Audio::SoundHandle _handle;
 	byte _volume = 0;
+	bool _paused = false;
 	bool _positional = false;
 	Common::Point _position;
 	int _listenerX = 0;

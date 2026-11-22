@@ -136,6 +136,10 @@ void RunawayAudio::setMusicVolume(byte volume) {
 	_music.setVolume(volume);
 }
 
+void RunawayAudio::pauseMusic(bool paused) {
+	_music.pause(paused);
+}
+
 void RunawayAudio::setListenerPosition(int x) {
 	_listenerX = x;
 	_speech.setListenerPosition(x);
@@ -263,6 +267,11 @@ void RunawayAudio::stopEffect() {
 void RunawayAudio::stopEffect(byte channel) {
 	assert(channel < ARRAYSIZE(_effects));
 	_effects[channel].stop();
+}
+
+void RunawayAudio::pauseEffect(byte channel, bool paused) {
+	assert(channel < ARRAYSIZE(_effects));
+	_effects[channel].pause(paused);
 }
 
 void RunawayAudio::setEffectVolume(byte channel, byte volume) {
