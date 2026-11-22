@@ -11,11 +11,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for The Colony.
 
  M4:
-   - Missing Animation and journal fixes for Ripley's Riddle of Master Lu
-   - Fix Riddle crash on Mei animation when visiting Peiping temple for the final time
- 
+   - Missing Animation and journal fixes for Ripley's Riddle of Master Lu.
+   - Fix Riddle crash on Mei animation when visiting Peiping temple for the final time.
+
  MADS:
-   - MT32 crash fixes for Dragonsphere
+   - MT32 crash fixes for Dragonsphere.
 
  MM:
    - Integrated Dragoo84's M&M1 Bugfix and Enhanced Mode improvements pack
@@ -26,14 +26,16 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Spellbook improved - manual spell sorting with X and scrolling with PgUp/PgDn.
    - Quest log implemented - keep track of quests with K.
    - Battle log implemented - keep track of damage, spells and statuses during combat with L.
-   - Bestiary implemented - unlock enemy units and their stats through encounters and check with N or click the black skull icon in the interface corner.
-   - Post-combat loot (sacks, boxes and chests) are now finally enabled, as intended. Previously, only gold and gems were received (yeah, sucks).
+   - Bestiary implemented - unlock enemy units and their stats through encounters and check
+     with N or click the black skull icon in the interface corner.
+   - Post-combat loot (sacks, boxes and chests) are now finally enabled, as intended. Previously,
+     only gold and gems were received (yeah, sucks).
    - Many game-breaking quest bugs corrected.
    - Spell behaviour corrected.
-   - Fixed several tavern bugs
+   - Fixed several tavern bugs.
 
  SCUMM:
-   - Added optional hotspot highlighting with object names
+   - Added optional hotspot highlighting with object names.
 
  Sherlock:
    - Improved resource handling by not keeping entire resource files in memory at all times.
