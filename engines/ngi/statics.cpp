@@ -90,7 +90,7 @@ void StepArray::insertPoints(const PointList &points) {
 
 AniObject::AniObject() {
 	_shadowsOn = 1;
-	_field_30 = 0;
+	_encodedRotation = 0;
 	_field_34 = 1;
 	_initialCounter = 0;
 	_messageQueueId = 0;
@@ -118,7 +118,7 @@ AniObject::~AniObject() {
 
 AniObject::AniObject(AniObject *src) : GameObject(src) {
 	_shadowsOn = src->_shadowsOn;
-	_field_30 = src->_field_30;
+	_encodedRotation = src->_encodedRotation;
 	_field_34 = 1;
 	_initialCounter = 0;
 
@@ -596,11 +596,11 @@ void AniObject::render() {
 	}
 
 	int angle = 0;
-	if (_field_30 & 0xC000) {
-		if (_field_30 & 0x8000)
-			angle = -(_field_30 ^ 0x8000);
+	if (_encodedRotation & 0xC000) {
+		if (_encodedRotation & 0x8000)
+			angle = -(_encodedRotation ^ 0x8000);
 		else
-			angle = _field_30 ^ 0x4000;
+			angle = _encodedRotation ^ 0x4000;
 	}
 
 	if (!_movement || (_flags & 0x20)) {

@@ -174,7 +174,7 @@ class AniObject : public GameObject {
 	Movement *_movement;
 	Statics *_statics;
 	int _shadowsOn;
-	int16 _field_30;
+	int16 _encodedRotation;
 	int16 _field_32;
 	int _field_34;
 	int _initialCounter;
