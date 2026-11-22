@@ -199,6 +199,27 @@ public:
 
 	void runDo(ScriptRun &run, uint32 ordinal);
 
+	void boardGame(ScriptRun &run, uint32 type, uint32 ordinal) {
+		Jim *player = _w.jim();
+		if (type == 8) {
+			if (ordinal == 0) {
+				moveToLevel(run, 14, player->x(), player->y());
+				player->setActive(false);
+				_w.setPointerActive(true);
+				_w._game.start(_w, run.variables);
+				_w.startScriptAt(run.level, "FCONECTA", "main", run.variables);
+			} else if (ordinal == 1) {
+				_w.setPointerActive(false);
+			}
+		} else if (ordinal == 0) {
+			_w._game.turn(_w, run.variables);
+		} else if (ordinal == 1) {
+			moveToLevel(run, 9, player->x(), player->y());
+			_w.setPointerActive(false);
+			player->setActive(true);
+		}
+	}
+
 	Level *moveToLevel(ScriptRun &run, int index, int32 x, int32 y) {
 		run.level = _w.level(index);
 		_w.putJimInLevel(run.level, x, y);
@@ -321,7 +342,7 @@ private:
 inline void Scripts::runDo(ScriptRun &run, uint32 ordinal) {
 	const uint32 type = _library.block(run.blockIndex).type();
 	if (type == 8 || type == 14) {
-		warning("Tesoro: the board game is not ported yet");
+		boardGame(run, type, ordinal);
 		return;
 	}
 	// The blocks of type 0 have no routine of their own: their DO lines only describe the scene.

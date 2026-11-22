@@ -11,8 +11,11 @@ MODULE_OBJS = \
 	core/animset.o \
 	core/archive.o \
 	core/archiveindex.o \
+	kinds/boardcolumn.o \
 	core/camera.o \
 	kinds/cameraframe.o \
+	core/connectfourmatch.o \
+	core/connectfour.o \
 	kinds/character.o \
 	kinds/clickcatcher.o \
 	core/clock.o \

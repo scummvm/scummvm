@@ -26,6 +26,8 @@
 #include "graphics/surface.h"
 
 #include "tesoro/kinds/clickcatcher.h"
+#include "tesoro/core/connectfour.h"
+#include "tesoro/core/connectfourmatch.h"
 #include "tesoro/kinds/cursor.h"
 #include "tesoro/kinds/actionstrip.h"
 #include "tesoro/kinds/inventoryitem.h"
@@ -241,6 +243,12 @@ public:
 	Object *interfaceObject(const char *name);
 	void jimResumeFacing() { jim()->resumeFacing(); }
 
+	// Connect-4 board game
+	bool boardBusy() { return _game.busy; }
+	void setBoardBusy() { _game.busy = true; }
+	ConnectFour &board() { return _game.board; }
+	void stampMoveTime() { _game.moveStamp = now(); }
+	void showPieces();
 private:
 	friend class WorldLevel;
 	friend class Scripts;
@@ -274,6 +282,7 @@ private:
 	Scripts *_scripts = nullptr;
 	byte _jimPhase = 0, _jimStep = 0, _jimExtra = 0;
 	bool _jimEntered = false;
+	ConnectFourMatch _game;
 };
 
 } // End of namespace Tesoro

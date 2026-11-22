@@ -28,6 +28,7 @@
 #include "tesoro/scripts.h"
 #include "tesoro/tesoro.h"
 #include "tesoro/world.h"
+#include "tesoro/kinds/boardcolumn.h"
 #include "tesoro/kinds/cameraframe.h"
 #include "tesoro/kinds/clickcatcher.h"
 #include "tesoro/kinds/cursor.h"
@@ -487,6 +488,11 @@ Object *World::createObject(Level &level, const ObjectRecord &record, Room &room
 			object->init(record, sort, levelPlayers, loadTime, *this);
 			return object;
 		}
+		case 21: {
+			BoardColumn *object = new BoardColumn();
+			object->init(record, sort, levelPlayers, loadTime, *this);
+			return object;
+		}
 		case 22: {
 			MenuButton *object = new MenuButton();
 			object->init(record, sort, levelPlayers, loadTime, *this);
@@ -797,6 +803,11 @@ void World::clearScreens() {
 }
 void World::fadeOut(int effect, int speed) { _engine.fadeOut(effect, speed); }
 void World::wait(int milliseconds) { _engine._system->delayMillis(milliseconds); }
+
+void World::showPieces() {
+	if (Level *where = jimLevel())
+		_game.showOn(where->objects(), now());
+}
 
 Common::SeekableReadStream &World::archiveStream() { return *_engine._archive.seekEntry(0); }
 
