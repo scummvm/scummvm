@@ -35,6 +35,18 @@ namespace Grim {
 
 class SaveGame;
 
+class CharCode {
+public:
+	constexpr CharCode(char c) : _code((byte)c) {}
+	template<typename T>
+	constexpr CharCode(T c) : _code((uint32)c) {}
+
+	constexpr operator uint32() const { return _code; }
+
+private:
+	uint32 _code;
+};
+
 class Font {
 public:
 	virtual ~Font() {}
@@ -44,7 +56,7 @@ public:
 	virtual int getKernedStringLength(const Common::String &text) const = 0;
 	virtual int32 getBaseOffsetY() const = 0;
 	virtual void render(Graphics::Surface &buf, const Common::String &currentLine, const Graphics::PixelFormat &pixelFormat, uint32 blackColor, uint32 color, uint32 colorKey) const = 0;
-	virtual int32 getCharKernedWidth(uint32 c) const = 0;
+	virtual int32 getCharKernedWidth(CharCode c) const = 0;
 	virtual int getPoolId() const = 0;
 	virtual int32 getPoolTag() const = 0;
 	virtual bool is8Bit() const = 0;
@@ -80,14 +92,14 @@ public:
 	int32 getFontWidth() const override { return getCharKernedWidth('w'); }
 	int32 getBaseOffsetY() const override { return _baseOffsetY; }
 	void render(Graphics::Surface &buf, const Common::String &currentLine, const Graphics::PixelFormat &pixelFormat, uint32 blackColor, uint32 color, uint32 colorKey) const override;
-	int32 getCharBitmapWidth(uint32 c) const { return _charHeaders[getCharIndex(c)].bitmapWidth; }
-	int32 getCharBitmapPitch(uint32 c) const { return _charHeaders[getCharIndex(c)].bitmapPitch; }
-	int32 getCharBitmapHeight(uint32 c) const { return _charHeaders[getCharIndex(c)].bitmapHeight; }
-	int32 getCharKernedWidth(uint32 c) const override { return _charHeaders[getCharIndex(c)].kernedWidth; }
-	int32 getCharStartingCol(uint32 c) const { return _charHeaders[getCharIndex(c)].startingCol; }
-	int32 getCharStartingLine(uint32 c) const { return _charHeaders[getCharIndex(c)].startingLine; }
-	int32 getCharOffset(uint32 c) const { return _charHeaders[getCharIndex(c)].offset; }
-	const byte *getCharData(uint32 c) const { return _fontData + (_charHeaders[getCharIndex(c)].offset); }
+	int32 getCharBitmapWidth(CharCode c) const { return _charHeaders[getCharIndex(c)].bitmapWidth; }
+	int32 getCharBitmapPitch(CharCode c) const { return _charHeaders[getCharIndex(c)].bitmapPitch; }
+	int32 getCharBitmapHeight(CharCode c) const { return _charHeaders[getCharIndex(c)].bitmapHeight; }
+	int32 getCharKernedWidth(CharCode c) const override { return _charHeaders[getCharIndex(c)].kernedWidth; }
+	int32 getCharStartingCol(CharCode c) const { return _charHeaders[getCharIndex(c)].startingCol; }
+	int32 getCharStartingLine(CharCode c) const { return _charHeaders[getCharIndex(c)].startingLine; }
+	int32 getCharOffset(CharCode c) const { return _charHeaders[getCharIndex(c)].offset; }
+	const byte *getCharData(CharCode c) const { return _fontData + (_charHeaders[getCharIndex(c)].offset); }
 
 	const byte *getFontData() const { return _fontData; }
 	uint32 getDataSize() const { return _dataSize; }
@@ -139,7 +151,7 @@ public:
 
 	int32 getKernedHeight() const override { return _font->getFontHeight(); }
 	int32 getBaseOffsetY() const override { return 0; }
-	int32 getCharKernedWidth(uint32 c) const override { return _font->getCharWidth(c); }
+	int32 getCharKernedWidth(CharCode c) const override { return _font->getCharWidth(c); }
 	int32 getFontWidth() const override { return getCharKernedWidth('w'); }
 
 	int getKernedStringLength(const Common::String &text) const override;
