@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-11-22 06:38+0000\n"
-"PO-Revision-Date: 2026-11-20 21:44+0000\n"
+"PO-Revision-Date: 2026-11-23 04:39+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -10856,14 +10856,13 @@ msgstr ""
 "dans la version originale"
 
 #: engines/hollywood/monsters/metaengine.cpp:48
-#, fuzzy
-#| msgid "Enable studio audience"
 msgid "Enable positional audio"
-msgstr "Active le public en studio"
+msgstr "Activer l'audio positionnel"
 
 #: engines/hollywood/monsters/metaengine.cpp:49
 msgid "Pan voices and footsteps according to their positions on screen"
 msgstr ""
+"Place les voix et les bruits de pas en fonction de leur position à l'écran"
 
 #: engines/hollywood/runaway/engine.cpp:796
 msgid "Perform action"
@@ -10891,10 +10890,8 @@ msgid "Scroll to the right edge"
 msgstr "Défiler jusqu'au bord droite"
 
 #: engines/hollywood/runaway/engine.cpp:834
-#, fuzzy
-#| msgid "Skip cutscene / open menu"
 msgid "Skip cutscene / Cancel action / Menu"
-msgstr "Passer la cinématique / ouvrir le menu"
+msgstr "Passer la cinématique / Annuler l'action / Menu"
 
 #: engines/hopkins/base_enhancements.cpp:313
 msgid "Player"
