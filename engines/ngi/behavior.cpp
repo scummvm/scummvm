@@ -56,15 +56,15 @@ void BehaviorController::initBehavior(Scene *sc, GameVar *var) {
 	for (GameVar *subvar = behvar->_subVars; subvar; subvar = subvar->_nextVarObj) {
 		debugC(3, kDebugBehavior, "BehaviorController::initBehavior. subVar %s", transCyrillic(subvar->_varName));
 		if (subvar->_varName == "AMBIENT") {
-			_behaviors.push_back(BehaviorInfo());
+			_behaviors.push_back(BehaviorAni());
 			_behaviors.back().initAmbientBehavior(subvar, sc);
 		} else {
 			AniObject *ani = sc->getStaticANIObject1ByName(subvar->_varName, -1);
 			if (ani) {
 				for (uint i = 0; i < sc->_aniObjects.size(); i++) {
 					if (sc->_aniObjects[i]->_id == ani->_id) {
-						_behaviors.push_back(BehaviorInfo());
-						BehaviorInfo &behinfo = _behaviors.back();
+						_behaviors.push_back(BehaviorAni());
+						BehaviorAni &behinfo = _behaviors.back();
 						behinfo.initObjectBehavior(subvar, sc, ani);
 						behinfo._ani = sc->_aniObjects[i];
 					}
@@ -80,7 +80,7 @@ void BehaviorController::update() {
 
 	debugC(6, kDebugBehavior, "BehaviorController::update()");
 	for (uint i = 0; i < _behaviors.size(); i++) {
-		BehaviorInfo &beh = _behaviors[i];
+		BehaviorAni &beh = _behaviors[i];
 
 		if (!beh._ani) {
 			beh._counter++;
@@ -118,7 +118,7 @@ void BehaviorController::update() {
 	}
 }
 
-void BehaviorController::updateBehavior(BehaviorInfo &behaviorInfo, BehaviorAnim &entry) {
+void BehaviorController::updateBehavior(BehaviorAni &behaviorInfo, BehaviorAnim &entry) {
 	debugC(7, kDebugBehavior, "BehaviorController::updateBehavior() moves: %d", entry._behaviorMoves.size());
 	for (uint i = 0; i < entry._behaviorMoves.size(); i++) {
 		BehaviorMove &bhi = entry._behaviorMoves[i];
@@ -194,7 +194,7 @@ bool BehaviorController::enableAni(AniObject *obj, int aniId, int quId, int flag
 
 void BehaviorController::enableAllQueuesForAni(AniObject *ani, int flag) {
 	for (uint i = 0; i < _behaviors.size(); i++) {
-		BehaviorInfo &beh = _behaviors[i];
+		BehaviorAni &beh = _behaviors[i];
 
 		if (ani == beh._ani) {
 			if (flag)
@@ -222,7 +222,7 @@ BehaviorMove *BehaviorController::getAniQueue(AniObject *ani, int id1, int id2) 
 	return nullptr;
 }
 
-void BehaviorInfo::clear() {
+void BehaviorAni::clear() {
 	_ani = nullptr;
 	_staticsId = 0;
 	_counter = 0;
@@ -233,8 +233,8 @@ void BehaviorInfo::clear() {
 	_behaviorAnims.clear();
 }
 
-void BehaviorInfo::initAmbientBehavior(GameVar *var, Scene *sc) {
-	debugC(4, kDebugBehavior, "BehaviorInfo::initAmbientBehavior(%s)", transCyrillic(var->_varName));
+void BehaviorAni::initAmbientBehavior(GameVar *var, Scene *sc) {
+	debugC(4, kDebugBehavior, "BehaviorAni::initAmbientBehavior(%s)", transCyrillic(var->_varName));
 
 	clear();
 	_animsCount = 1;
@@ -255,9 +255,9 @@ void BehaviorInfo::initAmbientBehavior(GameVar *var, Scene *sc) {
 	}
 }
 
-void BehaviorInfo::initObjectBehavior(GameVar *var, Scene *sc, AniObject *ani) {
+void BehaviorAni::initObjectBehavior(GameVar *var, Scene *sc, AniObject *ani) {
 	Common::String s((char *)transCyrillic(var->_varName));
-	debugC(4, kDebugBehavior, "BehaviorInfo::initObjectBehavior(%s, %d, %s)", s.c_str(), sc->_sceneId, transCyrillic(ani->_title));
+	debugC(4, kDebugBehavior, "BehaviorAni::initObjectBehavior(%s, %d, %s)", s.c_str(), sc->_sceneId, transCyrillic(ani->_title));
 
 	clear();
 
