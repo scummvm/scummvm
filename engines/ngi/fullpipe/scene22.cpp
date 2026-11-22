@@ -107,7 +107,7 @@ void sceneHandler22_hideStool() {
 	g_nmi->_currentScene->findAniObjectById(ANI_TABURETTE, -1)->hide();
 }
 
-void sceneHandler22_handleDown() {
+void sceneHandler22_onHandleDown() {
 	if (g_vars->scene22_bag->_statics->_staticsId == ST_MSH_SIT) {
 		runQueue(QU_MSH_CRANEOUT, 1);
 		g_vars->scene22_interactionIsDisabled = false;
@@ -328,7 +328,7 @@ int sceneHandler22(Command *cmd) {
 		break;
 
 	case MSG_SC22_HANDLEDOWN:
-		sceneHandler22_handleDown();
+		sceneHandler22_onHandleDown();
 		break;
 
 	case 29:
