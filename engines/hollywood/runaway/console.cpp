@@ -32,8 +32,8 @@ RunawayConsole::RunawayConsole(RunawayEngine *vm) : _vm(vm) {
 }
 
 bool RunawayConsole::cmdGet(int argc, const char **argv) {
-	if (argc > 2) {
-		debugPrintf("Usage: %s [item id|all]\n", argv[0]);
+	if (argc > 3) {
+		debugPrintf("Usage: %s [item id|all]\n       %s 19 filled (chapter 2)\n", argv[0], argv[0]);
 		return true;
 	}
 	if (!_vm->_inventory) {
@@ -43,7 +43,7 @@ bool RunawayConsole::cmdGet(int argc, const char **argv) {
 
 	RunawayInventory &inventory = *_vm->_inventory;
 	if (argc == 1) {
-		debugPrintf("Usage: %s [item id|all]\n", argv[0]);
+		debugPrintf("Usage: %s [item id|all]\n       %s 19 filled (chapter 2)\n", argv[0], argv[0]);
 		debugPrintf("Chapter %u items (* = already in inventory):\n", _vm->_state.chapter());
 		for (uint item = 1; item <= inventory.maxItemId(); ++item) {
 			debugPrintf("%2u %c %s\n", item, inventory.contains(item) ? '*' : ' ', inventory.name(item).encode().c_str());
@@ -56,7 +56,7 @@ bool RunawayConsole::cmdGet(int argc, const char **argv) {
 	}
 
 	const Common::String argument(argv[1]);
-	if (argument.equalsIgnoreCase("all")) {
+	if (argument.equalsIgnoreCase("all") && argc == 2) {
 		uint added = 0;
 		for (uint item = 1; item <= inventory.maxItemId(); ++item) {
 			if (inventory.add(item)) {
@@ -72,6 +72,16 @@ bool RunawayConsole::cmdGet(int argc, const char **argv) {
 	if (end == argv[1] || *end || item < 1 || item > (long)inventory.maxItemId()) {
 		debugPrintf("Invalid item '%s'; valid IDs for chapter %u are 1..%u.\n",
 			argv[1], _vm->_state.chapter(), inventory.maxItemId());
+		return true;
+	}
+	if (argc == 3) {
+		if (_vm->_state.chapter() != 2 || item != 19 || !Common::String(argv[2]).equalsIgnoreCase("filled")) {
+			debugPrintf("The only supported item variant is 'get 19 filled' in chapter 2.\n");
+			return true;
+		}
+		inventory.museum().packageFilled = 1;
+		inventory.add(item);
+		debugPrintf("The filled coffee packet is now in the inventory.\n");
 		return true;
 	}
 	if (inventory.add(item)) {

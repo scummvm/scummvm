@@ -235,6 +235,11 @@ void RunawayAudio::stopEffect(byte channel) {
 	_effects[channel].stop();
 }
 
+void RunawayAudio::setEffectVolume(byte channel, byte volume) {
+	assert(channel < ARRAYSIZE(_effects));
+	_effects[channel].setVolume(volume);
+}
+
 bool RunawayAudio::musicPlaying() const {
 	return _music.isPlaying();
 }

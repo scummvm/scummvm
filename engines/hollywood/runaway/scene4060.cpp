@@ -163,6 +163,11 @@ bool Scene4060::loadCustomResources() {
 	return _willyAnimation.load(_archive, 8, 22);
 }
 
+bool Scene4060::applyCustomBackgroundPatches() {
+	// The red indicator stays off once Willy has refilled the machine.
+	return !_museum.coffeeMachine || applyPatch(5);
+}
+
 void Scene4060::applyCustomHotspotState() {
 	for (uint i = 0; i < 256; ++i) {
 		byte &id = _maps[256 + i];
@@ -195,6 +200,7 @@ void Scene4060::runCustomEntrySequence() {
 			say(38, 1);
 			deferMuseumAction(460);
 		} else {
+			_facing = 6;
 			say(36, 3);
 			deferMuseumAction(462);
 		}
@@ -215,18 +221,52 @@ void Scene4060::runCustomEntrySequence() {
 }
 
 void Scene4060::advanceCustomGameplayLoop(uint32 delta) {
-	_willyFrame = (_now / 80) % 22;
+	if (_willyWalking) {
+		static const AnimationFootstep steps[] = {
+			{5, 540, 179}, {12, 570, 179}, {16, 600, 179}, {22, 630, 179},
+			{27, 660, 179}, {32, 690, 179}, {37, 720, 179}, {42, 750, 179},
+			{50, 780, 179}, {57, 810, 179}, {62, 840, 179}, {69, 870, 179},
+			{74, 900, 179}, {80, 930, 179}, {85, 960, 179}, {91, 990, 179},
+			{97, 1020, 179}, {102, 1050, 179}, {107, 1080, 179}, {112, 1110, 179},
+			{119, 1140, 179}, {125, 1170, 179}, {131, 1200, 179}, {137, 1230, 179},
+			{142, 1260, 179}, {147, 1290, 179}
+		};
+		while (_willyFrame < 150 && _now - _willyWalkStarted >= 60) {
+			_willyWalkStarted += 60;
+			playAnimationFootsteps(++_willyFrame, 5, steps, ARRAYSIZE(steps));
+		}
+	} else {
+		_willyFrame = (_now / 80) % 22;
+	}
+	if (_roomAction == 480) {
+		const uint ticks = (_now - _actionStarted) / 10;
+		_actionStarted += ticks * 10;
+		const int distance = ticks * 2;
+		_camera.x = MAX<int>(0, _camera.x - distance);
+		_camera.y = MAX<int>(0, _camera.y - distance);
+	}
 }
 
 void Scene4060::updateActor(uint elapsed, int scrollDirection, bool inventoryOpen) {
+	const Common::Point camera = _camera;
 	RunawayRoomScene::updateActor(elapsed, scrollDirection, inventoryOpen);
-	if (!inventoryOpen && !_upperFloor && (!_roomAction || _roomAction < 461 || _roomAction > 466)) {
+	if (_position.x >= 0 && walkZone()) {
+		_lastWalkZone = walkZone();
+	}
+	if (_walkPath.active() && (_roomAction == 479 || _roomAction == 481 || (_roomAction == 482 && actorWalkZone() == 9))) {
+		// Keep the stair-climbing direction on the narrow reserved walk zones.
+		_facing = _roomAction == 479 ? (actorWalkZone() == 8 ? 7 : 6) : 3;
+		_actor.setFrame(_facing, 1 + (_walkElapsed / 60) % 12);
+	}
+	if (_roomAction == 480) {
+		_camera = camera;
+	} else if (!inventoryOpen && !_upperFloor && (!_roomAction || _roomAction < 461 || _roomAction > 466)) {
 		_camera.y = CLIP<int>(_position.y - 400, 200, 600);
 	}
 }
 
 void Scene4060::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
-	if (!museumChapter() || !_museum.willyInLab) {
+	if (_willyWalking || !museumChapter() || !_museum.willyInLab) {
 		_willyAnimation.draw(viewport, museumChapter() ? _willyFrame : 0, _camera.x, -_camera.y);
 	}
 }
@@ -458,16 +498,58 @@ void Scene4060::finishCustomAnimation(uint16 action) {
 	case 475: // Come out of hiding after the telephone distraction.
 		say(15, 5);
 		break;
-	case 462: // Follow Willy to the coffee machine.
-		say(36, 4);
-		walkTo(Common::Point(140, 504), 7, true);
-		_camera = Common::Point(0, 0);
-		beginRoomAnimationRange(463, 16, 216, 0, 150, false);
+	case 462: // Hear Willy refill the coffee machine upstairs.
+		_audio.playEffectAt(47, Common::Point(202, 200), 230);
+		_actionStarted = _now;
+		deferMuseumAction(477);
 		break;
-	case 463: // Finish refilling the coffee machine.
+	case 477: // Wait for the coffee machine before following Willy.
+		if (_now - _actionStarted < 3000) {
+			deferMuseumAction(477);
+		} else {
+			say(36, 4);
+			deferMuseumAction(478);
+		}
+		break;
+	case 478: // Brian heads for the stairs while Willy walks along the balcony.
+		if (!_willyAnimation.load(_archive, 16, 216)) {
+			error("Cannot load Runaway Willy walking animation");
+		}
+		_willyFrame = 0;
+		_willyWalking = true;
+		_willyWalkStarted = _now;
+		walkTo(Common::Point(140, 504), 7, false, true);
+		deferMuseumAction(479);
+		break;
+	case 479: // Pan to the upper landing after Brian reaches the stairs.
+		_actionStarted = _now;
+		deferMuseumAction(480);
+		break;
+	case 480: // Finish the pan and bring Brian out of the upper stairway.
+		if (_camera.x || _camera.y || _willyFrame < 150) {
+			deferMuseumAction(480);
+			break;
+		}
+		_willyWalking = false;
+		_willyFrame = 0;
+		if (!_willyAnimation.load(_archive, 8, 22)) {
+			error("Cannot load Runaway Willy idle animation");
+		}
 		_museum.willyInLab = 0;
-		changeFloor(true, Common::Point(218, 379));
-		_facing = 7;
+		changeFloor(true, Common::Point(-25, 319));
+		// RESOURCE.D06's first portal leads from off-screen zone 19 into zone 9.
+		walkTo(Common::Point(17, 279), 3, true);
+		deferMuseumAction(481);
+		break;
+	case 481: // Walk down the remaining steps onto the landing.
+		walkTo(Common::Point(69, 372), 3, false, true);
+		deferMuseumAction(482);
+		break;
+	case 482: // Walk from the landing to the coffee machine.
+		walkTo(Common::Point(218, 379), 7, false, true);
+		deferMuseumAction(463);
+		break;
+	case 463: // Comment on the refilled coffee machine.
 		say(36, 5);
 		break;
 	case 322: // Collect the cup of coffee.
@@ -548,9 +630,17 @@ void Scene4060::finishCustomFilm() {
 	}
 }
 
+byte Scene4060::actorWalkZone() const {
+	if (_roomAction == 481) {
+		return 19;
+	}
+	// Fractional steps can round outside the one-pixel-wide stair paths.
+	const byte zone = walkZone();
+	return zone ? zone : _lastWalkZone;
+}
+
 float Scene4060::actorHeight() const {
 	const int x = _position.x, y = _position.y;
-	const byte zone = walkZone();
 	if (_upperFloor) {
 		if (x < 69) {
 			return x * 1.289855f + 140;
@@ -563,6 +653,7 @@ float Scene4060::actorHeight() const {
 		}
 		return x * 0.3125f - 280.3125f;
 	}
+	const byte zone = actorWalkZone();
 	if (zone == 7 || zone == 8) {
 		return y * 0.4370861f - 140.649f;
 	}
@@ -580,7 +671,7 @@ Common::U32String Scene4060::hotspotName(byte id) const {
 }
 
 void Scene4060::setupActorDepth(RunawayActor::RenderParams &params) const {
-	const byte zone = walkZone();
+	const byte zone = actorWalkZone();
 	params.depthY[1] = 1199;
 	params.depthY[2] = zone == 1 ? 1199 : 0;
 	params.depthY[3] = zone == 13 || zone == 15 || zone == 16 || zone == 17 ? 1199 : 0;

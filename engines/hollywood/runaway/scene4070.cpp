@@ -24,6 +24,14 @@
 #include "hollywood/runaway/scene4070.h"
 
 namespace Hollywood {
+namespace {
+
+const byte kWillyTurnFrames[] = {
+	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+	17, 18, 19, 20, 21, 22, 23, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54
+};
+
+} // End of anonymous namespace
 
 const RunawayRoom kRunawayScene4070 = {
 	kMuseumWilly, 1024, 600, nullptr, 0, {{100, 100, 100}, {70, 70, 70}}, Common::Point(548, 580),
@@ -42,25 +50,7 @@ bool Scene4070::loadCustomResources() {
 void Scene4070::runCustomEntrySequence() {
 	_facing = 7;
 	_audio.playEffect(57, 102, 1, true);
-	if (_entryScene == 4071) {
-		say(32);
-		say(33, 3, false, 1);
-		deferMuseumAction(417);
-	} else if (_entryScene == 4072) {
-		say(32);
-		if (_inventory.museum().coffee == 0) {
-			say(33, 0, false, 1);
-			_museum.needsGroundCoffee = 1;
-		} else {
-			say(33, 1, false, 1);
-			say(32, 1);
-			say(33, 2, false, 1);
-			_museum.needsPackage = 1;
-		}
-		deferMuseumAction(409);
-	} else {
-		startWillyConversation();
-	}
+	beginRoomAnimation(400, 4, 188, kWillyTurnFrames, ARRAYSIZE(kWillyTurnFrames), false, 60);
 }
 
 void Scene4070::updateActor(uint elapsed, int scrollDirection, bool inventoryOpen) {
@@ -78,15 +68,59 @@ void Scene4070::handleAnimationFrameHook() {
 		{10, 512}, {14, 512}, {38, 512}, {44, 412}, {51, 312},
 		{56, 212}, {62, 112}, {68, 12}
 	};
-	if (_roomAction == 458) {
-		playAnimationFootsteps(_actionFrames[_actionStep], 1, steps, ARRAYSIZE(steps));
+	const byte frame = _actionFrames[_actionStep];
+	if (_roomAction == 400 && frame == 17) {
+		_audio.setEffectVolume(1, 204);
+	} else if (_roomAction == 409 && frame == 14) {
+		_audio.setEffectVolume(1, 102);
+	} else if (_roomAction == 458) {
+		playAnimationFootsteps(frame, 1, steps, ARRAYSIZE(steps));
+		switch (frame) {
+		case 36: // Brian turns to watch Willy leave.
+			_facing = 6;
+			break;
+		case 44:
+			_audio.setEffectVolume(1, 179);
+			break;
+		case 51:
+			_audio.setEffectVolume(1, 128);
+			break;
+		case 56:
+			_audio.setEffectVolume(1, 77);
+			break;
+		case 62:
+			_audio.setEffectVolume(1, 26);
+			break;
+		}
 	}
 }
 
 void Scene4070::finishCustomAnimation(uint16 action) {
 	switch (action) {
-	case 417: // Offer the coffee package to Willy.
-		beginRoomAnimationRange(427, 5, 53, 19, 33);
+	case 400: // Address Willy after he turns toward Brian.
+		if (_entryScene == 4071 || _entryScene == 4072) {
+			say(32);
+			deferMuseumAction(417);
+		} else {
+			startWillyConversation();
+		}
+		break;
+	case 417: // Hold out the coffee package or bowl to Willy.
+		if (_entryScene == 4071) {
+			beginRoomAnimationRange(437, 5, 53, 19, 33, true, 60);
+		} else {
+			static const byte frames[] = {19, 20, 21, 22, 23, 24, 25, 26, 27, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52};
+			beginRoomAnimation(437, 5, 53, frames, ARRAYSIZE(frames), true, 60);
+		}
+		break;
+	case 437: // Keep Brian's hand extended while Willy replies.
+		if (_entryScene == 4071) {
+			holdRoomAnimation(427, 5, 53, 33);
+			say(33, 3, false, 1);
+		} else {
+			holdRoomAnimation(467, 5, 53, 52);
+			say(33, _inventory.museum().coffee != 0, false, 1);
+		}
 		break;
 	case 427: { // Willy takes the coffee package.
 		byte willy[31], brian[31];
@@ -94,10 +128,25 @@ void Scene4070::finishCustomAnimation(uint16 action) {
 			willy[i] = !i || i == 30 ? 54 : 158 + i;
 			brian[i] = i < 10 ? 33 : i < 19 ? 24 + i : 18;
 		}
-		beginRoomAnimation(407, 5, 53, brian, ARRAYSIZE(brian));
+		beginRoomAnimation(407, 5, 53, brian, ARRAYSIZE(brian), true, 60);
 		setRoomAnimationOverlay(4, 188, willy, ARRAYSIZE(willy));
 		break;
 	}
+	case 467: { // Lower the bowl after Willy refuses the coffee.
+		static const byte frames[] = {51, 51, 50, 49, 48, 47, 46, 45, 44, 43, 27, 26, 25, 24, 23, 22, 21, 20, 19};
+		beginRoomAnimation(477, 5, 53, frames, ARRAYSIZE(frames), true, 60);
+		break;
+	}
+	case 477: // Explain which coffee Willy needs.
+		if (!_inventory.museum().coffee) {
+			_museum.needsGroundCoffee = 1;
+		} else {
+			say(32, 1);
+			say(33, 2, false, 1);
+			_museum.needsPackage = 1;
+		}
+		deferMuseumAction(489);
+		break;
 	case 407: // Willy agrees to refill the coffee machine.
 		_inventory.remove(19);
 		say(33, 4, false, 1);
@@ -147,13 +196,22 @@ void Scene4070::finishCustomAnimation(uint16 action) {
 		deferMuseumAction(448);
 		break;
 	case 448: // Willy leaves the close-up.
-		beginRoomAnimation(458, 6, 72, nullptr, 0, false);
+		beginRoomAnimation(458, 6, 72, nullptr, 0, false, 60);
 		break;
 	case 458: // Comment after Willy leaves to fetch stock or refill the coffee machine.
 		holdRoomAnimation(409, 6, 72, 71, false);
 		say(_museum.willyInLab == 1 ? 38 : 36, _museum.willyInLab == 1 ? 0 : 2);
 		break;
+	case 489: { // Willy turns back to his work.
+		byte frames[ARRAYSIZE(kWillyTurnFrames)];
+		for (uint i = 0; i < ARRAYSIZE(frames); ++i) {
+			frames[i] = kWillyTurnFrames[ARRAYSIZE(frames) - 1 - i];
+		}
+		beginRoomAnimation(409, 4, 188, frames, ARRAYSIZE(frames), false, 60);
+		break;
+	}
 	case 409: // Return to the exhibition hall.
+		_audio.stopEffect(1);
 		_upperFloor = false;
 		leaveMuseumRoom(4064, Common::Point(921, 813), 7);
 		break;
@@ -187,7 +245,7 @@ void Scene4070::runCustomDialogueIntro() {
 }
 
 void Scene4070::finishCustomConversation() {
-	deferMuseumAction(409);
+	deferMuseumAction(489);
 }
 
 uint Scene4070::sceneTextNumber() const {

@@ -36,6 +36,7 @@ public:
 	uint32 playMusic(uint16 cue, bool loop = true);
 	void playMusicEffect(uint16 cue, byte volume = Audio::Mixer::kMaxChannelVolume, byte channel = 0, bool loop = false);
 	void setMusicVolume(byte volume);
+	void setEffectVolume(byte channel, byte volume);
 	void setListenerPosition(int x);
 	int listenerPosition() const { return _listenerX; }
 	uint32 playSpeech(uint16 sample, bool global = false);
