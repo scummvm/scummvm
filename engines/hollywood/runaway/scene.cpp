@@ -467,18 +467,22 @@ void RunawayRoomScene::showLine() {
 }
 
 void RunawayRoomScene::say(uint16 cue, byte variation, bool global, byte speaker, byte color) {
-	assert(speaker < ARRAYSIZE(_speechColors));
-	stopAmbientSpeech();
 	SceneSpeechCue speech;
 	if (global)
 		_text.getStaticSpeechCue(cue, variation, speech.textRecordId, speech.continuationCount, speech.voiceSampleId);
 	else
 		speech = _text.stageCue(cue, variation);
+	say(_text, speech, global, speaker, color);
+}
+
+void RunawayRoomScene::say(const SceneTextStore &text, const SceneSpeechCue &speech, bool global, byte speaker, byte color) {
+	assert(speaker < ARRAYSIZE(_speechColors));
+	stopAmbientSpeech();
 	if (!speech.valid())
 		return;
 	for (uint i = 0; i < MAX<uint>(1, speech.continuationCount); ++i) {
 		SpeechLine line;
-		line.text = Common::U32String(_text.largeTextRecord(speech.textRecordId + i), Common::kDos850);
+		line.text = Common::U32String(text.largeTextRecord(speech.textRecordId + i), Common::kDos850);
 		line.sample = _game == kRunawayFullGame && speech.voiceSampleId ? speech.voiceSampleId + i : 0;
 		line.global = global;
 		line.speaker = speaker;
@@ -496,6 +500,13 @@ void RunawayRoomScene::sayInventory(const RunawayInventory::Reply &reply) {
 	_caption.clear();
 	if (reply.action) {
 		executeItemAction(reply.action);
+		return;
+	}
+	if (reply.stage) {
+		SceneTextStore text;
+		if (text.loadStage("RESOURCE.003", "Runaway inventory", reply.stage)) {
+			say(text, text.stageCue(reply.cue, reply.variation), false);
+		}
 		return;
 	}
 	if (townChapter() && sayTownInventory(reply)) {

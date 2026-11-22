@@ -75,6 +75,10 @@ void Scene6210::resumeAmbientAudio(bool entering) {
 
 void Scene6210::runCustomEntrySequence() {
 	_facing = 0;
+	if (_restoredContent && !_town.cellVisited) {
+		say(0);
+	}
+	_town.cellVisited = 1;
 	_town.cellOpen = _town.bodySeen = 1;
 	_town.cellRefusals = 0;
 }

@@ -260,6 +260,9 @@ RunawayRoomScene::ActionResult Scene6263::dispatchCustomSceneAction(uint16 actio
 	case 1309: // Finish loading the firewood into the boiler.
 		_town.boiler = 1;
 		_inventory.remove(14);
+		if (_restoredContent) {
+			say(29, 1);
+		}
 		break;
 	case 310: // Reject unsuitable fuel.
 		say(30, _town.boiler >= 2);

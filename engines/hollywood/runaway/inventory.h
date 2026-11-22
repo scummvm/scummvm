@@ -47,10 +47,16 @@ public:
 		byte lastVariation;
 		byte nextVariation = 0xff;
 		uint16 action = 0;
+		uint16 stage = 0;
 		Reply(uint16 c = 1, byte v = 0, byte last = 0) : cue(c), variation(v), lastVariation(last) {}
 		static Reply fromAction(uint16 action) {
 			Reply reply;
 			reply.action = action;
+			return reply;
+		}
+		static Reply fromStage(uint16 stage, uint16 cue) {
+			Reply reply(cue);
+			reply.stage = stage;
 			return reply;
 		}
 	};

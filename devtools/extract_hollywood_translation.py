@@ -380,6 +380,9 @@ def pack_translation(source, output, compiler, po=None, runaway_po=None, runaway
                 name = f"images/{extension.lower()}-{index}.{suffix}"
                 files[name] = (source / name).read_bytes()
 
+    name = "runaway/f24-can.patch"
+    files[name] = (source / name).read_bytes()
+
     with tempfile.TemporaryDirectory() as directory:
         directory = Path(directory)
         catalogs = []

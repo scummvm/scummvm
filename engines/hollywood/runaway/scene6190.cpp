@@ -194,11 +194,17 @@ RunawayRoomScene::ActionResult Scene6190::dispatchCustomSceneAction(uint16 actio
 	case 313: // Search the desk and take the bank stamp.
 		if (_town.bankStampTaken) {
 			say(12, 2);
+		} else if (_restoredContent) {
+			say(12);
+			deferTownAction(413);
 		} else {
-			_town.bankStampTaken = 1;
-			_inventory.add(32);
-			say(12, 1);
+			return dispatchCustomSceneAction(413);
 		}
+		break;
+	case 413: // Collect the bank stamp after searching the desk.
+		_town.bankStampTaken = 1;
+		_inventory.add(32);
+		say(12, 1);
 		return kBackgroundChanged;
 	case 400: // First visit: inspect the damage from the locomotive.
 		say(0);

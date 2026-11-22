@@ -60,6 +60,13 @@ bool RunawayRoomScene::sayTownInventory(const RunawayInventory::Reply &reply) {
 		_audio.playEffect(34);
 		say(228, 0, true);
 		return true;
+	case 230: // Refuse to attach the strap to an unsuitable inventory item.
+	case 242: // The prepared tobacco needs no more grinding.
+		if (!_restoredContent) {
+			executeItemAction(1);
+			return true;
+		}
+		return false;
 	case 233: // Once Joshua is gone, there is no reason to save another liter of water.
 		if (reply.variation == 1 && _town.joshuaGone) {
 			say(1, 2, true);

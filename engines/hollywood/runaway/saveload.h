@@ -117,6 +117,7 @@ struct RunawaySaveState {
 		byte safeDial = 69, safeProgress = 0;
 		byte machinePowered = 0, melodyTried = 0, campingGearTaken = 0;
 		byte motorcycleRefilled = 0;
+		byte wateringCanTaken = 0, cellVisited = 0;
 	} town;
 
 	struct TownItems {

@@ -104,13 +104,19 @@ bool Scene8240::loadCustomResources() {
 }
 
 bool Scene8240::applyCustomBackgroundPatches() {
-	return applyPatch(9) && (!_brew || applyPatch(13));
+	if (!applyPatch(9) || (_brew && !applyPatch(13))) {
+		return false;
+	}
+	return removeWateringCan();
 }
 
 void Scene8240::applyCustomHotspotState() {
 	for (uint i = 0; i < 256; ++i) {
 		if (_maps[i] >= 6 && _maps[i] <= 8) {
 			_maps[i] = 0;
+		}
+		if (_maps[256 + i] == 4 && _town.wateringCanTaken) {
+			_maps[256 + i] = 0;
 		}
 	}
 }

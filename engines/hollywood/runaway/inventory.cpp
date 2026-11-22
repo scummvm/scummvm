@@ -422,6 +422,8 @@ RunawayInventory::Reply RunawayInventory::examine(byte item, const RunawaySaveSt
 		case 13: // Telepathic helmet.
 		case 15: // Blowtorch.
 			return Reply(193 + item);
+		case 16: // Reuse the saloon's description of the watering can.
+			return Reply::fromStage(624, 5);
 		case 17: // Map of the mine.
 		case 18: // Miner's light.
 		case 19: // Rope.

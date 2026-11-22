@@ -34,6 +34,7 @@ public:
 protected:
 	bool loadCustomResources() override;
 	void handleAnimationFrameHook() override;
+	bool removeWateringCan();
 	RunawayAnimation _plantAnimation;
 
 private:
@@ -53,6 +54,7 @@ private:
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 
 	Common::Array<byte> _plantPatches[3];
+	Common::Array<byte> _wateringCanPatch;
 };
 
 } // End of namespace Runaway

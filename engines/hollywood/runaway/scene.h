@@ -207,6 +207,7 @@ protected:
 	void executeItemAction(uint16 action);
 	void useItem(byte item, byte hotspot);
 	void say(uint16 cue, byte variation = 0, bool global = false, byte speaker = 0, byte color = 0);
+	void say(const SceneTextStore &text, const SceneSpeechCue &speech, bool global, byte speaker = 0, byte color = 0);
 	void showLine();
 	void changeFloor(bool upper, Common::Point position);
 	void updateCamera();

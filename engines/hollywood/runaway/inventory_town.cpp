@@ -176,6 +176,12 @@ RunawayInventory::Reply RunawayInventory::combineTownItems(byte first, byte seco
 	if (first == 29 && second == 30) { // The room supplies Saturn's prerequisite for sanding the stone.
 		return Reply(240);
 	}
+	if (first == 28 && second == 31) {
+		return Reply(242);
+	}
+	if (first == 11 || second == 11) {
+		return Reply(230);
+	}
 	return Reply::fromAction(1);
 }
 

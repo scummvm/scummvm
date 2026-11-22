@@ -19,6 +19,9 @@
  *
  */
 
+#include "common/archive.h"
+#include "common/compression/unzip.h"
+#include "common/ptr.h"
 #include "common/util.h"
 #include "hollywood/runaway/scene6240.h"
 #include "hollywood/runaway/strings.h"
@@ -42,7 +45,6 @@ const RunawayResponse kResponses[] = {
 	{6240, 301, 1, 0},   // Look out into town.
 	{6240, 305, 3, 0},   // Examine the pot of soil.
 	{6240, 307, 5, 0},   // Examine the watering can.
-	{6240, 308, 6, 0},   // Leave the watering to the plants' owner.
 	{6240, 312, 10, 0},  // Try to remove the carved door knob.
 	{6240, 315, 13, 0},  // Examine the bonsai.
 	{6240, 316, 14, 0},  // Leave the bonsai where it belongs.
@@ -88,7 +90,32 @@ bool Scene6240::loadCustomResources() {
 }
 
 bool Scene6240::applyCustomBackgroundPatches() {
-	return !_town.flowerPotTaken || applyPatch(9);
+	if (_town.flowerPotTaken && !applyPatch(9)) {
+		return false;
+	}
+	return removeWateringCan();
+}
+
+bool Scene6240::removeWateringCan() {
+	if (!_town.wateringCanTaken) {
+		return true;
+	}
+	if (_wateringCanPatch.empty()) {
+		Common::ScopedPtr<Common::Archive> archive(Common::makeZipArchive("hollywood.dat"));
+		if (!archive) {
+			return false;
+		}
+		Common::ScopedPtr<Common::SeekableReadStream> stream(archive->createReadStreamForMember("runaway/f24-can.patch"));
+		if (!stream || stream->size() < 2 || stream->size() > 65536) {
+			return false;
+		}
+		_wateringCanPatch.resize(stream->size());
+		if (stream->read(_wateringCanPatch.data(), _wateringCanPatch.size()) != _wateringCanPatch.size()) {
+			_wateringCanPatch.clear();
+			return false;
+		}
+	}
+	return applyRunawayPatch(_wateringCanPatch, _background);
 }
 
 void Scene6240::applyCustomHotspotState() {
@@ -97,6 +124,9 @@ void Scene6240::applyCustomHotspotState() {
 			_maps[i] = 0;
 		}
 		if (_maps[256 + i] == 3 && _town.flowerPotTaken) {
+			_maps[256 + i] = 0;
+		}
+		if (_maps[256 + i] == 4 && _town.wateringCanTaken) {
 			_maps[256 + i] = 0;
 		}
 	}
@@ -157,6 +187,9 @@ bool Scene6240::adjustCustomWalkTargetToFloorMask(Common::Point &target) const {
 }
 
 int8 Scene6240::customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const {
+	if (id == 4 && use && !item && townChapter() && _restoredContent) {
+		return 1;
+	}
 	if (id == 5 && use && !item && _town.gardeningShed) {
 		return -1;
 	}
@@ -185,6 +218,21 @@ RunawayRoomScene::ActionResult Scene6240::dispatchCustomSceneAction(uint16 actio
 		_town.flowerPotTaken = 1;
 		_inventory.add(21);
 		say(4, 1);
+		return kBackgroundChanged;
+	case 308: // Optionally collect the unused watering-can inventory item.
+		if (_town.wateringCanTaken) {
+			break;
+		}
+		if (_restoredContent) {
+			say(4);
+			deferTownAction(408);
+		} else {
+			say(6);
+		}
+		break;
+	case 408:
+		_town.wateringCanTaken = 1;
+		_inventory.add(16);
 		return kBackgroundChanged;
 	case 309: // Identify the gardening shed.
 	case 310: // Search the shed for useful items.
