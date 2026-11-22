@@ -526,11 +526,26 @@ void WWEngine::openAlternateRoomLibrary(const char *name) {
 }
 
 void WWEngine::loadRoomBackground() {
+	const int wayneX = _wayneSpriteX, wayneY = _wayneSpriteY;
+	const int garthX = _garthSpriteX, garthY = _garthSpriteY;
+
 	loadPalette(_roomGxl, "backg.pcx");
 	g_system->getPaletteManager()->setPalette(_palette2, 0, 256);
 
 	drawRoomImageToSurface("backg.pcx", _backgroundSurface, 0, 0);
 	refreshRoomBackground(_currentRoomNumber);
+
+	if (_isRestoringRoom) {
+		_isRestoringRoom = false;
+		// Undo what the refresh did for a room entry
+		setWaynePosition(wayneX, wayneY);
+		setGarthPosition(garthX, garthY);
+
+		// room 0 must keep reopening the menu until the Pizzathon starts
+		if (_currentRoomNumber != 0)
+			_roomEventNum = 0;
+	}
+
 	refreshActors();
 }
 

@@ -217,6 +217,7 @@ public:
 	int _roomEventNum;
 	int _animationsCtr;
 	bool _animationsRedrawBackground;
+	bool _isRestoringRoom;
 
 	// Actors
 	int _wayneSpriteX, _wayneSpriteY, _wayneKind, _wayneActorScale;

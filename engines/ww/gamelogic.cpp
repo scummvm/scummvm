@@ -9043,6 +9043,8 @@ void GameLogic::menuExit() {
 	_vm->_gameState = _menuGameState;
 	_menuIsSaveLoad = 0;
 	_vm->setMouseBounds(0, 319, 0, 199);
+
+	_vm->_isRestoringRoom = true;
 	_vm->changeRoom(_vm->_currentRoomNumber);
 }
 

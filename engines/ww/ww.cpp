@@ -53,6 +53,7 @@ WWEngine::~WWEngine() {
 
 Common::Error WWEngine::run() {
 	_isSaveAllowed = false;
+	_isRestoringRoom = false;
 
 	initGraphics(320, 200);
 	initMouseCursor();
@@ -153,6 +154,7 @@ Common::Error WWEngine::run() {
 	_currentRoomNumber = 0;
 	if (_loadSaveSlot >= 0) {
 		_logic->loadSavegame(_loadSaveSlot);
+		_isRestoringRoom = true;
 	}
 	changeRoom(_currentRoomNumber);
 	changeMusic();
@@ -1372,11 +1374,16 @@ void WWEngine::handleVerbTalkTo() {
 			actionTextIndex += 10;
 		}
 		toggleActor();
+		// keep the original actor's place by setting isRestoringRoom
+		_isRestoringRoom = true;
 		loadRoomBackground();
 		displayText("c11", actionTextIndex, 0, -1, -1, 0);
 		toggleActor();
 		waitSeconds(2);
 		_isTextVisible = false;
+
+		// keep the original actor's place by setting isRestoringRoom
+		_isRestoringRoom = true;
 		loadRoomBackground();
 		if (room1Special) {
 			_logic->r1_handleRoomEvent(true);
@@ -1590,6 +1597,9 @@ void WWEngine::unusedTicketHandleMouseClick() {
 	} else {
 		textIndex = 2;
 	}
+
+	// keep the original actor's place by setting isRestoringRoom
+	_isRestoringRoom = true;
 	changeRoom(_currentRoomNumber);
 	drawInterface(_verbNumber);
 	displayText("c00", textIndex, 0, -1, -1, 0);
@@ -1602,6 +1612,9 @@ void WWEngine::extremeCloseUpHandleMouseClick() {
 	_screen->clear(0);
 	paletteFadeIn(0, 256, 16);
 	drawInterface(_verbNumber);
+
+	// keep the original actor's place by setting isRestoringRoom
+	_isRestoringRoom = true;
 	loadRoomBackground();
 	// sysMouseDriver(1);
 }
