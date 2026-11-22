@@ -23,6 +23,7 @@
 #define TESORO_CORE_SPEAKER_H
 
 #include "common/scummsys.h"
+
 #include "tesoro/core/speechtable.h"
 
 namespace Tesoro {

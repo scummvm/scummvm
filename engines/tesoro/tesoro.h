@@ -22,28 +22,28 @@
 #ifndef TESORO_H
 #define TESORO_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
 #include "common/error.h"
 #include "common/events.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
 #include "common/random.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
+#include "common/system.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
 #include "graphics/screen.h"
 
-#include "tesoro/detection.h"
-#include "tesoro/core/archive.h"
 #include "tesoro/core/animbank.h"
+#include "tesoro/core/archive.h"
 #include "tesoro/core/camera.h"
 #include "tesoro/core/clock.h"
-#include "tesoro/core/pointerstate.h"
 #include "tesoro/core/display.h"
 #include "tesoro/core/object.h"
-#include "tesoro/world.h"
+#include "tesoro/core/pointerstate.h"
+#include "tesoro/detection.h"
 #include "tesoro/videoplayer.h"
+#include "tesoro/world.h"
 
 namespace Tesoro {
 
@@ -173,12 +173,7 @@ public:
 	Level *loadLevel(const char *name);
 	/** Sets the label next to the pointer (null clears it). */
 	void setHoverText(const char *text);
-	/** Flags an object of the level as collidable and a hitter, so the pointer can touch it. False if there is no such object. */
-	bool makeHitter(const char *name);
-	/** Puts Jim into the shown level at a place. False if he cannot be built. */
-	bool putJim(int32 x, int32 y);
 	Cursor *cursor() { return _cursor; }
-	Level *shownLevel() { return _level; }
 	World &world() { return _world; }
 	/** Shows or hides the hit rectangles and outlines of the objects over the picture. Returns the new state. */
 	bool toggleOutlines() { return _showOutlines = !_showOutlines; }

@@ -19,20 +19,19 @@
  *
  */
 
-#include "tesoro/core/level.h"
-#include "tesoro/kinds/cameraframe.h"
+#include "common/endian.h"
+#include "common/textconsole.h"
+#include "common/util.h"
+
 #include "tesoro/core/collision.h"
+#include "tesoro/core/level.h"
+#include "tesoro/core/streamutil.h"
+#include "tesoro/kinds/cameraframe.h"
 #include "tesoro/kinds/cursor.h"
 #include "tesoro/kinds/menuitem.h"
 #include "tesoro/kinds/pathobject.h"
 #include "tesoro/kinds/spriteobject.h"
 #include "tesoro/kinds/walkfloor.h"
-
-#include "common/endian.h"
-#include "common/textconsole.h"
-#include "common/util.h"
-
-#include "tesoro/core/streamutil.h"
 
 namespace Tesoro {
 
@@ -173,7 +172,7 @@ Object *Level::createObject(const ObjectRecord &record, Room &room) {
 		return object;
 	}
 
-	warning("Level: object '%s' of kind %u is not ported yet, skipped", record.name, record.kind);
+	warning("Level: object '%s' has the unknown kind %u, skipped", record.name, record.kind);
 	return nullptr;
 }
 

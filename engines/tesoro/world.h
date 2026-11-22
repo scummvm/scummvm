@@ -25,19 +25,19 @@
 #include "common/scummsys.h"
 #include "graphics/surface.h"
 
-#include "tesoro/kinds/clickcatcher.h"
 #include "tesoro/core/connectfour.h"
 #include "tesoro/core/connectfourmatch.h"
-#include "tesoro/kinds/cursor.h"
-#include "tesoro/kinds/actionstrip.h"
-#include "tesoro/kinds/inventoryitem.h"
-#include "tesoro/kinds/objectgroup.h"
-#include "tesoro/kinds/jim.h"
-#include "tesoro/kinds/character.h"
 #include "tesoro/core/objectlist.h"
 #include "tesoro/core/sounddevice.h"
 #include "tesoro/core/speechtable.h"
 #include "tesoro/core/walkarea.h"
+#include "tesoro/kinds/actionstrip.h"
+#include "tesoro/kinds/character.h"
+#include "tesoro/kinds/clickcatcher.h"
+#include "tesoro/kinds/cursor.h"
+#include "tesoro/kinds/inventoryitem.h"
+#include "tesoro/kinds/jim.h"
+#include "tesoro/kinds/objectgroup.h"
 
 namespace Tesoro {
 

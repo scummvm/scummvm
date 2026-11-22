@@ -26,6 +26,7 @@
 #include "common/str-array.h"
 #include "common/translation.h"
 #include "common/util.h"
+
 #include "tesoro/detection.h"
 #include "tesoro/detection_tables.h"
 

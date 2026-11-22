@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/scummsys.h"
+
 #include "tesoro/core/speechtable.h"
 
 namespace Tesoro {

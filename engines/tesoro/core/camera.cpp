@@ -22,7 +22,6 @@
 #include "common/textconsole.h"
 
 #include "tesoro/core/camera.h"
-
 #include "tesoro/core/object.h"
 #include "tesoro/core/wrap.h"
 

@@ -19,11 +19,11 @@
  *
  */
 
-#include "tesoro/core/textqueue.h"
-
 #include "common/endian.h"
 #include "common/textconsole.h"
+
 #include "tesoro/core/animbank.h"
+#include "tesoro/core/textqueue.h"
 
 namespace Tesoro {
 

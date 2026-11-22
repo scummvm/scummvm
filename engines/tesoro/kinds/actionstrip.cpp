@@ -19,13 +19,12 @@
  *
  */
 
-#include "tesoro/kinds/actionstrip.h"
-#include "tesoro/world.h"
-
-#include "tesoro/kinds/objectgroup.h"
 #include "tesoro/core/level.h"
 #include "tesoro/core/namekey.h"
 #include "tesoro/core/room.h"
+#include "tesoro/kinds/actionstrip.h"
+#include "tesoro/kinds/objectgroup.h"
+#include "tesoro/world.h"
 
 namespace Tesoro {
 

@@ -19,9 +19,8 @@
  *
  */
 
-#include "tesoro/core/objectlist.h"
-
 #include "tesoro/core/object.h"
+#include "tesoro/core/objectlist.h"
 
 namespace Tesoro {
 

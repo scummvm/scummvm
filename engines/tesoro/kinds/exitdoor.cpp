@@ -19,11 +19,11 @@
  *
  */
 
+#include "common/textconsole.h"
+
+#include "tesoro/core/namekey.h"
 #include "tesoro/kinds/exitdoor.h"
 #include "tesoro/world.h"
-
-#include "common/textconsole.h"
-#include "tesoro/core/namekey.h"
 
 namespace Tesoro {
 

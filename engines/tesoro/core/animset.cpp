@@ -19,9 +19,9 @@
  *
  */
 
-#include "tesoro/core/animset.h"
-
 #include "common/textconsole.h"
+
+#include "tesoro/core/animset.h"
 
 namespace Tesoro {
 

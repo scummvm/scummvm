@@ -21,11 +21,11 @@
 
 #include "common/textconsole.h"
 
-#include "tesoro/kinds/cursor.h"
 #include "tesoro/core/camera.h"
 #include "tesoro/core/display.h"
 #include "tesoro/core/level.h"
 #include "tesoro/core/room.h"
+#include "tesoro/kinds/cursor.h"
 #include "tesoro/world.h"
 
 namespace Tesoro {

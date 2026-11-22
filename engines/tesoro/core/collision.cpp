@@ -19,9 +19,9 @@
  *
  */
 
-#include "tesoro/core/collision.h"
-
 #include "common/util.h"
+
+#include "tesoro/core/collision.h"
 
 namespace Tesoro {
 

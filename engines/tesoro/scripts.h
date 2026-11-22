@@ -23,18 +23,19 @@
 #define TESORO_SCRIPTS_H
 
 #include "common/textconsole.h"
+
 #include "tesoro/core/archive.h"
 #include "tesoro/core/camera.h"
-#include "tesoro/kinds/cameraframe.h"
-#include "tesoro/kinds/cursor.h"
-#include "tesoro/kinds/jim.h"
 #include "tesoro/core/level.h"
 #include "tesoro/core/namekey.h"
 #include "tesoro/core/scenes.h"
 #include "tesoro/core/scriptblock.h"
 #include "tesoro/core/scriptrunner.h"
-#include "tesoro/world.h"
+#include "tesoro/kinds/cameraframe.h"
+#include "tesoro/kinds/cursor.h"
+#include "tesoro/kinds/jim.h"
 #include "tesoro/tesoro.h"
+#include "tesoro/world.h"
 
 namespace Tesoro {
 
@@ -348,7 +349,7 @@ inline void Scripts::runDo(ScriptRun &run, uint32 ordinal) {
 	// The blocks of type 0 have no routine of their own: their DO lines only describe the scene.
 	SceneAdapter scene(*this, run);
 	if (!SceneRoutines::run(scene, type, ordinal) && type)
-		warning("Tesoro: DO line %u of the scene routine of block type %u is not ported yet", ordinal, type);
+		warning("Tesoro: DO line %u of the scene routine of block type %u has no scene routine", ordinal, type);
 }
 
 inline void Scripts::throneScene(ScriptRun &run, int variant) {

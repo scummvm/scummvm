@@ -19,14 +19,14 @@
  *
  */
 
-#include "tesoro/kinds/character.h"
-#include "tesoro/world.h"
-
 #include "common/textconsole.h"
+
 #include "tesoro/core/animbank.h"
 #include "tesoro/core/camera.h"
-#include "tesoro/core/room.h"
 #include "tesoro/core/display.h"
+#include "tesoro/core/room.h"
+#include "tesoro/kinds/character.h"
+#include "tesoro/world.h"
 
 namespace Tesoro {
 

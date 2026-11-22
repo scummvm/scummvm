@@ -19,11 +19,10 @@
  *
  */
 
-#include "tesoro/kinds/spriteobject.h"
-
 #include "tesoro/core/camera.h"
 #include "tesoro/core/display.h"
 #include "tesoro/core/room.h"
+#include "tesoro/kinds/spriteobject.h"
 
 namespace Tesoro {
 

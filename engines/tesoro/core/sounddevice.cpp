@@ -19,10 +19,10 @@
  *
  */
 
-#include "tesoro/core/sounddevice.h"
-
 #include "common/endian.h"
 #include "common/textconsole.h"
+
+#include "tesoro/core/sounddevice.h"
 
 namespace Tesoro {
 

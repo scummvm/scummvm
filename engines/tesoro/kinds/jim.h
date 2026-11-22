@@ -23,6 +23,7 @@
 #define TESORO_KINDS_JIM_H
 
 #include "common/array.h"
+
 #include "tesoro/core/object.h"
 #include "tesoro/core/speaker.h"
 #include "tesoro/core/speechtable.h"

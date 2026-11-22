@@ -19,11 +19,10 @@
  *
  */
 
-#include "tesoro/core/connectfourmatch.h"
-#include "tesoro/world.h"
-
 #include "tesoro/core/animset.h"
+#include "tesoro/core/connectfourmatch.h"
 #include "tesoro/core/namekey.h"
+#include "tesoro/world.h"
 
 namespace Tesoro {
 

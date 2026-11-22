@@ -20,14 +20,14 @@
  */
 
 
-#include "tesoro/kinds/walkfloor.h"
-
 #include "common/textconsole.h"
+
 #include "tesoro/core/animbank.h"
-#include "tesoro/kinds/cameraframe.h"
 #include "tesoro/core/level.h"
 #include "tesoro/core/namekey.h"
+#include "tesoro/kinds/cameraframe.h"
 #include "tesoro/kinds/pathobject.h"
+#include "tesoro/kinds/walkfloor.h"
 
 namespace Tesoro {
 

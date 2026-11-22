@@ -23,6 +23,7 @@
 #define TESORO_CORE_ARCHIVE_H
 
 #include "common/file.h"
+
 #include "tesoro/core/archiveindex.h"
 
 namespace Tesoro {

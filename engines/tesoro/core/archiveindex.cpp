@@ -19,9 +19,9 @@
  *
  */
 
-#include "tesoro/core/archiveindex.h"
-
 #include "common/endian.h"
+
+#include "tesoro/core/archiveindex.h"
 
 namespace Tesoro {
 

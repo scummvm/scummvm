@@ -23,8 +23,8 @@
 #define TESORO_KINDS_CHARACTER_H
 
 #include "tesoro/core/camera.h"
-#include "tesoro/kinds/interactive.h"
 #include "tesoro/core/speaker.h"
+#include "tesoro/kinds/interactive.h"
 
 namespace Tesoro {
 

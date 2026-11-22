@@ -26,19 +26,19 @@
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/framelimiter.h"
-#include "graphics/paletteman.h"
 #include "graphics/managed_surface.h"
+#include "graphics/paletteman.h"
 
 #include "tesoro/console.h"
-#include "tesoro/metaengine.h"
-#include "tesoro/tesoro.h"
+#include "tesoro/core/level.h"
+#include "tesoro/core/namekey.h"
 #include "tesoro/detection.h"
 #include "tesoro/kinds/cursor.h"
 #include "tesoro/kinds/jim.h"
-#include "tesoro/core/level.h"
 #include "tesoro/kinds/menuitem.h"
-#include "tesoro/core/namekey.h"
 #include "tesoro/kinds/spriteobject.h"
+#include "tesoro/metaengine.h"
+#include "tesoro/tesoro.h"
 
 namespace Tesoro {
 
@@ -93,7 +93,7 @@ Common::Error TesoroEngine::run() {
 	_level = _mainMenu;
 	_level->camera().moveTo(0, 0, 0, gameTime());
 
-	// The interface level holds the pointer (its other kinds are not ported yet and are skipped with warnings).
+	// The interface level holds the pointer.
 	_interface = loadLevel("INTERFACE.LVL");
 	if (_interface) {
 		ObjectList &objects = _interface->objects();
@@ -410,25 +410,6 @@ bool TesoroEngine::level(int index) {
 void TesoroEngine::setHoverText(const char *text) {
 	if (_cursor)
 		_cursor->label().set(text, text ? 0xffff : 0);	// names are shown in white
-}
-
-bool TesoroEngine::putJim(int32 x, int32 y) {
-	if (!_level)
-		return false;
-	// The level may already be in the main list (shown without Jim), and he inserts it himself.
-	_world.removeFromMainList(_level);
-	if (!_world.putJimInLevel(_level, x, y))
-		return false;
-	_cursor->setSurroundings(&_pointer, _level);
-	return true;
-}
-
-bool TesoroEngine::makeHitter(const char *name) {
-	Object *object = _level ? _level->findObject(nameKey64(name)) : nullptr;
-	if (!object)
-		return false;
-	object->setFlags(object->flags() | Object::kCollidable | Object::kHitter);
-	return true;
 }
 
 } // End of namespace Tesoro

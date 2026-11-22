@@ -19,10 +19,9 @@
  *
  */
 
-#include "tesoro/kinds/objectgroup.h"
-
 #include "tesoro/core/level.h"
 #include "tesoro/core/namekey.h"
+#include "tesoro/kinds/objectgroup.h"
 
 namespace Tesoro {
 

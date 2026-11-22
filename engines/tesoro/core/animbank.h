@@ -25,6 +25,7 @@
 #include "common/array.h"
 #include "common/ptr.h"
 #include "common/stream.h"
+
 #include "tesoro/core/animimage.h"
 
 namespace Tesoro {

@@ -23,6 +23,7 @@
 #define TESORO_CORE_ANIMSET_H
 
 #include "common/array.h"
+
 #include "tesoro/core/animbank.h"
 
 namespace Tesoro {

@@ -20,10 +20,9 @@
  */
 
 
-#include "tesoro/kinds/pathobject.h"
-
 #include "tesoro/core/animbank.h"
 #include "tesoro/core/level.h"
+#include "tesoro/kinds/pathobject.h"
 
 namespace Tesoro {
 

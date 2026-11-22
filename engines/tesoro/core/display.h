@@ -77,9 +77,6 @@ public:
 		_layerDepth = _texts.add(text, colour, centreX, y, maxWidth, layerDepth, centred, lineHeight);
 	}
 
-	// Temp: a flat colour behind everything, so every row is covered.
-	void fillBackground(uint16 colour) { _queue.fillBackground(colour); }
-
 	/**
 	 * Fades the last composed frame to black in the given number of steps (the brightness goes down in equal steps,
 	 * reaching black on the last), showing each step on the screen and waiting delayMs between steps. Leaves the black frame in the buffer.

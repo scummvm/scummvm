@@ -19,9 +19,8 @@
  *
  */
 
-#include "tesoro/core/room.h"
-
 #include "tesoro/core/object.h"
+#include "tesoro/core/room.h"
 
 namespace Tesoro {
 

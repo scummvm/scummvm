@@ -19,11 +19,11 @@
  *
  */
 
-#include "tesoro/kinds/slotlabel.h"
-#include "tesoro/world.h"
-
 #include <stdio.h>
 #include <string.h>
+
+#include "tesoro/kinds/slotlabel.h"
+#include "tesoro/world.h"
 
 namespace Tesoro {
 

@@ -19,10 +19,9 @@
  *
  */
 
+#include "tesoro/core/room.h"
 #include "tesoro/kinds/clickcatcher.h"
 #include "tesoro/world.h"
-
-#include "tesoro/core/room.h"
 
 namespace Tesoro {
 

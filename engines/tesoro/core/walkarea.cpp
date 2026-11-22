@@ -19,10 +19,9 @@
  *
  */
 
+#include "tesoro/core/animbank.h"
 #include "tesoro/core/walkarea.h"
 #include "tesoro/kinds/jim.h"
-
-#include "tesoro/core/animbank.h"
 
 namespace Tesoro {
 

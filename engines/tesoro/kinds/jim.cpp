@@ -19,12 +19,11 @@
  *
  */
 
-#include "tesoro/kinds/jim.h"
-
-#include "tesoro/kinds/cameraframe.h"
 #include "tesoro/core/display.h"
 #include "tesoro/core/level.h"
 #include "tesoro/core/namekey.h"
+#include "tesoro/kinds/cameraframe.h"
+#include "tesoro/kinds/jim.h"
 #include "tesoro/world.h"
 
 namespace Tesoro {

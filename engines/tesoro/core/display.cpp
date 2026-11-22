@@ -19,12 +19,12 @@
  *
  */
 
-#include "tesoro/core/display.h"
-
 #include "common/endian.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/util.h"
+
+#include "tesoro/core/display.h"
 
 namespace Tesoro {
 

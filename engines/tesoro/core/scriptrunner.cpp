@@ -19,12 +19,13 @@
  *
  */
 
-#include "tesoro/core/scriptrunner.h"
-#include "tesoro/scripts.h"
 #include "common/textconsole.h"
+
+#include "tesoro/core/display.h"
 #include "tesoro/core/namekey.h"
 #include "tesoro/core/scriptblock.h"
-#include "tesoro/core/display.h"
+#include "tesoro/core/scriptrunner.h"
+#include "tesoro/scripts.h"
 
 namespace Tesoro {
 

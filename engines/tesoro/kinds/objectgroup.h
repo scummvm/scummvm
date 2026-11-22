@@ -23,6 +23,7 @@
 #define TESORO_KINDS_OBJECTGROUP_H
 
 #include "common/array.h"
+
 #include "tesoro/core/object.h"
 
 namespace Tesoro {

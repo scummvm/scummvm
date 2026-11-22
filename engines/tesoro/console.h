@@ -31,21 +31,7 @@ namespace Tesoro {
 
 class Console : public GUI::Debugger {
 private:
-	bool testCmd(int argc, const char **argv);
-	bool fade(int argc, const char **argv);
-	bool level(int argc, const char **argv);
-	bool hover(int argc, const char **argv);
-	bool hitter(int argc, const char **argv);
-	bool touching(int argc, const char **argv);
 	bool outlines(int argc, const char **argv);
-	bool jim(int argc, const char **argv);
-	bool scale(int argc, const char **argv);
-	bool route(int argc, const char **argv);
-	bool start(int argc, const char **argv);
-	bool voice(int argc, const char **argv);
-	bool jimsay(int argc, const char **argv);
-	bool scripts(int argc, const char **argv);
-	bool movie(int argc, const char **argv);
 public:
 	Console();
 	~Console() override;

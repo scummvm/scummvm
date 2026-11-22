@@ -19,10 +19,10 @@
  *
  */
 
+#include "common/textconsole.h"
+
 #include "tesoro/kinds/mapplace.h"
 #include "tesoro/world.h"
-
-#include "common/textconsole.h"
 
 namespace Tesoro {
 

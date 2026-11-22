@@ -19,12 +19,12 @@
  *
  */
 
-#include "tesoro/kinds/inventoryitem.h"
-#include "tesoro/world.h"
-
 #include "common/textconsole.h"
+
 #include "tesoro/core/animbank.h"
 #include "tesoro/core/namekey.h"
+#include "tesoro/kinds/inventoryitem.h"
+#include "tesoro/world.h"
 
 namespace Tesoro {
 

@@ -19,13 +19,12 @@
  *
  */
 
-#include "common/translation.h"
-
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
+#include "common/translation.h"
 
-#include "tesoro/metaengine.h"
 #include "tesoro/detection.h"
+#include "tesoro/metaengine.h"
 #include "tesoro/tesoro.h"
 
 namespace Tesoro {

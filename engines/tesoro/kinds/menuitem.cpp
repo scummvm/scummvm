@@ -19,13 +19,12 @@
  *
  */
 
-#include "tesoro/kinds/menuitem.h"
-#include "tesoro/tesoro.h"
-
 #include "common/textconsole.h"
 
 #include "tesoro/core/camera.h"
 #include "tesoro/core/display.h"
+#include "tesoro/kinds/menuitem.h"
+#include "tesoro/tesoro.h"
 
 namespace Tesoro {
 

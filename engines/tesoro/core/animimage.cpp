@@ -19,10 +19,10 @@
  *
  */
 
-#include "tesoro/core/animimage.h"
-
 #include "common/endian.h"
 #include "common/textconsole.h"
+
+#include "tesoro/core/animimage.h"
 
 namespace Tesoro {
 

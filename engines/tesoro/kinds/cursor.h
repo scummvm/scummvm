@@ -23,8 +23,8 @@
 #define TESORO_KINDS_CURSOR_H
 
 #include "tesoro/core/hovertext.h"
-#include "tesoro/kinds/actionstrip.h"
 #include "tesoro/core/pointerstate.h"
+#include "tesoro/kinds/actionstrip.h"
 #include "tesoro/kinds/spriteobject.h"
 
 namespace Tesoro {
