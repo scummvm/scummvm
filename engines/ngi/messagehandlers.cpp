@@ -398,7 +398,7 @@ int global_messageHandler3(Command *cmd) {
 		case 29:
 			if (g_nmi->_gameLoader->_interactionController->_enabled && g_nmi->_currentScene) {
 				ani = g_nmi->_currentScene->findAniObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-				ani2 = g_nmi->_currentScene->findAniObjectById(g_nmi->_gameLoader->_field_FA, -1);
+				ani2 = g_nmi->_currentScene->findAniObjectById(g_nmi->_gameLoader->_heroId, -1);
 
 				if (ani) {
 					if (g_nmi->_msgObjectId2 == ani->_id && g_nmi->_msgId == ani->_copyId) {
@@ -427,12 +427,12 @@ int global_messageHandler3(Command *cmd) {
 			}
 			if (getSc2MctlCompoundBySceneId(g_nmi->_currentScene->_sceneId)->_isEnabled && cmd->_param <= 0) {
 				if (g_nmi->_msgX != cmd->_sceneClickX || g_nmi->_msgY != cmd->_sceneClickY) {
-					ani = g_nmi->_currentScene->findAniObjectById(g_nmi->_gameLoader->_field_FA, -1);
+					ani = g_nmi->_currentScene->findAniObjectById(g_nmi->_gameLoader->_heroId, -1);
 					if (!ani || (ani->isIdle() && !(ani->_flags & 0x80) && !(ani->_flags & 0x100))) {
 						debugC(0, kDebugPathfinding, "WWW 1");
-						result = startWalkTo(g_nmi->_gameLoader->_field_FA, -1, cmd->_sceneClickX, cmd->_sceneClickY, 0);
+						result = startWalkTo(g_nmi->_gameLoader->_heroId, -1, cmd->_sceneClickX, cmd->_sceneClickY, 0);
 						if (result) {
-							Command *ex = new Command(g_nmi->_gameLoader->_field_FA, 17, 64, 0, 0, 0, 1, 0, 0, 0);
+							Command *ex = new Command(g_nmi->_gameLoader->_heroId, 17, 64, 0, 0, 0, 1, 0, 0, 0);
 
 							ex->_param = 1;
 							ex->_excFlags |= 3;
@@ -478,7 +478,7 @@ int global_messageHandler3(Command *cmd) {
 				getGameLoaderInventory()->recalcItemPos();
 				return 1;
 			}
-			ani = g_nmi->_currentScene->findAniObjectById(g_nmi->_gameLoader->_field_FA, -1);
+			ani = g_nmi->_currentScene->findAniObjectById(g_nmi->_gameLoader->_heroId, -1);
 			if (ani) {
 				getGameLoaderInventory()->removeItem2(g_nmi->_currentScene, cmd->_parentId, ani->_x + cmd->_x, ani->_y + cmd->_y, ani->_z + cmd->_z);
 				getGameLoaderInventory()->recalcItemPos();
@@ -754,7 +754,7 @@ int MovGraph::messageHandler(Command *cmd) {
 	if (cmd->_messageNum != 33)
 		return 0;
 
-	AniObject *ani = g_nmi->_currentScene->findAniObjectById(g_nmi->_gameLoader->_field_FA, -1);
+	AniObject *ani = g_nmi->_currentScene->findAniObjectById(g_nmi->_gameLoader->_heroId, -1);
 
 	if (!getSc2MctlCompoundBySceneId(g_nmi->_currentScene->_sceneId))
 		return 0;

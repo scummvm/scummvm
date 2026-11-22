@@ -120,7 +120,7 @@ class GameLoader : public CObject {
 	bool (*_preloadCallback)(PreloadItem &pre, int flag);
 	void (*_savegameCallback)(MfcArchive *archive, bool mode);
 	int16 _field_F8;
-	int16 _field_FA;
+	int16 _heroId;
 	PreloadItems _preloadItems;
 	GameVar *_gameVar;
 	Common::String _gameName;

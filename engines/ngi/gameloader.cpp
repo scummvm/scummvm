@@ -77,7 +77,7 @@ GameLoader::GameLoader() {
 	insertMessageHandler(global_messageHandler3, 0, 128);
 	insertMessageHandler(global_messageHandler4, 0, 1);
 
-	_field_FA = 0;
+	_heroId = 0;
 	_field_F8 = 0;
 	_sceneSwitcher = nullptr;
 	_preloadCallback = nullptr;
@@ -140,10 +140,10 @@ bool GameLoader::load(MfcArchive &file) {
 
 	_preloadItems.load(file);
 
-	_field_FA = file.readUint16LE();
+	_heroId = file.readUint16LE();
 	_field_F8 = file.readUint16LE();
 
-	debugC(1, kDebugLoading, "_field_FA: %d\n_field_F8: %d", _field_FA, _field_F8);
+	debugC(1, kDebugLoading, "_heroId: %d\n_field_F8: %d", _heroId, _field_F8);
 
 	_gameVar = file.readClass<GameVar>();
 
@@ -220,7 +220,7 @@ bool GameLoader::setScene(int sceneId, int entranceId) {
 	if (mq1) {
 		MessageQueue *mq = new MessageQueue(mq1, 0, 0);
 
-		AniObject *stobj = g_nmi->_currentScene->findAniObjectById(_field_FA, -1);
+		AniObject *stobj = g_nmi->_currentScene->findAniObjectById(_heroId, -1);
 		if (stobj) {
 			stobj->_flags &= 0x100;
 
@@ -241,7 +241,7 @@ bool GameLoader::setScene(int sceneId, int entranceId) {
 			return false;
 		}
 	} else {
-		AniObject *stobj = g_nmi->_currentScene->findAniObjectById(_field_FA, -1);
+		AniObject *stobj = g_nmi->_currentScene->findAniObjectById(_heroId, -1);
 		if (stobj)
 			stobj->_flags &= 0xfeff;
 	}
