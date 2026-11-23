@@ -41,6 +41,7 @@
 #include "image/codecs/rpza.h"
 #include "image/codecs/smc.h"
 #include "image/codecs/svq1.h"
+#include "image/codecs/tm2a.h"
 #include "image/codecs/truemotion1.h"
 #include "image/codecs/xan.h"
 #ifdef USE_VC1
@@ -156,6 +157,13 @@ Codec *createBitmapCodec(uint32 tag, uint32 streamTag, int width, int height, in
 		return new TrueMotion1Decoder();
 #else
 		missingCodec = "TrueMotion1";
+		break;
+#endif
+	case MKTAG('T', 'M', '2', 'A'):
+#ifdef USE_TM2A
+		return new TM2ADecoder(width, height);
+#else
+		missingCodec = "TrueMotion 2A";
 		break;
 #endif
 	case MKTAG('m','p','g','2'):

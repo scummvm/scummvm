@@ -83,6 +83,11 @@ MODULE_OBJS += \
 	codecs/svq1.o
 endif
 
+ifdef USE_TM2A
+MODULE_OBJS += \
+	codecs/tm2a.o
+endif
+
 ifdef USE_TRUEMOTION1
 MODULE_OBJS += \
 	codecs/truemotion1.o
