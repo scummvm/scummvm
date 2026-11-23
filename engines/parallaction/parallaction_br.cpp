@@ -419,11 +419,6 @@ void Parallaction_br::parseLocation(const char *filename) {
 		}
 	}
 
-	// load the character (must be done before animations are processed)
-	if (!out._characterName.empty()) {
-		changeCharacter(out._characterName.c_str());
-	}
-
 	// process animations
 	AnimationList::iterator ait = _location._animations.begin();
 	for ( ; ait != _location._animations.end(); ++ait) {

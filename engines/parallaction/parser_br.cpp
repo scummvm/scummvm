@@ -437,7 +437,11 @@ DECLARE_LOCATION_PARSER(redundant)  {
 
 DECLARE_LOCATION_PARSER(character)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(character) ");
-	_out->_characterName = _tokens[1];
+
+	// only for 1st visit, before IFCHAR is parsed
+	if ((_vm->getLocationFlags() & kFlagsVisited) == 0) {
+		_vm->changeCharacter(_tokens[1]);
+	}
 }
 
 
