@@ -1181,20 +1181,17 @@ Sector *Set::getSectorByName(const Common::String &name) {
 	return nullptr;
 }
 
-Sector *Set::getSectorBySubstring(const Common::String &str) {
-	for (int i = 0; i < _numSectors; i++) {
-		Sector *sector = _sectors[i];
-		if (strstr(sector->getName().c_str(), str.c_str())) {
+Sector *Set::findNamedSector(const Common::String &name, const Math::Vector3d &pos) {
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		Sector *sector = getSectorByName(name);
+		if (sector && sector->isVisible() && sector->isPointInSector(pos))
 			return sector;
-		}
+		return nullptr;
 	}
-	return nullptr;
-}
 
-Sector *Set::getSectorBySubstring(const Common::String &str, const Math::Vector3d &pos) {
 	for (int i = 0; i < _numSectors; i++) {
 		Sector *sector = _sectors[i];
-		if (strstr(sector->getName().c_str(), str.c_str()) && sector->isPointInSector(pos)) {
+		if (sector->isVisible() && strstr(sector->getName().c_str(), name.c_str()) && sector->isPointInSector(pos)) {
 			return sector;
 		}
 	}

@@ -100,16 +100,7 @@ void Lua_V1::IsActorInSector() {
 	Actor *actor = getactor(actorObj);
 	const char *name = lua_getstring(nameObj);
 
-	Sector *sector;
-	if (g_grim->getGameType() == GType_GRIM) {
-		sector = g_grim->getCurrSet()->getSectorBySubstring(name, actor->getPos());
-	} else {
-		sector = g_grim->getCurrSet()->getSectorByName(name);
-		if (!(sector && sector->isPointInSector(actor->getPos()))) {
-			sector = nullptr;
-		}
-	}
-
+	Sector *sector = g_grim->getCurrSet()->findNamedSector(name, actor->getPos());
 	if (sector) {
 		lua_pushnumber(sector->getSectorId());
 		lua_pushstring(sector->getName().c_str());
@@ -125,6 +116,11 @@ void Lua_V1::IsPointInSector() {
 	lua_Object zObj = lua_getparam(3);
 	lua_Object nameObj = lua_getparam(4);
 
+	if (!lua_isnumber(xObj) || !lua_isnumber(yObj) || !lua_isnumber(zObj)) {
+		lua_pushnil();
+		return;
+	}
+
 	if (!lua_isstring(nameObj)) {
 		lua_pushnil();
 		return;
@@ -136,7 +132,7 @@ void Lua_V1::IsPointInSector() {
 	float z = lua_getnumber(zObj);
 	Math::Vector3d pos(x, y, z);
 
-	Sector *sector = g_grim->getCurrSet()->getSectorBySubstring(name, pos);
+	Sector *sector = g_grim->getCurrSet()->findNamedSector(name, pos);
 	if (sector) {
 		lua_pushnumber(sector->getSectorId());
 		lua_pushstring(sector->getName().c_str());
@@ -161,7 +157,7 @@ void Lua_V1::GetSectorOppositeEdge() {
 	Actor *actor = getactor(actorObj);
 	const char *name = lua_getstring(nameObj);
 
-	Sector *sector = g_grim->getCurrSet()->getSectorBySubstring(name);
+	Sector *sector = g_grim->getCurrSet()->getSectorByName(name);
 	if (sector) {
 		if (sector->getNumVertices() != 4)
 			warning("GetSectorOppositeEdge(): cheat box with %d (!= 4) edges!", sector->getNumVertices());
