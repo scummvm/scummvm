@@ -152,6 +152,12 @@ void TesoroEngine::handleEvent(const Common::Event &e) {
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		if (e.customType == kActionFastMode)
 			_clock.setSpeed(_clock.speed() == 1 ? kFastModeSpeed : 1);
+		else if (e.customType == kActionMenuKey)
+			_escape |= PointerState::kPressed;
+		break;
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+		if (e.customType == kActionMenuKey)
+			_escape |= PointerState::kReleased;
 		break;
 	case Common::EVENT_MOUSEMOVE:
 		// The original's mouse counts from the middle of the window.
@@ -169,14 +175,6 @@ void TesoroEngine::handleEvent(const Common::Event &e) {
 	case Common::EVENT_MBUTTONDOWN:
 	case Common::EVENT_MBUTTONUP:
 		_buttonsDown[2] = e.type == Common::EVENT_MBUTTONDOWN;
-		break;
-	case Common::EVENT_KEYDOWN:
-		if (e.kbd.keycode == Common::KEYCODE_ESCAPE && !e.kbdRepeat)
-			_escape |= PointerState::kPressed;
-		break;
-	case Common::EVENT_KEYUP:
-		if (e.kbd.keycode == Common::KEYCODE_ESCAPE)
-			_escape |= PointerState::kReleased;
 		break;
 	default:
 		break;

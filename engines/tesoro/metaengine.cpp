@@ -21,6 +21,7 @@
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
 #include "common/translation.h"
 
 #include "tesoro/detection.h"
@@ -44,9 +45,27 @@ bool TesoroMetaEngine::hasFeature(MetaEngineFeature f) const {
 Common::KeymapArray TesoroMetaEngine::initKeymaps(const char *target) const {
 	Common::Keymap *keymap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "tesoro-default", _("Default keymappings"));
 
-	Common::Action *act = new Common::Action("FAST_MODE", _("Fast mode"));
+	Common::Action *act = new Common::Action(Common::kStandardActionLeftClick, _("Left click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	keymap->addAction(act);
+
+	act = new Common::Action(Common::kStandardActionRightClick, _("Right click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	keymap->addAction(act);
+
+	act = new Common::Action("FAST_MODE", _("Fast mode"));
 	act->setCustomEngineActionEvent(Tesoro::kActionFastMode);
 	act->addDefaultInputMapping("C+f");
+	keymap->addAction(act);
+
+	act = new Common::Action("MENU_KEY", _("Menu / skip movie"));
+	act->setCustomEngineActionEvent(Tesoro::kActionMenuKey);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_START");
 	keymap->addAction(act);
 
 	return Common::Keymap::arrayOf(keymap);

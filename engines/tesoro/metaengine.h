@@ -25,7 +25,7 @@
 #include "engines/advancedDetector.h"
 
 namespace Tesoro {
-enum TesoroAction { kActionNone, kActionFastMode };
+enum TesoroAction { kActionNone, kActionFastMode, kActionMenuKey };
 }
 
 class TesoroMetaEngine : public AdvancedMetaEngine<ADGameDescription> {

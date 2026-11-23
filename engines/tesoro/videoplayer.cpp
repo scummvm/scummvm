@@ -26,6 +26,7 @@
 #include "graphics/surface.h"
 #include "video/avi_decoder.h"
 
+#include "tesoro/metaengine.h"
 #include "tesoro/tesoro.h"
 #include "tesoro/videoplayer.h"
 
@@ -48,13 +49,13 @@ void VideoPlayer::playVideo(int number) {
 	}
 	decoder.start();
 
-	// It plays until it ends or the skip key (Escape) is let go.
+	// It plays until it ends or the menu key (Escape by default) is let go.
 	bool skipped = false;
 	while (!skipped && !decoder.endOfVideo() && !_engine.shouldQuit()) {
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			_engine.handleEvent(event);
-			if (event.type == Common::EVENT_KEYUP && event.kbd.keycode == Common::KEYCODE_ESCAPE)
+			if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END && event.customType == kActionMenuKey)
 				skipped = true;
 		}
 		if (decoder.needsUpdate()) {
