@@ -1142,6 +1142,7 @@ public:
 	void clearFonts();
 	void getFontColors(int16 fontIndex, int16 &outlineColor, int16 &inkColor);
 	void setFontColors(int16 fontIndex, int16 outlineColor, int16 inkColor);
+	void setFontInterletter(int16 fontIndex, int16 interletter);
 	void setActiveFont(int16 fontIndex);
 	// These work with the active font
 	void drawText(int16 x, int16 y, const Common::String &text);

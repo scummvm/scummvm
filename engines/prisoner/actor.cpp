@@ -67,7 +67,7 @@ int16 PrisonerEngine::addActor(Common::String &pakName, int16 pakSlot, int16 fra
 	actor->y2 = actor->actorSprite->y - 40;
 
 	actor->textFontNumber = _textFont;
-	getFontColors(_textFont, actor->fontInkColor, actor->fontOutlineColor);
+	getFontColors(_textFont, actor->fontOutlineColor, actor->fontInkColor);
 
 	return actorIndex;
 }

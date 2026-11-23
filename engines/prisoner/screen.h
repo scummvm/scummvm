@@ -290,6 +290,7 @@ public:
 	void copyRectFrom(Graphics::Surface *source, int sourceX, int sourceY, int destX, int destY, int width, int height);
 
 	void setFontColorTable(byte index, byte color);
+	void setFontInterletter(int16 interletter) { _interletter = interletter; }
 	void initPaletteTransTable(byte colorIncr);
 	void buildPaletteTransTable(const byte *sourcePalette, byte color);
 	void drawTransparentRect(int16 x1, int16 y1, int16 x2, int16 y2);
@@ -302,6 +303,8 @@ public:
 
 	int _clipX1, _clipY1, _clipX2, _clipY2;
 	byte _fontColorTable[256];
+	// Extra space added after each character of the active font
+	int16 _interletter;
 
 	/* Palette transparency */
 	byte _pttTable1[256], _pttTable2[256];

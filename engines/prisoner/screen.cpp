@@ -36,6 +36,7 @@ Screen::Screen(PrisonerEngine *vm) : _vm(vm) {
 
 	for (int16 i = 0; i < 256; i++)
 		_fontColorTable[i] = i;
+	_interletter = 1;
 
 	/* Palette transparency */
 	_pttColorIncr = 0;
@@ -153,9 +154,12 @@ int16 Screen::getTextWidth(FontResource *fontResource, const Common::String &tex
 	for (uint i = 0; i < text.size(); i++) {
 		byte ch = text[i];
 		if (fontResource->isValidChar(ch)) {
-			width += fontResource->getFontChar(ch)->interletter; // TODO: + _interletter;
+			width += fontResource->getFontChar(ch)->interletter + _interletter;
 		}
 	}
+	// The space after the last character is not counted
+	if (width != 0)
+		width -= _interletter;
 	return width;
 }
 
@@ -214,7 +218,7 @@ void Screen::drawText(FontResource *fontResource, const Common::String &text, in
 			const FontChar *fontChar = fontResource->getFontChar(ch);
 			const byte *fontCharData = fontResource->getFontCharData(ch);
 			drawChar(fontChar, fontCharData, x, y);
-			x += fontChar->interletter; // TODO: + _interletter;
+			x += fontChar->interletter + _interletter;
 		}
 	}
 }

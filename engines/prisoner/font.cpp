@@ -73,9 +73,16 @@ void PrisonerEngine::setFontColors(int16 fontIndex, int16 outlineColor, int16 in
 	font->inkColor = inkColor;
 }
 
+void PrisonerEngine::setFontInterletter(int16 fontIndex, int16 interletter) {
+	_fonts[fontIndex].interletter = interletter;
+	if (fontIndex == _activeFontIndex)
+		_screen->setFontInterletter(interletter);
+}
+
 void PrisonerEngine::setActiveFont(int16 fontIndex) {
 	Font *font = &_fonts[fontIndex];
 	_activeFontIndex = fontIndex;
+	_screen->setFontInterletter(font->interletter);
 	_screen->setFontColorTable(font->outlineColorIdx, font->outlineColor);
 	_screen->setFontColorTable(font->inkColorIdx, font->inkColor);
 }

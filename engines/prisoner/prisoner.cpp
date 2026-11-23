@@ -149,10 +149,20 @@ Common::Error PrisonerEngine::run() {
 
 	initializeMidi();
 
-	// TODO: Later read font def from config data
+	// Font definitions read from ICE640.EXE in loadMessageResources.
+	// DEBUG_FONT doesn't seem to be used.
+	//
+	// #param are pakname pakslot interletter outline_idx ink_idx outline_color ink_color
+	// MENU_FONT= S_FONT.PUK 0 1 2 2 255 255
+	// TEXT_FONT= S_FONT.PUK 1 0 96 255 134 140
+	// DEBUG_FONT= S_FONT.PUK 2 1 254 254 156 156
 	Common::String pakName = "S_FONT";
 	_menuFont = addFont(pakName, 0, 2, 2);
+	setFontInterletter(_menuFont, 1);
+	setFontColors(_menuFont, 255, 255);
 	_textFont = addFont(pakName, 1, 96, 255);
+	setFontInterletter(_textFont, 0);
+	setFontColors(_textFont, 134, 140);
 
 	setDefaultTextDisplayColors();
 
