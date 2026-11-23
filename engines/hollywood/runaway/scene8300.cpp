@@ -59,8 +59,7 @@ const RunawayResponse kResponses[] = {
 
 const RunawayItemAction kItemActions[] = {
 	{8300, 8, 10, 334, false}, {8300, 12, 10, 334, false},
-	{8300, 13, 10, 334, false}, {8300, 21, 10, 334, false},
-	{8300, 10, 11, 338, false}
+	{8300, 13, 10, 334, false}, {8300, 21, 10, 334, false}
 };
 
 // The three sculpture variants share this sequence, including speech at step 90.
@@ -261,8 +260,6 @@ RunawayRoomScene::ActionResult Scene8300::dispatchCustomSceneAction(uint16 actio
 	case 324: // Greet Saturn before he turns away from his work.
 		say(_finale.saturnMet ? 80 : 81);
 		deferAction(400);
-		break;
-	case 338: // The earlier wrench interaction is inactive in this chapter.
 		break;
 	case 400: // Let Saturn finish his current gesture and face Brian.
 		_waitingForSaturn = true;

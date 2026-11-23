@@ -262,6 +262,9 @@ Common::U32String RunawayInventory::name(byte item) const {
 
 uint RunawayInventory::icon(byte item) const {
 	if (_chapter == 6) {
+		if (item == 7 && contains(20)) {
+			return 24;
+		}
 		if (item == 19 && _finale.scalpel == 1) {
 			return 22;
 		}

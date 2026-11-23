@@ -47,15 +47,12 @@ const RunawayResponse kResponses[] = {
 	{8240, 309, 7, 3},  // Examine the gardening shed.
 	{8240, 312, 10, 0}, // The door knob is carved into the column.
 	{8240, 315, 13, 0}, // Examine the bonsai.
-	{8240, 316, 14, 0}, // Leave the bonsai where it belongs.
-	{8240, 317, 15, 0}  // Refuse to water the plants with an inventory item.
+	{8240, 316, 14, 0}  // Leave the bonsai where it belongs.
 };
 
 const RunawayItemAction kItemActions[] = {
 	{8240, 9, 3, 318, false},  // Offer Rutger the Hopi axe-pipe.
-	{8240, 10, 3, 319, false}, // Give Rutger the yawaskel seeds.
-	{8240, 16, 7, 317, false}, {8240, 16, 8, 317, false},
-	{8240, 24, 7, 317, false}, {8240, 24, 8, 317, false}
+	{8240, 10, 3, 319, false}  // Give Rutger the yawaskel seeds.
 };
 
 const byte kRutgerFrames[] = {

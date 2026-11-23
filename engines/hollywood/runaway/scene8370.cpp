@@ -310,7 +310,9 @@ RunawayRoomScene::ActionResult Scene8370::dispatchCustomSceneAction(uint16 actio
 		if (!_inventory.finale().heatNeeded) {
 			say(19, 0);
 		} else if (_inventory.finale().podsOpened) {
-			say(19, _finale.mediumTests >= 3 ? 6 : 5);
+			say(19, 6);
+		} else if (_inventory.finale().scalpel == 1) {
+			say(19, 5);
 		} else {
 			say(19, 1);
 			beginRoomAnimation(416, 7, 38);
