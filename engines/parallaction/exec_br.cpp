@@ -270,6 +270,23 @@ DECLARE_COMMAND_OPCODE(scroll) {
 }
 
 
+// SWAP exchanges two animations, and so do the references of the scripts,
+// but those to the animation of the script itself
+static void swapField(ScriptVar &var, Animation *a, Animation *b, Animation *self) {
+	if (!(var._flags & kParaField)) {
+		return;
+	}
+	Animation *instance = var._field->getInstance();
+	if (instance == self) {
+		return;
+	}
+	if (instance == a) {
+		var._field->setInstance(b);
+	} else if (instance == b) {
+		var._field->setInstance(a);
+	}
+}
+
 DECLARE_COMMAND_OPCODE(swap) {
 	/*
 		TODO:
@@ -286,6 +303,24 @@ DECLARE_COMMAND_OPCODE(swap) {
 	_vm->_char._ani = newCharacterAnimation;
 	_vm->_char._talk = _vm->_disk->loadTalk(newCharacterName);
 	Common::strlcpy(_vm->_char._ani->_name, "yourself", ZONENAME_LENGTH);
+
+	Animation *oldAnim = oldCharaterAnimation.get(), *newAnim = newCharacterAnimation.get();
+	ProgramList &programs = _vm->_location._programs;
+	for (ProgramList::iterator p = programs.begin(); p != programs.end(); ++p) {
+		Animation *self = (*p)->_anim.get();
+		InstructionList &instructions = (*p)->_instructions;
+		for (InstructionList::iterator it = instructions.begin(); it != instructions.end(); ++it) {
+			InstructionPtr inst = *it;
+			if (inst->_z.get() == oldAnim && oldAnim != self) {
+				inst->_z = newCharacterAnimation;
+			} else if (inst->_z.get() == newAnim && newAnim != self) {
+				inst->_z = oldCharaterAnimation;
+			}
+			swapField(inst->_opA, oldAnim, newAnim, self);
+			swapField(inst->_opB, oldAnim, newAnim, self);
+			swapField(inst->_opC, oldAnim, newAnim, self);
+		}
+	}
 
 	// the character being left follows the new one
 	if (_vm->hasFollower()) {
