@@ -88,7 +88,7 @@ clean: androidclean
 
 # SUBPATH_BUILDS is set in fatbundle.mk
 androidclean:
-	$(RM) -rf $(PATH_BUILD) $(SUBPATH_BUILDS) *.apk *.aab
+	$(RM) -rf $(PATH_BUILD) $(SUBPATH_BUILDS) *.apk *.aab libloader.so
 
 all: $(APK_MAIN)
 
