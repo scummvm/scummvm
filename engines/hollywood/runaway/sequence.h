@@ -55,7 +55,7 @@ public:
 		kDelay,       // Milliseconds.
 		kEnd
 	};
-	enum Playback { kOnce, kLoopDuringSpeech, kIdleDuringSpeech, kUntilSpeechEnds };
+	enum Playback { kOnce, kLoopDuringSpeech, kIdleDuringSpeech, kUntilSpeechEnds, kPortraitDuringSpeech };
 	struct Command {
 		constexpr Command(Operation op, uint16 first = 0, uint16 second = 0, byte third = 0, byte fourth = 0, byte color = 11) :
 			operation(op), a(first), b(second), c(third), d(fourth), speechColor(color) {}
@@ -63,8 +63,10 @@ public:
 		uint16 a, b;
 		byte c, d;
 		byte speechColor;
+		const char *file = nullptr; // Optional filename for kOpen or kImage.
 	};
-	explicit RunawaySequence(RunawayAudio &audio) : _audio(audio), _random("runawaySequence"), _speech(audio, _random) {}
+	explicit RunawaySequence(RunawayAudio &audio, RunawaySpeech::LipSync lipSync = RunawaySpeech::kRecordedLipSync) :
+		_audio(audio), _random("runawaySequence"), _speech(audio, _random, lipSync) {}
 	void start(const Command *commands, const SceneTextStore &text, uint32 now, char chapter = 'B', bool keepEffects = false);
 	void setBackground(const Graphics::ManagedSurface &background, const Common::Rect &destination);
 	void update(uint32 now);

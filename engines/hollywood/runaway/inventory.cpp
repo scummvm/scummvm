@@ -371,7 +371,7 @@ uint RunawayInventory::cursor(byte item) const {
 	if (_chapter == 1 && item == 13 && _water == 1)
 		return 85;
 	if (_chapter == 2) {
-		return item && item <= kMuseumItemCount ? (_museumDemo ? 11 + item * 2 : 39 + icon(item) * 2) : 0;
+		return item && item <= kMuseumItemCount ? (_museumDemo ? 11 : 39) + icon(item) * 2 : 0;
 	}
 	if (_chapter == 1)
 		return item && item <= 19 ? (item == 16 ? 81 : 39 + item * 2 - (item > 16 ? 2 : 0)) : 0;
@@ -578,7 +578,7 @@ RunawayInventory::Reply RunawayInventory::nextReply(const Reply &reply) const {
 }
 
 Common::U32String RunawayInventory::combinationCaption(byte item, byte target) const {
-	if (!_fullGame || !item || !target || item == target) {
+	if ((!_fullGame && !_museumDemo) || !item || !target || item == target) {
 		return Common::U32String();
 	}
 	return RunawayStrings::formatActionCaption(_strings.combinationCaption(_chapter, item, target), name(item), name(target));
@@ -657,16 +657,16 @@ RunawayInventory::Reply RunawayInventory::combineHospitalItems(byte first, byte 
 
 RunawayInventory::Reply RunawayInventory::combineMuseumItems(byte first, byte second) {
 	// Varnish, talcum powder and coffee have replies only when selected.
-	if (first == 9 || (!_fullGame && second == 9)) {
+	if (first == 9) {
 		return Reply(118);
 	}
-	if (first == 10 || (!_fullGame && second == 10)) {
+	if (first == 10) {
 		return Reply(119);
 	}
-	if (first == 15 || (!_fullGame && second == 15)) {
+	if (first == 15) {
 		return Reply(122);
 	}
-	if ((first == 12 && second == 11) || (!_fullGame && first == 11 && second == 12)) {
+	if (first == 12 && second == 11) {
 		return Reply(120);
 	}
 	if (first > second) {
@@ -693,9 +693,6 @@ RunawayInventory::Reply RunawayInventory::combineMuseumItems(byte first, byte se
 			return Reply(117, 2);
 		}
 		_museum.rubyRemoved = 1;
-		if (!_fullGame) {
-			add(12);
-		}
 		return Reply(117);
 	}
 	if (first == 14 && second == 19) {
@@ -706,7 +703,7 @@ RunawayInventory::Reply RunawayInventory::combineMuseumItems(byte first, byte se
 		_museum.packageFilled = 1;
 		return Reply(121, 1);
 	}
-	return _fullGame ? Reply::fromAction(1) : Reply();
+	return _fullGame ? Reply::fromAction(1) : Reply(0);
 }
 
 RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {

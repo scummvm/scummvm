@@ -30,7 +30,7 @@ void RunawaySpeech::start(const Common::U32String &text, uint16 sample, bool glo
 	const uint32 duration = sample ? _audio.playSpeech(sample, global) : 0;
 	_deadline = now + (duration ? MAX<uint>(minimumDuration, duration + 150) : MAX<uint>(3000, _subtitle.size() * 55));
 	if (_mode != kNoLipSync)
-		_lipSync.start(_subtitle, now, duration, _random, _mode == kRecordedLipSync ? sample : 0);
+		_lipSync.start(_subtitle, now, duration, _random, _mode == kRecordedLipSync ? sample : 0, _mode == kRandomLipSync);
 }
 
 void RunawaySpeech::stop() {

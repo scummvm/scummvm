@@ -102,6 +102,13 @@ void RunawayAudio::playIntroMusic(uint16 cue) {
 }
 
 uint32 RunawayAudio::playMusic(uint16 cue, bool loop) {
+	if (_museum) {
+		// The demo loops one track throughout the museum, including its films.
+		cue = 11;
+		loop = true;
+		if (_musicCue == cue && musicPlaying())
+			return 0;
+	}
 	_musicCue = cue;
 	_musicLooping = loop;
 	_nextMusic = 0;
@@ -161,8 +168,7 @@ void RunawayAudio::playMusicEffect(uint16 cue, byte volume, byte channel, bool l
 
 uint32 RunawayAudio::playSpeech(uint16 sample, bool global) {
 	if (_museum)
-		return sample ? play("RESOURCE.004", sample, 4000, false, Audio::FLAG_UNSIGNED,
-			Audio::Mixer::kSpeechSoundType, _speech, Audio::Mixer::kMaxChannelVolume, false, 22050) : 0;
+		return 0; // The museum demo has subtitles only; RESOURCE.004 is not speech.
 	// DATAACA archives have independent 6000-entry offset and length tables. Their global
 	// sample IDs include stale offsets for other chapters, so never derive a
 	// length by subtracting adjacent offsets as with the M/S archives.
@@ -191,6 +197,15 @@ void RunawayAudio::playEffectAt(uint16 cue, Common::Point position, byte volume,
 
 void RunawayAudio::playEffect(uint16 cue, byte volume, byte channel, bool loop, const Common::Point *position) {
 	assert(channel < ARRAYSIZE(_effects));
+	if (_museum) {
+		// Translate the shared museum scripts' retail cues to the demo archive.
+		if (cue == 58 || cue == 59)
+			cue -= 55;
+		else if (cue >= 18 && cue <= 27)
+			cue -= 7;
+		else if (cue != 1) // The inventory pickup effect has the same number.
+			return;
+	}
 	// Museum effects use unsigned 8-bit PCM (native 0x43ae40).
 	byte flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
 	if (_museum)
@@ -249,6 +264,13 @@ void RunawayAudio::playMenuMusic() {
 	// Options volume preview and credits use shared music cue 1, channel 7.
 	play("RESOURCE.002", 1, 100, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO,
 		Audio::Mixer::kMusicSoundType, _music, 255, true, 16000);
+}
+
+void RunawayAudio::playDemoSlideshowMusic() {
+	assert(_museum);
+	stopMusic();
+	play("RESOURCE.M04", 12, 100, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO,
+		Audio::Mixer::kMusicSoundType, _music, 255, true, 22050);
 }
 
 void RunawayAudio::stopSpeech() {

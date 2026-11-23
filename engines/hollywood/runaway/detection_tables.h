@@ -84,7 +84,7 @@
 		ADGF_UNSTABLE,
 		GUIO2(GUIO_NOMIDI, GAMEOPTION_RESTORED_CONTENT)
 	},
-	// English museum demo (2000). Gameplay POC; movies are not supported.
+	// English museum demo (2000), with TM2A movies and text-only dialogue.
 	{
 		"runaway",
 		"Museum demo",

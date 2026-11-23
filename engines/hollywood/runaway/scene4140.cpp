@@ -53,19 +53,22 @@ void Scene4140::click(Common::Point mouse, RunawayVerb verb, byte item) {
 	if (!id) { // Leave the keypad close-up.
 		leaveMuseumRoom(4063, Common::Point(1153, 297), 7);
 	} else if (id == 10) { // Clear the entered digits.
-		_audio.playEffect(museumChapter() ? 30 : 10);
+		_audio.playEffect(30);
 		_keyCount = 0;
 		_museum.keypadDigits = 0;
 	} else if (id == 12) { // Confirm the security code.
 		if (_keyCount == 4 && _museum.keypad >= 3 && _museum.keypadDigits == 8137) {
 			_keyResult = 2;
 			_audio.playEffect(31);
-			say(3, 3);
+			if (_museum.keypad == 3) {
+				say(3, 3);
+			}
 			deferMuseumAction(414);
 		} else {
 			_keyResult = 1;
-			if (museumChapter()) {
-				_audio.playEffect(28);
+			_audio.playEffect(28);
+			if (_museum.keypad >= 3) {
+				say(3, _museum.keypad == 4 ? 4 : 2);
 			}
 		}
 		_keyUntil = _now + 500;
@@ -73,7 +76,7 @@ void Scene4140::click(Common::Point mouse, RunawayVerb verb, byte item) {
 		_museum.keypadDigits = 0;
 	} else { // Enter a digit; button 11 is zero.
 		const byte digit = id == 11 ? 0 : id;
-		_audio.playEffect(museumChapter() ? 18 + digit : id == 11 ? 11 : 11 + id);
+		_audio.playEffect(18 + digit);
 		if (_keyCount < 4) {
 			++_keyCount;
 			_museum.keypadDigits = _museum.keypadDigits * 10 + digit;

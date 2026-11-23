@@ -33,7 +33,7 @@ namespace Hollywood {
 class RunawayLipSync {
 public:
 	// Pass the voice sample ID for retail recordings; zero keeps demo text-derived animation.
-	void start(const Common::U32String &text, uint32 now, uint32 duration, Common::RandomSource &random, uint16 sample = 0);
+	void start(const Common::U32String &text, uint32 now, uint32 duration, Common::RandomSource &random, uint16 sample = 0, bool randomMouth = false);
 	void stop() { _frames.clear(); }
 	byte frame(uint32 now) const;
 	uint frameDuration() const { return _frameDuration; }

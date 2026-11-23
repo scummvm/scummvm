@@ -122,7 +122,7 @@ void RunawaySequence::cacheRevisitedFrames() {
 			if (command.a < furthestFrame) {
 				_video.cacheFrames(command.a, MIN<uint>(command.b, furthestFrame));
 			}
-			if (command.c == kLoopDuringSpeech || command.c == kIdleDuringSpeech) {
+			if (command.c == kLoopDuringSpeech || command.c == kIdleDuringSpeech || command.c == kPortraitDuringSpeech) {
 				_video.cacheFrames(command.a, command.b);
 			}
 			furthestFrame = MAX<uint>(furthestFrame, command.b);
@@ -215,7 +215,7 @@ void RunawaySequence::update(uint32 now) {
 			}
 			switch (command.operation) {
 			case kOpen: {
-				const Common::String name = Common::String::format("DATAV%c%02u.%03u", _chapter, command.a, command.b ? command.b : 1);
+				const Common::String name = command.file ? command.file : Common::String::format("DATAV%c%02u.%03u", _chapter, command.a, command.b ? command.b : 1);
 				if (!_video.load(name.c_str()))
 					error("Cannot load Runaway film %s", name.c_str());
 				cacheRevisitedFrames();
@@ -278,7 +278,9 @@ void RunawaySequence::update(uint32 now) {
 				break;
 			case kImage: {
 				Graphics::ManagedSurface image;
-				if (!loadRunawaySurface(command.a, kRunawayScreenWidth, kRunawayViewportHeight, image)) {
+				const bool loaded = command.file ? loadRunawaySurface(Common::Path(command.file), kRunawayScreenWidth, kRunawayViewportHeight, image) :
+					loadRunawaySurface(command.a, kRunawayScreenWidth, kRunawayViewportHeight, image);
+				if (!loaded) {
 					error("Cannot load Runaway image %u", command.a);
 				}
 				_video.close();
@@ -328,7 +330,8 @@ void RunawaySequence::update(uint32 now) {
 		case kPlay: {
 			const uint elapsedFrames = _video.frameAtTime(now - _started);
 			const uint count = command.b - command.a + 1;
-			const uint frame = command.a + (command.c == kLoopDuringSpeech ? elapsedFrames % count : MIN(elapsedFrames, count - 1));
+			const uint frame = command.a + (command.c == kPortraitDuringSpeech ? MIN<uint>(speechFrame(), count - 1) :
+				command.c == kLoopDuringSpeech ? elapsedFrames % count : MIN(elapsedFrames, count - 1));
 			const bool frameReady = _video.prepareFrame(frame, 0) == RunawayVideo::kFrameReady;
 			const RunawayVideo::FrameStatus status = _video.prepareFrame(frame, 4);
 			if (status == RunawayVideo::kFrameError) {
@@ -344,6 +347,11 @@ void RunawaySequence::update(uint32 now) {
 			if (frameReady) {
 				// Use updates between movie frames to prepare the next speakers.
 				prefetch();
+			}
+			if (command.c == kPortraitDuringSpeech) {
+				if (!subtitle().empty())
+					return;
+				break;
 			}
 			if (command.c == kUntilSpeechEnds) {
 				if (elapsedFrames < count && !subtitle().empty())

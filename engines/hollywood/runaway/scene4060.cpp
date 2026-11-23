@@ -112,10 +112,6 @@ const RunawayItemAction kItemActions[] = {
 };
 
 const RunawayExit kExits[] = {
-	{kMuseumHall, 302, kMuseumHall, 533, 848, false, false}, // Go downstairs on the left.
-	{kMuseumHall, 303, kMuseumHall, 1169, 643, false, false}, // Go downstairs on the right.
-	{kMuseumHall, 305, kMuseumHall, 69, 372, true, false}, // Go upstairs on the left.
-	{kMuseumHall, 306, kMuseumHall, 1290, 300, true, false}, // Go upstairs on the right.
 	{kMuseumHall, 310, kMuseumExhibition, 881, 392, false, false}, // Enter the Mayan exhibition.
 	{kMuseumHall, 312, kMuseumOffice, 934, 563, true, true}, // Enter Clive's office.
 	{kMuseumHall, 316, kMuseumLaboratory, 382, 529, true, true}, // Enter the restoration laboratory.
@@ -252,6 +248,11 @@ void Scene4060::advanceCustomGameplayLoop(uint32 delta) {
 		const int distance = ticks * 2;
 		_camera.x = MAX<int>(0, _camera.x - distance);
 		_camera.y = MAX<int>(0, _camera.y - distance);
+	} else if (_roomAction >= 483 && _roomAction <= 486) {
+		const uint ticks = (_now - _actionStarted) / 10;
+		_actionStarted += ticks * 10;
+		const int targetY = _roomAction <= 484 ? 200 : 0;
+		_camera.y += CLIP<int>(targetY - _camera.y, -(int)ticks * 2, ticks * 2);
 	}
 }
 
@@ -261,12 +262,13 @@ void Scene4060::updateActor(uint elapsed, int scrollDirection, bool inventoryOpe
 	if (_position.x >= 0 && walkZone()) {
 		_lastWalkZone = walkZone();
 	}
-	if (_walkPath.active() && (_roomAction == 479 || _roomAction == 481 || (_roomAction == 482 && actorWalkZone() == 9))) {
+	if (_walkPath.active() && (_roomAction == 479 || _roomAction == 481 || _roomAction == 488 ||
+			((_roomAction == 482 || _roomAction == 487) && actorWalkZone() == 9))) {
 		// Keep the stair-climbing direction on the narrow reserved walk zones.
 		_facing = _roomAction == 479 ? (actorWalkZone() == 8 ? 7 : 6) : 3;
 		_actor.setFrame(_facing, 1 + (_walkElapsed / 60) % 12);
 	}
-	if (_roomAction == 480) {
+	if (_roomAction == 480 || (_roomAction >= 483 && _roomAction <= 486)) {
 		_camera = camera;
 	} else if (!inventoryOpen && !_upperFloor && (!_roomAction || _roomAction < 461 || _roomAction > 466)) {
 		_camera.y = CLIP<int>(_position.y - 400, 200, 600);
@@ -282,6 +284,13 @@ void Scene4060::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport
 RunawayRoomScene::ActionResult Scene4060::dispatchCustomSceneAction(uint16 action) {
 	if (museumChapter()) {
 		switch (action) {
+		case 302: // Descend the left stairs.
+		case 303: // Descend the right stairs.
+		case 305: // Ascend the left stairs.
+		case 306: // Ascend the right stairs.
+			_actionStarted = _now;
+			deferMuseumAction(action + (action <= 303 ? 181 : 180));
+			return kHandled;
 		case 307: // Look at Willy.
 			say(3, _museum.willyMet != 0);
 			return kHandled;
@@ -291,7 +300,11 @@ RunawayRoomScene::ActionResult Scene4060::dispatchCustomSceneAction(uint16 actio
 		case 312: // Open Clive's office door.
 		case 316: // Open the restoration laboratory door.
 			// RESOURCE.001 bank 64: reach for the handle, facing northwest.
-			beginActorAnimation(action, 64, 11, 6);
+			if (_game == kRunawayMuseumDemo) {
+				deferMuseumAction(action);
+			} else {
+				beginActorAnimation(action, 64, 11, 6);
+			}
 			return kHandled;
 		case 313: // Look in the wastepaper basket.
 			if (!_museum.basketSeen) {
@@ -442,6 +455,28 @@ RunawayRoomScene::ActionResult Scene4060::dispatchCustomSceneAction(uint16 actio
 
 void Scene4060::finishCustomAnimation(uint16 action) {
 	switch (action) {
+	case 483:
+	case 484:
+	case 485:
+	case 486: {
+		const bool upper = action >= 485;
+		if (_camera.y != (upper ? 0 : 200)) {
+			deferMuseumAction(action);
+			break;
+		}
+		const Common::Point starts[] = {{140, 504}, {1085, 411}, {-25, 319}, {1220, 280}};
+		const Common::Point ends[] = {{533, 848}, {1169, 643}, {17, 279}, {1290, 300}};
+		if (upper && _museum.willyInLab == 2)
+			_museum.willyInLab = 0;
+		changeFloor(upper, starts[action - 483]);
+		walkTo(ends[action - 483], action == 484 ? 5 : 3, action == 485, true);
+		deferMuseumAction(action == 485 ? 488 : 487);
+		break;
+	}
+	case 488: // Emerge from the left upper stairway onto the landing.
+		walkTo(Common::Point(69, 372), 3, false, true);
+		deferMuseumAction(487);
+		break;
 	case 312: // Enter Clive's office after opening the door.
 		leaveMuseumRoom(4030, Common::Point(934, 563), 3, true);
 		break;
@@ -640,7 +675,7 @@ void Scene4060::finishCustomFilm() {
 }
 
 byte Scene4060::actorWalkZone() const {
-	if (_roomAction == 481) {
+	if (_roomAction == 481 || _roomAction == 488) {
 		return 19;
 	}
 	// Fractional steps can round outside the one-pixel-wide stair paths.

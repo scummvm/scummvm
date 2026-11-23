@@ -30,7 +30,7 @@ namespace Hollywood {
 // Playback of one line; scenes retain their cue ordering and speaker changes.
 class RunawaySpeech {
 public:
-	enum LipSync { kNoLipSync, kTextLipSync, kRecordedLipSync };
+	enum LipSync { kNoLipSync, kTextLipSync, kRecordedLipSync, kRandomLipSync };
 	RunawaySpeech(RunawayAudio &audio, Common::RandomSource &random, LipSync mode = kRecordedLipSync) :
 		_audio(audio), _random(random), _mode(mode) {}
 	void start(const Common::U32String &text, uint16 sample, bool global, uint32 now, byte color = 11, uint minimumDuration = 1000);

@@ -58,8 +58,10 @@ const RunawayResponse kGlobalResponses[] = {
 } // End of anonymous namespace
 
 RunawayRoomScene::RunawayRoomScene(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
-	_audio(audio), _sequence(audio), _inventory(inventory), _strings(strings), _game(game), _random("runaway"),
-	_speech(audio, _random, game == kRunawayFullGame ? RunawaySpeech::kRecordedLipSync : RunawaySpeech::kNoLipSync) {}
+	_audio(audio), _sequence(audio, game == kRunawayMuseumDemo ? RunawaySpeech::kRandomLipSync : RunawaySpeech::kRecordedLipSync),
+	_inventory(inventory), _strings(strings), _game(game), _random("runaway"),
+	_speech(audio, _random, game == kRunawayFullGame ? RunawaySpeech::kRecordedLipSync :
+		game == kRunawayMuseumDemo ? RunawaySpeech::kRandomLipSync : RunawaySpeech::kNoLipSync) {}
 
 const Common::U32String &RunawayRoomScene::subtitle() const {
 	if (_sequence.active())
@@ -375,7 +377,7 @@ Common::U32String RunawayRoomScene::hotspotName(byte id) const {
 
 Common::U32String RunawayRoomScene::actionCaption(byte id, RunawayVerb verb, byte item) const {
 	const Common::U32String name = hotspotName(id);
-	if (_game == kRunawayFullGame) {
+	if (_game == kRunawayFullGame || _game == kRunawayMuseumDemo) {
 		const bool look = verb == kVerbLook && !isWalkHotspot(id);
 		const Common::U32String pattern = _strings.sceneActionCaption(_room, id, item, look, actionCaptionVariant(id, look, item));
 		if (!pattern.empty()) {
@@ -442,7 +444,7 @@ void RunawayRoomScene::click(Common::Point mouse, RunawayVerb verb, byte item) {
 		_pendingAction = spot->action[index];
 		int8 approach = spot->approach[index];
 		if (item) {
-			approach = _game != kRunawayFullGame;
+			approach = _game == kRunawayCabinDemo;
 			const RunawayRoom *room = findRunawayRoom(_room);
 			for (uint i = 0; i < room->itemActionCount; ++i) {
 				const RunawayItemAction &action = room->itemActions[i];
@@ -527,8 +529,9 @@ void RunawayRoomScene::sayInventory(const RunawayInventory::Reply &reply) {
 	if (finaleChapter() && sayFinaleInventory(reply)) {
 		return;
 	}
-	if (_game == kRunawayFullGame && !desertChapter() && !townChapter() && !hopiChapter() && !finaleChapter() &&
-			(museumChapter() ? sayMuseumInventory(reply) : sayHospitalInventory(reply)))
+	if (museumChapter() && sayMuseumInventory(reply))
+		return;
+	if (_game == kRunawayFullGame && _room / 1000 == 2 && sayHospitalInventory(reply))
 		return;
 	for (RunawayInventory::Reply line = reply; line.cue; line = _inventory.nextReply(line)) {
 		say(line.cue, line.variation, true);
@@ -563,12 +566,15 @@ void RunawayRoomScene::useItem(byte item, byte id) {
 	}
 	if (_game == kRunawayFullGame) {
 		executeItemAction(defaultItemAction(item, id));
-	} else {
+	} else if (_game != kRunawayMuseumDemo) {
 		say(1, 0, true);
 	}
 }
 
 void RunawayRoomScene::executeItemAction(uint16 action) {
+	if (_game == kRunawayMuseumDemo && action <= 1) {
+		return; // The demo's default item action is empty (0x42b250).
+	}
 	if (_game == kRunawayFullGame) {
 		if (action == 1 || action == 5) {
 			const RunawayInventory::Reply reply = RunawayInventory::randomReply(_random);
@@ -795,6 +801,8 @@ void RunawayRoomScene::updateActor(uint elapsed, int scrollDirection, bool inven
 		if (!walking) {
 			headFrame = speaking() && !speaker() ? speechFrame() : idle ? _idleHead.frame() : -1;
 		}
+	} else if (_game == kRunawayMuseumDemo && !walking && speaking() && !speaker()) {
+		headFrame = speechFrame();
 	}
 	if (_actionUsesActor && _roomAction && !_actionFrames.empty() && !walking && !speaking()) {
 		_actor.setActionFrame(_actionFrames[_actionStep]);

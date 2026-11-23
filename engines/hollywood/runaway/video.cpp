@@ -220,7 +220,7 @@ bool RunawayVideo::isBink() const {
 }
 
 void RunawayVideo::cacheFrames(uint first, uint last) {
-	if (!isBink() || first > last || last >= frameCount()) {
+	if (!_decoder || first > last || last >= frameCount()) {
 		return;
 	}
 	_cachedFrames.resize(frameCount());
@@ -230,7 +230,7 @@ void RunawayVideo::cacheFrames(uint first, uint last) {
 			++count;
 		}
 	}
-	// Retain short shots revisited by the script, not entire long movies.
+	// Retain short shots, including the demo's embedded AVI talking portraits.
 	const uint64 bytes = (uint64)count * width() * height() * _frame->format.bytesPerPixel;
 	if (_cacheBytes + bytes > 64 * 1024 * 1024) {
 		return;

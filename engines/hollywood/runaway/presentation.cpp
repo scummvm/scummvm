@@ -293,7 +293,16 @@ void RunawayInterrogation::draw(Graphics::ManagedSurface &screen) const {
 		_actors[i].draw(screen, _frames[i], 0, kRunawayViewportTop);
 }
 
-bool RunawayEnding::load() {
+bool RunawayEnding::load(bool museum) {
+	_museum = museum;
+	if (_museum) {
+		_audio.setMuseum(true);
+		Common::ArchiveMemberList members;
+		SearchMan.listMatchingMembers(members, "*.bmp");
+		for (const auto &member : members)
+			_screenshots.push_back(member->getPathInArchive());
+		return true;
+	}
 	ChunkArchive archive, cards;
 	if (!archive.open(Common::Path("RESOURCE.E01")) || !cards.open(Common::Path("RESOURCE.X01")) ||
 			!loadRunawaySurface(archive, 0, 1024, 600, _outside) ||
@@ -325,6 +334,12 @@ void RunawayEnding::start(uint32 now) {
 	_started = _now = _lastTick = now;
 	_screenshot = 0;
 	_fadeDuration = 0;
+	if (_museum) {
+		nextSlide(now);
+		if (_stage == kSlideshow)
+			_audio.playDemoSlideshowMusic();
+		return;
+	}
 	_frames[0] = 0;
 	const uint ambient[] = {1, 2, 5};
 	for (uint i : ambient) {
@@ -349,9 +364,10 @@ void RunawayEnding::nextSlide(uint32 now) {
 	// 0x4446c0 visits Screenshots/01.bmp through 16.bmp. The native loader
 	// ignores absent or unsuitable images, allowing incomplete installations
 	// to reach the final card too. Keep just the current screenshot in memory.
-	while (++_screenshot <= 16) {
+	while (++_screenshot <= (_museum ? _screenshots.size() : 16)) {
 		Common::File file;
-		if (!file.open(Common::Path(Common::String::format("%02u.bmp", _screenshot))))
+		const Common::Path path = _museum ? _screenshots[_screenshot - 1] : Common::Path(Common::String::format("%02u.bmp", _screenshot));
+		if (!file.open(path))
 			continue;
 		Image::BitmapDecoder decoder;
 		if (!decoder.loadStream(file) || !decoder.getSurface() ||
@@ -360,16 +376,23 @@ void RunawayEnding::nextSlide(uint32 now) {
 			warning("Runaway: invalid promotional screenshot %02u.bmp", _screenshot);
 			continue;
 		}
-		_slide.convertFrom(*decoder.getSurface(), _outside.format);
+		_slide.convertFrom(*decoder.getSurface(), Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 		_stage = kSlideshow;
 		return;
 	}
 	_slide.free();
-	_stage = kCard;
+	_stage = _museum ? kFinished : kCard;
+	if (_museum)
+		_audio.stopMusic();
 }
 
 void RunawayEnding::update(uint32 now) {
 	_now = now;
+	if (_museum) {
+		if (_stage == kSlideshow && now - _started >= 3000)
+			nextSlide(now);
+		return;
+	}
 	while (_stage == kOutside && now - _lastTick >= 80) {
 		_lastTick += 80;
 		_frames[0] = (_frames[0] + 1) % _layers[0].frameCount();
@@ -449,11 +472,11 @@ void RunawayEnding::draw(Graphics::ManagedSurface &screen) const {
 			else if (_language == Common::FR_FRA)
 				screen.fillRect(Common::Rect(373, 183 + kRunawayViewportTop, 653, 208 + kRunawayViewportTop), 0);
 		}
-		const uint brightness = _fadeDuration ?
+		const uint brightness = _museum ? 1000 : _fadeDuration ?
 			1000 * (_fadeDuration - MIN<uint>(_fadeDuration, _now - _fadeStarted)) / _fadeDuration : MIN<uint>(1000, elapsed * 2);
 		dimRunawayViewport(screen, brightness);
 	}
-	if (_stage == kOutside || _stage == kSlideshow)
+	if (!_museum && (_stage == kOutside || _stage == kSlideshow))
 		screen.blitFrom(_demoLogo, Common::Point(976, 720));
 }
 

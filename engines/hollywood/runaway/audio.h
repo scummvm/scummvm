@@ -53,6 +53,7 @@ public:
 	void playFootstep(byte surface, byte variant, byte volume = Audio::Mixer::kMaxChannelVolume, int x = -1);
 	void playPointer();
 	void playMenuMusic();
+	void playDemoSlideshowMusic();
 	void stopMusic();
 	void pauseMusic(bool paused);
 	void stopSpeech();

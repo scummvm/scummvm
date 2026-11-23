@@ -223,6 +223,8 @@ bool AVIDecoder::parseNextChunk() {
 	case ID_SHOT: // block in Origin Systems Xxan videos
 	case ID_BEST: // block in Origin Systems Xxan videos
 	case ID_INDX2: // block in Origin Systems Xxan videos
+	case MKTAG('F', 'X', 'T', 'C'): // Metadata in Runaway museum demo movies
+	case MKTAG('A', 'L', 'F', 'A'):
 		skipChunk(size);
 		break;
 	case ID_PAL8: // PAL8 block in Origin Systems Xxan videos

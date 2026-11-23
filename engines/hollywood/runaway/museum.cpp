@@ -84,11 +84,15 @@ void RunawayRoomScene::updateMuseum(uint elapsed) {
 }
 
 bool RunawayRoomScene::sayMuseumInventory(const RunawayInventory::Reply &reply) {
+	if (!reply.cue)
+		return true;
 	if (reply.cue == 102) { // Inspect the crucifix before or after restoration.
 		typedef RunawaySequence S;
 		const byte restored = _inventory.museum().restoredCrucifix != 0;
 		_filmCommands = {{S::kImage, (uint16)(143 + restored)}, {S::kSpeech, 102, restored, restored, 1},
 			{S::kWaitInput}, {S::kEnd}};
+		if (_game == kRunawayMuseumDemo)
+			_filmCommands[0].file = restored ? "am_crlim.obt" : "am_crsuc.obt";
 		_inventorySequence = true;
 		_sequence.start(_filmCommands.data(), _text, _now, 'D');
 		return true;
@@ -155,7 +159,8 @@ bool RunawayRoomScene::updateMuseumInventory() {
 
 void RunawayRoomScene::startMuseumFilm(MuseumFilm film) {
 	typedef RunawaySequence S;
-	const bool gog = Common::File::exists("DATAVC00.000");
+	const bool demo = _game == kRunawayMuseumDemo;
+	const bool gog = !demo && Common::File::exists("DATAVC00.000");
 	_museumFilm = film;
 	_filmCommands.clear();
 	const uint stage = film == kArrivalFilm || film == kCliveFilm ? 401 : sceneTextNumber();
@@ -171,6 +176,12 @@ void RunawayRoomScene::startMuseumFilm(MuseumFilm film) {
 			{S::kStill, (uint16)(gog ? 900 : 890)}, {S::kWaitEffect, 7000, 1}, {S::kTalk, 30, 0, 1, 0, 21}, {S::kDelay, 1000},
 			{S::kTalk, 30, 1, 1, 0, 21}, {S::kPlay, (uint16)(gog ? 912 : 919), (uint16)(gog ? 919 : 930)},
 			{S::kTalk, 30, 2, 3, 0, 21}, {S::kDelay, 2000}, {S::kTalk, 30, 3, 3, 0, 21}, {S::kDelay, 3000}, {S::kTalk, 30, 4, 3, 0, 21}};
+		if (demo) {
+			_filmCommands = {{S::kOpen, 5}, {S::kPlay, 0, 912}, {S::kTalk, 30, 0, 1, 0, 21}, {S::kDelay, 1000},
+				{S::kTalk, 30, 1, 1, 0, 21}, {S::kDelay, 3000}, {S::kPlay, 923, 931},
+				{S::kTalk, 30, 2, 3, 0, 21}, {S::kDelay, 2000}, {S::kTalk, 30, 3, 3, 0, 21},
+				{S::kDelay, 3000}, {S::kPlay, 943, 988}, {S::kTalk, 30, 4, 3, 0, 21}};
+		}
 		break;
 	case kCliveFilm:
 		_filmCommands = {{S::kOpen, 1}, {S::kPlay, 57, 107}, {S::kTalk, 1, 0, (byte)(gog ? 5 : 1), 0, 20},
@@ -199,17 +210,21 @@ void RunawayRoomScene::startMuseumFilm(MuseumFilm film) {
 	case kLaserFilm:
 		_filmCommands = {{S::kOpen, 3}, {S::kMusic, 22, 255}, {S::kEffect, 50, 204}, {S::kPlay, 0, 127},
 			{S::kSpeech, 70, 0, 0, 0, 17}, {S::kPlay, 128, 175}, {S::kMusic, 13, 255}};
+		if (demo)
+			_filmCommands = {{S::kOpen, 3}, {S::kPlay, 0, 175}};
 		break;
 	case kRubyFilm:
 		_filmCommands = {{S::kOpen, 4}, {S::kEffect, 51, 230}, {S::kPlay, 0, 75}};
 		break;
 	case kCrucifixFilm:
 		_filmCommands = {{S::kImage, 144}, {S::kSpeech, 32, 2, 2}, {S::kWaitSpeech}};
+		if (demo)
+			_filmCommands[0].file = "am_crlim.obt";
 		break;
 	case kMobstersFilm:
-		_filmCommands = {{S::kOpen, 7}, {S::kMusic, 21, 255, 1}, {S::kEffect, 13, 255}, {S::kPlay, 0, 213},
+		_filmCommands = {{S::kOpen, 7}, {S::kMusic, 21, 255, 1}, {S::kEffect, 13, 255}, {S::kPlay, 0, (uint16)(demo ? 211 : 213)},
 			{S::kTalk, 93, 0, 1, 0, 22}, {S::kTalk, 94, 0, 1, 1, 21}, {S::kTalk, 93, 1, 1, 0, 22},
-			{S::kPlay, (uint16)(gog ? 214 : 225), (uint16)(gog ? 226 : 237)}, {S::kTalk, 94, 1, 3, 0, 21}};
+			{S::kPlay, (uint16)(demo ? 223 : gog ? 214 : 225), (uint16)(demo ? 236 : gog ? 226 : 237)}, {S::kTalk, 94, 1, 3, 0, 21}};
 		if (gog) {
 			_filmCommands.push_back(S::Command(S::kStill, 227));
 		}
@@ -228,10 +243,10 @@ void RunawayRoomScene::startMuseumFilm(MuseumFilm film) {
 		}
 		_filmCommands.push_back(S::Command(S::kTalk, 82, 6, 1, 1));
 		_filmCommands.push_back(S::Command(S::kTalk, 92, 6, 1, 0, 19));
-		_filmCommands.push_back(S::Command(S::kPlay, (uint16)(gog ? 32 : 43), (uint16)(gog ? 62 : 72)));
+		_filmCommands.push_back(S::Command(S::kPlay, (uint16)(demo ? 54 : gog ? 32 : 43), (uint16)(demo ? 87 : gog ? 62 : 72)));
 		break;
 	case kScannerFilm:
-		_filmCommands = {{S::kOpen, 6}, {S::kMusic, 19, 255}, {S::kEffect, 53, 255}, {S::kPlay, 0, 386}, {S::kMusic, 11, 255}};
+		_filmCommands = {{S::kOpen, 6}, {S::kMusic, 19, 255}, {S::kEffect, 53, 255}, {S::kPlay, 0, (uint16)(demo ? 694 : 386)}, {S::kMusic, 11, 255}};
 		break;
 	case kBetrayalFilm:
 		_filmCommands = {{S::kOpen, 9}, {S::kMusic, 20, 255}, {S::kPlay, 0, 9}, {S::kEffect, 11, 255},
@@ -239,6 +254,10 @@ void RunawayRoomScene::startMuseumFilm(MuseumFilm film) {
 			{S::kPlay, (uint16)(gog ? 79 : 90), (uint16)(gog ? 86 : 90)}, {S::kSpeech, 92, 3, 3, 0, 20},
 			{S::kPlay, (uint16)(gog ? 87 : 91), (uint16)(gog ? 121 : 134)}, {S::kEffect, 12, 255},
 			{S::kPlay, (uint16)(gog ? 122 : 135), (uint16)(gog ? 124 : 135)}, {S::kWaitSpeech}, {S::kWaitEffect, 5000}};
+		if (demo) {
+			_filmCommands = {{S::kOpen, 9}, {S::kPlay, 0, 79}, {S::kTalk, 92, 2, 1, 0, 20},
+				{S::kSpeech, 92, 3, 3, 0, 20}, {S::kPlay, 91, 135}, {S::kWaitSpeech}};
+		}
 		break;
 	case kMuseumExitFilm:
 		_filmCommands = {{S::kOpen, 10}, {S::kEffect, 57, 153, 1, 1}, {S::kPlay, 0, 12},
@@ -246,13 +265,45 @@ void RunawayRoomScene::startMuseumFilm(MuseumFilm film) {
 			{S::kSpeech, 60, 1, 1, 0, 19}, {S::kPlay, (uint16)(gog ? 13 : 24), (uint16)(gog ? 130 : 141)}, {S::kWaitSpeech}};
 		break;
 	}
+	if (demo) {
+		static const char *const movies[] = {
+			nullptr, "Interior museo 1.avi", "susan trabajando.avi", "susan le revienta.avi", "pone rubi.avi",
+			"Exterior museo 1.avi", "Escaner-crucifijo.avi", "Exterior museo 2.avi", "Willy telefono.avi",
+			"final del museo.avi", "muerte de willy.avi"
+		};
+		// The demo keeps each twelve-frame talking portrait in the movie itself.
+		static const uint16 portraits[][6] = {
+			{}, {107, 172, 25, 160, 44, 184}, {}, {}, {}, {912, 931}, {},
+			{211, 236, 248}, {31}, {79}, {12}
+		};
+		Common::Array<S::Command> commands;
+		uint movie = 0;
+		for (S::Command command : _filmCommands) {
+			if (command.operation == S::kOpen) {
+				movie = command.a;
+				command.file = movies[movie];
+			} else if (command.operation == S::kTalk && command.c) {
+				const uint16 frame = portraits[movie][(command.c - 1) / 2];
+				commands.push_back(S::Command(S::kStill, frame));
+				if (!command.d) {
+					commands.push_back(S::Command(S::kSpeech, command.a, command.b, command.b, 0, command.speechColor));
+					commands.push_back(S::Command(S::kPlay, frame, frame + 11, S::kPortraitDuringSpeech));
+					continue;
+				}
+				command.c = 0;
+			}
+			commands.push_back(command);
+		}
+		_filmCommands = commands;
+	}
 	_filmCommands.push_back(S::Command(S::kEnd));
 	if (film == kPhoneFilm) {
 		draw();
 	}
 	_sequence.start(_filmCommands.data(), _filmText, _now, 'D');
 	if (film == kPhoneFilm) {
-		_sequence.setBackground(_screen, Common::Rect(116, kRunawayViewportTop + 320, 396, kRunawayViewportTop + 600));
+		_sequence.setBackground(_screen, demo ? Common::Rect(106, 316, 394, 604) :
+			Common::Rect(116, kRunawayViewportTop + 320, 396, kRunawayViewportTop + 600));
 	}
 }
 

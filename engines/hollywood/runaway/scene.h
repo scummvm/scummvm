@@ -247,7 +247,7 @@ protected:
 	void updateHospitalInventory();
 	void leaveHospitalRoom(uint16 scene, Common::Point position, byte facing);
 
-	bool museumChapter() const { return _game == kRunawayFullGame && _room / 1000 == 4; }
+	bool museumChapter() const { return _room / 1000 == 4; }
 	void startMuseum();
 	void resumeMuseum();
 	void updateMuseum(uint elapsed);

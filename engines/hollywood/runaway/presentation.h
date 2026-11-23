@@ -113,7 +113,7 @@ private:
 class RunawayEnding : public RunawayPresentation {
 public:
 	RunawayEnding(Audio::Mixer *mixer, Common::Language language) : _audio(mixer), _random("runawayEnding"), _language(language) {}
-	bool load();
+	bool load(bool museum = false);
 	void start(uint32 now);
 	void update(uint32 now);
 	void skip(uint32 now);
@@ -129,6 +129,8 @@ private:
 	RunawayAudio _audio;
 	Common::RandomSource _random;
 	Common::Language _language;
+	bool _museum = false;
+	Common::Array<Common::Path> _screenshots;
 	Graphics::ManagedSurface _outside, _card, _slide, _demoLogo;
 	RunawayAnimation _layers[7];
 	Common::Array<byte> _occlusion[2];

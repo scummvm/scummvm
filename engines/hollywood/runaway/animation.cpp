@@ -97,7 +97,7 @@ bool RunawayLipSync::loadRecording(uint16 sample) {
 	return true;
 }
 
-void RunawayLipSync::start(const Common::U32String &text, uint32 now, uint32 duration, Common::RandomSource &random, uint16 sample) {
+void RunawayLipSync::start(const Common::U32String &text, uint32 now, uint32 duration, Common::RandomSource &random, uint16 sample, bool randomMouth) {
 	_started = now;
 	_duration = duration ? duration : text.size() * 80;
 	if (sample && duration && loadRecording(sample)) {
@@ -111,6 +111,19 @@ void RunawayLipSync::start(const Common::U32String &text, uint32 now, uint32 dur
 	// The native timer advances in 10 ms ticks, rounding up at a fractional
 	// tick of 0.3. Without a voice sample it uses 80 ms per character.
 	_frameDuration = duration ? MAX<uint>(1, (duration / _frames.size() + 7) / 10) * 10 : 80;
+	if (randomMouth) {
+		// Museum demo 0x42a950 picks a different mouth each tick and blinks for one tick.
+		byte previous = 0;
+		for (uint i = 0; i < _frames.size(); ++i) {
+			const bool blink = previous < 6 && !random.getRandomNumber(14);
+			byte mouth;
+			do {
+				mouth = random.getRandomNumber(5);
+			} while (mouth == previous % 6);
+			_frames[i] = previous = mouth + (blink ? 6 : 0);
+		}
+		return;
+	}
 	for (uint i = 0; i < _frames.size(); ++i) {
 		const uint32 c = speechLetter(text[i]);
 		const uint32 next = i + 1 < text.size() ? speechLetter(text[i + 1]) : 0;

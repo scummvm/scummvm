@@ -32,6 +32,7 @@ public:
 	Scene4050(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
 	const Common::U32String &subtitle() const override;
 	byte subtitleColor() const override;
+	Common::U32String actionCaption(byte id, RunawayVerb verb, byte item) const override;
 
 private:
 	const char *actionCaptionVariant(byte id, bool look, byte item) const override;
