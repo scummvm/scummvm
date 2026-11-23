@@ -240,6 +240,7 @@ namespace NGI {
 #define SC_36 2070
 #define SC_37 2071
 #define SC_38 2072
+#define SC_CHAPTER 10006
 #define SC_COMMON 321
 #define SC_DBGMENU 726
 #define SC_FINAL1 4999
@@ -372,6 +373,9 @@ namespace NGI {
 #define PIC_POST_TEXT 5397
 #define PIC_POST_BUTTON 5398
 #define SND_CMN_069 4969
+
+// Chapter dialog
+#define SND_CHAPTER_DLG 23272
 
 // Intro
 #define ANI_IN1MAN 5110

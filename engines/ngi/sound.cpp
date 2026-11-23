@@ -258,6 +258,12 @@ int Sound::getVolume() {
 	return g_nmi->_mixer->getChannelVolume(*_handle) * 39;  // 0..10000
 }
 
+void Sound::pause(bool paused) {
+	g_nmi->_mixer->pauseHandle(*_handle, paused);
+	for (const Audio::SoundHandle &handle : _overlappingHandles)
+		g_nmi->_mixer->pauseHandle(handle, paused);
+}
+
 void Sound::stop() {
 	g_nmi->_mixer->stopHandle(*_handle);
 	for (const Audio::SoundHandle &handle : _overlappingHandles)

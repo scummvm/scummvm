@@ -36,6 +36,43 @@
 
 namespace NGI {
 
+void Fader::start(uint32 fadeIn, uint32 hold, uint32 fadeOut) {
+	_durations[kFadeIn] = fadeIn;
+	_durations[kHold] = hold;
+	_durations[kFadeOut] = fadeOut;
+	_stage = kFadeIn;
+	_elapsed = 0;
+	_brightness = 0;
+}
+
+void Fader::fadeOut() {
+	if (active() && _stage != kFadeOut) {
+		_stage = kFadeOut;
+		_elapsed = 0;
+	}
+}
+
+void Fader::update(uint32 elapsed) {
+	if (!active())
+		return;
+	const uint32 duration = _durations[_stage];
+	if (elapsed < duration - _elapsed) {
+		// CFader samples the current alpha before advancing its timer.
+		if (_stage != kHold) {
+			const byte level = (uint64)_elapsed * 255 / duration;
+			_brightness = _stage == kFadeIn ? level : 255 - level;
+		}
+		_elapsed += elapsed;
+		return;
+	}
+
+	_brightness = _stage == kFadeOut ? 0 : 255;
+	_elapsed = 0;
+	do {
+		_stage = (Stage)(_stage + 1);
+	} while (active() && !_durations[_stage]);
+}
+
 Vars::Vars() {
 	sceneIntro_aniin1man = nullptr;
 	sceneIntro_needSleep = true;

@@ -145,6 +145,7 @@ public:
 	uint32 getFeatures() const;
 	bool isDemo();
 	Common::Language getLanguage() const;
+	const char *getAndroidResourceLocale() const;
 	Common::Platform getPlatform() const;
 	const char *getGameId() const;
 	int getGameGID() const;

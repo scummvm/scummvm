@@ -28,11 +28,13 @@
 #include "common/file.h"
 #include "common/formats/xmlparser.h"
 
+#include "backends/keymapper/keymapper.h"
 #include "engines/util.h"
 #include "ngi/ngi.h"
 #include "ngi/constants.h"
 #include "ngi/detection.h"
 #include "ngi/messages.h"
+#include "ngi/modal.h"
 #include "ngi/ngiarchive.h"
 #include "ngi/objects.h"
 #include "ngi/utils.h"
@@ -152,17 +154,6 @@ private:
 		return true;
 	}
 };
-
-static const char *getResourceLocale(Common::Language language) {
-	switch (language) {
-	case Common::DE_DEU:
-		return "de";
-	case Common::RU_RUS:
-		return "ru";
-	default:
-		return "en";
-	}
-}
 
 class XMLTextureSizeParser : public Common::XMLParser {
 public:
@@ -585,13 +576,15 @@ private:
 	bool textCallback(const Common::String &text) override { return true; }
 };
 
-static void drawAndroidScene(const Scene &scene, Graphics::ManagedSurface &target) {
+} // End of anonymous namespace
+
+void Scene::drawAndroid(Graphics::ManagedSurface &target) const {
 	Common::Array<const GameObject *> visibleObjects;
-	for (const PictureObject *picture : scene._pictureObjects) {
+	for (const PictureObject *picture : _pictureObjects) {
 		if (picture->_flags & 4)
 			visibleObjects.push_back(picture);
 	}
-	for (const AniObject *animation : scene._renderableAnis) {
+	for (const AniObject *animation : _renderableAnis) {
 		if (animation->_flags & 4)
 			visibleObjects.push_back(animation);
 	}
@@ -604,7 +597,7 @@ static void drawAndroidScene(const Scene &scene, Graphics::ManagedSurface &targe
 	});
 
 	for (const GameObject *object : visibleObjects) {
-		Common::Point position(object->_x - scene._x, object->_y - scene._y);
+		Common::Point position(object->_x - _x, object->_y - _y);
 		if (object->_objtype == kObjTypePictureObject) {
 			static_cast<const PictureObject *>(object)->_picture->blitTo(target, position);
 		} else {
@@ -615,17 +608,26 @@ static void drawAndroidScene(const Scene &scene, Graphics::ManagedSurface &targe
 	}
 }
 
-} // End of anonymous namespace
-
-void SceneTag::loadSceneXML(const GameProject &project) {
+const char *NGIEngine::getAndroidResourceLocale() const {
 	Common::Language language = Common::parseLanguage(ConfMan.get("language"));
 	if (language == Common::UNK_LANG)
 		language = Common::parseLanguageFromLocale(g_system->getSystemLanguage().c_str());
 
+	switch (language) {
+	case Common::DE_DEU:
+		return "de";
+	case Common::RU_RUS:
+		return "ru";
+	default:
+		return "en";
+	}
+}
+
+void SceneTag::loadSceneXML(const GameProject &project) {
 	Common::ScopedPtr<Scene> scene(new Scene());
 	scene->_sceneId = _sceneId;
 	const Common::Path path = Common::Path("data/res").join(_tag);
-	XMLSceneParser parser(project, *scene, getResourceLocale(language));
+	XMLSceneParser parser(project, *scene, g_nmi->getAndroidResourceLocale());
 	if (!parser.loadStream(SearchMan.createReadStreamForMember(path), path.toString()) || !parser.parse()) {
 		warning("Could not load Full Pipe Android scene %s", _tag.c_str());
 		return;
@@ -678,6 +680,9 @@ Common::Error NGIEngine::runAndroid() {
 	if (format.isCLUT8())
 		return Common::kUnsupportedColorMode;
 
+	Common::Keymapper *mapper = _system->getEventManager()->getKeymapper();
+	mapper->disableAllGameKeymaps();
+	mapper->setGameKeymapState("ngi-default", true);
 	_gameProject = &project;
 	_currentScene = startScene;
 	addMessageHandlerByIndex(global_messageHandler4, 0, 4);
@@ -695,7 +700,7 @@ Common::Error NGIEngine::runAndroid() {
 	byte brightness = intro ? 0 : 255;
 	frame.clear(format.RGBToColor(0, 0, 0));
 	if (brightness)
-		drawAndroidScene(*_currentScene, frame);
+		_currentScene->drawAndroid(frame);
 	_system->copyRectToScreen(frame.getPixels(), frame.pitch, 0, 0, frame.w, frame.h);
 	_system->updateScreen();
 	debugC(1, kDebugDrawing, "Presented first Full Pipe Android frame for %s", start->_tag.c_str());
@@ -706,8 +711,20 @@ Common::Error NGIEngine::runAndroid() {
 	while (!shouldQuit()) {
 		bool screenChanged = false;
 		while (eventManager->pollEvent(event)) {
-			if (event.type == Common::EVENT_SCREEN_CHANGED)
+			if (event.type == Common::EVENT_SCREEN_CHANGED) {
 				screenChanged = true;
+			} else if (_modalObject) {
+				const bool back = (event.type == Common::EVENT_KEYUP &&
+						(event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_AC_BACK)) ||
+					(event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END && event.customType == kActionCloseDialog);
+				if (event.type == Common::EVENT_LBUTTONUP || back) {
+					Command cmd;
+					cmd._cmd = 17;
+					cmd._messageNum = back ? 37 : 30;
+					cmd._param = back ? kActionCloseDialog : 0;
+					_modalObject->handleMessage(&cmd);
+				}
+			}
 		}
 		if (shouldQuit())
 			break;
@@ -717,14 +734,24 @@ Common::Error NGIEngine::runAndroid() {
 		lastUpdate = now;
 		bool redraw = false;
 		Scene *scene = _currentScene;
-		for (MessageQueue *queue : *_globalMessageQueueList)
-			redraw |= queue->updatePause(elapsed);
-		processMessages();
-		if (scene == _currentScene)
-			redraw |= scene->update(elapsed);
-		if (scene == _currentScene && scene->_sceneId == SC_INTRO1)
-			redraw |= sceneIntro_updateAndroid(elapsed, brightness);
-		processMessages();
+		if (_modalObject) {
+			if (!_modalObject->init(elapsed)) {
+				deleteModalObject();
+				if (!_modalObject && scene->_sceneId == SC_INTRO1 && !g_vars->sceneIntro_playing)
+					warning("Android scene 1 entrance TrubaLeft not implemented");
+			}
+			redraw = true;
+		} else {
+			for (MessageQueue *queue : *_globalMessageQueueList)
+				redraw |= queue->updatePause(elapsed);
+			processMessages();
+			if (!_modalObject && scene == _currentScene)
+				redraw |= scene->update(elapsed);
+			if (!_modalObject && scene == _currentScene && scene->_sceneId == SC_INTRO1)
+				redraw |= sceneIntro_updateAndroid(elapsed, brightness);
+			processMessages();
+			redraw |= _modalObject != nullptr;
+		}
 
 		if (scene != _currentScene) {
 			stopAllSounds(Sound::kSpeech);
@@ -734,15 +761,20 @@ Common::Error NGIEngine::runAndroid() {
 		}
 		if (redraw) {
 			frame.clear(format.RGBToColor(0, 0, 0));
-			drawAndroidScene(*_currentScene, frame);
-			if (brightness < 255)
-				drawAlphaRectangle(0, 0, frame.w, frame.h, brightness);
+			if (_modalObject) {
+				_modalObject->update();
+			} else {
+				_currentScene->drawAndroid(frame);
+				if (brightness < 255)
+					drawAlphaRectangle(0, 0, frame.w, frame.h, brightness);
+			}
 		}
 		if (redraw || screenChanged)
 			_system->copyRectToScreen(frame.getPixels(), frame.pitch, 0, 0, frame.w, frame.h);
 		_system->updateScreen();
 		_system->delayMillis(10);
 	}
+	deleteModalObject();
 	clearMessages();
 	clearGlobalMessageQueueList();
 	clearMessageHandlers();

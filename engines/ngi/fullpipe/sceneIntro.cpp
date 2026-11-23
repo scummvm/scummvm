@@ -34,7 +34,8 @@ void sceneIntro_initMan(Scene &scene) {
 	g_vars->sceneIntro_aniin1man = scene.findAniObjectById(ANI_IN1MAN, -1);
 	g_vars->sceneIntro_needSleep = true;
 	g_vars->sceneIntro_needGetup = false;
-	g_vars->sceneIntro_fadeElapsed = 0;
+	g_vars->sceneIntro_playing = true;
+	g_vars->sceneIntro_fader.start(1025, 0, 0);
 }
 
 static bool sceneIntro_updateMan() {
@@ -52,15 +53,15 @@ static bool sceneIntro_updateMan() {
 }
 
 bool sceneIntro_updateAndroid(uint32 elapsed, byte &brightness) {
-	const uint32 fadeDuration = 1025;
-	const uint32 previous = g_vars->sceneIntro_fadeElapsed;
-	if (previous < fadeDuration) {
-		g_vars->sceneIntro_fadeElapsed += MIN(elapsed, fadeDuration - previous);
-		// CFader samples the alpha before advancing its timer and clears it at the end.
-		const byte next = g_vars->sceneIntro_fadeElapsed == fadeDuration ? 255 : previous * 255 / fadeDuration;
-		const bool changed = brightness != next;
-		brightness = next;
-		if (g_vars->sceneIntro_fadeElapsed == fadeDuration)
+	if (!g_vars->sceneIntro_playing)
+		return false;
+
+	Fader &fader = g_vars->sceneIntro_fader;
+	if (fader.active()) {
+		fader.update(elapsed);
+		const bool changed = brightness != fader.brightness();
+		brightness = fader.brightness();
+		if (!fader.active())
 			runQueue(QU_INTR_STARTINTRO, 0);
 		return changed;
 	}
@@ -78,7 +79,6 @@ void sceneIntro_initScene(Scene *sc) {
 	g_nmi->_gameLoader->loadScene(SC_INTRO2);
 
 	sceneIntro_initMan(*sc);
-	g_vars->sceneIntro_playing = true;
 	g_vars->sceneIntro_needBlackout = false;
 
 	if (g_nmi->_recordEvents || g_nmi->_inputArFlag)
@@ -103,7 +103,7 @@ int sceneHandlerIntro(Command *ex) {
 
 	if (g_nmi->getPlatform() == Common::kPlatformAndroid && !ex->_messageName.empty()) {
 		debugC(3, kDebugEvents, "Android intro message %s", ex->_messageName.c_str());
-		if (ex->_messageNum == MSG_INTR_ENDINTRO || ex->_messageName == "MSG_ENABLE_BHV_SOUND") {
+		if (ex->_messageName == "MSG_ENABLE_BHV_SOUND") {
 			warning("Android intro message %s not implemented", ex->_messageName.c_str());
 			return 0;
 		}
@@ -111,6 +111,8 @@ int sceneHandlerIntro(Command *ex) {
 
 	switch (ex->_messageNum) {
 	case MSG_INTR_ENDINTRO:
+		if (g_vars->sceneIntro_playing && g_nmi->getPlatform() == Common::kPlatformAndroid)
+			sceneChapter_show("CHAPTER_1");
 		g_vars->sceneIntro_playing = 0;
 		return 0;
 

@@ -54,6 +54,7 @@ class Scene : public Background {
 	void initStaticANIObjects();
 	void init();
 	void render();
+	void drawAndroid(Graphics::ManagedSurface &target) const;
 	void drawContent(int minPri, int maxPri, bool drawBG);
 	void updateScrolling();
 	void updateScrolling2();

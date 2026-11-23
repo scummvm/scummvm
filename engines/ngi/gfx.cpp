@@ -529,6 +529,11 @@ void Texture::setAOIDs() {
 	}
 }
 
+void Texture::blitTo(Graphics::ManagedSurface &target, const Common::Rect &source, const Common::Point &position) const {
+	if (_bitmap && _bitmap->_surface)
+		target.blitFrom(*_bitmap->_surface, source, position);
+}
+
 void Texture::init() {
 	debugC(5, kDebugLoading, "Texture::init(), %s", _memfilename.toString().c_str());
 

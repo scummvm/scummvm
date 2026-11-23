@@ -54,6 +54,7 @@ public:
 	void unload();
 	int getVolume();
 	void stop();
+	void pause(bool paused);
 
 	void setPanAndVolumeByStaticAni();
 	void attenuate(int vol, int pan);
