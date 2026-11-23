@@ -50,13 +50,9 @@ void SlotLabel::draw(const Camera &camera, Display &display) {
 			snprintf(number, sizeof number, "%u", (uint)slot);
 			_world->drawMenuText(number, 0xf800, 450, 255, 200);
 			// The date is shown in two pieces: the first ten characters (day), and the rest from the twelfth (time).
-			const char *date = _world->slotTime();
-			const size_t length = strlen(date);
-			char day[11];
-			strncpy(day, date, 10);
-			day[length < 10 ? length : 10] = '\0';
-			_world->drawMenuText(day, 0xffff, 450, 300, 200);
-			_world->drawMenuText(length > 11 ? date + 11 : "", 0xffff, 450, 0x159, 200);
+			const Common::String date = _world->slotTime();
+			_world->drawMenuText(date.substr(0, 10).c_str(), 0xffff, 450, 300, 200);
+			_world->drawMenuText(date.size() > 11 ? date.substr(11).c_str() : "", 0xffff, 450, 0x159, 200);
 		}
 	}
 	InteractiveObject::draw(camera, display);

@@ -657,13 +657,11 @@ void World::saveSlot() {
 	showSlotPicture(slot);
 }
 
-const char *World::slotTime() {
-	static Common::String text;
+Common::String World::slotTime() {
 	SaveStateList saves = listSlots(_engine);
 	if (_slotChoice < 1 || _slotChoice > (int)saves.size())
-		return "";
-	text = Common::String::format("%-10s %s", saves[_slotChoice - 1].getSaveDate().c_str(), saves[_slotChoice - 1].getSaveTime().c_str());
-	return text.c_str();
+		return Common::String();
+	return Common::String::format("%-10s %s", saves[_slotChoice - 1].getSaveDate().c_str(), saves[_slotChoice - 1].getSaveTime().c_str());
 }
 
 void World::closeSaveLoadMenu() {

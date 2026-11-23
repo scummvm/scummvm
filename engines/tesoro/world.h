@@ -207,7 +207,7 @@ public:
 	void closeSaveLoadMenu();
 	bool toggleSubtitles() { _subtitles = !_subtitles; return _subtitles; }
 	int selectedSlot() { return _slotChoice; }
-	const char *slotTime();
+	Common::String slotTime();
 	void drawMenuText(const char *text, uint32 colour, int32 x, int32 y, int32 width);
 
 	/** Makes the pointer and the interface level known (they are loaded by the engine). */
