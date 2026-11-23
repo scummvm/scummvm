@@ -621,6 +621,7 @@ public:
 	void	setCounterValue(const Common::String &name, int value);
 
 	void	setFollower(const Common::String &name);
+	bool	hasFollower() const { return _follower != nullptr; }
 
 	int		getSfxStatus();
 	int		getMusicStatus();

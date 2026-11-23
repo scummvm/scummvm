@@ -271,11 +271,8 @@ DECLARE_COMMAND_OPCODE(scroll) {
 
 
 DECLARE_COMMAND_OPCODE(swap) {
-	warning("Parallaction_br::cmdOp_swap does not handle a follower yet");
-
 	/*
 		TODO:
-		- fixup follower
 		- change mouse pointer
 	*/
 
@@ -289,6 +286,11 @@ DECLARE_COMMAND_OPCODE(swap) {
 	_vm->_char._ani = newCharacterAnimation;
 	_vm->_char._talk = _vm->_disk->loadTalk(newCharacterName);
 	Common::strlcpy(_vm->_char._ani->_name, "yourself", ZONENAME_LENGTH);
+
+	// the character being left follows the new one
+	if (_vm->hasFollower()) {
+		_vm->setFollower(oldCharaterAnimation->_name);
+	}
 
 	_vm->linkUnlinkedZoneAnimations();
 
