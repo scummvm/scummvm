@@ -22,6 +22,7 @@
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 #include "graphics/managed_surface.h"
 #include "graphics/scaler.h"
 
@@ -652,7 +653,7 @@ void World::saveSlot() {
 			slot = MAX(slot, saves[i].getSaveSlot() + 1);
 		_slotChoice = (int)saves.size() + 1;
 	}
-	_engine.saveGameState(slot, Common::String::format("Partida %d", slot + 1), false);
+	_engine.saveGameState(slot, Common::U32String::format(_("Partida %d"), slot + 1).encode(), false);
 	showSlotPicture(slot);
 }
 

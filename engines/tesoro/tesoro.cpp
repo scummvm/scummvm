@@ -66,7 +66,7 @@ Common::String TesoroEngine::getGameId() const {
 }
 
 Common::Error TesoroEngine::run() {
-	// Initialize 320x200 paletted graphics mode
+	// 640x480 with 16-bit (RGB565) colour, as the original runs
 	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	initGraphics(640, 480, &format);
 	_screen = new Graphics::Screen(640, 480, format);
@@ -114,12 +114,14 @@ Common::Error TesoroEngine::run() {
 		_world.mainList().insertByPriority(_interface, 0x13);
 	_world.mainList().insertByPriority(_level, 0x14);
 
-	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");
-	if (saveSlot != -1)
-		(void)loadGameState(saveSlot);
-	else
-		_world.startMovie(0);	// the game opens with the introduction movie, then the main menu
+	if (saveSlot != -1) {
+		const Common::Error loaded = loadGameState(saveSlot);
+		if (loaded.getCode() != Common::kNoError)
+			return loaded;
+	} else {
+		_world.startMovie(0);	// introduction movie, then main menu
+	}
 
 	while (runFrame()) {
 		limiter.delayBeforeSwap();

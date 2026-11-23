@@ -30,15 +30,6 @@
 #include "tesoro/detection.h"
 #include "tesoro/detection_tables.h"
 
-const DebugChannelDef TesoroMetaEngineDetection::debugFlagList[] = {
-	{ Tesoro::kDebugGraphics, "Graphics", "Graphics debug level" },
-	{ Tesoro::kDebugPath, "Path", "Pathfinding debug level" },
-	{ Tesoro::kDebugFilePath, "FilePath", "File path debug level" },
-	{ Tesoro::kDebugScan, "Scan", "Scan for unrecognised games" },
-	{ Tesoro::kDebugScript, "Script", "Enable debug script dump" },
-	DEBUG_CHANNEL_END
-};
-
 TesoroMetaEngineDetection::TesoroMetaEngineDetection() : AdvancedMetaEngineDetection(
 	Tesoro::gameDescriptions, Tesoro::tesoroGames) {
 }

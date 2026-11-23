@@ -41,8 +41,6 @@ public:
 	 */
 	bool hasFeature(MetaEngineFeature f) const override;
 
-	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
-
 	Common::KeymapArray initKeymaps(const char *target) const override;
 
 	/** The save list shows the scene, not the save screen that is up when the file is written. */

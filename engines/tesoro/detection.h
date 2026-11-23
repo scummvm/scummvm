@@ -26,25 +26,13 @@
 
 namespace Tesoro {
 
-enum TesoroDebugChannels {
-	kDebugGraphics = 1,
-	kDebugPath,
-	kDebugScan,
-	kDebugFilePath,
-	kDebugScript,
-};
-
 extern const PlainGameDescriptor tesoroGames[];
 
 extern const ADGameDescription gameDescriptions[];
 
-#define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
-
 } // End of namespace Tesoro
 
 class TesoroMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
-	static const DebugChannelDef debugFlagList[];
-
 public:
 	TesoroMetaEngineDetection();
 	~TesoroMetaEngineDetection() override {}
@@ -59,10 +47,6 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Tesoro (C)";
-	}
-
-	const DebugChannelDef *getDebugChannels() const override {
-		return debugFlagList;
 	}
 };
 

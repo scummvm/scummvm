@@ -1,3 +1,3 @@
 begin_section("Tesoro");
-	add_person("Name 1", "Handle 1", "");
+	add_person("Gabriel Sanmartín", "kelmer", "");
 end_section();

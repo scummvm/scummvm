@@ -27,31 +27,8 @@
 #include "tesoro/metaengine.h"
 #include "tesoro/tesoro.h"
 
-namespace Tesoro {
-
-static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_ORIGINAL_SAVELOAD,
-		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"original_menus",
-			false,
-			0,
-			0
-		}
-	},
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
-} // End of namespace Tesoro
-
 const char *TesoroMetaEngine::getName() const {
 	return "tesoro";
-}
-
-const ADExtraGuiOptionsMap *TesoroMetaEngine::getAdvancedExtraGuiOptions() const {
-	return Tesoro::optionsList;
 }
 
 Common::Error TesoroMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

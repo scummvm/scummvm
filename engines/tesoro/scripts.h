@@ -288,22 +288,22 @@ private:
 
 /** The scene routines' view of the game, for the block that is running. */
 struct SceneAdapter {
-	SceneAdapter(Scripts &scripts, ScriptRun &run) : _s(scripts), _w(scripts._w), _run(run) {}
-	void enterLevel(int level, int32 x, int32 y) { _s.moveToLevel(_run, level, x, y); }
-	void enterLevelAtJim(int level) { _s.moveToLevel(_run, level, _w._jim->x(), _w._jim->y()); }
+	SceneAdapter(Scripts &scripts, ScriptRun &run) : _scripts(scripts), _w(scripts._w), _run(run) {}
+	void enterLevel(int level, int32 x, int32 y) { _scripts.moveToLevel(_run, level, x, y); }
+	void enterLevelAtJim(int level) { _scripts.moveToLevel(_run, level, _w._jim->x(), _w._jim->y()); }
 	void enterLevelAtFloor(int level) {
 		Level *where = _w.level(level);
 		const CameraFrame *frame = where ? where->cameraFrame() : nullptr;
 		Object *floor = frame ? frame->target() : nullptr;
-		_s.moveToLevel(_run, level, floor ? floor->x() : 0, floor ? floor->y() : 0);
+		_scripts.moveToLevel(_run, level, floor ? floor->x() : 0, floor ? floor->y() : 0);
 	}
 	void enterLevelAtObject(int level, const char *name) {
 		Object *object = _w.findObject(level, name);
-		_s.moveToLevel(_run, level, object ? object->x() : 0, object ? object->y() : 0);
+		_scripts.moveToLevel(_run, level, object ? object->x() : 0, object ? object->y() : 0);
 	}
-	void rebindCharacters() { _s.rebindCharacters(_run); }
+	void rebindCharacters() { _scripts.rebindCharacters(_run); }
 
-	void cameraToJim(bool blockLevel) { _s.cameraToJim(blockLevel ? _run.level : _w._jim->level()); }
+	void cameraToJim(bool blockLevel) { _scripts.cameraToJim(blockLevel ? _run.level : _w._jim->level()); }
 	void setJimVisible(bool visible) { _w._jim->setVisible(visible); }
 	void setJimActive(bool active) { _w._jim->setActive(active); }
 	void setJimPosition(int32 x, int32 y) { _w._jim->setPosition(x, y); }
@@ -336,7 +336,7 @@ struct SceneAdapter {
 	void clearPointerItem() { _w.clearPointerItem(); }
 
 private:
-	Scripts &_s;
+	Scripts &_scripts;
 	World &_w;
 	ScriptRun &_run;
 };
