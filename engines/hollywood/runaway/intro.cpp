@@ -49,7 +49,7 @@ const uint kStoryHoldDuration = 40000;
 
 } // End of anonymous namespace
 
-bool RunawayIntro::load(bool fullGame, byte chapter, Mode mode) {
+bool RunawayIntro::load(bool fullGame, byte chapter, Mode mode, bool publisherLogo) {
 	_fullGame = fullGame;
 	_chapter = chapter;
 	_mode = mode;
@@ -58,6 +58,8 @@ bool RunawayIntro::load(bool fullGame, byte chapter, Mode mode) {
 	if (chapter || mode == kOpeningOnly) {
 		return _opening.load(chapter);
 	}
+	if (publisherLogo && !_publisher.load("DATAVA01.001"))
+		return false;
 	ChunkArchive archive;
 	if (!archive.open(Common::Path("RESOURCE.A02")))
 		return false;
@@ -93,6 +95,17 @@ void RunawayIntro::start(uint32 now) {
 		startStory(now);
 		return;
 	}
+	if (_publisher.frameCount()) {
+		_phase = kPublisher;
+		_phaseStarted = now;
+		_audio.playIntroMusic(3);
+		update(now);
+		return;
+	}
+	startLogo(now);
+}
+
+void RunawayIntro::startLogo(uint32 now) {
 	_phase = kLogo;
 	_phaseStarted = now;
 	_audio.playIntroMusic();
@@ -117,6 +130,11 @@ void RunawayIntro::startStory(uint32 now) {
 }
 
 void RunawayIntro::skip(uint32 now) {
+	if (_phase == kPublisher || _phase == kPublisherFade || _phase == kPublisherAudio) {
+		_publisher.close();
+		startLogo(now);
+		return;
+	}
 	if (_phase == kOpening) {
 		_opening.skip(now);
 	}
@@ -137,6 +155,35 @@ void RunawayIntro::update(uint32 now) {
 	for (;;) {
 		const uint32 elapsed = now - _phaseStarted;
 		switch (_phase) {
+		case kPublisher: {
+			// The French intro fades at frame 90 of the 120-frame movie.
+			const uint lastFrame = MIN<uint>(90, _publisher.frameCount() - 1);
+			const uint frame = MIN(_publisher.frameAtTime(elapsed), lastFrame);
+			if (!_publisher.decodeToFrame(frame)) {
+				_failed = true;
+				_phase = kFinished;
+				return;
+			}
+			_brightness = 255;
+			if (frame == lastFrame) {
+				_phase = kPublisherFade;
+				_phaseStarted = now;
+			}
+			return;
+		}
+		case kPublisherFade:
+			_brightness = 255 * (1000 - MIN<uint>(elapsed, 1000)) / 1000;
+			if (elapsed >= 1000) {
+				_phase = kPublisherAudio;
+				_phaseStarted = now;
+			}
+			return;
+		case kPublisherAudio:
+			if (!_audio.musicPlaying() || elapsed >= 4000) {
+				_publisher.close();
+				startLogo(now);
+			}
+			return;
 		case kLogo: {
 			for (uint i = 0; i < ARRAYSIZE(_logo); ++i) {
 				_logoFrames[i] = elapsed < kLogoTrackStarts[i] ? -1 :
@@ -201,7 +248,10 @@ void RunawayIntro::draw() {
 	_screen.fillRect(Common::Rect(_screen.w, _screen.h), 0);
 	if (!_brightness)
 		return;
-	if (_phase == kLogo) {
+	if (_phase == kPublisher || _phase == kPublisherFade) {
+		// French demo 0x455330 displays the publisher movie at its native size.
+		_publisher.draw(_screen, Common::Rect(256, 234, 768, 534));
+	} else if (_phase == kLogo) {
 		for (uint i = 0; i < ARRAYSIZE(_logo); ++i) {
 			if (_logoFrames[i] >= 0)
 				_logo[i].draw(_screen, _logoFrames[i], 0, kRunawayViewportTop);

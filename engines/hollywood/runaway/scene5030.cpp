@@ -41,8 +41,8 @@ struct SceneHotspot {
 	Common::Point lookPosition;
 };
 
-// Approach points and facings from demo initializer 0x439e40, with approach
-// flags and look targets from retail 0x479ea0. The hit regions are decoded from E03.
+// The demo (0x439e40) and retail (0x479ea0) share the approach flags and
+// look targets. The hit regions are decoded from E03.
 const SceneHotspot kHotspots[] = {
 	{0, 0, 0, {false, false}, {0, 0}},
 	{101, 507, 7, {true, false}, {42, 451}},
@@ -166,7 +166,7 @@ void Scene5030::start(uint32 now) {
 
 void Scene5030::resume() {
 	if (_entering || !_audio.musicPlaying()) {
-		_audio.playMusic(11, _game != kRunawayFullGame);
+		_audio.playMusic(11, false);
 	}
 	if (_entering) {
 		_entering = false;
@@ -352,7 +352,7 @@ Common::U32String Scene5030::hotspotName(byte id) const {
 }
 
 byte Scene5030::actionCursor(byte id) const {
-	return _game == kRunawayFullGame && id == 6 && _hatchState == kOpen ? 7 : 0;
+	return id == 6 && _hatchState == kOpen ? 7 : 0;
 }
 
 RunawayVerb Scene5030::alternateVerb(byte id) const {
@@ -361,23 +361,21 @@ RunawayVerb Scene5030::alternateVerb(byte id) const {
 
 Common::U32String Scene5030::actionCaption(byte id, RunawayVerb verb, byte item) const {
 	const Common::U32String name = hotspotName(id);
-	if (_game == kRunawayFullGame) {
-		if (!item && id == 6 && _hatchState == kOpen && verb == kVerbUse)
-			return _strings.text(RunawayStrings::kClose) + name;
-		const char *variant = nullptr;
-		if (item == 2 && id == 6 && _hatchState >= kUnlocked) {
-			variant = "unlocked";
-		} else if (!item && verb != kVerbLook) {
-			if ((id == 6 && _hatchState == kOpen) || (id == 18 && _lidOpen)) {
-				variant = "open";
-			} else if (id == 11 && _ice == kDrained) {
-				variant = "closed";
-			}
+	if (!item && id == 6 && _hatchState == kOpen && verb == kVerbUse)
+		return _strings.text(RunawayStrings::kClose) + name;
+	const char *variant = nullptr;
+	if (item == 2 && id == 6 && _hatchState >= kUnlocked) {
+		variant = "unlocked";
+	} else if (!item && verb != kVerbLook) {
+		if ((id == 6 && _hatchState == kOpen) || (id == 18 && _lidOpen)) {
+			variant = "open";
+		} else if (id == 11 && _ice == kDrained) {
+			variant = "closed";
 		}
-		const Common::U32String pattern = _strings.sceneActionCaption(5030, id, item, verb == kVerbLook, variant);
-		if (!pattern.empty()) {
-			return RunawayStrings::formatActionCaption(pattern, _inventory.name(item), name);
-		}
+	}
+	const Common::U32String pattern = _strings.sceneActionCaption(5030, id, item, verb == kVerbLook, variant);
+	if (!pattern.empty()) {
+		return RunawayStrings::formatActionCaption(pattern, _inventory.name(item), name);
 	}
 	if (item) {
 		Common::U32String caption = _strings.text(RunawayStrings::kUse) + _inventory.name(item);
@@ -414,6 +412,8 @@ Common::U32String Scene5030::actionCaption(byte id, RunawayVerb verb, byte item)
 void Scene5030::sayInventory(const RunawayInventory::Reply &reply) {
 	const RunawayInventory::Reply speech = reply.action == 1 || reply.action == 5 ? RunawayInventory::randomReply(_random) : reply;
 	stopSpeech();
+	if (speech.cue == 156 && !speech.variation)
+		_audio.playEffect(26, 166);
 	uint16 row, sample;
 	byte count;
 	if (!_text.getStaticSpeechCue(speech.cue, speech.variation, row, count, sample))
@@ -484,7 +484,7 @@ void Scene5030::click(Common::Point mouse, RunawayVerb verb, byte item) {
 	_pendingItem = item;
 	_pendingVerb = verb;
 	_committedCaption = actionCaption(id, verb, item);
-	if (_game == kRunawayFullGame && id) {
+	if (id) {
 		bool approach = kHotspots[id].approach[verb == kVerbLook ? 0 : 1];
 		if (item) {
 			approach = (item == 1 && id == 4) || (item == 2 && id == 6) || (item == 6 && id == 8);
@@ -522,8 +522,7 @@ void Scene5030::useItem(byte item, byte hotspot) {
 	_inventory.select(0);
 	if (!_inventory.contains(item))
 		return;
-	// Dispatch the room's item actions separately from its ordinary verbs.
-	// Original rejected actions use the shared, voiced inventory responses.
+	// Unmatched item uses share the voiced inventory refusals.
 	if (item == 1 && hotspot == 3) {
 		// 339: Use the chamois with the large window.
 		sayCue(35, 0);
@@ -576,7 +575,7 @@ void Scene5030::useItem(byte item, byte hotspot) {
 			break;
 		}
 	} else {
-		sayInventory(_game == kRunawayFullGame ? RunawayInventory::Reply::fromAction(1) : RunawayInventory::Reply());
+		sayInventory(RunawayInventory::Reply::fromAction(1));
 	}
 }
 
@@ -720,7 +719,7 @@ void Scene5030::arrive(bool faceHotspot) {
 		else
 			sayInventory(RunawayInventory::Reply(25, 0));
 	} else if (id == 6) {
-		if (_game == kRunawayFullGame && _hatchState == kOpen && _pendingVerb == kVerbUse)
+		if (_hatchState == kOpen && _pendingVerb == kVerbUse)
 			sayCue(12, 0);
 		else if (_hatchState == kLocked)
 			sayCue(11, 0);
@@ -835,10 +834,8 @@ void Scene5030::startAction(Action action) {
 		frames = 43;
 		break;
 	case kOpenHatch:
-		if (_game == kRunawayFullGame) {
-			_audio.playMusic(20, false);
-			_audio.setMusicVolume(255);
-		}
+		_audio.playMusic(20, false);
+		_audio.setMusicVolume(255);
 		chunk = 36;
 		frames = 47;
 		applyPatch(24);
@@ -935,7 +932,7 @@ void Scene5030::finishAction() {
 		if (completed == kPryHatch)
 			sayCue(34, 1);
 	} else if (completed == kEscape) {
-		if (_game == kRunawayFullGame) {
+		if (_game == kRunawayFullGame || _strings.language() == Common::FR_FRA) {
 			_transition.scene = 5021;
 			_transition.position = Common::Point(618, 386);
 			_transition.facing = 3;
@@ -1112,9 +1109,7 @@ void Scene5030::update(uint32 now, int scrollDirection, bool inventoryOpen) {
 	const uint elapsed = MIN<uint>(100, now - _lastUpdate);
 	const uint32 pausedTime = now - _lastUpdate;
 	_lastUpdate = now;
-	if (_game == kRunawayFullGame) {
-		_audio.updateBackgroundMusic(now, _random, 17, 3, 96, 30000);
-	}
+	_audio.updateBackgroundMusic(now, _random, 17, 3, 96, 30000);
 	if (_speechRow && !_audio.speechPlaying() && _speech.finished(now))
 		skipSpeech();
 	if (inventoryOpen && !inventoryPresentation()) {

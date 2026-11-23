@@ -270,7 +270,7 @@ protected:
 	void finishConversation();
 	byte speaker() const { return speaking() && _lineIndex < _lines.size() ? _lines[_lineIndex].speaker : 0; }
 
-	bool desertChapter() const { return _game == kRunawayFullGame && _room / 1000 == 5; }
+	bool desertChapter() const { return _game != kRunawayMuseumDemo && _room / 1000 == 5; }
 	void startDesert();
 	void resumeDesert();
 	void updateDesert(uint elapsed);

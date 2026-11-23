@@ -26,23 +26,24 @@
 #include "hollywood/runaway/graphics.h"
 #include "hollywood/runaway/presentation.h"
 #include "hollywood/runaway/scene2010.h"
+#include "hollywood/runaway/video.h"
 
 namespace Hollywood {
 
-// Animated Pendulo logo, then the demo story card or retail opening.
+// Publisher/Pendulo logos, then the demo story card or retail opening.
 // The engine supplies its pause-aware clock and handles input/presentation.
 class RunawayIntro : public RunawayPresentation {
 public:
 	enum Mode { kCompleteIntro, kLogoOnly, kOpeningOnly };
 	explicit RunawayIntro(Audio::Mixer *mixer) : _audio(mixer), _opening(_audio) {}
-	bool load(bool fullGame = false, byte chapter = 0, Mode mode = kCompleteIntro);
+	bool load(bool fullGame = false, byte chapter = 0, Mode mode = kCompleteIntro, bool publisherLogo = false);
 	void start(uint32 now);
 	void skip(uint32 now);
 	void skipSpeech(uint32 now);
 	void update(uint32 now);
 	void draw();
 	bool finished() const { return _phase == kFinished; }
-	bool failed() const { return _opening.failed(); }
+	bool failed() const { return _failed || _opening.failed(); }
 	const Common::U32String &subtitle() const { return _opening.subtitle(); }
 	byte subtitleColor() const { return _opening.subtitleColor(); }
 	Graphics::ManagedSurface &screen() { return _screen; }
@@ -51,11 +52,14 @@ private:
 	void skipPresentation(uint32 now) override { skip(now); }
 	void skipPresentationSpeech(uint32 now) override { skipSpeech(now); }
 
-	enum Phase { kLogo, kLogoAudio, kStoryFadeIn, kStory, kStoryFadeOut, kOpening, kFinished };
+	enum Phase { kPublisher, kPublisherFade, kPublisherAudio, kLogo, kLogoAudio, kStoryFadeIn, kStory, kStoryFadeOut, kOpening, kFinished };
+	void startLogo(uint32 now);
 	void startStory(uint32 now);
 
 	RunawayAudio _audio;
 	RunawayOpening _opening;
+	RunawayVideo _publisher;
+	bool _failed = false;
 	bool _fullGame = false;
 	byte _chapter = 0;
 	Mode _mode = kCompleteIntro;

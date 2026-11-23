@@ -148,6 +148,18 @@ RunawayRoomScene::ActionResult Scene5020::dispatchCustomSceneAction(uint16 actio
 	case 410: // Rescue Gina and escape in the helicopter.
 		startRescueFilm();
 		break;
+	case 1450: // Finish climbing out of the cabin.
+		_position = Common::Point(618, 386);
+		_walkPath.reset(_position);
+		_facing = 3;
+		if (!_desert.escapedCabin) {
+			_desert.escapedCabin = 1;
+			say(0);
+			leaveDesertRoom(5140);
+		} else {
+			visitDesertRoom(1, 0);
+		}
+		break;
 	default:
 		return kUnhandled;
 	}
@@ -156,12 +168,9 @@ RunawayRoomScene::ActionResult Scene5020::dispatchCustomSceneAction(uint16 actio
 
 void Scene5020::runCustomEntrySequence() {
 	if (_entryScene == 5021) {
+		const byte frames[] = {0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
 		_audio.playMusic(12, false);
-	}
-	if (_entryScene == 5021 && !_desert.escapedCabin) {
-		_desert.escapedCabin = 1;
-		say(0);
-		leaveDesertRoom(5140);
+		beginRoomAnimation(450, 10, 25, frames, ARRAYSIZE(frames), true, 60);
 		return;
 	}
 	if (_entryScene == 5022) {

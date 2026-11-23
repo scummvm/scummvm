@@ -60,8 +60,7 @@ const RunawayResponse kGlobalResponses[] = {
 RunawayRoomScene::RunawayRoomScene(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	_audio(audio), _sequence(audio, game == kRunawayMuseumDemo ? RunawaySpeech::kRandomLipSync : RunawaySpeech::kRecordedLipSync),
 	_inventory(inventory), _strings(strings), _game(game), _random("runaway"),
-	_speech(audio, _random, game == kRunawayFullGame ? RunawaySpeech::kRecordedLipSync :
-		game == kRunawayMuseumDemo ? RunawaySpeech::kRandomLipSync : RunawaySpeech::kNoLipSync) {}
+	_speech(audio, _random, game == kRunawayMuseumDemo ? RunawaySpeech::kRandomLipSync : RunawaySpeech::kRecordedLipSync) {}
 
 const Common::U32String &RunawayRoomScene::subtitle() const {
 	if (_sequence.active())
@@ -162,7 +161,8 @@ void RunawayRoomScene::updateAmbientMusic() {
 				_audio.playMusic(16);
 				_audio.setMusicVolume(_room == 5170 ? 179 : 255);
 			}
-		} else if (_room != 5060 && _room != 5130 && _room != 5140) {
+		} else if (_game == kRunawayFullGame && _room != 5060 && _room != 5130 && _room != 5140) {
+			// The cabin demos omit the outdoor background tracks.
 			_audio.updateBackgroundMusic(_now, _random, 13, 2);
 		}
 	} else if (townChapter()) {
@@ -267,8 +267,8 @@ bool RunawayRoomScene::enterRoom(uint16 number, Common::Point position, byte fac
 	if (!loadWalkMap()) {
 		return false;
 	}
-	if (_game == kRunawayFullGame ? !_actor.loadChapter(number < 4000 ? 1 : number < 5000 ? 2 : number < 6000 ? 3 : 4,
-			usesAlternateActor()) :
+	if (_game != kRunawayMuseumDemo ? !_actor.loadChapter(number < 4000 ? 1 : number < 5000 ? 2 : number < 6000 ? 3 : 4,
+			_game == kRunawayFullGame && usesAlternateActor()) :
 			!_actor.load(usesAlternateActor() ? RunawayActor::kMuseumInterior : RunawayActor::kMuseumHall))
 		return false;
 	_position = position;
@@ -497,7 +497,7 @@ void RunawayRoomScene::say(const SceneTextStore &text, const SceneSpeechCue &spe
 	for (uint i = 0; i < MAX<uint>(1, speech.continuationCount); ++i) {
 		SpeechLine line;
 		line.text = Common::U32String(text.largeTextRecord(speech.textRecordId + i), Common::kDos850);
-		line.sample = _game == kRunawayFullGame && speech.voiceSampleId ? speech.voiceSampleId + i : 0;
+		line.sample = _game != kRunawayMuseumDemo && speech.voiceSampleId ? speech.voiceSampleId + i : 0;
 		line.global = global;
 		line.speaker = speaker;
 		line.color = color ? color : _speechColors[speaker];
@@ -784,7 +784,7 @@ void RunawayRoomScene::updateActor(uint elapsed, int scrollDirection, bool inven
 	if (_walkPath.active() && !speaking()) {
 		_walkPath.advance(elapsed * actorWalkSpeed(), _position, _facing);
 		_walkElapsed += elapsed;
-		if (_game == kRunawayFullGame && (!_lastFootstep || _walkElapsed - _lastFootstep >= 360)) {
+		if (_game != kRunawayMuseumDemo && (!_lastFootstep || _walkElapsed - _lastFootstep >= 360)) {
 			const bool inside = _position.x >= 0 && _position.x < _background.w && _position.y >= 0 && _position.y < _background.h;
 			const byte surface = inside ? _maps[1280 + _mask[_position.y * _background.w + _position.x]] : 0;
 			const byte volume = CLIP<int>((int)(actorHeight() * 255 / 455), 0, 255);
@@ -799,7 +799,7 @@ void RunawayRoomScene::updateActor(uint elapsed, int scrollDirection, bool inven
 	}
 	const bool walking = _walkPath.active();
 	int headFrame = -1;
-	if (_game == kRunawayFullGame) {
+	if (_game != kRunawayMuseumDemo) {
 		const bool idle = !walking && !busy();
 		_idleHead.update(_now, idle, _speech.frameDuration(), _random);
 		if (!walking) {

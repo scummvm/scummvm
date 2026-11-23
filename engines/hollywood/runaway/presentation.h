@@ -82,7 +82,7 @@ private:
 class RunawayInterrogation {
 public:
 	explicit RunawayInterrogation(Audio::Mixer *mixer) :
-		_audio(mixer), _random("runawayInterrogation"), _speech(_audio, _random, RunawaySpeech::kTextLipSync) {}
+		_audio(mixer), _random("runawayInterrogation"), _speech(_audio, _random, RunawaySpeech::kRecordedLipSync) {}
 	bool load();
 	void start(uint32 now);
 	void update(uint32 now);

@@ -194,6 +194,7 @@ RunawayScene *RunawayEngine::createScene(uint16 entryScene) {
 	const RunawayRoom *room = findRunawayRoom(entryScene);
 	RunawayScene *scene = nullptr;
 	if (room && ((_museum && entryScene / 1000 == 4) ||
+			(_game == kRunawayCabinDemo && _language == Common::FR_FRA && (entryScene == 5021 || entryScene == 5140)) ||
 			(_game == kRunawayFullGame && (entryScene / 1000 == 2 || entryScene / 1000 == 4 || entryScene / 1000 == 5 || entryScene / 1000 == 6 || entryScene / 1000 == 7 || entryScene / 1000 == 8 || entryScene / 1000 == 9)))) {
 		scene = createRunawayRoomScene(*room, _audio, *_inventory, _strings, _game);
 	} else if ((_game == kRunawayCabinDemo && entryScene == 5030) ||
@@ -298,7 +299,7 @@ Common::Error RunawayEngine::playIntro(RunawayMenu &menu, byte chapter, RunawayI
 	_inPresentation = true;
 	_loadedGame = false;
 	RunawayIntro intro(_mixer);
-	if (!intro.load(_game == kRunawayFullGame, chapter, mode)) {
+	if (!intro.load(_game == kRunawayFullGame, chapter, mode, _game == kRunawayCabinDemo && _language == Common::FR_FRA)) {
 		_inPresentation = false;
 		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway opening resources");
 	}

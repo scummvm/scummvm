@@ -98,6 +98,12 @@ const IntroductionLine kFarewell[] = {
 	{34, kBrianCarla, 0, 0},
 };
 
+const IntroductionLine kDemoFarewell[] = {
+	{kNoLine, kNobody, 120, 128},
+	{2, kBrianCarla, 0, 0},
+	{4, kBrianCarla, 0, 0},
+};
+
 } // End of anonymous namespace
 
 const RunawayRoom kRunawayScene5140 = {
@@ -144,7 +150,7 @@ void Scene5140::updateIntroduction() {
 		intro.speaker = kNobody;
 	}
 	const bool arriving = intro.phase == BusIntroduction::kArrival || intro.phase == BusIntroduction::kReturn;
-	if (_now - intro.tick >= 80) {
+	if (_now - intro.tick >= 60) {
 		intro.tick = _now;
 		intro.blink = false;
 		if (intro.frame != intro.lastFrame) {
@@ -168,13 +174,18 @@ void Scene5140::updateIntroduction() {
 		intro.frame = intro.lastFrame = kBrianTalkFrames[kBrianMariola];
 	}
 	const bool farewell = intro.phase == BusIntroduction::kFarewell;
-	const IntroductionLine *lines = farewell ? kFarewell : kIntroduction;
-	const uint count = farewell ? ARRAYSIZE(kFarewell) : ARRAYSIZE(kIntroduction);
+	const bool demoFarewell = farewell && _game == kRunawayCabinDemo;
+	const IntroductionLine *lines = demoFarewell ? kDemoFarewell : farewell ? kFarewell : kIntroduction;
+	const uint count = demoFarewell ? ARRAYSIZE(kDemoFarewell) : farewell ? ARRAYSIZE(kFarewell) : ARRAYSIZE(kIntroduction);
 	if (intro.nextLine == count) {
 		if (farewell) {
 			_roomAction = 0;
-			leaveDesertRoom(5060);
-			_transition = _hospitalExit;
+			if (demoFarewell) {
+				_chapterComplete = true;
+			} else {
+				leaveDesertRoom(5060);
+				_transition = _hospitalExit;
+			}
 		} else {
 			// Brian pauses to think, then announces that he has a plan.
 			typedef RunawaySequence S;
@@ -200,7 +211,7 @@ void Scene5140::updateIntroduction() {
 	}
 	intro.tick = _now;
 	if (line.variation != kNoLine) {
-		say(1, line.variation, false, line.speaker + 1);
+		say(demoFarewell ? 0 : 1, line.variation, false, line.speaker + 1);
 	}
 }
 
@@ -210,6 +221,9 @@ bool Scene5140::updateCustomSequence() {
 }
 
 void Scene5140::finishCustomFilm() {
+	// The French demo returns with three lines from stage 506, then ends.
+	if (_game == kRunawayCabinDemo && !_text.loadStage("RESOURCE.003", "Runaway demo farewell", 506))
+		error("Cannot load Runaway demo farewell");
 	updateIntroduction();
 }
 

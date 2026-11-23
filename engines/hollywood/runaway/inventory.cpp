@@ -578,7 +578,7 @@ RunawayInventory::Reply RunawayInventory::nextReply(const Reply &reply) const {
 }
 
 Common::U32String RunawayInventory::combinationCaption(byte item, byte target) const {
-	if ((!_fullGame && !_museumDemo) || !item || !target || item == target) {
+	if (!item || !target || item == target) {
 		return Common::U32String();
 	}
 	return RunawayStrings::formatActionCaption(_strings.combinationCaption(_chapter, item, target), name(item), name(target));
@@ -823,7 +823,7 @@ RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 		return Reply(191);
 	if (first == 18 && second == 25)
 		return Reply(_desert.antTrickKnown ? (_desert.bucket == 1 ? 192 : 180) : 14);
-	return _fullGame ? Reply::fromAction(1) : Reply();
+	return Reply::fromAction(1);
 }
 
 } // End of namespace Hollywood

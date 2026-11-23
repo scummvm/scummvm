@@ -49,7 +49,7 @@ public:
 	Scene5030(Audio::Mixer *mixer, RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings,
 			RunawayGameType game = kRunawayCabinDemo) :
 		_audio(audio), _inventory(inventory), _strings(strings), _game(game), _interrogation(mixer), _random("runawayShack"), _actor(),
-		_speech(audio, _random, game == kRunawayFullGame ? RunawaySpeech::kRecordedLipSync : RunawaySpeech::kTextLipSync),
+		_speech(audio, _random, RunawaySpeech::kRecordedLipSync),
 		_walkPath(Common::Point(623, 447)) {}
 	bool load(uint16 entryScene) override;
 	void start(uint32 now) override;
