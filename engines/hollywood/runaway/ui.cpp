@@ -147,7 +147,7 @@ bool RunawayUI::inViewport() const {
 }
 
 void RunawayUI::setVerb(RunawayVerb verb, byte actionCursor) {
-	const byte cursor = verb == kVerbUse && actionCursor ? actionCursor : (byte)verb;
+	const byte cursor = verb == kVerbExit || (verb == kVerbUse && actionCursor == 3) ? actionCursor : (byte)verb;
 	if (_verb != verb || _cursorType != cursor) {
 		if (_pointerSound && (_inventoryOpen || _roomHasVerbs) && !_blocked && !_speaking && !busy()) {
 			_audio.playPointer();
@@ -158,6 +158,16 @@ void RunawayUI::setVerb(RunawayVerb verb, byte actionCursor) {
 		_verbStarted = _now;
 	}
 	_actionCursor = actionCursor;
+}
+
+RunawayVerb RunawayUI::defaultVerb() const {
+	if (!_hovered || _walkHotspot || (!_inventoryOpen && !_roomHasVerbs))
+		return kVerbWalk;
+	if (_inventoryOpen)
+		return _inventory.isPlan(_hovered) ? kVerbLook : kVerbUse;
+	if (_preferLook || !_actionCursor)
+		return kVerbLook;
+	return _actionCursor >= 4 ? kVerbExit : kVerbUse;
 }
 
 void RunawayUI::captureState(RunawaySaveState &state) const {
@@ -176,8 +186,10 @@ void RunawayUI::restoreState(const RunawaySaveState &state, uint32 now) {
 	_inventoryOpen = state.inventoryOpen;
 	_enteredInventory = false;
 	_verb = (RunawayVerb)state.verb;
-	_cursorType = _previousCursor = state.verb;
+	// The loaded hotspot supplies the exit arrow's direction on the next update.
+	_cursorType = _previousCursor = _verb == kVerbExit ? 0 : state.verb;
 	_actionCursor = 0;
+	_alternateVerb = kVerbLook;
 	_preferLook = false;
 	_walkHotspot = false;
 	_cursorKey = -1;
@@ -209,6 +221,7 @@ bool RunawayUI::cancel() {
 		return true;
 	if (_inventory.selected()) {
 		_inventory.select(0);
+		setVerb(defaultVerb(), _actionCursor);
 		return true;
 	}
 	if (_inventoryOpen) {
@@ -219,7 +232,8 @@ bool RunawayUI::cancel() {
 }
 
 void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool blocked, bool speaking,
-		bool inventoryPresentation, byte speechFrame, bool roomHasVerbs, byte actionCursor, bool preferLook, bool walkHotspot) {
+		bool inventoryPresentation, byte speechFrame, bool roomHasVerbs, byte actionCursor, bool preferLook, bool walkHotspot,
+		RunawayVerb alternateVerb) {
 	_now = now;
 	_mouse = mouse;
 	_blocked = blocked;
@@ -276,16 +290,17 @@ void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool b
 	if (_inventoryOpen || !roomHasVerbs || (_museum && actionCursor != 3)) {
 		actionCursor = 0;
 		preferLook = false;
+		alternateVerb = kVerbLook;
 	}
 	if (_hovered != hovered || _roomHasVerbs != roomHasVerbs || _actionCursor != actionCursor ||
-			_preferLook != preferLook || _walkHotspot != walkHotspot) {
+			_preferLook != preferLook || _walkHotspot != walkHotspot || _alternateVerb != alternateVerb) {
 		_hovered = hovered;
 		_roomHasVerbs = roomHasVerbs;
 		_preferLook = preferLook;
 		_walkHotspot = walkHotspot;
-		setVerb(hovered && !walkHotspot && (_inventoryOpen || _roomHasVerbs) ?
-			(_inventoryOpen ? (_inventory.isPlan(hovered) ? kVerbLook : kVerbUse) :
-			(actionCursor && !preferLook ? kVerbUse : kVerbLook)) : kVerbWalk, actionCursor);
+		_actionCursor = actionCursor;
+		_alternateVerb = alternateVerb;
+		setVerb(defaultVerb(), actionCursor);
 	}
 	if (now - _buttonTick >= 20) {
 		const uint steps = MIN<uint>(6, (now - _buttonTick) / 20);
@@ -354,8 +369,10 @@ RunawayUI::Command RunawayUI::click(bool right) {
 	if (right) {
 		if (_inventory.selected()) {
 			_inventory.select(0);
-		} else if (_hovered && !_walkHotspot && (_inventoryOpen || _roomHasVerbs)) {
-			setVerb(_verb == kVerbLook ? kVerbUse : kVerbLook, _actionCursor);
+			setVerb(defaultVerb(), _actionCursor);
+		} else if (_hovered && !_walkHotspot && _alternateVerb != kVerbWalk && (_inventoryOpen || _roomHasVerbs)) {
+			setVerb(_actionCursor >= 4 ? (_verb == kVerbExit ? _alternateVerb : kVerbExit) :
+				(_verb == kVerbLook ? kVerbUse : kVerbLook), _actionCursor);
 		}
 		return command;
 	}

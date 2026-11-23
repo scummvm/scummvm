@@ -30,6 +30,7 @@ namespace Runaway {
 class Scene7020 : public RunawayRoomScene {
 public:
 	Scene7020(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
+	RunawayVerb alternateVerb(byte id) const override { return id == 5 || id == 7 ? kVerbWalk : kVerbLook; }
 
 private:
 	struct RouteStep {

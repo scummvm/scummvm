@@ -351,9 +351,19 @@ Common::U32String Scene5030::hotspotName(byte id) const {
 	return name;
 }
 
+byte Scene5030::actionCursor(byte id) const {
+	return _game == kRunawayFullGame && id == 6 && _hatchState == kOpen ? 7 : 0;
+}
+
+RunawayVerb Scene5030::alternateVerb(byte id) const {
+	return actionCursor(id) ? kVerbUse : kVerbLook;
+}
+
 Common::U32String Scene5030::actionCaption(byte id, RunawayVerb verb, byte item) const {
 	const Common::U32String name = hotspotName(id);
 	if (_game == kRunawayFullGame) {
+		if (!item && id == 6 && _hatchState == kOpen && verb == kVerbUse)
+			return _strings.text(RunawayStrings::kClose) + name;
 		const char *variant = nullptr;
 		if (item == 2 && id == 6 && _hatchState >= kUnlocked) {
 			variant = "unlocked";
@@ -480,6 +490,8 @@ void Scene5030::click(Common::Point mouse, RunawayVerb verb, byte item) {
 			approach = (item == 1 && id == 4) || (item == 2 && id == 6) || (item == 6 && id == 8);
 		} else if (verb == kVerbLook && (id == 5 || id == 7 || id == 9 || id == 15 || id == 17)) {
 			approach = !_examined[id];
+		} else if (id == 6 && _hatchState == kOpen && verb == kVerbUse) {
+			approach = false;
 		}
 		if (!approach) {
 			const Common::Point target = id == 8 && _coolerMoved ? Common::Point(1128, 406) : kHotspots[id].lookPosition;
@@ -708,7 +720,9 @@ void Scene5030::arrive(bool faceHotspot) {
 		else
 			sayInventory(RunawayInventory::Reply(25, 0));
 	} else if (id == 6) {
-		if (_hatchState == kLocked)
+		if (_game == kRunawayFullGame && _hatchState == kOpen && _pendingVerb == kVerbUse)
+			sayCue(12, 0);
+		else if (_hatchState == kLocked)
 			sayCue(11, 0);
 		else if (_hatchState == kUnlocked)
 			startAction(kOpenHatch);

@@ -81,6 +81,10 @@ Scene8400::Scene8400(RunawayAudio &audio, RunawayInventory &inventory, const Run
 	_speechColors[2] = 22; // Feodor.
 }
 
+byte Scene8400::actionCursor(byte id) const {
+	return id == 3 ? (_finale.trailerDoor ? 4 : 0) : RunawayRoomScene::actionCursor(id);
+}
+
 bool Scene8400::loadCustomResources() {
 	return _door.load(_archive, 4, 3) && _scenery.load(_archive, 9, 123) &&
 		_parkedCar.load(_archive, 10, 2) && _feodor.load(_archive, 11, 126) &&

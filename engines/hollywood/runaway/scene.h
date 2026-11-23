@@ -63,6 +63,8 @@ public:
 	// Cursor tile 3 is talk, 4..7 are exit arrows; zero keeps the usual verbs.
 	virtual byte actionCursor(byte hotspot) const { return 0; }
 	virtual bool preferLook(byte hotspot) const { return false; }
+	// Exit arrows alternate with look or use; walk means the arrow cannot be toggled.
+	virtual RunawayVerb alternateVerb(byte hotspot) const { return kVerbLook; }
 	virtual bool isWalkHotspot(byte hotspot) const { return false; }
 	virtual Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const = 0;
 	virtual const Common::U32String &committedCaption() const = 0;

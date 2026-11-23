@@ -117,6 +117,10 @@ Scene8200::Scene8200(RunawayAudio &audio, RunawayInventory &inventory, const Run
 	_speechColors[2] = 27; // Gustav.
 }
 
+byte Scene8200::actionCursor(byte id) const {
+	return id == 2 ? (_finale.oscarAway ? 0 : 5) : RunawayRoomScene::actionCursor(id);
+}
+
 bool Scene8200::usesAlternateActor() const {
 	return false;
 }

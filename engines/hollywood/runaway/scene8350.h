@@ -30,6 +30,7 @@ namespace Runaway {
 class Scene8350 : public RunawayRoomScene {
 public:
 	Scene8350(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
+	RunawayVerb alternateVerb(byte id) const override { return kVerbWalk; }
 
 private:
 	bool usesAlternateActor() const override { return false; }

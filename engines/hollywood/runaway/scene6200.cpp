@@ -65,6 +65,10 @@ namespace Runaway {
 Scene6200::Scene6200(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
 
+byte Scene6200::actionCursor(byte id) const {
+	return id == 2 ? (_town.cellOpen ? 5 : 0) : RunawayRoomScene::actionCursor(id);
+}
+
 const char *Scene6200::actionCaptionVariant(byte id, bool look, byte item) const {
 	return !look && !item && id == 2 && _town.cellOpen ? "open" : nullptr;
 }

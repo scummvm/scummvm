@@ -62,6 +62,8 @@ public:
 	int roomWidth() const override { return kRoomWidth; }
 	Graphics::ManagedSurface &screen() override { return _screen; }
 	byte hotspotAt(Common::Point mouse) const override;
+	byte actionCursor(byte id) const override;
+	RunawayVerb alternateVerb(byte id) const override;
 	Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const override;
 	const Common::U32String &committedCaption() const override { return _committedCaption; }
 	const Common::U32String &subtitle() const override { return _action == kPeekConversation ? _interrogation.subtitle() : _speech.subtitle(); }

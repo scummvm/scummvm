@@ -31,6 +31,7 @@ class Scene5100 : public RunawayRoomScene {
 public:
 	Scene5100(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
 	void setCameraX(int x) override;
+	byte actionCursor(byte id) const override;
 	const Common::U32String &subtitle() const override;
 	byte subtitleColor() const override;
 

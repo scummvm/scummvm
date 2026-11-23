@@ -56,7 +56,7 @@ const RunawayHotspot kHotspots[] = {
 	{1279, 267, 0, {301, 302}, {0, 1}, {1449, 255}, 4}, // 1: Path.
 	{1259, 354, 7, {303, 304}, {1, 0}, {1101, 298}}, // 2: Barn Doors.
 	{0, 0, 0, {305, 306}, {1, 1}, {274, 484}}, // 3: Bottle.
-	{1279, 267, 4, {1, 302}, {0, 1}, {0, 0}}, // 4: Window.
+	{1279, 267, 4, {1, 302}, {0, 1}, {0, 0}, 4, true}, // 4: Window.
 	{164, 581, 0, {307, 308}, {1, 0}, {164, 570}}, // 5: Motorcycle.
 	{0, 0, 7, {309, 310}, {1, 1}, {490, 493}, 3, true}, // 6: Stud.
 	{0, 0, 4, {311, 312}, {0, 0}, {1329, 514}}, // 7: Remains Of Rocking Chair.
@@ -66,8 +66,8 @@ const RunawayHotspot kHotspots[] = {
 	{0, 0, 7, {319, 320}, {0, 0}, {1101, 298}}, // 11: Helicopter.
 	{253, 418, 4, {321, 322}, {0, 0}, {245, 491}}, // 12: Can.
 	{0, 0, 1, {323, 324}, {1, 0}, {786, 403}}, // 13: Bucket.
-	{253, 418, 4, {1, 325}, {0, 0}, {253, 600}}, // 14: Outside.
-	{1053, 403, 3, {329, 329}, {1, 1}, {490, 493}}, // 15: Stud (peek around the corner).
+	{253, 418, 4, {1, 325}, {0, 0}, {253, 600}, 0, false, true}, // 14: Outside.
+	{1053, 403, 3, {329, 329}, {1, 1}, {490, 493}, 0, false, true}, // 15: Stud (peek around the corner).
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}}, // 16: Beer Can.
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}}, // 17: Peanut Butter.
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}}, // 18: Foot Rest.
@@ -110,6 +110,10 @@ Scene5100::Scene5100(RunawayAudio &audio, RunawayInventory &inventory, const Run
 	_hangarSpeech(audio, _random) {
 	_speechColors[1] = 26; // Stud.
 	_speechColors[2] = 28; // Lula.
+}
+
+byte Scene5100::actionCursor(byte id) const {
+	return id == 2 ? (_desert.barnDoor == 1 ? 4 : 0) : RunawayRoomScene::actionCursor(id);
 }
 
 void Scene5100::setCameraX(int x) {

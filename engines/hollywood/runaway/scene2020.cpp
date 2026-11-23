@@ -38,7 +38,7 @@ const RunawayHotspot kHotspots[] = {
 	{622, 457, 7, {308, 309}, {0, 1}, {620, 436}}, // 5: Sheet.
 	{417, 444, 7, {310, 311}, {0, 0}, {401, 432}}, // 6: Locker.
 	{417, 444, 7, {312, 313}, {0, 1}, {401, 432}}, // 7: Gina's bag.
-	{265, 456, 7, {314, 332}, {1, 1}, {237, 438}}, // 8: Window.
+	{265, 456, 7, {314, 332}, {1, 1}, {237, 438}, 4, true}, // 8: Window.
 	{690, 540, 1, {315, 316}, {1, 1}, {748, 517}}, // 9: Gina's medical chart.
 	{453, 455, 1, {317, 318}, {1, 1}, {650, 420}}, // 10: Chart.
 	{687, 448, 7, {319, 320}, {0, 1}, {650, 420}}, // 11: Fake patient.
@@ -353,6 +353,10 @@ namespace Runaway {
 
 Scene2020::Scene2020(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
+
+bool Scene2020::preferLook(byte id) const {
+	return id == 8 ? !_hospital.window : RunawayRoomScene::preferLook(id);
+}
 
 bool Scene2020::loadCustomResources() {
 	return loadForeground(0, 12) && loadForeground(1, 14) && loadForeground(2, 11, true) &&

@@ -47,7 +47,7 @@ public:
 	bool loadChapter(byte chapter);
 	void update(uint32 now, Common::Point mouse, byte roomHotspot, bool blocked, bool speaking,
 		bool inventoryPresentation = false, byte speechFrame = 0, bool roomHasVerbs = true,
-		byte actionCursor = 0, bool preferLook = false, bool walkHotspot = false);
+		byte actionCursor = 0, bool preferLook = false, bool walkHotspot = false, RunawayVerb alternateVerb = kVerbLook);
 	void setDialogueChoices(const Common::Array<Common::U32String> &choices);
 	Command click(bool right);
 	void toggleInventory();
@@ -73,6 +73,7 @@ private:
 	bool inViewport() const;
 	void setInventoryOpen(bool open);
 	void setVerb(RunawayVerb verb, byte actionCursor = 0);
+	RunawayVerb defaultVerb() const;
 	void updateCursor();
 	Common::U32String inventoryCaption() const;
 	void drawInventory(Graphics::ManagedSurface &screen);
@@ -90,6 +91,7 @@ private:
 	Common::Array<Common::Array<Common::U32String> > _choices;
 	Common::Array<Common::Rect> _choiceRects;
 	RunawayVerb _verb = kVerbWalk;
+	RunawayVerb _alternateVerb = kVerbLook;
 	byte _cursorType = 0, _previousCursor = 0, _actionCursor = 0;
 	bool _preferLook = false;
 	bool _walkHotspot = false;

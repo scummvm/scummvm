@@ -20,6 +20,7 @@
  */
 
 #include "hollywood/runaway/saveload.h"
+#include "hollywood/runaway/inventory.h"
 #include "hollywood/runaway/scene_data.h"
 
 namespace Hollywood {
@@ -406,7 +407,8 @@ bool RunawaySaveState::valid() const {
 			camera >= 32768 || cameraY >= 32768 || facing >= 8 ||
 			lidOpen > 1 || unplugged > 1 || windowClean > 1 || coolerMoved > 1 ||
 			coolerInspected > 1 || peeked > 1 || ice > 2 || hatch > 3 ||
-			itemCount > sizeof(items) || selected > sizeof(items) || cloth > 2 || inventoryOpen > 1 || verb > 2)
+			itemCount > sizeof(items) || selected > sizeof(items) || cloth > 2 || inventoryOpen > 1 ||
+			(verb > kVerbUse && verb != kVerbExit))
 		return false;
 	if ((game == kRunawayCabinDemo || (game == kRunawayFullGame && scene >= 5030 && scene <= 5032)) &&
 			(scene < 5030 || scene > (game == kRunawayCabinDemo ? 5030 : 5032) || x >= 1376 || y >= 600 || camera > 352 || cameraY))

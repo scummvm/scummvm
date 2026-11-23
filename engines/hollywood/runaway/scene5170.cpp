@@ -75,6 +75,10 @@ namespace Runaway {
 Scene5170::Scene5170(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
 
+byte Scene5170::actionCursor(byte id) const {
+	return id == 1 ? (doorClosed() ? 0 : 4) : RunawayRoomScene::actionCursor(id);
+}
+
 const char *Scene5170::actionCaptionVariant(byte id, bool look, byte item) const {
 	if (!look && !item) {
 		if (id == 1 && doorClosed()) {

@@ -33,6 +33,7 @@ public:
 	void start(uint32 now) override;
 	bool busy() const override;
 	void setCameraX(int x) override;
+	bool preferLook(byte id) const override;
 
 private:
 	enum HospitalFilm { kGinaStoryFilm, kLedgeFilm, kDecoyFilm, kAmbushFilm, kEscapeFilm };

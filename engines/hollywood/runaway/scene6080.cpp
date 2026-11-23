@@ -69,6 +69,10 @@ Scene6080::Scene6080(RunawayAudio &audio, RunawayInventory &inventory, const Run
 	_speechColors[1] = 32; // Oscar.
 }
 
+byte Scene6080::actionCursor(byte id) const {
+	return id == 5 ? (_town.rockMoved ? 5 : 0) : RunawayRoomScene::actionCursor(id);
+}
+
 bool Scene6080::loadCustomResources() {
 	return _rockAnimation.load(_archive, 6, 2) && loadForeground(0, 4) && loadForeground(1, 7) &&
 		(_entryScene != 6082 || _oscarAnimation.load(_archive, 9, 135));

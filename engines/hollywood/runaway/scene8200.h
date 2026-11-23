@@ -30,6 +30,7 @@ namespace Runaway {
 class Scene8200 : public RunawayRoomScene {
 public:
 	Scene8200(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
+	byte actionCursor(byte id) const override;
 	const Common::U32String &subtitle() const override;
 	byte subtitleColor() const override;
 	void sayInventory(const RunawayInventory::Reply &reply) override;

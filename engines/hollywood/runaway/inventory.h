@@ -36,7 +36,7 @@ namespace Hollywood {
 class RunawayStrings;
 struct RunawaySaveState;
 
-enum RunawayVerb { kVerbWalk, kVerbLook, kVerbUse };
+enum RunawayVerb { kVerbWalk, kVerbLook, kVerbUse, kVerbExit = 4 };
 
 class RunawayInventory {
 public:
