@@ -177,6 +177,7 @@ void RunawayUI::restoreState(const RunawaySaveState &state, uint32 now) {
 	_cursorType = _previousCursor = state.verb;
 	_actionCursor = 0;
 	_preferLook = false;
+	_walkHotspot = false;
 	_cursorKey = -1;
 	// The options cursor may still be on top of the stack. Rebuild ours
 	// on the next gameplay update, after the menu has popped its cursor.
@@ -211,7 +212,7 @@ bool RunawayUI::cancel() {
 }
 
 void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool blocked, bool speaking,
-		bool inventoryPresentation, byte speechFrame, bool roomHasVerbs, byte actionCursor, bool preferLook) {
+		bool inventoryPresentation, byte speechFrame, bool roomHasVerbs, byte actionCursor, bool preferLook, bool walkHotspot) {
 	_now = now;
 	_mouse = mouse;
 	_blocked = blocked;
@@ -255,15 +256,19 @@ void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool b
 			setInventoryOpen(false);
 	}
 	const byte hovered = _inventoryOpen ? itemAt(mouse) : roomHotspot;
+	if (_inventoryOpen || !roomHasVerbs)
+		walkHotspot = false;
 	if (_inventoryOpen || !roomHasVerbs || (_museum && actionCursor != 3)) {
 		actionCursor = 0;
 		preferLook = false;
 	}
-	if (_hovered != hovered || _roomHasVerbs != roomHasVerbs || _actionCursor != actionCursor || _preferLook != preferLook) {
+	if (_hovered != hovered || _roomHasVerbs != roomHasVerbs || _actionCursor != actionCursor ||
+			_preferLook != preferLook || _walkHotspot != walkHotspot) {
 		_hovered = hovered;
 		_roomHasVerbs = roomHasVerbs;
 		_preferLook = preferLook;
-		setVerb(hovered && (_inventoryOpen || _roomHasVerbs) ?
+		_walkHotspot = walkHotspot;
+		setVerb(hovered && !walkHotspot && (_inventoryOpen || _roomHasVerbs) ?
 			(_inventoryOpen ? (_inventory.isPlan(hovered) ? kVerbLook : kVerbUse) :
 			(actionCursor && !preferLook ? kVerbUse : kVerbLook)) : kVerbWalk, actionCursor);
 	}
@@ -333,7 +338,7 @@ RunawayUI::Command RunawayUI::click(bool right) {
 	if (right) {
 		if (_inventory.selected()) {
 			_inventory.select(0);
-		} else if (_hovered && (_inventoryOpen || _roomHasVerbs)) {
+		} else if (_hovered && !_walkHotspot && (_inventoryOpen || _roomHasVerbs)) {
 			setVerb(_verb == kVerbLook ? kVerbUse : kVerbLook, _actionCursor);
 		}
 		return command;
@@ -387,7 +392,7 @@ void RunawayUI::updateCursor() {
 	}
 	uint shade = 0;
 	if (item) {
-		tile = _inventory.cursor(item) + (_hovered != 0);
+		tile = _inventory.cursor(item) + (_hovered != 0 && !_walkHotspot);
 	} else {
 		const uint phase = (_now - _verbStarted) / 20;
 		// Close-ups such as the keypad keep the plain pointer, without verb morphs.

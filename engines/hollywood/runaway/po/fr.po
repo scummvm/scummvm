@@ -1710,11 +1710,11 @@ msgctxt "action.5020.use.1"
 msgid "GO TO @"
 msgstr "ALLER VERS @"
 
-#. Scene 5020, use at hotspot 2. @ is the current hotspot name.
+#. Scene 5020, walk towards the cabin (hotspot 2).
 #: engines/hollywood/runaway/scene5020.cpp
 msgctxt "action.5020.use.2"
-msgid "GET @"
-msgstr "PRENDRE @"
+msgid "GO TO"
+msgstr "ALLER VERS"
 
 #. Scene 5020, use at hotspot 3. @ is the current hotspot name.
 #: engines/hollywood/runaway/scene5020.cpp

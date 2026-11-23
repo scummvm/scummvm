@@ -63,6 +63,7 @@ public:
 	// Cursor tile 3 is talk, 4..7 are exit arrows; zero keeps the usual verbs.
 	virtual byte actionCursor(byte hotspot) const { return 0; }
 	virtual bool preferLook(byte hotspot) const { return false; }
+	virtual bool isWalkHotspot(byte hotspot) const { return false; }
 	virtual Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const = 0;
 	virtual const Common::U32String &committedCaption() const = 0;
 	virtual const Common::U32String &subtitle() const = 0;
@@ -118,6 +119,7 @@ public:
 	byte hotspotAt(Common::Point mouse) const override;
 	byte actionCursor(byte id) const override;
 	bool preferLook(byte id) const override;
+	bool isWalkHotspot(byte id) const override;
 	Common::U32String actionCaption(byte hotspot, RunawayVerb verb, byte item) const override;
 	const Common::U32String &committedCaption() const override { return _caption; }
 	const Common::U32String &subtitle() const override;

@@ -130,7 +130,7 @@ Common::Point RunawayEngine::updateUI(uint32 now) {
 		_ui->setInventoryFrame(_scene->inventoryFrame());
 		_ui->update(now, mouse, hotspot, sceneBusy(), _scene->speaking(),
 			_scene->inventoryPresentation(), _scene->speechFrame(), _scene->hasVerbControls(),
-			_scene->actionCursor(hotspot), _scene->preferLook(hotspot));
+			_scene->actionCursor(hotspot), _scene->preferLook(hotspot), _scene->isWalkHotspot(hotspot));
 	}
 	return mouse;
 }

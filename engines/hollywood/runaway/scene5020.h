@@ -36,6 +36,7 @@ private:
 	bool applyCustomBackgroundPatches() override;
 	void applyCustomHotspotState() override;
 	float actorHeight() const override;
+	void setupActorDepth(RunawayActor::RenderParams &params) const override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 	void runCustomEntrySequence() override;
 	void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) override;

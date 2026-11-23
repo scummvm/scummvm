@@ -29,7 +29,7 @@ namespace {
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
 	{1123, 416, 3, {302, 301}, {0, 3}, {1123, 416}, 6}, // 1: Path.
-	{456, 405, 7, {0, 1}, {0, 0}, {0, 0}},
+	{456, 405, 7, {0, 303}, {0, 1}, {0, 0}, 0, false, true}, // 2: Walk towards the cabin (native verb 0).
 	{573, 400, 7, {304, 305}, {0, 0}, {533, 379}}, // 3: Rocking Chair.
 	{644, 397, 1, {310, 311}, {0, 0}, {677, 372}}, // 4: Tires.
 	{456, 405, 7, {306, 307}, {0, 0}, {428, 336}}, // 5: Door.
@@ -39,7 +39,7 @@ const RunawayHotspot kHotspots[] = {
 
 const RunawayResponse kResponses[] = {
 	{5020, 302, 2, 0}, // Look at the path.
-	{5020, 303, 1, 0}, // Use an item with the cabin.
+	{5020, 303, 1, 0}, // Refuse to walk in front of the cabin.
 	{5020, 304, 3, 0}, // Look at the rocking chair.
 	{5020, 305, 4, 0}, // Use the rocking chair.
 	{5020, 306, 5, 0}, // Look at the door.
@@ -117,6 +117,11 @@ void Scene5020::applyCustomHotspotState() {
 
 float Scene5020::actorHeight() const {
 	return _position.y * -0.140845075f + 264.225342f;
+}
+
+void Scene5020::setupActorDepth(RunawayActor::RenderParams &params) const {
+	// The foreground rock and vegetation always cover Brian (native 0x473a60).
+	params.depthY[1] = 599;
 }
 
 RunawayRoomScene::ActionResult Scene5020::dispatchCustomSceneAction(uint16 action) {

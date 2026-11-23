@@ -350,6 +350,11 @@ bool RunawayRoomScene::preferLook(byte id) const {
 	return target && target->preferLook;
 }
 
+bool RunawayRoomScene::isWalkHotspot(byte id) const {
+	const RunawayHotspot *target = hotspot(id);
+	return target && target->walkOnly;
+}
+
 byte RunawayRoomScene::hotspotAt(Common::Point mouse) const {
 	if (mouse.x < 0 || mouse.x >= kRunawayScreenWidth || mouse.y < kRunawayViewportTop ||
 			mouse.y >= kRunawayViewportTop + kRunawayViewportHeight)
@@ -371,7 +376,7 @@ Common::U32String RunawayRoomScene::hotspotName(byte id) const {
 Common::U32String RunawayRoomScene::actionCaption(byte id, RunawayVerb verb, byte item) const {
 	const Common::U32String name = hotspotName(id);
 	if (_game == kRunawayFullGame && id) {
-		const bool look = verb == kVerbLook;
+		const bool look = verb == kVerbLook && !isWalkHotspot(id);
 		const Common::U32String pattern = _strings.sceneActionCaption(_room, id, item, look, actionCaptionVariant(id, look, item));
 		if (!pattern.empty()) {
 			return RunawayStrings::formatActionCaption(pattern, _inventory.name(item), name);
@@ -432,7 +437,7 @@ void RunawayRoomScene::click(Common::Point mouse, RunawayVerb verb, byte item) {
 	const RunawayHotspot *spot = hotspot(id);
 	_pendingItem = item;
 	if (spot) {
-		const uint index = verb == kVerbLook && !item ? 0 : 1;
+		const uint index = verb == kVerbLook && !item && !spot->walkOnly ? 0 : 1;
 		_pendingHotspot = id;
 		_pendingAction = spot->action[index];
 		int8 approach = spot->approach[index];
