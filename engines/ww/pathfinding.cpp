@@ -437,9 +437,7 @@ bool WWEngine::walkTo(int actor1_destX, int actor1_destY, int direction, int act
 		actor2PointsCount = walkCalcPath(flag2, actor2X, actor2Y, actor2WalkDestX, actor2WalkDestY, 0);
 	}
 
-	if (actor1PointsCount + 20 < actor2PointsCount) {
-		actor2PointsCount = actor1PointsCount + 20;
-	}
+	actor2PointsCount = MIN(actor2PointsCount, actor1PointsCount + 20);
 
 	for (int pointIndex = 0, walkIncr = 0; pointIndex < actor1PointsCount || pointIndex < actor2PointsCount; pointIndex += 2, walkIncr += 2) {
 		int scale;
@@ -461,13 +459,14 @@ bool WWEngine::walkTo(int actor1_destX, int actor1_destY, int direction, int act
 				scale = drawActors(actor2Points[pointIndex].direction, 1, 0, (walkIncr % 8) / 2, _wayneSpriteX, _wayneSpriteY, _garthWalkPoints[pointIndex].x - _scrollPosition, _garthWalkPoints[pointIndex].y);
 			}
 		}
-		debug(5, "scale:%d", scale);
-		// if (_inventoryItemsCount == 0 && _scrollPosition == 0) {
-		//	 waitMillis(10000 / (scale * scale) * 10);
-		// }
 
-		// TODO Fix this - The formula above is correct, the purpose is to move at a different speed based on the scale. If you take a scale of 100, it results in a wait of 10ms
-		waitMillis(100);
+		if (_inventoryItemsCount == 0 && _scrollPosition == 0) {
+			debug(5, "scale:%d delay:%d", scale, 55 + 10000 / (scale * scale) * 10);
+			// The original is using the here-under formula without the constant 55.
+			// The original variable part is to make the character move on the screen slower when he's far away
+			// The 55 has been added as a correction to compensate the display hardware performances, based on DosBox experience
+			 waitMillis(55 + 10000 / (scale * scale) * 10);
+		}
 
 		if (_scrollRemaining == 0) {
 			if (updateGame())
