@@ -56,12 +56,6 @@ class Console;
 
 class TesoroEngine : public Engine {
 private:
-	friend class World;
-	friend class MenuItem;
-	friend class Console;
-	friend class Scripts;
-	friend class VideoPlayer;
-
 	const ADGameDescription *_gameDescription;
 	GameClock _clock;
 	Common::RandomSource _randomSource;
@@ -81,23 +75,11 @@ private:
 	VideoPlayer _video;
 	bool _showOutlines = false;
 
-	// What clicks on the menu items ask for.
-	void fadeOut(int steps, int delayMs);
-	void enterMainMenu();
-	void enterNewGameMenu();
-	void startScript(const char *block, const char *label);
-	void startGame();
-	void openSavedGames();
-	int32 now() { return gameTime(); }
-	void clearHoverText();
-
 	/** Makes a menu level the one shown, with its camera on the origin. */
 	void showMenu(Level *menu);
 
 	/** Hands the menu items of a level this engine for their clicks. */
 	void hookMenuItems(Level *level);
-
-	void handleEvent(const Common::Event &e);
 
 	// Ctrl+F toggles this many times the normal game speed, for playtesting.
 	static const int kFastModeSpeed = 4;
@@ -105,8 +87,6 @@ private:
 
 	/** One frame: events, then drawing. False when the game should end. */
 	bool runFrame();
-
-	void resetKeys() { _escape = 0; }
 
 protected:
 	// Engine APIs
@@ -119,6 +99,7 @@ public:
 	~TesoroEngine() override;
 
 	int32 gameTime() { return _clock.update(_system->getMillis()); }
+	int32 now() { return gameTime(); }
 
 	int32 randomBetween(int32 min, int32 max) { return max <= min ? min : min + (int32)_randomSource.getRandomNumber((uint32)(max - min)); }
 
@@ -169,6 +150,27 @@ public:
 	void setHoverText(const char *text);
 	Cursor *cursor() { return _cursor; }
 	World &world() { return _world; }
+	Archive &archive() { return _archive; }
+	Display &display() { return _display; }
+	PointerState &pointer() { return _pointer; }
+	VideoPlayer &video() { return _video; }
+	Level *interfaceLevel() { return _interface; }
+	bool inMenu() const { return _inMenu; }
+	bool mainMenuShown() const { return _level == _mainMenu; }
+
+	/** The menu key's state in this frame (PointerState::kPressed, kReleased), and the held mouse buttons. */
+	byte menuKeyState() const { return _escape; }
+	bool anyButtonDown() const { return _buttonsDown[0] || _buttonsDown[1] || _buttonsDown[2]; }
+	void resetKeys() { _escape = 0; }
+	void handleEvent(const Common::Event &e);
+
+	void fadeOut(int steps, int delayMs);
+	void enterMainMenu();
+	void enterNewGameMenu();
+	void startScript(const char *block, const char *label);
+	void startGame();
+	void openSavedGames();
+	void clearHoverText();
 	/** Shows or hides the hit rectangles and outlines of the objects over the picture. Returns the new state. */
 	bool toggleOutlines() { return _showOutlines = !_showOutlines; }
 };

@@ -169,34 +169,34 @@ World::~World() {
 
 bool World::loadGameData() {
 	// The font the texts are drawn with
-	const uint32 fontOffset = _engine._archive.findEntry("FUENTES.ANM");
-	if (!fontOffset || !_font.load(*_engine._archive.seekEntry(fontOffset), fontOffset, AnimBank::kLoadNow)) {
+	const uint32 fontOffset = _engine.archive().findEntry("FUENTES.ANM");
+	if (!fontOffset || !_font.load(*_engine.archive().seekEntry(fontOffset), fontOffset, AnimBank::kLoadNow)) {
 		warning("Tesoro: the font FUENTES.ANM cannot be read");
 		return false;
 	}
-	_engine._display.setFont(_font.bank());
+	_engine.display().setFont(_font.bank());
 
 	// The table that darkens the picture through shadows
-	const uint32 tableOffset = _engine._archive.findEntry("TABLA1.TBL");
+	const uint32 tableOffset = _engine.archive().findEntry("TABLA1.TBL");
 	byte table[0x8000];
-	if (tableOffset && _engine._archive.seekEntry(tableOffset)->read(table, sizeof table) == sizeof table)
-		_engine._display.setShadeTable(table);
+	if (tableOffset && _engine.archive().seekEntry(tableOffset)->read(table, sizeof table) == sizeof table)
+		_engine.display().setShadeTable(table);
 	else
 		warning("Tesoro: the shade table TABLA1.TBL cannot be read");
 
 	for (uint i = 0; i < SpeechTables::kCount; ++i) {
-		const uint32 offset = _engine._archive.findEntry(kSpeechFiles[i]);
+		const uint32 offset = _engine.archive().findEntry(kSpeechFiles[i]);
 		if (!offset) {
 			warning("Tesoro: %s is not in the archive", kSpeechFiles[i]);
 			return false;
 		}
 
-		Common::SeekableReadStream &dat = *_engine._archive.seekEntry(offset - 4);
+		Common::SeekableReadStream &dat = *_engine.archive().seekEntry(offset - 4);
 		const uint32 size = dat.readUint32LE();
 		_speechText[i].resize(size);
 		if (dat.read(_speechText[i].data(), size) != size)
 			return false;
-		_speech.table(i).load(_speechText[i].data(), size, _engine._archive);
+		_speech.table(i).load(_speechText[i].data(), size, _engine.archive());
 	}
 	_scripts = new Scripts(*this);
 	return _scripts->load();
@@ -207,13 +207,13 @@ void World::updateSound() {
 }
 
 Level *World::loadLevelFile(const char *name, int mode, int index) {
-	const uint32 offset = _engine._archive.findEntry(name);
+	const uint32 offset = _engine.archive().findEntry(name);
 	if (!offset) {
 		warning("Tesoro: level %s is not in the archive", name);
 		return nullptr;
 	}
 	Level *level = new WorldLevel(*this);
-	if (!level->load(*_engine._archive.seekEntry(offset), offset, mode, now())) {
+	if (!level->load(*_engine.archive().seekEntry(offset), offset, mode, now())) {
 		warning("Tesoro: level %s could not be read", name);
 		delete level;
 		return nullptr;
@@ -279,8 +279,8 @@ Jim *World::jim() {
 	Common::Array<AnimPlayer> levelPlayers;
 	levelPlayers.resize(Jim::kBanks);
 	for (int i = 0; i < Jim::kBanks; ++i) {
-		const uint32 offset = _engine._archive.findEntry(kJimFiles[i]);
-		if (!offset || !levelPlayers[i].load(*_engine._archive.seekEntry(offset), offset, AnimBank::kLoadDeferred)) {
+		const uint32 offset = _engine.archive().findEntry(kJimFiles[i]);
+		if (!offset || !levelPlayers[i].load(*_engine.archive().seekEntry(offset), offset, AnimBank::kLoadDeferred)) {
 			warning("Tesoro: Jim's animation %s cannot be read", kJimFiles[i]);
 			return nullptr;
 		}
@@ -528,8 +528,8 @@ const SpeechTable::Line *World::phrase(const char *name) {
 }
 
 void World::setPointerActive(bool active) {
-	if (_engine._cursor)
-		_engine._cursor->setActive(active);
+	if (_engine.cursor())
+		_engine.cursor()->setActive(active);
 }
 
 int World::levelSecondStep(Level &level) { return _engine.levelSecondStep(level); }
@@ -587,7 +587,7 @@ void World::removeFromMainList(Object *object) {
 }
 
 uint32 World::playVoice(uint32 archiveOffset) {
-	_engine._archive.seekEntry(archiveOffset);
+	_engine.archive().seekEntry(archiveOffset);
 	return _sound.play(archiveStream(), archiveOffset);
 }
 
@@ -615,7 +615,7 @@ uint32 World::randomNumber(uint32 lo, uint32 hi) { return _engine.randomBetween(
 
 // Escape or the right button was released this frame (the left button does not skip).
 bool World::skipPressed() {
-	return ((_engine._escape | _engine._pointer.buttonState(PointerState::kRight)) & PointerState::kReleased) != 0;
+	return ((_engine.menuKeyState() | _engine.pointer().buttonState(PointerState::kRight)) & PointerState::kReleased) != 0;
 }
 
 bool World::subtitlesOn() { return _subtitles; }
@@ -670,7 +670,7 @@ void World::closeSaveLoadMenu() {
 }
 
 void World::drawMenuText(const char *text, uint32 colour, int32 x, int32 y, int32 width) {
-	_engine._display.queueText((const byte *)text, colour, x, y, width, 0, false, 0);
+	_engine.display().queueText((const byte *)text, colour, x, y, width, 0, false, 0);
 }
 
 Camera &World::updateCamera(int32 divisor) {
@@ -680,7 +680,7 @@ Camera &World::updateCamera(int32 divisor) {
 }
 
 void World::queueText(const byte *text, uint32 colour, int32 centreX, int32 y, int32 maxWidth) {
-	_engine._display.queueText(text, colour, centreX, y, maxWidth, 0, true, 0);
+	_engine.display().queueText(text, colour, centreX, y, maxWidth, 0, true, 0);
 }
 
 void World::drawSubtitle(Jim &jim, const SpeechTable::Line &line) {
@@ -717,7 +717,7 @@ Level *World::jimLevel() {
 }
 int World::jimLevelIndex() { return jimLevel() ? jimLevel()->index() : -1; }
 Object *World::findObjectByKey(int index, uint64 key) {
-	Level *where = index < 0 ? _engine._interface : level(index);
+	Level *where = index < 0 ? _engine.interfaceLevel() : level(index);
 	return where ? where->findObject(key) : nullptr;
 }
 
@@ -771,7 +771,7 @@ void World::setWalkAreaFrames(Level *where, WalkPart part, int first, int last) 
 	playFrames(*object, first, last);
 }
 
-void World::startMovie(int number) { _engine._video.playVideo(number); }
+void World::startMovie(int number) { _engine.video().playVideo(number); }
 
 int World::startScript(Character &who, const char *block, const char *label, byte *variables) {
 	return startScript(static_cast<InteractiveObject &>(who), block, label, variables);
@@ -784,19 +784,19 @@ int World::startScript(InteractiveObject &who, const char *block, const char *la
 int World::startScriptInJimLevel(const char *block, const char *label, byte *variables) { return startScriptInLevel(jimLevelIndex(), block, label, variables); }
 
 int World::startScriptInLevel(int index, const char *block, const char *label, byte *variables) {
-	return startScriptAt(index < 0 ? _engine._interface : level(index), block, label, variables);
+	return startScriptAt(index < 0 ? _engine.interfaceLevel() : level(index), block, label, variables);
 }
 
 int World::startScriptAt(Level *where, const char *block, const char *label, byte *variables) {
 	return _scripts ? _scripts->start(where, block, label, variables) : 0;
 }
-void World::resetRenderQueue() { _engine._display.startFrame(); }
+void World::resetRenderQueue() { _engine.display().startFrame(); }
 
 void World::drawRooms(Level *level) {
 	if (level)
-		level->drawRooms(now(), _engine._display);
+		level->drawRooms(now(), _engine.display());
 }
-void World::composeFrame() { _engine._display.compose(); }
+void World::composeFrame() { _engine.display().compose(); }
 
 void World::clearScreens() {
 	_engine._screen->clear();
@@ -810,7 +810,7 @@ void World::showPieces() {
 		_game.showOn(where->objects(), now());
 }
 
-Common::SeekableReadStream &World::archiveStream() { return *_engine._archive.seekEntry(0); }
+Common::SeekableReadStream &World::archiveStream() { return *_engine.archive().seekEntry(0); }
 
 int World::useItemOnInterface() {
 	// Item 37 is forwarded to the bucket in the interface, which is used with the "no item" value.
@@ -868,7 +868,7 @@ int World::jimRunVerb() {
 	return 3;
 }
 
-bool World::menuKeyPressed() { return (_engine._escape & PointerState::kPressed) != 0; }
+bool World::menuKeyPressed() { return (_engine.menuKeyState() & PointerState::kPressed) != 0; }
 
 void World::acknowledgeKeys() { _engine.resetKeys(); }
 
@@ -877,14 +877,14 @@ Object *World::interfaceObject(const char *name) { return _interface ? _interfac
 void World::enterMainMenu() { _engine.enterMainMenu(); }
 
 Cursor::Place World::place() {
-	if (_engine._inMenu)
-		return _engine._level == _engine._mainMenu ? Cursor::kMainMenu : Cursor::kNewGameMenu;
+	if (_engine.inMenu())
+		return _engine.mainMenuShown() ? Cursor::kMainMenu : Cursor::kNewGameMenu;
 	return jimLevelIndex() == 14 ? Cursor::kBoard : Cursor::kGame;
 }
 
 void World::captureThumbnail() {
 
-	Display &display = _engine._display;
+	Display &display = _engine.display();
 	display.startFrame();
 	if (Level *where = jimLevel())
 		where->drawRooms(now(), display);

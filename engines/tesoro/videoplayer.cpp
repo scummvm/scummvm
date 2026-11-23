@@ -87,8 +87,8 @@ void VideoPlayer::pumpEvents(uint32 milliseconds) {
 
 void VideoPlayer::releaseInput() {
 	// The movie took the events: the skip key is let go, the mouse buttons come up, and then half a second passes.
-	_engine._escape = 0;
-	while ((_engine._buttonsDown[0] || _engine._buttonsDown[1] || _engine._buttonsDown[2]) && !_engine.shouldQuit())
+	_engine.resetKeys();
+	while (_engine.anyButtonDown() && !_engine.shouldQuit())
 		pumpEvents(10);
 	pumpEvents(500);
 }

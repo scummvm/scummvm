@@ -92,6 +92,10 @@ public:
 	void showSlotPicture(int slot);
 	void showChosenSlotPicture();
 
+	TesoroEngine &engine() { return _engine; }
+	Cursor *cursor() { return _cursor; }
+	ConnectFourMatch &game() { return _game; }
+	void setJimPhase(byte phase) { _jimPhase = phase; }
 	MainList &mainList() { return _main; }
 	/** The second step of a level in the frame (its cameras, and for the player's level the picture shown). */
 	int levelSecondStep(Level &level);
@@ -251,8 +255,6 @@ public:
 	void showPieces();
 private:
 	friend class WorldLevel;
-	friend class Scripts;
-	friend struct SceneAdapter;
 
 	/** The objects the game starts with switched off, once a level has been loaded. */
 	void applyStartState(Level &where, int index);

@@ -45,7 +45,7 @@ namespace Tesoro {
 TesoroEngine *g_engine;
 
 TesoroEngine::TesoroEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-																			   _gameDescription(gameDesc), _clock(syst->getMillis()), _randomSource("Tesoro"), _world(*this), _video(*this) {
+		_gameDescription(gameDesc), _clock(syst->getMillis()), _randomSource("Tesoro"), _world(*this), _video(*this) {
 	g_engine = this;
 }
 

@@ -123,9 +123,9 @@ public:
 	void removeJimFromMainList();
 
 	const ScriptLibrary &library() const { return _library; }
+	World &world() { return _w; }
 
 private:
-	friend struct SceneAdapter;
 	World &_w;
 	ScriptLibrary _library;
 	ScriptRunner *_runner = nullptr;

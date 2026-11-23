@@ -44,15 +44,15 @@ Scripts::~Scripts() {
 bool Scripts::load() {
 	static const char *const kFiles[] = { "ANIMS.DLG", "CONVERS.DLG", "ICONS.DLG", "OBJETOS.DLG" };
 	for (uint i = 0; i < 4; ++i) {
-		const uint32 offset = _w._engine._archive.findEntry(kFiles[i]);
+		const uint32 offset = _w.engine().archive().findEntry(kFiles[i]);
 		if (!offset) {
 			warning("Tesoro: %s is not in the archive", kFiles[i]);
 			return false;
 		}
-		Common::SeekableReadStream &dat = *_w._engine._archive.seekEntry(offset - 4);
+		Common::SeekableReadStream &dat = *_w.engine().archive().seekEntry(offset - 4);
 		const uint32 size = dat.readUint32LE();
 		_text[i].resize(size);
-		if (dat.read(_text[i].data(), size) != size || !_library.load(_text[i].data(), size, _w._speech)) {
+		if (dat.read(_text[i].data(), size) != size || !_library.load(_text[i].data(), size, _w.speech())) {
 			warning("Tesoro: %s could not be compiled", kFiles[i]);
 			return false;
 		}
@@ -84,33 +84,33 @@ uint32 Scripts::now() { return _w.now(); }
 
 Object *Scripts::jim() { return _w.jim(); }
 
-Level *Scripts::levelFromRef(uint32 ref) { return !ref ? nullptr : ref == kInventoryRef ? _w._engine._interface : _w.level((int)ref - 1); }
+Level *Scripts::levelFromRef(uint32 ref) { return !ref ? nullptr : ref == kInventoryRef ? _w.engine().interfaceLevel() : _w.level((int)ref - 1); }
 
 Object *Scripts::findObject(Level *level, uint64 key) { return level ? level->findObject(key) : nullptr; }
 
-void Scripts::insertScript(uint32 block, int priority) { _w._main.insertByPriorityFront(_tasks[block], priority); }
+void Scripts::insertScript(uint32 block, int priority) { _w.mainList().insertByPriorityFront(_tasks[block], priority); }
 
-void Scripts::removeScript(uint32 block) { _w._main.remove(_tasks[block]); }
+void Scripts::removeScript(uint32 block) { _w.mainList().remove(_tasks[block]); }
 
-void Scripts::removeObject(Object *object) { _w._main.remove(object); }
+void Scripts::removeObject(Object *object) { _w.mainList().remove(object); }
 
 void Scripts::setCursorActive(bool enabled) { _w.setPointerActive(enabled); }
 
 void Scripts::say(Object *actor, uint32 phrase, uint32 extra) {
-	const SpeechTable::Line &line = _w._speech.lineOf(phrase);
-	if (actor == _w._jim)
-		_w._jim->sayAnswer(line);
+	const SpeechTable::Line &line = _w.speech().lineOf(phrase);
+	if (actor == _w.jim())
+		_w.jim()->sayAnswer(line);
 	else if (actor && actor->kindId() == 5)
 		static_cast<Character *>(actor)->say(line, static_cast<Character *>(actor)->textColour(), extra);
 	else
 		warning("Tesoro: a script makes something other than Jim speak");
 }
 
-void Scripts::sayJim(uint32 phrase) { _w.jim()->sayNarrationLine(_w._speech.lineOf(phrase)); }
+void Scripts::sayJim(uint32 phrase) { _w.jim()->sayNarrationLine(_w.speech().lineOf(phrase)); }
 
 bool Scripts::isSpeaking(Object *actor) {
-	if (actor == _w._jim)
-		return _w._jim->speaker().speaking();
+	if (actor == _w.jim())
+		return _w.jim()->speaker().speaking();
 	return actor && actor->kindId() == 5 && static_cast<Character *>(actor)->speaker().speaking();
 }
 
@@ -138,15 +138,15 @@ bool Scripts::animationBusy(Object *object) {
 }
 
 void Scripts::walk(Object *object, int16 x, int16 y, uint32 notifyBlock) {
-	if (object == _w._jim)
-		_w._jim->walkTo(x, y, _tasks[notifyBlock], false);
+	if (object == _w.jim())
+		_w.jim()->walkTo(x, y, _tasks[notifyBlock], false);
 	else if (object && object->kindId() == 5)
 		static_cast<Character *>(object)->startWalk();
 }
 
 void Scripts::look(Object *object, int8 direction) {
-	if (object == _w._jim)
-		_w._jim->setFacing(direction);
+	if (object == _w.jim())
+		_w.jim()->setFacing(direction);
 	else if (object && object->kindId() == 5)
 		static_cast<Character *>(object)->face(direction);
 }
@@ -160,9 +160,9 @@ void Scripts::releaseIfBusy(Object *character) {
 }
 
 void Scripts::beginMenu() {
-	if (!_w._cursor)
+	if (!_w.cursor())
 		return;
-	_savedStep = _w._cursor->currentPlayer()->current();
+	_savedStep = _w.cursor()->currentPlayer()->current();
 	if (InventoryItem *held = _w.pointerItem())
 		held->setVisible(true);
 	_w.setPointerItem(nullptr);
@@ -172,13 +172,13 @@ void Scripts::beginMenu() {
 int Scripts::showMenu(const uint32 *phrases, uint32 count) {
 	const SpeechTable::Line *lines[kMaxChoices];
 	for (uint32 i = 0; i < count && i < kMaxChoices; ++i)
-		lines[i] = &_w._speech.lineOf(phrases[i]);
-	return DialogueChoiceMenu::run(*this, _w._engine._display, lines, count);
+		lines[i] = &_w.speech().lineOf(phrases[i]);
+	return DialogueChoiceMenu::run(*this, _w.engine().display(), lines, count);
 }
 
 void Scripts::endMenu() {
-	if (_w._engine._cursor)
-		_w._engine._cursor->currentPlayer()->setCurrent(_savedStep);
+	if (_w.engine().cursor())
+		_w.engine().cursor()->currentPlayer()->setCurrent(_savedStep);
 }
 
 void Scripts::boardGame(ScriptRun &run, uint32 type, uint32 ordinal) {
@@ -188,13 +188,13 @@ void Scripts::boardGame(ScriptRun &run, uint32 type, uint32 ordinal) {
 			moveToLevel(run, 14, player->x(), player->y());
 			player->setActive(false);
 			_w.setPointerActive(true);
-			_w._game.start(_w, run.variables);
+			_w.game().start(_w, run.variables);
 			_w.startScriptAt(run.level, "FCONECTA", "main", run.variables);
 		} else if (ordinal == 1) {
 			_w.setPointerActive(false);
 		}
 	} else if (ordinal == 0) {
-		_w._game.turn(_w, run.variables);
+		_w.game().turn(_w, run.variables);
 	} else if (ordinal == 1) {
 		moveToLevel(run, 9, player->x(), player->y());
 		_w.setPointerActive(false);
@@ -210,7 +210,7 @@ Level *Scripts::moveToLevel(ScriptRun &run, int index, int32 x, int32 y) {
 
 void Scripts::cameraToJim(Level *where) {
 	if (where)
-		where->cameraMoveTo(_w._jim->x(), _w._jim->y(), 0, _w.now());
+		where->cameraMoveTo(_w.jim()->x(), _w.jim()->y(), 0, _w.now());
 }
 
 void Scripts::rebindCharacters(ScriptRun &run) {
@@ -219,18 +219,18 @@ void Scripts::rebindCharacters(ScriptRun &run) {
 		run.characters[i] = findObject(run.level, b.character(i));
 }
 
-void Scripts::playVideo(uint32 number) { _w._engine._video.playVideo((int)number); }
+void Scripts::playVideo(uint32 number) { _w.engine().video().playVideo((int)number); }
 
 void Scripts::resumeJim() {
-	_w._jim->stopWalking();
-	_w._jim->setFacing(_w._jim->facing());
+	_w.jim()->stopWalking();
+	_w.jim()->setFacing(_w.jim()->facing());
 }
 
 void Scripts::playSound(const char *name) {
 	Common::String file(name);
 	file.toUppercase();
 	file += ".WAV";
-	const uint32 offset = _w._engine._archive.findEntry(file.c_str());
+	const uint32 offset = _w.engine().archive().findEntry(file.c_str());
 	if (offset)
 		_w.playVoice(offset);
 	else
@@ -241,26 +241,26 @@ void Scripts::playTrack(byte track) { _w.playMusicTrack(track); }
 
 void Scripts::clearLabel() { _w.setHoverText(nullptr); }
 
-int32 Scripts::mouseX() { return _w._engine._pointer.x; }
+int32 Scripts::mouseX() { return _w.engine().pointer().x; }
 
-int32 Scripts::mouseY() { return _w._engine._pointer.y; }
+int32 Scripts::mouseY() { return _w.engine().pointer().y; }
 
-bool Scripts::leftButton() { return (_w._engine._pointer.buttonState(PointerState::kLeft) & PointerState::kPressed) != 0; }
+bool Scripts::leftButton() { return (_w.engine().pointer().buttonState(PointerState::kLeft) & PointerState::kPressed) != 0; }
 
 void Scripts::showCursorAt(int32 x, int32 y) {
-	if (!_w._engine._cursor || !_w._engine._interface)
+	if (!_w.engine().cursor() || !_w.engine().interfaceLevel())
 		return;
-	_w._engine._cursor->setPosition(x, y);
-	_w._engine._cursor->draw(_w._engine._interface->camera(), _w._engine._display);
+	_w.engine().cursor()->setPosition(x, y);
+	_w.engine().cursor()->draw(_w.engine().interfaceLevel()->camera(), _w.engine().display());
 }
 
-void Scripts::removeJimFromMainList() { _w._main.remove(_w._jim); }
+void Scripts::removeJimFromMainList() { _w.mainList().remove(_w.jim()); }
 
-SceneAdapter::SceneAdapter(Scripts &scripts, ScriptRun &run) : _scripts(scripts), _w(scripts._w), _run(run) {}
+SceneAdapter::SceneAdapter(Scripts &scripts, ScriptRun &run) : _scripts(scripts), _w(scripts.world()), _run(run) {}
 
 void SceneAdapter::enterLevel(int level, int32 x, int32 y) { _scripts.moveToLevel(_run, level, x, y); }
 
-void SceneAdapter::enterLevelAtJim(int level) { _scripts.moveToLevel(_run, level, _w._jim->x(), _w._jim->y()); }
+void SceneAdapter::enterLevelAtJim(int level) { _scripts.moveToLevel(_run, level, _w.jim()->x(), _w.jim()->y()); }
 
 void SceneAdapter::enterLevelAtFloor(int level) {
 	Level *where = _w.level(level);
@@ -276,17 +276,17 @@ void SceneAdapter::enterLevelAtObject(int level, const char *name) {
 
 void SceneAdapter::rebindCharacters() { _scripts.rebindCharacters(_run); }
 
-void SceneAdapter::cameraToJim(bool blockLevel) { _scripts.cameraToJim(blockLevel ? _run.level : _w._jim->level()); }
+void SceneAdapter::cameraToJim(bool blockLevel) { _scripts.cameraToJim(blockLevel ? _run.level : _w.jim()->level()); }
 
-void SceneAdapter::setJimVisible(bool visible) { _w._jim->setVisible(visible); }
+void SceneAdapter::setJimVisible(bool visible) { _w.jim()->setVisible(visible); }
 
-void SceneAdapter::setJimActive(bool active) { _w._jim->setActive(active); }
+void SceneAdapter::setJimActive(bool active) { _w.jim()->setActive(active); }
 
-void SceneAdapter::setJimPosition(int32 x, int32 y) { _w._jim->setPosition(x, y); }
+void SceneAdapter::setJimPosition(int32 x, int32 y) { _w.jim()->setPosition(x, y); }
 
-void SceneAdapter::setJimPhase(byte phase) { _w._jimPhase = phase; }
+void SceneAdapter::setJimPhase(byte phase) { _w.setJimPhase(phase); }
 
-void SceneAdapter::setJimStep(byte step) { _w._jimStep = step; }
+void SceneAdapter::setJimStep(byte step) { _w.setJimStepKeep(step); }
 
 void SceneAdapter::setObjectActive(int level, const char *name, bool active) {
 	if (Object *object = _w.findObject(level, name))
@@ -319,7 +319,7 @@ void SceneAdapter::wait(int milliseconds) { _w.wait(milliseconds); }
 
 void SceneAdapter::resetRenderQueue() { _w.resetRenderQueue(); }
 
-void SceneAdapter::clearMainList() { _w._main.clear(); }
+void SceneAdapter::clearMainList() { _w.mainList().clear(); }
 
 void SceneAdapter::clearPointerItem() { _w.clearPointerItem(); }
 
