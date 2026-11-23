@@ -89,7 +89,7 @@ public:
 	void unload();
 
 	bool load(MfcArchive &file) override;
-	bool loadPNG(Common::SeekableReadStream &stream);
+	void loadPNG(const Common::Path &path, const Dims &sizeHint);
 	void blitTo(Graphics::ManagedSurface &target, const Common::Point &position) const;
 	void setAOIDs();
 	virtual void init();

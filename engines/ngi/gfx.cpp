@@ -28,6 +28,7 @@
 #include "ngi/interaction.h"
 #include "ngi/gameloader.h"
 
+#include "common/file.h"
 #include "common/memstream.h"
 #include "graphics/managed_surface.h"
 
@@ -418,12 +419,17 @@ Texture::~Texture() {
 	freePicture();
 }
 
-bool Texture::loadPNG(Common::SeekableReadStream &stream) {
-	Image::PNGDecoder png;
-	if (!png.loadStream(stream))
-		return false;
-
+void Texture::loadPNG(const Common::Path &path, const Dims &sizeHint) {
 	freePicture();
+	_width = sizeHint.x;
+	_height = sizeHint.y;
+	Common::File file;
+	Image::PNGDecoder png;
+	if (!file.open(path) || !png.loadStream(file)) {
+		warning("Could not load scene texture %s (%d x %d)", path.toString().c_str(), _width, _height);
+		return;
+	}
+
 	const Graphics::Surface &source = *png.getSurface();
 	_width = source.w;
 	_height = source.h;
@@ -437,7 +443,7 @@ bool Texture::loadPNG(Common::SeekableReadStream &stream) {
 		_bitmap->_surface->setPalette(palette.data(), 0, palette.size());
 	if (png.hasTransparentColor())
 		_bitmap->_surface->setTransparentColor(png.getTransparentColor());
-	return true;
+	debugC(2, kDebugLoading, "Loaded scene texture %s (%d x %d)", path.toString().c_str(), _width, _height);
 }
 
 void Texture::blitTo(Graphics::ManagedSurface &target, const Common::Point &position) const {

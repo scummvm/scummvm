@@ -28,7 +28,7 @@
 namespace NGI {
 
 class MessageQueue;
-class ObjectIdList;
+class GameProject;
 
 class Scene : public Background {
  public:
@@ -109,7 +109,7 @@ class SceneTag : public CObject {
 
 	bool load(MfcArchive &file) override;
 	void loadScene();
-	void loadSceneXML(const ObjectIdList &ids);
+	void loadSceneXML(const GameProject &project);
 };
 
 class SceneTagList : public Common::List<SceneTag>, public CObject {

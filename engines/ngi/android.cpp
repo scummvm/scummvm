@@ -164,31 +164,79 @@ static const char *getResourceLocale(Common::Language language) {
 	}
 }
 
+class XMLTextureSizeParser : public Common::XMLParser {
+public:
+	explicit XMLTextureSizeParser(GameProject &project) : _project(project) {}
+
+	void loadSizes() {
+		if (!read("tex_data_main.xml"))
+			return;
+		Common::Array<Common::Path> files;
+		files.swap(_files);
+		for (const Common::Path &path : files)
+			read(path);
+	}
+
+private:
+	GameProject &_project;
+	Common::Array<Common::Path> _files;
+
+	bool read(const Common::Path &name) {
+		const Common::Path path = Common::Path("data").join(name);
+		close();
+		return loadFile(path) && parse();
+	}
+
+	CUSTOM_XML_PARSER(XMLTextureSizeParser) {
+		XML_KEY(FILES)
+			XML_KEY(FLIE)
+				XML_PROP(path, true)
+			KEY_END()
+		KEY_END()
+		XML_KEY(TEX_DATA)
+			XML_KEY(DATA)
+				XML_PROP(path, true)
+				XML_PROP(w, true)
+				XML_PROP(h, true)
+			KEY_END()
+		KEY_END()
+	} PARSER_END()
+
+	bool parserCallback_FILES(ParserNode *) { return true; }
+	bool parserCallback_TEX_DATA(ParserNode *) { return true; }
+
+	bool parserCallback_FLIE(ParserNode *node) {
+		_files.push_back(Common::Path(node->values["path"], '\\'));
+		return true;
+	}
+
+	bool parserCallback_DATA(ParserNode *node) {
+		const Common::Path path = Common::Path("data").join(Common::Path(node->values["path"], '\\'));
+		if (!_project._textureSizes.contains(path))
+			_project._textureSizes[path] = Dims(atoi(node->values["w"].c_str()), atoi(node->values["h"].c_str()));
+		return true;
+	}
+};
+
 class XMLSceneParser : public Common::XMLParser {
 public:
-	XMLSceneParser(const ObjectIdList &ids, Scene &scene, const char *locale)
-		: _ids(ids), _scene(scene), _locale(locale) {
+	XMLSceneParser(const GameProject &project, Scene &scene, const char *locale)
+		: _project(project), _scene(scene), _locale(locale) {
 		setAllowText();
 	}
 
 private:
-	const ObjectIdList &_ids;
+	const GameProject &_project;
 	Scene &_scene;
 	const char *_locale;
 	uint _objectOrder = 0;
 	bool _hasInitialStatics = false;
 	int16 _initialStaticsId = 0;
 
-	bool loadTexture(Texture &texture, const Common::String &resource, bool localized) {
+	void loadTexture(Texture &texture, const Common::String &resource, bool localized) {
 		const Common::String directory = localized ? Common::String::format("data/res_%s", _locale) : "data/res";
 		const Common::Path path = Common::Path(directory).join(resource + ".png");
-		Common::File file;
-		if (!file.open(path) || !texture.loadPNG(file))
-			return parserError("Could not load scene texture " + path.toString());
-
-		const Dims dimensions = texture.getDimensions();
-		debugC(2, kDebugLoading, "Loaded scene texture %s (%d x %d)", path.toString().c_str(), dimensions.x, dimensions.y);
-		return true;
+		texture.loadPNG(path, _project._textureSizes.getValOrDefault(path));
 	}
 
 	CUSTOM_XML_PARSER(XMLSceneParser) {
@@ -303,8 +351,7 @@ private:
 		picture->_picture = new Texture();
 		const Common::String resource = Common::String::format("%08hu/%08hu",
 			static_cast<uint16>(_scene._sceneId), static_cast<uint16>(picture->_id));
-		if (!loadTexture(*picture->_picture, resource, isLocalized(*node)))
-			return false;
+		loadTexture(*picture->_picture, resource, isLocalized(*node));
 		picture->setOXY2();
 		_scene.addPicture(picture.release());
 		return true;
@@ -376,7 +423,7 @@ private:
 			cmd->_cmd = 17;
 			cmd->_messageName = node->values.getValOrDefault("msg");
 			uint32 id;
-			if (_ids.findId(cmd->_messageName, id))
+			if (_project._objectIds.findId(cmd->_messageName, id))
 				cmd->_messageNum = id;
 		} else if (kind == "PAUSE" || kind == "22") {
 			cmd->_cmd = Command::kCmdPause;
@@ -442,8 +489,7 @@ private:
 		AniObject &object = *_scene._aniObjects.back();
 		const Common::String resource = Common::String::format("%08hu/%08hu/%08hu",
 			static_cast<uint16>(_scene._sceneId), static_cast<uint16>(object._id), static_cast<uint16>(pose->_staticsId));
-		if (!loadTexture(*pose, resource, isLocalized(*node)))
-			return false;
+		loadTexture(*pose, resource, isLocalized(*node));
 
 		if (_hasInitialStatics ? pose->_staticsId == _initialStaticsId :
 				(!object._statics || static_cast<uint16>(pose->_staticsId) < static_cast<uint16>(object._statics->_staticsId)))
@@ -500,8 +546,7 @@ private:
 		phase->_delayRelative = atoi(node->values.getValOrDefault("delayRelative").c_str());
 		phase->_x = atoi(node->values.getValOrDefault("x").c_str());
 		phase->_y = atoi(node->values.getValOrDefault("y").c_str());
-		if (!loadTexture(*phase, resource, isLocalized(*getParentNode(node))))
-			return false;
+		loadTexture(*phase, resource, isLocalized(*getParentNode(node)));
 
 		movement._framePosOffsets.insert_at(index, Common::Point(phase->_x, phase->_y));
 		movement._phases.insert_at(index, phase.release());
@@ -518,7 +563,7 @@ private:
 
 	bool readId(const Common::String &name, int16 &id) const {
 		uint32 value;
-		if (!_ids.findId(name, value) || value > 0xffff)
+		if (!_project._objectIds.findId(name, value) || value > 0xffff)
 			return false;
 		id = static_cast<int16>(value);
 		return true;
@@ -572,7 +617,7 @@ static void drawAndroidScene(const Scene &scene, Graphics::ManagedSurface &targe
 
 } // End of anonymous namespace
 
-void SceneTag::loadSceneXML(const ObjectIdList &ids) {
+void SceneTag::loadSceneXML(const GameProject &project) {
 	Common::Language language = Common::parseLanguage(ConfMan.get("language"));
 	if (language == Common::UNK_LANG)
 		language = Common::parseLanguageFromLocale(g_system->getSystemLanguage().c_str());
@@ -580,7 +625,7 @@ void SceneTag::loadSceneXML(const ObjectIdList &ids) {
 	Common::ScopedPtr<Scene> scene(new Scene());
 	scene->_sceneId = _sceneId;
 	const Common::Path path = Common::Path("data/res").join(_tag);
-	XMLSceneParser parser(ids, *scene, getResourceLocale(language));
+	XMLSceneParser parser(project, *scene, getResourceLocale(language));
 	if (!parser.loadStream(SearchMan.createReadStreamForMember(path), path.toString()) || !parser.parse()) {
 		warning("Could not load Full Pipe Android scene %s", _tag.c_str());
 		return;
@@ -604,6 +649,7 @@ Common::Error NGIEngine::runAndroid() {
 	SearchMan.add("ngi-android-apk", apk.release());
 
 	GameProject project;
+	XMLTextureSizeParser(project).loadSizes();
 	if (!project._objectIds.load("data/obj.h"))
 		return Common::Error(Common::kNoGameDataFoundError, "Could not read the Full Pipe Android object IDs");
 

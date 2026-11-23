@@ -47,6 +47,7 @@ class GameProject : public CObject {
 	Common::String _headerFilename;
 	Common::ScopedPtr<SceneTagList> _sceneTagList;
 	ObjectIdList _objectIds;
+	Common::HashMap<Common::Path, Common::Point, Common::Path::Hash> _textureSizes;
 	int _field_10;
 
  public:

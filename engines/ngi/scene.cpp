@@ -44,7 +44,7 @@ Scene *GameProject::findScene(int sceneId) {
 			continue;
 		if (!tag._scene) {
 			if (g_nmi->getPlatform() == Common::kPlatformAndroid)
-				tag.loadSceneXML(_objectIds);
+				tag.loadSceneXML(*this);
 			else
 				tag.loadScene();
 		}
