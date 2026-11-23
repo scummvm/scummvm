@@ -269,50 +269,6 @@ Common::Error PrisonerEngine::run() {
 	_newModuleIndex = -1;
 	_newSceneIndex = -1;
 
-	// Note: These are now set via the main menu
-	// TODO: Remove after debugging
-	//_newModuleIndex = 2;
-	//_newSceneIndex = 39;
-
-#if 0
-	_newModuleIndex = 3;
-	_newSceneIndex = 1;
-#endif
-
-#if 0
-	_newModuleIndex = 9;
-	//_newSceneIndex = 2;//lava room
-	//_newSceneIndex = 4;//mine cart room
-	//_newSceneIndex = 9;//lab room (present)
-	//_newSceneIndex = 15;//lab room (future)
-	_newSceneIndex = 14;
-#endif
-
-#if 0
-	_newModuleIndex = 10;
-	_newSceneIndex = 1;
-#endif
-
-#if 0
-	_newModuleIndex = 2;
-	_newSceneIndex = 10;
-#endif
-
-#if 0
-	_newModuleIndex = 3;
-	//_newSceneIndex = 27;//safe
-	_newSceneIndex = 37;
-#endif
-
-#if 0
-	_newModuleIndex = 6;
-	_newSceneIndex = 7;
-#endif
-
-#if 0
-	_newModuleIndex = 2;
-	_newSceneIndex = 33;//radar
-#endif
 	// TODO: Move to init function
 	pakName = "F_ICETXT";
 	_globalTextResourceCacheSlot = loadTextResource(pakName, 0);
@@ -855,7 +811,6 @@ int16 PrisonerEngine::handleInput(int16 x, int16 y) {
 			if (!_mainMenuRequested) {
 				openMainMenu();
 			} else {
-				// TODO CLEAR MENU (MAYBE VIA DIRTY RECTS?)
 				this->resumeGame();
 			}
 		} else if (keyState == Common::KEYCODE_F2) {
