@@ -33,6 +33,8 @@ public:
 	void playVideo(int number);
 
 private:
+	/** Handles events for the given time without freezing the window. */
+	void pumpEvents(uint32 milliseconds);
 	/** Lets the skip key go and waits until the mouse buttons are up. */
 	void releaseInput();
 

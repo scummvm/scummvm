@@ -71,20 +71,25 @@ void VideoPlayer::playVideo(int number) {
 	}
 	decoder.stop();
 
-	// Then it waits until the mouse buttons are up and for half a second.
 	releaseInput();
-	g_system->delayMillis(500);
 }
 
-void VideoPlayer::releaseInput() {
-	// The movie took the events: the skip key is let go, and the game waits for the mouse buttons to come up.
-	_engine._escape = 0;
-	while ((_engine._buttonsDown[0] || _engine._buttonsDown[1] || _engine._buttonsDown[2]) && !_engine.shouldQuit()) {
+void VideoPlayer::pumpEvents(uint32 milliseconds) {
+	const uint32 end = g_system->getMillis() + milliseconds;
+	do {
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event))
 			_engine.handleEvent(event);
 		g_system->delayMillis(10);
-	}
+	} while (g_system->getMillis() < end && !_engine.shouldQuit());
+}
+
+void VideoPlayer::releaseInput() {
+	// The movie took the events: the skip key is let go, the mouse buttons come up, and then half a second passes.
+	_engine._escape = 0;
+	while ((_engine._buttonsDown[0] || _engine._buttonsDown[1] || _engine._buttonsDown[2]) && !_engine.shouldQuit())
+		pumpEvents(10);
+	pumpEvents(500);
 }
 
 } // End of namespace Tesoro
