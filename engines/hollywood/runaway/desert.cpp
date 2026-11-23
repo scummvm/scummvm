@@ -51,6 +51,12 @@ void RunawayRoomScene::visitDesertRoom(byte index, byte lines) {
 }
 
 void RunawayRoomScene::updateDesert(uint elapsed) {
+	if (_reviewingDesertPlan) {
+		if (!speaking()) {
+			_reviewingDesertPlan = false;
+		}
+		return;
+	}
 	if (updateCustomSequence()) {
 		return;
 	}
@@ -82,6 +88,21 @@ void RunawayRoomScene::leaveDesertRoom(uint16 scene) {
 void RunawayRoomScene::deferDesertAction(uint16 action) {
 	_roomAction = action;
 	_actionFrames.clear();
+}
+
+void RunawayRoomScene::reviewDesertPlan(byte variation) {
+	_desert.planKnown = 1;
+	_inventory.add(23);
+	_reviewingDesertPlan = true;
+	say(174, 0, true);
+	if (variation) {
+		say(174, variation, true);
+	}
+	const RunawaySaveState::DesertItems &items = _inventory.desert();
+	if (items.bombReady && items.gunReady && items.helicopterReady) {
+		say(174, 4, true);
+		leaveDesertRoom(5062);
+	}
 }
 
 } // End of namespace Hollywood

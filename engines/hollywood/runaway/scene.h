@@ -75,6 +75,8 @@ public:
 	virtual void chooseDialogue(uint choice) {}
 	virtual bool playingVideo() const { return false; }
 	virtual bool inventoryPresentation() const { return false; }
+	// A scene can override the inventory portrait during an item action.
+	virtual byte inventoryFrame() const { return 0xff; }
 	virtual void skipVideo() {}
 	virtual void sayInventory(const RunawayInventory::Reply &reply) = 0;
 	virtual bool escaped() const { return false; }
@@ -120,7 +122,9 @@ public:
 	const Common::U32String &committedCaption() const override { return _caption; }
 	const Common::U32String &subtitle() const override;
 	byte subtitleColor() const override { return _sequence.active() ? _sequence.subtitleColor() : _speech.subtitleColor(); }
-	bool busy() const override { return _sequence.active() || _pendingHotspot != 0 || _transition.scene || _hospitalExit.scene || _arrivalFacing != 0xff || _roomAction || _conversation || speaking(); }
+	bool busy() const override { return _sequence.active() || _pendingHotspot != 0 || _transition.scene || _hospitalExit.scene || _arrivalFacing != 0xff || _roomAction || _conversation || _reviewingDesertPlan || speaking(); }
+	bool inventoryPresentation() const override { return _reviewingDesertPlan; }
+	byte inventoryFrame() const override;
 	bool speaking() const override { return _sequence.active() ? !_sequence.subtitle().empty() : !_speech.subtitle().empty(); }
 	byte speechFrame() const override { return _sequence.active() ? _sequence.speechFrame() : _speech.frame(_now); }
 	bool playingVideo() const override { return _sequence.active(); }
@@ -238,6 +242,7 @@ protected:
 	void updateHospital(uint elapsed);
 	void updateHospitalAudio();
 	bool sayHospitalInventory(const RunawayInventory::Reply &reply);
+	void updateHospitalInventory();
 	void leaveHospitalRoom(uint16 scene, Common::Point position, byte facing);
 
 	bool museumChapter() const { return _game == kRunawayFullGame && _room / 1000 == 4; }
@@ -265,6 +270,7 @@ protected:
 	void visitDesertRoom(byte index, byte lines);
 	void leaveDesertRoom(uint16 scene);
 	void deferDesertAction(uint16 action);
+	void reviewDesertPlan(byte variation);
 
 	bool townChapter() const { return _game == kRunawayFullGame && _room / 1000 == 6; }
 	void resumeTown();
@@ -334,6 +340,7 @@ protected:
 	RunawaySaveState::Hospital _hospital;
 	RunawaySaveState::Museum _museum;
 	RunawaySaveState::Desert _desert;
+	bool _reviewingDesertPlan = false;
 	RunawaySaveState::Town _town;
 	RunawaySaveState::Hopi _hopi;
 	RunawaySaveState::Finale _finale;

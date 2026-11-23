@@ -174,11 +174,11 @@ RunawayRoomScene::ActionResult Scene5050::dispatchCustomSceneAction(uint16 actio
 		items.gunReady = 1;
 		_inventory.remove(14);
 		say(17, 4);
-		if (items.bombReady && items.helicopterReady) {
-			say(174, 4, true);
-			leaveDesertRoom(5062);
-		}
+		deferDesertAction(418);
 		return kBackgroundChanged;
+	case 418:
+		reviewDesertPlan(2);
+		break;
 	case 319: // Use unsuitable lubricant with the machine gun.
 		say(18, _desert.gun != 0);
 		break;

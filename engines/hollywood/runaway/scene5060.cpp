@@ -127,6 +127,13 @@ float Scene5060::actorHeight() const {
 
 RunawayRoomScene::ActionResult Scene5060::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
+	case 500: // Add the plan after Brian returns from the bus introduction.
+		reviewDesertPlan(0);
+		deferDesertAction(501);
+		break;
+	case 501:
+		say(0, 1);
+		break;
 	case 480: { // Gather everyone after all three rescue preparations are complete.
 		static const byte speakers[] = {0, 1, 0, 2, 0, 2, 1, 3};
 		for (uint i = 0; i < ARRAYSIZE(speakers); ++i) {
@@ -418,7 +425,11 @@ void Scene5060::runCustomEntrySequence() {
 		beginRoomAnimationRange(400, 6, 26, 9, 25);
 		return;
 	}
-	visitDesertRoom(3, 2);
+	if (!_desert.visited[3]) {
+		_desert.visited[3] = 1;
+		say(0);
+		deferDesertAction(500);
+	}
 }
 
 Common::U32String Scene5060::hotspotName(byte id) const {

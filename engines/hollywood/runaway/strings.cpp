@@ -62,7 +62,7 @@ const char *const kTextKeys[] = {
 	"interface.bottleWithGasoline", "interface.filledMeasuringTube", "interface.polishedStone",
 	"interface.stoneOfLight", "interface.makeshiftMortar", "interface.steamOutletLever",
 	"interface.pressureWheel", "interface.makeshiftMiningTool", "interface.hotScalpel",
-	"interface.openPods"
+	"interface.openPods", "interface.putPlanIntoAction"
 };
 static_assert(ARRAYSIZE(kTextKeys) == RunawayStrings::kTextCount, "Runaway text keys must match TextId");
 

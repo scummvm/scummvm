@@ -127,6 +127,7 @@ Common::Point RunawayEngine::updateUI(uint32 now) {
 	if (!presentation) {
 		const byte hotspot = _scene->hotspotAt(mouse);
 		_ui->setDialogueChoices(_scene->dialogueChoices());
+		_ui->setInventoryFrame(_scene->inventoryFrame());
 		_ui->update(now, mouse, hotspot, sceneBusy(), _scene->speaking(),
 			_scene->inventoryPresentation(), _scene->speechFrame(), _scene->hasVerbControls(),
 			_scene->actionCursor(hotspot), _scene->preferLook(hotspot));
@@ -504,6 +505,9 @@ Common::Error RunawayEngine::run() {
 				case RunawayUI::Command::kExamineItem:
 					_scene->captureState(_state);
 					_scene->sayInventory(_inventory->examine(command.target, _state));
+					break;
+				case RunawayUI::Command::kUseItem:
+					_scene->sayInventory(_inventory->use(command.target));
 					break;
 				case RunawayUI::Command::kCombine:
 					_scene->sayInventory(_inventory->combine(command.item, command.target));

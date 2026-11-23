@@ -34,7 +34,7 @@ namespace Hollywood {
 class RunawayUI {
 public:
 	struct Command {
-		enum Type { kNone, kRoom, kExamineItem, kCombine, kSkipSpeech, kOpenMenu, kChooseDialogue };
+		enum Type { kNone, kRoom, kExamineItem, kUseItem, kCombine, kSkipSpeech, kOpenMenu, kChooseDialogue };
 		Type type = kNone;
 		RunawayVerb verb = kVerbWalk;
 		Common::Point mouse;
@@ -59,6 +59,7 @@ public:
 	void captureState(RunawaySaveState &state) const;
 	void restoreState(const RunawaySaveState &state, uint32 now);
 	void setPointerSound(bool enabled) { _pointerSound = enabled; }
+	void setInventoryFrame(byte frame) { _inventoryFrame = frame; }
 	void drawSubtitle(Graphics::ManagedSurface &screen, const Common::U32String &text, byte color = 11) const;
 	void draw(Graphics::ManagedSurface &screen, const Common::U32String &roomCaption,
 		const Common::U32String &committedCaption, const Common::U32String &subtitle, byte subtitleColor, bool showSubtitles);
@@ -91,6 +92,7 @@ private:
 	byte _cursorType = 0, _previousCursor = 0, _actionCursor = 0;
 	bool _preferLook = false;
 	byte _hovered = 0, _buttonFrame = 0, _optionsFrame = 0, _pickupItem = 0;
+	byte _inventoryFrame = 0xff;
 	bool _inventoryOpen = false, _enteredInventory = false, _returnAfterPickup = false;
 	bool _inventoryPresentation = false;
 	bool _roomHasVerbs = true;

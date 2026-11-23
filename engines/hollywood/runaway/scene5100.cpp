@@ -451,10 +451,7 @@ RunawayRoomScene::ActionResult Scene5100::dispatchCustomSceneAction(uint16 actio
 		_audio.playEffect(49);
 		_desert.barnDoor = 2;
 		_inventory.desert().helicopterReady = 1;
-		if (_inventory.desert().gunReady && _inventory.desert().bombReady) {
-			say(174, 4, true);
-			leaveDesertRoom(5062);
-		}
+		reviewDesertPlan(3);
 		return kBackgroundChanged;
 	case 340: // Abandon the distraction and return to cover outside.
 		say(13);

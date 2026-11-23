@@ -121,11 +121,11 @@ RunawayRoomScene::ActionResult Scene5070::dispatchCustomSceneAction(uint16 actio
 		items.bombReady = 1;
 		_inventory.remove(5);
 		say(7, 1);
-		if (items.gunReady && items.helicopterReady) {
-			say(174, 4, true);
-			leaveDesertRoom(5062);
-		}
+		deferDesertAction(411);
 		return kBackgroundChanged;
+	case 411:
+		reviewDesertPlan(1);
+		break;
 	case 312: // Use the bucket with the oil well.
 		if (items.bucket != 1) {
 			say(17, 0, true);

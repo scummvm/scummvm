@@ -10810,6 +10810,12 @@ msgctxt "interface.putAway"
 msgid "PUT AWAY "
 msgstr "DEJAR "
 
+#. kPutPlanIntoAction
+#: engines/hollywood/runaway/strings.h
+msgctxt "interface.putPlanIntoAction"
+msgid "PUT PLAN INTO ACTION"
+msgstr "PONER EN MARCHA EL PLAN"
+
 #. kQuit
 #: engines/hollywood/runaway/strings.h
 msgctxt "interface.quit"

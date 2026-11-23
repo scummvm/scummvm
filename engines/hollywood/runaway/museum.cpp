@@ -95,6 +95,8 @@ bool RunawayRoomScene::sayMuseumInventory(const RunawayInventory::Reply &reply) 
 	}
 	if (reply.cue == 108) {
 		_inventory.museum().businessCardExamined = 1;
+		say(108, _museum.phoneUsed != 0, true);
+		return true;
 	}
 	if (reply.cue == 115 && reply.variation == 1) {
 		// Inserting the battery precedes Brian's response.

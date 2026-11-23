@@ -71,12 +71,13 @@ public:
 	RunawaySaveState::FinaleItems &finale() { return _finale; }
 	bool contains(byte item) const;
 	uint maxItemId() const;
-	bool add(byte item);
+	bool add(byte item, bool animate = true);
 	void remove(byte item);
 	uint size() const { return _items.size(); }
 	byte itemAt(uint slot) const { return slot < size() ? _items[slot] : 0; }
 	byte selected() const { return _selected; }
 	void select(byte item) { _selected = contains(item) ? item : 0; }
+	bool isPlan(byte item) const { return _chapter == 3 && item == 23; }
 	byte takeNewItem() { const byte item = _newItem; _newItem = 0; return item; }
 	Common::U32String name(byte item) const;
 	Common::U32String combinationCaption(byte item, byte target) const;
@@ -84,6 +85,7 @@ public:
 	uint icon(byte item) const;
 	uint cursor(byte item) const;
 	Reply examine(byte item, const RunawaySaveState &state) const;
+	Reply use(byte item) const;
 	Reply nextReply(const Reply &reply) const;
 	Reply combine(byte first, byte second);
 	byte clothState() const { return _clothState; }

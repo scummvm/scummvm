@@ -170,6 +170,7 @@ void RunawayUI::restoreState(const RunawaySaveState &state, uint32 now) {
 	_blinkUntil = _idleStarted = _pickupStarted = 0;
 	_pickupItem = _hovered = _buttonFrame = _optionsFrame = _mouth = 0;
 	_blocked = _speaking = _inventoryPresentation = _returnAfterPickup = _pickupSoundPlayed = false;
+	_inventoryFrame = 0xff;
 	_inventoryOpen = state.inventoryOpen;
 	_enteredInventory = false;
 	_verb = (RunawayVerb)state.verb;
@@ -196,7 +197,7 @@ void RunawayUI::toggleInventory() {
 }
 
 bool RunawayUI::cancel() {
-	if (busy() || _inventoryPresentation)
+	if (busy() || _inventoryPresentation || _inventoryFrame != 0xff)
 		return true;
 	if (_inventory.selected()) {
 		_inventory.select(0);
@@ -263,7 +264,8 @@ void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool b
 		_roomHasVerbs = roomHasVerbs;
 		_preferLook = preferLook;
 		setVerb(hovered && (_inventoryOpen || _roomHasVerbs) ?
-			(_inventoryOpen || (actionCursor && !preferLook) ? kVerbUse : kVerbLook) : kVerbWalk, actionCursor);
+			(_inventoryOpen ? (_inventory.isPlan(hovered) ? kVerbLook : kVerbUse) :
+			(actionCursor && !preferLook ? kVerbUse : kVerbLook)) : kVerbWalk, actionCursor);
 	}
 	if (now - _buttonTick >= 20) {
 		const uint steps = MIN<uint>(6, (now - _buttonTick) / 20);
@@ -285,14 +287,14 @@ void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool b
 	}
 	if (_inventoryOpen && now - _portraitTick >= 60) {
 		_portraitTick = now;
-		if (_speaking) {
+		if (_speaking || _inventoryFrame != 0xff) {
 			_blinkUntil = 0;
 			_lastInteraction = now;
 			_idleStarted = 0;
 		} else if (!busy() && _random.getRandomNumber(49) == 0) {
 			_blinkUntil = now + 180;
 		}
-		if (!busy() && !_speaking && !_idleStarted && now - _lastInteraction >= 30000)
+		if (!busy() && !_speaking && _inventoryFrame == 0xff && !_idleStarted && now - _lastInteraction >= 30000)
 			_idleStarted = now;
 		if (_idleStarted && now - _idleStarted >= _idlePortrait.frameCount() * 60) {
 			_idleStarted = 0;
@@ -361,6 +363,8 @@ RunawayUI::Command RunawayUI::click(bool right) {
 			_inventory.select(0);
 		} else if (_verb == kVerbLook) {
 			command.type = Command::kExamineItem;
+		} else if (_inventory.isPlan(_hovered)) {
+			command.type = Command::kUseItem;
 		} else {
 			_inventory.select(_hovered);
 		}
@@ -436,6 +440,8 @@ Common::U32String RunawayUI::inventoryCaption() const {
 	}
 	if (!_hovered)
 		return Common::U32String();
+	if (_inventory.isPlan(_hovered) && _verb == kVerbUse)
+		return _strings.text(RunawayStrings::kPutPlanIntoAction);
 	return _strings.text(_verb == kVerbLook ? RunawayStrings::kLook : RunawayStrings::kTake) + _inventory.name(_hovered);
 }
 
@@ -471,6 +477,8 @@ void RunawayUI::drawInventory(Graphics::ManagedSurface &screen) {
 		} else {
 			_portrait.draw(screen, 64 + MIN<uint>(17, (_now - _pickupStarted) / 60), 0, kRunawayViewportTop);
 		}
+	} else if (_inventoryFrame != 0xff) {
+		_portrait.draw(screen, _inventoryFrame, 0, kRunawayViewportTop);
 	} else if (_idleStarted) {
 		_idlePortrait.draw(screen, MIN<uint>(_idlePortrait.frameCount() - 1, (_now - _idleStarted) / 60), 0, kRunawayViewportTop);
 	} else {

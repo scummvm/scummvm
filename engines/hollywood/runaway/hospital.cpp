@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/util.h"
 #include "hollywood/runaway/scene.h"
 
 namespace Hollywood {
@@ -35,6 +36,11 @@ void RunawayRoomScene::resumeHospital() {
 }
 
 void RunawayRoomScene::updateHospital(uint elapsed) {
+	if (_roomAction == 54) {
+		updateHospitalAudio();
+		updateHospitalInventory();
+		return;
+	}
 	advanceCustomGameplayLoop(elapsed);
 	if (!updateCustomSequence()) {
 		updateRoomAnimation();
@@ -71,16 +77,88 @@ bool RunawayRoomScene::sayHospitalInventory(const RunawayInventory::Reply &reply
 	}
 	// Searching Gina's bag reveals the matches on the first examination.
 	say(54, 1, true);
-	if (_inventory.contains(9) && _inventory.contains(17) && !_inventory.headWig() && !_inventory.contains(10)) {
-		_inventory.add(10);
-		say(54, 4, true);
-	} else if (_inventory.contains(9)) {
-		say(54, _random.getRandomBit() ? 3 : 5, true);
-	} else {
-		_inventory.add(9);
-		say(54, 2, true);
-	}
+	deferAction(54);
+	_actionStage = 0;
 	return true;
+}
+
+void RunawayRoomScene::updateHospitalInventory() {
+	if (speaking()) {
+		return;
+	}
+	const uint elapsed = _now - _actionStarted;
+	switch (_actionStage) {
+	case 0:
+		_actionStage = 1;
+		break;
+	case 1: // Lower Brian's head before searching the bag.
+		if (elapsed < 9 * 60) {
+			return;
+		}
+		_audio.playEffect(32);
+		_actionStage = 2;
+		break;
+	case 2:
+		if (_audio.effectPlaying() && elapsed < 1500) {
+			return;
+		}
+		_audio.playEffect(33);
+		_actionStage = 3;
+		break;
+	case 3:
+		if (_audio.effectPlaying() && elapsed < 1500) {
+			return;
+		}
+		if (!_inventory.contains(9)) {
+			_inventory.add(9, false);
+			_actionStep = 2;
+		} else if (_inventory.contains(17) && !_inventory.headWig() && !_inventory.contains(10)) {
+			_inventory.add(10, false);
+			_actionStep = 4;
+		} else {
+			_actionStep = _random.getRandomBit() ? 3 : 5;
+		}
+		if (_actionStep == 2 || _actionStep == 4) {
+			// The item appears directly in the open inventory.
+			_audio.playEffect(1, 255, _audio.effectPlaying() ? 1 : 0);
+		}
+		_audio.playEffect(32, 255, 1);
+		_actionStage = 4;
+		break;
+	case 4:
+		if (_audio.effectPlaying(1) && elapsed < 1500) {
+			return;
+		}
+		_actionStage = 5;
+		break;
+	case 5: // Return to the speaking pose before describing the result.
+		if (elapsed < 11 * 60) {
+			return;
+		}
+		_roomAction = 0;
+		say(54, _actionStep, true);
+		return;
+	}
+	_actionStarted = _now;
+}
+
+byte RunawayRoomScene::inventoryFrame() const {
+	if (!hospitalChapter() || _roomAction != 54) {
+		return 0xff;
+	}
+	const uint frame = (_now - _actionStarted) / 60;
+	switch (_actionStage) {
+	case 1:
+		return 84 + MIN<uint>(8, frame);
+	case 2:
+	case 3:
+	case 4:
+		return 92;
+	case 5:
+		return frame < 10 ? 93 + frame : 0;
+	default:
+		return 0xff;
+	}
 }
 
 void RunawayRoomScene::leaveHospitalRoom(uint16 scene, Common::Point position, byte facing) {

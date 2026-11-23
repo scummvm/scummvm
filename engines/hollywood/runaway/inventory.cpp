@@ -158,12 +158,14 @@ uint RunawayInventory::maxItemId() const {
 		_chapter == 4 ? kTownItemCount : _chapter == 3 ? kItemCount : 19;
 }
 
-bool RunawayInventory::add(byte item) {
+bool RunawayInventory::add(byte item, bool animate) {
 	if (!item || item > maxItemId() || contains(item)) {
 		return false;
 	}
 	_items.push_back(item);
-	_newItem = item;
+	if (animate) {
+		_newItem = item;
+	}
 	return true;
 }
 
@@ -435,7 +437,7 @@ RunawayInventory::Reply RunawayInventory::examine(byte item, const RunawaySaveSt
 		case 19: // Rope.
 			return Reply(192 + item);
 		case 24: // Empty, water-filled, or fuel-filled bottle.
-			return _town.bottleContents ? Reply(215, _town.bottleContents - 1) : Reply(19, 1);
+			return _town.bottleContents ? Reply(215, _town.bottleContents - 1) : Reply(214);
 		case 25: // The 30 cc measuring tube.
 			return Reply(216, _town.tube30 == 3 ? 5 : _town.tube30);
 		case 26: // The 50 cc measuring tube.
@@ -551,6 +553,10 @@ RunawayInventory::Reply RunawayInventory::examine(byte item, const RunawaySaveSt
 		break;
 	}
 	return Reply(item && item <= kItemCount ? kExamineCues[item] : 1, variation);
+}
+
+RunawayInventory::Reply RunawayInventory::use(byte item) const {
+	return Reply(isPlan(item) ? 193 : 1);
 }
 
 RunawayInventory::Reply RunawayInventory::nextReply(const Reply &reply) const {

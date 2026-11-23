@@ -27,6 +27,8 @@ namespace Hollywood {
 
 bool RunawayRoomScene::sayTownInventory(const RunawayInventory::Reply &reply) {
 	switch (reply.cue) {
+	case 200: // Inspect the crucifix.
+		return sayHopiInventory(reply);
 	case 209: { // Read the mine map from the inventory.
 		typedef RunawaySequence S;
 		static const S::Command commands[] = {
