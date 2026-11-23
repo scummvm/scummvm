@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/array.h"
 #include "common/endian.h"
 
 #include "tesoro/core/archive.h"
@@ -91,11 +92,12 @@ bool Archive::open(const Common::Path &datName, const Common::Path &treName) {
 		if (!tre.open(treName))
 			return false;
 		const uint32 size = (uint32)tre.size();
-		byte *data = new byte[size];
-		const uint32 got = tre.read(data, size);
+		Common::Array<byte> data(size);
+		const uint32 got = tre.read(data.data(), size);
+		if (got != size)
+			return false;
 		// builds the index from the TRE file data
-		loadIndex(data, got);
-		delete[] data;
+		loadIndex(data.data(), got);
 	}
 
 	return _dat.open(datName);
