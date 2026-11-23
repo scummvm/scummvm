@@ -94,7 +94,7 @@ Common::SeekableReadStream *Disk_br::openFile_internal(bool errorOnNotFound, con
 
 	Common::Path lookup(name);
 
-	if (!ext.empty() && !name.hasSuffix(ext.c_str())) {
+	if (!ext.empty() && !name.hasSuffixIgnoreCase(ext.c_str())) {
 		// make sure we are using the specified extension
 		debugC(9, kDebugDisk, "Disk_br::openFile: appending explicit extension (%s) to (%s)", ext.c_str(), name.c_str());
 		lookup.appendInPlace(ext);
@@ -107,7 +107,7 @@ Common::SeekableReadStream *Disk_br::openFile_internal(bool errorOnNotFound, con
 
 	// as a very last resort, try trimming the file name to 8 chars
 	Common::String filename = lookup.baseName();
-	if (!ext.empty() && filename.hasSuffix(ext.c_str())) {
+	if (!ext.empty() && filename.hasSuffixIgnoreCase(ext.c_str())) {
 		int len = filename.size();
 		if (len > 8) {
 			debugC(9, kDebugDisk, "Disk_br::openFile: trimming filename (%s) to 8 characters", name.c_str());
