@@ -145,7 +145,7 @@ const char *Scene4060::actionCaptionVariant(byte id, bool look, byte item) const
 		if (id == 1 || id == 9 || id == 12 || id == 13) {
 			return _upperFloor ? "downstairs" : "upstairs";
 		}
-		if (id == 5 && !_coffeeTaken && _museum.needsPackage) {
+		if (id == 5 && _game != kRunawayMuseumDemo && !_coffeeTaken && _museum.needsPackage) {
 			return "coffee";
 		}
 		if (id == 7 && _museum.keypad == 4) {
@@ -309,14 +309,20 @@ RunawayRoomScene::ActionResult Scene4060::dispatchCustomSceneAction(uint16 actio
 		case 313: // Look in the wastepaper basket.
 			if (!_museum.basketSeen) {
 				say(6);
-				say(6, 1);
+				if (_game == kRunawayMuseumDemo) {
+					deferMuseumAction(313);
+				} else {
+					say(6, 1);
+				}
 				_museum.basketSeen = 1;
+			} else if (_game == kRunawayMuseumDemo) {
+				say(19, 1, true);
 			} else {
 				say(_coffeeTaken ? 7 : 6, _coffeeTaken ? 0 : 2);
 			}
 			return kHandled;
 		case 314: // Take the empty coffee package.
-			if (!_museum.basketSeen || _coffeeTaken) {
+			if (_game == kRunawayMuseumDemo || !_museum.basketSeen || _coffeeTaken) {
 				say(7);
 			} else if (!_museum.needsPackage) {
 				say(7, 1);
@@ -370,7 +376,7 @@ RunawayRoomScene::ActionResult Scene4060::dispatchCustomSceneAction(uint16 actio
 			if (!_inventory.contains(13)) {
 				say(15);
 			} else if (_museum.willyInLab == 1) {
-				if (!_museum.phoneUsed && !_museum.phonePlanExplained) {
+				if (_game != kRunawayMuseumDemo && !_museum.phoneUsed && !_museum.phonePlanExplained) {
 					_museum.phonePlanExplained = 1;
 					say(15, 1);
 					say(15, 8);
@@ -479,6 +485,11 @@ void Scene4060::finishCustomAnimation(uint16 action) {
 		break;
 	case 312: // Enter Clive's office after opening the door.
 		leaveMuseumRoom(4030, Common::Point(934, 563), 3, true);
+		break;
+	case 313: // Collect the demo's coffee package after examining the basket.
+		_coffeeTaken = true;
+		_inventory.add(19);
+		say(6, 1);
 		break;
 	case 316: // Enter the restoration laboratory after opening the door.
 		leaveMuseumRoom(4050, Common::Point(382, 529), 3, true);

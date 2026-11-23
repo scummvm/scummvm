@@ -107,6 +107,15 @@ void RunawayRoomScene::setMuseumInventorySpeechPoses(uint16 cue, byte variation,
 	case 52:
 		pose = variation == 2 ? 1 : 0;
 		break;
+	case 115:
+	case 116:
+	case 117:
+		// The demo has an unused smiling speech pose at frames 18-22.
+		pose = _restoredContent && variation == 1 ? 3 : 0;
+		break;
+	case 121:
+		pose = _restoredContent && variation == 2 ? 3 : 0;
+		break;
 	default:
 		break;
 	}
@@ -220,7 +229,8 @@ void RunawayRoomScene::startMuseumFilm(MuseumFilm film) {
 			{S::kTalk, 30, 1, 1, 0, 21}, {S::kPlay, (uint16)(gog ? 912 : 919), (uint16)(gog ? 919 : 930)},
 			{S::kTalk, 30, 2, 3, 0, 21}, {S::kDelay, 2000}, {S::kTalk, 30, 3, 3, 0, 21}, {S::kDelay, 3000}, {S::kTalk, 30, 4, 3, 0, 21}};
 		if (demo) {
-			_filmCommands = {{S::kOpen, 5}, {S::kPlay, 0, 912}, {S::kTalk, 30, 0, 1, 0, 21}, {S::kDelay, 1000},
+			_filmCommands = {{S::kOpen, 5}, {S::kPlay, 0, 68}, {S::kSpeech, 40, 0}, {S::kPlay, 69, 912},
+				{S::kTalk, 30, 0, 1, 0, 21}, {S::kDelay, 1000},
 				{S::kTalk, 30, 1, 1, 0, 21}, {S::kDelay, 3000}, {S::kPlay, 923, 931},
 				{S::kTalk, 30, 2, 3, 0, 21}, {S::kDelay, 2000}, {S::kTalk, 30, 3, 3, 0, 21},
 				{S::kDelay, 3000}, {S::kPlay, 943, 988}, {S::kTalk, 30, 4, 3, 0, 21}};

@@ -375,7 +375,8 @@ RunawayRoomScene::ActionResult Scene4050::dispatchCustomSceneAction(uint16 actio
 			say(3, _museum.restoration == 1);
 			return kHandled;
 		case 304: // Look at Susan.
-			say(4, _museum.susan == 3 ? 2 : _museum.susan == 1 ? 1 : _museum.restoration && _museum.leftLabOnce ? 3 : 0);
+			say(4, _museum.susan == 3 ? 2 : _museum.susan == 1 ? 1 :
+				_game != kRunawayMuseumDemo && _museum.restoration && _museum.leftLabOnce ? 3 : 0);
 			return kHandled;
 		case 305: // Talk to Susan.
 			if (_museum.susan == 3) {

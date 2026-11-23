@@ -152,12 +152,17 @@ void Scene4070::finishCustomAnimation(uint16 action) {
 	case 407: // Willy agrees to refill the coffee machine.
 		_inventory.remove(19);
 		say(33, 4, false, 1);
-		if (_museum.batteryRequested) {
-			say(33, 5, false, 1);
+		if (_game == kRunawayMuseumDemo) {
 			say(36, 1);
-			say(33, 6, false, 1);
+			say(33, 5, false, 1);
+		} else {
+			if (_museum.batteryRequested) {
+				say(33, 5, false, 1);
+				say(36, 1);
+				say(33, 6, false, 1);
+			}
+			say(33, 7, false, 1);
 		}
-		say(33, 7, false, 1);
 		_museum.coffeeMachine = 1;
 		_museum.willyInLab = 2;
 		deferMuseumAction(448);
