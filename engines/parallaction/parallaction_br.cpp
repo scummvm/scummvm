@@ -319,6 +319,7 @@ void Parallaction_br::changeLocation() {
 	}
 
 	freeLocation(false);
+	_zoneTrap.reset();
 	// load new location
 	Common::strlcpy(_location._name, _newLocationName.c_str(), 100);
 	parseLocation(_location._name);
