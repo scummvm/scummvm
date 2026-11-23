@@ -115,6 +115,7 @@ void Scene8090::runCustomEntrySequence() {
 		_arrivalStarted = _now;
 		break;
 	case 8093: // Oscar returns armed, ready to confront the gangsters.
+		_inventory.remove(11);
 		_position = Common::Point(676, 510);
 		_walkPath.reset(_position);
 		_facing = 7;
@@ -398,15 +399,18 @@ RunawayRoomScene::ActionResult Scene8090::dispatchCustomSceneAction(uint16 actio
 		_animatesOscar = false;
 		setOscarPose(13, 100, 0);
 		_oscarMouth = 94;
-		for (uint i = 12; i <= 19; ++i) {
+		for (uint i = 12; i <= 18; ++i) {
 			say(20, i, false, i <= 16 && !(i % 2));
+		}
+		if (!_inventory.contains(11)) {
+			say(20, 19);
 		}
 		deferAction(423);
 		break;
-	case 423: // Return to Sushi to continue the plan.
+	case 423: // Arm Oscar with the borrowed rifle, or fetch it from Sushi.
 		_oscarPose = 0;
 		_oscar.startIdle();
-		leaveRoom(8373);
+		leaveRoom(_inventory.contains(11) ? 8093 : 8373);
 		break;
 	case 1430: // Oscar shows Brian his rifle.
 		_animatesOscar = false;

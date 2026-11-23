@@ -396,6 +396,9 @@ uint RunawayInventory::cursor(byte item) const {
 
 RunawayInventory::Reply RunawayInventory::examine(byte item, const RunawaySaveState &state) const {
 	if (_chapter == 6) {
+		if (item == 11) {
+			return Reply::fromStage(637, 14);
+		}
 		if (item == 19) {
 			return Reply(310, _finale.scalpel ? _finale.scalpel + 1 : _finale.heatNeeded);
 		}
