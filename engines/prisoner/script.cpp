@@ -273,7 +273,6 @@ void PrisonerEngine::runInitScript(int16 programIndex) {
 	_currScriptProgramIndex = programIndex;
 	_currScriptIndex = 0;
 	while (_currScript->status != kScriptStatusPaused) {
-		// TODO: updateMusicItems(); // Probably not
 		runCurrentScript();
 		if (_needToPlayMux) {
 			playMux(_muxFilename);
@@ -297,7 +296,6 @@ void PrisonerEngine::runScripts(int16 programIndex) {
 			_currScriptIndex = scriptIndex;
 			if (_currScript->status != kScriptStatusPaused) {
 				_scriptContinueFlag = false;
-				// TODO: updateMusicItems(); // See above
 				do {
 					runCurrentScript();
 					if (_needToPlayMux)

@@ -159,8 +159,6 @@ void PrisonerEngine::updateDialog(int16 x, int16 y) {
 
 	_screen->drawTransparentRect(_dialogRectX1, _dialogRectY1, _dialogRectX2, _dialogRectY2);
 
-	// TODO: cseg02:00029654 - cseg02:000296E0
-
 	_screen->frameRect(_dialogRectX1 - 2, _dialogRectY1 - 2, _dialogRectX2 + 2, _dialogRectY2 + 2, 87);
 	_screen->frameRect(_dialogRectX1 - 1, _dialogRectY1 - 1, _dialogRectX2 + 1, _dialogRectY2 + 1, 89);
 

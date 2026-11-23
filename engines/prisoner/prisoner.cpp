@@ -291,7 +291,6 @@ Common::Error PrisonerEngine::run() {
 
 	mainLoop();
 
-	// TODO: Move to shutdown function
 	_res->unload(_globalTextResourceCacheSlot);
 	_globalTextResourceCacheSlot = -1;
 	_res->unload(_inventoryBoxResourceCacheSlot);
@@ -1234,8 +1233,6 @@ void PrisonerEngine::getInteractMessage(Common::String &pakName, int16 pakSlot, 
 
 }
 
-// TODO: Move MIDI code to own class
-
 void PrisonerEngine::initializeMidi() {
 
 	MidiDriver::DeviceHandle midiDriver = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
@@ -1274,7 +1271,6 @@ void PrisonerEngine::setBackgroundObjects(Common::String &pakName, int16 pakSlot
 			backgroundObject->x = command->points[0].x;
 			backgroundObject->y = command->points[0].y;
 			backgroundObject->animationResource = animationResource;
-			// TODO: Init bounds: Not used in POI
 		}
 	}
 
@@ -1372,12 +1368,11 @@ bool PrisonerEngine::backupScreen() {
 		return true;
 }
 
-// TODO: Change ignorePalette name
-void PrisonerEngine::restoreScreen(bool ignorePalette) {
+void PrisonerEngine::restoreScreen(bool keepBackup) {
 	if (_screenBackedup) {
-		_screenBackedup = ignorePalette;
+		_screenBackedup = keepBackup;
 		memcpy(_screen->getScreen()->getPixels(), _screenBackupSurface->getPixels(), 640 * 480);
-		if (!ignorePalette) {
+		if (!keepBackup) {
 			_screen->setFullPalette(_effectPalette);
 		}
 	}

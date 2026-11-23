@@ -41,7 +41,6 @@ void PrisonerEngine::playSound(int16 soundIndex) {
 	}
 }
 
-// TODO: Merge with playSound
 void PrisonerEngine::playLoopingSound(int16 soundIndex, int16 loops) {
 	if (soundIndex >= 0) {
 		SoundSlot &soundSlot = _sounds[soundIndex];

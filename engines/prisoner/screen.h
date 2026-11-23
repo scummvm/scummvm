@@ -180,7 +180,6 @@ public:
 	~AnimationCelDrawer() {}
 	void draw(T *reader, Graphics::Surface *destSurface, int16 x, int16 y, int16 clipX1, int16 clipY1, int16 clipX2, int16 clipY2, bool flip) {
 
-		// TODO: Move clipping code elsewhere to reduce templated code size a little
 		byte *dest;
 		int16 width = reader->getWidth(), height = reader->getHeight();
 		int w, skipX = 0, skipY = 0, skipL, skipR, pitchIncr, destIncr;

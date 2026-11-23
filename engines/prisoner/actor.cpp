@@ -266,7 +266,6 @@ void PrisonerEngine::actorWalkToPoint(int16 actorIndex, int16 x, int16 y) {
 
 	actor->pathWalker1 = actor->pathWalker2;
 
-	// TODO: Rework this
 	PathResult *pathResults = _pathSystem->getPathResults();
 	int16 pathResultsCount = _pathSystem->getPathResultsCount();
 
@@ -367,7 +366,6 @@ void PrisonerEngine::actor21C89() {
 	}
 }
 
-// TODO: Rename this
 void PrisonerEngine::setActorDirection(int16 actorIndex, int16 direction) {
 	Actor *actor = &_actors[actorIndex];
 	restoreActorAnimation(actorIndex);

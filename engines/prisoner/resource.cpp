@@ -301,8 +301,7 @@ void AnimationResource::load(Common::MemoryReadStream &stream) {
 		}
 	}
 
-	// TODO: Load section 4 data
-	// CHECKME: Doesn't seem to be used in Prisoner
+	// The fourth section is never used by the game
 
 }
 

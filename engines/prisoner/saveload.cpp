@@ -469,7 +469,6 @@ void PrisonerEngine::syncGameState(Common::Serializer &s) {
 		s.syncAsUint16LE(_moduleScriptVars[i]);
 
 	// Palette
-	// TODO: Unknown palette struct "stru_761EC" seems unused
 	s.syncAsByte(_scenePaletteOk);
 	s.syncBytes(_scenePalette, 768);
 	s.syncAsByte(_effectPaletteOk);
@@ -495,8 +494,7 @@ void PrisonerEngine::syncGameState(Common::Serializer &s) {
 	_inventoryItemCombinations.sync(this, s);
 
 	// Inventory
-	s.syncAsUint16LE(_inventoryItemCursor); // TODO: sg_inventoryItemCursor
-	// TODO: "someArray" doesn't seem to be used
+	s.syncAsUint16LE(_inventoryItemCursor);
 	s.syncAsUint16LE(_inventoryItemsCount);
 	_inventoryItems.sync(this, s);
 	if (s.isLoading()) {

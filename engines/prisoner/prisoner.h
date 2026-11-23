@@ -993,7 +993,7 @@ public:
 	void alarmPalette(byte *source);
 
 	bool backupScreen();
-	void restoreScreen(bool ignorePalette);
+	void restoreScreen(bool keepBackup);
 
 	/* Actors */
 	int16 addActor(Common::String &pakName, int16 pakSlot, int16 frameListIndex, int16 nodeIndex,

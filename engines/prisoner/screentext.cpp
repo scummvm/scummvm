@@ -217,10 +217,7 @@ void PrisonerEngine::updateScreenTexts() {
 				y2 += screenText->fontHeight;
 			}
 
-			if (!screenText->screenCenter/*TODO:Other flags*/) {
-				// TODO: Dirty rectangle
-			} else {
-				// TODO: Dirty rectangle
+			if (screenText->screenCenter) {
 				_screen->setClipRect(0, 82, 639, 397);
 				if (_inventoryActive) {
 					// Draw frame for inventory text
@@ -244,13 +241,11 @@ void PrisonerEngine::updateScreenTexts() {
 		}
 
 		if (!screenText->screenText && screenText->speechPakSlot != -1 && !_loadingSavegame) {
-			// TODO: Talkie code/auto advance text
-			//debug("getTicks = %d; finishedTime = %d", getTicks(), screenText->finishedTime);
-			// TODO: More...
 			// With speech muted the player clicks through the text at their own pace
 			// Spoken text only ends by itself with "End of dialogs" set to
-			// automatic or when the text isn't shown (voice only)
-			if (!_speechMuted && (_dialogAutoEnd || _talkieEnabled) && getTicks() >= screenText->finishedTime)
+			// automatic or when the text isn't shown (voice only), once the voice has finished
+			if (!_speechMuted && (_dialogAutoEnd || _talkieEnabled) && getTicks() >= screenText->finishedTime &&
+				!_mixer->isSoundHandleActive(_talkieSoundHandle))
 				_autoAdvanceScreenTexts = true;
 		}
 

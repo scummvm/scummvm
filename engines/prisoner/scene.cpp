@@ -98,7 +98,6 @@ void PrisonerEngine::checkForSceneChange() {
 	_menuMouseCursorActive = true;
 	_menuMouseCursor = kCursorDisk;
 	updateMouseCursor();
-	// TODO: showMouseCursor(true);
 
 	if (_newModuleIndex == _currModuleIndex) {
 		enterScene(_currModuleIndex, _newSceneIndex);
@@ -133,7 +132,6 @@ void PrisonerEngine::enterScene(int16 moduleIndex, int16 sceneIndex) {
 	_moduleScriptCalled = false;
 	_clearBackgroundFlag = false;
 	resetBackgroundValues();
-	// TODO: resetBackgroundObjectsResourceCacheSlot();
 	clearPaletteTasks();
 	clearActors();
 	_pathSystem->clearPathWalker();

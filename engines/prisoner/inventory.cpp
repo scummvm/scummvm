@@ -136,7 +136,6 @@ void PrisonerEngine::updateInventoryItems() {
 		if (inventoryItem->status == 1) {
 			AnimationResource *inventoryItemAnimationResource;
 			if (_buildInventoryClickBoxes) {
-				// TODO
 				addClickBox(x, 41, x + 39, 81, i);
 				if (isPointInClickBox(clickBoxIndex, _mouseX, _mouseY)) {
 					_selectedInventoryItemIndex = i;
