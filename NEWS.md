@@ -10,6 +10,12 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Uninvited.
    - Added support for The Colony.
 
+ GRIM:
+   - Rewrote iMUSE to match the original, adding 3D speech positioning.
+   - Rewrote SMUSH video playback to match the original.
+   - Many fixes to the OpenGL shaders renderer.
+   - Fixed various text, collision and movement issues.
+
  M4:
    - Missing Animation and journal fixes for Ripley's Riddle of Master Lu.
    - Fix Riddle crash on Mei animation when visiting Peiping temple for the final time.
