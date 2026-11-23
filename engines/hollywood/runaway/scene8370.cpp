@@ -289,7 +289,7 @@ RunawayRoomScene::ActionResult Scene8370::dispatchCustomSceneAction(uint16 actio
 		_audio.playEffect(37);
 		if (++_finale.bellRings == 5) {
 			_finale.bellRings = 1;
-			say(12, _random.getRandomBit(), false, 1);
+			say(12, _restoredContent ? _random.getRandomNumber(2) : _random.getRandomBit(), false, 1);
 		}
 		break;
 	case 316: // Enter Sushi's work area from the upper walkway.

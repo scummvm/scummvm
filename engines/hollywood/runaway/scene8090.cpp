@@ -481,7 +481,7 @@ void Scene8090::enterHouse(bool visitGina) {
 		if (_finale.mediumTests < 3) {
 			_houseDestination = 8420;
 		} else if (!_finale.recordingPlan) {
-			_houseDestination = 0;
+			_houseDestination = _restoredContent ? 8420 : 0;
 		} else if (_finale.recordings == 0 || _finale.recordings == 2) {
 			_houseDestination = 8422;
 		} else {

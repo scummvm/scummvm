@@ -424,7 +424,7 @@ void Scene8100::startPrayers() {
 void Scene8100::leaveHouse() {
 	uint16 destination = 8091;
 	if (_visitingGina) {
-		if (_finale.mediumTests < 3) {
+		if (_finale.mediumTests < 3 || (_restoredContent && !_finale.recordingPlan)) {
 			destination = 8420;
 		} else if (_finale.recordingPlan && (_finale.recordings == 0 || _finale.recordings == 2)) {
 			destination = 8422;

@@ -174,7 +174,11 @@ void Scene8420::exchange(uint16 cue, byte first, byte last) {
 void Scene8420::startGinaConversation() {
 	startConversation(1);
 	_destination = _finale.mediumDiscussed ? 8091 : 8101;
-	_dialogue[0][0] = {1, 0, 3, 14, 15, 1, 0};
+	byte recovery = 15;
+	if (_restoredContent) {
+		recovery = _finale.seanceComplete ? 16 : (_finale.mediumTests ? 15 : 14);
+	}
+	_dialogue[0][0] = {1, 0, 3, 14, recovery, 1, 0};
 	_dialogue[0][1] = {byte(_finale.mediumDiscussed && _finale.mediumTests < 3), 0, 1, 17, 17, 0, 0};
 	_dialogue[0][2] = {byte(!_finale.mediumDiscussed && _finale.mediumTests < 3), 1, 1, 18, 18, 0, 0};
 	_dialogue[0][3] = {byte(_finale.mediumTests >= 3), 2, 1, 21, 21, 0, 0};
@@ -191,6 +195,9 @@ void Scene8420::handleCustomDialogueChoice(byte effect) {
 }
 
 void Scene8420::finishCustomConversation() {
+	if (_finale.seanceComplete) {
+		_finale.ginaVisitPending = 1;
+	}
 	deferAction(430);
 }
 
@@ -206,7 +213,7 @@ void Scene8420::startNightmareMovement(byte first, byte last, uint16 nextAction)
 RunawayRoomScene::ActionResult Scene8420::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
 	case 400: // Greet Gina from the bedroom entrance.
-		say(40, _finale.ginaVisited ? 11 : 0);
+		say(40, (_finale.ginaVisited || _finale.seanceComplete) ? 11 : 0);
 		deferAction(401);
 		break;
 	case 401: // Let Gina finish moving her injured leg before answering.
@@ -214,7 +221,7 @@ RunawayRoomScene::ActionResult Scene8420::dispatchCustomSceneAction(uint16 actio
 		deferAction(402);
 		break;
 	case 402: // Gina recognizes Brian.
-		say(50, _finale.ginaVisited ? 11 : 0, false, 1);
+		say(50, (_finale.ginaVisited || _finale.seanceComplete) ? 11 : 0, false, 1);
 		deferAction(403);
 		break;
 	case 403: // Walk over to the bed.
@@ -222,7 +229,9 @@ RunawayRoomScene::ActionResult Scene8420::dispatchCustomSceneAction(uint16 actio
 		deferAction(404);
 		break;
 	case 404: // Explain the séance plan, or report progress on finding a medium.
-		if (!_finale.ginaVisited) {
+		if (_finale.seanceComplete) {
+			_finale.ginaVisited = 1;
+		} else if (!_finale.ginaVisited) {
 			exchange(40, 1, 8);
 			say(40, _finale.mediumDiscussed ? 10 : 9);
 			say(50, 10, false, 1);
