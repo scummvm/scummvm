@@ -58,7 +58,7 @@ void PrisonerEngine::unloadFonts() {
 
 void PrisonerEngine::clearFonts() {
 	_fonts.clear();
-	// TODO: Set active font to -1
+	_activeFontIndex = -1;
 }
 
 void PrisonerEngine::getFontColors(int16 fontIndex, int16 &outlineColor, int16 &inkColor) {
