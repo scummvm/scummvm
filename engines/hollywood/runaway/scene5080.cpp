@@ -88,7 +88,8 @@ const char *Scene5080::actionCaptionVariant(byte id, bool look, byte item) const
 
 bool Scene5080::loadCustomResources() {
 	Graphics::ManagedSurface scratch(1, 1, _screen.format);
-	if (!_archive.readVariableChunk(6, _parallax) || !applyRunawayPatch(_parallax, scratch) ||
+	if (!_archive.readVariableChunk(3, _walkRoutes) ||
+		!_archive.readVariableChunk(6, _parallax) || !applyRunawayPatch(_parallax, scratch) ||
 		!_archive.readVariableChunk(21, _shedRoof) || !applyRunawayPatch(_shedRoof, scratch) ||
 		!_ambientAnimations[0].load(_archive, 18, 769) ||
 		!_ambientAnimations[1].load(_archive, 17, 672) ||
@@ -124,6 +125,14 @@ void Scene5080::applyCustomHotspotState() {
 			}
 		}
 	}
+}
+
+bool Scene5080::adjustCustomWalkTargetToFloorMask(Common::Point &target) const {
+	target.x = MIN<int>(target.x, 1133);
+	if (target.x > 683 && target.x < 766 && target.y > 374) {
+		target.x = target.x - 683 <= 766 - target.x ? 683 : 766;
+	}
+	return false;
 }
 
 float Scene5080::actorHeight() const {
@@ -209,7 +218,7 @@ RunawayRoomScene::ActionResult Scene5080::dispatchCustomSceneAction(uint16 actio
 			say(17, 0, true);
 		} else {
 			say(21);
-			walkTo(Common::Point(564, 497), 7, true);
+			walkTo(Common::Point(564, 497), 7);
 			byte brian[49] = {}, butter[49] = {};
 			for (uint i = 1; i < 39; ++i) {
 				brian[i] = i - 1;
@@ -246,7 +255,7 @@ RunawayRoomScene::ActionResult Scene5080::dispatchCustomSceneAction(uint16 actio
 		}
 		break;
 	case 446: // Step back from the ants.
-		walkTo(Common::Point(906, 450), 5, true);
+		walkTo(Common::Point(906, 450), 5);
 		deferDesertAction(456);
 		break;
 	case 456: // Watch the ants consume the shed.

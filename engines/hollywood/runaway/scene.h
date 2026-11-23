@@ -304,6 +304,7 @@ protected:
 	Common::Array<byte> _actionFrames, _secondaryFrames;
 	Graphics::ManagedSurface _background, _screen;
 	Common::Array<byte> _mask, _originalMaps, _maps;
+	Common::Array<byte> _walkRoutes;
 	Common::Array<Common::Rect> _foreground[5];
 	RunawayWalkPath _walkPath;
 	struct SpeechLine {

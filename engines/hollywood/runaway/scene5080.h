@@ -36,6 +36,7 @@ private:
 	bool loadCustomResources() override;
 	bool applyCustomBackgroundPatches() override;
 	void applyCustomHotspotState() override;
+	bool adjustCustomWalkTargetToFloorMask(Common::Point &target) const override;
 	float actorHeight() const override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 	void runCustomEntrySequence() override;

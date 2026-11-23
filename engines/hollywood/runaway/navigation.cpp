@@ -20,11 +20,21 @@
  */
 
 #include "common/debug.h"
+#include "common/endian.h"
 #include "common/util.h"
 #include "hollywood/debug.h"
 #include "hollywood/runaway/navigation.h"
 
 namespace Hollywood {
+
+namespace {
+
+const uint kWalkZoneCount = 21;
+const uint kZonePointCount = 20;
+const uint kZoneRouteLength = 19;
+const uint kZonePointBytes = kWalkZoneCount * kWalkZoneCount * kZonePointCount * 4;
+
+} // End of anonymous namespace
 
 byte runawayFacingTo(Common::Point position, Common::Point target) {
 	const int dx = target.x - position.x;
@@ -51,10 +61,80 @@ bool RunawayWalkMap::clearPath(Common::Point start, Common::Point end) const {
 	return true;
 }
 
+byte RunawayWalkMap::nearestZone(Common::Point position) const {
+	if (walkable(position.x, position.y))
+		return _maps[_mask[position.y * _width + position.x]];
+	// A walk can be interrupted in a gap within a zone, and some approach
+	// positions lie just outside the painted floor.
+	int bestDistance = 0x7fffffff;
+	byte zone = 0;
+	for (int y = 0; y < _height; ++y) {
+		for (int x = 0; x < _width; ++x) {
+			const byte candidate = _maps[_mask[y * _width + x]];
+			if (!candidate || candidate >= kWalkZoneCount)
+				continue;
+			const int distance = (x - position.x) * (x - position.x) + (y - position.y) * (y - position.y);
+			if (distance < bestDistance) {
+				bestDistance = distance;
+				zone = candidate;
+			}
+		}
+	}
+	return zone;
+}
+
+bool RunawayWalkMap::findZonePath(Common::Point position, Common::Point target, Common::Array<Common::Point> &path) const {
+	if (_routes->size() != kZonePointBytes + kWalkZoneCount * kWalkZoneCount * kZoneRouteLength)
+		return false;
+	byte zone = nearestZone(position);
+	const byte targetZone = nearestZone(target);
+	if (!zone || zone >= kWalkZoneCount || !targetZone || targetZone >= kWalkZoneCount)
+		return false;
+	const byte *route = _routes->data() + kZonePointBytes + (zone * kWalkZoneCount + targetZone) * kZoneRouteLength;
+	for (uint step = 0; zone != targetZone && step < kZoneRouteLength; ++step) {
+		const byte nextZone = route[step];
+		if (!nextZone || nextZone >= kWalkZoneCount)
+			return false;
+		const byte *points = _routes->data() + (zone * kWalkZoneCount + nextZone) * kZonePointCount * 4;
+		int bestDistance = 0x7fffffff;
+		Common::Point next;
+		for (uint i = 0; i < kZonePointCount; ++i) {
+			const uint x = READ_LE_UINT16(points + i * 4), y = READ_LE_UINT16(points + i * 4 + 2);
+			if (x == 0xffff)
+				break;
+			if (x >= (uint)_width || y >= (uint)_height)
+				return false;
+			const Common::Point point(x, y);
+			int distance = position.sqrDist(point);
+			// The final boundary also accounts for the destination (native 0x4332f0).
+			if (nextZone == targetZone)
+				distance += target.sqrDist(point);
+			if (distance < bestDistance) {
+				bestDistance = distance;
+				next = point;
+			}
+		}
+		if (bestDistance == 0x7fffffff)
+			return false;
+		path.push_back(next);
+		position = next;
+		zone = nextZone;
+	}
+	if (zone != targetZone)
+		return false;
+	path.push_back(target);
+	return true;
+}
+
 void RunawayWalkMap::findPath(Common::Point position, Common::Point target, Common::Array<Common::Point> &path) const {
 	path.clear();
-	if (position.x < 0 || position.x >= _width || position.y < 0 || position.y >= _height ||
-			_mask.size() != (uint)(_width * _height) || _maps.size() < 256)
+	if (_mask.size() != (uint)(_width * _height) || _maps.size() < 256)
+		return;
+	// Original zone routes can cross intentional gaps in the floor mask.
+	if (_routes && findZonePath(position, target, path))
+		return;
+	path.clear();
+	if (position.x < 0 || position.x >= _width || position.y < 0 || position.y >= _height)
 		return;
 	// Search only the connected floor. Using pixel resolution preserves the
 	// one-pixel-wide approach to the plug, which a coarse navigation grid loses.

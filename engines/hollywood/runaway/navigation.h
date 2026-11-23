@@ -31,15 +31,19 @@ byte runawayFacingTo(Common::Point position, Common::Point target);
 
 class RunawayWalkMap {
 public:
-	RunawayWalkMap(int width, int height, const Common::Array<byte> &mask, const Common::Array<byte> &maps) :
-		_width(width), _height(height), _mask(mask), _maps(maps) {}
+	RunawayWalkMap(int width, int height, const Common::Array<byte> &mask, const Common::Array<byte> &maps,
+			const Common::Array<byte> *routes = nullptr) :
+		_width(width), _height(height), _mask(mask), _maps(maps), _routes(routes) {}
 	void findPath(Common::Point start, Common::Point target, Common::Array<Common::Point> &path) const;
 
 private:
 	bool walkable(int x, int y) const;
 	bool clearPath(Common::Point start, Common::Point end) const;
+	byte nearestZone(Common::Point position) const;
+	bool findZonePath(Common::Point start, Common::Point target, Common::Array<Common::Point> &path) const;
 	int _width, _height;
 	const Common::Array<byte> &_mask, &_maps;
+	const Common::Array<byte> *_routes;
 };
 
 class RunawayWalkPath {

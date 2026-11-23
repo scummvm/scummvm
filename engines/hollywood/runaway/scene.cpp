@@ -400,6 +400,10 @@ void RunawayRoomScene::walkTo(Common::Point target, byte facing, bool scripted, 
 }
 
 void RunawayRoomScene::findWalkPath(Common::Point target) {
+	if (!_walkRoutes.empty()) {
+		findGameplayWalkPath(target);
+		return;
+	}
 	_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _maps), target);
 }
 
@@ -734,7 +738,8 @@ void RunawayRoomScene::findGameplayWalkPath(Common::Point target) {
 			}
 		}
 	}
-	_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _originalMaps), target);
+	_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _originalMaps,
+		_walkRoutes.empty() ? nullptr : &_walkRoutes), target);
 }
 
 void RunawayRoomScene::updateOutdoorMusic(byte cueCount) {
