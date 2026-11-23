@@ -50,6 +50,7 @@ MODULE_OBJS = \
 	kinds/walkfloor.o \
 	kinds/wanderingsprite.o \
 	metaengine.o \
+	scripts.o \
 	tesoro.o \
 	videoplayer.o \
 	world.o
