@@ -445,6 +445,19 @@ int BoyzEngine::detectTarget(const Common::Point &mousePos) {
 }
 
 char BoyzEngine::selectDirection() {
+	// The video goes black at this point, so redraw a frame from just before
+	int lastVisibleFrame = _background->decoder->getCurFrame() - 4;
+	_background->decoder->forceSeekToFrame(0);
+	const Graphics::Surface *frame = nullptr;
+	while (_background->decoder->getCurFrame() < lastVisibleFrame)
+		frame = _background->decoder->decodeNextFrame();
+
+	Graphics::Surface *scene = frame->convertTo(frame->format, _background->decoder->getPalette());
+	drawImage(*scene, 0, 0, false);
+	drawScreen();
+	scene->free();
+	delete scene;
+
 	Common::Event event;
 	Common::Rect button(252, 158, 315, 195);
 	Graphics::Surface *screen = _compositeSurface->convertTo(_compositeSurface->format, _background->decoder->getPalette());
