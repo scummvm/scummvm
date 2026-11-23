@@ -584,9 +584,10 @@ Common::U32String RunawayInventory::combinationCaption(byte item, byte target) c
 	return RunawayStrings::formatActionCaption(_strings.combinationCaption(_chapter, item, target), name(item), name(target));
 }
 
-RunawayInventory::Reply RunawayInventory::randomReply(Common::RandomSource &random) {
+RunawayInventory::Reply RunawayInventory::randomReply(Common::RandomSource &random, bool museumDemo) {
 	// Native 0x410000 selects weighted refusals for unsuitable combinations.
-	const uint roll = random.getRandomNumber(34);
+	// The museum demo has no text for cues 25 and 26.
+	const uint roll = random.getRandomNumber(museumDemo ? 30 : 34);
 	if (roll < 10) {
 		return Reply(14, random.getRandomNumber(2));
 	}
@@ -604,7 +605,7 @@ RunawayInventory::Reply RunawayInventory::randomReply(Common::RandomSource &rand
 	if (roll < 30) {
 		return Reply(1, random.getRandomNumber(2));
 	}
-	return Reply(roll < 32 ? 25 : roll < 34 ? 26 : 4);
+	return Reply(museumDemo ? 4 : roll < 32 ? 25 : roll < 34 ? 26 : 4);
 }
 
 RunawayInventory::Reply RunawayInventory::combineHospitalItems(byte first, byte second) {
@@ -703,7 +704,7 @@ RunawayInventory::Reply RunawayInventory::combineMuseumItems(byte first, byte se
 		_museum.packageFilled = 1;
 		return Reply(121, 1);
 	}
-	return _fullGame ? Reply::fromAction(1) : Reply(0);
+	return Reply::fromAction(1);
 }
 
 RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {

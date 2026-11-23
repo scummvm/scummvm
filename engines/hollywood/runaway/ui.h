@@ -60,6 +60,7 @@ public:
 	void restoreState(const RunawaySaveState &state, uint32 now);
 	void setPointerSound(bool enabled) { _pointerSound = enabled; }
 	void setInventoryFrame(byte frame) { _inventoryFrame = frame; }
+	void setInventorySpeechPose(byte pose) { _inventorySpeechPose = pose; }
 	void drawSubtitle(Graphics::ManagedSurface &screen, const Common::U32String &text, byte color = 11) const;
 	void draw(Graphics::ManagedSurface &screen, const Common::U32String &roomCaption,
 		const Common::U32String &committedCaption, const Common::U32String &subtitle, byte subtitleColor, bool showSubtitles);
@@ -94,6 +95,7 @@ private:
 	bool _walkHotspot = false;
 	byte _hovered = 0, _buttonFrame = 0, _optionsFrame = 0, _pickupItem = 0;
 	byte _inventoryFrame = 0xff;
+	byte _inventorySpeechPose = 0;
 	bool _inventoryOpen = false, _enteredInventory = false, _returnAfterPickup = false;
 	bool _inventoryPresentation = false;
 	bool _roomHasVerbs = true;
@@ -101,6 +103,7 @@ private:
 	bool _pickupSoundPlayed = false;
 	bool _blocked = false, _speaking = false, _cursorPushed = false;
 	uint32 _now = 0, _buttonTick = 0, _verbStarted = 0, _portraitTick = 0;
+	uint32 _mouthTick = 0;
 	uint32 _blinkUntil = 0, _idleStarted = 0, _lastInteraction = 0, _pickupStarted = 0;
 	uint _mouth = 0;
 	int _cursorKey = -1;

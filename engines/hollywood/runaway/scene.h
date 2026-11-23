@@ -78,6 +78,7 @@ public:
 	virtual bool inventoryPresentation() const { return false; }
 	// A scene can override the inventory portrait during an item action.
 	virtual byte inventoryFrame() const { return 0xff; }
+	virtual byte inventorySpeechPose() const { return 0; }
 	virtual void skipVideo() {}
 	virtual void sayInventory(const RunawayInventory::Reply &reply) = 0;
 	virtual bool escaped() const { return false; }
@@ -127,6 +128,7 @@ public:
 	bool busy() const override { return _sequence.active() || _pendingHotspot != 0 || _transition.scene || _hospitalExit.scene || _arrivalFacing != 0xff || _roomAction || _conversation || _reviewingDesertPlan || speaking(); }
 	bool inventoryPresentation() const override { return _reviewingDesertPlan; }
 	byte inventoryFrame() const override;
+	byte inventorySpeechPose() const override { return _lineIndex < _lines.size() ? _lines[_lineIndex].inventoryPose : 0; }
 	bool speaking() const override { return _sequence.active() ? !_sequence.subtitle().empty() : !_speech.subtitle().empty(); }
 	byte speechFrame() const override { return _sequence.active() ? _sequence.speechFrame() : _speech.frame(_now); }
 	bool playingVideo() const override { return _sequence.active(); }
@@ -252,6 +254,7 @@ protected:
 	void resumeMuseum();
 	void updateMuseum(uint elapsed);
 	bool sayMuseumInventory(const RunawayInventory::Reply &reply);
+	void setMuseumInventorySpeechPoses(uint16 cue, byte variation, uint firstLine);
 	bool updateMuseumInventory();
 	void deferMuseumAction(uint16 action);
 	void refreshMuseum();
@@ -320,6 +323,7 @@ protected:
 		uint16 sample;
 		bool global;
 		byte speaker, color;
+		byte inventoryPose = 0;
 	};
 	Common::Array<SpeechLine> _lines;
 	// Local animation speaker IDs map to the original font palette.

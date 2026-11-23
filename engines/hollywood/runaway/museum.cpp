@@ -83,6 +83,45 @@ void RunawayRoomScene::updateMuseum(uint elapsed) {
 	}
 }
 
+void RunawayRoomScene::setMuseumInventorySpeechPoses(uint16 cue, byte variation, uint firstLine) {
+	byte pose = 0;
+	switch (cue) {
+	case 2:
+		pose = 1;
+		break;
+	case 4:
+	case 5:
+	case 11:
+	case 21:
+		pose = 2 * _random.getRandomNumber(1);
+		break;
+	case 6:
+		pose = _random.getRandomNumber(1);
+		break;
+	case 17:
+		pose = 2;
+		break;
+	case 20:
+		pose = variation == 0 ? 1 : 0;
+		break;
+	case 52:
+		pose = variation == 2 ? 1 : 0;
+		break;
+	default:
+		break;
+	}
+	for (uint i = firstLine; i < _lines.size(); ++i) {
+		_lines[i].inventoryPose = pose;
+		// Native 0x428170 indexes poses by the remaining continuation count.
+		if (_lines.size() - i == 2) {
+			if (cue == 50)
+				_lines[i].inventoryPose = 2;
+			else if (cue == 52 && variation == 0)
+				_lines[i].inventoryPose = 1;
+		}
+	}
+}
+
 bool RunawayRoomScene::sayMuseumInventory(const RunawayInventory::Reply &reply) {
 	if (!reply.cue)
 		return true;
@@ -100,6 +139,10 @@ bool RunawayRoomScene::sayMuseumInventory(const RunawayInventory::Reply &reply) 
 	if (reply.cue == 108) {
 		_inventory.museum().businessCardExamined = 1;
 		say(108, _museum.phoneUsed != 0, true);
+		return true;
+	}
+	if (_game == kRunawayMuseumDemo && reply.cue == 52) {
+		say(52, _random.getRandomNumber(2), true);
 		return true;
 	}
 	if (reply.cue == 115 && reply.variation == 1) {

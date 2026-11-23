@@ -483,7 +483,10 @@ void RunawayRoomScene::say(uint16 cue, byte variation, bool global, byte speaker
 		_text.getStaticSpeechCue(cue, variation, speech.textRecordId, speech.continuationCount, speech.voiceSampleId);
 	else
 		speech = _text.stageCue(cue, variation);
+	const uint firstLine = _lines.size();
 	say(_text, speech, global, speaker, color);
+	if (_game == kRunawayMuseumDemo && global)
+		setMuseumInventorySpeechPoses(cue, variation, firstLine);
 }
 
 void RunawayRoomScene::say(const SceneTextStore &text, const SceneSpeechCue &speech, bool global, byte speaker, byte color) {
@@ -566,24 +569,25 @@ void RunawayRoomScene::useItem(byte item, byte id) {
 	}
 	if (_game == kRunawayFullGame) {
 		executeItemAction(defaultItemAction(item, id));
-	} else if (_game != kRunawayMuseumDemo) {
+	} else if (_game == kRunawayMuseumDemo) {
+		executeItemAction(1);
+	} else {
 		say(1, 0, true);
 	}
 }
 
 void RunawayRoomScene::executeItemAction(uint16 action) {
-	if (_game == kRunawayMuseumDemo && action <= 1) {
-		return; // The demo's default item action is empty (0x42b250).
+	if ((_game == kRunawayFullGame && (action == 1 || action == 5)) ||
+			(_game == kRunawayMuseumDemo && action == 1)) {
+		const RunawayInventory::Reply reply = RunawayInventory::randomReply(_random, _game == kRunawayMuseumDemo);
+		say(reply.cue, reply.variation, true);
+		if (reply.nextVariation != 0xff)
+			say(reply.cue, reply.nextVariation, true);
+		return;
 	}
+	if (_game == kRunawayMuseumDemo && !action)
+		return;
 	if (_game == kRunawayFullGame) {
-		if (action == 1 || action == 5) {
-			const RunawayInventory::Reply reply = RunawayInventory::randomReply(_random);
-			say(reply.cue, reply.variation, true);
-			if (reply.nextVariation != 0xff) {
-				say(reply.cue, reply.nextVariation, true);
-			}
-			return;
-		}
 		switch (action) {
 		case 2: // A variation of "That won't work."
 			say(1, _random.getRandomNumber(2), true);

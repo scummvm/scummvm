@@ -81,7 +81,7 @@ public:
 	byte takeNewItem() { const byte item = _newItem; _newItem = 0; return item; }
 	Common::U32String name(byte item) const;
 	Common::U32String combinationCaption(byte item, byte target) const;
-	static Reply randomReply(Common::RandomSource &random);
+	static Reply randomReply(Common::RandomSource &random, bool museumDemo = false);
 	uint icon(byte item) const;
 	uint cursor(byte item) const;
 	Reply examine(byte item, const RunawaySaveState &state) const;
