@@ -24,10 +24,7 @@
 
 #include "common/array.h"
 #include "common/ptr.h"
-
-namespace Audio {
-class SoundHandle;
-}
+#include "audio/mixer.h"
 
 namespace NGI {
 
@@ -35,12 +32,14 @@ class Sound : public MemoryObject {
 	int _id;
 	byte *_soundData;
 	Audio::SoundHandle *_handle;
+	Common::Array<Audio::SoundHandle> _overlappingHandles;
 
 public:
 	int16 _objectId;
 
 public:
 	Sound();
+	Sound(int id, const Common::Path &path);
 	~Sound() override;
 
 	virtual bool load(MfcArchive &file, NGIArchive *archive);
@@ -49,7 +48,7 @@ public:
 	int getId() const { return _id; }
 	Audio::SoundHandle *getHandle() const { return _handle; }
 
-	void play(int loop);
+	void play(int loop, int creator = 0);
 	void unload();
 	int getVolume();
 	void stop();
@@ -59,7 +58,7 @@ public:
 };
 
 class SoundList : public CObject {
-	Common::Array<Sound> _soundItems;
+	Common::Array<Common::ScopedPtr<Sound>> _soundItems;
 	Common::ScopedPtr<NGIArchive> _libHandle;
 
  public:
@@ -68,7 +67,9 @@ class SoundList : public CObject {
 	bool loadFile(const Common::Path &fname, const Common::Path &libname);
 
 	int getCount() { return _soundItems.size(); }
-	Sound &getSoundByIndex(int idx) { return _soundItems[idx]; }
+	Sound &getSoundByIndex(int idx) { return *_soundItems[idx]; }
+	void addSound(int id, const Common::Path &path);
+	void stopByCreator(int objectId);
 	Sound *getSound(int id);
 };
 

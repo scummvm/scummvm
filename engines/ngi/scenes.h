@@ -38,7 +38,8 @@ int defaultUpdateCursor();
 
 int sceneIntro_updateCursor();
 void sceneIntro_initScene(Scene *sc);
-bool sceneIntro_updateAndroid(Scene &scene, uint32 elapsed, byte &brightness);
+void sceneIntro_initMan(Scene &scene);
+bool sceneIntro_updateAndroid(uint32 elapsed, byte &brightness);
 int sceneHandlerIntro(Command *cmd);
 
 int sceneIntroDemo_updateCursor();

@@ -764,7 +764,7 @@ bool AniObject::update(int counterdiff) {
 			}
 
 			Phase *dyn = _movement->_curPhase;
-			if (dyn->_delay == dyn->_countdown) {
+			if (!android && dyn->_delay == dyn->_countdown) {
 
 				ex = dyn->getCommand();
 				if (ex && ex->_cmd != 35) {
@@ -798,7 +798,9 @@ bool AniObject::update(int counterdiff) {
 				setPos(_movement->_x, _movement->_y);
 				_counter = _initialCounter;
 
-				if (dyn->_delay == dyn->_countdown) {
+				if (android) {
+					_movement->_curPhase->enter(_id);
+				} else if (dyn->_delay == dyn->_countdown) {
 					ex = dyn->getCommand();
 					if (ex) {
 						if (ex->_cmd == 35) {
@@ -951,6 +953,8 @@ L12:
 		_statics->_y = _y - point.y;
 		oid = _movement->_id;
 		_movement = nullptr;
+		if (g_nmi->getPlatform() == Common::kPlatformAndroid && g_nmi->_currentScene && g_nmi->_currentScene->_soundList)
+			g_nmi->_currentScene->_soundList->stopByCreator(_id);
 
 		Command *ex = new Command(_id, 17, 24, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = _copyId;
@@ -1293,7 +1297,7 @@ bool AniObject::startMovement(int movementId, int messageQueueId, int dynPhaseId
 			_stepArray.gotoNextPoint();
 
 			Command *ex = _movement->_curPhase->getCommand();
-			if (ex) {
+			if (ex && !android) {
 				if (ex->_cmd == 35) {
 					Command *newex = ex->createClone();
 					newex->_excFlags |= 2;
@@ -1328,6 +1332,9 @@ bool AniObject::startMovement(int movementId, int messageQueueId, int dynPhaseId
 	newex->_excFlags = 2;
 
 	newex->postMessage();
+
+	if (android)
+		mov->_curPhase->enter(_id);
 
 	return true;
 }
@@ -2138,6 +2145,8 @@ Phase::Phase(Phase *src, bool reverse) {
 	_delay = src->_delay;
 	_delayMs = src->_delayMs;
 	_delayRelative = src->_delayRelative;
+	_soundId = src->_soundId;
+	_loopSound = src->_loopSound;
 	_field_6A = src->_field_6A;
 	_flags = src->_flags;
 
@@ -2152,6 +2161,16 @@ Common::String Phase::toXML() {
 	return Common::String::format("f7c=%d left=%d top=%d right=%d bottom=%d sX=%d sY=%d dynFlags=%d %s",
 			_field_7C, _rect.left, _rect.top, _rect.right, _rect.bottom, _someX, _someY, _flags,
 			StaticPhase::toXML().c_str());
+}
+
+void Phase::enter(int objectId) {
+	if (_soundId && g_nmi->_soundEnabled)
+		g_nmi->playSound(_soundId, _loopSound, objectId);
+	if (_command) {
+		Command *cmd = _command->createClone();
+		cmd->_excFlags |= 2;
+		cmd->sendMessage();
+	}
 }
 
 bool Phase::load(MfcArchive &file) {

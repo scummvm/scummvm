@@ -523,7 +523,17 @@ int global_messageHandler4(Command *cmd) {
 
 	switch (cmd->_cmd) {
 	case 18: {
-		MessageQueue *mq = new MessageQueue(g_nmi->_currentScene->findMessageQueue(cmd->_messageNum), cmd->_parId, 0);
+		MessageQueue *source = g_nmi->_currentScene ? g_nmi->_currentScene->findMessageQueue(cmd->_messageNum) : nullptr;
+		if (!source) {
+			warning("Could not find message queue %d", cmd->_messageNum);
+			if (!(cmd->_excFlags & 1))
+				updateGlobalMessageQueue(cmd->_parId, 0);
+			break;
+		}
+		int parent = cmd->_parId;
+		if (g_nmi->getPlatform() == Common::kPlatformAndroid && !cmd->_wait)
+			parent = 0;
+		MessageQueue *mq = new MessageQueue(source, parent, 0);
 
 		if (cmd->_excFlags & 1)
 			mq->_flag1 = 1;

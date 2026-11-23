@@ -216,7 +216,7 @@ public:
 
 	void stopAllSounds();
 	void toggleMute();
-	void playSound(int id, int flag);
+	void playSound(int id, int flag, int creator = 0);
 	void playTrack(GameVar *sceneVar, const char *name, bool delayed);
 	int getSceneTrack();
 	void updateTrackDelay();

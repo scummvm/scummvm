@@ -30,14 +30,28 @@
 
 namespace NGI {
 
-static bool sceneIntro_playSleep(AniObject *sleeper) {
-	if (!sleeper || sleeper->_movement || !sleeper->_statics || sleeper->_statics->_staticsId != ST_IN1MAN_SLEEP)
-		return false;
-
-	return sleeper->startMovement(MV_IN1MAN_SLEEP, 0, -1);
+void sceneIntro_initMan(Scene &scene) {
+	g_vars->sceneIntro_aniin1man = scene.findAniObjectById(ANI_IN1MAN, -1);
+	g_vars->sceneIntro_needSleep = true;
+	g_vars->sceneIntro_needGetup = false;
+	g_vars->sceneIntro_fadeElapsed = 0;
 }
 
-bool sceneIntro_updateAndroid(Scene &scene, uint32 elapsed, byte &brightness) {
+static bool sceneIntro_updateMan() {
+	AniObject *man = g_vars->sceneIntro_aniin1man;
+	if (!man || man->_movement || !man->_statics || man->_statics->_staticsId != ST_IN1MAN_SLEEP)
+		return false;
+
+	if (g_vars->sceneIntro_needSleep)
+		return man->startMovement(MV_IN1MAN_SLEEP, 0, -1);
+	if (g_vars->sceneIntro_needGetup) {
+		g_vars->sceneIntro_needGetup = false;
+		return runQueue(QU_INTR_GETUPMAN, 0);
+	}
+	return false;
+}
+
+bool sceneIntro_updateAndroid(uint32 elapsed, byte &brightness) {
 	const uint32 fadeDuration = 1025;
 	const uint32 previous = g_vars->sceneIntro_fadeElapsed;
 	if (previous < fadeDuration) {
@@ -46,10 +60,12 @@ bool sceneIntro_updateAndroid(Scene &scene, uint32 elapsed, byte &brightness) {
 		const byte next = g_vars->sceneIntro_fadeElapsed == fadeDuration ? 255 : previous * 255 / fadeDuration;
 		const bool changed = brightness != next;
 		brightness = next;
+		if (g_vars->sceneIntro_fadeElapsed == fadeDuration)
+			runQueue(QU_INTR_STARTINTRO, 0);
 		return changed;
 	}
 
-	return sceneIntro_playSleep(scene.findAniObjectById(ANI_IN1MAN, -1));
+	return sceneIntro_updateMan();
 }
 
 int sceneIntro_updateCursor() {
@@ -61,9 +77,7 @@ int sceneIntro_updateCursor() {
 void sceneIntro_initScene(Scene *sc) {
 	g_nmi->_gameLoader->loadScene(SC_INTRO2);
 
-	g_vars->sceneIntro_aniin1man = sc->findAniObjectById(ANI_IN1MAN, -1);
-	g_vars->sceneIntro_needSleep = true;
-	g_vars->sceneIntro_needGetup = false;
+	sceneIntro_initMan(*sc);
 	g_vars->sceneIntro_playing = true;
 	g_vars->sceneIntro_needBlackout = false;
 
@@ -86,6 +100,15 @@ void sceneHandlerIntro_part2() {
 int sceneHandlerIntro(Command *ex) {
 	if (ex->_cmd != 17)
 		return 0;
+
+	if (g_nmi->getPlatform() == Common::kPlatformAndroid && !ex->_messageName.empty()) {
+		debugC(3, kDebugEvents, "Android intro message %s", ex->_messageName.c_str());
+		if (ex->_messageNum == MSG_INTR_SWITCHTO2 || ex->_messageNum == MSG_INTR_SWITCHTO1 ||
+				ex->_messageNum == MSG_INTR_ENDINTRO || ex->_messageName == "MSG_ENABLE_BHV_SOUND") {
+			warning("Android intro message %s not implemented", ex->_messageName.c_str());
+			return 0;
+		}
+	}
 
 	switch (ex->_messageNum) {
 	case MSG_INTR_ENDINTRO:
@@ -113,14 +136,7 @@ int sceneHandlerIntro(Command *ex) {
 		return 0;
 	}
 
-	if (g_vars->sceneIntro_needSleep) {
-		sceneIntro_playSleep(g_vars->sceneIntro_aniin1man);
-	} else if (g_vars->sceneIntro_needGetup && !g_vars->sceneIntro_aniin1man->_movement &&
-				g_vars->sceneIntro_aniin1man->_statics->_staticsId == ST_IN1MAN_SLEEP) {
-		g_vars->sceneIntro_needGetup = 0;
-
-		runQueue(QU_INTR_GETUPMAN, 0);
-	}
+	sceneIntro_updateMan();
 
 	g_nmi->startSceneTrack();
 

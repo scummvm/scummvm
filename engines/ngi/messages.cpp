@@ -37,6 +37,7 @@ Command::Command() {
 }
 
 Command::Command(Command *src) : Message(*src) {
+	_messageName = src->_messageName;
 	_field_3C = 1;
 	_messageNum = src->_messageNum;
 	_excFlags = src->_excFlags;
@@ -454,11 +455,27 @@ void MessageQueue::next() {
 		ex->_excFlags |= (ex->_wait == 0 ? 1 : 0) | (ex->_field_3C != 0 ? 2 : 0);
 
 		_flags |= 4;
-		ex->sendMessage();
+		if (ex->_cmd == Command::kCmdPause && ex->_wait && g_nmi->getPlatform() == Common::kPlatformAndroid)
+			_pauseCommand.reset(ex);
+		else
+			ex->sendMessage();
 	} else if (_counter <= 0) {
 		_isFinished = 1;
 		finish();
 	}
+}
+
+bool MessageQueue::updatePause(uint32 elapsed) {
+	if (!_pauseCommand)
+		return false;
+
+	if (elapsed < (uint32)_pauseCommand->_messageNum) {
+		_pauseCommand->_messageNum -= elapsed;
+		return false;
+	}
+	_pauseCommand->_excFlags |= 1;
+	_pauseCommand.release()->postMessage();
+	return true;
 }
 
 bool MessageQueue::checkGlobalExCommandList1() {
@@ -697,8 +714,9 @@ void GlobalMessageQueueList::clear() {
 		// queue if it thinks it is in the global queue, which will break the
 		// iteration over the list
 		(*it)->_flags &= ~kInGlobalQueue;
-		delete *it;
+		(*it)->_parId = 0;
 	}
+	Common::for_each(begin(), end(), Common::DefaultDeleter<MessageQueue>());
 	Common::Array<MessageQueue *>::clear();
 }
 

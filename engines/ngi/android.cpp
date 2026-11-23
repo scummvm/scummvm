@@ -33,6 +33,7 @@
 #include "ngi/constants.h"
 #include "ngi/detection.h"
 #include "ngi/messages.h"
+#include "ngi/ngiarchive.h"
 #include "ngi/utils.h"
 #include "ngi/scene.h"
 #include "ngi/statics.h"
@@ -186,6 +187,7 @@ private:
 	}
 
 	CUSTOM_XML_PARSER(XMLSceneParser) {
+		XMLKeyLayout *commandLayout;
 		XML_KEY(SCENE)
 			XML_PROP(id, true)
 			XML_PROP(title, false)
@@ -198,6 +200,30 @@ private:
 			XML_PROP(putPrev, false)
 			XML_PROP(scrollX, false)
 			XML_PROP(scrollY, false)
+			XML_KEY(SOUND)
+				XML_PROP(id, true)
+				XML_PROP(file, true)
+				XML_PROP(title, false)
+				XML_PROP(flags, false)
+			KEY_END()
+			XML_KEY(QUEUE)
+				XML_PROP(id, true)
+				XML_PROP(title, false)
+				XML_KEY(COMMAND)
+					commandLayout = layout.top();
+					XML_PROP(cmd, true)
+					XML_PROP(wait, false)
+					XML_PROP(id, false)
+					XML_PROP(ani, false)
+					XML_PROP(mov, false)
+					XML_PROP(vis, false)
+					XML_PROP(copy, false)
+					XML_PROP(msg, false)
+					XML_PROP(cycled, false)
+					XML_PROP(stop, false)
+					XML_PROP(delay, false)
+				KEY_END()
+			KEY_END()
 			XML_KEY(PICTURE)
 				XML_PROP(id, true)
 				XML_PROP(title, false)
@@ -240,6 +266,7 @@ private:
 					XML_PROP(dwLoopDelay, false)
 					XML_PROP(link, false)
 					XML_KEY(PHASE)
+						layout.top()->children["COMMAND"] = commandLayout;
 						XML_PROP(x, false)
 						XML_PROP(y, false)
 						XML_PROP(flags, false)
@@ -275,6 +302,94 @@ private:
 			return false;
 		picture->setOXY2();
 		_scene.addPicture(picture.release());
+		return true;
+	}
+
+	bool parserCallback_SOUND(ParserNode *node) {
+		int16 id;
+		if (!readId(node->values["id"], id))
+			return parserError("Unknown sound ID " + node->values["id"]);
+		const bool speech = atoi(node->values.getValOrDefault("flags").c_str()) & 1;
+		Common::Path path(speech ? Common::String::format("data/res_%s", _locale) : "data/res");
+		path = path.join(Common::String::format("Sounds/%08hu", static_cast<uint16>(_scene._sceneId)));
+		if (speech)
+			path = path.join("Talks");
+		path = path.join(node->values["file"]);
+		if (!SearchMan.hasFile(path))
+			path = Common::Path("assets").join(path);
+		if (!_scene._soundList)
+			_scene._soundList.reset(new SoundList());
+		_scene._soundList->addSound(id, path);
+		return true;
+	}
+
+	bool parserCallback_QUEUE(ParserNode *node) {
+		Common::ScopedPtr<MessageQueue> queue(new MessageQueue());
+		if (!readId(node->values["id"], queue->_queueId))
+			return parserError("Unknown queue ID " + node->values["id"]);
+		queue->_title = node->values.getValOrDefault("title");
+		_scene._messageQueues.push_back(queue.release());
+		return true;
+	}
+
+	static bool boolProperty(const ParserNode &node, const char *name) {
+		const Common::String &value = node.values.getValOrDefault(name);
+		return value == "1" || value == "true" || value == "yes";
+	}
+
+	bool parserCallback_COMMAND(ParserNode *node) {
+		Common::ScopedPtr<Command> cmd(new Command());
+		Common::String kind = node->values["cmd"];
+		kind.toUppercase();
+		cmd->_excFlags = 2;
+		cmd->_wait = boolProperty(*node, "wait");
+		cmd->_param = atoi(node->values.getValOrDefault("copy").c_str());
+
+		const char *idProperty = nullptr;
+		if (kind == "START_MOVEMENT" || kind == "3") {
+			cmd->_cmd = 1;
+			if (!readId(node->values.getValOrDefault("ani"), cmd->_parentId))
+				return parserError("Unknown animation in START_MOVEMENT");
+			idProperty = "mov";
+		} else if (kind == "HIDE" || kind == "2") {
+			cmd->_cmd = 6;
+			cmd->_wait = 0;
+			if (!readId(node->values.getValOrDefault("vis"), cmd->_parentId))
+				return parserError("Unknown object in HIDE");
+		} else if (kind == "QUEUE" || kind == "24") {
+			cmd->_cmd = 18;
+			idProperty = "id";
+		} else if (kind == "SOUND" || kind == "7") {
+			if (cmd->_wait)
+				return parserError("Waiting for an XML sound is not implemented");
+			cmd->_cmd = 35;
+			cmd->_param = boolProperty(*node, "cycled");
+			cmd->_z = boolProperty(*node, "stop") ? 2 : 1;
+			idProperty = "id";
+		} else if (kind == "MESSAGE" || kind == "5") {
+			cmd->_cmd = 17;
+			cmd->_messageName = node->values.getValOrDefault("msg");
+			uint32 id;
+			if (_ids.findId(cmd->_messageName, id))
+				cmd->_messageNum = id;
+		} else if (kind == "PAUSE" || kind == "22") {
+			cmd->_cmd = Command::kCmdPause;
+			cmd->_messageNum = MAX(0, atoi(node->values.getValOrDefault("delay").c_str()));
+		} else {
+			return parserError("Unsupported XML command " + kind);
+		}
+		if (idProperty) {
+			int16 id;
+			if (!readId(node->values.getValOrDefault(idProperty), id))
+				return parserError("Unknown " + Common::String(idProperty) + " in " + kind);
+			cmd->_messageNum = id;
+		}
+		if (getParentNode(node)->name == "QUEUE") {
+			_scene._messageQueues.back()->addCommandToEnd(cmd.release());
+		} else {
+			Movement &movement = *_scene._aniObjects.back()->_movements.back();
+			movement._phases[movement._phases.size() - 2]->_command.reset(cmd.release());
+		}
 		return true;
 	}
 
@@ -354,8 +469,7 @@ private:
 		movement->_nextStepX = atoi(node->values.getValOrDefault("nNextStepX").c_str());
 		movement->_nextStepY = atoi(node->values.getValOrDefault("nNextStepY").c_str());
 		movement->_loopDelay = atoi(node->values.getValOrDefault("dwLoopDelay", "42").c_str());
-		const Common::String &link = node->values.getValOrDefault("link");
-		movement->_link = link.empty() || link == "true" || link == "1";
+		movement->_link = !node->values.contains("link") || boolProperty(*node, "link");
 
 		// Movement owns its phases except for the terminal statics shared with the animation.
 		movement->_phases.push_back(next);
@@ -372,6 +486,9 @@ private:
 		const Common::String resource = Common::String::format("%08hu/%08hu/%08hu/%08hu.%03u",
 			static_cast<uint16>(_scene._sceneId), static_cast<uint16>(animation._id), movementId, movementId, index);
 		Common::ScopedPtr<Phase> phase(new Phase());
+		if (node->values.contains("sound") && !readId(node->values["sound"], phase->_soundId))
+			return parserError("Unknown phase sound " + node->values["sound"]);
+		phase->_loopSound = boolProperty(*node, "cycled");
 		phase->_flags = atoi(node->values.getValOrDefault("flags").c_str());
 		phase->_delayMs = atoi(node->values.getValOrDefault("delay").c_str());
 		phase->_delayRelative = atoi(node->values.getValOrDefault("delayRelative").c_str());
@@ -402,8 +519,7 @@ private:
 	}
 
 	static bool isLocalized(const ParserNode &node) {
-		const Common::String &locale = node.values.getValOrDefault("locale");
-		return locale == "true" || locale == "1";
+		return boolProperty(node, "locale");
 	}
 
 	bool handleUnknownKey(ParserNode *node) override {
@@ -497,6 +613,15 @@ Common::Error NGIEngine::runAndroid() {
 	if (format.isCLUT8())
 		return Common::kUnsupportedColorMode;
 
+	_currentScene = &scene;
+	addMessageHandlerByIndex(global_messageHandler4, 0, 4);
+	if (scene._sceneId == SC_INTRO1) {
+		sceneIntro_initMan(scene);
+		addMessageHandler(sceneHandlerIntro, 2);
+	}
+	if (scene._soundList)
+		_currSoundList1[_currSoundListCount++] = scene._soundList.get();
+
 	Graphics::ManagedSurface &frame = _backgroundSurface;
 	frame.create(project.width(), project.height(), format);
 	byte brightness = scene._sceneId == SC_INTRO1 ? 0 : 255;
@@ -522,9 +647,13 @@ Common::Error NGIEngine::runAndroid() {
 		const uint32 now = _system->getMillis();
 		const uint32 elapsed = now - lastUpdate;
 		lastUpdate = now;
-		bool redraw = scene.update(elapsed);
+		bool redraw = false;
+		for (MessageQueue *queue : *_globalMessageQueueList)
+			redraw |= queue->updatePause(elapsed);
+		processMessages();
+		redraw |= scene.update(elapsed);
 		if (scene._sceneId == SC_INTRO1)
-			redraw |= sceneIntro_updateAndroid(scene, elapsed, brightness);
+			redraw |= sceneIntro_updateAndroid(elapsed, brightness);
 		processMessages();
 
 		if (redraw) {
@@ -538,6 +667,13 @@ Common::Error NGIEngine::runAndroid() {
 		_system->updateScreen();
 		_system->delayMillis(10);
 	}
+	clearMessages();
+	clearGlobalMessageQueueList();
+	clearMessageHandlers();
+	_currSoundListCount = 0;
+	_currSoundList1[0] = nullptr;
+	g_vars->sceneIntro_aniin1man = nullptr;
+	_currentScene = nullptr;
 	return Common::kNoError;
 }
 
