@@ -144,7 +144,6 @@ public:
 	};
 
 	// The original saves only in the first 23 levels (the lab and the closing scenes cannot be saved), and not on the board game's level.
-	// ScummVM's own load, save and autosave follow it; loading stays open in the menus.
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return _inMenu || !_world.jimLevel() || _world.jimLevelIndex() < 23;
 	}
@@ -175,7 +174,6 @@ public:
 };
 
 extern TesoroEngine *g_engine;
-#define SHOULD_QUIT ::Tesoro::g_engine->shouldQuit()
 
 } // End of namespace Tesoro
 

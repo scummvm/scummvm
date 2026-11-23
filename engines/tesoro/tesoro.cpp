@@ -50,6 +50,7 @@ TesoroEngine::TesoroEngine(OSystem *syst, const ADGameDescription *gameDesc) : E
 }
 
 TesoroEngine::~TesoroEngine() {
+	g_engine = nullptr;
 	_world.mainList().clear();
 	delete _interface;
 	delete _mainMenu;
