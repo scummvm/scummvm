@@ -707,6 +707,7 @@ bool Parallaction::checkZoneType(ZonePtr z, uint32 type) {
 			if (ACTIONTYPE(z) == kZoneDoor) {
 				return true;
 			}
+			return false;
 		}
 	}
 
