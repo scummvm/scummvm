@@ -37,6 +37,8 @@ public:
 private:
 	const char *actionCaptionVariant(byte id, bool look, byte item) const override;
 	bool loadCustomResources() override;
+	bool adjustCustomWalkTargetToFloorMask(Common::Point &target) const override;
+	byte actorWalkZone() const;
 	float actorHeight() const override;
 	int sceneViewportYOffset() const override;
 	void setupActorDepth(RunawayActor::RenderParams &params) const override;

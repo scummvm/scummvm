@@ -67,7 +67,7 @@ const RunawayHotspot kHotspots[] = {
 	{253, 418, 4, {321, 322}, {0, 0}, {245, 491}}, // 12: Can.
 	{0, 0, 1, {323, 324}, {1, 0}, {786, 403}}, // 13: Bucket.
 	{253, 418, 4, {1, 325}, {0, 0}, {253, 600}}, // 14: Outside.
-	{1053, 403, 3, {1, 329}, {0, 1}, {490, 493}}, // 15: Stud.
+	{1053, 403, 3, {329, 329}, {1, 1}, {490, 493}}, // 15: Stud (peek around the corner).
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}}, // 16: Beer Can.
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}}, // 17: Peanut Butter.
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}}, // 18: Foot Rest.
@@ -142,6 +142,33 @@ bool Scene5100::loadCustomResources() {
 		_lulaAnimation.load(_archive, 16, 79);
 }
 
+bool Scene5100::adjustCustomWalkTargetToFloorMask(Common::Point &target) const {
+	if (_desert.insideBarn) {
+		target = Common::Point(253, 418);
+		return true;
+	}
+	target.x = CLIP<int>(target.x, _desert.guard == 2 ? 141 : 1053, 1471);
+	return false;
+}
+
+byte Scene5100::actorWalkZone() const {
+	// The one-pixel-wide corridors can fall between Brian's rounded positions.
+	for (int distance = 0; distance < _background.h; ++distance) {
+		const int above = _position.y - distance, below = _position.y + distance;
+		if (above >= 0 && above < _background.h) {
+			const byte zone = _originalMaps[_mask[above * _background.w + _position.x]];
+			if (zone)
+				return zone;
+		}
+		if (below >= 0 && below < _background.h) {
+			const byte zone = _originalMaps[_mask[below * _background.w + _position.x]];
+			if (zone)
+				return zone;
+		}
+	}
+	return 0;
+}
+
 float Scene5100::actorHeight() const {
 	return _position.y * 0.668016195f + 87.591095f;
 }
@@ -152,7 +179,7 @@ int Scene5100::sceneViewportYOffset() const {
 }
 
 void Scene5100::setupActorDepth(RunawayActor::RenderParams &params) const {
-	const bool behindHangar = _desert.guard != 2 && (walkZone() == 3 || _position == Common::Point(253, 418));
+	const bool behindHangar = _desert.guard != 2 && actorWalkZone() == 3;
 	params.depthY[1] = behindHangar ? 599 : 0;
 	params.depthY[2] = behindHangar ? 599 : 303;
 	params.depthY[3] = behindHangar ? 599 : 446;
@@ -161,6 +188,8 @@ void Scene5100::setupActorDepth(RunawayActor::RenderParams &params) const {
 
 RunawayRoomScene::ActionResult Scene5100::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
+	case 1: // The window and exit have no look response.
+		break;
 	case 302: // Go to the desert overview.
 		leaveDesertRoom(5010);
 		break;
@@ -607,6 +636,7 @@ Common::U32String Scene5100::hotspotName(byte id) const {
 bool Scene5100::applyCustomBackgroundPatches() {
 	const uint mask = _desert.insideBarn ? 23 : _desert.guard == 2 ? 26 : 1;
 	return loadRunawayMask(_archive, _background.w, _background.h, _mask, _originalMaps, mask) &&
+		_archive.readVariableChunk(mask + 2, _walkRoutes) &&
 		(_desert.barnDoor != 2 || applyPatch(5)) && (_desert.peanutButter != 2 || applyPatch(6));
 }
 
@@ -650,7 +680,7 @@ void Scene5100::applyCustomHotspotState() {
 
 void Scene5100::walkHangar(Common::Point target, byte facing) {
 	// Scripted entrances cross the floor that is blocked while the guard watches.
-	_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _originalMaps), target);
+	_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _originalMaps, &_walkRoutes), target);
 	_arrivalFacing = facing;
 	_walkElapsed = _lastFootstep = 0;
 	if (!_walkPath.active()) {
@@ -871,13 +901,13 @@ const RunawayHotspot *Scene5100::hotspot(byte id) const {
 }
 
 void Scene5100::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
-	if (!drawingRoomAnimation() && walkZone() != 7) {
+	if (!drawingRoomAnimation() && actorWalkZone() != 7) {
 		drawRoomComposite(viewport);
 	}
 }
 
 void Scene5100::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) {
-	if (!drawingRoomAnimation() && walkZone() == 7) {
+	if (!drawingRoomAnimation() && actorWalkZone() == 7) {
 		drawRoomComposite(viewport);
 	}
 	if (_desert.guard == 1 && !_hangarIntroduction && _hangarThrowing) {
