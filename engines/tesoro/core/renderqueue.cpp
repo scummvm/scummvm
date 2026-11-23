@@ -53,7 +53,9 @@ int RenderQueue::Row::allocate() {
 	return _bump++;
 }
 
-void RenderQueue::Row::insert(int32 xs, int32 xe, uint16 depth, uintptr_t pixels, uint16 colour, bool drawn) {
+void RenderQueue::Row::insert(int32 xs, int32 xe, const Span &proto, bool drawn) {
+	Span span = proto;
+	const uint16 depth = span.depth;
 	int pred = 0;
 	int cur = _head;
 	bool hidden = false;
@@ -82,7 +84,7 @@ void RenderQueue::Row::insert(int32 xs, int32 xe, uint16 depth, uintptr_t pixels
 							return;
 						Span &old = _spans[cur];
 						_spans[right] = old;
-						if (_mask || old.pixels < 2) {
+						if (_mask || old.source != kPixels) {
 							_spans[right].x0 = (int16)(xe + 1);
 						} else {
 							const int32 skipped = xe - nx0 + 1;
@@ -98,7 +100,7 @@ void RenderQueue::Row::insert(int32 xs, int32 xe, uint16 depth, uintptr_t pixels
 				} else {
 					if (xe < nx1) {
 						// It covers the front of the old span.
-						if (_mask || node.pixels < 2) {
+						if (_mask || node.source != kPixels) {
 							node.x0 = (int16)(xe + 1);
 						} else {
 							const int32 skipped = xe - nx0 + 1;
@@ -125,12 +127,14 @@ void RenderQueue::Row::insert(int32 xs, int32 xe, uint16 depth, uintptr_t pixels
 					const int left = allocate();
 					if (left < 0)
 						return;
+					_spans[left] = span;
 					_spans[left].next = cur;
 					_spans[left].x1 = (int16)(nx0 - 1);
 					_spans[left].x0 = startX;
-					_spans[left].pixels = drawn ? 0 : pixels;
-					_spans[left].colour = colour;
-					_spans[left].depth = depth;
+					if (drawn) {
+						_spans[left].source = kNoPixels;
+						_spans[left].pixels = nullptr;
+					}
 					setNext(pred, left);
 				} else if (xe <= nx1) {
 					hidden = true;
@@ -139,8 +143,8 @@ void RenderQueue::Row::insert(int32 xs, int32 xe, uint16 depth, uintptr_t pixels
 
 				const int32 skipped = nx1 - xs + 1;
 				xs += skipped;
-				if (!_mask && pixels >= 2)
-					pixels += skipped * 2;
+				if (!_mask && span.source == kPixels)
+					span.pixels += skipped * 2;
 			}
 		}
 
@@ -154,12 +158,10 @@ void RenderQueue::Row::insert(int32 xs, int32 xe, uint16 depth, uintptr_t pixels
 	const int added = allocate();
 	if (added < 0)
 		return;
+	_spans[added] = span;
 	_spans[added].next = next(pred);
 	_spans[added].x0 = startX;
 	_spans[added].x1 = (int16)xe;
-	_spans[added].pixels = pixels;
-	_spans[added].colour = colour;
-	_spans[added].depth = depth;
 	setNext(pred, added);
 }
 
@@ -232,7 +234,11 @@ void RenderQueue::queueMaskRows(const byte *image, uint firstRow, uint count, ui
 					xe = kWidth - 1;
 			}
 
-			row.insert(xs, xe, depth, extra, page);
+			Span span;
+			span.depth = depth;
+			span.colour = page;
+			span.window = extra;
+			row.insert(xs, xe, span);
 		}
 	}
 }
@@ -268,8 +274,8 @@ void RenderQueue::mergeMask(uint y, uint16 *frameRow, const byte *table) {
 
 		// Whether the shadow misses this span: its depth window does not hold it, or (without one) it is in front of the shadow.
 		bool misses;
-		if ((uint32)shadow.pixels != 0) {
-			const uint16 low = (uint16)shadow.pixels, high = (uint16)((uint32)shadow.pixels >> 16);
+		if (shadow.window != 0) {
+			const uint16 low = (uint16)shadow.window, high = (uint16)(shadow.window >> 16);
 			misses = under.depth < low || under.depth > high;
 		} else {
 			misses = shadow.depth > under.depth;
@@ -291,8 +297,8 @@ void RenderQueue::mergeMask(uint y, uint16 *frameRow, const byte *table) {
 
 		// Darkens a span in place (a solid colour), or turns it into a shadow span over its source.
 		const uint16 page = shadow.colour;
-		const uintptr_t source = under.pixels;
-		const bool literal = source > 1, solid = source == 1;
+		const byte *source = under.pixels;
+		const bool literal = under.source == kPixels, solid = under.source == kSolid;
 
 		if (sx0 == mx0) {
 			if (sx1 > mx1 || sx1 == mx1) {
@@ -309,8 +315,10 @@ void RenderQueue::mergeMask(uint y, uint16 *frameRow, const byte *table) {
 					under.x0 = (int16)-1;
 					under.x1 = (int16)width;
 					under.colour = page;
-					if (!literal)
-						under.pixels = (uintptr_t)(frameRow + mx0);
+					if (!literal) {
+						under.source = kPixels;
+						under.pixels = (const byte *)(frameRow + mx0);
+					}
 				}
 				continue;
 			}
@@ -331,15 +339,17 @@ void RenderQueue::mergeMask(uint y, uint16 *frameRow, const byte *table) {
 			if (literal) {
 				part.x0 = (int16)-1;
 				part.x1 = (int16)count;
+				part.source = kPixels;
 				part.pixels = source;
 				main._spans[m].pixels = source + count * 2;
 			} else if (solid) {
-				part.pixels = 1;
+				part.source = kSolid;
 				part.colour = shade(table, page, main._spans[m].colour);
 			} else {
 				part.x0 = (int16)-1;
 				part.x1 = (int16)count;
-				part.pixels = (uintptr_t)(frameRow + sx0);
+				part.source = kPixels;
+				part.pixels = (const byte *)(frameRow + sx0);
 			}
 			continue;
 		}
@@ -361,16 +371,18 @@ void RenderQueue::mergeMask(uint y, uint16 *frameRow, const byte *table) {
 			if (literal) {
 				part.x0 = (int16)-1;
 				part.x1 = (int16)count;
+				part.source = kPixels;
 				part.pixels = source + (sx0 - mx0) * 2;
 			} else if (solid) {
 				part.x1 = (int16)mx1;
 				part.x0 = (int16)sx0;
-				part.pixels = 1;
+				part.source = kSolid;
 				part.colour = shade(table, page, main._spans[m].colour);
 			} else {
 				part.x0 = (int16)-1;
 				part.x1 = (int16)count;
-				part.pixels = (uintptr_t)(frameRow + sx0);
+				part.source = kPixels;
+				part.pixels = (const byte *)(frameRow + sx0);
 			}
 			continue;
 		}
@@ -407,20 +419,26 @@ void RenderQueue::mergeMask(uint y, uint16 *frameRow, const byte *table) {
 		if (literal) {
 			part.x0 = (int16)-1;
 			part.x1 = (int16)count;
+			part.source = kPixels;
 			part.pixels = source + (sx0 - mx0) * 2;
-			if (rest)
+			if (rest) {
+				main._spans[rest].source = kPixels;
 				main._spans[rest].pixels = source + (sx1 - mx0) * 2 + 2;
+			}
 		} else if (solid) {
-			part.pixels = 1;
+			part.source = kSolid;
 			part.colour = shade(table, page, main._spans[m].colour);
 			if (rest)
-				main._spans[rest].pixels = 1;
+				main._spans[rest].source = kSolid;
 		} else {
 			part.x0 = (int16)-1;
 			part.x1 = (int16)count;
-			part.pixels = (uintptr_t)(frameRow + sx0);
-			if (rest)
-				main._spans[rest].pixels = 0;
+			part.source = kPixels;
+			part.pixels = (const byte *)(frameRow + sx0);
+			if (rest) {
+				main._spans[rest].source = kNoPixels;
+				main._spans[rest].pixels = nullptr;
+			}
 		}
 	}
 }
@@ -435,8 +453,15 @@ void RenderQueue::queueRows(const byte *image, uint firstRow, uint count, uint y
 
 		while (items) {
 			--items;
-			uintptr_t pixels = solid ? (uintptr_t)kSolid : (uintptr_t)(image + READ_LE_UINT32(item));
-			const uint16 colour = solid ? READ_LE_UINT16(item) : 0;
+			Span span;
+			span.depth = depth;
+			if (solid) {
+				span.source = kSolid;
+				span.colour = READ_LE_UINT16(item);
+			} else {
+				span.source = kPixels;
+				span.pixels = image + READ_LE_UINT32(item);
+			}
 			int32 xs = base + READ_LE_UINT16(item + 4);
 			base = xs + READ_LE_UINT16(item + 6);
 			item += 8;
@@ -447,7 +472,7 @@ void RenderQueue::queueRows(const byte *image, uint firstRow, uint count, uint y
 					continue;
 				if (xs < 0) {
 					if (!solid)
-						pixels += -xs * 2;
+						span.pixels += -xs * 2;
 					xs = 0;
 				}
 				if (xs > kWidth - 1)
@@ -456,7 +481,7 @@ void RenderQueue::queueRows(const byte *image, uint firstRow, uint count, uint y
 					xe = kWidth - 1;
 			}
 
-			row.insert(xs, xe, depth, pixels, colour);
+			row.insert(xs, xe, span);
 		}
 	}
 }
@@ -539,10 +564,14 @@ void RenderQueue::queueScaledRows(const byte *image, uint y, uint count, int32 x
 					xe = kWidth - 1;
 			}
 
+			Span span;
+			span.depth = depth;
+			span.colour = first;
 			if (solid)
-				row.insert(xs, xe, depth, kSolid, first);
+				span.source = kSolid;
 			else
-				row.insert(xs, xe, depth, extra, first);
+				span.window = extra;
+			row.insert(xs, xe, span);
 		}
 	}
 }
@@ -608,8 +637,13 @@ void RenderQueue::rasterScaledRows(uint16 *frame, const byte *image, uint y, uin
 			}
 
 			// ... and enter the span without pixels, unless the image is not scaled.
-			const uintptr_t source = scaleX == 0x10000 ? (uintptr_t)(pixels + (offset >> 16) * 2) : 0;
-			row.insert(xs, xe, depth, source, 0, true);
+			Span span;
+			span.depth = depth;
+			if (scaleX == 0x10000) {
+				span.source = kPixels;
+				span.pixels = pixels + (offset >> 16) * 2;
+			}
+			row.insert(xs, xe, span, true);
 		}
 	}
 }

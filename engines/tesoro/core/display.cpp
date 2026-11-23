@@ -133,7 +133,7 @@ void Display::compose() {
 					warning("Display: spans run past the frame");
 					return;
 				}
-				const byte *pixels = (const byte *)span.pixels;
+				const byte *pixels = span.pixels;
 				for (uint i = 0; i < count; ++i)
 					out[i] = RenderQueue::shade(&_shades[0], span.colour, READ_LE_UINT16(pixels + 2 * i));
 				out += count;
@@ -146,11 +146,11 @@ void Display::compose() {
 				return;
 			}
 
-			if (span.pixels == RenderQueue::kSolid) {
+			if (span.source == RenderQueue::kSolid) {
 				for (uint i = 0; i < count; ++i)
 					out[i] = span.colour;
-			} else if (span.pixels != RenderQueue::kNoPixels) {
-				const byte *pixels = (const byte *)span.pixels;
+			} else if (span.source == RenderQueue::kPixels) {
+				const byte *pixels = span.pixels;
 				for (uint i = 0; i < count; ++i)
 					out[i] = READ_LE_UINT16(pixels + 2 * i);
 			}

@@ -40,8 +40,8 @@ namespace Tesoro {
  */
 class RenderQueue {
 public:
-	/** Where the pixels of a span come from: nothing (already drawn), a solid colour, or a pointer into an image. */
-	enum { kNoPixels = 0, kSolid = 1 };
+	/** Where the pixels of a span come from: nothing (already drawn), a solid colour, or 16-bit pixels in an image or the frame. */
+	enum PixelSource { kNoPixels, kSolid, kPixels };
 	enum { kRows = 480, kWidth = 640, kLiteralSpans = 125, kMaskSpans = 50 };
 
 	/**
@@ -50,7 +50,9 @@ public:
 	 * */
 	struct Span {
 		int next = 0;			// index of the next span in the row, 0 for the end
-		uintptr_t pixels = 0;	// kNoPixels, kSolid, or the address of the first 16-bit pixel
+		PixelSource source = kNoPixels;
+		const byte *pixels = nullptr;	// the first 16-bit pixel, for kPixels
+		uint32 window = 0;		// shadow spans in the mask rows: the depths they darken (low | high << 16), or 0 for those behind
 		int16 x0 = 0, x1 = 0;	// first and last screen column
 		uint16 depth = 0;
 		uint16 colour = 0;
@@ -67,10 +69,10 @@ public:
 		int head() const { return _head; }
 
 		/**
-		 * Adds the span xs..xe at depth, cutting whatever is behind it and being cut by what is in front.
-		 * If drawn is true, a piece of the span cut off at its start then gets no pixels.
+		 * Adds the span xs..xe, taking depth, source, pixels, window and colour from `span`, cutting whatever is behind it
+		 * and being cut by what is in front. If drawn is true, a piece of the span cut off at its start then gets no pixels.
 		 */
-		void insert(int32 xs, int32 xe, uint16 depth, uintptr_t pixels, uint16 colour, bool drawn = false);
+		void insert(int32 xs, int32 xe, const Span &span, bool drawn = false);
 
 	private:
 		friend class RenderQueue;
