@@ -823,7 +823,10 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 			if (s->jumpToTimeAfterKilled == -1000) {
 				ArcadeTransition at("", 0, "", 0, s->explosionFrames[0].lastFrame() - 1);
 				at.loseLevel = true;
-				_transitions.push_front(at);
+				ArcadeTransitions::iterator it = _transitions.begin();
+				while (it != _transitions.end() && it->time < at.time)
+					++it;
+				_transitions.insert(it, at);
 			}
 		}
 		return;
