@@ -312,6 +312,10 @@ bool Input::translateGameInput() {
 	ZonePtr z = _vm->hitZone(_activeItem._id, mousePos.x, mousePos.y);
 
 	if (((_mouseButtons == kMouseLeftUp) && (_activeItem._id == 0) && ((g_engineFlags & kEngineWalking) == 0)) && ((!z) || (ACTIONTYPE(z) != kZoneCommand))) {
+		// BRA walks to the MOVETO of a door
+		if (_gameType == GType_BRA && z && z->_type == kZoneDoor && z->_moveTo.y != 0) {
+			mousePos = z->_moveTo;
+		}
 		walkTo(mousePos);
 		return true;
 	}
