@@ -105,8 +105,7 @@ public:
 
 	Sector *getSectorBase(int id);
 	Sector *getSectorByName(const Common::String &name);
-	Sector *getSectorBySubstring(const Common::String &str);
-	Sector *getSectorBySubstring(const Common::String &str, const Math::Vector3d &pos);
+	Sector *findNamedSector(const Common::String &name, const Math::Vector3d &pos);
 
 	Sector *findPointSector(const Math::Vector3d &p, Sector::SectorType type);
 	Common::Pair<bool, int> findSectorSortOrder(const Math::Vector3d &p, Sector::SectorType type);
