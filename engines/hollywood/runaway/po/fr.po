@@ -10570,6 +10570,12 @@ msgctxt "interface.glassWithWater"
 msgid "Glass with water"
 msgstr "GOBELET REMPLI D'EAU"
 
+#. Walk caption when an inventory item is held over empty ground.
+#: engines/hollywood/runaway/strings.cpp
+msgctxt "interface.goTo"
+msgid "GO TO"
+msgstr "ALLER VERS"
+
 #. kGroundCoffeeBowl
 #: engines/hollywood/runaway/strings.h
 msgctxt "interface.groundCoffeeBowl"

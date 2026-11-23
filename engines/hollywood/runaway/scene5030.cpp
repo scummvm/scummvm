@@ -353,7 +353,7 @@ Common::U32String Scene5030::hotspotName(byte id) const {
 
 Common::U32String Scene5030::actionCaption(byte id, RunawayVerb verb, byte item) const {
 	const Common::U32String name = hotspotName(id);
-	if (_game == kRunawayFullGame && id) {
+	if (_game == kRunawayFullGame) {
 		const char *variant = nullptr;
 		if (item == 2 && id == 6 && _hatchState >= kUnlocked) {
 			variant = "unlocked";

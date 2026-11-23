@@ -62,7 +62,7 @@ const char *const kTextKeys[] = {
 	"interface.bottleWithGasoline", "interface.filledMeasuringTube", "interface.polishedStone",
 	"interface.stoneOfLight", "interface.makeshiftMortar", "interface.steamOutletLever",
 	"interface.pressureWheel", "interface.makeshiftMiningTool", "interface.hotScalpel",
-	"interface.openPods", "interface.putPlanIntoAction"
+	"interface.openPods", "interface.putPlanIntoAction", "interface.goTo"
 };
 static_assert(ARRAYSIZE(kTextKeys) == RunawayStrings::kTextCount, "Runaway text keys must match TextId");
 
@@ -155,6 +155,10 @@ Common::U32String RunawayStrings::sceneActionCaption(uint16 scene, byte hotspot,
 	Common::U32String caption = lookup(key);
 	if (caption.empty() && item) {
 		caption = lookup(Common::String::format("action.%u.item.0.%u", scene, hotspot));
+		if (caption.empty() && !hotspot) {
+			// Native 0x415230 uses the room's walk caption when there is no target.
+			caption = text(kGoTo);
+		}
 	}
 	return caption;
 }

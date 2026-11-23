@@ -430,6 +430,8 @@ void RunawayUI::updateCursor() {
 }
 
 Common::U32String RunawayUI::inventoryCaption() const {
+	if (!_hovered)
+		return Common::U32String();
 	const byte selected = _inventory.selected();
 	if (selected) {
 		if (_hovered == selected)
@@ -438,13 +440,9 @@ Common::U32String RunawayUI::inventoryCaption() const {
 		if (!combination.empty()) {
 			return combination;
 		}
-		Common::U32String caption = _strings.text(RunawayStrings::kUse) + _inventory.name(selected);
-		if (_hovered)
-			caption += _strings.text(RunawayStrings::kWith) + _inventory.name(_hovered);
-		return caption;
+		return _strings.text(RunawayStrings::kUse) + _inventory.name(selected) +
+			_strings.text(RunawayStrings::kWith) + _inventory.name(_hovered);
 	}
-	if (!_hovered)
-		return Common::U32String();
 	if (_inventory.isPlan(_hovered) && _verb == kVerbUse)
 		return _strings.text(RunawayStrings::kPutPlanIntoAction);
 	return _strings.text(_verb == kVerbLook ? RunawayStrings::kLook : RunawayStrings::kTake) + _inventory.name(_hovered);
