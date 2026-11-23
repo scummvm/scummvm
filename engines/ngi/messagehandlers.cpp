@@ -689,7 +689,13 @@ int global_messageHandler4(Command *cmd) {
 		if (cmd->_z >= 0)
 			ani->_z = cmd->_z;
 
-		ani->show1(cmd->_x, cmd->_y, cmd->_messageNum, cmd->_parId);
+		if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+			const bool mirror = cmd->_auxParam < 0 ? (ani->_flags & 8) != 0 : cmd->_auxParam != 0;
+			ani->show1(cmd->_x == -1 ? ani->_x : cmd->_x, cmd->_y == -1 ? ani->_y : cmd->_y, cmd->_messageNum, 0);
+			ani->_flags = (ani->_flags & ~8) | (mirror ? 8 : 0);
+		} else {
+			ani->show1(cmd->_x, cmd->_y, cmd->_messageNum, cmd->_parId);
+		}
 		break;
 
 	case 10:
@@ -744,6 +750,12 @@ int global_messageHandler4(Command *cmd) {
 
 	case 35:
 		global_messageHandler_handleSound(cmd);
+		break;
+
+	case 63:
+		if (g_nmi->getPlatform() != Common::kPlatformAndroid)
+			return 0;
+		warning("Android command %s not implemented", cmd->_messageName.c_str());
 		break;
 
 	case 11:

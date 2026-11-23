@@ -274,11 +274,11 @@ AniObject *Scene::getAniMan() {
 }
 
 AniObject *Scene::findAniObjectById(int obj, int a3) {
-	for (uint i = 0; i < _aniObjects.size(); i++) {
-		if (_aniObjects[i]->_id == obj && (a3 == -1 || _aniObjects[i]->_copyId == a3))
-			return _aniObjects[i];
+	const auto &objects = _roamingObjects.empty() ? _aniObjects : _renderableAnis;
+	for (AniObject *ani : objects) {
+		if (ani->_id == obj && (a3 == -1 || ani->_copyId == a3))
+			return ani;
 	}
-
 	return nullptr;
 }
 
@@ -335,7 +335,7 @@ void Scene::stopAllSounds() {
 }
 
 PictureObject *Scene::findPictureObjectById(int objId, int flags) {
-	for (uint i = 1; i < _pictureObjects.size(); i++) {
+	for (uint i = g_nmi->getPlatform() == Common::kPlatformAndroid ? 0 : 1; i < _pictureObjects.size(); i++) {
 		if (_pictureObjects[i]->_id == objId && _pictureObjects[i]->_copyId == flags)
 			return _pictureObjects[i];
 	}

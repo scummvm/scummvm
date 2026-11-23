@@ -952,11 +952,12 @@ L12:
 		_statics->_x = _x - point.x;
 		_statics->_y = _y - point.y;
 		oid = _movement->_id;
-		_movement = nullptr;
 		if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+			_movement->unload();
 			for (int i = 0; i < g_nmi->_currSoundListCount; ++i)
 				g_nmi->_currSoundList1[i]->stopByCreator(_id);
 		}
+		_movement = nullptr;
 
 		Command *ex = new Command(_id, 17, 24, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = _copyId;
@@ -1312,7 +1313,7 @@ bool AniObject::startMovement(int movementId, int messageQueueId, int dynPhaseId
 	point = _movement->getCurrDynamicPhaseXY();
 	setPos(point.x + newx, point.y + newy);
 
-	if (_movement->_nextStatic->_staticsId & 0x4000)
+	if (!android && (_movement->_nextStatic->_staticsId & 0x4000))
 		_flags |= 8;
 	else
 		_flags &= 0xFFF7;
@@ -1858,6 +1859,12 @@ void Movement::load() {
 }
 
 void Movement::unload() {
+	if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+		// XML movements borrow their last phase from the actor's statics.
+		for (uint i = 0; i + 1 < _phases.size(); ++i)
+			_phases[i]->unload();
+		return;
+	}
 	if (!_currMovement)
 		for (uint i = 0; i < _phases.size(); i++)
 			_phases[i]->unload();
@@ -2165,7 +2172,15 @@ Common::String Phase::toXML() {
 			StaticPhase::toXML().c_str());
 }
 
+void Phase::setPNG(const Common::Path &path, const Dims &size) {
+	_memfilename = path;
+	_width = size.x;
+	_height = size.y;
+}
+
 void Phase::enter(int objectId) {
+	if (!_bitmap && !_memfilename.empty())
+		loadPNG(_memfilename, getDimensions());
 	if (_soundId && g_nmi->_soundEnabled)
 		g_nmi->playSound(_soundId, _loopSound, objectId);
 	if (_command) {

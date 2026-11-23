@@ -23,7 +23,9 @@
 #define NGI_SCENE_H
 
 #include "common/ptr.h"
+#include "ngi/objects.h"
 #include "ngi/gfx.h"
+#include "ngi/interaction.h"
 
 namespace NGI {
 
@@ -35,7 +37,11 @@ class Scene : public Background {
 	/** list items are owned */
 	Common::Array<AniObject *> _aniObjects;
 
+	// Includes non-owning references to roaming XML actors from other scenes.
 	Common::Array<AniObject *> _renderableAnis;
+	PicAniInfoList _roamingObjects;
+	Common::Array<Entrance> _entrances;
+	int16 _heroId = 0;
 	Common::Array<MessageQueue *> _messageQueues;
 	// PtrList _faObjectList; // not used
 	Common::ScopedPtr<Shadows> _shadows;

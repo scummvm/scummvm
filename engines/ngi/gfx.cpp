@@ -446,8 +446,12 @@ void Texture::loadPNG(const Common::Path &path, const Dims &sizeHint) {
 	debugC(2, kDebugLoading, "Loaded scene texture %s (%d x %d)", path.toString().c_str(), _width, _height);
 }
 
-void Texture::blitTo(Graphics::ManagedSurface &target, const Common::Point &position) const {
-	if (_bitmap && _bitmap->_surface)
+void Texture::blitTo(Graphics::ManagedSurface &target, const Common::Point &position, bool mirror) const {
+	if (!_bitmap || !_bitmap->_surface)
+		return;
+	if (mirror)
+		target.simpleBlitFrom(*_bitmap->_surface, position, Graphics::FLIP_H, true);
+	else
 		target.blitFrom(*_bitmap->_surface, position);
 }
 

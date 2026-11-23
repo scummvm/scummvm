@@ -65,6 +65,7 @@ int sceneHandlerIntroDemo(Command *cmd);
 
 void scene01_fixEntrance();
 void scene01_initScene(Scene *sc, int entrance);
+void scene01_initObjects(Scene *sc, int entrance, bool eggUncracked);
 int sceneHandler01(Command *cmd);
 
 void scene02_initScene(Scene *sc);

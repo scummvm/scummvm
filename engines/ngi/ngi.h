@@ -129,6 +129,7 @@ protected:
 
 	Common::Error run() override;
 	Common::Error runAndroid();
+	Common::Error enterAndroidScene1();
 
 public:
 	NGIEngine(OSystem *syst, const NGIGameDescription *gameDesc);

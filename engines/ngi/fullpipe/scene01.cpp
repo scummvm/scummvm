@@ -41,14 +41,14 @@ void scene01_fixEntrance() {
 		var->setSubVarAsInt("Entrance", TrubaRight);
 }
 
-void scene01_initScene(Scene *sc, int entrance) {
+void scene01_initObjects(Scene *sc, int entrance, bool eggUncracked) {
 	g_vars->scene01_picSc01Osk = sc->findPictureObjectById(PIC_SC1_OSK, 0);
 	g_vars->scene01_picSc01Osk->_flags &= 0xFFFB;
 
 	g_vars->scene01_picSc01Osk2 = sc->findPictureObjectById(PIC_SC1_OSK2, 0);
 	g_vars->scene01_picSc01Osk2->_flags &= 0xFFFB;
 
-	if (g_nmi->getStateId(sO_EggCracker) == g_nmi->getStateValue(sO_EggCracker, sO_DidNotCrackEgg)) {
+	if (eggUncracked) {
 		PictureObject *pic = sc->findPictureObjectById(PIC_SC1_KUCHKA, 0);
 		if (pic)
 			pic->_flags &= 0xFFFB;
@@ -59,7 +59,10 @@ void scene01_initScene(Scene *sc, int entrance) {
 		if (bootAnim)
 			bootAnim->_flags &= ~0x04;
 	}
+}
 
+void scene01_initScene(Scene *sc, int entrance) {
+	scene01_initObjects(sc, entrance, g_nmi->getStateId(sO_EggCracker) == g_nmi->getStateValue(sO_EggCracker, sO_DidNotCrackEgg));
 	g_nmi->lift_setButton(sO_Level2, ST_LBN_2N);
 }
 
@@ -68,6 +71,11 @@ int sceneHandler01(Command *cmd) {
 
 	if (cmd->_cmd != 17)
 		return 0;
+
+	if (!cmd->_messageNum && !cmd->_messageName.empty()) {
+		warning("Android scene 1 message %s not implemented", cmd->_messageName.c_str());
+		return 0;
+	}
 
 	if (cmd->_messageNum > MSG_SC1_SHOWOSK) {
 		if (cmd->_messageNum == MSG_SC1_UTRUBACLICK)

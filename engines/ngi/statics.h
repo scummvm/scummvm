@@ -81,6 +81,7 @@ class Phase : public StaticPhase {
   public:
 	Phase();
 	Phase(Phase *src, bool reverse);
+	void setPNG(const Common::Path &path, const Dims &size);
 	void enter(int objectId);
 
 	bool load(MfcArchive &file) override;

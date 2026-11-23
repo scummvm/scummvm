@@ -224,9 +224,13 @@ private:
 	bool _hasInitialStatics = false;
 	int16 _initialStaticsId = 0;
 
-	void loadTexture(Texture &texture, const Common::String &resource, bool localized) {
+	Common::Path texturePath(const Common::String &resource, bool localized) const {
 		const Common::String directory = localized ? Common::String::format("data/res_%s", _locale) : "data/res";
-		const Common::Path path = Common::Path(directory).join(resource + ".png");
+		return Common::Path(directory).join(resource + ".png");
+	}
+
+	void loadTexture(Texture &texture, const Common::String &resource, bool localized) {
+		const Common::Path path = texturePath(resource, localized);
 		texture.loadPNG(path, _project._textureSizes.getValOrDefault(path));
 	}
 
@@ -244,6 +248,16 @@ private:
 			XML_PROP(putPrev, false)
 			XML_PROP(scrollX, false)
 			XML_PROP(scrollY, false)
+			XML_KEY(ADDANI)
+				XML_PROP(id, true)
+				XML_PROP(scene, true)
+				XML_PROP(copy, false)
+			KEY_END()
+			XML_KEY(ENTRANCE)
+				XML_PROP(id, true)
+				XML_PROP(scene, true)
+				XML_PROP(queue, true)
+			KEY_END()
 			XML_KEY(SOUND)
 				XML_PROP(id, true)
 				XML_PROP(file, true)
@@ -266,9 +280,21 @@ private:
 					XML_PROP(cycled, false)
 					XML_PROP(stop, false)
 					XML_PROP(delay, false)
+					XML_PROP(x, false)
+					XML_PROP(y, false)
+					XML_PROP(z, false)
+					XML_PROP(mirror, false)
+					XML_PROP(static, false)
+					XML_PROP(stat, false)
+					XML_PROP(type, false)
+					XML_PROP(state, false)
+					XML_PROP(picId, false)
+					XML_PROP(title, false)
 				KEY_END()
 			KEY_END()
 			XML_KEY(PICTURE)
+				XML_PROP(filter, false)
+				XML_PROP(serializable, false)
 				XML_PROP(id, true)
 				XML_PROP(title, false)
 				XML_PROP(x, false)
@@ -278,6 +304,8 @@ private:
 				XML_PROP(locale, false)
 			KEY_END()
 			XML_KEY(OLDANI)
+				XML_PROP(mirror, false)
+				XML_PROP(serializable, false)
 				XML_PROP(id, true)
 				XML_PROP(title, false)
 				XML_PROP(x, false)
@@ -294,6 +322,8 @@ private:
 					XML_PROP(locale, false)
 				KEY_END()
 				XML_KEY(MOVEMENT)
+					XML_PROP(mirrorPrev, false)
+					XML_PROP(mirrorNext, false)
 					XML_PROP(id, true)
 					XML_PROP(title, false)
 					XML_PROP(x, false)
@@ -328,9 +358,30 @@ private:
 		int16 id;
 		if (!readId(node->values["id"], id) || id != _scene._sceneId)
 			return parserError("Scene ID does not match the project");
+		if (node->values.contains("hero") && !node->values["hero"].empty() && !readId(node->values["hero"], _scene._heroId))
+			return parserError("Unknown scene hero");
 		_scene._sceneName = node->values.getValOrDefault("title");
 		_scene._x = strtod(node->values.getValOrDefault("scrollX").c_str(), nullptr);
 		_scene._y = strtod(node->values.getValOrDefault("scrollY").c_str(), nullptr);
+		return true;
+	}
+
+	bool parserCallback_ADDANI(ParserNode *node) {
+		PicAniInfo ref;
+		if (!readId(node->values["id"], ref.objectId) || !readId(node->values["scene"], ref.sceneId))
+			return parserError("Unknown roaming animation or scene");
+		ref.copyId = atoi(node->values.getValOrDefault("copy").c_str());
+		_scene._roamingObjects.push_back(ref);
+		return true;
+	}
+
+	bool parserCallback_ENTRANCE(ParserNode *node) {
+		uint32 id, scene, queue;
+		if (!_project._objectIds.findId(node->values["id"], id) ||
+			!_project._objectIds.findId(node->values["scene"], scene) ||
+			!_project._objectIds.findId(node->values["queue"], queue))
+			return parserError("Unknown ID in scene entrance");
+		_scene._entrances.push_back(Entrance{(int32)scene, (int32)id, (int32)queue, 0});
 		return true;
 	}
 
@@ -390,7 +441,23 @@ private:
 		cmd->_param = atoi(node->values.getValOrDefault("copy").c_str());
 
 		const char *idProperty = nullptr;
-		if (kind == "START_MOVEMENT" || kind == "3") {
+		if (kind == "SHOW" || kind == "1") {
+			cmd->_cmd = 5;
+			cmd->_wait = 0;
+			if (!readId(node->values.getValOrDefault("ani"), cmd->_parentId))
+				return parserError("Unknown animation in SHOW");
+			cmd->_messageNum = -1;
+			if (!node->values.getValOrDefault("mov").empty())
+				idProperty = "mov";
+			cmd->_x = atoi(node->values.getValOrDefault("x", "-1").c_str());
+			cmd->_y = atoi(node->values.getValOrDefault("y", "-1").c_str());
+			cmd->_z = atoi(node->values.getValOrDefault("z", "-1").c_str());
+			cmd->_auxParam = node->values.contains("mirror") ? (int)boolProperty(*node, "mirror") : -1;
+		} else if (kind == "USER" || kind == "12" || kind == "SET_STATIC" || kind == "25") {
+			cmd->_cmd = 63;
+			cmd->_messageName = node->values.getValOrDefault("type", kind);
+			cmd->_wait = 0;
+		} else if (kind == "START_MOVEMENT" || kind == "3") {
 			cmd->_cmd = 1;
 			if (!readId(node->values.getValOrDefault("ani"), cmd->_parentId))
 				return parserError("Unknown animation in START_MOVEMENT");
@@ -449,6 +516,8 @@ private:
 		if (_hasInitialStatics && !readId(statics, _initialStaticsId))
 			return parserError("Unknown initial statics ID '" + statics + "'");
 
+		if (boolProperty(*node, "mirror"))
+			animation->_flags |= 8;
 		animation->_sceneId = _scene._sceneId;
 		return true;
 	}
@@ -537,7 +606,8 @@ private:
 		phase->_delayRelative = atoi(node->values.getValOrDefault("delayRelative").c_str());
 		phase->_x = atoi(node->values.getValOrDefault("x").c_str());
 		phase->_y = atoi(node->values.getValOrDefault("y").c_str());
-		loadTexture(*phase, resource, isLocalized(*getParentNode(node)));
+		const Common::Path path = texturePath(resource, isLocalized(*getParentNode(node)));
+		phase->setPNG(path, _project._textureSizes.getValOrDefault(path));
 
 		movement._framePosOffsets.insert_at(index, Common::Point(phase->_x, phase->_y));
 		movement._phases.insert_at(index, phase.release());
@@ -603,7 +673,11 @@ void Scene::drawAndroid(Graphics::ManagedSurface &target) const {
 		} else {
 			const AniObject &animation = *static_cast<const AniObject *>(object);
 			const Phase *phase = animation._movement ? animation._movement->_curPhase : animation._statics;
-			phase->blitTo(target, position - animation.getSomeXY());
+			Common::Point anchor = animation.getSomeXY();
+			const bool mirror = (animation._flags & 8) != 0;
+			if (mirror)
+				anchor.x = phase->getDimensions().x - anchor.x;
+			phase->blitTo(target, position - anchor, mirror);
 		}
 	}
 }
@@ -637,6 +711,47 @@ void SceneTag::loadSceneXML(const GameProject &project) {
 		_tag.c_str(), scene->_pictureObjects.size(), scene->_aniObjects.size());
 	delete _scene;
 	_scene = scene.release();
+}
+
+Common::Error NGIEngine::enterAndroidScene1() {
+	Scene *room = findScene(SC_1);
+	Scene *common = findScene(SC_COMMON);
+	if (!room || !common)
+		return Common::Error(Common::kNoGameDataFoundError, "Could not load the first Full Pipe Android room");
+	for (const PicAniInfo &ref : room->_roamingObjects) {
+		Scene *source = findScene(ref.sceneId);
+		AniObject *actor = source ? source->findAniObjectById(ref.objectId, ref.copyId) : nullptr;
+		if (!actor)
+			return Common::Error(Common::kNoGameDataFoundError, "Missing roaming animation for the first Android room");
+		if (!room->findAniObjectById(ref.objectId, ref.copyId))
+			room->_renderableAnis.push_back(actor);
+	}
+	_aniMan = room->findAniObjectById(room->_heroId, 0);
+	_aniMan2 = _aniMan;
+	if (!_aniMan)
+		return Common::Error(Common::kNoGameDataFoundError, "Missing hero for the first Android room");
+
+	clearGlobalMessageQueueList1();
+	clearMessageHandlers();
+	stopAllSounds(-1);
+	_currSoundListCount = 0;
+	if (room->_soundList)
+		_currSoundList1[_currSoundListCount++] = room->_soundList.get();
+	if (common->_soundList)
+		_currSoundList1[_currSoundListCount++] = common->_soundList.get();
+
+	_currentScene = room;
+	addMessageHandlerByIndex(global_messageHandler4, 0, 4);
+	addMessageHandler(sceneHandler01, 2);
+	// CStateManager::SetStartStates starts a new game with the egg uncracked.
+	scene01_initObjects(room, TrubaLeft, true);
+	for (const Entrance &entrance : room->_entrances) {
+		if (entrance._id == TrubaLeft && entrance._sceneId == room->_sceneId && runQueue(entrance._queueId, 0)) {
+			debugC(1, kDebugSceneLogic, "Entered Android scene %d through entrance %d, queue %d", room->_sceneId, entrance._id, entrance._queueId);
+			return Common::kNoError;
+		}
+	}
+	return Common::Error(Common::kNoGameDataFoundError, "Could not start the TrubaLeft entrance queue");
 }
 
 Common::Error NGIEngine::runAndroid() {
@@ -707,6 +822,7 @@ Common::Error NGIEngine::runAndroid() {
 
 	Common::Event event;
 	Common::EventManager *eventManager = _system->getEventManager();
+	Common::Error result = Common::kNoError;
 	uint32 lastUpdate = _system->getMillis();
 	while (!shouldQuit()) {
 		bool screenChanged = false;
@@ -735,11 +851,8 @@ Common::Error NGIEngine::runAndroid() {
 		bool redraw = false;
 		Scene *scene = _currentScene;
 		if (_modalObject) {
-			if (!_modalObject->init(elapsed)) {
+			if (!_modalObject->init(elapsed))
 				deleteModalObject();
-				if (!_modalObject && scene->_sceneId == SC_INTRO1 && !g_vars->sceneIntro_playing)
-					warning("Android scene 1 entrance TrubaLeft not implemented");
-			}
 			redraw = true;
 		} else {
 			for (MessageQueue *queue : *_globalMessageQueueList)
@@ -757,6 +870,14 @@ Common::Error NGIEngine::runAndroid() {
 			stopAllSounds(Sound::kSpeech);
 			stopAllSounds(Sound::kEffect);
 			debugC(2, kDebugDrawing, "Switched Android scene from %d to %d", scene->_sceneId, _currentScene->_sceneId);
+			redraw = true;
+		}
+		if (!_modalObject && _currentScene->_sceneId == SC_INTRO1 && !g_vars->sceneIntro_playing) {
+			result = enterAndroidScene1();
+			if (result.getCode() != Common::kNoError)
+				break;
+			lastUpdate = _system->getMillis();
+			brightness = 255;
 			redraw = true;
 		}
 		if (redraw) {
@@ -781,9 +902,12 @@ Common::Error NGIEngine::runAndroid() {
 	while (_currSoundListCount)
 		_currSoundList1[--_currSoundListCount] = nullptr;
 	g_vars->sceneIntro_aniin1man = nullptr;
+	g_vars->scene01_picSc01Osk = nullptr;
+	g_vars->scene01_picSc01Osk2 = nullptr;
+	_aniMan = _aniMan2 = nullptr;
 	_currentScene = nullptr;
 	_gameProject = nullptr;
-	return Common::kNoError;
+	return result;
 }
 
 } // End of namespace NGI
