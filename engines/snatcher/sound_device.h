@@ -22,7 +22,6 @@
 #ifndef SNATCHER_SOUND_DEVICE_H
 #define SNATCHER_SOUND_DEVICE_H
 
-#include "audio/mididrv.h"
 #include "common/platform.h"
 
 namespace Audio {
@@ -37,9 +36,16 @@ class SoundDevice {
 public:
 	virtual ~SoundDevice() {}
 
-	virtual bool init(Audio::Mixer *mixer) = 0;
+	enum InitResult : int {
+		kDeviceOk = 0,
+		kDriverInitFailed = 1,
+		kAudioCDInitFailed = 2,
+		kLoadDataFailed = 3
+	};
 
-	virtual void cdaPlay(int track, uint32 bcdTime = 0) = 0;
+	virtual InitResult init(Audio::Mixer *mixer) = 0;
+
+	virtual bool cdaPlay(int track, uint32 bcdTime = 0) = 0;
 	virtual void cdaStop() = 0;
 	virtual bool cdaIsPlaying() const = 0;
 	virtual int cdaGetCurTrack() const = 0;

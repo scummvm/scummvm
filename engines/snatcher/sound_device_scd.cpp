@@ -80,9 +80,9 @@ public:
 	SegaSoundDevice(FIO *fio);
 	~SegaSoundDevice() override;
 
-	bool init(Audio::Mixer *mixer) override;
+	InitResult init(Audio::Mixer *mixer) override;
 
-	void cdaPlay(int track, uint32 bcdTime = 0) override;
+	bool cdaPlay(int track, uint32 bcdTime = 0) override;
 	void cdaStop() override;
 	bool cdaIsPlaying() const override;
 	int cdaGetCurTrack() const override;
@@ -1762,36 +1762,45 @@ SegaSoundDevice::~SegaSoundDevice() {
 	delete[] _fmCmdQueue;
 }
 
-bool SegaSoundDevice::init(Audio::Mixer *mixer) {
+SoundDevice::InitResult SegaSoundDevice::init(Audio::Mixer *mixer) {
 	_fmDriver = new KonamiMCDAudioDriver(mixer, &_driverMsg);
 	if (!_fmDriver)
-		return false;
+		return kDriverInitFailed;
 
 	_sai = new SegaAudioInterface(mixer, nullptr);
 	if (!_sai || !_sai->init() || !_fmDriver->init())
-		return false;
+		return kDriverInitFailed;
 	// Setup first 4 pcm channels as sound effect channels.
 	_sai->setSoundEffectChanMask(0x1E00);
 
 	if (!fmLoadData() || !pcmLoadData()) {
 		delete _sai;
 		delete _fmDriver;
-		return false;
+		return kLoadDataFailed;
 	}
 
-	return true;
+	if (!g_system->getAudioCDManager()->open())
+		return kAudioCDInitFailed;
+
+	return kDeviceOk;
 }
 
-void SegaSoundDevice::cdaPlay(int track, uint32 bcdTime) {
+bool SegaSoundDevice::cdaPlay(int track, uint32 bcdTime) {
 	assert(track > 0);
 
 	uint32 frm = 0;
 	if (bcdTime != 0)
 		frm = Util::decodeBCDTimeStamp(bcdTime, Util::kBCD_MMSSFR) / (1000 / 75);
 
-	g_system->getAudioCDManager()->play(track - 1, 1, frm, 0);
+	if (!g_system->getAudioCDManager()->play(track - 1, 1, frm, 0)) {
+		_lastTrack = -1;
+		return false;
+	}
+
 	_lastTrack = track;
 	_musicStartTime = g_system->getMillis();
+
+	return true;
 }
 
 void SegaSoundDevice::cdaStop() {

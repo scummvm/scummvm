@@ -21,9 +21,20 @@
 
 #include "snatcher/sound_device.h"
 #include "snatcher/sound.h"
+#include "audio/mididrv.h"
 #include "common/stream.h"
+#include "common/str.h"
+#include "gui/error.h"
+
 
 namespace Snatcher {
+
+static const char *errMsg[] = {
+	"Sound driver initialization failed.",
+	"Audio CD initialization failed.",
+	"Failed to load sound data.",
+	"Failed to start Audio CD track no. %d. Please check the documentation on how to use Audio CD tracks in ScummVM."
+};
 
 SoundEngine::SoundEngine(FIO *fio, Common::Platform platform, int soundOptions) : _dev(nullptr), _cdaRestoreTime(0), _cdaRestoreTrack(-1) {
 	_dev = SoundDevice::create(fio, platform, soundOptions);
@@ -35,11 +46,21 @@ SoundEngine::~SoundEngine() {
 }
 
 bool SoundEngine::init(Audio::Mixer *mixer) {
-	return _dev->init(mixer);
+	SoundDevice::InitResult r = _dev->init(mixer);
+
+	if (r != SoundDevice::kDeviceOk) {
+		::GUI::displayErrorDialog(Common::U32String(errMsg[static_cast<int>(r) - 1]));
+		return false;
+	}
+
+	return true;
 }
 
 void SoundEngine::cdaPlay(int track) {
-	_dev->cdaPlay(track);
+	if (!_dev->cdaPlay(track)) {
+		::GUI::displayErrorDialog(Common::U32String::format(errMsg[3], track));
+		error(errMsg[3], track);
+	}
 }
 
 void SoundEngine::cdaStop() {
