@@ -1208,7 +1208,6 @@ const Feature s_features[] = {
 	{       "mpc",      "USE_MPCDEC", true, false, "Musepack support" },
 
 	// Feature flags
-	{               "bink",                      "USE_BINK", false, true,  "Bink video support" },
 	{            "scalers",                   "USE_SCALERS", false, true,  "Scalers" },
 	{          "hqscalers",                "USE_HQ_SCALERS", false, true,  "HQ scalers" },
 	{        "edgescalers",              "USE_EDGE_SCALERS", false, true,  "Edge scalers" },

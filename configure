@@ -220,7 +220,7 @@ _enable_prof=no
 _enable_asan=no
 _enable_tsan=no
 _enable_ubsan=no
-_bink=yes
+_bink=auto
 _coktel_decoder=auto
 _cloud=auto
 _dlc=no
@@ -328,7 +328,6 @@ _universaltracker=auto
 # Add (virtual) features
 add_feature 16bit "16bit color" "_16bit"
 add_feature 3d "3D rendering" "_3d"
-add_feature bink "Bink" "_bink"
 add_feature cloud "cloud" "_cloud"
 add_feature faad "libfaad" "_faad"
 add_feature flac "FLAC" "_flac"
@@ -346,6 +345,7 @@ add_feature test_cxx11 "Test C++11" "_test_cxx11"
 add_feature printing "Printing" "_printing"
 
 # Components are features which may be disabled if unused by the engines
+add_component bink "Bink" "_bink" "USE_BINK"
 add_component cdtoons "CDTOONS" "_cdtoons" "USE_CDTOONS"
 add_component coktel_decoder "Coktel decoder" "_coktel_decoder" "USE_COKTEL_DECODER"
 add_component enet "ENet" "_enet" "USE_ENET"
@@ -7505,13 +7505,6 @@ else
 	_3d=no
 fi
 echo "$_3d"
-
-#
-# Check whether to build Bink video support
-#
-echo_n "Building Bink video support... "
-define_in_config_if_yes $_bink 'USE_BINK'
-echo "$_bink"
 
 #
 # Check whether to build updates support
