@@ -30,22 +30,24 @@ namespace NGI {
 
 class Sound : public MemoryObject {
 	int _id;
+	int _flags = 0;
 	byte *_soundData;
 	Audio::SoundHandle *_handle;
 	Common::Array<Audio::SoundHandle> _overlappingHandles;
 
 public:
+	enum { kEffect = 0, kSpeech = 1 };
 	int16 _objectId;
 
-public:
 	Sound();
-	Sound(int id, const Common::Path &path);
+	Sound(int id, const Common::Path &path, int flags);
 	~Sound() override;
 
 	virtual bool load(MfcArchive &file, NGIArchive *archive);
 	bool load(MfcArchive &file) override { assert(0); return false; } // Disable base class
 	void updateVolume();
 	int getId() const { return _id; }
+	int getFlags() const { return _flags; }
 	Audio::SoundHandle *getHandle() const { return _handle; }
 
 	void play(int loop, int creator = 0);
@@ -68,7 +70,7 @@ class SoundList : public CObject {
 
 	int getCount() { return _soundItems.size(); }
 	Sound &getSoundByIndex(int idx) { return *_soundItems[idx]; }
-	void addSound(int id, const Common::Path &path);
+	void addSound(int id, const Common::Path &path, int flags);
 	void stopByCreator(int objectId);
 	Sound *getSound(int id);
 };

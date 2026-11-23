@@ -34,6 +34,7 @@
 #include "ngi/detection.h"
 #include "ngi/messages.h"
 #include "ngi/ngiarchive.h"
+#include "ngi/objects.h"
 #include "ngi/utils.h"
 #include "ngi/scene.h"
 #include "ngi/statics.h"
@@ -42,21 +43,56 @@
 
 namespace NGI {
 
+bool ObjectIdList::load(const Common::Path &path) {
+	Common::File file;
+	if (!file.open(path))
+		return false;
+
+	while (!file.eos() && !file.err()) {
+		const Common::String line = file.readLine();
+		if (!line.hasPrefix("#define"))
+			continue;
+
+		const char *name = line.c_str() + 7;
+		while (*name == ' ' || *name == '\t')
+			++name;
+		const char *value = name;
+		while (*value && *value != ' ' && *value != '\t')
+			++value;
+		if (name == value || !*value)
+			continue;
+
+		const Common::String symbol(name, value);
+		if (!_ids.contains(symbol))
+			_ids[symbol] = strtoul(value, nullptr, 10);
+	}
+	return !file.err();
+}
+
+bool ObjectIdList::findId(const Common::String &symbol, uint32 &id) const {
+	const auto entry = _ids.find(symbol);
+	if (entry == _ids.end())
+		return false;
+	id = entry->_value;
+	return true;
+}
+
 namespace {
 
 class XMLProjectParser : public Common::XMLParser {
 public:
-	const Common::String &startScene() const { return _startScene; }
+	explicit XMLProjectParser(GameProject &project) : _project(project) {
+		_project._sceneTagList.reset(new SceneTagList());
+	}
+
+	const SceneTag *startScene() const { return _startScene; }
 	int width() const { return _width; }
 	int height() const { return _height; }
 
-	Common::String startSceneFile() const {
-		return _scenes.getValOrDefault(_startScene);
-	}
-
 private:
-	Common::String _startScene;
-	Common::StringMap _scenes;
+	GameProject &_project;
+	Common::String _startName;
+	SceneTag *_startScene = nullptr;
 	int _width = 800;
 	int _height = 600;
 
@@ -80,7 +116,7 @@ private:
 	} PARSER_END()
 
 	bool parserCallback_PROJECT(ParserNode *node) {
-		_startScene = node->values["start"];
+		_startName = node->values["start"];
 		if (node->values.contains("width"))
 			_width = atoi(node->values["width"].c_str());
 		if (node->values.contains("height"))
@@ -91,7 +127,16 @@ private:
 	}
 
 	bool parserCallback_SCENE(ParserNode *node) {
-		_scenes[node->values["id"]] = node->values["file"];
+		const Common::String &name = node->values["id"];
+		uint32 id;
+		if (!_project._objectIds.findId(name, id) || id > 0xffff)
+			return parserError("Unknown project scene ID '" + name + "'");
+		_project._sceneTagList->emplace_back();
+		SceneTag &tag = _project._sceneTagList->back();
+		tag._sceneId = static_cast<int16>(id);
+		tag._tag = node->values["file"];
+		if (name == _startName)
+			_startScene = &tag;
 		return true;
 	}
 
@@ -106,46 +151,6 @@ private:
 		node->ignore = true;
 		return true;
 	}
-};
-
-class ObjectIdList {
-public:
-	bool load(const Common::Path &path) {
-		Common::File file;
-		if (!file.open(path))
-			return false;
-
-		while (!file.eos() && !file.err()) {
-			const Common::String line = file.readLine();
-			if (!line.hasPrefix("#define"))
-				continue;
-
-			const char *name = line.c_str() + 7;
-			while (*name == ' ' || *name == '\t')
-				++name;
-			const char *value = name;
-			while (*value && *value != ' ' && *value != '\t')
-				++value;
-			if (name == value || !*value)
-				continue;
-
-			const Common::String symbol(name, value);
-			if (!_ids.contains(symbol))
-				_ids[symbol] = strtoul(value, nullptr, 10);
-		}
-		return !file.err();
-	}
-
-	bool findId(const Common::String &symbol, uint32 &id) const {
-		const auto entry = _ids.find(symbol);
-		if (entry == _ids.end())
-			return false;
-		id = entry->_value;
-		return true;
-	}
-
-private:
-	Common::HashMap<Common::String, uint32> _ids;
 };
 
 static const char *getResourceLocale(Common::Language language) {
@@ -309,7 +314,8 @@ private:
 		int16 id;
 		if (!readId(node->values["id"], id))
 			return parserError("Unknown sound ID " + node->values["id"]);
-		const bool speech = atoi(node->values.getValOrDefault("flags").c_str()) & 1;
+		const int flags = atoi(node->values.getValOrDefault("flags").c_str());
+		const bool speech = flags & Sound::kSpeech;
 		Common::Path path(speech ? Common::String::format("data/res_%s", _locale) : "data/res");
 		path = path.join(Common::String::format("Sounds/%08hu", static_cast<uint16>(_scene._sceneId)));
 		if (speech)
@@ -319,7 +325,7 @@ private:
 			path = Common::Path("assets").join(path);
 		if (!_scene._soundList)
 			_scene._soundList.reset(new SoundList());
-		_scene._soundList->addSound(id, path);
+		_scene._soundList->addSound(id, path, flags);
 		return true;
 	}
 
@@ -566,6 +572,26 @@ static void drawAndroidScene(const Scene &scene, Graphics::ManagedSurface &targe
 
 } // End of anonymous namespace
 
+void SceneTag::loadSceneXML(const ObjectIdList &ids) {
+	Common::Language language = Common::parseLanguage(ConfMan.get("language"));
+	if (language == Common::UNK_LANG)
+		language = Common::parseLanguageFromLocale(g_system->getSystemLanguage().c_str());
+
+	Common::ScopedPtr<Scene> scene(new Scene());
+	scene->_sceneId = _sceneId;
+	const Common::Path path = Common::Path("data/res").join(_tag);
+	XMLSceneParser parser(ids, *scene, getResourceLocale(language));
+	if (!parser.loadStream(SearchMan.createReadStreamForMember(path), path.toString()) || !parser.parse()) {
+		warning("Could not load Full Pipe Android scene %s", _tag.c_str());
+		return;
+	}
+
+	debugC(1, kDebugXML, "Loaded Full Pipe Android scene %s with %u pictures and %u animations",
+		_tag.c_str(), scene->_pictureObjects.size(), scene->_aniObjects.size());
+	delete _scene;
+	_scene = scene.release();
+}
+
 Common::Error NGIEngine::runAndroid() {
 	const auto &files = _gameDescription->desc.filesDescriptions;
 	const Common::FSNode gameDirectory(ConfMan.getPath("path"));
@@ -577,60 +603,56 @@ Common::Error NGIEngine::runAndroid() {
 	SearchMan.add("ngi-android-obb", obb.release());
 	SearchMan.add("ngi-android-apk", apk.release());
 
-	const Common::Path projectPath("data/FullPipe.xml");
-	XMLProjectParser project;
-	if (!project.loadStream(SearchMan.createReadStreamForMember(projectPath), projectPath.toString()) || !project.parse())
-		return Common::Error(Common::kNoGameDataFoundError, "Could not read the Full Pipe Android project");
-
-	ObjectIdList ids;
-	if (!ids.load("data/obj.h"))
+	GameProject project;
+	if (!project._objectIds.load("data/obj.h"))
 		return Common::Error(Common::kNoGameDataFoundError, "Could not read the Full Pipe Android object IDs");
 
-	const Common::String startSceneFile = project.startSceneFile();
-	uint32 startSceneId;
-	if (!ids.findId(project.startScene(), startSceneId) || startSceneId > 0xffff || startSceneFile.empty())
+	const Common::Path projectPath("data/FullPipe.xml");
+	XMLProjectParser parser(project);
+	if (!parser.loadStream(SearchMan.createReadStreamForMember(projectPath), projectPath.toString()) || !parser.parse())
+		return Common::Error(Common::kNoGameDataFoundError, "Could not read the Full Pipe Android project");
+
+	const SceneTag *start = parser.startScene();
+	if (!start)
 		return Common::Error(Common::kNoGameDataFoundError, "Could not find the Full Pipe Android start scene");
-
-	debugC(1, kDebugXML, "Loaded Full Pipe Android project, start scene %s (%u)", startSceneFile.c_str(), startSceneId);
-
-	Common::Language language = Common::parseLanguage(ConfMan.get("language"));
-	if (language == Common::UNK_LANG)
-		language = Common::parseLanguageFromLocale(_system->getSystemLanguage().c_str());
-
-	Scene scene;
-	scene._sceneId = static_cast<int16>(startSceneId);
-	const Common::Path scenePath = Common::Path("data/res").join(startSceneFile);
-	XMLSceneParser sceneParser(ids, scene, getResourceLocale(language));
-	if (!sceneParser.loadStream(SearchMan.createReadStreamForMember(scenePath), scenePath.toString()) || !sceneParser.parse())
+	debugC(1, kDebugXML, "Loaded Full Pipe Android project, start scene %s (%hu)",
+		start->_tag.c_str(), static_cast<uint16>(start->_sceneId));
+	Scene *startScene = project.findScene(start->_sceneId);
+	if (!startScene)
 		return Common::Error(Common::kNoGameDataFoundError, "Could not load the Full Pipe Android start scene");
 
-	debugC(1, kDebugXML, "Loaded Full Pipe Android scene %s with %u pictures and %u animations",
-		startSceneFile.c_str(), scene._pictureObjects.size(), scene._aniObjects.size());
+	const bool intro = start->_sceneId == SC_INTRO1;
+	Scene *intro2 = intro ? project.findScene(SC_INTRO2) : nullptr;
+	if (intro && !intro2)
+		return Common::Error(Common::kNoGameDataFoundError, "Could not load the second Full Pipe Android intro scene");
 
 	_isSaveAllowed = false;
-	initGraphics(project.width(), project.height(), nullptr);
+	initGraphics(parser.width(), parser.height(), nullptr);
 	const Graphics::PixelFormat format = _system->getScreenFormat();
 	if (format.isCLUT8())
 		return Common::kUnsupportedColorMode;
 
-	_currentScene = &scene;
+	_gameProject = &project;
+	_currentScene = startScene;
 	addMessageHandlerByIndex(global_messageHandler4, 0, 4);
-	if (scene._sceneId == SC_INTRO1) {
-		sceneIntro_initMan(scene);
+	if (intro) {
+		sceneIntro_initMan(*startScene);
 		addMessageHandler(sceneHandlerIntro, 2);
 	}
-	if (scene._soundList)
-		_currSoundList1[_currSoundListCount++] = scene._soundList.get();
+	if (startScene->_soundList)
+		_currSoundList1[_currSoundListCount++] = startScene->_soundList.get();
+	if (intro2 && intro2->_soundList)
+		_currSoundList1[_currSoundListCount++] = intro2->_soundList.get();
 
 	Graphics::ManagedSurface &frame = _backgroundSurface;
-	frame.create(project.width(), project.height(), format);
-	byte brightness = scene._sceneId == SC_INTRO1 ? 0 : 255;
+	frame.create(parser.width(), parser.height(), format);
+	byte brightness = intro ? 0 : 255;
 	frame.clear(format.RGBToColor(0, 0, 0));
 	if (brightness)
-		drawAndroidScene(scene, frame);
+		drawAndroidScene(*_currentScene, frame);
 	_system->copyRectToScreen(frame.getPixels(), frame.pitch, 0, 0, frame.w, frame.h);
 	_system->updateScreen();
-	debugC(1, kDebugDrawing, "Presented first Full Pipe Android frame for %s", startSceneFile.c_str());
+	debugC(1, kDebugDrawing, "Presented first Full Pipe Android frame for %s", start->_tag.c_str());
 
 	Common::Event event;
 	Common::EventManager *eventManager = _system->getEventManager();
@@ -648,17 +670,25 @@ Common::Error NGIEngine::runAndroid() {
 		const uint32 elapsed = now - lastUpdate;
 		lastUpdate = now;
 		bool redraw = false;
+		Scene *scene = _currentScene;
 		for (MessageQueue *queue : *_globalMessageQueueList)
 			redraw |= queue->updatePause(elapsed);
 		processMessages();
-		redraw |= scene.update(elapsed);
-		if (scene._sceneId == SC_INTRO1)
+		if (scene == _currentScene)
+			redraw |= scene->update(elapsed);
+		if (scene == _currentScene && scene->_sceneId == SC_INTRO1)
 			redraw |= sceneIntro_updateAndroid(elapsed, brightness);
 		processMessages();
 
+		if (scene != _currentScene) {
+			stopAllSounds(Sound::kSpeech);
+			stopAllSounds(Sound::kEffect);
+			debugC(2, kDebugDrawing, "Switched Android scene from %d to %d", scene->_sceneId, _currentScene->_sceneId);
+			redraw = true;
+		}
 		if (redraw) {
 			frame.clear(format.RGBToColor(0, 0, 0));
-			drawAndroidScene(scene, frame);
+			drawAndroidScene(*_currentScene, frame);
 			if (brightness < 255)
 				drawAlphaRectangle(0, 0, frame.w, frame.h, brightness);
 		}
@@ -670,10 +700,11 @@ Common::Error NGIEngine::runAndroid() {
 	clearMessages();
 	clearGlobalMessageQueueList();
 	clearMessageHandlers();
-	_currSoundListCount = 0;
-	_currSoundList1[0] = nullptr;
+	while (_currSoundListCount)
+		_currSoundList1[--_currSoundListCount] = nullptr;
 	g_vars->sceneIntro_aniin1man = nullptr;
 	_currentScene = nullptr;
+	_gameProject = nullptr;
 	return Common::kNoError;
 }
 

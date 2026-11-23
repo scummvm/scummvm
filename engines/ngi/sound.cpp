@@ -82,13 +82,14 @@ Sound::Sound() :
 	_handle(new Audio::SoundHandle()),
 	_objectId(0) {}
 
-Sound::Sound(int id, const Common::Path &path) : Sound() {
+Sound::Sound(int id, const Common::Path &path, int flags) : Sound() {
 	_id = id;
+	_flags = flags;
 	_memfilename = path;
 }
 
-void SoundList::addSound(int id, const Common::Path &path) {
-	_soundItems.emplace_back(new Sound(id, path));
+void SoundList::addSound(int id, const Common::Path &path, int flags) {
+	_soundItems.emplace_back(new Sound(id, path, flags));
 }
 
 void SoundList::stopByCreator(int objectId) {
@@ -404,10 +405,12 @@ void NGIEngine::playOggSound(const Common::Path &trackName, Audio::SoundHandle &
 #endif
 }
 
-void NGIEngine::stopAllSounds() {
+void NGIEngine::stopAllSounds(int flags) {
 	for (int i = 0; i < _currSoundListCount; i++)
 		for (int j = 0; j < _currSoundList1[i]->getCount(); j++) {
-			_currSoundList1[i]->getSoundByIndex(j).stop();
+			Sound &sound = _currSoundList1[i]->getSoundByIndex(j);
+			if (flags == -1 || sound.getFlags() == flags)
+				sound.stop();
 		}
 }
 

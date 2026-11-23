@@ -35,23 +35,22 @@
 namespace NGI {
 
 Scene *NGIEngine::findScene(int sceneId) {
-	SceneTag *t = nullptr;
+	return _gameProject->findScene(sceneId);
+}
 
-	for (SceneTagList::iterator s = _gameProject->_sceneTagList->begin(); s != _gameProject->_sceneTagList->end(); ++s) {
-		if (s->_sceneId == sceneId) {
-			t = &(*s);
-			break;
+Scene *GameProject::findScene(int sceneId) {
+	for (SceneTag &tag : *_sceneTagList) {
+		if (tag._sceneId != sceneId)
+			continue;
+		if (!tag._scene) {
+			if (g_nmi->getPlatform() == Common::kPlatformAndroid)
+				tag.loadSceneXML(_objectIds);
+			else
+				tag.loadScene();
 		}
+		return tag._scene;
 	}
-
-	if (!t)
-		return nullptr;
-
-	if (!t->_scene) {
-		t->loadScene();
-	}
-
-	return t->_scene;
+	return nullptr;
 }
 
 bool SceneTagList::load(MfcArchive &file) {

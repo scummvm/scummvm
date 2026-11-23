@@ -103,8 +103,7 @@ int sceneHandlerIntro(Command *ex) {
 
 	if (g_nmi->getPlatform() == Common::kPlatformAndroid && !ex->_messageName.empty()) {
 		debugC(3, kDebugEvents, "Android intro message %s", ex->_messageName.c_str());
-		if (ex->_messageNum == MSG_INTR_SWITCHTO2 || ex->_messageNum == MSG_INTR_SWITCHTO1 ||
-				ex->_messageNum == MSG_INTR_ENDINTRO || ex->_messageName == "MSG_ENABLE_BHV_SOUND") {
+		if (ex->_messageNum == MSG_INTR_ENDINTRO || ex->_messageName == "MSG_ENABLE_BHV_SOUND") {
 			warning("Android intro message %s not implemented", ex->_messageName.c_str());
 			return 0;
 		}

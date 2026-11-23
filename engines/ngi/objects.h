@@ -22,24 +22,37 @@
 #ifndef NGI_OBJECTS_H
 #define NGI_OBJECTS_H
 
+#include "common/hashmap.h"
 #include "common/ptr.h"
 #include "ngi/utils.h"
 
 namespace NGI {
 
 class MessageQueue;
+class Scene;
 class SceneTagList;
+
+class ObjectIdList {
+public:
+	bool load(const Common::Path &path);
+	bool findId(const Common::String &symbol, uint32 &id) const;
+
+private:
+	Common::HashMap<Common::String, uint32> _ids;
+};
 
 class GameProject : public CObject {
  public:
 	int _field_4;
 	Common::String _headerFilename;
 	Common::ScopedPtr<SceneTagList> _sceneTagList;
+	ObjectIdList _objectIds;
 	int _field_10;
 
  public:
 	GameProject();
 	bool load(MfcArchive &file) override;
+	Scene *findScene(int sceneId);
 };
 
 struct PicAniInfo {

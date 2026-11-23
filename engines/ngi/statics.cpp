@@ -953,8 +953,10 @@ L12:
 		_statics->_y = _y - point.y;
 		oid = _movement->_id;
 		_movement = nullptr;
-		if (g_nmi->getPlatform() == Common::kPlatformAndroid && g_nmi->_currentScene && g_nmi->_currentScene->_soundList)
-			g_nmi->_currentScene->_soundList->stopByCreator(_id);
+		if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+			for (int i = 0; i < g_nmi->_currSoundListCount; ++i)
+				g_nmi->_currSoundList1[i]->stopByCreator(_id);
+		}
 
 		Command *ex = new Command(_id, 17, 24, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = _copyId;

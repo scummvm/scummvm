@@ -214,7 +214,7 @@ public:
 	Common::Path _sceneTracksCurrentTrack;
 	bool _sceneTrackIsPlaying;
 
-	void stopAllSounds();
+	void stopAllSounds(int flags = -1);
 	void toggleMute();
 	void playSound(int id, int flag, int creator = 0);
 	void playTrack(GameVar *sceneVar, const char *name, bool delayed);
