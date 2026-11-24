@@ -136,7 +136,8 @@ public:
 	const Common::String &getEventSender() const { return _eventSender; }
 	void setEventSender(const Common::String &sender) { _eventSender = sender; }
 
-	void takeAction(const Action &action);
+	// Returns whether anything took the action
+	bool takeAction(const Action &action);
 	void takeAction(int32 type, const Common::String &target, double value);
 	void takeAction(int32 type, const Common::String &target, const Common::String &text);
 	void handleInput(NancyInput &input);

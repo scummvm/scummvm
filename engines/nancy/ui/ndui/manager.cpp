@@ -163,19 +163,20 @@ void Manager::updateTooltip(const Common::Point &mousePos) {
 	_tooltipWindow.setVisible(show);
 }
 
-void Manager::takeAction(const Action &action) {
+bool Manager::takeAction(const Action &action) {
 	if (action.target.hasPrefixIgnoreCase("Engine_")) {
 		takeEngineAction(action);
-		return;
+		return true;
 	}
 
 	for (Panel *panel : _panels) {
 		if (panel->takeAction(action)) {
-			return;
+			return true;
 		}
 	}
 
 	debugC(1, kDebugEngine, "Unhandled NDUI action %d on \"%s\" from \"%s\"", action.type, action.target.c_str(), action.sender.c_str());
+	return false;
 }
 
 void Manager::takeAction(int32 type, const Common::String &target, double value) {

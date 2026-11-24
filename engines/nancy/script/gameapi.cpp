@@ -2016,7 +2016,7 @@ static const luaL_Reg kSceneFunctions[] = {
 };
 
 // Hands a message to the scene or the record it is for, or else to the UI.
-// Returns whether a scene or a record took it.
+// Returns whether any of them took it.
 static bool deliverMessage(lua_State *L, const char *actionName, UI::NDUI::Action &action) {
 	// The targets that answer do so to the control whose event is being handled
 	UI::NDUI::Manager *ui = NancySceneState.getNDUI();
@@ -2049,7 +2049,9 @@ static bool deliverMessage(lua_State *L, const char *actionName, UI::NDUI::Actio
 	}
 
 	if (!hasReceiver && ui) {
-		ui->takeAction(action);
+		// Scripts go by whether the UI took it: the dialog that dims the screen
+		// stops disabling panels at the first one that didn't
+		wasTaken = ui->takeAction(action);
 	}
 
 	return wasTaken;
