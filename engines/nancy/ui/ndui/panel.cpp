@@ -841,14 +841,61 @@ void Panel::updateGraphics() {
 		control->fireEvents(kEventUpdate, false, 0, control->getName());
 	}
 
-	bool changed = _background->update(seconds);
+	bool isAllChanged = _background->update(seconds) || _isDirty;
+	Common::Rect changedArea;
 	for (Control *control : _controls) {
-		changed |= control->update(seconds);
+		if (!control->update(seconds)) {
+			continue;
+		}
+
+		if (!control->isDrawnInBounds()) {
+			isAllChanged = true;
+			continue;
+		}
+
+		Common::Rect bounds = control->getDrawBounds();
+		bounds.translate(0, -_scrollOffset);
+		if (changedArea.isEmpty()) {
+			changedArea = bounds;
+		} else {
+			changedArea.extend(bounds);
+		}
 	}
 
-	if (changed || _isDirty) {
+	if (isAllChanged) {
 		redraw();
+	} else if (!changedArea.isEmpty()) {
+		redrawArea(changedArea);
 	}
+}
+
+// A button fading in and out of its hover color only needs its own area drawn
+void Panel::redrawArea(const Common::Rect &area) {
+	const Common::Rect clipped = area.findIntersectingRect(Common::Rect(_drawSurface.w, _drawSurface.h));
+	if (clipped.isEmpty()) {
+		return;
+	}
+
+	Graphics::ManagedSurface target(_drawSurface, clipped);
+	target.clear(0);
+
+	const Common::Point offset(-clipped.left, -clipped.top);
+	if (_backgroundColor >> 24) {
+		Common::Rect background = _background->_bounds;
+		background.translate(offset.x, offset.y);
+		background.clip(Common::Rect(target.w, target.h));
+		if (!background.isEmpty()) {
+			target.fillRect(background, argbToColor(target.format, _backgroundColor));
+		}
+	}
+
+	_background->draw(target, offset);
+	for (Control *control : _controls) {
+		control->draw(target, Common::Point(offset.x, offset.y - _scrollOffset));
+	}
+
+	addChangedArea(clipped);
+	_needsRedraw = true;
 }
 
 void Panel::redraw() {

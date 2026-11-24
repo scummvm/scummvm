@@ -35,6 +35,8 @@ public:
 	Button(Panel *panel) : Control(panel) {}
 
 	bool update(float seconds) override;
+	// Text can reach past the bounds, and so does a button that is pressed in
+	bool isDrawnInBounds() const override { return _text.empty() && !_isPressed; }
 	void draw(Graphics::ManagedSurface &surface, const Common::Point &offset) const override;
 
 	bool containsPoint(const Common::Point &pos) const override { return _bounds.contains(pos); }

@@ -148,6 +148,7 @@ private:
 	void setCollapsed(bool isCollapsed);
 	void fireEvent(int32 eventType, double value = 0.0);
 	void redraw();
+	void redrawArea(const Common::Rect &area);
 	Control *getControlAt(const Common::Point &pos) const;
 	void showItem(int16 itemID, bool show);
 	void cycleFocus();

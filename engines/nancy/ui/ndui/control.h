@@ -58,6 +58,11 @@ public:
 
 	// The area the control draws to, which can reach past its bounds
 	virtual Common::Rect getDrawBounds() const { return _bounds; }
+
+	// Whether a change of its colors shows inside getDrawBounds() only, so the
+	// rest of the panel doesn't have to be drawn again
+	virtual bool isDrawnInBounds() const { return false; }
+
 	virtual void onMouseHover(const Common::Point &pos) {}
 	virtual bool onMouseDown(const Common::Point &pos) { return false; }
 	virtual void onMouseMove(const Common::Point &pos) {}
