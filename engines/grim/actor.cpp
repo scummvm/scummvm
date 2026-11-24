@@ -808,6 +808,70 @@ void Actor::moveTo(const Math::Vector3d &pos) {
 	_pos += moveVec;
 }
 
+void Actor::walkForwardEMI(float dist, bool backwards) {
+	const int maxHandovers = 8;
+	const float minMove = 0.0001f;
+	const float turnMargin = 0.1f;
+	const float reverseTurn = 180.2f;
+	Set *set = g_grim->getCurrSet();
+	Common::Array<const Sector *> walked;
+
+	Sector *sector = set->findFloorSector(_pos, Sector::WalkType, walked);
+	if (!sector)
+		set->findClosestSector(_pos, &sector, &_pos);
+
+	for (int depth = 0; dist > 0.f; depth++) {
+		Math::Vector3d heading(_moveYaw.getSine(), 0.f, _moveYaw.getCosine());
+		if (backwards)
+			heading = -heading;
+		if (!sector) {
+			moveTo(_pos + heading * dist);
+			_walkedCur = true;
+			break;
+		}
+
+		Math::Vector3d ahead = _pos + heading;
+		ahead.y() = sector->getPlaneHeight(ahead);
+		Math::Vector3d dir = ahead - _pos;
+		dir.normalize();
+		Math::Vector3d end = _pos + dir * dist;
+		if (sector->isPointOnFloor(end)) {
+			end.y() = sector->getPlaneHeight(end);
+			moveTo(end);
+			_walkedCur = true;
+			break;
+		}
+		if (depth >= maxHandovers)
+			break;
+
+		Sector::ExitInfo ei;
+		sector->getFloorExitInfo(Math::Line3d(_pos, end), &ei);
+		Math::Vector3d toExit = ei.exitPoint - _pos;
+		if (toExit.getMagnitude() > minMove)
+			_walkedCur = true;
+		dist -= toExit.dotProduct(heading);
+		_pos = ei.exitPoint;
+
+		walked.push_back(sector);
+		Sector *next = set->findFloorSector(_pos, Sector::WalkType, walked);
+		if (next) {
+			sector = next;
+			continue;
+		}
+		walked.pop_back();
+
+		float turn = ei.angleWithEdge.getDegrees();
+		if (ei.edgeVertex >= 0) {
+			if (turn > 90.f)
+				turn = -(reverseTurn - turn);
+			else
+				turn += turnMargin;
+		}
+		if (turn != 0.f)
+			turnTo(0, _moveYaw.getDegrees() + turn, 0, true);
+	}
+}
+
 void Actor::walkForward() {
 	float dist = g_grim->getPerSecond(_walkRate) * _timeScale;
 	// Limit the amount of the movement per frame, otherwise with low fps
@@ -847,6 +911,11 @@ void Actor::walkForward() {
 		backwards = true;
 	}
 
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		walkForwardEMI(dist, backwards);
+		return;
+	}
+
 	int tries = 0;
 	while (dist > 0.0f) {
 		Sector *currSector = nullptr, *prevSector = nullptr, *startSector = nullptr;
@@ -856,13 +925,6 @@ void Actor::walkForward() {
 		if (!currSector) { // Shouldn't happen...
 			Math::Vector3d forwardVec(-_moveYaw.getSine(),
 			                           _moveYaw.getCosine(), 0);
-
-			// EMI: Y is up-down, actors use an X-Z plane for movement
-			if (g_grim->getGameType() == GType_MONKEY4) {
-				forwardVec.x() = -forwardVec.x();
-				forwardVec.z() = forwardVec.y();
-				forwardVec.y() = 0;
-			}
 
 			if (backwards)
 				forwardVec = -forwardVec;
@@ -878,23 +940,13 @@ void Actor::walkForward() {
 			prevSector = currSector;
 			Math::Vector3d forwardVec;
 			const Math::Vector3d &normal = currSector->getNormal();
-			if (g_grim->getGameType() == GType_GRIM) {
-				Math::Angle ax = Math::Vector2d(normal.x(), normal.z()).getAngle();
-				Math::Angle ay = Math::Vector2d(normal.y(), normal.z()).getAngle();
+			Math::Angle ax = Math::Vector2d(normal.x(), normal.z()).getAngle();
+			Math::Angle ay = Math::Vector2d(normal.y(), normal.z()).getAngle();
 
-				float z1 = -_moveYaw.getCosine() * ay.getCosine();
-				float z2 = _moveYaw.getSine() * ax.getCosine();
-				forwardVec = Math::Vector3d(-_moveYaw.getSine() * ax.getSine(),
-				                             _moveYaw.getCosine() * ay.getSine(), z1 + z2);
-			} else {
-				Math::Angle ax = Math::Vector2d(normal.x(), normal.y()).getAngle();
-				Math::Angle az = Math::Vector2d(normal.z(), normal.y()).getAngle();
-
-				float y1 = _moveYaw.getCosine() * az.getCosine();
-				float y2 = _moveYaw.getSine() * ax.getCosine();
-				forwardVec = Math::Vector3d(-_moveYaw.getSine() * ax.getSine(), y1 + y2,
-				                            -_moveYaw.getCosine() * az.getSine());
-			}
+			float z1 = -_moveYaw.getCosine() * ay.getCosine();
+			float z2 = _moveYaw.getSine() * ax.getCosine();
+			forwardVec = Math::Vector3d(-_moveYaw.getSine() * ax.getSine(),
+			                             _moveYaw.getCosine() * ay.getSine(), z1 + z2);
 
 			if (backwards)
 				forwardVec = -forwardVec;
@@ -917,13 +969,6 @@ void Actor::walkForward() {
 			// the path
 			currSector = g_grim->getCurrSet()->findPointSector(ei.exitPoint + (float)0.0001 * puckVec, Sector::WalkType);
 
-			// EMI: some sectors are significantly higher/lower than others.
-			if (currSector && g_grim->getGameType() == GType_MONKEY4) {
-				float planeDist = currSector->distanceToPoint(_pos);
-				if (fabs(planeDist) < 1.f)
-					_pos -= planeDist * currSector->getNormal();
-			}
-
 			if (currSector == prevSector || currSector == startSector)
 				break;
 		}
@@ -939,9 +984,6 @@ void Actor::walkForward() {
 
 		ei.angleWithEdge += (float)1.0f;
 
-		if (g_grim->getGameType() == GType_MONKEY4) {
-			ei.angleWithEdge = -ei.angleWithEdge;
-		}
 		turnTo(0, _moveYaw + ei.angleWithEdge * turnDir, 0, true);
 
 		if (oldDist <= dist + 0.001f) {

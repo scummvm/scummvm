@@ -583,6 +583,7 @@ private:
 	ScreenBounds getScreenBounds() const;
 	void collisionHandlerCallback(Actor *other) const;
 	void updateWalk();
+	void walkForwardEMI(float dist, bool backwards);
 	void addShadowPlane(const char *n, Set *scene, int shadowId);
 	bool shouldDrawShadow(int shadowId);
 	void stopTalking();

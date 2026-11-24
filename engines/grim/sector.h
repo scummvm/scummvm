@@ -66,6 +66,8 @@ public:
 	SectorType getType() const { return _type; } // FIXME: Implement type de-masking
 	bool isVisible() const { return _visible && !_invalid; }
 	bool isPointInSector(const Math::Vector3d &point) const;
+	bool isPointOnFloor(const Math::Vector3d &point) const;
+	float getPlaneHeight(const Math::Vector3d &point) const;
 	float distanceToPoint(const Math::Vector3d &point) const;
 	Common::List<Math::Line3d> getBridgesTo(Sector *sector) const;
 
@@ -82,6 +84,7 @@ public:
 		int edgeVertex;
 	};
 	void getExitInfo(const Math::Vector3d &start, const Math::Vector3d &dir, struct ExitInfo *result) const;
+	void getFloorExitInfo(const Math::Line3d &segment, struct ExitInfo *result) const;
 
 	int getNumSortplanes() { return _numSortplanes; }
 	int getSortplane(int setup);
