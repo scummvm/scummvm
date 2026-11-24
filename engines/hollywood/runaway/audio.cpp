@@ -255,6 +255,17 @@ void RunawayAudio::playPointer() {
 		Audio::makeRawStream(samples, data.size(), 16000, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN), 3);
 }
 
+void RunawayAudio::playInventoryIdle() {
+	// The old museum demo calls cue 22, but ships no sample for it.
+	if (_museum)
+		return;
+	// Chapter six omits the shared knock; chapter five has the same sample
+	// as chapters one through four and is present on the same retail disc.
+	const Common::String archive = Common::String::format("RESOURCE.S%02u", MIN<byte>(_chapter, 5));
+	play(archive.c_str(), 5, 1000, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN,
+		Audio::Mixer::kSFXSoundType, _effects[0], 255, false, 16000);
+}
+
 void RunawayAudio::playMenuMusic() {
 	if (_museum) {
 		playMusic(11);

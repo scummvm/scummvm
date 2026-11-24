@@ -33,6 +33,10 @@ const uint kCursorWidth = 60;
 const uint kButtonX = 312;
 const byte kMuseumPickupFrames[] = {0, 30, 31, 32, 31, 30, 31, 32, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 3};
 const byte kMuseumBlinkFrames[] = {1, 2, 1, 0, 3};
+const byte kMuseumIdleFrames[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+	11, 12, 13, 14, 11, 12, 13, 14, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0
+};
 
 void shadeBevelPixel(Graphics::ManagedSurface &screen, int x, int y, int amount) {
 	uint16 *pixel = (uint16 *)screen.getBasePtr(x, y);
@@ -179,6 +183,7 @@ void RunawayUI::restoreState(const RunawaySaveState &state, uint32 now) {
 	_audio.stopEffect();
 	_now = _buttonTick = _verbStarted = _portraitTick = _mouthTick = _lastInteraction = now;
 	_blinkUntil = _idleStarted = _pickupStarted = 0;
+	_idleStep = 0;
 	_pickupItem = _hovered = _buttonFrame = _optionsFrame = _mouth = 0;
 	_blocked = _speaking = _inventoryPresentation = _returnAfterPickup = _pickupSoundPlayed = false;
 	_inventoryFrame = 0xff;
@@ -202,11 +207,12 @@ void RunawayUI::setInventoryOpen(bool open) {
 	_enteredInventory = inViewport();
 	_hovered = 0;
 	_idleStarted = 0;
+	_idleStep = 0;
 	_lastInteraction = _now;
+	_blinkUntil = 0;
 	if (_museum) {
 		_mouth = 0;
 		_mouthTick = _now;
-		_blinkUntil = 0;
 	}
 	setVerb(kVerbWalk);
 }
@@ -320,30 +326,52 @@ void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool b
 		else
 			_optionsFrame = MAX<int>(0, MIN<int>(5, _optionsFrame) - steps);
 	}
-	if (_inventoryOpen && now - _portraitTick >= 60) {
-		_portraitTick = now;
-		if (_speaking || _inventoryFrame != 0xff) {
-			_blinkUntil = 0;
-			_lastInteraction = now;
-			_idleStarted = 0;
-		} else if (!busy() && (!_museum || (int32)(_blinkUntil - now) <= 0) &&
-				_random.getRandomNumber(_museum ? 29 : 49) == 0) {
-			_blinkUntil = now + (_museum ? ARRAYSIZE(kMuseumBlinkFrames) * 60 : 180);
-		}
-		if (!busy() && !_speaking && _inventoryFrame == 0xff && !_idleStarted && now - _lastInteraction >= 30000)
-			_idleStarted = now;
-		if (_idleStarted && now - _idleStarted >= _idlePortrait.frameCount() * 60) {
-			_idleStarted = 0;
-			_lastInteraction = now;
-		}
-	}
+	updatePortrait(now);
 	updateCursor();
+}
+
+void RunawayUI::updatePortrait(uint32 now) {
+	if (!_inventoryOpen || now - _portraitTick < 60)
+		return;
+	_portraitTick = now;
+	if (_speaking || _inventoryFrame != 0xff || _pickupItem) {
+		_blinkUntil = _idleStarted = 0;
+		_lastInteraction = now;
+		return;
+	}
+	if (_idleStarted) {
+		const uint count = _museum ? ARRAYSIZE(kMuseumIdleFrames) : _idlePortrait.frameCount();
+		const uint step = MIN<uint>(count - 1, (now - _idleStarted) / 60);
+		// Retail 0x411a10 sounds at cel 11. Museum 0x427830 repeats cel 13
+		// three times, sounding each knock before reversing back to rest.
+		for (uint i = _idleStep + 1; i <= step; ++i) {
+			if (_museum ? kMuseumIdleFrames[i] == 13 : i == 11)
+				_audio.playInventoryIdle();
+		}
+		_idleStep = step;
+		if (now - _idleStarted >= count * 60) {
+			_idleStarted = 0;
+			_lastInteraction = now;
+		}
+		return;
+	}
+	if (!_blocked && now - _lastInteraction >= (_museum ? 60000U : 30000U)) {
+		_idleStarted = now;
+		_idleStep = 0;
+		_blinkUntil = 0;
+	} else if (_blinkUntil) {
+		if ((int32)(_blinkUntil - now) <= 0)
+			_blinkUntil = 0;
+	} else if (_random.getRandomNumber(_museum ? 29 : 49) == 0) {
+		_blinkUntil = now + (_museum ? ARRAYSIZE(kMuseumBlinkFrames) * 60 : 180);
+	}
 }
 
 RunawayUI::Command RunawayUI::click(bool right) {
 	Command command;
+	if (_idleStarted)
+		return command;
 	_lastInteraction = _now;
-	_idleStarted = 0;
 	if (!right && overOptions()) {
 		command.type = Command::kOpenMenu;
 		return command;
@@ -516,7 +544,7 @@ void RunawayUI::drawInventory(Graphics::ManagedSurface &screen) {
 	} else if (_inventoryFrame != 0xff) {
 		_portrait.draw(screen, _inventoryFrame, 0, kRunawayViewportTop);
 	} else if (_idleStarted) {
-		_idlePortrait.draw(screen, MIN<uint>(_idlePortrait.frameCount() - 1, (_now - _idleStarted) / 60), 0, kRunawayViewportTop);
+		_idlePortrait.draw(screen, _museum ? kMuseumIdleFrames[_idleStep] : _idleStep, 0, kRunawayViewportTop);
 	} else {
 		const bool blinking = (int32)(_blinkUntil - _now) > 0;
 		uint frame = _speaking ? _mouth : blinking ? 6 : 0;

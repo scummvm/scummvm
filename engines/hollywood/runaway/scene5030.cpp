@@ -158,6 +158,8 @@ bool Scene5030::loadRoomGraphics() {
 
 void Scene5030::start(uint32 now) {
 	_now = _lastUpdate = now;
+	_idleHead.reset(now);
+	_idleBody.reset(now);
 	_entering = true;
 	resume();
 	if (_entryScene == 5030)
@@ -231,6 +233,7 @@ bool Scene5030::restoreState(const RunawaySaveState &state, uint32 now, bool ent
 	setPosition(Common::Point(state.x, state.y), state.facing);
 	setCameraX(entering ? state.x - kScreenWidth / 2 : state.camera);
 	_idleHead.reset(now);
+	_idleBody.reset(now);
 	return _actor.setFrame(_facing, 0, 0);
 }
 
@@ -329,6 +332,7 @@ void Scene5030::showSpeechRow() {
 	const uint16 sample = _globalSpeech ? _speechSample : _voiceSamples[_speechRow - 500];
 	_speech.start(Common::U32String(_text.largeTextRecord(_speechRow), Common::kDos850), sample, _globalSpeech, _now);
 	_idleHead.reset(_now);
+	_idleBody.reset(_now);
 	debugC(1, kDebugScene, "Runaway demo: dialogue row %u, voice %u, ends at row %u",
 		_speechRow, sample, _speechEnd);
 }
@@ -477,6 +481,7 @@ void Scene5030::playWalkFootstep() {
 void Scene5030::click(Common::Point mouse, RunawayVerb verb, byte item) {
 	if (_action != kNone || speaking() || mouse.y < kRoomTop || mouse.y >= kRoomTop + kRoomHeight)
 		return;
+	_idleBody.interact(_now);
 	const byte id = hotspotAt(mouse);
 	debugC(1, kDebugScene, "Runaway demo: verb %u item %u at %d,%d, hotspot %u",
 		(uint)verb, item, mouse.x + _cameraX, mouse.y - kRoomTop, id);
@@ -1117,9 +1122,16 @@ void Scene5030::update(uint32 now, int scrollDirection, bool inventoryOpen) {
 	if (inventoryOpen && !inventoryPresentation()) {
 		_actionStarted += pausedTime;
 		_idleHead.pause(pausedTime);
+		_idleBody.pause(pausedTime);
 		return;
 	}
 	updateAction();
+	if (_idleBody.active() && _walkPath.active() && !speaking()) {
+		_idleBody.interact(now);
+		_idleHead.reset(now);
+		if (_idleBody.update(now, true, false, _facing, _actor, _random))
+			return;
+	}
 	if ((_action == kNone || _action == kWalkingAction) && _walkPath.active()) {
 		const uint previousWalkFrame = _walkElapsed / 60;
 		if (_walkPath.advance(elapsed * 0.18f, _position, _facing)) {
@@ -1145,9 +1157,11 @@ void Scene5030::update(uint32 now, int scrollDirection, bool inventoryOpen) {
 		walkForAction(Common::Point(900, 473), 2, kMeltIce);
 	const bool walking = _walkPath.active();
 	const bool idle = !walking && !_speechRow && _action == kNone;
-	_idleHead.update(now, idle, _speech.frameDuration(), _random);
+	_idleHead.update(now, idle && !_idleBody.active(), _random);
+	const bool bodyIdle = _idleBody.update(now, idle, _idleHead.centered(), _facing, _actor, _random);
 	const int headFrame = walking ? -1 : _speechRow ? speechFrame() : idle ? _idleHead.frame() : -1;
-	_actor.setFrame(_facing, walking ? 1 + (_walkElapsed / 60) % 12 : 0, headFrame);
+	if (!bodyIdle)
+		_actor.setFrame(_facing, walking ? 1 + (_walkElapsed / 60) % 12 : 0, headFrame);
 	if (scrollDirection)
 		_cameraX += scrollDirection * MAX<int>(1, elapsed / (_fastScrolling ? 2 : 4));
 	else if (walking || (_action != kNone && _action != kIntro))

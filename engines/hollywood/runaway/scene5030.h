@@ -140,6 +140,7 @@ private:
 	RunawayActor _actor;
 	RunawaySpeech _speech;
 	RunawayIdleHead _idleHead;
+	RunawayIdleBody _idleBody;
 	RunawayAnimation _intro, _lidActor, _lid, _unplug, _climb, _actionAnimation, _water, _hatch;
 	RunawayVideo _video;
 	Common::Point _position = Common::Point(623, 447);

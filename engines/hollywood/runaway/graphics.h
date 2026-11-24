@@ -89,6 +89,8 @@ public:
 	bool setFrame(uint facing, uint frame, int headFrame = -1);
 	bool loadAction(uint chunk, uint frames);
 	bool setActionFrame(uint frame);
+	bool loadIdle(byte facing, byte action);
+	bool setIdleFrame(uint frame);
 	static float perspectiveHeight(Common::Point position);
 	void draw(Graphics::ManagedSurface &surface, Common::Point position, int cameraX,
 		int roomTop, const Common::Array<byte> &mask, const Common::Array<byte> &maps,
@@ -104,8 +106,12 @@ private:
 	bool _museum = false;
 	bool decodeBodyFrame(const Common::Array<byte> &bank, const byte *descriptor, uint end);
 	bool decodeFrame(const Common::Array<byte> &bank, const byte *descriptor, uint end, bool head);
+	bool loadActionBank(uint chunk, uint frames, Common::Array<byte> &descriptors, Common::Array<byte> &bank);
+	bool setBankFrame(uint frame, const Common::Array<byte> &descriptors, const Common::Array<byte> &bank);
 	Common::Array<byte> _descriptors, _headDescriptors;
 	Common::Array<byte> _actionDescriptors, _actionBank;
+	Common::Array<byte> _idleDescriptors, _idleBank;
+	int _idleChunk = -1;
 	Common::Array<byte> _banks[kFacings];
 	Common::Array<byte> _headBanks[kHeadFacings];
 	Common::Array<byte> _pixels, _opacity, _shadow;

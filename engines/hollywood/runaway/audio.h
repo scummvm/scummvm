@@ -52,6 +52,7 @@ public:
 	void playEffectAt(uint16 cue, Common::Point position, byte volume = Audio::Mixer::kMaxChannelVolume, byte channel = 0, bool loop = false);
 	void playFootstep(byte surface, byte variant, byte volume = Audio::Mixer::kMaxChannelVolume, int x = -1);
 	void playPointer();
+	void playInventoryIdle();
 	void playMenuMusic();
 	void playDemoSlideshowMusic();
 	void stopMusic();

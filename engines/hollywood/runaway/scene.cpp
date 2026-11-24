@@ -81,6 +81,7 @@ bool RunawayRoomScene::load(uint16 entryScene) {
 void RunawayRoomScene::start(uint32 now) {
 	_now = _lastUpdate = now;
 	_idleHead.reset(now);
+	_idleBody.reset(now);
 	if (townChapter() || hopiChapter() || finaleChapter()) {
 		_inventory.startChapter(finaleChapter() ? 6 : hopiChapter() ? 5 : 4);
 		_entering = true;
@@ -247,6 +248,7 @@ bool RunawayRoomScene::restoreState(const RunawaySaveState &state, uint32 now, b
 	_now = _lastUpdate = now;
 	_random.setSeed(state.randomSeed);
 	_idleHead.reset(now);
+	_idleBody.reset(now);
 	if (entering)
 		updateCamera();
 	else
@@ -275,6 +277,8 @@ bool RunawayRoomScene::enterRoom(uint16 number, Common::Point position, byte fac
 	_position = position;
 	_walkPath.reset(position);
 	_facing = facing;
+	_idleHead.reset(_now);
+	_idleBody.reset(_now);
 	_walkElapsed = 0;
 	_pendingHotspot = _pendingItem = 0;
 	_pendingAction = 0;
@@ -431,6 +435,7 @@ void RunawayRoomScene::arrive() {
 void RunawayRoomScene::click(Common::Point mouse, RunawayVerb verb, byte item) {
 	if (busy())
 		return;
+	_idleBody.interact(_now);
 	const byte id = hotspotAt(mouse);
 	_caption = actionCaption(id, verb, item);
 	const RunawayHotspot *spot = hotspot(id);
@@ -470,8 +475,8 @@ void RunawayRoomScene::click(Common::Point mouse, RunawayVerb verb, byte item) {
 void RunawayRoomScene::showLine() {
 	const SpeechLine &line = _lines[_lineIndex];
 	_speech.start(line.text, line.sample, line.global, _now, line.color);
-	if (_game == kRunawayFullGame)
-		_idleHead.reset(_now);
+	_idleHead.reset(_now);
+	_idleBody.reset(_now);
 }
 
 void RunawayRoomScene::say(uint16 cue, byte variation, bool global, byte speaker, byte color) {
@@ -677,10 +682,16 @@ int RunawayRoomScene::sceneViewportYOffset() const {
 
 void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpen) {
 	_now = now;
+	if (inventoryOpen || _inventoryOpen) {
+		_idleHead.pause(now - _lastUpdate);
+		_idleBody.pause(now - _lastUpdate);
+	}
 	_inventoryOpen = inventoryOpen;
 	const uint elapsed = MIN<uint>(100, now - _lastUpdate);
 	_lastUpdate = now;
 	if (_sequence.active()) {
+		_idleHead.reset(now);
+		_idleBody.reset(now);
 		_sequence.update(now);
 		if (!_sequence.active()) {
 			if (_inventorySequence) {
@@ -772,8 +783,18 @@ void RunawayRoomScene::leaveRoom(uint16 scene) {
 }
 
 void RunawayRoomScene::updateActor(uint elapsed, int scrollDirection, bool inventoryOpen) {
-	if (inventoryOpen || !shouldUpdateActor()) {
+	if (inventoryOpen)
 		return;
+	if (!shouldUpdateActor()) {
+		_idleHead.reset(_now);
+		_idleBody.reset(_now);
+		return;
+	}
+	if (_idleBody.active() && _walkPath.active() && !speaking()) {
+		_idleBody.interact(_now);
+		_idleHead.reset(_now);
+		if (_idleBody.update(_now, true, false, _facing, _actor, _random))
+			return;
 	}
 	if (_walkPath.active() && !speaking()) {
 		_walkPath.advance(elapsed * actorWalkSpeed(), _position, _facing);
@@ -792,19 +813,14 @@ void RunawayRoomScene::updateActor(uint elapsed, int scrollDirection, bool inven
 		}
 	}
 	const bool walking = _walkPath.active();
-	int headFrame = -1;
-	if (_game != kRunawayMuseumDemo) {
-		const bool idle = !walking && !busy();
-		_idleHead.update(_now, idle, _speech.frameDuration(), _random);
-		if (!walking) {
-			headFrame = speaking() && !speaker() ? speechFrame() : idle ? _idleHead.frame() : -1;
-		}
-	} else if (_game == kRunawayMuseumDemo && !walking && speaking() && !speaker()) {
-		headFrame = speechFrame();
-	}
+	const bool idle = !walking && !busy() && shouldDrawActor();
+	_idleHead.update(_now, idle && !_idleBody.active(), _random, _game == kRunawayMuseumDemo);
+	const bool bodyIdle = _idleBody.update(_now, idle && _game != kRunawayMuseumDemo,
+		_idleHead.centered(), _facing, _actor, _random);
+	const int headFrame = walking ? -1 : speaking() && !speaker() ? speechFrame() : idle ? _idleHead.frame() : -1;
 	if (_actionUsesActor && _roomAction && !_actionFrames.empty() && !walking && !speaking()) {
 		_actor.setActionFrame(_actionFrames[_actionStep]);
-	} else {
+	} else if (!bodyIdle) {
 		_actor.setFrame(_facing, walking ? 1 + (_walkElapsed / 60) % 12 : 0, headFrame);
 	}
 	if (scrollDirection) {

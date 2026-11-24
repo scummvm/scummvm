@@ -53,7 +53,7 @@ public:
 	void toggleInventory();
 	bool cancel();
 	bool inventoryOpen() const { return _inventoryOpen; }
-	bool busy() const { return _pickupItem != 0; }
+	bool busy() const { return _pickupItem != 0 || _idleStarted != 0; }
 	RunawayVerb verb() const { return _verb; }
 	byte hovered() const { return _hovered; }
 	void captureState(RunawaySaveState &state) const;
@@ -77,6 +77,7 @@ private:
 	void updateCursor();
 	Common::U32String inventoryCaption() const;
 	void drawInventory(Graphics::ManagedSurface &screen);
+	void updatePortrait(uint32 now);
 
 	RunawayAudio _audio;
 	RunawayInventory &_inventory;
@@ -108,6 +109,7 @@ private:
 	uint32 _mouthTick = 0;
 	uint32 _blinkUntil = 0, _idleStarted = 0, _lastInteraction = 0, _pickupStarted = 0;
 	uint _mouth = 0;
+	uint _idleStep = 0;
 	int _cursorKey = -1;
 };
 

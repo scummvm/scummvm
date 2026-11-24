@@ -22,6 +22,7 @@
 #include "common/file.h"
 #include "common/util.h"
 #include "hollywood/runaway/animation.h"
+#include "hollywood/runaway/graphics.h"
 
 namespace Hollywood {
 namespace {
@@ -159,17 +160,16 @@ void RunawayIdleHead::pause(uint32 elapsed) {
 	_blinkTick += elapsed;
 }
 
-void RunawayIdleHead::update(uint32 now, bool enabled, uint blinkInterval, Common::RandomSource &random) {
+void RunawayIdleHead::update(uint32 now, bool enabled, Common::RandomSource &random, bool museum) {
 	if (!enabled || !_active) {
 		reset(now);
 		_active = enabled;
 		return;
 	}
-	// Native 0x42a610 moves between three poses on a 60 ms clock. The
-	// center is index 6 in the transition table at 0x464660. Blinks use
-	// 0x42ab50's separate timer, retaining the last speech character period.
+	// Retail 0x434c50 turns every 60 ms; 0x412f60 restores the 150 ms
+	// blink clock after speech. The museum demo uses rand() % 400.
 	static const byte frames[] = {24, 23, 22, 21, 20, 19, 0, 12, 13, 14, 15, 16, 17};
-	blinkInterval = MAX<uint>(10, blinkInterval);
+	const uint blinkInterval = 150;
 	while (now - _turnTick >= 60 || now - _blinkTick >= blinkInterval) {
 		if (now - _turnTick >= 60 && (int32)((_turnTick + 60) - (_blinkTick + blinkInterval)) <= 0) {
 			_turnTick += 60;
@@ -177,7 +177,7 @@ void RunawayIdleHead::update(uint32 now, bool enabled, uint blinkInterval, Commo
 				_step += _target > _step ? 1 : -1;
 				_frame = frames[_step];
 			} else if (!_blink) {
-				const uint choice = random.getRandomNumber(499);
+				const uint choice = random.getRandomNumber(museum ? 399 : 499);
 				if (_step == 6) {
 					if (choice < 4)
 						_target = choice < 2 ? 0 : 12;
@@ -196,6 +196,112 @@ void RunawayIdleHead::update(uint32 now, bool enabled, uint blinkInterval, Commo
 			}
 		}
 	}
+}
+
+void RunawayIdleBody::reset(uint32 now) {
+	_kind = kNone;
+	_frames.clear();
+	_tick = _lastInteraction = now;
+	_step = 0;
+	_returning = false;
+}
+
+void RunawayIdleBody::pause(uint32 elapsed) {
+	_tick += elapsed;
+	_lastInteraction += elapsed;
+}
+
+void RunawayIdleBody::interact(uint32 now) {
+	_lastInteraction = now;
+	if (!active() || _returning)
+		return;
+	if (_kind == kTurn) {
+		reset(now);
+		return;
+	}
+	_returning = true;
+	const byte frame = _frames[_step];
+	// Native 0x436650 lowers the arm before walking. A shrug already past
+	// its halfway point finishes forwards instead.
+	if (_kind == kShrug && frame > 5)
+		return;
+	_frames.clear();
+	for (int i = frame; i >= 0; --i)
+		_frames.push_back(i);
+	_step = 0;
+	_tick = now;
+}
+
+bool RunawayIdleBody::start(Kind kind, uint32 now, byte facing, RunawayActor &actor, Common::RandomSource &random) {
+	if (!actor.loadIdle(facing, kind))
+		return false;
+	_kind = kind;
+	_tick = now;
+	_step = 0;
+	_returning = false;
+	_frames.clear();
+	// Retail 0x435dd0: scratch twice, shrug, or hold the thinking pose.
+	if (kind == kScratch) {
+		for (uint i = 0; i < 16; ++i)
+			_frames.push_back(i);
+		for (uint repeat = 0; repeat < 2; ++repeat) {
+			for (uint i = 16; i < 20; ++i)
+				_frames.push_back(i);
+			for (int i = 18; i >= 15; --i)
+				_frames.push_back(i);
+		}
+		for (int i = 14; i >= 0; --i)
+			_frames.push_back(i);
+	} else if (kind == kShrug) {
+		_lastInteraction = now;
+		for (uint i = 0; i < 13; ++i)
+			_frames.push_back(i);
+	} else {
+		for (uint i = 0; i < 12; ++i)
+			_frames.push_back(i);
+		const uint hold = (1 + random.getRandomNumber(9)) * 10;
+		for (uint i = 0; i < hold; ++i)
+			_frames.push_back(12);
+		for (int i = 11; i >= 0; --i)
+			_frames.push_back(i);
+	}
+	return true;
+}
+
+bool RunawayIdleBody::update(uint32 now, bool enabled, bool headCentered, byte &facing, RunawayActor &actor, Common::RandomSource &random) {
+	if (!enabled) {
+		reset(now);
+		return false;
+	}
+	if (now - _tick >= 60) {
+		_tick = now;
+		if (_kind == kTurn) {
+			facing += facing < 4 ? 1 : -1;
+			actor.setFrame(facing, 0);
+			if (facing == 4 && !start(kShrug, now, facing, actor, random))
+				reset(now);
+		} else if (active()) {
+			if (++_step == _frames.size()) {
+				_kind = kNone;
+				_returning = false;
+			}
+		} else if (headCentered) {
+			// Retail 0x436840 checks each random gesture twice out of 1000.
+			if (now - _lastInteraction >= 30000) {
+				if (facing != 4)
+					_kind = kTurn;
+				else if (!start(kShrug, now, facing, actor, random))
+					_lastInteraction = now;
+			} else {
+				const uint choice = random.getRandomNumber(999);
+				if (choice < 4)
+					start(choice < 2 ? kScratch : kThink, now, facing, actor, random);
+			}
+		}
+	}
+	if (_kind == kTurn)
+		return actor.setFrame(facing, 0);
+	return active() && actor.setIdleFrame(_frames[_step]);
 }
 
 void RunawayCarlaAnimation::update(uint32 now, bool talking, Common::RandomSource &random) {

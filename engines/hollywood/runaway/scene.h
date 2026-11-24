@@ -310,6 +310,7 @@ protected:
 	Common::RandomSource _random;
 	RunawaySpeech _speech;
 	RunawayIdleHead _idleHead;
+	RunawayIdleBody _idleBody;
 	ChunkArchive _archive;
 	SceneTextStore _text;
 	RunawayActor _actor;

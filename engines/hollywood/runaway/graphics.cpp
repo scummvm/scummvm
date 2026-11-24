@@ -259,6 +259,7 @@ bool RunawayActor::load(Model model) {
 	if (_loadedModel == model)
 		return setFrame(3, 0);
 	_loadedModel = -1;
+	_idleChunk = -1;
 	Common::File file;
 	Common::Array<byte> palette;
 	const bool museum = model == kMuseumInterior || model == kMuseumHall;
@@ -361,6 +362,11 @@ bool RunawayActor::setFrame(uint facing, uint frame, int headFrame) {
 }
 
 bool RunawayActor::loadAction(uint chunk, uint frames) {
+	const int facing = _facing;
+	return loadActionBank(chunk, frames, _actionDescriptors, _actionBank) && setFrame(facing, 0);
+}
+
+bool RunawayActor::loadActionBank(uint chunk, uint frames, Common::Array<byte> &descriptors, Common::Array<byte> &bank) {
 	// RESOURCE.001 has 216 banks, each preceded by 100 frame descriptors.
 	// The size table counts only the sprite data after those descriptors.
 	Common::File file;
@@ -374,29 +380,56 @@ bool RunawayActor::loadAction(uint chunk, uint frames) {
 	if (!offset || !size || (uint64)offset + 3200 + size > (uint64)file.size()) {
 		return false;
 	}
-	_actionDescriptors.resize(frames * 32);
-	_actionBank.resize(size);
+	descriptors.resize(frames * 32);
+	bank.resize(size);
 	file.seek(offset);
-	if (file.read(_actionDescriptors.data(), _actionDescriptors.size()) != _actionDescriptors.size() ||
-			!file.seek(offset + 3200) || file.read(_actionBank.data(), size) != size) {
+	if (file.read(descriptors.data(), descriptors.size()) != descriptors.size() ||
+			!file.seek(offset + 3200) || file.read(bank.data(), size) != size) {
 		return false;
 	}
-	const int facing = _facing;
 	for (uint frame = 0; frame < frames; ++frame) {
-		if (!setActionFrame(frame)) {
+		if (!setBankFrame(frame, descriptors, bank)) {
 			return false;
 		}
 	}
-	return setFrame(facing, 0);
+	return true;
 }
 
 bool RunawayActor::setActionFrame(uint frame) {
-	if (frame >= _actionDescriptors.size() / 32) {
+	return setBankFrame(frame, _actionDescriptors, _actionBank);
+}
+
+bool RunawayActor::loadIdle(byte facing, byte action) {
+	if (_museum || _loadedModel < 0 || facing >= kFacings || action < 1 || action > 3)
+		return false;
+	// Retail 0x40ef90 selects six directions, two variants and three outfits.
+	// East/west stops share the southeast/southwest standing poses.
+	static const byte directions[] = {0, 1, 2, 2, 3, 4, 4, 5};
+	const uint outfit = _loadedModel == kCabin || _loadedModel == kCabinAlternate ? 1 :
+		_loadedModel == kChapters456 || _loadedModel == kChapters456Alternate ? 2 : 0;
+	const bool alternate = _loadedModel == kChapters12Alternate || _loadedModel == kCabinAlternate ||
+		_loadedModel == kChapters456Alternate;
+	const uint chunk = ((outfit * 6 + directions[facing]) * 2 + alternate) * 6 + action - 1;
+	if (_idleChunk == (int)chunk)
+		return true;
+	_idleChunk = -1;
+	if (!loadActionBank(chunk, action == 1 ? 20 : 13, _idleDescriptors, _idleBank))
+		return false;
+	_idleChunk = chunk;
+	return true;
+}
+
+bool RunawayActor::setIdleFrame(uint frame) {
+	return _idleChunk >= 0 && setBankFrame(frame, _idleDescriptors, _idleBank);
+}
+
+bool RunawayActor::setBankFrame(uint frame, const Common::Array<byte> &descriptors, const Common::Array<byte> &bank) {
+	if (frame >= descriptors.size() / 32) {
 		return false;
 	}
-	const byte *descriptor = _actionDescriptors.data() + frame * 32;
-	const uint end = (frame + 1) * 32 < _actionDescriptors.size() ? READ_LE_UINT32(descriptor + 32) : _actionBank.size();
-	return decodeBodyFrame(_actionBank, descriptor, end);
+	const byte *descriptor = descriptors.data() + frame * 32;
+	const uint end = (frame + 1) * 32 < descriptors.size() ? READ_LE_UINT32(descriptor + 32) : bank.size();
+	return decodeBodyFrame(bank, descriptor, end);
 }
 
 bool RunawayActor::decodeBodyFrame(const Common::Array<byte> &bank, const byte *descriptor, uint end) {
@@ -411,7 +444,7 @@ bool RunawayActor::decodeBodyFrame(const Common::Array<byte> &bank, const byte *
 	memset(_pixels.data(), 0, _pixels.size());
 	memset(_opacity.data(), 0, _opacity.size());
 	memset(_shadow.data(), 0, _shadow.size());
-	_facing = _frame = _headFrame = -1;
+	_frame = _headFrame = -1;
 	return decodeFrame(bank, descriptor, end, false);
 }
 

@@ -570,6 +570,7 @@ float Scene2020::actorHeight() const {
 void Scene2020::start(uint32 now) {
 	_now = _lastUpdate = now;
 	_idleHead.reset(now);
+	_idleBody.reset(now);
 	for (byte item = 1; item <= 4; ++item) {
 		_inventory.add(item);
 	}

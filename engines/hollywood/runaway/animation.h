@@ -28,6 +28,8 @@
 
 namespace Hollywood {
 
+class RunawayActor;
+
 // The room actor, inventory portrait and other speakers share the original
 // text-derived mouth shapes (0..5), with a closed-eye set at 6..11.
 class RunawayLipSync {
@@ -48,13 +50,32 @@ class RunawayIdleHead {
 public:
 	void reset(uint32 now);
 	void pause(uint32 elapsed);
-	void update(uint32 now, bool enabled, uint blinkInterval, Common::RandomSource &random);
+	void update(uint32 now, bool enabled, Common::RandomSource &random, bool museum = false);
 	byte frame() const { return _frame; }
+	bool centered() const { return _step == 6 && _target == 6; }
 
 private:
 	uint32 _turnTick = 0, _blinkTick = 0;
 	byte _step = 6, _target = 6, _frame = 0;
 	bool _blink = false, _active = false;
+};
+
+class RunawayIdleBody {
+public:
+	void reset(uint32 now);
+	void pause(uint32 elapsed);
+	void interact(uint32 now);
+	bool active() const { return _kind != kNone; }
+	bool update(uint32 now, bool enabled, bool headCentered, byte &facing, RunawayActor &actor, Common::RandomSource &random);
+
+private:
+	enum Kind { kNone, kScratch, kShrug, kThink, kTurn };
+	bool start(Kind kind, uint32 now, byte facing, RunawayActor &actor, Common::RandomSource &random);
+	Kind _kind = kNone;
+	Common::Array<byte> _frames;
+	uint32 _tick = 0, _lastInteraction = 0;
+	uint _step = 0;
+	bool _returning = false;
 };
 
 class RunawayCarlaAnimation {
