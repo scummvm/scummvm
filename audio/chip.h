@@ -55,6 +55,15 @@ public:
 	 */
 	virtual void setCallbackFrequency(int timerFrequency) = 0;
 
+	/**
+	 * Set attenuation after synthesis, independently for the two outputs.
+	 * Call before start(), or from the timer callback. Values are unsigned
+	 * numerators no greater than denominator. Hardware chips may not support
+	 * a separate output mixer and return false without changing their sound.
+	 */
+	virtual bool setOutputGain(uint16 left, uint16 right, uint16 denominator) { return false; }
+
+
 protected:
 	/**
 	 * Start the callbacks.
@@ -121,6 +130,8 @@ public:
 	void setCallbackFrequency(int timerFrequency) override;
 
 	// AudioStream API
+	bool setOutputGain(uint16 left, uint16 right, uint16 denominator) override;
+
 	int readBuffer(int16 *buffer, const int numSamples) override;
 	int getRate() const override;
 	bool endOfData() const override { return false; }
@@ -143,6 +154,10 @@ protected:
 	virtual void generateSamples(int16 *buffer, int numSamples) = 0;
 
 private:
+	uint16 _gainLeft = 1;
+	uint16 _gainRight = 1;
+	uint16 _gainDenominator = 1;
+
 	int _baseFreq;
 
 	int _nextTick;

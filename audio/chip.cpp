@@ -109,6 +109,14 @@ EmulatedChip::~EmulatedChip() {
 	delete _handle;
 }
 
+bool EmulatedChip::setOutputGain(uint16 left, uint16 right, uint16 denominator) {
+	assert(denominator && left <= denominator && right <= denominator);
+	_gainLeft = left;
+	_gainRight = right;
+	_gainDenominator = denominator;
+	return true;
+}
+
 int EmulatedChip::readBuffer(int16 *buffer, const int numSamples) {
 	const int stereoFactor = isStereo() ? 2 : 1;
 	int len = numSamples / stereoFactor;
@@ -120,6 +128,15 @@ int EmulatedChip::readBuffer(int16 *buffer, const int numSamples) {
 			step = (_nextTick >> FIXP_SHIFT);
 
 		generateSamples(buffer, step * stereoFactor);
+		// The callback changes gain between synthesized blocks, so it follows
+		// the chip's timer even when a mixer read spans several callbacks.
+		if (_gainLeft != _gainDenominator || _gainRight != _gainDenominator) {
+			for (int i = 0; i < step * stereoFactor; i++) {
+				const uint16 gain = stereoFactor == 2 && (i & 1) ? _gainRight : _gainLeft;
+				buffer[i] = (int32)buffer[i] * gain / _gainDenominator;
+			}
+		}
+
 
 		_nextTick -= step << FIXP_SHIFT;
 		if (!(_nextTick >> FIXP_SHIFT)) {
