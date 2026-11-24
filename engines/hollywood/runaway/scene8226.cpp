@@ -52,7 +52,7 @@ Scene8226::Scene8226(RunawayAudio &audio, RunawayInventory &inventory, const Run
 	RunawayRoomScene(audio, inventory, strings, game), _oscar(false, 6) {}
 
 bool Scene8226::loadWalkMap() {
-	return loadRunawayMask(_archive, 1024, 600, _mask, _originalMaps, 4);
+	return loadRunawayWalkMap(_archive, 1024, 600, _mask, _originalMaps, _walkRoutes, 4, 6);
 }
 
 bool Scene8226::loadCustomResources() {

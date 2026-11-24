@@ -88,8 +88,7 @@ const char *Scene5080::actionCaptionVariant(byte id, bool look, byte item) const
 
 bool Scene5080::loadCustomResources() {
 	Graphics::ManagedSurface scratch(1, 1, _screen.format);
-	if (!_archive.readVariableChunk(3, _walkRoutes) ||
-		!_archive.readVariableChunk(6, _parallax) || !applyRunawayPatch(_parallax, scratch) ||
+	if (!_archive.readVariableChunk(6, _parallax) || !applyRunawayPatch(_parallax, scratch) ||
 		!_archive.readVariableChunk(21, _shedRoof) || !applyRunawayPatch(_shedRoof, scratch) ||
 		!_ambientAnimations[0].load(_archive, 18, 769) ||
 		!_ambientAnimations[1].load(_archive, 17, 672) ||
@@ -110,7 +109,8 @@ bool Scene5080::loadCustomResources() {
 }
 
 bool Scene5080::applyCustomBackgroundPatches() {
-	return loadRunawayMask(_archive, _background.w, _background.h, _mask, _originalMaps, _desert.antsDistracted ? 4 : 1) &&
+	return loadRunawayWalkMap(_archive, _background.w, _background.h, _mask, _originalMaps,
+		_walkRoutes, _desert.antsDistracted ? 4 : 1, 3) &&
 		(!_desert.antsDistracted || applyPatch(_desert.dynamite == 1 ? 7 : 8));
 }
 

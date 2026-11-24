@@ -92,7 +92,7 @@ bool Scene6263::usesAlternateActor() const {
 }
 
 bool Scene6263::loadWalkMap() {
-	return loadRunawayMask(_archive, 1024, 600, _mask, _originalMaps, 21);
+	return loadRunawayWalkMap(_archive, 1024, 600, _mask, _originalMaps, _walkRoutes, 21, 23);
 }
 
 bool Scene6263::loadBackground() {

@@ -79,8 +79,7 @@ Scene5110::Scene5110(RunawayAudio &audio, RunawayInventory &inventory, const Run
 
 bool Scene5110::loadCustomResources() {
 	Graphics::ManagedSurface scratch(1, 1, _screen.format);
-	return _archive.readVariableChunk(3, _walkRoutes) &&
-		_archive.readVariableChunk(14, _gunpowder) && applyRunawayPatch(_gunpowder, scratch) &&
+	return _archive.readVariableChunk(14, _gunpowder) && applyRunawayPatch(_gunpowder, scratch) &&
 		_curtainAnimation.load(_archive, 4, 50) &&
 		_shadowAnimation.load(_archive, 5, 50) &&
 		_bucketAnimation.load(_archive, 8, 1) &&

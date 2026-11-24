@@ -125,7 +125,7 @@ private:
 	ChunkArchive _archive;
 	SceneTextStore _text;
 	Graphics::ManagedSurface _background, _screen;
-	Common::Array<byte> _mask, _maps, _unplugPatch, _openLidPatch, _closedLidPatch;
+	Common::Array<byte> _mask, _maps, _walkRoutes, _unplugPatch, _openLidPatch, _closedLidPatch;
 	Common::Array<byte> _pickupPatches[5];
 	Common::Array<uint16> _voiceSamples, _cueEnds;
 	RunawayAudio &_audio;

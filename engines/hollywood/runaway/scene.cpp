@@ -264,6 +264,7 @@ bool RunawayRoomScene::enterRoom(uint16 number, Common::Point position, byte fac
 	if (!_archive.open(path, 40) ||
 			!_text.load("RESOURCE.003", "Runaway room", sceneTextNumber(), 0, 0x1135))
 		return false;
+	_walkRoutes.clear();
 	if (!loadWalkMap()) {
 		return false;
 	}
@@ -294,7 +295,7 @@ bool RunawayRoomScene::enterRoom(uint16 number, Common::Point position, byte fac
 
 bool RunawayRoomScene::loadWalkMap() {
 	const RunawayRoom *room = findRunawayRoom(_room);
-	return loadRunawayMask(_archive, room->width, room->height, _mask, _originalMaps);
+	return loadRunawayWalkMap(_archive, room->width, room->height, _mask, _originalMaps, _walkRoutes);
 }
 
 bool RunawayRoomScene::loadForeground(uint layer, uint chunk, bool pixels) {
@@ -396,7 +397,7 @@ void RunawayRoomScene::walkTo(Common::Point target, byte facing, bool scripted, 
 	if (scripted) {
 		_walkPath.setTarget(target);
 	} else if (reserved) {
-		_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _originalMaps), target);
+		_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _originalMaps, &_walkRoutes), target);
 	} else {
 		findWalkPath(target);
 	}
@@ -407,11 +408,7 @@ void RunawayRoomScene::walkTo(Common::Point target, byte facing, bool scripted, 
 }
 
 void RunawayRoomScene::findWalkPath(Common::Point target) {
-	if (!_walkRoutes.empty()) {
-		findGameplayWalkPath(target);
-		return;
-	}
-	_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _maps), target);
+	findGameplayWalkPath(target);
 }
 
 void RunawayRoomScene::arrive() {
@@ -744,13 +741,10 @@ void RunawayRoomScene::findGameplayWalkPath(Common::Point target) {
 		// Clicks stay on the ground; hotspot approaches may use the reserved zones.
 		target.x = CLIP<int>(target.x, 0, _background.w - 1);
 		target.y = CLIP<int>(target.y, 0, _background.h - 1);
-		if (!adjustCustomWalkTargetToFloorMask(target)) {
-			while (target.y < _background.h - 1 && !_maps[_mask[target.y * _background.w + target.x]]) {
-				++target.y;
-			}
-			while (target.y > 0 && !_maps[_mask[target.y * _background.w + target.x]]) {
-				--target.y;
-			}
+		if (!adjustCustomWalkTargetToFloorMask(target) &&
+				!RunawayWalkMap(_background.w, _background.h, _mask, _maps).projectToFloor(target)) {
+			_walkPath.clear();
+			return;
 		}
 	}
 	_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _originalMaps,

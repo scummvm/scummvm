@@ -76,7 +76,9 @@ bool Scene6190::usesAlternateActor() const {
 }
 
 bool Scene6190::applyCustomBackgroundPatches() {
-	return (!_town.catapult || applyPatch(_town.catapult == 3 ? 5 : 4)) &&
+	return loadRunawayWalkMap(_archive, _background.w, _background.h, _mask, _originalMaps,
+		_walkRoutes, _town.catapult ? 10 : 1, _town.catapult ? 12 : 3) &&
+		(!_town.catapult || applyPatch(_town.catapult == 3 ? 5 : 4)) &&
 		(!_town.bankStampTaken || applyPatch(8)) &&
 		(_town.bankShelves != 2 || applyPatch(9));
 }

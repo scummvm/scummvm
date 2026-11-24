@@ -60,7 +60,7 @@ Scene6226::Scene6226(RunawayAudio &audio, RunawayInventory &inventory, const Run
 	RunawayRoomScene(audio, inventory, strings, game) {}
 
 bool Scene6226::loadWalkMap() {
-	return loadRunawayMask(_archive, 1024, 600, _mask, _originalMaps, 4);
+	return loadRunawayWalkMap(_archive, 1024, 600, _mask, _originalMaps, _walkRoutes, 4, 6);
 }
 
 bool Scene6226::applyCustomBackgroundPatches() {

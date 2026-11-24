@@ -39,6 +39,8 @@ bool loadRunawaySurface(uint chunk, int width, int height, Graphics::ManagedSurf
 bool loadRunawaySurface(const Common::Path &path, int width, int height, Graphics::ManagedSurface &surface);
 bool loadRunawaySurface(ChunkArchive &archive, uint chunk, int width, int height, Graphics::ManagedSurface &surface);
 bool loadRunawayMask(ChunkArchive &archive, int width, int height, Common::Array<byte> &mask, Common::Array<byte> &maps, uint chunk = 1);
+bool loadRunawayWalkMap(ChunkArchive &archive, int width, int height, Common::Array<byte> &mask, Common::Array<byte> &maps,
+	Common::Array<byte> &routes, uint maskChunk = 1, uint routeChunk = 3);
 byte findRunawayLight(Common::Point position, int width, const Common::Array<byte> &mask, const Common::Array<byte> &maps);
 bool applyRunawayPatch(const Common::Array<byte> &patch, Graphics::ManagedSurface &surface, int yOffset = 0, int xOffset = 0);
 

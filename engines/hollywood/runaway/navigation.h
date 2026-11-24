@@ -31,10 +31,12 @@ byte runawayFacingTo(Common::Point position, Common::Point target);
 
 class RunawayWalkMap {
 public:
+	static const uint kRouteDataSize = 21 * 21 * (20 * 4 + 19);
 	RunawayWalkMap(int width, int height, const Common::Array<byte> &mask, const Common::Array<byte> &maps,
 			const Common::Array<byte> *routes = nullptr) :
 		_width(width), _height(height), _mask(mask), _maps(maps), _routes(routes) {}
 	void findPath(Common::Point start, Common::Point target, Common::Array<Common::Point> &path) const;
+	bool projectToFloor(Common::Point &target) const;
 
 private:
 	bool walkable(int x, int y) const;
@@ -50,7 +52,7 @@ class RunawayWalkPath {
 public:
 	explicit RunawayWalkPath(Common::Point position = Common::Point()) : _x(position.x), _y(position.y) {}
 	void reset(Common::Point position);
-	void clear() { _points.clear(); _index = 0; }
+	void clear() { _points.clear(); _index = 0; _segmentFacing = 0xff; }
 	void findPath(const RunawayWalkMap &map, Common::Point target);
 	void setTarget(Common::Point target);
 	// Returns whether the fractional position changed, for footstep timing.
@@ -58,9 +60,10 @@ public:
 	bool active() const { return _index < _points.size(); }
 
 private:
-	Common::Point position() const { return Common::Point((int)(_x + 0.5f), (int)(_y + 0.5f)); }
+	Common::Point position() const;
 	Common::Array<Common::Point> _points;
 	uint _index = 0;
+	byte _segmentFacing = 0xff;
 	float _x, _y;
 };
 

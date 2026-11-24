@@ -74,7 +74,7 @@ bool Scene5030::load(uint16 entryScene) {
 	_entryScene = entryScene;
 	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	if (!_archive.open(Common::Path("RESOURCE.E03"), 50) ||
-			!loadRunawayMask(_archive, kRoomWidth, kRoomHeight, _mask, _maps) ||
+			!loadRunawayWalkMap(_archive, kRoomWidth, kRoomHeight, _mask, _maps, _walkRoutes) ||
 			!_text.load("RESOURCE.003", "Runaway shack", 503, 0, 0x1135))
 		return false;
 	_background.create(kRoomWidth, kRoomHeight, format);
@@ -308,7 +308,7 @@ void Scene5030::walkTo(Common::Point target, bool scripted) {
 	if (scripted) {
 		_walkPath.setTarget(target);
 	} else {
-		_walkPath.findPath(RunawayWalkMap(kRoomWidth, kRoomHeight, _mask, _maps), target);
+		_walkPath.findPath(RunawayWalkMap(kRoomWidth, kRoomHeight, _mask, _maps, &_walkRoutes), target);
 	}
 	_walkElapsed = _lastFootstep = 0;
 	if (!_walkPath.active())
@@ -501,9 +501,11 @@ void Scene5030::click(Common::Point mouse, RunawayVerb verb, byte item) {
 			return;
 		}
 	}
-	const Common::Point target = id == 8 && _coolerMoved ? Common::Point(1054, 448) :
+	Common::Point target = id == 8 && _coolerMoved ? Common::Point(1054, 448) :
 		id ? Common::Point(kHotspots[id].x, kHotspots[id].y) :
 		Common::Point(mouse.x + _cameraX, mouse.y - kRoomTop);
+	if (!id && !RunawayWalkMap(kRoomWidth, kRoomHeight, _mask, _maps).projectToFloor(target))
+		return;
 	walkTo(target);
 }
 

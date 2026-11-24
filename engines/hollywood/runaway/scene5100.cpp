@@ -636,8 +636,7 @@ Common::U32String Scene5100::hotspotName(byte id) const {
 
 bool Scene5100::applyCustomBackgroundPatches() {
 	const uint mask = _desert.insideBarn ? 23 : _desert.guard == 2 ? 26 : 1;
-	return loadRunawayMask(_archive, _background.w, _background.h, _mask, _originalMaps, mask) &&
-		_archive.readVariableChunk(mask + 2, _walkRoutes) &&
+	return loadRunawayWalkMap(_archive, _background.w, _background.h, _mask, _originalMaps, _walkRoutes, mask, mask + 2) &&
 		(_desert.barnDoor != 2 || applyPatch(5)) && (_desert.peanutButter != 2 || applyPatch(6));
 }
 

@@ -25,6 +25,7 @@
 
 #include "hollywood/resource.h"
 #include "hollywood/runaway/graphics.h"
+#include "hollywood/runaway/navigation.h"
 
 namespace Hollywood {
 
@@ -81,6 +82,16 @@ bool loadRunawayMask(ChunkArchive &archive, int width, int height, Common::Array
 		offset += length;
 	}
 	return offset == mask.size();
+}
+
+bool loadRunawayWalkMap(ChunkArchive &archive, int width, int height, Common::Array<byte> &mask, Common::Array<byte> &maps,
+		Common::Array<byte> &routes, uint maskChunk, uint routeChunk) {
+	routes.clear();
+	if (!loadRunawayMask(archive, width, height, mask, maps, maskChunk))
+		return false;
+	// Overviews and close-ups have masks but no routing table.
+	return archive.chunkSize(routeChunk) != RunawayWalkMap::kRouteDataSize ||
+		archive.readVariableChunk(routeChunk, routes);
 }
 
 byte findRunawayLight(Common::Point position, int width, const Common::Array<byte> &mask, const Common::Array<byte> &maps) {
