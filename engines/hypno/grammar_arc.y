@@ -88,6 +88,14 @@ void parseSN(const char *sn, const char *path, const char *enc, const char *flag
 		g_parsedArc->additionalSound = path;
 		g_parsedArc->additionalSoundRate = sampleRate;
 		assert(!stereo);
+	} else if (Common::String("S9") == sn) {
+		g_parsedArc->sound9 = path;
+		g_parsedArc->sound9Rate = sampleRate;
+		assert(!stereo);
+	} else if (Common::String("SA") == sn) {
+		g_parsedArc->soundA = path;
+		g_parsedArc->soundARate = sampleRate;
+		assert(!stereo);
 	}
 	debugC(1, kHypnoDebugParser, "SN %s", path);
 }
