@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-23 05:55+0000\n"
+"POT-Creation-Date: 2026-11-24 09:40+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -4127,7 +4127,7 @@ msgid "Pause"
 msgstr "Pausa"
 
 #: engines/metaengine.cpp:120 engines/harvester/metaengine.cpp:93
-#: engines/hollywood/runaway/engine.cpp:841 engines/igor/metaengine.cpp:98
+#: engines/hollywood/runaway/engine.cpp:846 engines/igor/metaengine.cpp:98
 #: engines/parallaction/metaengine.cpp:163
 #: engines/scumm/insane/mortimer/mortimer.cpp:79
 #: engines/ultima/ultima8/metaengine.cpp:47
@@ -4154,7 +4154,7 @@ msgstr "Menú do xogo"
 msgid "Skip"
 msgstr "Omitir"
 
-#: engines/metaengine.cpp:134 engines/hollywood/runaway/engine.cpp:863
+#: engines/metaengine.cpp:134 engines/hollywood/runaway/engine.cpp:868
 #: engines/sky/metaengine.cpp:121 engines/supernova/metaengine.cpp:315
 msgid "Skip line"
 msgstr "Omitir liña"
@@ -6523,7 +6523,7 @@ msgstr "Quitar"
 #: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
 #: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:542
 #: engines/grim/grim.cpp:642 engines/harvester/metaengine.cpp:92
-#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:852
+#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:857
 #: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
 #: engines/icb/icb.cpp:179 engines/macs2/metaengine.cpp:64
 #: engines/petka/metaengine.cpp:173 engines/phoenixvr/metaengine.cpp:82
@@ -10817,40 +10817,40 @@ msgstr "Activa o público do estudio."
 msgid "Pan voices and footsteps according to their positions on screen"
 msgstr ""
 
-#: engines/hollywood/runaway/engine.cpp:809
+#: engines/hollywood/runaway/engine.cpp:814
 #, fuzzy
 #| msgid "Look at"
 msgid "Perform action"
 msgstr "Mirar"
 
-#: engines/hollywood/runaway/engine.cpp:815
-#: engines/hollywood/runaway/engine.cpp:858
+#: engines/hollywood/runaway/engine.cpp:820
+#: engines/hollywood/runaway/engine.cpp:863
 #, fuzzy
 msgid "Next action / Cancel"
 msgstr "~A~nterior"
 
-#: engines/hollywood/runaway/engine.cpp:821 engines/sherlock/metaengine.cpp:578
+#: engines/hollywood/runaway/engine.cpp:826 engines/sherlock/metaengine.cpp:578
 #, fuzzy
 msgid "Scroll left"
 msgstr "Mover á esquerda"
 
-#: engines/hollywood/runaway/engine.cpp:826 engines/sherlock/metaengine.cpp:584
+#: engines/hollywood/runaway/engine.cpp:831 engines/sherlock/metaengine.cpp:584
 #, fuzzy
 msgid "Scroll right"
 msgstr "Mover á dereita"
 
-#: engines/hollywood/runaway/engine.cpp:831
+#: engines/hollywood/runaway/engine.cpp:836
 #, fuzzy
 #| msgid "Scroll list up"
 msgid "Scroll to the left edge"
 msgstr "Subir lista"
 
-#: engines/hollywood/runaway/engine.cpp:836
+#: engines/hollywood/runaway/engine.cpp:841
 #, fuzzy
 msgid "Scroll to the right edge"
 msgstr "Mover á esquerda"
 
-#: engines/hollywood/runaway/engine.cpp:847
+#: engines/hollywood/runaway/engine.cpp:852
 #, fuzzy
 #| msgid "Skip cutscene"
 msgid "Skip cutscene / Cancel action / Menu"

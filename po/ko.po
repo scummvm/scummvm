@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-23 05:55+0000\n"
+"POT-Creation-Date: 2026-11-24 09:40+0000\n"
 "PO-Revision-Date: 2026-05-19 20:22+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4109,7 +4109,7 @@ msgid "Pause"
 msgstr "일시 정지"
 
 #: engines/metaengine.cpp:120 engines/harvester/metaengine.cpp:93
-#: engines/hollywood/runaway/engine.cpp:841 engines/igor/metaengine.cpp:98
+#: engines/hollywood/runaway/engine.cpp:846 engines/igor/metaengine.cpp:98
 #: engines/parallaction/metaengine.cpp:163
 #: engines/scumm/insane/mortimer/mortimer.cpp:79
 #: engines/ultima/ultima8/metaengine.cpp:47
@@ -4135,7 +4135,7 @@ msgstr "게임 메뉴"
 msgid "Skip"
 msgstr "건너뛰기"
 
-#: engines/metaengine.cpp:134 engines/hollywood/runaway/engine.cpp:863
+#: engines/metaengine.cpp:134 engines/hollywood/runaway/engine.cpp:868
 #: engines/sky/metaengine.cpp:121 engines/supernova/metaengine.cpp:315
 msgid "Skip line"
 msgstr "대사 건너뛰기"
@@ -6680,7 +6680,7 @@ msgstr "잡기"
 #: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
 #: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:542
 #: engines/grim/grim.cpp:642 engines/harvester/metaengine.cpp:92
-#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:852
+#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:857
 #: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
 #: engines/icb/icb.cpp:179 engines/macs2/metaengine.cpp:64
 #: engines/petka/metaengine.cpp:173 engines/phoenixvr/metaengine.cpp:82
@@ -10659,40 +10659,40 @@ msgstr "스튜디오 관객을 활성화"
 msgid "Pan voices and footsteps according to their positions on screen"
 msgstr ""
 
-#: engines/hollywood/runaway/engine.cpp:809
+#: engines/hollywood/runaway/engine.cpp:814
 #, fuzzy
 #| msgid "Perform default action"
 msgid "Perform action"
 msgstr "기본 작업 수행"
 
-#: engines/hollywood/runaway/engine.cpp:815
-#: engines/hollywood/runaway/engine.cpp:858
+#: engines/hollywood/runaway/engine.cpp:820
+#: engines/hollywood/runaway/engine.cpp:863
 #, fuzzy
 #| msgid "Next action"
 msgid "Next action / Cancel"
 msgstr "다음 행동"
 
-#: engines/hollywood/runaway/engine.cpp:821 engines/sherlock/metaengine.cpp:578
+#: engines/hollywood/runaway/engine.cpp:826 engines/sherlock/metaengine.cpp:578
 msgid "Scroll left"
 msgstr "왼쪽으로 스크롤"
 
-#: engines/hollywood/runaway/engine.cpp:826 engines/sherlock/metaengine.cpp:584
+#: engines/hollywood/runaway/engine.cpp:831 engines/sherlock/metaengine.cpp:584
 msgid "Scroll right"
 msgstr "오른쪽으로 스크롤"
 
-#: engines/hollywood/runaway/engine.cpp:831
+#: engines/hollywood/runaway/engine.cpp:836
 #, fuzzy
 #| msgid "Scroll to top left"
 msgid "Scroll to the left edge"
 msgstr "왼쪽 상단으로 스크롤"
 
-#: engines/hollywood/runaway/engine.cpp:836
+#: engines/hollywood/runaway/engine.cpp:841
 #, fuzzy
 #| msgid "Scroll to bottom right"
 msgid "Scroll to the right edge"
 msgstr "오른쪽 하단으로 스크롤"
 
-#: engines/hollywood/runaway/engine.cpp:847
+#: engines/hollywood/runaway/engine.cpp:852
 #, fuzzy
 #| msgid "Skip cutscene"
 msgid "Skip cutscene / Cancel action / Menu"

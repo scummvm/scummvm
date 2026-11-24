@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-23 05:55+0000\n"
+"POT-Creation-Date: 2026-11-24 09:40+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://"
@@ -4134,7 +4134,7 @@ msgid "Pause"
 msgstr "暂停"
 
 #: engines/metaengine.cpp:120 engines/harvester/metaengine.cpp:93
-#: engines/hollywood/runaway/engine.cpp:841 engines/igor/metaengine.cpp:98
+#: engines/hollywood/runaway/engine.cpp:846 engines/igor/metaengine.cpp:98
 #: engines/parallaction/metaengine.cpp:163
 #: engines/scumm/insane/mortimer/mortimer.cpp:79
 #: engines/ultima/ultima8/metaengine.cpp:47
@@ -4160,7 +4160,7 @@ msgstr "游戏菜单"
 msgid "Skip"
 msgstr "跳过"
 
-#: engines/metaengine.cpp:134 engines/hollywood/runaway/engine.cpp:863
+#: engines/metaengine.cpp:134 engines/hollywood/runaway/engine.cpp:868
 #: engines/sky/metaengine.cpp:121 engines/supernova/metaengine.cpp:315
 msgid "Skip line"
 msgstr "跳过行"
@@ -6856,7 +6856,7 @@ msgstr "拿取"
 #: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
 #: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:542
 #: engines/grim/grim.cpp:642 engines/harvester/metaengine.cpp:92
-#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:852
+#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:857
 #: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
 #: engines/icb/icb.cpp:179 engines/macs2/metaengine.cpp:64
 #: engines/petka/metaengine.cpp:173 engines/phoenixvr/metaengine.cpp:82
@@ -11200,44 +11200,44 @@ msgstr "启用工作室听众"
 msgid "Pan voices and footsteps according to their positions on screen"
 msgstr ""
 
-#: engines/hollywood/runaway/engine.cpp:809
+#: engines/hollywood/runaway/engine.cpp:814
 #, fuzzy
 #| msgid "General Information"
 msgid "Perform action"
 msgstr "通用信息"
 
-#: engines/hollywood/runaway/engine.cpp:815
-#: engines/hollywood/runaway/engine.cpp:858
+#: engines/hollywood/runaway/engine.cpp:820
+#: engines/hollywood/runaway/engine.cpp:863
 #, fuzzy
 #| msgid "Next action"
 msgid "Next action / Cancel"
 msgstr "下一个操作"
 
-#: engines/hollywood/runaway/engine.cpp:821 engines/sherlock/metaengine.cpp:578
+#: engines/hollywood/runaway/engine.cpp:826 engines/sherlock/metaengine.cpp:578
 #, fuzzy
 #| msgid "Move left"
 msgid "Scroll left"
 msgstr "向左移动"
 
-#: engines/hollywood/runaway/engine.cpp:826 engines/sherlock/metaengine.cpp:584
+#: engines/hollywood/runaway/engine.cpp:831 engines/sherlock/metaengine.cpp:584
 #, fuzzy
 #| msgid "Move right"
 msgid "Scroll right"
 msgstr "向右移动"
 
-#: engines/hollywood/runaway/engine.cpp:831
+#: engines/hollywood/runaway/engine.cpp:836
 #, fuzzy
 #| msgid "Scroll list up"
 msgid "Scroll to the left edge"
 msgstr "向上滚动列表"
 
-#: engines/hollywood/runaway/engine.cpp:836
+#: engines/hollywood/runaway/engine.cpp:841
 #, fuzzy
 #| msgid "Move to bottom"
 msgid "Scroll to the right edge"
 msgstr "移到底部"
 
-#: engines/hollywood/runaway/engine.cpp:847
+#: engines/hollywood/runaway/engine.cpp:852
 #, fuzzy
 #| msgid "Skip cutscene"
 msgid "Skip cutscene / Cancel action / Menu"
