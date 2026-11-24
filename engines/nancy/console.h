@@ -82,6 +82,7 @@ private:
 	bool Cmd_setDifficulty(int argc, const char **argv);
 	bool Cmd_soundInfo(int argc, const char **argv);
 	bool Cmd_showHotspots(int argc, const char **argv);
+	bool Cmd_uiControl(int argc, const char **argv);
 
 	void printInventoryItem(uint itemID);
 

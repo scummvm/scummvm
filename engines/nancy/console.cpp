@@ -44,6 +44,8 @@
 
 #include "engines/nancy/action/actionrecord.h"
 
+#include "engines/nancy/ui/ndui/manager.h"
+
 #ifdef ENABLE_NANCY_V4
 #include "engines/nancy/script/record.h"
 #include "engines/nancy/script/scenecontext.h"
@@ -93,6 +95,7 @@ NancyConsole::NancyConsole() : GUI::Debugger() {
 	registerCmd("set_difficulty", WRAP_METHOD(NancyConsole, Cmd_setDifficulty));
 	registerCmd("sound_info", WRAP_METHOD(NancyConsole, Cmd_soundInfo));
 	registerCmd("debug_hotspots", WRAP_METHOD(NancyConsole, Cmd_showHotspots));
+	registerCmd("ui_control", WRAP_METHOD(NancyConsole, Cmd_uiControl));
 }
 
 NancyConsole::~NancyConsole() {}
@@ -1637,6 +1640,46 @@ bool NancyConsole::Cmd_setInventory(int argc, const char **argv) {
 			debugPrintf("Invalid value %s\n", argv[i + 1]);
 			continue;
 		}
+	}
+
+	return cmdExit(0, nullptr);
+}
+
+// Saved games keep which UI controls are shown, so this can repair a saved game
+// made while a control was stuck
+bool NancyConsole::Cmd_uiControl(int argc, const char **argv) {
+	if (argc != 3) {
+		debugPrintf("Shows, hides, enables or disables a control of the UI (Nancy16 and later).\n");
+		debugPrintf("Save the game afterwards to keep the change.\n");
+		debugPrintf("Usage: %s <name> show|hide|enable|disable\n", argv[0]);
+		debugPrintf("For example, %s ShowPaperDoll show brings back the outfit button of Nancy18.\n", argv[0]);
+		return true;
+	}
+
+	if (g_nancy->getState() != NancyState::kScene || !NancySceneState.getNDUI()) {
+		debugPrintf("The UI is only available in a scene of Nancy16 and later\n");
+		return true;
+	}
+
+	const Common::String command = argv[2];
+	UI::NDUI::Action action;
+	action.target = argv[1];
+	if (command.equalsIgnoreCase("show")) {
+		action.type = UI::NDUI::kActionShow;
+	} else if (command.equalsIgnoreCase("hide")) {
+		action.type = UI::NDUI::kActionHide;
+	} else if (command.equalsIgnoreCase("enable")) {
+		action.type = UI::NDUI::kActionEnable;
+	} else if (command.equalsIgnoreCase("disable")) {
+		action.type = UI::NDUI::kActionDisable;
+	} else {
+		debugPrintf("Invalid action %s\n", argv[2]);
+		return true;
+	}
+
+	if (!NancySceneState.getNDUI()->takeAction(action)) {
+		debugPrintf("The UI has no control named %s\n", argv[1]);
+		return true;
 	}
 
 	return cmdExit(0, nullptr);
