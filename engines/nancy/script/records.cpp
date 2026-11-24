@@ -1217,6 +1217,46 @@ void OverrideRecord::onZChanged() {
 	}
 }
 
+// The smallest rect around the pixels that differ between two pictures of the
+// same size and 32 bit format. Empty when they are the same.
+static Common::Rect findChangedArea(const Graphics::ManagedSurface &a, const Graphics::ManagedSurface &b) {
+	const uint rowSize = a.w * 4;
+
+	int top = 0;
+	while (top < a.h && memcmp(a.getBasePtr(0, top), b.getBasePtr(0, top), rowSize) == 0) {
+		++top;
+	}
+
+	if (top == a.h) {
+		return Common::Rect();
+	}
+
+	int bottom = a.h;
+	while (memcmp(a.getBasePtr(0, bottom - 1), b.getBasePtr(0, bottom - 1), rowSize) == 0) {
+		--bottom;
+	}
+
+	int left = a.w;
+	int right = 0;
+	for (int y = top; y < bottom; ++y) {
+		const uint32 *rowA = (const uint32 *)a.getBasePtr(0, y);
+		const uint32 *rowB = (const uint32 *)b.getBasePtr(0, y);
+		for (int x = 0; x < left; ++x) {
+			if (rowA[x] != rowB[x]) {
+				left = x;
+			}
+		}
+
+		for (int x = a.w - 1; x >= right; --x) {
+			if (rowA[x] != rowB[x]) {
+				right = x + 1;
+			}
+		}
+	}
+
+	return Common::Rect(left, top, right, bottom);
+}
+
 // An override draws by having its "Render" function called every frame, which
 // draws through the "Draw" object. Here that goes onto a picture as large as
 // the viewport, which is started over every frame. The picture is only shown
@@ -1268,9 +1308,10 @@ void OverrideRecord::updateGraphics() {
 	}
 
 	Graphics::ManagedSurface &shown = _canvas->_drawSurface;
-	const uint32 size = shown.pitch * shown.h;
-	if (memcmp(shown.getPixels(), _renderSurface.getPixels(), size) != 0) {
-		memcpy(shown.getPixels(), _renderSurface.getPixels(), size);
+	const Common::Rect changed = findChangedArea(shown, _renderSurface);
+	if (!changed.isEmpty()) {
+		memcpy(shown.getPixels(), _renderSurface.getPixels(), shown.pitch * shown.h);
+		_canvas->addChangedArea(changed);
 		_canvas->setNeedsRedraw(true);
 	}
 
