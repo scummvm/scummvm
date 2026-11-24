@@ -807,8 +807,8 @@ bool SnatcherEngine::canLoadGameStateCurrently(Common::U32String*) {
 
 bool SnatcherEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	static const char txt[] = "Saving not possible right now.\nFor now, saving is mostly limited to situations where the original interpreter would allow it.";
-	*msg = Common::U32String(txt, strnlen(txt, ARRAYSIZE(txt)));
-
+	if (msg != nullptr)
+		*msg = Common::U32String(txt, strnlen(txt, ARRAYSIZE(txt)));
 	return _saveMan->canSaveHere() && _ui->canSaveHere() && _aseq->canSaveHere();
 }
 
