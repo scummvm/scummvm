@@ -83,14 +83,14 @@ public:
 		return 0;
 	}
 
-	// The number of lines the text gets wrapped into
-	uint countLines(const Common::String &text, int width, uint fontID) {
+	// The height of the text when it gets wrapped to a width
+	int measureHeight(const Common::String &text, int width, uint fontID) {
 		_fullSurface.create(width, 1, g_nancy->_graphics->getTransparentPixelFormat());
 		addTextLine(text);
 		drawAllText(Common::Rect(width, 1), 0, fontID, fontID);
 
 		// Every text gets an empty line after it
-		return _numDrawnLines - 1;
+		return (_numDrawnLines - 1) * _lastLineStep;
 	}
 };
 
@@ -264,7 +264,15 @@ int Element::measureTextHeight(const Common::String &text, int width) const {
 	}
 
 	ElementText layout;
-	return layout.countLines(text, width, (uint)fontID) * getFontHeight();
+	return layout.measureHeight(text, width, (uint)fontID);
+}
+
+int Element::getDrawnTextHeight(const Common::String &text, int width) const {
+	if (_wordWrap) {
+		return measureTextHeight(text, width);
+	}
+
+	return text.contains("<n>") ? measureTextHeight(text, kSingleLineWidth) : getFontHeight();
 }
 
 const Graphics::Font *Element::getSystemFont() const {
@@ -292,18 +300,23 @@ void Element::drawText(Graphics::ManagedSurface &surface, const Common::String &
 	// in the rect. Wrapped text is aligned up and down in the rect like it. Text
 	// isn't cut off by a rect that is too low for it: the goal of Lights, Camera,
 	// Curses has two lines in the height of one.
-	const int textHeight = _wordWrap ? measureTextHeight(text, dest.width()) : getFontHeight();
+	const int textHeight = getDrawnTextHeight(text, dest.width());
+	const bool hasSeveralLines = !_wordWrap && text.contains("<n>");
 	ElementText layout;
 	const int renderHeight = MAX<int>(dest.height(), textHeight);
 	const Graphics::ManagedSurface &rendered = layout.render(text, _wordWrap ? dest.width() : kSingleLineWidth, renderHeight, (uint)fontID,
 		colorChannelToByte(color[1]), colorChannelToByte(color[2]), colorChannelToByte(color[3]),
-		_wordWrap ? _horizontalAlignment : (int32)ElementText::kAlignLeft, state);
+		_wordWrap || hasSeveralLines ? _horizontalAlignment : (int32)ElementText::kAlignLeft, state);
 
 	int left = dest.left;
 	int width = rendered.w;
 	int top = dest.top;
 	if (!_wordWrap) {
-		width = layout.getDrawnWidth();
+		// Each of several lines is aligned by itself, in the whole width laid out
+		if (!hasSeveralLines) {
+			width = layout.getDrawnWidth();
+		}
+
 		if (_horizontalAlignment == ElementText::kAlignCenter) {
 			left += (dest.width() - width) / 2;
 		} else if (_horizontalAlignment == ElementText::kAlignRight) {

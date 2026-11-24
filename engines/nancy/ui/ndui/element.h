@@ -64,6 +64,9 @@ public:
 
 	// The height the text takes up when it gets wrapped to the given width
 	int measureTextHeight(const Common::String &text, int width) const;
+	// The height the text takes up when drawn, which also goes for text that isn't
+	// wrapped but has several lines
+	int getDrawnTextHeight(const Common::String &text, int width) const;
 	const Graphics::Font *getSystemFont() const;
 	void setTextureName(const Common::String &textureName) { _textureName = textureName; }
 

@@ -580,6 +580,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 
 			// Record the height of the text currently drawn. Used for textbox scrolling
 			_drawnTextHeight = (_numDrawnLines - 1) * lineStep(font) + _imageVerticalOffset;
+			_lastLineStep = lineStep(font);
 		}
 
 		// Draw the footer image(s)

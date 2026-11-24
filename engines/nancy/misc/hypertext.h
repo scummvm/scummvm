@@ -40,6 +40,7 @@ public:
 		_highlightBackgroundColor(0),
 		_numDrawnLines(0),
 		_drawnTextHeight(0),
+		_lastLineStep(0),
 		_needsTextRedraw(false),
 		_defaultTextColor(0),
 		_imageVerticalOffset(0) {}
@@ -97,6 +98,7 @@ protected:
 
 	uint16 _numDrawnLines;
 	uint16 _drawnTextHeight;
+	uint16 _lastLineStep;	// How far apart the lines of the font drawn last are
 	bool _needsTextRedraw;
 
 	// Otherwise a line is as long as its text, and may run past the right of the bounds
