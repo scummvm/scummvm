@@ -174,7 +174,11 @@ void ListBox::draw(Graphics::ManagedSurface &surface, const Common::Point &offse
 
 void ListBox::onMouseHover(const Common::Point &pos) {
 	Common::Rect text = getTextBounds();
-	_hovered = (pos.x >= text.left && pos.x < text.right) ? getItemAt(pos) : -1;
+	const int hovered = (pos.x >= text.left && pos.x < text.right) ? getItemAt(pos) : -1;
+	if (hovered != _hovered) {
+		_hovered = hovered;
+		_panel->setDirty();
+	}
 }
 
 bool ListBox::onMouseDown(const Common::Point &pos) {

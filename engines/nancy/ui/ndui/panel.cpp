@@ -929,6 +929,12 @@ bool Panel::handleInput(NancyInput &input, bool canHover, bool &isOverControl) {
 		isOverControl = true;
 		hovered->onMouseHover(pos);
 
+		// Resting the mouse on a control changes nothing by itself, and redrawing
+		// a large panel every frame slows down the game
+		if ((input.input & NancyInput::kLeftMouseButtonDown) || notches) {
+			_isDirty = true;
+		}
+
 		if ((input.input & NancyInput::kLeftMouseButtonDown) && hovered->onMouseDown(pos)) {
 			_capture = hovered;
 		}
@@ -936,8 +942,6 @@ bool Panel::handleInput(NancyInput &input, bool canHover, bool &isOverControl) {
 		if (notches && hovered->onWheel(notches)) {
 			notches = 0;
 		}
-
-		_isDirty = true;
 	} else if (_enabled && (input.input & NancyInput::kLeftMouseButtonUp)) {
 		// A click on the panel itself reports no value
 		_background->fireEvents(kEventClicked, false, -1, getName());
