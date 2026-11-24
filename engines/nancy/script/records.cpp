@@ -2097,6 +2097,19 @@ bool OverlayRecord::setPicture(const Common::String &imageName) {
 	return true;
 }
 
+// Scripts can move a picture by less than a pixel per frame, like the pieces of
+// the Dossier1 DataMine puzzle. A plain picture only looks different once it
+// reaches another whole pixel. From Nancy26 on, records can also have an alpha.
+bool OverlayRecord::staysOnSamePixels(const ScriptRect &dest) {
+	if (g_nancy->getGameType() >= kGameTypeNancy26 || _modColor != kNoModColor) {
+		return false;
+	}
+
+	const ScriptMatrix transform = getTransform();
+	return transform.isTranslation() &&
+		getTransformedDest(dest, transform, 0, 0) == getTransformedDest(_dest, transform, 0, 0);
+}
+
 bool OverlayRecord::setField(const Common::String &key) {
 	lua_State *L = getLua();
 
@@ -2120,7 +2133,11 @@ bool OverlayRecord::setField(const Common::String &key) {
 				return true;
 			}
 
+			const bool isOnSamePixels = staysOnSamePixels(dest);
 			_dest = dest;
+			if (isOnSamePixels) {
+				return true;
+			}
 		}
 	} else if (key == "source") {
 		const ScriptRect source = checkRect(L, 3);

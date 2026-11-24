@@ -323,6 +323,7 @@ private:
 	void readDest(int index);
 	void readDestTable(Common::Array<ScriptRect> &dests);
 	void applyRects();
+	bool staysOnSamePixels(const ScriptRect &dest);
 	bool setPicture(const Common::String &imageName);
 
 #ifdef ENABLE_NANCY_V5
