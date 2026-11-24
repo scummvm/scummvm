@@ -220,10 +220,15 @@ void Font::setSystemFont(const Common::String &name, const Common::String &faceN
 		debugC(1, kDebugEngine, "Could not load font file %s", fileName.toString().c_str());
 	}
 
-	// None of the Windows fonts the game asks for (Tahoma, Arial, Lucida Handwriting)
-	// ship with ScummVM, so they all get replaced with the same sans-serif font
+	// None of the Windows fonts the game asks for (Tahoma, Arial, Courier, Lucida
+	// Handwriting) ship with ScummVM. Courier gets a font of the same fixed width,
+	// and the rest the same sans-serif font, italic when the name says so.
 	const int32 kBoldWeight = 700;
-	const char *substitute = weight >= kBoldWeight ? "LiberationSans-Bold.ttf" : "LiberationSans-Regular.ttf";
+	const bool isBold = weight >= kBoldWeight;
+	const bool isItalic = faceName.hasSuffixIgnoreCase("Italic");
+	const char *style = isBold ? (isItalic ? "BoldItalic" : "Bold") : (isItalic ? "Italic" : "Regular");
+	const Common::String substitute = Common::String::format("Liberation%s-%s.ttf",
+		faceName.hasPrefixIgnoreCase("Courier") ? "Mono" : "Sans", style);
 	_systemFont.reset(Graphics::loadTTFFontFromArchive(substitute, height, Graphics::kTTFSizeModeCell), DisposeAfterUse::YES);
 #endif
 
