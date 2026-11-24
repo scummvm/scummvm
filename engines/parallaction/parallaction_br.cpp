@@ -278,44 +278,48 @@ void Parallaction_br::cleanupGame() {
 }
 
 
+void Parallaction_br::loadPart(int part) {
+	cleanupGame();
+
+	// more cleanup needed for part changes (see also saveload)
+	g_globalFlags = 0;
+	cleanInventory(true);
+	Common::strcpy_s(_characterName1, "null");
+
+	_part = part;
+
+	if (getFeatures() & GF_DEMO) {
+		assert(_part == 1);
+	} else {
+		assert(_part >= 0 && _part <= 4);
+	}
+
+	_disk->selectArchive(_partNames[_part]);
+
+	memset(_counters, 0, sizeof(_counters));
+
+	_globalFlagsNames = _disk->loadTable("global");
+	_objectsNames = _disk->loadTable("objects");
+	_countersNames = _disk->loadTable("counters");
+
+	// TODO: maybe handle this into Disk
+	delete _objects;
+	if (getPlatform() == Common::kPlatformDOS) {
+		_objects = _disk->loadObjects("icone.ico");
+	} else {
+		_objects = _disk->loadObjects("icons.ico", _part);
+	}
+
+	parseLocation("common.slf");
+}
+
 void Parallaction_br::changeLocation() {
 	if (_newLocationName.empty()) {
 		return;
 	}
 
 	if (_nextPart != -1) {
-		cleanupGame();
-
-		// more cleanup needed for part changes (see also saveload)
-		g_globalFlags = 0;
-		cleanInventory(true);
-		Common::strcpy_s(_characterName1, "null");
-
-		_part = _nextPart;
-
-		if (getFeatures() & GF_DEMO) {
-			assert(_part == 1);
-		} else {
-			assert(_part >= 0 && _part <= 4);
-		}
-
-		_disk->selectArchive(_partNames[_part]);
-
-		memset(_counters, 0, sizeof(_counters));
-
-		_globalFlagsNames = _disk->loadTable("global");
-		_objectsNames = _disk->loadTable("objects");
-		_countersNames = _disk->loadTable("counters");
-
-		// TODO: maybe handle this into Disk
-		delete _objects;
-		if (getPlatform() == Common::kPlatformDOS) {
-			_objects = _disk->loadObjects("icone.ico");
-		} else {
-			_objects = _disk->loadObjects("icons.ico", _part);
-		}
-
-		parseLocation("common.slf");
+		loadPart(_nextPart);
 	}
 
 	freeLocation(false);

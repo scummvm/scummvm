@@ -597,6 +597,7 @@ public:
 public:
 	void parseLocation(const char* name) override;
 	void changeLocation() override;
+	void loadPart(int part);
 	void changeCharacter(const char *name) override;
 		void callFunction(uint index, void* parm) override;
 	void runPendingZones() override;
