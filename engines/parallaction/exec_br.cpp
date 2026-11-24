@@ -287,6 +287,39 @@ static void swapField(ScriptVar &var, Animation *a, Animation *b, Animation *sel
 	}
 }
 
+// The original binds the commands on loading: bind the unbound ones before
+// SWAP renames the animations, then exchange them too
+static void swapCommands(CommandList &commands, Location &location,
+		const AnimationPtr &a, const AnimationPtr &b) {
+	for (CommandList::iterator it = commands.begin(); it != commands.end(); ++it) {
+		CommandPtr cmd = *it;
+		if (cmd->_valid && !cmd->_zone && !cmd->_zoneName.empty()) {
+			cmd->_zone = location.findZone(cmd->_zoneName.c_str());
+			cmd->_valid = cmd->_zone != nullptr;
+		}
+		if (cmd->_zone.get() == a.get()) {
+			cmd->_zone = b;
+		} else if (cmd->_zone.get() == b.get()) {
+			cmd->_zone = a;
+		}
+	}
+}
+
+static void swapZoneCommands(ZonePtr z, Location &location,
+		const AnimationPtr &a, const AnimationPtr &b) {
+	swapCommands(z->_commands, location, a, b);
+	if (ACTIONTYPE(z) != kZoneSpeak || !z->u._speakDialogue) {
+		return;
+	}
+	Dialogue *dialogue = z->u._speakDialogue;
+	for (uint i = 0; i < dialogue->_numQuestions; i++) {
+		Question *q = dialogue->_questions[i];
+		for (int j = 0; j < NUM_ANSWERS && q->_answers[j]; j++) {
+			swapCommands(q->_answers[j]->_commands, location, a, b);
+		}
+	}
+}
+
 DECLARE_COMMAND_OPCODE(swap) {
 	/*
 		TODO:
@@ -296,6 +329,19 @@ DECLARE_COMMAND_OPCODE(swap) {
 	const char *newCharacterName = ctxt._cmd->_string.c_str();
 	AnimationPtr newCharacterAnimation = _vm->_location.findAnimation(newCharacterName);
 	AnimationPtr oldCharaterAnimation = _vm->_char._ani;
+
+	Location &location = _vm->_location;
+	swapCommands(location._commands, location, oldCharaterAnimation, newCharacterAnimation);
+	swapCommands(location._aCommands, location, oldCharaterAnimation, newCharacterAnimation);
+	swapCommands(location._escapeCommands, location, oldCharaterAnimation, newCharacterAnimation);
+	ZoneList &zones = location._zones;
+	for (ZoneList::iterator it = zones.begin(); it != zones.end(); ++it) {
+		swapZoneCommands(*it, location, oldCharaterAnimation, newCharacterAnimation);
+	}
+	AnimationList &animations = location._animations;
+	for (AnimationList::iterator it = animations.begin(); it != animations.end(); ++it) {
+		swapZoneCommands(*it, location, oldCharaterAnimation, newCharacterAnimation);
+	}
 
 	Common::strlcpy(oldCharaterAnimation->_name, _vm->_char.getName(), ZONENAME_LENGTH);
 	_vm->_char.setName(newCharacterName);
