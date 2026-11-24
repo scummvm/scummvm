@@ -105,7 +105,7 @@ namespace NGI {
 
 // Catalog placeholders until detection signatures are available.
 #define NGI_STUB(id) { \
-	{ id, nullptr, AD_ENTRY1s(id "stub.gam, "00000000000000000000000000000000", 0), \
+	{ id, nullptr, AD_ENTRY1s(id "stub.gam", "00000000000000000000000000000000", 0), \
 	  Common::RU_RUS, Common::kPlatformWindows, ADGF_UNSUPPORTED | ADGF_DROPPLATFORM, GUIO1(GUIO_NOMIDI) }, \
 	0 \
 }
