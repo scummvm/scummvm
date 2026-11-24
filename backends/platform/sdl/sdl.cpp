@@ -415,6 +415,7 @@ void OSystem_SDL::initBackend() {
 void OSystem_SDL::detectOpenGLFeaturesSupport() {
 	_oglType = OpenGL::kContextNone;
 	_supportsShaders = false;
+	_multisampleFBOMaxSamples = 0;
 #if USE_FORCED_GLES2
 	// Framebuffers and shaders are always available with GLES2
 	_oglType = OpenGL::kContextGLES2;
@@ -464,6 +465,9 @@ void OSystem_SDL::detectOpenGLFeaturesSupport() {
 
 	OpenGLContext.initialize(_oglType);
 	_supportsShaders = OpenGLContext.enginesShadersSupported;
+	if (OpenGLContext.framebufferObjectSupported && OpenGLContext.framebufferObjectMultisampleSupported) {
+		_multisampleFBOMaxSamples = OpenGLContext.multisampleMaxSamples;
+	}
 	OpenGLContext.reset();
 #if SDL_VERSION_ATLEAST(3, 0, 0)
 	SDL_GL_DestroyContext(glContext);
@@ -479,6 +483,9 @@ void OSystem_SDL::detectOpenGLFeaturesSupport() {
 	_oglType = OpenGL::kContextGL;
 	OpenGLContext.initialize(_oglType);
 	_supportsShaders = OpenGLContext.enginesShadersSupported;
+	if (OpenGLContext.framebufferObjectSupported && OpenGLContext.framebufferObjectMultisampleSupported) {
+		_multisampleFBOMaxSamples = OpenGLContext.multisampleMaxSamples;
+	}
 	OpenGLContext.reset();
 #endif
 #endif
@@ -487,6 +494,13 @@ void OSystem_SDL::detectOpenGLFeaturesSupport() {
 void OSystem_SDL::detectAntiAliasingSupport() {
 #ifndef NINTENDO_SWITCH
 	_antiAliasLevels.clear();
+
+	if (_multisampleFBOMaxSamples > 0) {
+		for (int samples = 2; samples <= _multisampleFBOMaxSamples; samples *= 2) {
+			_antiAliasLevels.push_back(samples);
+		}
+		return;
+	}
 
 	int requestedSamples = 2;
 	while (requestedSamples <= 32) {

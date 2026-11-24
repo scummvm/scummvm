@@ -151,6 +151,7 @@ protected:
 
 	OpenGL::ContextType _oglType;
 	bool _supportsShaders;
+	int _multisampleFBOMaxSamples;
 	Common::Array<uint> _antiAliasLevels;
 #endif
 
