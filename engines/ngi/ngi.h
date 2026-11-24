@@ -94,6 +94,7 @@ class NGIArchive;
 class PictureObject;
 struct PreloadItem;
 class Scene;
+class Sound;
 class SoundList;
 class AniObject;
 class Vars;
@@ -218,6 +219,7 @@ public:
 
 	void stopAllSounds(int flags = -1);
 	void toggleMute();
+	Sound *findSound(int id) const;
 	void playSound(int id, int flag, int creator = 0);
 	void playTrack(GameVar *sceneVar, const char *name, bool delayed);
 	int getSceneTrack();

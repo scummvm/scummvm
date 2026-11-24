@@ -71,7 +71,7 @@ class Phase : public StaticPhase {
 	// XML phases can add both milliseconds and multiples of the movement's loop delay.
 	int _delayMs = 0;
 	int _delayRelative = 0;
-	int16 _soundId = 0;
+	uint16 _soundId = 0;
 	bool _loopSound = false;
 	Common::Rect _rect;
 	int16 _field_7C;

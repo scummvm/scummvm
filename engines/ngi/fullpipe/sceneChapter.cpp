@@ -255,10 +255,10 @@ private:
 		Common::Keymapper *mapper = g_system->getEventManager()->getKeymapper();
 		mapper->setGameKeymapState("ngi-default", !active);
 		mapper->setGameKeymapState("dialog", active);
-		SoundList *sounds = g_nmi->_currentScene->_soundList.get();
-		if (sounds) {
-			for (int i = 0; i < sounds->getCount(); ++i)
-				sounds->getSoundByIndex(i).pause(active);
+		for (int i = 0; i < g_nmi->_currSoundListCount; ++i) {
+			SoundList &sounds = *g_nmi->_currSoundList1[i];
+			for (int j = 0; j < sounds.getCount(); ++j)
+				sounds.getSoundByIndex(j).pause(active);
 		}
 	}
 

@@ -39,6 +39,68 @@ BehaviorController::~BehaviorController() {
 
 void BehaviorController::clear() {
 	_behaviors.clear();
+	_sounds.clear();
+	_music.clear();
+}
+
+void BehaviorController::addSound(const BehaviorSound &sound, bool music) {
+	(music ? _music : _sounds).push_back(sound);
+}
+
+void BehaviorController::enableAllMusic() {
+	for (BehaviorSound &track : _music)
+		track._enabled = true;
+}
+
+void BehaviorController::onShow() {
+	for (int i = 0; i < g_nmi->_currSoundListCount; ++i) {
+		SoundList &list = *g_nmi->_currSoundList1[i];
+		for (int j = 0; j < list.getCount(); ++j) {
+			Sound &sound = list.getSoundByIndex(j);
+			if (sound.getFlags() != Sound::kMusic || !sound.isPlaying())
+				continue;
+			for (const BehaviorSound &track : _music)
+				if (track._soundId == sound.getId() && track._enabled)
+					return;
+			sound.stop();
+			return;
+		}
+	}
+}
+
+bool BehaviorSound::update(uint32 elapsed) {
+	Sound *sound = g_nmi->findSound(_soundId);
+	if (!sound)
+		return false;
+	if (sound->isPlaying())
+		return true;
+	_elapsed += elapsed;
+	// The original roll is inclusive, so zero still matches one roll out of 100.
+	if (!_enabled || _elapsed < _delay || g_nmi->_rnd.getRandomNumber(99) > _percent)
+		return false;
+	_elapsed = 0;
+	sound->play(_loop);
+	return sound->isPlaying();
+}
+
+void BehaviorController::updateSounds(uint32 elapsed) {
+	for (BehaviorSound &sound : _sounds)
+		sound.update(elapsed);
+
+	bool musicPlaying = false;
+	for (const BehaviorSound &track : _music) {
+		Sound *sound = g_nmi->findSound(track._soundId);
+		if (sound && sound->isPlaying()) {
+			musicPlaying = true;
+			break;
+		}
+	}
+	for (BehaviorSound &track : _music) {
+		if (musicPlaying)
+			track._elapsed = 0;
+		else
+			musicPlaying = track.update(elapsed);
+	}
 }
 
 void BehaviorController::initBehavior(Scene *sc, GameVar *var) {

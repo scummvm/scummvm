@@ -36,7 +36,7 @@ class Sound : public MemoryObject {
 	Common::Array<Audio::SoundHandle> _overlappingHandles;
 
 public:
-	enum { kEffect = 0, kSpeech = 1 };
+	enum { kEffect = 0, kSpeech = 1, kMusic = 2 };
 	int16 _objectId;
 
 	Sound();
@@ -49,6 +49,7 @@ public:
 	int getId() const { return _id; }
 	int getFlags() const { return _flags; }
 	Audio::SoundHandle *getHandle() const { return _handle; }
+	bool isPlaying() const;
 
 	void play(int loop, int creator = 0);
 	void unload();

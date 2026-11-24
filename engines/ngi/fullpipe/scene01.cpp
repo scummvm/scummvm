@@ -73,6 +73,11 @@ int sceneHandler01(Command *cmd) {
 		return 0;
 
 	if (!cmd->_messageNum && !cmd->_messageName.empty()) {
+		if (cmd->_messageName == "MSG_ENABLE_BHV_SOUND") {
+			if (g_nmi->_currentScene->_behaviorController)
+				g_nmi->_currentScene->_behaviorController->enableAllMusic();
+			return 0;
+		}
 		warning("Android scene 1 message %s not implemented", cmd->_messageName.c_str());
 		return 0;
 	}

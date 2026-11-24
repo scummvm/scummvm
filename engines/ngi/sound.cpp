@@ -244,8 +244,13 @@ void Sound::play(int loop, int creator) {
 	} else {
 		g_nmi->_mixer->stopHandle(*handle);
 	}
-	g_nmi->_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, audioStream);
+	const Audio::Mixer::SoundType type = android && _flags == kMusic ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
+	g_nmi->_mixer->playStream(type, handle, audioStream);
 	debugC(3, kDebugEvents, "Playing sound %d (%s), loop %d", _id, _memfilename.toString().c_str(), loop);
+}
+
+bool Sound::isPlaying() const {
+	return g_nmi->_mixer->isSoundHandleActive(*_handle);
 }
 
 void Sound::unload() {
@@ -428,16 +433,17 @@ void NGIEngine::toggleMute() {
 	}
 }
 
-void NGIEngine::playSound(int id, int flag, int creator) {
-	Sound *sound = nullptr;
-
+Sound *NGIEngine::findSound(int id) const {
 	for (int i = 0; i < _currSoundListCount; i++) {
-		sound = _currSoundList1[i]->getSound(id);
-
+		Sound *sound = _currSoundList1[i]->getSound(id);
 		if (sound)
-			break;
+			return sound;
 	}
+	return nullptr;
+}
 
+void NGIEngine::playSound(int id, int flag, int creator) {
+	Sound *sound = findSound(id);
 	if (!sound) {
 		warning("playSound: Can't find sound with ID %d", id);
 		return;
@@ -509,12 +515,7 @@ void global_messageHandler_handleSound(Command *cmd) {
 	if (!g_nmi->_soundEnabled)
 		return;
 
-	Sound *snd = nullptr;
-
-	for (int i = 0; i < g_nmi->_currSoundListCount; i++)
-		if ((snd = g_nmi->_currSoundList1[i]->getSound(cmd->_messageNum)) != nullptr)
-			break;
-
+	Sound *snd = g_nmi->findSound(cmd->_messageNum);
 	if (!snd)
 		return;
 

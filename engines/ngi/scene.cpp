@@ -22,6 +22,7 @@
 #include "ngi/ngi.h"
 
 #include "ngi/objects.h"
+#include "ngi/behavior.h"
 #include "ngi/ngiarchive.h"
 #include "ngi/statics.h"
 #include "ngi/messages.h"

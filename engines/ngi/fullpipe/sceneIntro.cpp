@@ -22,6 +22,7 @@
 #include "ngi/ngi.h"
 
 #include "ngi/constants.h"
+#include "ngi/behavior.h"
 #include "ngi/gameloader.h"
 #include "ngi/motion.h"
 #include "ngi/scenes.h"
@@ -104,7 +105,8 @@ int sceneHandlerIntro(Command *ex) {
 	if (g_nmi->getPlatform() == Common::kPlatformAndroid && !ex->_messageName.empty()) {
 		debugC(3, kDebugEvents, "Android intro message %s", ex->_messageName.c_str());
 		if (ex->_messageName == "MSG_ENABLE_BHV_SOUND") {
-			warning("Android intro message %s not implemented", ex->_messageName.c_str());
+			if (g_nmi->_currentScene->_behaviorController)
+				g_nmi->_currentScene->_behaviorController->enableAllMusic();
 			return 0;
 		}
 	}

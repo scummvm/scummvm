@@ -22,7 +22,14 @@
 #ifndef NGI_BEHAVIOR_H
 #define NGI_BEHAVIOR_H
 
+#include "ngi/utils.h"
+
 namespace NGI {
+
+class AniObject;
+class GameVar;
+class MessageQueue;
+class Scene;
 
 struct BehaviorMove {
 	MessageQueue *_messageQueue;
@@ -59,8 +66,22 @@ struct BehaviorAni {
 	void initObjectBehavior(GameVar *var, Scene *sc, AniObject *ani);
 };
 
+// A scene can schedule the same shared sound with different delays and chances.
+struct BehaviorSound {
+	uint16 _soundId;
+	uint32 _delay;
+	uint32 _percent;
+	uint32 _elapsed;
+	bool _loop;
+	bool _enabled;
+
+	bool update(uint32 elapsed);
+};
+
 class BehaviorController : public CObject {
 	Common::Array<BehaviorAni> _behaviors;
+	Common::Array<BehaviorSound> _sounds;
+	Common::Array<BehaviorSound> _music;
 	Scene *_scene;
 	bool _isActive;
 
@@ -73,6 +94,10 @@ class BehaviorController : public CObject {
 	void initBehavior(Scene *scene, GameVar *var);
 
 	void update();
+	void addSound(const BehaviorSound &sound, bool music);
+	void enableAllMusic();
+	void onShow();
+	void updateSounds(uint32 elapsed);
 	void updateBehavior(BehaviorAni &behaviorInfo, BehaviorAnim &entry);
 	void updateStaticAniBehavior(AniObject &ani, int delay, const BehaviorAnim &beh);
 

@@ -31,6 +31,7 @@
 #include "backends/keymapper/keymapper.h"
 #include "engines/util.h"
 #include "ngi/ngi.h"
+#include "ngi/behavior.h"
 #include "ngi/constants.h"
 #include "ngi/detection.h"
 #include "ngi/messages.h"
@@ -264,6 +265,16 @@ private:
 				XML_PROP(title, false)
 				XML_PROP(flags, false)
 			KEY_END()
+			XML_KEY(BEHAVIORCONTROLLER)
+				XML_KEY(BHVR_SOUND)
+					XML_PROP(id, true)
+					XML_PROP(delay, false)
+					XML_PROP(percent, false)
+					XML_PROP(flags, false)
+					XML_PROP(enable, false)
+				KEY_END()
+				layout.top()->children["BHVR_MUSIC"] = layout.top()->children["BHVR_SOUND"];
+			KEY_END()
 			XML_KEY(QUEUE)
 				XML_PROP(id, true)
 				XML_PROP(title, false)
@@ -400,7 +411,7 @@ private:
 	}
 
 	bool parserCallback_SOUND(ParserNode *node) {
-		int16 id;
+		uint16 id;
 		if (!readId(node->values["id"], id))
 			return parserError("Unknown sound ID " + node->values["id"]);
 		const int flags = atoi(node->values.getValOrDefault("flags").c_str());
@@ -424,6 +435,23 @@ private:
 			return parserError("Unknown queue ID " + node->values["id"]);
 		queue->_title = node->values.getValOrDefault("title");
 		_scene._messageQueues.push_back(queue.release());
+		return true;
+	}
+
+	bool parserCallback_BEHAVIORCONTROLLER(ParserNode *) {
+		_scene._behaviorController.reset(new BehaviorController());
+		return true;
+	}
+
+	bool parserCallback_BHVR_SOUND(ParserNode *node) {
+		BehaviorSound sound = {};
+		if (!readId(node->values["id"], sound._soundId))
+			return parserError("Unknown behavior sound " + node->values["id"]);
+		sound._delay = strtoul(node->values.getValOrDefault("delay").c_str(), nullptr, 10);
+		sound._percent = strtoul(node->values.getValOrDefault("percent").c_str(), nullptr, 10);
+		sound._loop = atoi(node->values.getValOrDefault("flags").c_str()) != 0;
+		sound._enabled = !node->values.contains("enable") || boolProperty(*node, "enable");
+		_scene._behaviorController->addSound(sound, node->name == "BHVR_MUSIC");
 		return true;
 	}
 
@@ -476,7 +504,8 @@ private:
 			cmd->_cmd = 35;
 			cmd->_param = boolProperty(*node, "cycled");
 			cmd->_z = boolProperty(*node, "stop") ? 2 : 1;
-			idProperty = "id";
+			if (!readId(node->values.getValOrDefault("id"), cmd->_messageNum))
+				return parserError("Unknown sound in SOUND");
 		} else if (kind == "MESSAGE" || kind == "5") {
 			cmd->_cmd = 17;
 			cmd->_messageName = node->values.getValOrDefault("msg");
@@ -622,11 +651,12 @@ private:
 		return true;
 	}
 
-	bool readId(const Common::String &name, int16 &id) const {
+	template<typename T>
+	bool readId(const Common::String &name, T &id) const {
 		uint32 value;
 		if (!_project._objectIds.findId(name, value) || value > 0xffff)
 			return false;
-		id = static_cast<int16>(value);
+		id = static_cast<T>(value);
 		return true;
 	}
 
@@ -733,7 +763,10 @@ Common::Error NGIEngine::enterAndroidScene1() {
 
 	clearGlobalMessageQueueList1();
 	clearMessageHandlers();
-	stopAllSounds(-1);
+	stopAllSounds(Sound::kSpeech);
+	stopAllSounds(Sound::kEffect);
+	if (room->_behaviorController)
+		room->_behaviorController->onShow();
 	_currSoundListCount = 0;
 	if (room->_soundList)
 		_currSoundList1[_currSoundListCount++] = room->_soundList.get();
@@ -788,6 +821,9 @@ Common::Error NGIEngine::runAndroid() {
 	Scene *intro2 = intro ? project.findScene(SC_INTRO2) : nullptr;
 	if (intro && !intro2)
 		return Common::Error(Common::kNoGameDataFoundError, "Could not load the second Full Pipe Android intro scene");
+	Scene *common = intro ? project.findScene(SC_COMMON) : nullptr;
+	if (intro && !common)
+		return Common::Error(Common::kNoGameDataFoundError, "Could not load the shared Full Pipe Android resources");
 
 	_isSaveAllowed = false;
 	initGraphics(parser.width(), parser.height(), nullptr);
@@ -809,6 +845,8 @@ Common::Error NGIEngine::runAndroid() {
 		_currSoundList1[_currSoundListCount++] = startScene->_soundList.get();
 	if (intro2 && intro2->_soundList)
 		_currSoundList1[_currSoundListCount++] = intro2->_soundList.get();
+	if (common && common->_soundList)
+		_currSoundList1[_currSoundListCount++] = common->_soundList.get();
 
 	Graphics::ManagedSurface &frame = _backgroundSurface;
 	frame.create(parser.width(), parser.height(), format);
@@ -855,6 +893,8 @@ Common::Error NGIEngine::runAndroid() {
 				deleteModalObject();
 			redraw = true;
 		} else {
+			if (scene->_behaviorController)
+				scene->_behaviorController->updateSounds(elapsed);
 			for (MessageQueue *queue : *_globalMessageQueueList)
 				redraw |= queue->updatePause(elapsed);
 			processMessages();
@@ -869,6 +909,8 @@ Common::Error NGIEngine::runAndroid() {
 		if (scene != _currentScene) {
 			stopAllSounds(Sound::kSpeech);
 			stopAllSounds(Sound::kEffect);
+			if (_currentScene->_behaviorController)
+				_currentScene->_behaviorController->onShow();
 			debugC(2, kDebugDrawing, "Switched Android scene from %d to %d", scene->_sceneId, _currentScene->_sceneId);
 			redraw = true;
 		}
