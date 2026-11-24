@@ -935,12 +935,19 @@ static int saveData(lua_State *L) {
 	const char *name = luaL_checkstring(L, 2);
 	lua_settop(L, 3);
 
+	ScriptSavedData *saved = (ScriptSavedData *)NancySceneState.getPuzzleData(ScriptSavedData::getTag());
+
+	// Saving nil removes the value: Dossier1 looks for a player's name that way
+	if (lua_isnil(L, 3)) {
+		saved->values.erase(name);
+		return 0;
+	}
+
 	Common::Array<byte> packed;
 	if (!writeSavedValue(L, 3, packed, 0)) {
 		return luaL_error(L, "Save:Data can only save tables, numbers, booleans, strings and nils");
 	}
 
-	ScriptSavedData *saved = (ScriptSavedData *)NancySceneState.getPuzzleData(ScriptSavedData::getTag());
 	saved->values.setVal(name, packed);
 	return 0;
 }
