@@ -2875,6 +2875,7 @@ void TextRecord::applyDest() {
 	if (_graphic._drawSurface.w != width || _graphic._drawSurface.h != height) {
 		_graphic._drawSurface.create(width, height, g_nancy->_graphics->getTransparentPixelFormat());
 		_isDirty = true;
+		_isScrollingTextDirty = true;
 	}
 
 	_graphic.moveTo(getTransformedDest(_dest, getTransform(), width, height));
@@ -2890,6 +2891,7 @@ void TextRecord::setText(const Common::String &text) {
 	_numRevealed = 0;
 	_shownText = _revealsAll ? _text : Common::String();
 	_isDirty = true;
+	_isScrollingTextDirty = true;
 }
 
 bool TextRecord::revealNext() {
@@ -2916,12 +2918,14 @@ bool TextRecord::revealNext() {
 	_shownText += _text.substr(_numRevealed, end - _numRevealed);
 	_numRevealed = end;
 	_isDirty = true;
+	_isScrollingTextDirty = true;
 	return true;
 }
 
 void TextRecord::run(double sceneTime, double elapsedTime) {
 	if (_element.blend(UI::NDUI::kStateNormal, (float)elapsedTime, kTextBlendRate)) {
 		_isDirty = true;
+		_isScrollingTextDirty = true;
 	}
 
 	if (_yVelocity == 0.0) {
@@ -2933,7 +2937,7 @@ void TextRecord::run(double sceneTime, double elapsedTime) {
 
 	// A text that moves is done once it has left its place
 	const Common::Rect dest = _dest.toRect();
-	const int textHeight = _element.measureTextHeight(_shownText, dest.width());
+	const int textHeight = _isScrollingTextDirty ? _element.getDrawnTextHeight(_shownText, dest.width()) : _scrollingText.h;
 	if ((_yOffset > textHeight && _yVelocity > 0.0) || (_yOffset < -dest.height() && _yVelocity < 0.0)) {
 		finish();
 	}
@@ -2954,13 +2958,47 @@ void TextRecord::updateGraphics() {
 	if (_isDirty) {
 		_isDirty = false;
 
-		Common::Rect area(_graphic._drawSurface.w, _graphic._drawSurface.h);
-		area.translate(0, -(int)_yOffset);
-
 		_graphic._drawSurface.clear(0);
-		_element.drawText(_graphic._drawSurface, _shownText, area, false);
+		if (!drawScrollingText()) {
+			Common::Rect area(_graphic._drawSurface.w, _graphic._drawSurface.h);
+			area.translate(0, -(int)_yOffset);
+			_element.drawText(_graphic._drawSurface, _shownText, area, false);
+		}
+
 		_graphic.setNeedsRedraw(true);
 	}
+}
+
+// Returns false for a text that fits in the record, which gets drawn as usual
+bool TextRecord::drawScrollingText() {
+	if (_yVelocity == 0.0) {
+		return false;
+	}
+
+	const int width = _graphic._drawSurface.w;
+	const int height = _graphic._drawSurface.h;
+	if (_isScrollingTextDirty) {
+		_isScrollingTextDirty = false;
+
+		const int textHeight = MAX<int>(_element.getDrawnTextHeight(_shownText, width), 1);
+		_scrollingText.create(width, textHeight, _graphic._drawSurface.format);
+		_scrollingText.clear(0);
+		if (textHeight > height) {
+			_element.drawText(_scrollingText, _shownText, Common::Rect(width, textHeight), false);
+		}
+	}
+
+	if (_scrollingText.h <= height) {
+		return false;
+	}
+
+	const int scroll = (int)_yOffset;
+	const Common::Rect source(0, MAX<int>(scroll, 0), width, MIN<int>(scroll + height, _scrollingText.h));
+	if (source.top < source.bottom) {
+		_graphic._drawSurface.copyRectToSurface(_scrollingText.rawSurface(), 0, source.top - scroll, source);
+	}
+
+	return true;
 }
 
 bool TextRecord::prepareReset() {

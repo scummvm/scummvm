@@ -340,11 +340,10 @@ void Element::drawText(Graphics::ManagedSurface &surface, const Common::String &
 				continue;
 			}
 
-			for (int x = 0; x < width; ++x) {
+			const int firstX = MAX<int>(0, -(left + offset));
+			const int endX = MIN<int>(width, surface.w - (left + offset));
+			for (int x = firstX; x < endX; ++x) {
 				int destX = left + x + offset;
-				if (destX < 0 || destX >= surface.w) {
-					continue;
-				}
 
 				byte a, r, g, b;
 				rendered.format.colorToARGB(rendered.getPixel(x, y), a, r, g, b);
