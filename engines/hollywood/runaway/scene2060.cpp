@@ -132,6 +132,11 @@ void Scene2060::applyCustomHotspotState() {
 
 RunawayRoomScene::ActionResult Scene2060::dispatchCustomSceneAction(uint16 action) {
 	switch (action) {
+	case 5: // Try to take the serum stand.
+		if (_game != kRunawayFullGame || !_restoredContent)
+			return kUnhandled;
+		executeItemAction(13);
+		return kHandled;
 	case 302: // Climb back to Gina's room.
 		beginRoomAnimation(action, 4, 44);
 		return kHandled;

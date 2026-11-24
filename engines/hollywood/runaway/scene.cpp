@@ -55,6 +55,25 @@ const RunawayResponse kGlobalResponses[] = {
 	{0, 31, 25, 0},
 };
 
+// New bindings for the original, unused response handlers.
+const RunawayItemAction kRestoredItemActions[] = {
+	{kHospitalStoreroom, 2, 8, 9, 0}, // Try the car keys in the left file cabinet.
+	{kHospitalStoreroom, 2, 9, 9, 0}, // Try the car keys in the right file cabinet.
+	{kHospitalStoreroom, 15, 3, 27, 0}, // Return the syringe to its box.
+	{kHospitalStoreroom, 17, 7, 27, 0}, // Return the head to the anatomical model.
+	{kHospitalStoreroom, 19, 11, 26, 0}, // Return the medical reference book to its box.
+	{kHospitalBathroom, 11, 1, 26, 0}, // Return the marker to the wastebasket.
+	{kHospitalBathroom, 11, 9, 12, 0}, // Discard the marker in the toilet.
+	{kHospitalBathroom, 15, 1, 25, 0}, // Discard the syringe in the wastebasket.
+	{kHospitalBathroom, 15, 9, 25, 0}, // Discard the syringe in the toilet.
+	{kHospitalBathroom, 19, 1, 12, 0}, // Discard the medical reference book in the wastebasket.
+	{kHospitalBathroom, 19, 9, 12, 0}, // Discard the medical reference book in the toilet.
+	{kMuseumLaboratory, 6, 7, 25, 0}, // Discard the battery in the wastepaper basket.
+	{kMuseumLaboratory, 9, 7, 12, 0}, // Discard the varnish in the wastepaper basket.
+	{kMuseumLaboratory, 9, 12, 26, 0}, // Return the varnish to the briefcase.
+	{6190, 20, 4, 27, 0}, // Return the ancient stapler to the bank shelves.
+};
+
 } // End of anonymous namespace
 
 RunawayRoomScene::RunawayRoomScene(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
@@ -455,6 +474,9 @@ void RunawayRoomScene::click(Common::Point mouse, RunawayVerb verb, byte item) {
 					break;
 				}
 			}
+			const RunawayItemAction *restored = restoredItemAction(item, id);
+			if (restored)
+				approach = restored->approach;
 		}
 		approach = customizeSceneActionApproach(id, index != 0, item, approach);
 		if (approach > 0) {
@@ -560,7 +582,23 @@ void RunawayRoomScene::skipSpeech() {
 	}
 }
 
+const RunawayItemAction *RunawayRoomScene::restoredItemAction(byte item, byte id) const {
+	if (_game != kRunawayFullGame || !_restoredContent)
+		return nullptr;
+	for (uint i = 0; i < ARRAYSIZE(kRestoredItemActions); ++i) {
+		const RunawayItemAction &action = kRestoredItemActions[i];
+		if (action.room == _room && action.item == item && action.hotspot == id)
+			return &action;
+	}
+	return nullptr;
+}
+
 void RunawayRoomScene::useItem(byte item, byte id) {
+	const RunawayItemAction *restored = restoredItemAction(item, id);
+	if (restored) {
+		executeItemAction(restored->action);
+		return;
+	}
 	const RunawayRoom *room = findRunawayRoom(_room);
 	for (uint i = 0; i < room->itemActionCount; ++i) {
 		const RunawayItemAction &action = room->itemActions[i];
@@ -594,9 +632,24 @@ void RunawayRoomScene::executeItemAction(uint16 action) {
 		case 2: // A variation of "That won't work."
 			say(1, _random.getRandomNumber(2), true);
 			return;
+		case 7: // "No can do."
+			say(6, _random.getRandomBit(), true);
+			return;
+		case 12: // Keep the item (masculine).
+			say(11, _random.getRandomNumber(2), true);
+			return;
 		case 24: // Think before rejecting the combination.
 			say(20, 0, true);
 			say(20, 1 + _random.getRandomNumber(2), true);
+			return;
+		case 25: { // Keep the item (feminine).
+			const byte variation = _random.getRandomNumber(2);
+			say(11, variation ? variation + 2 : 0, true);
+			return;
+		}
+		case 26: // Refuse to put the item back (masculine).
+		case 27: // Refuse to put the item back (feminine).
+			say(21, (action == 27 ? 2 : 0) + _random.getRandomBit(), true);
 			return;
 		case 29: // Refuse to burn the object.
 			say(_random.getRandomNumber(4) ? 23 : 14, 0, true);

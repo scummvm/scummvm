@@ -365,6 +365,7 @@ void Scene4050::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport
 }
 
 RunawayRoomScene::ActionResult Scene4050::dispatchCustomSceneAction(uint16 action) {
+	const bool restoredResponses = _game == kRunawayFullGame && _restoredContent;
 	if (museumChapter()) {
 		switch (action) {
 		case 302: // Look at the restoration shelves.
@@ -389,15 +390,17 @@ RunawayRoomScene::ActionResult Scene4050::dispatchCustomSceneAction(uint16 actio
 			}
 			return kHandled;
 		case 312: // Look in the wastepaper basket.
-			say(19, 1, true);
+			executeItemAction(restoredResponses ? 14 : 23);
 			return kHandled;
 		case 313: // Use the wastepaper basket.
 			say(4, 0, true);
 			return kHandled;
-		case 315: // Use the tank.
-			say(7, 0, true);
+		case 315: // Try to take the tank.
+			executeItemAction(restoredResponses ? 18 : 8);
 			return kHandled;
 		case 317: // Use the machine.
+			executeItemAction(restoredResponses ? 7 : 15);
+			return kHandled;
 		case 335: // Use an item with the laser.
 			say(14, _random.getRandomNumber(2), true);
 			return kHandled;
