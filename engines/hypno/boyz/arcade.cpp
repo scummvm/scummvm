@@ -492,12 +492,12 @@ char BoyzEngine::selectDirection() {
 						}
 						viewingMap = !viewingMap;
 					} else if (!viewingMap && mousePos.x <= _screenW / 2) {
-						playSound(_soundPath + "lmine2l.raw", 1);
+						playSound(_soundPath + _sound9, 1, _sound9Rate);
 						screen->free();
 						delete screen;
 						return 'L';
 					} else if (!viewingMap) {
-						playSound(_soundPath + "lmine2r.raw", 1);
+						playSound(_soundPath + _soundA, 1, _soundARate);
 						screen->free();
 						delete screen;
 						return 'R';
