@@ -347,6 +347,13 @@ public:
 	void processMainStream();
 	double getFrameSeconds() const { return _frameSeconds; }
 
+	// How long the last frame took for a stream: no time passes for the game
+	// while a menu has paused it, but the UI stream of later games keeps going
+	double getStreamFrameSeconds(const Common::String &streamName) const;
+
+	// Stops the game and its sounds, while a menu covers it
+	void setGamePaused(bool isPaused);
+
 	SceneChangeDescription &getSceneInfo() { return _streams.getRunning() ? _streams.getRunning()->getSceneInfo() : _sceneState.currentScene; }
 	const SceneChangeDescription &getMainSceneInfo() const { return _sceneState.currentScene; }
 
@@ -606,6 +613,7 @@ private:
 	Common::String _nextScriptSceneName;
 #endif
 	double _frameSeconds = 0.0;	// how long the last frame took
+	bool _isGamePaused = false;
 	Action::PlaySecondaryMovie *_activeMovie;
 	Action::ConversationSound *_activeConversation;
 

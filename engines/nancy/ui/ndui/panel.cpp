@@ -26,6 +26,7 @@
 
 #include "common/algorithm.h"
 #include "common/memstream.h"
+#include "common/system.h"
 
 #include "engines/nancy/ui/ndui/panel.h"
 #include "engines/nancy/ui/ndui/control.h"
@@ -823,7 +824,8 @@ int Panel::getCheckedRadioIndex(const Common::String &group) const {
 }
 
 void Panel::updateGraphics() {
-	uint32 now = g_nancy->getTotalPlayTime();
+	// Not the play time: up to Nancy20, it stops while a menu pauses the game
+	uint32 now = g_system->getMillis();
 	if (_lastUpdateTime == 0) {
 		_lastUpdateTime = now;
 	}

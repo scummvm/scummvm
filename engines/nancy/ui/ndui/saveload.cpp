@@ -682,6 +682,15 @@ void Manager::onGameWindowAction(const Action &action) {
 		ConfMan.setInt("matte_color", (int)action.value);
 		applyMatteColor();
 		break;
+	case kActionEnable:
+	case kActionDisable:
+		// The dialog that dims the screen disables the game window, which pauses
+		// the game. Nancy16 does nothing for it.
+		if (g_nancy->getGameType() >= kGameTypeNancy17) {
+			NancySceneState.setGamePaused(action.type == kActionDisable);
+		}
+
+		break;
 	case kActionQuery: {
 		const Graphics::PixelFormat &format = g_nancy->_graphics->getTransparentPixelFormat();
 		bool isCurrent = ConfMan.hasKey("matte_color") &&

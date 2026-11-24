@@ -22,6 +22,7 @@
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/memstream.h"
+#include "common/system.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource/resource.h"
@@ -128,7 +129,7 @@ void Manager::setHoveredTooltip(const Control *control, Tooltip *tooltip) {
 }
 
 void Manager::updateTooltip(const Common::Point &mousePos) {
-	const uint32 now = g_nancy->getTotalPlayTime();
+	const uint32 now = g_system->getMillis();
 
 	if (_hoveredControl != _tooltipControl) {
 		// Another control starts over

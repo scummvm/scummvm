@@ -2459,7 +2459,7 @@ void Scene::loadScriptedScene(bool fromSaveFile) {
 void Scene::processMainStream() {
 #ifdef ENABLE_NANCY_V4
 	if (_scriptScene) {
-		_scriptScene->run(_frameSeconds);
+		_scriptScene->run(_isGamePaused ? 0.0 : _frameSeconds);
 
 		if (_isProfileChangePending && _scriptScene->getTime() > 0.0) {
 			finishProfileChange();
@@ -2539,6 +2539,23 @@ void Scene::finishProfileChange() {
 }
 #endif
 
+double Scene::getStreamFrameSeconds(const Common::String &streamName) const {
+	return _isGamePaused && !streamName.equalsIgnoreCase(SceneStreamManager::getUIStreamName()) ? 0.0 : _frameSeconds;
+}
+
+void Scene::setGamePaused(bool isPaused) {
+	if (isPaused != _isGamePaused) {
+		_isGamePaused = isPaused;
+		g_nancy->_sound->pauseAllSounds(isPaused);
+
+		// The movies of later games run on the time of their stream
+		if (g_nancy->getGameType() <= kGameTypeNancy18) {
+			_actionManager.onPause(isPaused);
+			_streams.onPause(isPaused);
+		}
+	}
+}
+
 void Scene::run() {
 	if (_gameStateRequested != NancyState::kNone) {
 		g_nancy->setState(_gameStateRequested);
@@ -2546,7 +2563,14 @@ void Scene::run() {
 		return;
 	}
 
-	Time currentPlayTime = g_nancy->getTotalPlayTime();
+	// Up to Nancy20, a pause stops the clock of the whole game. Later games
+	// stop what runs in the game window, and the in-game time.
+	const bool isClockStopped = _isGamePaused && g_nancy->getGameType() <= kGameTypeNancy20;
+	if (isClockStopped) {
+		g_nancy->setTotalPlayTime(_timers.lastTotalTime.getTotalMilliseconds());
+	}
+
+	Time currentPlayTime = isClockStopped ? _timers.lastTotalTime : Time(g_nancy->getTotalPlayTime());
 	Time deltaTime = currentPlayTime - _timers.lastTotalTime;
 	_timers.lastTotalTime = currentPlayTime;
 
@@ -2561,8 +2585,11 @@ void Scene::run() {
 	// so any flags they fire this frame are visible to record dependencies
 	tickSoftwareTimers(deltaTime.getTotalMilliseconds());
 
-	// Calculate the in-game time (playerTime)
-	if (currentPlayTime > _timers.playerTimeNextMinute) {
+	// Calculate the in-game time (playerTime). It stands still while a menu has
+	// paused the game, and the rest of the minute is kept for later.
+	if (_isGamePaused) {
+		_timers.playerTimeNextMinute += deltaTime;
+	} else if (currentPlayTime > _timers.playerTimeNextMinute) {
 		auto *bootSummary = GetEngineData(BSUM);
 		assert(bootSummary);
 
@@ -3029,6 +3056,11 @@ void Scene::handleInput() {
 		_cellPhonePopup.handleInput(input);
 	}
 
+	// What is behind the menu that paused the game doesn't get the input
+	if (_isGamePaused) {
+		return;
+	}
+
 	if (g_nancy->getGameType() <= kGameTypeNancy15) {
 		_textbox.handleInput(input);
 	}
@@ -3331,6 +3363,9 @@ void Scene::initStaticData() {
 void Scene::initUI() {
 	auto *pcui = GetEngineData(PCUI);
 	assert(pcui);
+
+	// The menu that paused the game goes away with the old UI
+	setGamePaused(false);
 
 	delete _ndui;
 	_ndui = new UI::NDUI::Manager();

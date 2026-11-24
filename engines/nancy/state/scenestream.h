@@ -104,6 +104,7 @@ public:
 
 	// Nancy19: the scripts of the scene store what they keep in a saved game
 	void onSave();
+	void onPause(bool isPaused) { _actionManager.onPause(isPaused); }
 
 	// Nancy19: hands a message to the scene. Returns false when it isn't for it.
 	bool receiveMessage(const Script::Message &message, bool &wasTaken);
@@ -232,6 +233,7 @@ public:
 	SceneStream *getRunning() const { return _running; }
 
 	void process();
+	void onPause(bool isPaused);
 	bool handleInput(NancyInput &input, bool beforeMainStream);
 
 	void clear();

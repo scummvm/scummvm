@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/system.h"
+
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/util.h"
@@ -195,7 +197,7 @@ bool ListBox::onMouseDown(const Common::Point &pos) {
 	// A second click on the same item, shortly after the first
 	static const uint32 kDoubleClickTime = 500;
 
-	const uint32 now = g_nancy->getTotalPlayTime();
+	const uint32 now = g_system->getMillis();
 	const bool isDoubleClick = item == _lastClicked && now - _lastClickTime <= kDoubleClickTime;
 	_lastClicked = isDoubleClick ? -1 : item;
 	_lastClickTime = now;

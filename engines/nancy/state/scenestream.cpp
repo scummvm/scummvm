@@ -102,7 +102,7 @@ bool SceneStream::loadNextScene() {
 void SceneStream::processRecords() {
 #ifdef ENABLE_NANCY_V4
 	if (_scriptScene) {
-		_scriptScene->run(NancySceneState.getFrameSeconds());
+		_scriptScene->run(NancySceneState.getStreamFrameSeconds(getName()));
 		return;
 	}
 #endif
@@ -737,6 +737,14 @@ static void returnViewedItem(const Common::String &streamName) {
 				streamName.equalsIgnoreCase(UI::NDUI::InvButton::getStreamName(item.name))) {
 			NancySceneState.addItemToInventory(item.id);
 			return;
+		}
+	}
+}
+
+void SceneStreamManager::onPause(bool isPaused) {
+	for (SceneStream *stream : _streams) {
+		if (stream) {
+			stream->onPause(isPaused);
 		}
 	}
 }
