@@ -927,9 +927,7 @@ void Lua_V2::SetActorFOV() {
 
 	if (lua_isnumber(fovObj)) {
 		float fov = lua_getnumber(fovObj);
-		// FIXME: implement missing code
-		//actor->func(fov); // cos(fov * some tuntime val * 0.5)
-		warning("Lua_V2::SetActorFOV: implement opcode. actor: %s, param: %f", actor->getName().c_str(), fov);
+		actor->setFOV(fov);
 	}
 }
 

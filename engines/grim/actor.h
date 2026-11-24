@@ -317,6 +317,9 @@ public:
 	 */
 	Math::Angle  getYawTo(const Math::Vector3d &p) const;
 
+	const Math::Angle &getFOV() const { return _fov; }
+	void setFOV(const Math::Angle &a) { _fov = a; }
+
 	/**
 	 * Sets the actor visibility.
 	 *
@@ -376,6 +379,8 @@ public:
 	 * @param setName The name of the set.
 	 */
 	bool isInSet(const Common::String &setName) const;
+
+	const Common::String &getCurrentSet() const { return _setName; }
 
 	/**
 	 * Sets the rate of the turning.
@@ -607,6 +612,7 @@ private:
 	Color _talkColor;
 	Math::Vector3d _pos;
 	Math::Angle _pitch, _yaw, _roll;
+	Math::Angle _fov;
 	float _walkRate, _turnRate;
 
 	bool _followBoxes;  // Constrain to walkboxes
