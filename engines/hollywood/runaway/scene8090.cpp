@@ -48,7 +48,8 @@ const RunawayResponse kResponses[] = {
 };
 
 const RunawayItemAction kItemActions[] = {
-	{8090, 12, 4, 325} // Offer Oscar the sheriff's badge.
+	{8090, 12, 4, 325}, // Offer Oscar the sheriff's badge.
+	{8090, 22, 4, 314}  // Offer raw tobacco leaves (native item 27).
 };
 
 } // End of anonymous namespace
@@ -316,6 +317,18 @@ RunawayRoomScene::ActionResult Scene8090::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 313: // Go inside to speak with Mama Dorita.
 		enterHouse(false);
+		break;
+	case 314: // Oscar chews tobacco; he does not smoke the untreated leaves.
+		if (!_restoredContent) {
+			executeItemAction(1);
+			break;
+		}
+		_oscar.setTalking(true);
+		_audio.stopEffect(1);
+		say(12);
+		say(12, 1, false, 1);
+		_town.rawTobaccoRefused = 1;
+		deferAction(400);
 		break;
 	case 320: // Visit Gina.
 		enterHouse(true);

@@ -54,7 +54,7 @@ private:
 		kTurnToScreen, kJourney, kMontage, kTurnBack, kLastNarration,
 		kCity, kTitle, kAccident, kAccidentTitle, kAccidentEnd, kCityExit,
 		kFilm, kStayAway, kApproach, kUnconscious, kTurn, kHospital,
-		kHitman, kReply, kFilmEnd, kChapter, kChapterGesture, kFinished
+		kHitman, kReply, kFilmEnd, kChapter, kChapterGesture, kChapterExpression, kFinished
 	};
 	void enter(Step step, uint32 now);
 	void advance();

@@ -109,6 +109,23 @@ bool RunawayUI::loadChapter(byte chapter) {
 			!readRunawayGlobalChunk(portraitChunk, animation) || !portrait.load(animation, 104) ||
 			!readRunawayGlobalChunk(portraitChunk + 4, animation) || !idlePortrait.load(animation, 32))
 		return false;
+	if (chapter == 6) {
+		// Reuse chapter four's tobacco art in the first free icon and cursor slots.
+		Graphics::ManagedSurface townIcons, townCursors;
+		if (!loadRunawaySurface(122, 80, iconHeights[3], townIcons) ||
+				!loadRunawaySurface(115, 904, 540, townCursors))
+			return false;
+		Graphics::ManagedSurface restoredIcons(80, icons.h + 80, kUIFormat);
+		restoredIcons.copyRectToSurface(icons, 0, 0, Common::Rect(0, 0, icons.w, icons.h));
+		restoredIcons.copyRectToSurface(townIcons, 0, icons.h, Common::Rect(0, 26 * 80, 80, 27 * 80));
+		icons = Common::move(restoredIcons);
+		for (uint i = 0; i < 2; ++i) {
+			const uint src = 93 + i, dst = 89 + i;
+			const uint x = (src % 15) * kCursorWidth, y = (src / 15) * kCursorWidth;
+			cursors.copyRectToSurface(townCursors, (dst % 15) * kCursorWidth, (dst / 15) * kCursorWidth,
+				Common::Rect(x, y, x + kCursorWidth, y + kCursorWidth));
+		}
+	}
 	_cursors = Common::move(cursors);
 	_icons = Common::move(icons);
 	_portrait = Common::move(portrait);

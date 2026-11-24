@@ -271,13 +271,23 @@ RunawayRoomScene::ActionResult Scene8240::dispatchCustomSceneAction(uint16 actio
 		walkTo(Common::Point(742, 332), 5, false, true);
 		deferAction(420);
 		break;
-	case 420: // Find nothing useful in the shed.
+	case 420: // Search the shed, optionally collecting another bundle of tobacco.
 		_audio.playEffect(18);
-		say(8, 5);
-		deferAction(421);
+		if (_restoredContent && !_inventory.contains(22)) {
+			say(8, 2);
+			deferAction(422);
+		} else {
+			say(8, 5);
+			deferAction(421);
+		}
 		break;
 	case 421: // Step back out of the gardening shed.
 		walkTo(Common::Point(855, 347), 3, false, true);
+		break;
+	case 422: // Take the dried tobacco leaves.
+		_inventory.add(22);
+		say(8, 3);
+		deferAction(421);
 		break;
 	case 311: // Recognize the artichoke carved into the column.
 		say(9, _town.artichokeSeen);
