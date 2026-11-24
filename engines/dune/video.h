@@ -25,6 +25,8 @@
 
 #include "dune/archive.h"
 
+#include "audio/mixer.h"
+
 #include "common/array.h"
 #include "common/stream.h"
 
@@ -46,6 +48,7 @@ public:
 	Common::Array<uint32> _frameOffsets;
 
 	Audio::QueuingAudioStream *_audioQueue;
+	Audio::SoundHandle         _audioHandle;
 	bool                       _audioIsStarted;
 
 	struct {
@@ -74,6 +77,12 @@ public:
 	~HnmPlayer();
 
 	void setReader(Resource reader);
+
+	// Ends whatever sound this movie was playing.
+	void stopAudio();
+
+	// Whether this movie carries sound of its own.
+	bool hasAudio() const { return _audioQueue != nullptr; }
 
 	void setSubtitles(const byte *subtitleFrames, Resource subtitleResource) {
 		_subtitleFrames = subtitleFrames;

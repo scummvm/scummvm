@@ -29,7 +29,7 @@ namespace Dune {
 
 bool DuneEngine::mapAnimationVisible() const {
 	return _onWorld && !_onGlobe && !_inCabin && !_onMixer &&
-		_menuKind != kMenuTroopNotice && _menuKind != kMenuPalaceAlert && _menuKind != kMenuLeaving;
+		_menuKind != kMenuTroopNotice && _menuKind != kMenuLeaving;
 }
 
 void DuneEngine::clearMapUnits() {
@@ -638,7 +638,7 @@ void DuneEngine::saveMapAnimations(Common::WriteStream *stream) const {
 	stream->writeByte(_mapRing.list ? _mapRingOrder : _mapUnitOrder.size());
 }
 
-bool DuneEngine::loadMapAnimations(Common::ReadStream *stream, bool stored, bool ringOrderStored) {
+bool DuneEngine::loadMapAnimations(Common::ReadStream *stream) {
 	// DS has already been loaded. Discard the previous runtime identities
 	// without clearing the new save's (possibly ATTACK-owned) pool count.
 	_mapActorPoolOrder.clear();
@@ -646,8 +646,6 @@ bool DuneEngine::loadMapAnimations(Common::ReadStream *stream, bool stored, bool
 	_mapAnimationActive = false;
 	_mapAnimationRemainder = 0;
 	_mapAnimationTime = _system->getMillis() / 5;
-	if (!stored)
-		return true;
 	const byte active = stream->readByte();
 	if (active > 1 || stream->err() || stream->eos())
 		return false;
@@ -677,10 +675,6 @@ bool DuneEngine::loadMapAnimations(Common::ReadStream *stream, bool stored, bool
 		if (unit.initialList < 0x16a2 || unit.initialList > 0x1916)
 			return false;
 		const uint initialCount = mapAnimationLength(_state.begin(), _state.size(), unit.initialList);
-		// Version-36 saves made before static actors used DOS's zero list
-		// pointer still hold their one-frame list. Accept and normalize them.
-		if (unit.list == unit.initialList && initialCount == 1 && !unit.flags)
-			unit.list = 0;
 		const uint count = unit.list ? mapAnimationLength(_state.begin(), _state.size(), unit.list) : 0;
 		if (!initialCount || (unit.list && (!count || unit.list < 0x16a2 || unit.list > 0x1916)) ||
 			(!unit.list && (initialCount != 1 || unit.flags || unit.next)) ||
@@ -703,8 +697,7 @@ bool DuneEngine::loadMapAnimations(Common::ReadStream *stream, bool stored, bool
 		if (seen[i] != (_mapUnits[i].initialList != 0))
 			return false;
 	}
-	// Older saves stored the ring separately and always advanced it last.
-	_mapRingOrder = ringOrderStored ? stream->readByte() : count;
+	_mapRingOrder = stream->readByte();
 	if (_mapRingOrder > count)
 		return false;
 	if (stream->err() || stream->eos() || (_mapRingTroop >= 0) != (_mapRing.list != 0))

@@ -1099,8 +1099,6 @@ void DuneEngine::redraw() {
 		drawPalacePlan();
 	else if (_menuKind == kMenuTroopNotice)
 		drawTroopNotice();
-	else if (_menuKind == kMenuPalaceAlert)
-		drawPalaceAlert();
 	else if (_menuKind == kMenuWormMap)
 		drawWormMap();
 	else if (_menuKind == kMenuMirror ||
@@ -1218,7 +1216,7 @@ void DuneEngine::prepareEndingCouple() {
 		const uint history = chani ? 0x4c6a : 0x4540;
 		const uint variant = chani ? 0 : paulAnimation() + 1;
 		const uint table = record + 8 + READ_LE_UINT16(bank.begin() + record + 8);
-		const uint choice = chani ? (_endingCoupleLegacy ? 0 : troopRandom(true) & 6) : 2 * (variant - 1);
+		const uint choice = chani ? (troopRandom(true) & 6) : 2 * (variant - 1);
 		if (table + choice + 2 > bank.size()) {
 			stopEndingCouple();
 			return;
@@ -1250,7 +1248,6 @@ void DuneEngine::prepareEndingCouple() {
 	_endingCouplePage.resize(kScreenWidth * kSceneHeight);
 	memcpy(_endingCouplePage.begin(), _framebuffer1, _endingCouplePage.size());
 	_endingCoupleTime = _system->getMillis() / 5;
-	_endingCoupleLegacy = false;
 	_state[0x478c] = 1;
 	WRITE_LE_UINT16(_state.begin() + 0x4c68, 7);
 	WRITE_LE_UINT16(_state.begin() + 0x22a6, 45);
@@ -3543,146 +3540,6 @@ bool DuneEngine::handleTroopNoticeEvent(const Common::Event &event) {
 	return true;
 }
 
-/**
- * Compatibility entry for the stage-48 warning. DOS 2BF4/2C16 routes caller
- * zero, type four through the ordinary remote-report path: part 132 selects
- * line 442 and 2C4F consumes the head before its timed wait. Retain the old
- * modal kind only for checkpoints already inside the former native alert.
- */
-bool DuneEngine::showPendingPalaceAlert() {
-	if (_menuKind == kMenuPalaceAlert)
-		return true;
-	if (_menuKind == kMenuTroopNotice)
-		return _state[0xea] == 4 && READ_LE_UINT16(_state.begin() + 0x47c4) == 0;
-	if (_state.size() <= 0x1194 || !_state[0x1190] ||
-			READ_LE_UINT16(_state.begin() + 0x1191) != 4 ||
-			READ_LE_UINT16(_state.begin() + 0x1193) != 0)
-		return false;
-	return showPendingTroopNotice();
-}
-
-/** Restores the static warning in an older native checkpoint. */
-void DuneEngine::drawPalaceAlert() {
-	_graphics.setFrameBuffer(_framebuffer1);
-	memset(_framebuffer1, 0, kScreenWidth * kScreenHeight);
-	openSpriteSheet("VIS.HSQ");
-	drawSprite(0, 0, 0);
-	// Type four's record is person zero, Leto in his black Atreides uniform.
-	// The 0x1409 word in the other queue really does name the Baron; using it
-	// as this picture was the bug which also consumed his later transmission.
-	drawSpeakerFigure(0, 0);
-	drawPanel();
-	drawMenu();
-	if (!_speech.empty())
-		drawSpeech(_speech, kSpeechColour);
-}
-
-/**
- * Repair the distinctive household arrangements in older native checkpoints.
- * This is not a stage-48 event effect: DOS 1103 only queues the warning and
- * retained transmission, and 2A34 closes that warning without moving people.
- * The early native event implementation left the earlier hall tableau in
- * persistent records and could also discard the Baron's retained message.
- * Its subsequent repair incorrectly moved Thufir to the throne room; 10BE
- * had already put him in the communication room before the warning.
- * Keep this compatibility repair out of live gameplay and new checkpoints.
- */
-void DuneEngine::repairLegacyPalaceHousehold() {
-	enum { kPeople = 0xfd8, kRecords = 16, kRecordSize = 16 };
-	if (storyStage() != 48 || _state.size() < kPeople + kRecords * kRecordSize)
-		return;
-
-	byte *people[9] = { nullptr };
-	for (uint record = 0; record != kRecords; record++) {
-		byte *at = _state.begin() + kPeople + record * kRecordSize;
-		if (at[14] < ARRAYSIZE(people))
-			people[at[14]] = at;
-	}
-
-	if (!people[0] || !people[1] || !people[2] || !people[3] || !people[8])
-		return;
-	const bool beforeAlert = READ_LE_UINT16(people[0]) == 0x2004 &&
-		READ_LE_UINT16(people[1]) == 0x2004 &&
-		READ_LE_UINT16(people[2]) == 0x2008 &&
-		READ_LE_UINT16(people[3]) == 0x2008 &&
-		READ_LE_UINT16(people[8]) == 0x2006;
-	// The former repair relocated Thufir and A219 then moved him back after
-	// Leto's expedition reply. Repair only that old stationary palace record;
-	// neither operation belongs to the DOS conversation or warning.
-	const bool misplacedThufir = READ_LE_UINT16(people[0]) == 0x200a &&
-		READ_LE_UINT16(people[1]) == 0x200a &&
-		READ_LE_UINT16(people[2]) == 0x200a &&
-		READ_LE_UINT16(people[2] + 2) == 0x0180 &&
-		!(people[2][15] & 0x40) && READ_LE_UINT16(people[3]) == 0x2004;
-	if (!beforeAlert && !misplacedThufir)
-		return;
-
-	bool hasBaronMessage = false;
-	enum { kMessages = 0x1179, kMessageDepth = 10, kBaronMessage = 0x1409 };
-	const uint messageCount = _state.size() > 0xc8
-		? MIN<uint>(_state[0xc8], kMessageDepth) : 0;
-	for (uint i = 0; i != messageCount; i++) {
-		if ((READ_LE_UINT16(_state.begin() + kMessages + 2 * i) & 0xff7f) ==
-				kBaronMessage) {
-			hasBaronMessage = true;
-			break;
-		}
-	}
-	if (!hasBaronMessage)
-		queueEvent(kBaronMessage);
-
-	if (beforeAlert) {
-		WRITE_LE_UINT16(people[0], 0x200a);
-		WRITE_LE_UINT16(people[1], 0x200a);
-		WRITE_LE_UINT16(people[3], 0x2004);
-		WRITE_LE_UINT16(people[8], 0x2004);
-	}
-	if (misplacedThufir)
-		WRITE_LE_UINT16(people[2], 0x2008);
-	debugC(1, kDebugScript,
-		   "repaired legacy palace household records");
-}
-
-/** Closes the former native modal from an older checkpoint, never a new report. */
-void DuneEngine::dismissPalaceAlert() {
-	enum { kQueue = 0x1190, kDepth = 10, kEntrySize = 4,
-		   kAlertType = 4, kAlertRecord = 0 };
-	const uint count = _state.size() > kQueue ? MIN<uint>(_state[kQueue], kDepth) : 0;
-	for (uint i = 0; i != count; i++) {
-		const uint32 at = kQueue + 1 + i * kEntrySize;
-		if (READ_LE_UINT16(_state.begin() + at) != kAlertType ||
-				READ_LE_UINT16(_state.begin() + at + 2) != kAlertRecord)
-			continue;
-
-		for (uint next = i + 1; next < count; next++) {
-			const uint32 from = kQueue + 1 + next * kEntrySize;
-			const uint32 to = from - kEntrySize;
-			WRITE_LE_UINT16(_state.begin() + to,
-							READ_LE_UINT16(_state.begin() + from));
-			WRITE_LE_UINT16(_state.begin() + to + 2,
-							READ_LE_UINT16(_state.begin() + from + 2));
-		}
-		const uint32 last = kQueue + 1 + (count - 1) * kEntrySize;
-		WRITE_LE_UINT16(_state.begin() + last, 0);
-		WRITE_LE_UINT16(_state.begin() + last + 2, 0);
-		_state[kQueue] = count - 1;
-		break;
-	}
-
-	_speech.clear();
-	_speechParts.clear();
-	_speechPart = 0;
-	_speakerPerson = -1;
-	_onWorld = false;
-	if (_inDesert) {
-		drawDesert();
-		showDesertMenu();
-	} else {
-		drawScene();
-		showRoomMenu();
-	}
-}
-
 void DuneEngine::showTroopMenu() {
 	showTroopMenu(true, false);
 }
@@ -5939,58 +5796,6 @@ void DuneEngine::giveOrder(uint troop, byte order) {
 	// ASK FOR MORE INFORMATION can explain the job's missing prerequisites.
 
 	finishTroopOccupationMenu();
-}
-
-/**
- * Repairs old native checkpoints with a stranded, stationary early search.
- * This compatibility shortcut is not the DOS equipment-search command.
- * Real outbound/returning collectors have bit 0x40 and must be left intact.
- */
-bool DuneEngine::repairLegacyEquipmentSearch(uint troop) {
-	if (troop >= _map.troops().size())
-		return false;
-
-	const uint32 record = 0x8aa + troop * 27;
-	if (record + 27 > _state.size() || (_state[record + 3] & 0x4f) != 3)
-		return false;
-
-	const uint16 home = READ_LE_UINT16(_state.begin() + record + 4);
-	// These are the two sietches Gurney names for the cache in this chapter.
-	if (home != 0x218 && home != 0x2dc)
-		return false;
-
-	uint32 cache = 0;
-	for (uint32 place = 0x100; place + 28 <= _state.size(); place += 28) {
-		if (_state[place] == 0xff)
-			break;
-		if (READ_LE_UINT16(_state.begin() + place) == 0x0603) {
-			cache = place;
-			break;
-		}
-	}
-
-	if (cache == 0 || cache + 0x14 >= _state.size() ||
-			home + 0x14 >= _state.size() || _state[cache + 0x14] == 0)
-		return false;
-
-	_state[cache + 0x14]--;
-	_state[home + 0x14]++;
-	_state[record + 0x19] |= 0x80;
-	_state[record + 3] &= 0xf0;
-	// Checkpoints made by the previous implementation used this hostile-troop
-	// flag as a made-up search exclusion.  It never belongs on these Fremen.
-	_state[record + 0x10] &= (byte)~0x80;
-	WRITE_LE_UINT16(_state.begin() + record + 0x0a, hour());
-	WRITE_LE_UINT16(_state.begin() + record + 0x0c, 0);
-	WRITE_LE_UINT16(_state.begin() + record + 0x0e, 0);
-
-	_map.readPlaces(_state.begin(), _state.size());
-	_map.readTroops(_state.begin(), _state.size());
-
-	debugC(1, kDebugScript,
-		   "troop %u brings a harvester from the hidden cache to place %04x", troop, home);
-
-	return true;
 }
 
 /**
@@ -13069,11 +12874,6 @@ void DuneEngine::pressAt(const Common::Point &at) {
 		return;
 	}
 
-	if (_menuKind == kMenuPalaceAlert) {
-		dismissPalaceAlert();
-		return;
-	}
-
 	// A distant operational report is modal like the original transmission:
 	// any acknowledgement returns to the room it interrupted.
 	if (_menuKind == kMenuTroopNotice) {
@@ -13705,11 +13505,6 @@ void DuneEngine::chooseFromMenu(uint panelRow) {
 		finishDeferredRoomCompass();
 		return;
 	}
-	if (_menuKind == kMenuPalaceAlert) {
-		dismissPalaceAlert();
-		return;
-	}
-
 	if (_menuKind == kMenuTroopNotice) {
 		dismissTroopNotice();
 		return;

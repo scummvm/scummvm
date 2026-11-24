@@ -142,9 +142,8 @@ public:
 
 	void readTroops(const byte *state, uint stateSize);
 	// The executable's map start-up pass walks every place's troop chain and
-	// writes that place and its coordinates into each troop record.  Static
-	// data (and saves made before that pass was implemented) still need it.
-	void restoreTroopLocations(byte *state, uint stateSize, bool missingOnly);
+	// writes that place and its coordinates into each troop record.
+	void restoreTroopLocations(byte *state, uint stateSize);
 	const Common::Array<Troop> &troops() const { return _troops; }
 
 	/**
@@ -229,7 +228,6 @@ public:
 			uint16 longitude, int latitude, const Common::Rect &view) const;
 	// Approximate the centre of pre-25 saves' obsolete flat crop, without
 	// resampling or changing any place/troop coordinates.
-	Common::Point legacySurveyCentre(int x, int y) const;
 
 	// The world as a ball, which is what the planet in the panel opens on.
 	void drawGlobe(byte *screen, int screenWidth, int left, int top,

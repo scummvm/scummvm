@@ -98,17 +98,12 @@ void DuneEngine::saveGlobeAnimation(Common::WriteStream *stream) const {
 	stream->write(_globePresented.begin(), _globePresented.size());
 }
 
-bool DuneEngine::loadGlobeAnimation(Common::ReadStream *stream, bool stored) {
+bool DuneEngine::loadGlobeAnimation(Common::ReadStream *stream) {
 	_globeBackground.clear();
 	_globePresented.clear();
 	_globeDrawing = GlobeRenderState();
 	_globeSpin = _globeTilt = _globePresentedSpin = 0;
 	_globeAnimationTime = _system->getMillis() / 5;
-	if (!stored) {
-		if (_onGlobe)
-			centreGlobeOnMap(); // Old saves have neither orientation nor drawing progress.
-		return true;
-	}
 	const byte active = stream->readByte();
 	if (active > 1 || stream->err() || stream->eos() || (active && !_onGlobe))
 		return false;

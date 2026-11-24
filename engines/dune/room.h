@@ -20,14 +20,31 @@ class Room {
 	Common::Array<uint16> _polygon_side_up;
 
 public:
+	// A place a scene sets aside for whoever is to stand there.  The scene
+	// gives the spot and how the figure standing on it is to be drawn; who
+	// that is comes from the game itself.
+	struct Marker {
+		uint16 x;
+		uint16 y;
+		byte   palOffset;
+		uint16 flags;
+	};
+
 	Room(DuneEngine *e, Resource r);
 
 	int count() { return _count; }
 
-	void add_gradient_section(int x0, int y0, int x1, int y1, Common::Array<uint16> &xs);
+	const Common::Array<Marker> &markers() const { return _markers; }
+
+	void add_gradient_section(int x0, int y0, int x1, int y1, Common::Array<uint16> &xs, int &row);
 	// void add_relative_gradient_section(int x0, int y0, int x1, int y1);
 
-	void draw(byte *framebuffer, int index);
+	// Gameplay paints figures at their SAL commands, so later geometry can
+	// occlude them. Bank/scene diagnostics can still collect empty markers.
+	void draw(byte *framebuffer, int index, bool drawPeople = false);
+
+private:
+	Common::Array<Marker> _markers;
 };
 
 } // End of namespace Dune

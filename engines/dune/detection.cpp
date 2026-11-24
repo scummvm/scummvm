@@ -47,7 +47,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_CD,
-		GUIO1(GUIO_NOMIDI)
+		GUIO0()
 	},
 	AD_TABLE_END_MARKER
 };

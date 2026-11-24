@@ -246,12 +246,9 @@ void Map::readTroops(const byte *state, uint stateSize) {
  * The byte at +0x12 also keeps the low nibble of the place type and which of
  * its three broad regions it belongs to.
  *
- * The extracted data segment precedes that start-up pass, so leaving it out
- * left every troop at place zero.  Existing engine saves may contain the same
- * uninitialised records; missingOnly repairs those without disturbing a
- * location already maintained by the running game.
+ * The initialized data in the executable precedes that start-up pass.
  */
-void Map::restoreTroopLocations(byte *state, uint stateSize, bool missingOnly) {
+void Map::restoreTroopLocations(byte *state, uint stateSize) {
 	if (!state)
 		return;
 	uint restored = 0;
@@ -268,25 +265,22 @@ void Map::restoreTroopLocations(byte *state, uint stateSize, bool missingOnly) {
 			if (number > kTroops || at + kTroopSize > stateSize)
 				break;
 
-			if (!missingOnly || READ_LE_UINT16(state + at + 4) < kPlacesAt) {
-				WRITE_LE_UINT16(state + at + 4, (uint16)place);
-				WRITE_LE_UINT16(state + at + 6, READ_LE_UINT16(state + place + 2));
-				WRITE_LE_UINT16(state + at + 8, READ_LE_UINT16(state + place + 4));
+			WRITE_LE_UINT16(state + at + 4, (uint16)place);
+			WRITE_LE_UINT16(state + at + 6, READ_LE_UINT16(state + place + 2));
+			WRITE_LE_UINT16(state + at + 8, READ_LE_UINT16(state + place + 4));
 
-				byte region = state[at + 0x12] & 0x70;
-				const byte type = state[place];
-				if ((type >= 4 && type <= 5) || type > 9)
-					region ^= 0x80;
-				state[at + 0x12] = (byte)(region | (type & 0x0f));
-				restored++;
-			}
+			byte region = state[at + 0x12] & 0x70;
+			const byte type = state[place];
+			if ((type >= 4 && type <= 5) || type > 9)
+				region ^= 0x80;
+			state[at + 0x12] = (byte)(region | (type & 0x0f));
+			restored++;
 
 			number = state[at + 1];
 		}
 	}
 
-	debugC(1, kDebugResource, "%u troop locations %s", restored,
-		   missingOnly ? "repaired" : "initialised");
+	debugC(1, kDebugResource, "%u troop locations initialised", restored);
 }
 
 Common::Array<uint> Map::troopsAt(uint place, const byte *state, uint stateSize) const {
@@ -583,20 +577,6 @@ Common::Point Map::surveyPosition(uint16 centreLongitude, int centreLatitude,
 	if (_latitudes.size() != kLatitudes)
 		return Common::Point(-32768, -32768);
 	return surveyMapPosition(_latitudes.begin(), centreLongitude, centreLatitude, longitude, latitude, view);
-}
-
-Common::Point Map::legacySurveyCentre(int x, int y) const {
-	if (_latitudes.size() != kLatitudes)
-		return Common::Point(0, 0);
-	x = CLIP(x, 0, (int)kEquatorWidth - 1);
-	y = CLIP(y, 0, (int)kMapRows - 1);
-	const uint which = y < kLatitudes ? kLatitudes - 1 - y : y - kLatitudes;
-	const MapLatitude &row = _latitudes[which];
-	const int width = row.halfWidth * 2;
-	const int column = CLIP(x - ((int)kEquatorWidth - width) / 2, 0, MAX(width - 1, 0));
-	const uint step = row.step ? row.step : 256;
-	const uint across = MIN<uint>((column * 256 + step / 2) / step, kEquatorWidth - 1);
-	return Common::Point((int16)(across * 65536 / kEquatorWidth), y - kEquator);
 }
 
 /**

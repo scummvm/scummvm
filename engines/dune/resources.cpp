@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/util.h"
+
 #include "dune/resources.h"
 
 namespace Dune {
@@ -528,6 +530,13 @@ resource_name *getResourceByIndex(uint16 index) {
 
 const char *getResourceFilenameByIndex(uint16 index) {
 	return resource_catalog[index]->filename;
+}
+
+uint16 getResourceParagraphsByIndex(uint16 index) {
+	if (index >= ARRAYSIZE(resource_catalog))
+		return 0;
+
+	return resource_catalog[index]->paragraphs;
 }
 
 } // End of namespace Dune

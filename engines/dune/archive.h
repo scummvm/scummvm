@@ -44,12 +44,9 @@ private:
 	};
 
 	Common::File          _archive;
-	int                   _count;
 	Common::Array<Member> _members;
 
 public:
-	Archive();
-
 	bool openArchive(const Common::String &archivePath);
 
 	Resource openMember(const Common::String &name);

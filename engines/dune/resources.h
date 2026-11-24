@@ -27,12 +27,22 @@
 
 namespace Dune {
 
+// Every resource the game knows carries a word ahead of its name, which is how
+// much room to keep for it, counted in paragraphs of sixteen bytes.  The
+// loader at 0xF0B9 reads the catalogue at DS:0x31FF, takes that word, and
+// hands it to the allocator at 0xF11C, which adds it to the segment it is
+// filling and frees the least recently used resource until it fits.
+//
+// It is a working buffer and not the size of the file: the movies that are
+// read as they play are given far less than they hold, Irulan thirteen
+// megabytes into sixty-six kilobytes.
 struct resource_name {
-	uint16 unk0;
+	uint16 paragraphs;
 	const char *filename;
 };
 
 const char *getResourceFilenameByIndex(uint16 index);
+uint16 getResourceParagraphsByIndex(uint16 index);
 
 enum {
 	INDEX_ICONES_HSQ   =  0,

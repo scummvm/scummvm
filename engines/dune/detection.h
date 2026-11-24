@@ -26,12 +26,14 @@
 
 namespace Dune {
 
+// A channel is a bit of its own, so that any of them can be asked for on
+// their own.
 enum DuneDebugChannels {
-	kDebugResource = 1,
-	kDebugGraphics,
-	kDebugScript,
-	kDebugSound,
-	kDebugVideo
+	kDebugResource = 1 << 0,
+	kDebugGraphics = 1 << 1,
+	kDebugScript   = 1 << 2,
+	kDebugSound    = 1 << 3,
+	kDebugVideo    = 1 << 4
 };
 
 // The game data either sits loose in the game directory (floppy release) or

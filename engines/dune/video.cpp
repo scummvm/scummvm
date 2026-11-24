@@ -22,12 +22,15 @@
 
 #include "dune/video.h"
 
+#include "dune/detection.h"
+
 #include "dune/dune.h"
 #include "dune/graphics.h"
 #include "dune/hsq.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "audio/decoders/raw.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/memstream.h"
@@ -55,10 +58,7 @@ HnmPlayer::HnmPlayer(DuneEngine *vm) : _vm(vm) {
 }
 
 HnmPlayer::~HnmPlayer() {
-	if (_audioIsStarted) {
-		_audioQueue->finish();
-	}
-	_audioQueue = nullptr;
+	stopAudio();
 
 	delete[] _decodeBuffer;
 	_decodeBuffer = nullptr;
@@ -67,8 +67,60 @@ HnmPlayer::~HnmPlayer() {
 	_frameBuffer = nullptr;
 }
 
+
+/**
+ * Reads past the VOC header a movie's sound opens with and reports the rate
+ * its samples were taken at.  Returns how many bytes came before the samples,
+ * or zero if what is there is not a VOC file after all.
+ */
+static uint32 parseVOCHeader(const byte *data, uint32 size, uint &rate) {
+	static const char *kSignature = "Creative Voice File\x1a";
+	const uint32 signatureLength = 20;
+
+	if (size < 32 || memcmp(data, kSignature, signatureLength) != 0)
+		return 0;
+
+	const uint16 headerSize = READ_LE_UINT16(data + 20);
+	if (headerSize + 6u > size || data[headerSize] != 1)
+		return 0;
+
+	// The rate is kept as the divisor the DOS driver loaded its timer with.
+	const byte timeConstant = data[headerSize + 4];
+	rate = 1000000 / (256 - timeConstant);
+
+	return headerSize + 6;
+}
+
+/**
+ * Ends the sound of a movie.  Each movie's sound is its own stream, taken at
+ * its own rate and opening with its own VOC header, so one must be finished
+ * and let go before the next begins; keeping one stream for all of them ran
+ * the second movie's samples out at the first one's rate and left the sound
+ * of a movie the player had cut short still playing over what came after it.
+ */
+void HnmPlayer::stopAudio() {
+	if (_audioIsStarted) {
+		_vm->_mixer->stopHandle(_audioHandle);
+		_audioIsStarted = false;
+	}
+
+	_audioQueue = nullptr;
+}
+
 void HnmPlayer::setReader(Resource reader) {
+	stopAudio();
+
+	// The words Irulan speaks over the desert belong to her movie alone.  They
+	// were left set when the movie was let go of, so cutting her short left
+	// them being drawn over everything that followed her.
+	_subtitleFrames = nullptr;
+	_subtitleCurrentPart = 0;
+
 	_reader = reader;
+	// Loop playback reuses the same Resource after its final frame. Reset
+	// the stream as well as the frame index before start rereads its header.
+	if (_reader)
+		_reader->seek(0);
 	_currentFrame = 0;
 
 	_done = false;
@@ -135,6 +187,10 @@ static void readFrameHeader(uint16_t tag, Common::ReadStream *r, int *w, int *h,
 }
 
 void HnmPlayer::decodeAVFrame() {
+	// A caller may have drawn a scene/overlay since the previous movie frame.
+	// Every delta (and subtitle-only frame) belongs to this decoder's page,
+	// never whichever drawing destination that intervening scene installed.
+	_vm->_graphics.setFrameBuffer(_frameBuffer);
 	_reader->seek(_frameOffsets[_currentFrame] + _headerSize, SEEK_SET);
 
 	uint32 avFrameSize = _reader->readUint16LE();
@@ -158,7 +214,7 @@ void HnmPlayer::decodeAVFrame() {
 			} else {
 				// Draw subtitle image
 				_vm->openSpriteSheet("IRUL1.HSQ");
-				_vm->drawSprite(_subtitleCurrentPart / 2, 0, 190, 0x00);
+				_vm->drawSprite(_subtitleCurrentPart / 2, 0, 190);
 			}
 			_subtitleCurrentPart++;
 		}
@@ -203,22 +259,43 @@ void HnmPlayer::decodeAVFrameChunks() {
 				size = _reader->readUint16LE();
 				assert(size >= 4);
 
+				uint32 length = size - 4;
+				byte *audioBuffer = (byte *)malloc(length);
+				_reader->read(audioBuffer, length);
+
+				// The sound of a movie is one VOC file cut across its frames,
+				// so the first slice opens with that file's header.  Play its
+				// samples and not the header, and take the rate it names.
 				if (!_audioQueue) {
-					_audioQueue = Audio::makeQueuingAudioStream(11111, false);
+					uint rate = 11111;
+					const uint32 skipped = parseVOCHeader(audioBuffer, length, rate);
+
+					if (skipped) {
+						memmove(audioBuffer, audioBuffer + skipped, length - skipped);
+						length -= skipped;
+					}
+
+					debugC(1, kDebugVideo, "movie sound: %d Hz", rate);
+					_audioQueue = Audio::makeQueuingAudioStream(rate, false);
 				}
 
-				byte *audioBuffer = (byte *)malloc(size - 4);
-				_reader->read(audioBuffer, size - 4);
+				_audioQueue->queueBuffer(audioBuffer, length, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 
-				_audioQueue->queueBuffer(audioBuffer, size - 4, DisposeAfterUse::YES, 1);
+				// A movie carries one frame's worth of sound in each of its
+				// frames, so starting to play the moment the first arrives
+				// leaves the sound a hair's breadth ahead of the decoding for
+				// the whole movie, and every frame that takes a moment longer
+				// than its share empties the queue and is heard as a blip.  A
+				// few frames' worth is let build up first.
+				const uint kAhead = 4;
 
-				if (!_audioIsStarted) {
-					_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, nullptr, _audioQueue);
+				if (!_audioIsStarted && _audioQueue->numQueuedStreams() >= kAhead) {
+					_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_audioHandle, _audioQueue);
 					_audioIsStarted = true;
 				}
 
 				g_framesPlayed += 1;
-				g_bytesPlayed += size - 4;
+				g_bytesPlayed += length;
 
 				// debug("%3d %d / %d", size - 4, g_bytesPlayed, g_framesPlayed);
 				break;
@@ -240,6 +317,9 @@ void HnmPlayer::decodeAVFrameChunks() {
 					&_frameHeader.height,
 					&_frameHeader.flags,
 					&_frameHeader.mode);
+
+				debugC(2, kDebugVideo, "frame %d: %dx%d flags %02x mode %02x", _currentFrame,
+					   _frameHeader.width, _frameHeader.height, _frameHeader.flags, _frameHeader.mode);
 
 				if ((_frameHeader.flags & 0x04) == 0) {
 					// Original has tag == 0 which causes it to decompress invalid data
@@ -274,7 +354,7 @@ void HnmPlayer::decodeAVFrameChunks() {
 				         + (packedLength & 0xff)
 				         + checksum;
 
-				assert(sum = 0xab);
+				assert(sum == 0xab);
 #endif
 
 				assert(unpackedLength <= MAX_DECODE_BUFFER_SIZE);
@@ -309,9 +389,17 @@ void HnmPlayer::decodeVideoFrame() {
 	byte mode = _frameHeader.mode;
 
 	if (_interlace) {
+		// The movies of the book are kept at half the screen's resolution and
+		// are drawn every other pixel and every other line, which is the
+		// pattern of black squares the originals show them through.
 		for (int y = 0; y < h; ++y) {
-			byte *src = _decodeBuffer + y*w + src_offset;
-			byte *dst = _frameBuffer  + 320*(2*y+y_offset) + x_offset;
+			const int row = 2 * y + y_offset;
+			if (row > 199)
+				break;
+
+			const byte *src = _decodeBuffer + y * w + src_offset;
+			byte *dst = _frameBuffer + 320 * row + x_offset;
+
 			for (int x = 0; x < w; ++x) {
 				*dst++ = *src++;
 				*dst++ = 0;

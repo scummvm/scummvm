@@ -24,6 +24,7 @@
 #define DUNE_GRAPHICS_H
 
 #include "common/endian.h"
+#include "common/rect.h"
 
 namespace Common {
 	class ReadStream;
@@ -116,18 +117,90 @@ class Graphics {
 		{ 0x36, 0x36, 0x36 }, { 0x39, 0x39, 0x39 }, { 0x3C, 0x3C, 0x3C }, { 0x3F, 0x3F, 0x3F },
 	};
 
+	// Sprite decoding must consume even off-screen rows, without forming a
+	// pointer outside the page. Clip coordinates before calculating an address.
+	void putSpritePixel(int x, int y, byte value) {
+		y += _global_y_offset;
+		if (x >= 0 && x < 320 && y >= 0 && y < 200)
+			_framebuffer[y * 320 + x] = value;
+	}
+
 public:
 	Graphics(DuneEngine *_engine);
+	// DNVGA 3047/308C/30C5: sample one pixel per 8x8/4x4/2x2 block, scene only.
+	// Source and destination are distinct 320x200 pages.
+	static void pixelateNotice(const byte *source, byte *dest, uint block, uint phase);
+	// DNVGA 2DC0, effect 0x34: one of sixteen 4x4 pixel positions per pass.
+	static void dissolveMapPage(const byte *target, byte *display, uint phase);
+	static void dissolveScenePage(const byte *target, byte *display, uint phase);
+	// DNVGA 2EEA/2F28, effect 2A: 65 spiral clears followed by 65 copies.
+	static void dissolveRoomConversion(const byte *target, byte *display, uint phase);
+	// DNVGA 272E/26E3/2673: 66 fade-out and 66 fade-in DAC updates.
+	// Palettes are six-bit RGB; colour 255 is never written by this effect.
+	static void fadePaletteFrame(const byte *previous, const byte *next, byte *current, uint frame);
+	// DNVGA AD7: move the pending six-bit range toward the saved palette,
+	// dividing by the number of frames still to come (signed, toward zero).
+	static void fadePaletteRange(const byte *target, byte *current, uint first, uint count, uint remaining);
+	// DNVGA 2D44, effect 22: slide the old 152-row scene down while the
+	// bottom of the next scene enters at the top. Lower panel never moves.
+	static void scrollEndingPage(const byte *previous, const byte *next, byte *display, uint rows);
+	// DOS BC99/BD00 and DNVGA 3581: sampled 2x2 interiors of expanding boxes.
+	static Common::Rect globeMapZoomBounds(const Common::Point &anchor, const Common::Rect &limits, uint phase);
+	// Draw the border at sample zero; false means the interior is too short.
+	static bool pixelateGlobeMapBox(const byte *clean, byte *display, const Common::Rect &bounds, uint sample);
+	// DNVGA 2A68/2AB0, full-scene effect 2: 74 spiral chunks of 8x4 tiles.
+	static void revealGlobeMapFrame(const byte *target, byte *display, uint phase);
+	// DNVGA 3382/32C1, DOS D280's seventeen command-list roll frames.
+	// Old, target and display are distinct 320x200 pages; phase is 0..16.
+	static void rollPanelMenuFrame(const byte *oldPage, const byte *target, byte *display, uint phase);
+	// DNVGA 2A15/2A10: 150 scene-pixel pairs for effect 8, 80 for effect 3C.
+	// Start with sequence=1; a true result means the scene is complete.
+	static bool revealScene(const byte *target, byte *display, uint16 &sequence, uint pairs = 150);
+	// DNVGA 38D8/39BB/3733: expanding or contracting map-window XOR outlines.
+	// Applying the same frame twice restores the page. Anchor is the actor.
+	static void xorMapWindowFrame(byte *display, const Common::Point &anchor,
+		const Common::Rect &bounds, uint phase, bool closing = false);
+	// DNVGA 3602/3841: two accumulating passes of travelling boxes, then
+	// expanding corners (opposite order on closing). Phase is 0..31.
+	static void xorTroopWindowFrame(byte *display, const Common::Point &anchor,
+		const Common::Rect &bounds, uint phase, bool closing = false);
+	// DNVGA 3500: partial horizontal wave over a composed report page.
+	static void distortNotice(const byte *source, byte *dest, uint16 &row, uint16 &previous);
 
-	/* 00 */ void setMode();
 	/* 01 */ void getInfo(byte **screen, int *size);
 
 	void  setFrameBuffer(byte *framebuffer) {
 		_framebuffer = framebuffer;
 	}
+	byte *frameBuffer() const { return _framebuffer; }
+	int globalYOffset() const { return _global_y_offset; }
+
+	// Every page is the whole screen and nothing more, so a pixel that falls
+	// outside it is not written.  The game draws figures that hang over an
+	// edge - a person stood at the bottom of a room, a movie wider than the
+	// screen - and the original clips them against the page it draws on; here
+	// the writes were walking a pointer with nothing to stop it, which put
+	// bytes into whatever the heap kept after the page.
+	bool holds(const byte *at) const {
+		return at >= _framebuffer && at < _framebuffer + 320 * 200;
+	}
+
+	// Whatever is being drawn is drawn a row at a time, and getPixelPtr keeps
+	// the ends of the row it was asked for.  A pixel that falls off either end
+	// is dropped rather than written, so a sprite that hangs over the side of
+	// the screen loses only the part that hangs over: it used not to be drawn
+	// at all, which is how the ornithopter standing outside a village came to
+	// be missing its body.
+	void put(byte *at, byte value) {
+		if (at >= _rowFrom && at < _rowTo && holds(at))
+			*at = value;
+	}
 	void  drawCursor(int x, int y, const byte *cursorData);
 	void  setGlobalYOffset(int y_offset);
 	byte *getPixelPtr(int x, int y);
+
+	const byte *_rowFrom = nullptr;
+	const byte *_rowTo = nullptr;
 
 	void draw_4bpp    (bool flip_x, bool flip_y, Common::ReadStream *r, int x_offset, int y_offset, int w, int h, byte mode);
 	void draw_4bpp_rle(bool flip_x, bool flip_y, Common::ReadStream *r, int x_offset, int y_offset, int w, int h, byte mode);
@@ -137,8 +210,24 @@ public:
 	void blitGraphics(Common::ReadStream *r, int x_offset, int y_offset, int w, int h, byte flags, byte mode);
 	void blitGraphics(byte *buf, int buf_len, int x_offset, int y_offset, int w, int h, byte flags, byte mode);
 	void copyScaled(byte *src, uint16 src_pitch, int x_offset, int y_offset, int dst_w, int dst_h, byte flags, byte pal_offset, uint16 src_delta_fp);
+	// DNVGA 1452/1728: unflipped packed map sprites clipped to C6AD's dirty box.
+	void copyMapSprite(const byte *src, uint pitch, int x, int y, int width, int height,
+		byte palette, const Common::Rect &clip, bool rle = false);
 
-	void drawNoise(uint16 x, uint16 y, uint16 count, uint16 start_value, uint16 increment, uint16 xor_state, uint16 xor_increment);
+	// A straight line between two points, kept inside the picture: the
+	// driver's routine at 0x1907 clips against the rectangle at DS:0x1470,
+	// which is the screen down to where the panel begins.
+	void drawLine(int x0, int y0, int x1, int y1, byte colour);
+
+	// A flat rectangle, from its top left corner up to but not including its
+	// bottom right one, which is what the driver's routine at 0x187B fills.
+	void fillRect(int x1, int y1, int x2, int y2, byte colour);
+
+	// One row of a gradient filled polygon.  Returns the state the pattern
+	// has reached, because the original keeps it in BP across a whole polygon
+	// and the routine it calls neither saves nor restores it.
+	uint16 drawNoise(uint16 x, uint16 y, uint16 count, uint16 start_value, uint16 increment,
+					 uint16 xor_state, uint16 xor_increment, bool leftwards = false);
 };
 
 } // End of namespace Dune

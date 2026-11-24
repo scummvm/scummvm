@@ -52,12 +52,6 @@ inline uint32 resumeMovieTick(uint32 previousTick, uint32 pauseTick, uint32 resu
 	return previousTick + resumeTick - (previousTick > pauseTick ? previousTick : pauseTick);
 }
 
-// Versions 6..51 stored milliseconds into an artificial 60-second hour,
-// leaving DS:46DB stale. Preserve their remaining time when migrating.
-inline uint16 legacyTimerCountdown(uint32 elapsedMs) {
-	return 11999 - (elapsedMs % 60000) / 5;
-}
-
 } // namespace Dune
 
 #endif
