@@ -360,6 +360,7 @@ protected:
 	bool loadResource000ActorPalette(const Common::Array<byte> &offsetTable);
 	void captureActorPaletteBase();
 	bool loadResource000InventoryActionTables(const Common::Array<byte> &offsetTable);
+	static void correctItemName(Common::Array<byte> &rows, uint row, const char *original, const char *replacement);
 	bool loadStage003SceneRows();
 	bool loadFixedChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
 	bool loadFixedChunk(uint index, Graphics::ManagedSurface &destination, uint fixedSize);

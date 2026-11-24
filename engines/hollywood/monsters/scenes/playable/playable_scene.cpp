@@ -1377,13 +1377,46 @@ bool PlayableScene::loadResource000InventoryActionTables(const Common::Array<byt
 	return true;
 }
 
+void PlayableScene::correctItemName(Common::Array<byte> &rows, uint row, const char *original, const char *replacement) {
+	const uint offset = row * kStage003SmallRowSize;
+	if (offset + kStage003SmallRowSize > rows.size())
+		return;
+	char *name = (char *)rows.data() + offset;
+	if (strncmp(name, original, kStage003SmallRowSize) == 0)
+		Common::strlcpy(name, replacement, kStage003SmallRowSize);
+}
+
 bool PlayableScene::loadStage003SceneRows() {
 	const uint stageIndex = sceneStageIndex();
 	// Demo recordings use compact sample numbers, not the full chapter's sequence.
 	const bool validateSequentialVoiceMap = !_vm->isDemo() && stageIndex >= 201 && stageIndex <= 211;
-	return _textStore.load(kStage003ArchiveName, sceneDebugName(), stageIndex,
+	if (!_textStore.load(kStage003ArchiveName, sceneDebugName(), stageIndex,
 		resource003InventoryRowsOffsetIndex(), speechCueDescriptorTableOffset(),
-		validateSequentialVoiceMap);
+		validateSequentialVoiceMap))
+		return false;
+
+	if (_vm->getLanguage() == Common::IT_ITA) {
+		// These path names were left in Spanish in the Italian release.
+		static const struct {
+			uint16 stage;
+			byte row;
+		} pathNames[] = {
+			{102, 1}, {301, 6}, {302, 1}, {308, 1},
+			{308, 3}, {310, 1}, {501, 7}, {802, 1}
+		};
+		for (uint i = 0; i < ARRAYSIZE(pathNames); ++i) {
+			if (stageIndex == pathNames[i].stage)
+				correctItemName(_stage003SmallRows, pathNames[i].row, " camino", " sentiero");
+		}
+
+		if (stageIndex == 602)
+			correctItemName(_stage003SmallRows, 6, " lente d% ingrandimento", " lente d%ingrandimento");
+		if (resource003InventoryRowsOffsetIndex() == 0)
+			correctItemName(_textStore._inventoryOwnerSmallRows, 90, " lente d% ingrandimento", " lente d%ingrandimento");
+		else if (resource003InventoryRowsOffsetIndex() == 50)
+			correctItemName(_textStore._inventoryOwnerSmallRows, 31, " lente d% ingrandimento", " lente d%ingrandimento");
+	}
+	return true;
 }
 
 bool PlayableScene::loadFixedChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
