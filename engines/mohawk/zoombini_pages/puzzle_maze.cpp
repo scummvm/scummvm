@@ -67,7 +67,7 @@ constexpr int16 ZoombiniPuzzleMaze::kTraitSlotValue[21];
 ZoombiniPuzzleMaze::ZoombiniPuzzleMaze(MohawkEngine_Zoombini *vm)
 	: ZoombiniPuzzle(vm, ZoombiniPageType::kMaze, ZmbSrcPageKind::kMaze_16) {
 	memset(_cellStateIdx, 0xFF, sizeof(_cellStateIdx));
-	memset(_collisionReservationRunnerIdx, 0xFF, sizeof(_collisionReservationRunnerIdx));
+	memset(_collisionCandidateRunnerIdx, 0xFF, sizeof(_collisionCandidateRunnerIdx));
 	memset(_launcherRunnerIndices, -1, sizeof(_launcherRunnerIndices));
 }
 
@@ -1316,10 +1316,9 @@ bool ZoombiniPuzzleMaze::debugFindMazeAcceptedPlan(const ZoombiniPuzzleMaze::Sol
 	// Different launch orders can leave the same arrows, positions, and remaining deliveries.
 	// The cached hash locates entries; complete encoding equality prevents collisions from skipping a different state.
 	const SolverStateKey stateKey = SolverStateKey::fromPlanState(context, state);
-	bool &wasVisited = search.visited.getOrCreateVal(stateKey);
-	if (wasVisited)
+	if (search.visited.contains(stateKey))
 		return false;
-	wasVisited = true;
+	search.visited.setVal(stateKey, true);
 	search.visitedStateCount += 1;
 
 	for (int16 snoidIdx = 0; snoidIdx < context.snoidCount; snoidIdx++) {
@@ -2520,10 +2519,9 @@ bool ZoombiniPuzzleMaze::debugBuildMazeGenericPlan(const ZoombiniPuzzleMaze::Sol
 				// Merge equivalent states and discard branches that cannot finish even under relaxed assumptions.
 				// Cached hashes locate entries; complete canonical encodings distinguish colliding states.
 				const SolverStateKey key = SolverStateKey::fromSearchNode(*tables, child);
-				bool &wasVisited = visited.getOrCreateVal(key);
-				if (wasVisited)
+				if (visited.contains(key))
 					continue;
-				wasVisited = true;
+				visited.setVal(key, true);
 				if (!debugMazeSolverGoalReachable(*tables, child, budget))
 					continue;
 				if (memoryLimits.maxRetainedNodes <= nodes.size()) {
@@ -2904,7 +2902,7 @@ ZoombiniPuzzleMaze::LaunchSimulationOutcome ZoombiniPuzzleMaze::simulateNextLaun
 					const MazeCellState &linked = _cellStates[_waveGroupCellIndices[groupIdx][colIdx]];
 					if (linked.type != kMazeCellType04_ColoredArrow)
 						continue;
-					int16 &linkedDirection = directions[linked.row][linked.col];
+					int16 linkedDirection = directions[linked.row][linked.col];
 					for (int16 attempts = 0; attempts < 4; attempts++) {
 						linkedDirection += 1;
 						if (3 < linkedDirection)
@@ -2912,6 +2910,7 @@ ZoombiniPuzzleMaze::LaunchSimulationOutcome ZoombiniPuzzleMaze::simulateNextLaun
 						if (linked.dirFlags[linkedDirection])
 							break;
 					}
+					directions[linked.row][linked.col] = linkedDirection;
 				}
 			}
 			break;
@@ -4137,8 +4136,8 @@ void ZoombiniPuzzleMaze::initGridAndSelectPaths() {
 	memset(_nodeDirFlags, 0, sizeof(_nodeDirFlags));
 	memset(_nodeDirection, 0, sizeof(_nodeDirection));
 	memset(_nodeCycleFlag, 0, sizeof(_nodeCycleFlag));
-	memset(_collisionReservationCount, 0, sizeof(_collisionReservationCount));
-	memset(_collisionReservationRunnerIdx, 0xFF, sizeof(_collisionReservationRunnerIdx));
+	memset(_collisionCandidateCount, 0, sizeof(_collisionCandidateCount));
+	memset(_collisionCandidateRunnerIdx, 0xFF, sizeof(_collisionCandidateRunnerIdx));
 
 	// Place 18 base nodes at fixed grid positions
 	generateBaseNodes();
@@ -5799,28 +5798,24 @@ void ZoombiniPuzzleMaze::handleTraversalGridEvent(int16 eventCode, int16 runnerI
 		eventCode == kGridEntityEventCode040_CollisionReservePhase2 || eventCode == kGridEntityEventCode050_CollisionReservePhase3) {
 		ZmbSnoid *snoid = getSnoid(_runnerSnoidIds[runnerIdx]);
 		// Every movement SCRS repeats its collision event on frames 1 through 5.
-		// Reserve the cell only at group frame index 3.
+		// Record a collision candidate only at group frame index 3.
 		if (!snoid || snoid->getLastFrameIdx() != 3)
 			return;
 
-		int16 &count = _collisionReservationCount[rs.row][rs.col];
-		int16 &firstRunner = _collisionReservationRunnerIdx[rs.row][rs.col];
-		count += 1;
+		const int16 count = _collisionCandidateCount[rs.row][rs.col] + 1;
 		if (count == 1) {
-			firstRunner = runnerIdx;
-		} else if (count == 2) {
-			if (_collisionPairQueueSize + 2 <= kMaxCrossQueueSize) {
-				_collisionPairQueue[_collisionPairQueueSize] = firstRunner;
-				_collisionPairQueueSize += 1;
-				_collisionPairQueue[_collisionPairQueueSize] = runnerIdx;
-				_collisionPairQueueSize += 1;
-			}
-			count = 0;
-			firstRunner = -1;
-		} else {
-			count = 0;
-			firstRunner = -1;
+			_collisionCandidateCount[rs.row][rs.col] = count;
+			_collisionCandidateRunnerIdx[rs.row][rs.col] = runnerIdx;
+			return;
 		}
+		if (count == 2 && _collisionPairQueueSize + 2 <= kMaxCrossQueueSize) {
+			_collisionPairQueue[_collisionPairQueueSize] = _collisionCandidateRunnerIdx[rs.row][rs.col];
+			_collisionPairQueueSize += 1;
+			_collisionPairQueue[_collisionPairQueueSize] = runnerIdx;
+			_collisionPairQueueSize += 1;
+		}
+		_collisionCandidateCount[rs.row][rs.col] = 0;
+		_collisionCandidateRunnerIdx[rs.row][rs.col] = -1;
 		return;
 	}
 
@@ -6383,9 +6378,9 @@ void ZoombiniPuzzleMaze::releaseRunnerTraversalVisuals(int16 runnerIdx) {
 		overlayFeature->scheduleClose();
 	}
 	if (0 <= rs.row && rs.row < kGridRows && 0 <= rs.col && rs.col < kGridCols &&
-		_collisionReservationRunnerIdx[rs.row][rs.col] == runnerIdx) {
-		_collisionReservationCount[rs.row][rs.col] = 0;
-		_collisionReservationRunnerIdx[rs.row][rs.col] = -1;
+		_collisionCandidateRunnerIdx[rs.row][rs.col] == runnerIdx) {
+		_collisionCandidateCount[rs.row][rs.col] = 0;
+		_collisionCandidateRunnerIdx[rs.row][rs.col] = -1;
 	}
 	removePlacedRunner(runnerIdx);
 	rs.placed = false;
@@ -6457,9 +6452,9 @@ void ZoombiniPuzzleMaze::processCellArrivalQueue() {
 			}
 		}
 
-		if (_collisionReservationRunnerIdx[rs.row][rs.col] == runnerIdx) {
-			_collisionReservationCount[rs.row][rs.col] = 0;
-			_collisionReservationRunnerIdx[rs.row][rs.col] = -1;
+		if (_collisionCandidateRunnerIdx[rs.row][rs.col] == runnerIdx) {
+			_collisionCandidateCount[rs.row][rs.col] = 0;
+			_collisionCandidateRunnerIdx[rs.row][rs.col] = -1;
 		}
 		handleRowChange(_cellTypes[rs.row][rs.col], runnerIdx);
 	}
@@ -6851,8 +6846,8 @@ void ZoombiniPuzzleMaze::assignCrossRunnerScrbs(int16 runner1Idx, int16 runner2I
 		joinFeatureTimingGroup(state.overlayFeature, state.bubbleFeature);
 	}
 
-	_collisionReservationCount[second.row][second.col] = 0;
-	_collisionReservationRunnerIdx[second.row][second.col] = -1;
+	_collisionCandidateCount[second.row][second.col] = 0;
+	_collisionCandidateRunnerIdx[second.row][second.col] = -1;
 }
 
 bool ZoombiniPuzzleMaze::handleCollisionOverlayEvent(ZmbFeature *feature, int16 eventCode) {

@@ -61,6 +61,8 @@
 #include "mohawk/zoombini_pages/dialog_options.h"
 #include "mohawk/zoombini_pages/dialog_save.h"
 #include "mohawk/zoombini_pages/dialog_version.h"
+#include "mohawk/zoombini_pages/easteregg_sa.h"
+#include "mohawk/zoombini_pages/easteregg_sb.h"
 #include "mohawk/zoombini_pages/interactive_base.h"
 #include "mohawk/zoombini_pages/interactive_rodmap.h"
 #include "mohawk/zoombini_pages/puzzle_bridge.h"
@@ -534,7 +536,7 @@ void MohawkEngine_Zoombini::observeBuiltinCheatKey(const Common::KeyState &kbd) 
 	// leave the sequence unchanged.
 	if (capturedAscii < 0x20 || 0x7e < capturedAscii)
 		return;
-	if (16 <= _builtinCheatCapture.size()) {
+	if (kMaxCheatPhraseLength <= _builtinCheatCapture.size()) {
 		_builtinCheatCaptureArmed = false;
 		_builtinCheatCapture.clear();
 		return;
@@ -543,34 +545,54 @@ void MohawkEngine_Zoombini::observeBuiltinCheatKey(const Common::KeyState &kbd) 
 	_builtinCheatCapture += static_cast<char>(capturedAscii);
 }
 
-bool MohawkEngine_Zoombini::handleBuiltinCheatSpace(const Common::KeyState &kbd) {
+MohawkEngine_Zoombini::BuiltinCheatPhrase MohawkEngine_Zoombini::getBuiltinCheatPhrase() const {
+	if (!_builtinCheatCaptureArmed)
+		return BuiltinCheatPhrase::kNone;
+	if (_builtinCheatCapture == "go snoids ")
+		return BuiltinCheatPhrase::kDebugMode;
+	if (_builtinCheatCapture == "midi ")
+		return BuiltinCheatPhrase::kMidiTest;
+	if (_builtinCheatCapture == "snoid zapper")
+		return BuiltinCheatPhrase::kEasterEggSA;
+	if (_builtinCheatCapture == "attack the snoids")
+		return BuiltinCheatPhrase::kEasterEggSB;
+	return BuiltinCheatPhrase::kNone;
+}
+
+bool MohawkEngine_Zoombini::handleBuiltinCheatKey(const Common::KeyState &kbd) {
 	if (kbd.keycode != Common::KEYCODE_SPACE)
 		return false;
 
-	bool phraseMatched = false;
-	if (_builtinCheatCaptureArmed) {
-		phraseMatched = true;
-		if (_builtinCheatCapture == "go snoids ") {
-			setBuiltinDebugMode(true);
-		} else if (_builtinCheatCapture == "midi ") {
-			setBuiltinMidiTestMode(!_builtinMidiTestMode);
-		} else {
-			phraseMatched = false;
-		}
-
-		// An unmatched Space remains in the sequence. This is required for the
-		// interior Space in "go snoids " to reach the final comparison.
-		if (phraseMatched) {
-			_builtinCheatCaptureArmed = false;
-			_builtinCheatCapture.clear();
-		}
+	switch (getBuiltinCheatPhrase()) {
+	case BuiltinCheatPhrase::kDebugMode:
+		setBuiltinDebugMode(true);
+		break;
+	case BuiltinCheatPhrase::kMidiTest:
+		setBuiltinMidiTestMode(!_builtinMidiTestMode);
+		break;
+	default:
+		// Keep unmatched spaces for phrases that contain spaces.
+		if (!_builtinMidiTestMode)
+			return false;
+		playBuiltinMidiTestResource(kbd.hasFlags(Common::KBD_SHIFT));
+		return true;
 	}
 
-	if (phraseMatched || !_builtinMidiTestMode)
-		return phraseMatched;
-
-	playBuiltinMidiTestResource(kbd.hasFlags(Common::KBD_SHIFT));
+	_builtinCheatCaptureArmed = false;
+	_builtinCheatCapture.clear();
 	return true;
+}
+
+ZoombiniPageType MohawkEngine_Zoombini::getBuiltinCheatMapDest(ZoombiniPageType destination) const {
+	if (!_state->inPracticeMode())
+		return ZoombiniPageType::kNone;
+
+	const BuiltinCheatPhrase phrase = getBuiltinCheatPhrase();
+	if (phrase == BuiltinCheatPhrase::kEasterEggSA && destination == ZoombiniPageType::kFleens)
+		return ZoombiniPageType::kEasterEggSA;
+	if (phrase == BuiltinCheatPhrase::kEasterEggSB && destination == ZoombiniPageType::kSlides)
+		return ZoombiniPageType::kEasterEggSB;
+	return ZoombiniPageType::kNone;
 }
 
 void MohawkEngine_Zoombini::setBuiltinDebugMode(bool enabled) {
@@ -578,7 +600,7 @@ void MohawkEngine_Zoombini::setBuiltinDebugMode(bool enabled) {
 	_state->markDebugStateMutation();
 	_state->markSaveBeforeQuitPending();
 	if (!enabled) {
-		_builtinDebug = ZmbBuiltinDebugRuntimeState();
+		_btiDbgRtState = ZmbBuiltinDebugRuntimeState();
 		if (_activePage)
 			_activePage->scheduleForceRedraw();
 	}
@@ -606,19 +628,21 @@ uint16 MohawkEngine_Zoombini::playBuiltinMidiTestResource(bool advance) {
 	}
 
 	const uint16 resourceId = getBuiltinMidiTestResource();
+	const Common::U32String notiText = Common::U32String::format("midi test:%u", resourceId);
+	showBuiltinNotiBox(notiText, true);
+
 	if (!_state || _state->getEnableMusic()) {
 		if (_relInfo.isFamily(ZmbReleaseInfo::Family::kTlcV20)) {
 			const ZmbResource musicResource(ZmbResource::kSystem, static_cast<int16>(resourceId));
-			if (resourceId == kBuiltinTlcMidiTestSoundResourceId && hasResource(ID_SND, musicResource) && !_sound->isSoundPlaying(musicResource))
-				_sound->playSound(musicResource, Audio::Mixer::kMusicSoundType);
-		} else {
-			if (advance || !_midi->isPlaying())
-				_midi->playMidi(ZmbResource(ZmbResource::kSystem, static_cast<int16>(resourceId)));
+			if (resourceId == kBuiltinTlcMidiTestSoundResourceId && hasResource(ID_SND, musicResource) && !_sound->isSoundPlaying(musicResource)) {
+				if (_sound->playSound(musicResource, Audio::Mixer::kMusicSoundType) && _btiDbgRtState._soundQueueNotifications)
+					showBuiltinNotiBox(Common::U32String::format("s-snd:%u", resourceId), true);
+			}
+		} else if (_midi->getPlayingResourceId() != resourceId) {
+			_midi->playMidi(ZmbResource(ZmbResource::kSystem, static_cast<int16>(resourceId)));
 		}
 	}
 
-	const Common::U32String notificationText = Common::U32String::format("midi test:%u", resourceId);
-	showBuiltinNotiBox(notificationText, true);
 	return resourceId;
 }
 
@@ -626,13 +650,13 @@ void MohawkEngine_Zoombini::showBuiltinNotiBox(const Common::U32String &text, bo
 	if (hasDialogOpened())
 		return;
 
-	ZoombiniInteractive *interactive = dynamic_cast<ZoombiniInteractive *>(getActivePage());
-	if (!interactive)
+	ZoombiniPage *page = getActivePage();
+	if (!page || (page->getPageCategory() != ZoombiniPageCategory::kInteractive && page->getPageType() != ZoombiniPageType::kXfer))
 		return;
 	if (persistent)
-		interactive->showNotiBoxMediumPersistent(text);
+		page->showNotiBoxMediumPersistent(text);
 	else
-		interactive->showNotiBoxMedium(text);
+		page->showNotiBoxMedium(text);
 }
 
 void MohawkEngine_Zoombini::beginQuitEvent(ZoombiniPage *page) {
@@ -705,7 +729,7 @@ void MohawkEngine_Zoombini::doFrame() {
 	uint32 frameStartTime = getTotalPlayTime();
 	bool isDialogOpened = !_dialogPageStack.empty();
 	const bool interpolate = !isDialogOpened && _activePage && !_activePage->isClosed() && isPosInterpolationEnabled() && !_gfx->isFading() &&
-							 !_builtinDebug._stepMode && !_builtinDebug._runnerBackdropMode && !_activePage->isBuiltinDebugInputWaitActive();
+							 !_btiDbgRtState._stepMode && !_btiDbgRtState._runnerBackdropMode && !_activePage->isBuiltinDebugInputWaitActive();
 	const uint32 logicFrame = getAnimationFrameCounter(frameStartTime);
 	const uint32 presentationRate = interpolate ? getTargetFrameRate() : kAnimateFrameRate;
 	if (interpolate && _lastPresentationLogicFrame == logicFrame) {
@@ -1407,6 +1431,12 @@ void MohawkEngine_Zoombini::loadNextPage() {
 
 	assert(!_pageQueue.empty());
 	ZoombiniPageType nextPageType = _pageQueue.pop();
+	// A new page resumes ordinary rendering and starts its own path inspection.
+	_btiDbgRtState._stepMode = false;
+	_btiDbgRtState._stepAdvanceRequested = false;
+	_btiDbgRtState._stepRunnerPosition = 0;
+	_btiDbgRtState._runnerBackdropMode = false;
+	_btiDbgRtState._pathCycleIndex = 0;
 	if (nextPageType == ZoombiniPageType::kRodMap)
 		_state->endPracticeState();
 
@@ -1423,6 +1453,12 @@ void MohawkEngine_Zoombini::loadNextPage() {
 		break;
 	case ZoombiniPageType::kPicker:
 		page = new ZoombiniShelterPicker(this);
+		break;
+	case ZoombiniPageType::kEasterEggSA:
+		page = new ZoombiniEasterEggSA(this);
+		break;
+	case ZoombiniPageType::kEasterEggSB:
+		page = new ZoombiniEasterEggSB(this);
 		break;
 	case ZoombiniPageType::kBasecamp1:
 		page = new ZoombiniShelterBasecampOne(this);
@@ -1644,7 +1680,7 @@ void MohawkEngine_Zoombini::applyPendingLanguageSwitch() {
 	_cursor->showCursor();
 
 	// Reset built-in debug modes and start a fresh journey without clearing the save roster.
-	_builtinDebug = ZmbBuiltinDebugRuntimeState();
+	_btiDbgRtState = ZmbBuiltinDebugRuntimeState();
 	_builtinMidiTestMode = false;
 	_state->resetForNewGame();
 
@@ -1661,9 +1697,11 @@ void MohawkEngine_Zoombini::applyPendingLanguageSwitch() {
 
 void MohawkEngine_Zoombini::setNextPage(ZoombiniPageType type) {
 	// Demo practice pages return to their route map instead of entering an archive that the demo does not ship.
+	// Preserve direct debugger jumps to the demo's SA and SB minigames.
 	if (_relInfo.hasDemoPracticeMap() && _state->inPracticeMode() &&
 		_activePage && _activePage->getPageType() != ZoombiniPageType::kRodMap &&
-		type != ZoombiniPageType::kPicker && type != ZoombiniPageType::kLogo)
+		type != ZoombiniPageType::kPicker && type != ZoombiniPageType::kLogo &&
+		type != ZoombiniPageType::kEasterEggSA && type != ZoombiniPageType::kEasterEggSB)
 		type = ZoombiniPageType::kRodMap;
 
 	// The transition option skips the XFER scene during normal progression.

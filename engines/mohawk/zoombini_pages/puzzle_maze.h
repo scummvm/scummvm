@@ -2058,10 +2058,10 @@ private:
 	int16 _waveGroupShapeBase[9] = {};
 
 	// Collision tracking grid.
-	/** Number of collision occupants per cell. */
-	int16 _collisionReservationCount[kGridRows][kGridCols] = {};
-	/** Runner index associated with each collision cell. */
-	int16 _collisionReservationRunnerIdx[kGridRows][kGridCols];
+	/** Number of recorded collision candidates in each cell (0 or 1). */
+	int16 _collisionCandidateCount[kGridRows][kGridCols] = {};
+	/** Index of the first runner recorded for collision detection in each cell, or -1. */
+	int16 _collisionCandidateRunnerIdx[kGridRows][kGridCols];
 
 	// --- Per-runner state ---
 	/** Maximum number of active Maze runners. */

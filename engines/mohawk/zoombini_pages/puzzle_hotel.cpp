@@ -541,12 +541,16 @@ bool ZoombiniPuzzleHotel::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 		output = "Hotel level 2-3 two-axis and level-4 three-axis validation now accepts all candidates for this page instance.\n";
 	} else if (action == BuiltinDebugAction::kCycleRoom || action == BuiltinDebugAction::kCycleRoomAlternate) {
 		const bool alternate = action == BuiltinDebugAction::kCycleRoomAlternate;
-		int16 &cycle = alternate ? _debugRoomAnimCycleAlternate : _debugRoomAnimCycle;
+		int16 cycle = alternate ? _debugRoomAnimCycleAlternate : _debugRoomAnimCycle;
 		const int16 first = alternate ? 10 : 0;
 		const int16 last = alternate ? 17 : 9;
 		cycle += 1;
 		if (last < cycle)
 			cycle = first;
+		if (alternate)
+			_debugRoomAnimCycleAlternate = cycle;
+		else
+			_debugRoomAnimCycle = cycle;
 		const int16 scrbId = static_cast<int16>(kResScrb7000_RoomBase + cycle);
 		if (!_vm->hasResource(ID_SCRB, ZmbResource(ZmbResource::kPage, scrbId))) {
 			// The original leaves the runner blank for unused debug selections.
@@ -556,7 +560,7 @@ bool ZoombiniPuzzleHotel::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 			}
 			const uint32 featureId = _ullaAnimFeature ? _ullaAnimFeature->getRegistrationIndex() : 0;
 			const Common::String message = Common::String::format("Set Ftr id  %u with bogus script  %d", featureId, scrbId);
-			showBuiltinDebugText(message);
+			showBuiltinDebugText(message, BuiltinDebugInputMode::kWait);
 			output = message + '\n';
 			return false;
 		}
@@ -577,6 +581,7 @@ bool ZoombiniPuzzleHotel::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 ZmbEventHandleResult ZoombiniPuzzleHotel::onDebugKeyDown(const Common::KeyState &kbd) {
 	BuiltinDebugAction action = BuiltinDebugAction::kInvalid;
 	if (kbd.hasFlags(0) || kbd.hasFlags(Common::KBD_SHIFT)) {
+		// The original puzzle reserves Space to reset the mistake counter and chance palette ahead of MIDI testing.
 		if (kbd.keycode == Common::KEYCODE_SPACE)
 			action = BuiltinDebugAction::kReinitCounter;
 		else if (kbd.ascii == 'A' || kbd.ascii == 'a')

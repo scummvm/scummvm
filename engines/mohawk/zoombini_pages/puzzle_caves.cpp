@@ -536,7 +536,7 @@ Common::String ZoombiniPuzzleCaves::debugGetAnswer(const Common::Array<Common::S
 
 Common::String ZoombiniPuzzleCaves::debugGetBuiltinDebugCommandHelp() const {
 	Common::String output;
-	output += Common::String::format("  %-7s (%s <1-4>)\n", "1-4", kBuiltinDebugActionDifficulty);
+	output += Common::String::format("  %-7s (%s <1-4>)\n", "1-4", kBuiltinDebugActionPuzzleLevel);
 	output += "    Set the runtime level, rebuild its visible hints, and reassign the current Zoombinis for the retained trait categories.\n";
 	output += "    This does not reset the controller or mistake count; use Space afterward when that reset is wanted.\n";
 	output += Common::String::format("  %-7s (%s)\n", "Space", kBuiltinDebugActionReinit);
@@ -678,7 +678,7 @@ void ZoombiniPuzzleCaves::debugProcessEntrance(int16 traitKindIndex) {
 bool ZoombiniPuzzleCaves::debugDoBuiltinDebugCommand(int argc, const char **argv, Common::String &output) {
 	if (argc < 3) {
 		output = Common::String::format("Usage: page builtin_debug <%s|%s|%s|%s|%s> ...\n",
-										kBuiltinDebugActionDifficulty, kBuiltinDebugActionReinit, kBuiltinDebugActionLevel,
+										kBuiltinDebugActionPuzzleLevel, kBuiltinDebugActionReinit, kBuiltinDebugActionLevel,
 										kBuiltinDebugActionReinitAfterExit, kBuiltinDebugActionEntrance);
 		return true;
 	}
@@ -691,10 +691,10 @@ bool ZoombiniPuzzleCaves::debugDoBuiltinDebugCommand(int argc, const char **argv
 	}
 
 	int32 argument = -1;
-	if (action == BuiltinDebugAction::kDifficulty) {
+	if (action == BuiltinDebugAction::kPuzzleLevel) {
 		int32 level = 0;
 		if (argc != 4 || !ZmbResource::parseSignedInt(argv[3], level) || level < 1 || 4 < level) {
-			output = Common::String::format("Usage: page builtin_debug %s <1-4>\n", kBuiltinDebugActionDifficulty);
+			output = Common::String::format("Usage: page builtin_debug %s <1-4>\n", kBuiltinDebugActionPuzzleLevel);
 			return true;
 		}
 		argument = level;
@@ -717,8 +717,8 @@ bool ZoombiniPuzzleCaves::debugDoBuiltinDebugCommand(int argc, const char **argv
 }
 
 ZoombiniPuzzleCaves::BuiltinDebugAction ZoombiniPuzzleCaves::parseBuiltinDebugAction(const Common::String &action) {
-	if (action.equalsIgnoreCase(kBuiltinDebugActionDifficulty))
-		return BuiltinDebugAction::kDifficulty;
+	if (action.equalsIgnoreCase(kBuiltinDebugActionPuzzleLevel) || action.equalsIgnoreCase("difficulty"))
+		return BuiltinDebugAction::kPuzzleLevel;
 	if (action.equalsIgnoreCase(kBuiltinDebugActionReinit))
 		return BuiltinDebugAction::kReinit;
 	if (action.equalsIgnoreCase(kBuiltinDebugActionReinitAfterExit))
@@ -731,7 +731,7 @@ ZoombiniPuzzleCaves::BuiltinDebugAction ZoombiniPuzzleCaves::parseBuiltinDebugAc
 }
 
 bool ZoombiniPuzzleCaves::runBuiltinDebugAction(BuiltinDebugAction action, int16 argument, Common::String &output) {
-	if (action == BuiltinDebugAction::kDifficulty) {
+	if (action == BuiltinDebugAction::kPuzzleLevel) {
 		_puzzleLevel = static_cast<ZmbPuzzleLevel>(argument);
 		debugProcessEntrance(-1);
 	} else if (action == BuiltinDebugAction::kReinit || action == BuiltinDebugAction::kReinitAfterExit) {
@@ -751,7 +751,7 @@ bool ZoombiniPuzzleCaves::runBuiltinDebugAction(BuiltinDebugAction action, int16
 	}
 
 	const Common::String message = Common::String::format("Level %d ", static_cast<int>(_puzzleLevel));
-	showBuiltinDebugText(message);
+	drawBuiltinDebugStatusText(message);
 	output = message + '\n';
 	return false;
 }
@@ -761,9 +761,10 @@ ZmbEventHandleResult ZoombiniPuzzleCaves::onDebugKeyDown(const Common::KeyState 
 	int16 argument = -1;
 	if (kbd.hasFlags(0) || kbd.hasFlags(Common::KBD_SHIFT)) {
 		if ('1' <= kbd.ascii && kbd.ascii <= '4') {
-			action = BuiltinDebugAction::kDifficulty;
+			action = BuiltinDebugAction::kPuzzleLevel;
 			argument = static_cast<int16>(kbd.ascii - '0');
 		} else if (kbd.keycode == Common::KEYCODE_SPACE) {
+			// The original puzzle consumes Space to reinit at the current puzzle level before shared MIDI handling.
 			action = BuiltinDebugAction::kReinit;
 		} else if (kbd.ascii == 'L') {
 			action = BuiltinDebugAction::kLevel;

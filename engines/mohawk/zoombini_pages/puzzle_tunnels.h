@@ -879,8 +879,6 @@ private:
 	ZmbFeature *_gateActorFeatures[4] = {};
 	/** Main route feature used for gate and path animation. */
 	ZmbFeature *_mainPathFeature = nullptr;
-	/** Shared current debug SCRB resource ID across the four gate actors. */
-	int16 _builtinDebugScrbId = 0;
 
 	// ========================================
 	// Ambient/Idle Animation

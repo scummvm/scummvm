@@ -567,8 +567,18 @@ private:
 	bool checkToppingMaskMatch() const;
 
 	// --- Helpers ---
-	/** Return the phase state belonging to one troll order line. */
-	FeaturePhase &getTrollPhase(TrollOrderLine orderLine);
+	/**
+	 * Read the animation phase for a troll order line.
+	 * @param orderLine The troll order line to read.
+	 * @return The current animation phase.
+	 */
+	FeaturePhase getTrollPhase(TrollOrderLine orderLine) const;
+	/**
+	 * Set the animation phase for a troll order line.
+	 * @param orderLine The troll order line to update.
+	 * @param phase The new animation phase.
+	 */
+	void setTrollPhase(TrollOrderLine orderLine, FeaturePhase phase);
 	/** Return one of two troll order lines selected at random. */
 	TrollOrderLine getRandomTargetOrderLine(TrollOrderLine firstOrderLine, TrollOrderLine secondOrderLine);
 	/** Return whether the current difficulty provides a machine button for a topping. */
@@ -915,8 +925,6 @@ private:
 	uint16 _nextDynamicFeatureId = 30000;
 	/** Pizza debug state advanced by R, O, and D. */
 	int16 _builtinDebugUnlockLevel = 0;
-	/** Built-in debug SCRB cycle indices keyed by troll order line. */
-	Common::HashMap<TrollOrderLine, int16, TrollOrderLineHash> _builtinDebugScrbCycle;
 
 	/** Create a topping runner with its initial SCRB and frame interval. */
 	ZmbFeature *createToppingRunnerFeature(int16 scrbId, uint32 frameInterval);

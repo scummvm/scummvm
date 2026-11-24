@@ -310,12 +310,12 @@ bool ZoombiniConsole::CmdSub_MidiBuiltinDebug(int argc, const char **argv) {
 		debugPrintf("After enabling the mode and closing the debugger:\n");
 		debugPrintf("  Space\n");
 		debugPrintf("      Run the current selector entry and show 'midi test:<id>'.\n");
-		debugPrintf("      Leave the current MIDI playing; Shift+Space explicitly replaces it.\n");
+		debugPrintf("      If the selected resource are already being played, it continues.\n");
 		debugPrintf("  Shift+Space\n");
 		debugPrintf("      Advance to the next of 18 selector entries, wrap, and run it.\n");
 		debugPrintf("      The table is 30000, 30001, 30020-30023, 30025-30028,\n");
 		debugPrintf("      30030-30033, and 30035-30038. v1 plays the selected tMID;\n");
-		debugPrintf("      TLC v2 queues only Picker's MUSIC.MHK SND 30001 while Picker is active.\n\n");
+		debugPrintf("      TLC v2 can play only SND 30001 from the shared MUSIC.MHK.\n\n");
 		debugPrintf("Debugger counterparts:\n");
 		debugPrintf("  play\n");
 		debugPrintf("      Enable the mode if needed, then perform the same operation as Space.\n");
@@ -3170,6 +3170,9 @@ Common::String ZoombiniConsole::formatCompletionFlags(uint8 flags) {
 // [*] Page/Puzzle commands
 
 bool ZoombiniConsole::Cmd_BuiltinDebug(int argc, const char **argv) {
+	if (2 <= argc && scumm_stricmp(argv[1], kSubCmdBuiltinDebugMinigame) == 0)
+		return CmdSub_BuiltinDebugMinigame(argc, argv);
+
 	ZoombiniInteractive *interactive = dynamic_cast<ZoombiniInteractive *>(_vm->getActivePage());
 	if (!interactive) {
 		debugPrintf("The active page is not an interactive page.\n\n");
@@ -3177,7 +3180,7 @@ bool ZoombiniConsole::Cmd_BuiltinDebug(int argc, const char **argv) {
 	}
 
 	if (argc < 2 || hasHelpOption(argc, argv)) {
-		debugPrintf("Builtin debug functions from the original Zoombini engine.\n");
+		debugPrintf("Builtin debug functions from the original engine.\n");
 		debugPrintf("In-game activation: press Ctrl+A, type 'go snoids', press Space.\n");
 		debugPrintf("\n");
 		debugPrintf("Direct debugger commands run regardless of the debug flag state.\n");
@@ -3186,7 +3189,9 @@ bool ZoombiniConsole::Cmd_BuiltinDebug(int argc, const char **argv) {
 		debugPrintf("Usage: %s <action> [arguments]\n\n", kCmdBuiltinDebug);
 		printBuiltinDebugStatus();
 		debugPrintf("\n");
-		debugPrintf("Actions:\n%s\n", interactive->debugGetGlobalDebugCommandHelp().c_str());
+		debugPrintf("Actions:\n%s", interactive->debugGetGlobalDebugCommandHelp().c_str());
+		debugPrintf("  %s <sa|sb>\n", kSubCmdBuiltinDebugMinigame);
+		debugPrintf("      Enter Snoid Zapper (SA) or Attack the Snoids (SB).\n\n");
 		debugPrintf("Options:\n");
 		printHelpOption();
 		return true;
@@ -3204,6 +3209,51 @@ bool ZoombiniConsole::Cmd_BuiltinDebug(int argc, const char **argv) {
 	printBuiltinDebugStatus();
 	debugPrintf("\n");
 	return commandFailed;
+}
+
+bool ZoombiniConsole::CmdSub_BuiltinDebugMinigame(int argc, const char **argv) {
+	if (argc != 3 || hasHelpOption(argc, argv)) {
+		debugPrintf("Usage: %s %s <sa|sb>\n\n", kCmdBuiltinDebug, kSubCmdBuiltinDebugMinigame);
+		debugPrintf("  sa  Snoid Zapper\n");
+		debugPrintf("  sb  Attack the Snoids\n\n");
+		debugPrintf("Opens the minigame in practice mode and closes the debugger.\n");
+		debugPrintf("Requires an active game and the Picker and map archives.\n\n");
+		return true;
+	}
+
+	ZoombiniPageType targetPage;
+	if (scumm_stricmp(argv[2], "sa") == 0) {
+		targetPage = ZoombiniPageType::kEasterEggSA;
+	} else if (scumm_stricmp(argv[2], "sb") == 0) {
+		targetPage = ZoombiniPageType::kEasterEggSB;
+	} else {
+		debugPrintf("Unknown minigame '%s'. Use %s %s <sa|sb>.\n\n", argv[2], kCmdBuiltinDebug, kSubCmdBuiltinDebugMinigame);
+		return true;
+	}
+
+	if (!requireGameStateReady(Common::String::format("%s %s", kCmdBuiltinDebug, kSubCmdBuiltinDebugMinigame)))
+		return true;
+
+	ZoombiniPage *page = _vm->getActivePage();
+	if (!page || page->getPageCategory() != ZoombiniPageCategory::kInteractive ||
+		page->isClosed() || _vm->hasDialogOpened() || _vm->shouldQuit()) {
+		debugPrintf("Enter a minigame from an interactive page with no dialog or transition in progress.\n\n");
+		return true;
+	}
+
+	const Common::Path archiveRoot(_vm->getArchiveRoot());
+	const char *mapArchive = _vm->getRelInfo().getMapArchiveKind() == ZmbReleaseInfo::MapArchiveKind::kMap ? ZMB_MHK_MAP : ZMB_MHK_RODMAP;
+	if (!Common::File::exists(archiveRoot.append(ZMB_MHK_PICKER)) || !Common::File::exists(archiveRoot.append(mapArchive))) {
+		debugPrintf("The Picker or map archive required by the minigame is unavailable.\n\n");
+		return true;
+	}
+
+	if (!_vm->_state->inPracticeMode())
+		_vm->_state->_practiceLevel = 1;
+	_vm->_state->beginPracticeState();
+	_vm->setNextPage(targetPage);
+	page->close();
+	return false;
 }
 
 bool ZoombiniConsole::Cmd_PagePuzzle(int argc, const char **argv) {
@@ -3749,6 +3799,21 @@ bool ZoombiniConsole::Cmd_ManBuiltinDebug(int argc, const char **argv) {
 	debugPrintf("  Page-local keys run before the shared keys below.\n");
 	debugPrintf("  Close this debugger before using an in-game key.\n");
 
+	debugPrintf("\n[Hidden minigames]\n");
+	debugPrintf("  %s %s sa\n", kCmdBuiltinDebug, kSubCmdBuiltinDebugMinigame);
+	debugPrintf("  %s %s sb\n", kCmdBuiltinDebug, kSubCmdBuiltinDebugMinigame);
+	debugPrintf("      Run from an interactive page with no dialog or transition in progress.\n");
+	debugPrintf("      Enters practice mode automatically\n");
+	debugPrintf("  On the practice map, press Ctrl+A, type the lowercase phrase, then click its map spot.\n");
+	debugPrintf("  Both entry work regardless of gameplay.debug value.\n");
+	debugPrintf("  SA     phrase='snoid zapper'       spot='Fleens!'\n");
+	debugPrintf("       Aim with the mouse and click Zoombinis to zap them.\n");
+	debugPrintf("       Click the last crosshair to restart after Game Over.\n");
+	debugPrintf("       Click the map button to leave.\n");
+	debugPrintf("  SB     phrase='attack the snoids'  spot='Stone Rise'\n");
+	debugPrintf("       4/6 turn left/right, 8 thrusts, and 5 fires. Space resets a destroyed ship.\n");
+	debugPrintf("       Left-click to return to the map.\n");
+
 	debugPrintf("\n[Recovery and reset]\n");
 	debugPrintf("  If ] stops normal screen rendering, press [ to turn Step Mode off and resume it.\n");
 	debugPrintf("  Then press = only if a full redraw is needed to clear direct diagnostics.\n");
@@ -3776,11 +3841,11 @@ bool ZoombiniConsole::Cmd_ManBuiltinDebug(int argc, const char **argv) {
 	debugPrintf("  Ctrl+A, type lowercase 'midi', Space\n");
 	if (_vm->getRelInfo().isFamily(ZmbReleaseInfo::Family::kTlcV20)) {
 		debugPrintf("      Toggle the built-in MUSIC test selector.\n");
-		debugPrintf("  Space       Show the current selector; only Picker's SND 30001 can enter the music queue\n");
+		debugPrintf("  Space       Run the current selector; only SND 30001 is playable\n");
 		debugPrintf("  Shift+Space Advance with wraparound, then run the selected selector\n");
 	} else {
 		debugPrintf("      Toggle the built-in 18-entry MIDI test selector.\n");
-		debugPrintf("  Space       Play the current test tMID unless MIDI is already playing\n");
+		debugPrintf("  Space       Play the selected tMID if that resource is not already playing\n");
 		debugPrintf("  Shift+Space Advance with wraparound, then play the selected tMID\n");
 	}
 	debugPrintf("  Debugger counterparts: midi builtin_debug -h; state get|set midi.debug\n");
@@ -3788,7 +3853,7 @@ bool ZoombiniConsole::Cmd_ManBuiltinDebug(int argc, const char **argv) {
 	debugPrintf("\n[Page-local keys: debug mode must be enabled unless noted]\n");
 	debugPrintf("  RoadMap\n");
 	debugPrintf("    +/-           Change the next generated practice pack by one (range 1-16)\n");
-	debugPrintf("                  The current pack is unchanged\n");
+	debugPrintf("                  The first adjustment selects 1. The current pack is unchanged\n");
 	debugPrintf("    Shift+T, a-p  In practice mode, generate that pack and start XFER from source page a-p\n");
 	debugPrintf("                  a-p: Picker, Bridge, Tunnels, Pizza, BC1 North, Ferry, Lilly, Slides,\n");
 	debugPrintf("                       BC1 South, Fleens, Hotel, Net, BC2, Caves, Smoke, Maze\n");

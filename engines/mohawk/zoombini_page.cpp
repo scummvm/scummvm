@@ -20,6 +20,7 @@
  */
 
 #include "common/algorithm.h"
+#include "common/config-manager.h"
 
 #include "mohawk/cursors.h"
 #include "mohawk/resource.h"
@@ -165,9 +166,9 @@ void ZoombiniPage::onFrame() {
 	onPreTickFrame();
 
 	if (_currentFrameCounter != _lastFrameCounter || _doForceRedraw) {
-		if (_builtinDebugTextRestorePending) {
+		if (_builtinDebugTextRestore == BuiltinDebugTextRestore::kPending) {
 			addExternalDirtyRect(Common::Rect(0, 0, 310, 16));
-			_builtinDebugTextRestorePending = false;
+			_builtinDebugTextRestore = BuiltinDebugTextRestore::kNone;
 		}
 		do {
 			_forceRedrawPending |= _doForceRedraw;
@@ -318,7 +319,7 @@ Common::Point ZoombiniPage::getPresentationCommandOffset(const PresentationRunne
 void ZoombiniPage::onInterpolationFrame(uint32 frameTime) {
 	// Move frozen drawing between logic ticks without advancing poses or gameplay.
 	if (_isClosed || !_vm->isPosInterpolationEnabled() || _vm->_gfx->isFading() ||
-		_vm->_builtinDebug._stepMode || _vm->_builtinDebug._runnerBackdropMode || _builtinDebugInputWaitActive)
+		_vm->_btiDbgRtState._stepMode || _vm->_btiDbgRtState._runnerBackdropMode || _builtinDebugInputWaitActive)
 		return;
 
 	// Pass 1 updates runner and group offsets from the fractional animation time and collects dirty rects.
@@ -1822,7 +1823,7 @@ void ZoombiniPage::renderFeatures() {
 	// The render clip is a union of dirty rectangles, not their bounding box.
 	// Each draw operation is clipped against each rectangle's intersection.
 
-	ZmbBuiltinDebugRuntimeState &builtinDebug = _vm->_builtinDebug;
+	ZmbBuiltinDebugRuntimeState &builtinDebug = _vm->_btiDbgRtState;
 	if (builtinDebug._stepMode) {
 		if (!builtinDebug._stepAdvanceRequested)
 			return;
@@ -2065,6 +2066,413 @@ void ZoombiniPage::renderFeatures() {
 		_vm->_gfx->setPresentationCapture(&_presentationOutside);
 }
 
+Common::String ZoombiniPage::debugGetGlobalDebugCommandHelp() const {
+	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
+
+	// v1.xEU family shadowes some debug shortcuts with normal shortcuts.
+	const char *shadowed = relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x) ? " (shadowed)" : "";
+
+	Common::String output;
+	output += Common::String::format("  %s | %s\n", kGlobalDebugActionEnable, kGlobalDebugActionDisable);
+	output += "    Enable the original serialized flag or use its ScummVM disable counterpart.\n";
+	output += Common::String::format("  %s ([)\n", kGlobalDebugActionStepOff);
+	output += "    Resume normal continuous screen rendering by turning Step Mode off.\n";
+	output += Common::String::format("  %s (])\n", kGlobalDebugActionStep);
+	output += "    Stop normal continuous screen rendering by turning Step Mode on; later presses advance one pass or runner.\n";
+	output += Common::String::format("  %s (*)\n", kGlobalDebugActionResetFidget);
+	output += "    Reset the fidget interval threshold.\n";
+	output += Common::String::format("  %s (Shift+N)\n", kGlobalDebugActionPaths);
+	output += "    Draw NODE points and the next PATH diagnostic.\n";
+	output += Common::String::format("  %s (Shift+S)\n", kGlobalDebugActionSound);
+	output += "    Toggle queued-sound start notifications.\n";
+	output += Common::String::format("  %s (&)\n", kGlobalDebugActionPalette);
+	output += "    Draw the 256-entry palette grid.\n";
+	output += Common::String::format("  %s (=)\n", kGlobalDebugActionMergeRect);
+	output += "    Request a full-screen redraw by merging the whole screen into the dirty region.\n";
+	output += Common::String::format("  %s (@)\n", kGlobalDebugActionUnlockRoutes);
+	output += "    Apply the original route-unlock bits.\n";
+	output += Common::String::format("  %s (Ctrl+E)%s\n", kGlobalDebugActionRunnerRectsAll, shadowed);
+	output += "    Draw all runner click rectangles, render-state signs, and global-list positions.\n";
+	output += Common::String::format("  %s (Ctrl+F)%s\n", kGlobalDebugActionRunnerRectsFiltered, shadowed);
+	output += "    Draw Snoid-only runner click rectangles, render-state signs, and global-list positions.\n";
+	output += Common::String::format("  %s (Ctrl+X)\n", kGlobalDebugActionRunnerIdsAll);
+	output += "    Draw all runner click rectangles and IDs.\n";
+	output += Common::String::format("  %s (Ctrl+Y)%s\n", kGlobalDebugActionRunnerIdsFiltered, shadowed);
+	output += "    Draw Snoid-only runner click rectangles and IDs.\n";
+	output += Common::String::format("  %s (Ctrl+Z)\n", kGlobalDebugActionRunnerDebug);
+	output += "    Toggle the palette-14 runner-debug backdrop.\n";
+	output += Common::String::format("  %s (Ctrl+I)%s\n", kGlobalDebugActionForceParty, shadowed);
+	output += "    Force every available Zoombini into the active party.\n";
+	output += Common::String::format("  %s (Ctrl+R)%s\n", kGlobalDebugActionDragCoords, shadowed);
+	output += "    Toggle dragged-Zoombini coordinate notifications.\n";
+	return output;
+}
+
+bool ZoombiniPage::debugDoGlobalDebugCommand(int argc, const char **argv, Common::String &output) {
+	if (argc != 2) {
+		output = "Usage: builtin_debug <action>\n";
+		output += debugGetGlobalDebugCommandHelp();
+		return true;
+	}
+
+	const GlobalDebugAction action = parseGlobalDebugAction(argv[1]);
+	if (action == GlobalDebugAction::kInvalid) {
+		output = Common::String::format("Unknown built-in debug action '%s'.\n", argv[1]);
+		output += debugGetGlobalDebugCommandHelp();
+		return true;
+	}
+	return runGlobalDebugAction(action, output);
+}
+
+ZoombiniPage::GlobalDebugAction ZoombiniPage::parseGlobalDebugAction(const Common::String &action) {
+	if (action.equalsIgnoreCase(kGlobalDebugActionEnable))
+		return GlobalDebugAction::kEnable;
+	if (action.equalsIgnoreCase(kGlobalDebugActionDisable))
+		return GlobalDebugAction::kDisable;
+	if (action.equalsIgnoreCase(kGlobalDebugActionStepOff))
+		return GlobalDebugAction::kStepOff;
+	if (action.equalsIgnoreCase(kGlobalDebugActionStep))
+		return GlobalDebugAction::kStep;
+	if (action.equalsIgnoreCase(kGlobalDebugActionResetFidget))
+		return GlobalDebugAction::kResetFidget;
+	if (action.equalsIgnoreCase(kGlobalDebugActionPaths))
+		return GlobalDebugAction::kPaths;
+	if (action.equalsIgnoreCase(kGlobalDebugActionSound))
+		return GlobalDebugAction::kSound;
+	if (action.equalsIgnoreCase(kGlobalDebugActionPalette))
+		return GlobalDebugAction::kPalette;
+	if (action.equalsIgnoreCase(kGlobalDebugActionMergeRect))
+		return GlobalDebugAction::kMergeRect;
+	if (action.equalsIgnoreCase(kGlobalDebugActionUnlockRoutes))
+		return GlobalDebugAction::kUnlockRoutes;
+	if (action.equalsIgnoreCase(kGlobalDebugActionRunnerRectsAll))
+		return GlobalDebugAction::kRunnerRectsAll;
+	if (action.equalsIgnoreCase(kGlobalDebugActionRunnerRectsFiltered))
+		return GlobalDebugAction::kRunnerRectsFiltered;
+	if (action.equalsIgnoreCase(kGlobalDebugActionRunnerIdsAll))
+		return GlobalDebugAction::kRunnerIdsAll;
+	if (action.equalsIgnoreCase(kGlobalDebugActionRunnerIdsFiltered))
+		return GlobalDebugAction::kRunnerIdsFiltered;
+	if (action.equalsIgnoreCase(kGlobalDebugActionRunnerDebug))
+		return GlobalDebugAction::kRunnerDebug;
+	if (action.equalsIgnoreCase(kGlobalDebugActionForceParty))
+		return GlobalDebugAction::kForceParty;
+	if (action.equalsIgnoreCase(kGlobalDebugActionDragCoords))
+		return GlobalDebugAction::kDragCoords;
+	return GlobalDebugAction::kInvalid;
+}
+
+void ZoombiniPage::showBuiltinDebugText(const Common::String &text, BuiltinDebugInputMode inputMode) {
+	drawBuiltinDebugText(text, inputMode);
+	if (inputMode == BuiltinDebugInputMode::kWait)
+		waitForBuiltinDebugInput();
+}
+
+bool ZoombiniPage::runGlobalDebugAction(GlobalDebugAction action, Common::String &output) {
+	ZmbBuiltinDebugRuntimeState &debugState = _vm->_btiDbgRtState;
+
+	if (action == GlobalDebugAction::kEnable || action == GlobalDebugAction::kDisable) {
+		const bool enabled = action == GlobalDebugAction::kEnable;
+		_vm->setBuiltinDebugMode(enabled);
+		output = Common::String::format("Built-in debug mode %s.\n", enabled ? "enabled" : "disabled");
+	} else if (action == GlobalDebugAction::kStepOff) {
+		debugState._stepMode = false;
+		debugState._stepAdvanceRequested = false;
+		debugState._stepRunnerPosition = 0;
+		showBuiltinDebugText("Step-Mode OFF");
+		output = "Step-Mode OFF\n";
+	} else if (action == GlobalDebugAction::kStep) {
+		if (!debugState._stepMode) {
+			debugState._stepMode = true;
+			debugState._stepAdvanceRequested = false;
+			debugState._stepRunnerPosition = 0;
+			showBuiltinDebugText("Step-Mode ON");
+			output = "Step-Mode ON\n";
+		} else if (debugState._stepRunnerPosition == 0) {
+			debugState._stepAdvanceRequested = true;
+			output = "One complete render frame requested.\n";
+		} else {
+			debugState._stepRunnerPosition += 1;
+			if (getBuiltinDebugRunnerCount() < static_cast<uint32>(debugState._stepRunnerPosition)) {
+				debugState._stepRunnerPosition = 0;
+				debugState._stepAdvanceRequested = true;
+				output = "Runner traversal completed; one complete render frame requested.\n";
+			} else {
+				drawBuiltinRunnerClickRects(debugState._runnerFilterSnoids, debugState._runnerShowIds,
+											debugState._stepRunnerPosition);
+				output = Common::String::format("Drew runner position %d.\n", debugState._stepRunnerPosition);
+			}
+		}
+	} else if (action == GlobalDebugAction::kResetFidget) {
+		_vm->_fidgetThreshold = 0;
+		output = "Original fidget threshold reset.\n";
+	} else if (action == GlobalDebugAction::kPaths) {
+		drawBuiltinNodePaths();
+		output = Common::String::format("Drew NODE/PATH diagnostic index %u.\n", debugState._pathCycleIndex);
+	} else if (action == GlobalDebugAction::kSound) {
+		debugState._soundQueueNotifications = !debugState._soundQueueNotifications;
+		const char *notificationState;
+		if (debugState._soundQueueNotifications)
+			notificationState = "on";
+		else
+			notificationState = "off";
+		output = Common::String::format("Queued-SND notifications %s.\n", notificationState);
+	} else if (action == GlobalDebugAction::kPalette) {
+		drawBuiltinPaletteGrid();
+		output = "Drew the 32 by 8 palette grid.\n";
+	} else if (action == GlobalDebugAction::kMergeRect) {
+		addExternalDirtyRect(Common::Rect(0, 0, ZoombiniGraphics::kScreenWidth, ZoombiniGraphics::kScreenHeight));
+		output = "Requested a full-screen redraw by merging the whole screen into the external dirty region.\n";
+	} else if (action == GlobalDebugAction::kUnlockRoutes) {
+		_vm->_state->getCurrentState().setRouteCompletionFlag(ZmbRouteId::kBigBadHungry, 0);
+		_vm->_state->getCurrentState().setRouteCompletionFlag(ZmbRouteId::kWhosBayou, 0);
+		_vm->_state->getCurrentState().setRouteCompletionFlag(ZmbRouteId::kMontDespair, 0);
+		_vm->_state->markDebugStateMutation();
+		_vm->_state->markSaveBeforeQuitPending();
+		output = "Built-in route unlock bits applied.\n";
+	} else if (action == GlobalDebugAction::kRunnerRectsFiltered || action == GlobalDebugAction::kRunnerRectsAll) {
+		debugState._runnerFilterSnoids = action == GlobalDebugAction::kRunnerRectsFiltered;
+		debugState._runnerShowIds = false;
+		debugState._stepRunnerPosition = debugState._stepMode ? 1 : 0;
+		drawBuiltinRunnerClickRects(debugState._runnerFilterSnoids, false, debugState._stepRunnerPosition);
+		output = "Drew original runner click-rectangle labels.\n";
+	} else if (action == GlobalDebugAction::kRunnerIdsFiltered || action == GlobalDebugAction::kRunnerIdsAll) {
+		debugState._runnerFilterSnoids = action == GlobalDebugAction::kRunnerIdsFiltered;
+		debugState._runnerShowIds = true;
+		debugState._stepRunnerPosition = debugState._stepMode ? 1 : 0;
+		drawBuiltinRunnerClickRects(debugState._runnerFilterSnoids, true, debugState._stepRunnerPosition);
+		output = "Drew original runner-ID labels.\n";
+	} else if (action == GlobalDebugAction::kRunnerDebug) {
+		debugState._runnerBackdropMode = !debugState._runnerBackdropMode;
+		if (!debugState._runnerBackdropMode)
+			addExternalDirtyRect(Common::Rect(0, 0, ZoombiniGraphics::kScreenWidth, ZoombiniGraphics::kScreenHeight));
+		output = Common::String::format("Runner backdrop mode %s.\n", debugState._runnerBackdropMode ? "on" : "off");
+	} else if (action == GlobalDebugAction::kForceParty) {
+		uint16 snoidCount = 0;
+		uint16 activePartyCount = 0;
+		for (ZmbSnoid *snoid : _snoidMap) {
+			if (!snoid || !snoid->isPackSnoid())
+				continue;
+			snoidCount += 1;
+			if (snoid->isRenderActivated() && snoid->_packIsOccupied)
+				activePartyCount += 1;
+		}
+		if (activePartyCount < snoidCount) {
+			schedulePackSnoids(true, true);
+			_vm->_state->markDebugStateMutation();
+			_vm->_state->markSaveBeforeQuitPending();
+		}
+		showBuiltinDebugText("ALL in party");
+		output = "ALL in party\n";
+	} else if (action == GlobalDebugAction::kDragCoords) {
+		debugState._showDragCoordinates = !debugState._showDragCoordinates;
+		updateBuiltinDragNotification();
+		output = Common::String::format("Dragged-Snoid coordinates %s.\n", debugState._showDragCoordinates ? "on" : "off");
+	} else {
+		return true;
+	}
+
+	return false;
+}
+
+ZmbEventHandleResult ZoombiniPage::onGlobalDebugKeyDown(const Common::KeyState &kbd) {
+	if (_vm->handleBuiltinCheatKey(kbd))
+		return ZmbEventHandleResult::kConsumed;
+	if (!_vm->isBuiltinDebugMode())
+		return ZmbEventHandleResult::kPassthrough;
+
+	GlobalDebugAction action = GlobalDebugAction::kInvalid;
+	if (kbd.hasFlags(Common::KBD_CTRL)) {
+		const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
+		const bool fixSwappedSoundMusic = ConfMan.getBool(MohawkMetaEngine_Zoombini::kOptionFixSwappedSoundMusicShortcuts);
+		// These release-specific shortcuts take priority over debugging, including during key repeat.
+		if (relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kVersionDialog, kbd) ||
+			relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kLangSwitch, kbd) ||
+			relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kSaveGame, kbd) ||
+			relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kGameplaySound, kbd, fixSwappedSoundMusic) ||
+			relInfo.isShortcut(ZmbReleaseInfo::ShortcutKind::kGameplayMusic, kbd, fixSwappedSoundMusic))
+			return ZmbEventHandleResult::kPassthrough;
+		switch (kbd.keycode) {
+		case Common::KEYCODE_e:
+			action = GlobalDebugAction::kRunnerRectsAll;
+			break;
+		case Common::KEYCODE_f:
+			action = GlobalDebugAction::kRunnerRectsFiltered;
+			break;
+		case Common::KEYCODE_i:
+			action = GlobalDebugAction::kForceParty;
+			break;
+		case Common::KEYCODE_r:
+			action = GlobalDebugAction::kDragCoords;
+			break;
+		case Common::KEYCODE_x:
+			action = GlobalDebugAction::kRunnerIdsAll;
+			break;
+		case Common::KEYCODE_y:
+			action = GlobalDebugAction::kRunnerIdsFiltered;
+			break;
+		case Common::KEYCODE_z:
+			action = GlobalDebugAction::kRunnerDebug;
+			break;
+		default:
+			return ZmbEventHandleResult::kPassthrough;
+		}
+	} else if (kbd.hasFlags(0) || kbd.hasFlags(Common::KBD_SHIFT)) {
+		// Shift+P measures the original render loop, and ^ reads its memory allocator.
+		// The ScummVM renderer and allocator do not provide equivalent statistics.
+		switch (kbd.ascii) {
+		case '[':
+			action = GlobalDebugAction::kStepOff;
+			break;
+		case ']':
+			action = GlobalDebugAction::kStep;
+			break;
+		case 'N':
+			action = GlobalDebugAction::kPaths;
+			break;
+		case 'S':
+			action = GlobalDebugAction::kSound;
+			break;
+		case '=':
+			action = GlobalDebugAction::kMergeRect;
+			break;
+		case '&':
+			action = GlobalDebugAction::kPalette;
+			break;
+		case '*':
+			action = GlobalDebugAction::kResetFidget;
+			break;
+		case '@':
+			action = GlobalDebugAction::kUnlockRoutes;
+			break;
+		default:
+			return ZmbEventHandleResult::kPassthrough;
+		}
+	} else {
+		return ZmbEventHandleResult::kPassthrough;
+	}
+
+	Common::String output;
+	runGlobalDebugAction(action, output);
+	return ZmbEventHandleResult::kConsumed;
+}
+
+void ZoombiniPage::showNotiBoxShort(const Common::U32String &ustr) {
+	showNotiBox(ustr, kNotiBox00_Short, true);
+}
+
+void ZoombiniPage::hideNotiBoxShort() {
+	_notiBoxShowUntilFrame = 0;
+}
+
+void ZoombiniPage::showNotiBoxMedium(const Common::U32String &ustr) {
+	showNotiBox(ustr, kNotiBox01_Medium, false);
+}
+
+void ZoombiniPage::showNotiBoxMediumPersistent(const Common::U32String &ustr) {
+	showNotiBox(ustr, kNotiBox01_Medium, true);
+}
+
+void ZoombiniPage::showNotiBoxLong(ZoombiniText::Key textKey) {
+	NotiBoxKind kind = kNotiBox01_Medium;
+	const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
+	if (relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x) && !relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x, Common::IT_ITA)) {
+		switch (textKey) {
+		case ZoombiniText::kNotiBoxHideCursor:
+		case ZoombiniText::kNotiBoxShowCursor:
+			break;
+		default:
+			kind = kNotiBox02_Wide;
+			break;
+		}
+	}
+	showNotiBox(_vm->_text->getLocalizedString(textKey), kind, false);
+}
+
+const Common::Rect &ZoombiniPage::getNotiBoxRect() const {
+	switch (_notiBoxKind) {
+	case kNotiBox00_Short:
+		return _notiBoxShortRect;
+	case kNotiBox02_Wide:
+		return _notiBoxWideRect;
+	default:
+		return _notiBoxMediumRect;
+	}
+}
+
+void ZoombiniPage::showNotiBox(const Common::U32String &ustr, NotiBoxKind kind, bool persistent) {
+	// Reused notifications retain their old draw order.
+	// Move this one after newer overlays so they do not cover the refreshed message.
+	if (_notiBoxFeature)
+		manualLinkAtEnd(_notiBoxFeature);
+
+	_notiBoxKind = kind;
+	_notiBoxText = ustr;
+	if (persistent)
+		_notiBoxShowUntilFrame = UINT32_MAX; // Virtually infinite duration
+	else
+		_notiBoxShowUntilFrame = _currentFrameCounter + NOTIBOX_LONG_SHOW_FRAME_DURATION;
+
+	// Only register NotiBox feature if not yet registered.
+	if (!_notiBoxFeature) {
+		ZmbFeature::EventHooks hooks;
+		hooks.setPreRenderFunc(&ZoombiniPage::notiBox_onPreRender);
+		hooks.setRenderFunc(&ZoombiniPage::notiBox_onRender);
+		hooks.setPostRenderFunc(&ZoombiniPage::notiBox_onPostRender);
+
+		_notiBoxFeature = loadScrbFeature(ZmbResource(ZmbResource::kSystem, kSysResShapeBitmap3001_NotiBox), 0, 0,
+										  ZmbFeature::FLAG_04000000_OVERLAY | ZmbFeature::FLAG_00001000_TOPMOST,
+										  hooks);
+	} else {
+		_notiBoxFeature->setNeedsRedraw(true);
+	}
+
+	static constexpr int16 kNotiBoxDirtyBottom = 580;
+	// Restore the screen below the plate when its content changes or expires.
+	Common::Rect dirtyRect = getNotiBoxRect();
+	dirtyRect.bottom = kNotiBoxDirtyBottom;
+	_notiBoxFeature->setClickRect(dirtyRect);
+	_notiBoxFeature->queueVisualRectConstraint(dirtyRect);
+	addExternalDirtyRect(dirtyRect);
+}
+
+bool ZoombiniPage::notiBox_onPreRender(ZmbFeature *feature) {
+	if (_notiBoxShowUntilFrame <= _currentFrameCounter) {
+		addDirtyRect(feature->getVisualRectConstraint());
+		feature->scheduleClose();
+		_notiBoxFeature = nullptr;
+	} else if (_vm->_btiDbgRtState._showDragCoordinates) {
+		feature->setNeedsRedraw(true);
+	}
+	return false;
+}
+
+ZmbRenderResult ZoombiniPage::notiBox_onRender(ZmbFeature *feature) {
+	if (feature->isCloseScheduled())
+		return ZmbRenderResult::kSkipped;
+
+	const ZmbHotspot hotspot(0, static_cast<int16>(_notiBoxKind) + 1, 0, getNotiBoxRect());
+	_vm->_gfx->drawShape(ZoombiniGraphics::kShapeScreen, ZmbResource(ZmbResource::kSystem, kSysResShapeBitmap3001_NotiBox), &hotspot);
+	return ZmbRenderResult::kRendered;
+}
+
+void ZoombiniPage::notiBox_onPostRender(ZmbFeature *feature) {
+	(void)feature;
+
+	if (_notiBoxText.empty())
+		return;
+
+	ZoombiniGraphics::ScreenKind screenKind = ZoombiniGraphics::kShapeScreen;
+
+	ZoombiniGraphics::TextConf tc;
+	tc._vAlign = Graphics::kTextAlignCenter;
+	tc._hAlign = Graphics::kTextAlignCenter;
+	Common::Rect textRect = getNotiBoxRect();
+	if (!_vm->_btiDbgRtState._showDragCoordinates || !isDragging())
+		textRect = _vm->getRelInfo().getLayoutAdjustment(ZmbReleaseInfo::LayoutKind::kNotiBoxText).apply(textRect);
+	_vm->_gfx->drawText(screenKind, _notiBoxText, textRect, tc);
+}
+
 static void drawBuiltinHollowRect(ZoombiniGraphics *gfx, const Common::Rect &rect, uint32 color) {
 	if (rect.isEmpty())
 		return;
@@ -2085,17 +2493,26 @@ static ZoombiniGraphics::TextConf getBuiltinDebugTextConf() {
 	return textConf;
 }
 
-void ZoombiniPage::drawBuiltinDebugText(const Common::String &text, bool restoreOnNextFrame) {
-	const Common::Rect rect(0, 0, 310, 16);
-	_vm->_gfx->fillArea(ZoombiniGraphics::kShapeScreen, rect, ZoombiniGraphics::kColor0A_White);
-	_vm->_gfx->drawText(ZoombiniGraphics::kShapeScreen, Common::U32String(text.c_str()), rect, getBuiltinDebugTextConf());
+void ZoombiniPage::drawBuiltinDebugText(const Common::String &text, BuiltinDebugInputMode inputMode) {
+	drawBuiltinDebugStrip(text, Common::Rect(0, 0, 310, 16), ZoombiniGraphics::kColor0A_White, ZoombiniGraphics::kColor2D_Black, inputMode);
+}
+
+void ZoombiniPage::drawBuiltinDebugStatusText(const Common::String &text) {
+	drawBuiltinDebugStrip(text, Common::Rect(275, 0, 375, 18), ZoombiniGraphics::kColor0E_VeryLightGray, ZoombiniGraphics::kColor0B_VeryDarkGray, BuiltinDebugInputMode::kContinue);
+}
+
+void ZoombiniPage::drawBuiltinDebugStrip(const Common::String &text, const Common::Rect &rect, uint32 background, uint32 foreground, BuiltinDebugInputMode inputMode) {
+	ZoombiniGraphics::TextConf textConf = getBuiltinDebugTextConf();
+	textConf._textPalette = foreground;
+	_vm->_gfx->fillArea(ZoombiniGraphics::kShapeScreen, rect, background);
+	_vm->_gfx->drawText(ZoombiniGraphics::kShapeScreen, Common::U32String(text.c_str()), rect, textConf);
 	_vm->_gfx->flushScreens();
 	_vm->_system->updateScreen();
 
-	// Non-blocking direct draws remain until normal page damage replaces them.
-	// A blocking draw is restored immediately before the first render pass after input resumes.
-	// A new direct draw during that release event replaces the pending message instead.
-	_builtinDebugTextRestorePending = restoreOnNextFrame;
+	if (inputMode == BuiltinDebugInputMode::kWait)
+		_builtinDebugTextRestore = BuiltinDebugTextRestore::kPending;
+	else
+		_builtinDebugTextRestore = BuiltinDebugTextRestore::kNone;
 }
 
 void ZoombiniPage::drawBuiltinDebugPanel(const Common::Rect &rect) {
@@ -2151,7 +2568,7 @@ void ZoombiniPage::drawBuiltinNodePaths() {
 	if (_nodeMap.empty())
 		return;
 
-	ZmbBuiltinDebugRuntimeState &debugState = _vm->_builtinDebug;
+	ZmbBuiltinDebugRuntimeState &debugState = _vm->_btiDbgRtState;
 	const ZmbNode *node = _nodeMap.begin()->_value;
 	const ZoombiniGraphics::ScreenKind screenKind = ZoombiniGraphics::kShapeScreen;
 	ZoombiniGraphics::TextConf textConf = getBuiltinDebugTextConf();

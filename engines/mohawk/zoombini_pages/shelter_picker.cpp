@@ -1303,11 +1303,13 @@ void ZoombiniShelterPicker::updateWaveBoatAnimationState(bool preserveAnimationS
 	if (!_wavesFeature || !_boatFeature)
 		return;
 
-	uint16 &animationState = _vm->_state->getCurrentState()._pickerWaveBoatAnimationState;
+	ZmbStateFile &state = _vm->_state->getCurrentState();
+	uint16 animationState = state._pickerWaveBoatAnimationState;
 	if (!preserveAnimationState)
 		animationState += 1;
 	if (kPickerBoatOnlyRunning < animationState)
 		animationState = kPickerWaveBoatBothRunning;
+	state._pickerWaveBoatAnimationState = animationState;
 
 	const bool wavesRunning = animationState == kPickerWaveBoatBothRunning || animationState == kPickerWaveOnlyRunning;
 	const bool boatRunning = animationState == kPickerWaveBoatBothRunning || animationState == kPickerBoatOnlyRunning;
@@ -1516,6 +1518,7 @@ bool ZoombiniShelterPicker::debugApplySyntheticGeneratePrefix(Common::String &ou
 	ZmbStateFile &f = _vm->_state->getCurrentState();
 	f._zmbGeneratedCount = ZmbTrait::SNOID_MAX - 1;
 	f._zmbStoredTownCount = ZmbTrait::SNOID_MAX - 1;
+	// The counters have no matching population records, so this state cannot be saved as progress.
 	_vm->_state->markUnsafeSyntheticDebugState();
 	_vm->_state->markSaveBeforeQuitPending();
 	output = "Synthetic generated and Town counts set to 624.\n";

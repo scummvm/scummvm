@@ -320,7 +320,7 @@ void ZoombiniSound::flushScriptSoundFrame(const ZoombiniPage &page) {
 		selectedEntry.started = true;
 	}
 	// The console can enable these notifications with the in-game debug flag off.
-	if (startedNow && _vm->_builtinDebug._soundQueueNotifications) {
+	if (startedNow && _vm->_btiDbgRtState._soundQueueNotifications) {
 		const int16 soundId = selectedEntry.resource._id;
 		// System narration uses IDs 20000-29999. Music IDs start at 30000.
 		// The original engine streamed these voices and reported them as "s-snd:".

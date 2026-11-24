@@ -128,18 +128,6 @@ public:
 	/** Finish a Snoid drag or dispatch the release to the page features. */
 	ZmbEventHandleResult onLButtonUp(const Common::Point &absPos, const Common::Point &relPos) override;
 
-	// [*] Notification Box
-	/** Show a short notification that expires after its brief display cycle. */
-	void showNotiBoxShort(const Common::U32String &ustr);
-	/** Hide the short notification immediately. */
-	void hideNotiBoxShort();
-	/** Show a medium notification with caller-supplied text. */
-	void showNotiBoxMedium(const Common::U32String &ustr);
-	/** Show a medium notification that remains until another owner replaces it. */
-	void showNotiBoxMediumPersistent(const Common::U32String &ustr);
-	/** Show a localized notification identified by @p textKey using the release-specific medium or wide layout. */
-	void showNotiBoxLong(ZoombiniText::Key textKey);
-
 	/**
 	 * Debug: finish the current puzzle and depart.
 	 * Called from the console @c puzzle finish command.
@@ -190,10 +178,6 @@ public:
 	 * "puzzle chances" output. Default: no additional budget.
 	 */
 	virtual Common::String debugGetChanceDetails() const { return Common::String(); }
-	/** Describe the shared built-in debug actions exposed by the debugger. */
-	Common::String debugGetGlobalDebugCommandHelp() const;
-	/** Run one shared built-in debug action from the debugger console. */
-	bool debugDoGlobalDebugCommand(int argc, const char **argv, Common::String &output);
 	/** Return whether the page supplies an F1 help sound for debug replay. */
 	bool debugCanReplayActiveHelpSound() const { return _activeHelpSoundId.hasId(); }
 	/** Replay the page-owned help sound for F1 input. */
@@ -205,55 +189,8 @@ protected:
 		(void)kbd;
 		return ZmbEventHandleResult::kPassthrough;
 	}
-	/** Handle a shared built-in debug key after page and retail shortcuts. */
-	ZmbEventHandleResult onGlobalDebugKeyDown(const Common::KeyState &kbd);
-	/** Shared actions accepted by the built-in debug console and keyboard dispatcher. */
-	enum class GlobalDebugAction {
-		kInvalid,
-		kEnable,
-		kDisable,
-		kStepOff,
-		kStep,
-		kResetFidget,
-		kPaths,
-		kSound,
-		kPalette,
-		kMergeRect,
-		kUnlockRoutes,
-		kRunnerRectsAll,
-		kRunnerRectsFiltered,
-		kRunnerIdsAll,
-		kRunnerIdsFiltered,
-		kRunnerDebug,
-		kForceParty,
-		kDragCoords
-	};
-	/** Console-facing names for the shared built-in debug actions. */
-	static constexpr const char *kGlobalDebugActionEnable = "enable";
-	static constexpr const char *kGlobalDebugActionDisable = "disable";
-	static constexpr const char *kGlobalDebugActionStepOff = "step-off";
-	static constexpr const char *kGlobalDebugActionStep = "step";
-	static constexpr const char *kGlobalDebugActionResetFidget = "reset-fidget";
-	static constexpr const char *kGlobalDebugActionPaths = "paths";
-	static constexpr const char *kGlobalDebugActionSound = "sound";
-	static constexpr const char *kGlobalDebugActionPalette = "palette";
-	static constexpr const char *kGlobalDebugActionMergeRect = "merge-rect";
-	static constexpr const char *kGlobalDebugActionUnlockRoutes = "unlock-routes";
-	static constexpr const char *kGlobalDebugActionRunnerRectsAll = "runner-rects-all";
-	static constexpr const char *kGlobalDebugActionRunnerRectsFiltered = "runner-rects-filtered";
-	static constexpr const char *kGlobalDebugActionRunnerIdsAll = "runner-ids-all";
-	static constexpr const char *kGlobalDebugActionRunnerIdsFiltered = "runner-ids-filtered";
-	static constexpr const char *kGlobalDebugActionRunnerDebug = "runner-debug";
-	static constexpr const char *kGlobalDebugActionForceParty = "force-party";
-	static constexpr const char *kGlobalDebugActionDragCoords = "drag-coords";
-	/** Parse one console-facing shared built-in debug action name. */
-	static GlobalDebugAction parseGlobalDebugAction(const Common::String &action);
-	/** Run one typed shared built-in debug action. */
-	bool runGlobalDebugAction(GlobalDebugAction action, Common::String &output);
-	/** Draw one ASCII message through the original 310 by 16 debug strip. */
-	void showBuiltinDebugText(const Common::String &text, bool waitForInput = false);
 	/** Refresh the drag NotiBox from the current Ctrl+R display mode. */
-	void updateBuiltinDragNotification();
+	void updateBuiltinDragNotification() override;
 	/** Sort walk-in runners by their destination position. */
 	static bool compareWalkerPositions(ZmbSnoid *left, ZmbSnoid *right);
 
@@ -435,37 +372,6 @@ protected:
 		kShapePickerGoButtonHover = 17,
 		kShapePickerMapButtonHover = 18,
 	};
-
-	// [*] Notification Box
-	/** Number of 60 FPS frames for the long notification box. */
-	constexpr static uint32 NOTIBOX_LONG_SHOW_FRAME_DURATION = 90;
-	/** Notification layouts, indexed in the same order as their background shapes. */
-	enum NotiBoxKind {
-		/** Displays the dragged Zoombini's name or debug coordinates in all releases. */
-		kNotiBox00_Short = 0,
-		/**
-		 * Used in all releases for mouse pointer show/hide messages and custom text, including built-in debug output.
-		 * Also used for other option notifications in v1.0US/ES/PT/IT, v1.1US, v1.11KR and TLC v2.0, including demos.
-		 */
-		kNotiBox01_Medium = 1,
-		/**
-		 * Used for option notifications in v1.0EU/v1.1EU, v1.1FR_2002, v1.0BR Demo and v1.0JP retail/demo.
-		 * Covers sound, music, less/more action, sticky/auto-sticky mouse, transitions and Japanese name generation (Ctrl+M).
-		 * Mouse pointer show/hide messages and custom text use @ref ZoombiniInteractive::kNotiBox01_Medium instead.
-		 */
-		kNotiBox02_Wide = 2,
-	};
-	/** Show the selected notification layout with the requested lifetime. */
-	void showNotiBox(const Common::U32String &ustr, NotiBoxKind kind, bool persistent);
-	/** Return the active notification's background and text bounds. */
-	const Common::Rect &getNotiBoxRect() const;
-
-	/** Expire the notification and request coordinate-debug redraws without advancing a SCRB timer. */
-	bool notiBox_onPreRender(ZmbFeature *feature);
-	/** Draw the selected notification background through the current dirty clip. */
-	ZmbRenderResult notiBox_onRender(ZmbFeature *feature);
-	/** Draw notification text after the notification-box shape. */
-	void notiBox_onPostRender(ZmbFeature *feature);
 
 	// [*] StickyButtonState - Helper for sticky button handling.
 	// Pressing toggles @ref ZoombiniInteractive::StickyButtonState::_isStuck immediately without a frame animation.
@@ -696,7 +602,7 @@ protected:
 	const Common::Rect _defaultDragConstraint = Common::Rect(0, 0, 639, 479);
 
 	/** Whether a drag is currently active. */
-	bool isDragging() const { return _draggedSnoid != nullptr; }
+	bool isDragging() const override { return _draggedSnoid != nullptr; }
 
 	/**
 	 * Find the frontmost bare Snoid under the cursor point.
@@ -931,20 +837,6 @@ private:
 	/** Shared Help feature runner. */
 	ZmbFeature *_helpButtonFeature = nullptr;
 
-	/** Short notification-box rectangle. */
-	const Common::Rect _notiBoxShortRect = Common::Rect(0x0115, 0x01CA, 0x016C, 0x01DD);
-	/** Medium notification-box rectangle. */
-	const Common::Rect _notiBoxMediumRect = Common::Rect(0x0101, 0x01CA, 0x0183, 0x01DD);
-	/** Wide notification-box rectangle for localized European option messages. */
-	const Common::Rect _notiBoxWideRect = Common::Rect(0x00ED, 0x01CA, 0x01B5, 0x01DD);
-	/** Frame at which the current notification expires. */
-	uint32 _notiBoxShowUntilFrame = 0;
-	/** Text currently displayed in the notification box. */
-	Common::U32String _notiBoxText;
-	/** Layout used by the current notification. */
-	NotiBoxKind _notiBoxKind = kNotiBox00_Short;
-	/** Notification-box feature runner. */
-	ZmbFeature *_notiBoxFeature = nullptr;
 
 protected:
 	// [*] Active Help Sound (F1 key replay)

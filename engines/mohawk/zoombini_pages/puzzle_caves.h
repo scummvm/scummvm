@@ -84,13 +84,14 @@ protected:
 	/** Lion's Lair actions accepted by the built-in debug console and keyboard dispatcher. */
 	enum class BuiltinDebugAction {
 		kInvalid,
-		kDifficulty,
+		kPuzzleLevel, ///< Set the current puzzle level.
 		kReinit,
 		kReinitAfterExit,
 		kLevel,
 		kEntrance
 	};
-	static constexpr const char *kBuiltinDebugActionDifficulty = "difficulty";
+	/** Console subcommand for setting the current puzzle level. */
+	static constexpr const char *kBuiltinDebugActionPuzzleLevel = "puzzle-level";
 	static constexpr const char *kBuiltinDebugActionReinit = "reinit";
 	static constexpr const char *kBuiltinDebugActionReinitAfterExit = "reinit-after-exit";
 	static constexpr const char *kBuiltinDebugActionLevel = "level";

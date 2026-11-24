@@ -2310,9 +2310,10 @@ void ZoombiniGraphics::applyPaletteFilter(byte *paletteBytes, uint16 startIdx, u
 	const uint16 endEntry = startIdx + colorCount;
 	for (uint16 colorIdx = startIdx; colorIdx < endEntry; colorIdx++) {
 		for (int ch = 0; ch < 3; ch++) {
-			byte &v = paletteBytes[colorIdx * 3 + ch];
-			if (v != 0)
-				v = v + 31 - (v >> 3);
+			const uint32 channelIdx = colorIdx * 3 + ch;
+			const byte component = paletteBytes[channelIdx];
+			if (component != 0)
+				paletteBytes[channelIdx] = component + 31 - (component >> 3);
 		}
 	}
 }

@@ -189,7 +189,6 @@ void ZoombiniPuzzleTunnels::initStates() {
 	}
 	_rockfallWarningFeature = nullptr;
 	_mainPathFeature = nullptr;
-	_builtinDebugScrbId = 0;
 }
 
 Common::String ZoombiniPuzzleTunnels::debugGetBuiltinDebugCommandHelp() const {
@@ -342,11 +341,13 @@ bool ZoombiniPuzzleTunnels::runBuiltinDebugAction(BuiltinDebugAction action, Com
 		output = "The selected Tunnels gate runner is unavailable.\n";
 		return true;
 	}
-	_builtinDebugScrbId += 1;
-	if (_builtinDebugScrbId < scrbFirst || scrbLast < _builtinDebugScrbId)
-		_builtinDebugScrbId = scrbFirst;
-	playGateActor(runnerIdx, _builtinDebugScrbId, kGateActorCompletionNone00);
-	const Common::String message = Common::String::format("SCRB id: %d", _builtinDebugScrbId);
+	int16 scrbId = _vm->_btiDbgPageState._tunnelsScrbId;
+	scrbId += 1;
+	if (scrbId < scrbFirst || scrbLast < scrbId)
+		scrbId = scrbFirst;
+	_vm->_btiDbgPageState._tunnelsScrbId = scrbId;
+	playGateActor(runnerIdx, scrbId, kGateActorCompletionNone00);
+	const Common::String message = Common::String::format("SCRB id: %d", scrbId);
 	showBuiltinDebugText(message);
 	output = message + '\n';
 	return false;
@@ -2100,7 +2101,7 @@ void ZoombiniPuzzleTunnels::processSnoidAnimEvent(ZmbSnoid *snoid, int16 eventCo
 		if (!head.isRejection) {
 			if (0 < head.dropZone && head.dropZone <= 4) {
 				int16 lane = kDropZoneToLane[head.dropZone - 1];
-				int16 &occupancy = _laneOccupancy[lane];
+				const int16 occupancy = _laneOccupancy[lane];
 				ZmbFeature *linkParent = _laneLinkAnchorFeature;
 				bool linkAfterParent = false;
 
@@ -2112,7 +2113,7 @@ void ZoombiniPuzzleTunnels::processSnoidAnimEvent(ZmbSnoid *snoid, int16 eventCo
 					}
 					_laneSnoidIds[lane][occupancy] = snoid->getId();
 					snoid->setAnimTargetPos(kOutputLanePositions[lane][occupancy]);
-					occupancy += 1;
+					_laneOccupancy[lane] = occupancy + 1;
 
 					// The first Snoid in a lane goes before the lane link anchor (SCRB 9000).
 					// Later Snoids go after the previous member of that lane.

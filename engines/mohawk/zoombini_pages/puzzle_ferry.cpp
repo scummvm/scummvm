@@ -229,7 +229,7 @@ void ZoombiniPuzzleFerry::loadFeatures() {
 		_seatLayoutScrbId = scrbBase + (zmbCount - 16);
 	}
 
-	// Create the raft seat and decoration runners before layout.
+	// Create the raft seat and cargo runners before layout.
 	loadSeatLayout();
 
 	// Lay out the Snoids with a 30-frame initial walk-in delay.
@@ -1012,10 +1012,13 @@ bool ZoombiniPuzzleFerry::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 			output = "Captain Cajun runner is not loaded.\n";
 			return true;
 		}
-		if (_debugCaptainScrbId < kResScrb1800_RaftBase || kResScrb1832_FlightFidget4 < _debugCaptainScrbId)
-			_debugCaptainScrbId = _captainRaftFeature->getScrbId();
-		loadScrbOntoFeature(_captainRaftFeature, _debugCaptainScrbId, true);
-		message = Common::String::format("Play FrogMan SCRB id: %d", _debugCaptainScrbId);
+		int16 scrbId = _vm->_btiDbgPageState._ferryCaptainScrbId;
+		if (scrbId < kResScrb1800_RaftBase || kResScrb1832_FlightFidget4 < scrbId) {
+			scrbId = _captainRaftFeature->getScrbId();
+			_vm->_btiDbgPageState._ferryCaptainScrbId = scrbId;
+		}
+		loadScrbOntoFeature(_captainRaftFeature, scrbId, true);
+		message = Common::String::format("Play FrogMan SCRB id: %d", scrbId);
 	} else if (action == BuiltinDebugAction::kLevel) {
 		message = Common::String::format("Level %d", static_cast<int>(_puzzleLevel));
 	} else {
@@ -1051,11 +1054,11 @@ ZmbEventHandleResult ZoombiniPuzzleFerry::onDebugKeyDown(const Common::KeyState 
 // SCRB 1510-1529 is not registered or played as an animation runner. Its two decoded frames are
 // parallel layout streams whose hotspot order, shape IDs, and positions describe the runners to create:
 //   Frame 0 -- seat entries (shape IDs 1-3), which create DRAW_ON_REG runners
-//   Frame 1 -- decoration entries (shape IDs 4-10), which create overlay runners
+//   Frame 1 -- cargo entries (shape IDs 4-10), which create overlay runners
 //
 // Shape-zero entries are metadata delimiters rather than drawable runners. Each consecutive delimiter
-// run ends one positive-shape run and yields to the other frame cursor. Leading decoration delimiters
-// are skipped before this alternation begins. The resulting seat/decoration interleaving establishes
+// run ends one positive-shape run and yields to the other frame cursor. Leading cargo delimiters
+// are skipped before this alternation begins. The resulting seat and cargo interleaving establishes
 // the authored Z order through @ref ZoombiniPuzzleFerry::_seatPriorityOverlayFeatures.
 //
 // For seats (shape 1-3):
@@ -1063,7 +1066,7 @@ ZmbEventHandleResult ZoombiniPuzzleFerry::onDebugKeyDown(const Common::KeyState 
 //   Flags: DRAW_ON_REG | CHAIN_SCRIPT | DEFER_ANIM | POS_DELTA | OVERLAY | ZSORT_*
 //   Snap position stored at layout pos + (22, -7)
 //
-// For decorations (shape 4-10, only when !lessAction):
+// For cargo (shape 4-10, only when !lessAction):
 //   SCRB ID = kResScrb1500_SeatBase + shapeId - 1 (-> 1503-1509)
 //   Flags: DEFER_ANIM | PLAY_ONCE | POS_DELTA | OVERLAY | ZSORT_*
 // ---------------------------------------------------------------------------
@@ -1087,48 +1090,46 @@ void ZoombiniPuzzleFerry::loadSeatLayout() {
 								 ZmbFeature::FLAG_00800000_POS_DELTA | ZmbFeature::FLAG_04000000_OVERLAY | ZmbFeature::FLAG_10000000_ZSORT_RIGHT |
 								 ZmbFeature::FLAG_20000000_ZSORT_BOTTOM | ZmbFeature::FLAG_40000000_ZSORT_LEFT;
 
-	constexpr uint32 decoFlags = ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_00800000_POS_DELTA |
-								 ZmbFeature::FLAG_04000000_OVERLAY | ZmbFeature::FLAG_10000000_ZSORT_RIGHT | ZmbFeature::FLAG_20000000_ZSORT_BOTTOM |
-								 ZmbFeature::FLAG_40000000_ZSORT_LEFT;
+	constexpr uint32 cargoFlags = ZmbFeature::FLAG_00080000_DEFER_ANIM | ZmbFeature::FLAG_00100000_PLAY_ONCE | ZmbFeature::FLAG_00800000_POS_DELTA |
+								  ZmbFeature::FLAG_04000000_OVERLAY | ZmbFeature::FLAG_10000000_ZSORT_RIGHT | ZmbFeature::FLAG_20000000_ZSORT_BOTTOM |
+								  ZmbFeature::FLAG_40000000_ZSORT_LEFT;
 
 	bool lessAction = _vm->_state->isLessActionEnabled();
 	int16 seatCountBefore = _drawOnRegCount;
 	const Common::Array<ZmbHotspot> &seatHotspots = layoutScrb->frames[0].hotspots;
-	const Common::Array<ZmbHotspot> &decoHotspots = layoutScrb->frames[1].hotspots;
+	const Common::Array<ZmbHotspot> &cargoHotspots = layoutScrb->frames[1].hotspots;
 	uint32 seatCursor = 0;
-	uint32 decoCursor = 0;
-	bool seatFinished = seatHotspots.empty();
-	bool decoFinished = decoHotspots.empty();
+	uint32 cargoCursor = 0;
 	bool processSeatGroup = true;
 
-	// Decoration padding before the first positive entry does not consume an alternation.
-	while (!decoFinished && decoHotspots[decoCursor]._shapeIdx == 0) {
-		decoCursor += 1;
-		decoFinished = decoHotspots.size() <= decoCursor;
-	}
+	// Cargo delimiters before the first positive entry do not switch groups.
+	while (cargoCursor < cargoHotspots.size() && cargoHotspots[cargoCursor]._shapeIdx == 0)
+		cargoCursor += 1;
 
-	while (!seatFinished || !decoFinished) {
-		const Common::Array<ZmbHotspot> &hotspots = processSeatGroup ? seatHotspots : decoHotspots;
-		uint32 &cursor = processSeatGroup ? seatCursor : decoCursor;
-		bool &finished = processSeatGroup ? seatFinished : decoFinished;
+	while (seatCursor < seatHotspots.size() || cargoCursor < cargoHotspots.size()) {
+		const Common::Array<ZmbHotspot> &hotspots = processSeatGroup ? seatHotspots : cargoHotspots;
+		uint32 cursor = processSeatGroup ? seatCursor : cargoCursor;
 
-		if (finished) {
+		if (hotspots.size() <= cursor) {
 			processSeatGroup = !processSeatGroup;
 			continue;
 		}
 
 		const ZmbHotspot &hotspot = hotspots[cursor];
 		const int16 shapeId = hotspot._shapeIdx;
+		cursor += 1;
 		if (shapeId == 0) {
-			do {
+			while (cursor < hotspots.size() && hotspots[cursor]._shapeIdx == 0)
 				cursor += 1;
-				finished = hotspots.size() <= cursor;
-			} while (!finished && hotspots[cursor]._shapeIdx == 0);
+		}
+		if (processSeatGroup)
+			seatCursor = cursor;
+		else
+			cargoCursor = cursor;
+		if (shapeId == 0) {
 			processSeatGroup = !processSeatGroup;
 			continue;
 		}
-		cursor += 1;
-		finished = hotspots.size() <= cursor;
 
 		if (1 <= shapeId && shapeId <= 3 && (_drawOnRegCount - seatCountBefore) < 20) {
 			const int16 scrbId = static_cast<int16>(kResScrb1500_SeatBase + shapeId - 1);
@@ -1143,8 +1144,8 @@ void ZoombiniPuzzleFerry::loadSeatLayout() {
 		} else if (!lessAction && 4 <= shapeId && shapeId <= 10) {
 			const int16 scrbId = static_cast<int16>(kResScrb1500_SeatBase + shapeId - 1);
 
-			ZmbFeature *decoFeature = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape1500_Seats), scrbId, 6, hotspot.getPos(), decoFlags);
-			_departureShiftFeatures.push_back(decoFeature);
+			ZmbFeature *cargoFeature = loadScrbFeature(ZmbResource(ZmbResource::kPage, kResBitmapShape1500_Seats), scrbId, 6, hotspot.getPos(), cargoFlags);
+			_departureShiftFeatures.push_back(cargoFeature);
 		}
 	}
 }

@@ -424,7 +424,7 @@ private:
 	void startRejectRequest(uint16 snoidId, ZmbFeature *rejectedSeatFeature, int16 reactionScrbId);
 	/** Release the reject controller when its return SCRS takes ownership. */
 	void completeRejectRequest();
-	/** Interpret the authored two-frame seating SCRB as layout metadata and create the seat and decoration runners. */
+	/** Interpret the authored two-frame seating SCRB as layout metadata and create the seat and cargo runners. */
 	void loadSeatLayout();
 	/** Build the default ferry seat adjacency matrix. */
 	void buildAdjacencyMatrix();
@@ -564,8 +564,6 @@ private:
 	int16 _acceptedSnoidCount = 0;
 	/** Captain reaction or fidget SCRB waiting in the page's single replacement slot. */
 	int16 _pendingCaptainScrbId = 0;
-	/** Captain SCRB 1800-1832 retained by the built-in replay key. */
-	int16 _debugCaptainScrbId = 0;
 	/** Captain reaction SCRB that must start before the pending reject controller. */
 	int16 _pendingRejectReactionScrbId = 0;
 	/** Whether the player may pick up a Ferry Snoid; pending walk-ins remain a separate gate. */
@@ -657,7 +655,7 @@ private:
 	ZmbFeature *_rejectRaftLandingFeature = nullptr;
 	/** SCRB 1450-1452 priority-chain overlays used while the seat layout is materialized. */
 	ZmbFeature *_seatPriorityOverlayFeatures[3] = {};
-	/** Seat and decoration features shifted with accepted Zoombinis during the real Go departure. */
+	/** Seat and cargo features shifted with accepted Zoombinis during the real Go departure. */
 	Common::Array<ZmbFeature *> _departureShiftFeatures;
 };
 

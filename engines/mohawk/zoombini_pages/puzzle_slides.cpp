@@ -1640,9 +1640,8 @@ void ZoombiniPuzzleSlides::orphanLinearChainFromCell(int16 sourceCellIdx) {
 
 	if (0 < sourceCellIdx) {
 		int16 precedingLinkCell = sourceCellIdx - 1;
-		int16 &precedingState = _cellGrid[precedingLinkCell * kFieldsPerCell + 1];
-		if (precedingState == kCellMatched) {
-			precedingState = kCellPath;
+		if (getCellState(precedingLinkCell) == kCellMatched) {
+			_cellGrid[precedingLinkCell * kFieldsPerCell + 1] = kCellPath;
 			syncCellFeatureScript(precedingLinkCell);
 		}
 	}
@@ -1652,13 +1651,13 @@ void ZoombiniPuzzleSlides::orphanLinearChainFromCell(int16 sourceCellIdx) {
 		if (kNumCells <= cellIdx)
 			break;
 
-		int16 &state = _cellGrid[cellIdx * kFieldsPerCell + 1];
+		const int16 state = getCellState(cellIdx);
 		if (state == kCellInert)
 			break;
 		if (state == kCellMatched)
-			state = kCellPath;
+			_cellGrid[cellIdx * kFieldsPerCell + 1] = kCellPath;
 		else if (state == kCellLocked)
-			state = kCellOccupied;
+			_cellGrid[cellIdx * kFieldsPerCell + 1] = kCellOccupied;
 		else
 			continue;
 
@@ -2441,14 +2440,15 @@ void ZoombiniPuzzleSlides::propagateMatchChain(int16 chainIdx) {
 
 void ZoombiniPuzzleSlides::resetAnimStates() {
 	for (int16 cellIdx = 0; cellIdx < kNumCells; cellIdx++) {
-		int16 &state = _cellGrid[cellIdx * kFieldsPerCell + 1];
-		if (state == kCellLocked) {
-			state = kCellOccupied;
-			syncCellFeatureScript(cellIdx);
-		} else if (state == kCellMatched) {
-			state = kCellPath;
-			syncCellFeatureScript(cellIdx);
-		}
+		const int16 state = getCellState(cellIdx);
+		if (state == kCellLocked)
+			_cellGrid[cellIdx * kFieldsPerCell + 1] = kCellOccupied;
+		else if (state == kCellMatched)
+			_cellGrid[cellIdx * kFieldsPerCell + 1] = kCellPath;
+		else
+			continue;
+
+		syncCellFeatureScript(cellIdx);
 	}
 
 	if (_puzzleLevel == kPuzzleLevel4)
@@ -2720,13 +2720,12 @@ bool ZoombiniPuzzleSlides::hasPendingZmb() const {
 void ZoombiniPuzzleSlides::scanAndResetActiveCells() {
 	_activeCellCount = 0;
 	for (int16 cellIdx = 0; cellIdx < kNumCells; cellIdx++) {
-		int16 &state = _cellGrid[cellIdx * kFieldsPerCell + 1];
-		if (state == kCellConnector) {
-			state = kCellPath;
+		if (getCellState(cellIdx) == kCellConnector) {
+			_cellGrid[cellIdx * kFieldsPerCell + 1] = kCellPath;
 			syncCellFeatureScript(cellIdx);
 		}
 
-		if (state == kCellOccupied && _activeCellCount < ARRAYSIZE(_activeCellIndices)) {
+		if (getCellState(cellIdx) == kCellOccupied && _activeCellCount < ARRAYSIZE(_activeCellIndices)) {
 			_activeCellIndices[_activeCellCount] = cellIdx;
 			_activeCellCount += 1;
 			_activeCellSnoidIds[_activeCellCount - 1] = _cellGrid[cellIdx * kFieldsPerCell + 2];

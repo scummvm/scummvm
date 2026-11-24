@@ -747,7 +747,7 @@ bool ZoombiniPuzzleSmoke::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 		return true;
 	}
 
-	showBuiltinDebugText(debugText);
+	drawBuiltinDebugStatusText(debugText);
 	output = debugText + '\n';
 	return false;
 }
@@ -755,6 +755,10 @@ bool ZoombiniPuzzleSmoke::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 ZmbEventHandleResult ZoombiniPuzzleSmoke::onDebugKeyDown(const Common::KeyState &kbd) {
 	BuiltinDebugAction action = BuiltinDebugAction::kInvalid;
 	if (kbd.hasFlags(0) || kbd.hasFlags(Common::KBD_SHIFT)) {
+		// In the original engine, Mirror Machine handles debug Space as a no-op.
+		// Letting it reach the shared MIDI tester would trigger playback when enabled.
+		if (kbd.keycode == Common::KEYCODE_SPACE)
+			return ZmbEventHandleResult::kConsumed;
 		if (kbd.ascii == 'L')
 			action = BuiltinDebugAction::kLevel;
 		else if (kbd.keycode == Common::KEYCODE_F4)
@@ -2166,8 +2170,8 @@ void ZoombiniPuzzleSmoke::tickSmokeRunner(ZmbFeature *feature, ZmbSmokeRunnerSta
 	} else if (state.blinkValue && state.nextTraitUpdateFrame <= currentFrame) {
 		state.nextTraitUpdateFrame = currentFrame + 30;
 		if (0 < cycleTrait && cycleTrait <= 4) {
-			byte &trait = state.traits[cycleTrait - 1];
-			trait = trait ? 0 : state.blinkValue;
+			const byte trait = state.traits[cycleTrait - 1];
+			state.traits[cycleTrait - 1] = trait ? 0 : state.blinkValue;
 		}
 		state.dirtyMode = ZmbSmokeRunnerState::DirtyMode::kRecompose04;
 	}
@@ -2944,16 +2948,22 @@ ZmbEventHandleResult ZoombiniPuzzleSmoke::onLButtonDown(const Common::Point &abs
 
 			for (int16 displayRunnerIdx = 0; displayRunnerIdx < 6; displayRunnerIdx++) {
 				if (_filterSlotRunners[displayRunnerIdx] == gridRunner) {
-					const int16 sideStart = (displayRunnerIdx < 3) ? 0 : 3;
-					int16 &sideCount = (displayRunnerIdx < 3) ? _leftFilterCount : _rightFilterCount;
+					const bool leftSide = displayRunnerIdx < 3;
+					const int16 sideStart = leftSide ? 0 : 3;
+					int16 sideCount = leftSide ? _leftFilterCount : _rightFilterCount;
 					for (int16 shiftSlotIdx = displayRunnerIdx; shiftSlotIdx < sideStart + 2; shiftSlotIdx++)
 						_filterSlotRunners[shiftSlotIdx] = _filterSlotRunners[shiftSlotIdx + 1];
 					_filterSlotRunners[sideStart + 2] = nullptr;
-					if (0 < sideCount)
+					if (0 < sideCount) {
 						sideCount -= 1;
+						if (leftSide)
+							_leftFilterCount = sideCount;
+						else
+							_rightFilterCount = sideCount;
+					}
 
 					if (0 < sideCount) {
-						const Common::Point *positions = (displayRunnerIdx < 3) ? kFilterPositionsA : kFilterPositionsB;
+						const Common::Point *positions = leftSide ? kFilterPositionsA : kFilterPositionsB;
 						for (int16 slotIdx = 0; slotIdx < sideCount; slotIdx++) {
 							ZmbFeature *placedRunner = _filterSlotRunners[sideStart + slotIdx];
 							if (placedRunner)
@@ -2961,7 +2971,7 @@ ZmbEventHandleResult ZoombiniPuzzleSmoke::onLButtonDown(const Common::Point &abs
 						}
 					}
 
-					if (displayRunnerIdx < 3) {
+					if (leftSide) {
 						loadZmbTraitsToCache();
 						cycleZmbTraitDisplay();
 					} else {
@@ -3106,25 +3116,30 @@ ZmbEventHandleResult ZoombiniPuzzleSmoke::onLButtonUp(const Common::Point &absPo
 		int16 dropSlot = evaluateRunnerDrop(_draggedRunner, _dragRunnerLastMousePos);
 		if (kPuzzleLevel3 <= _puzzleLevel) {
 			if (0 <= dropSlot && dropSlot < 6) {
-				const int16 sideStart = (dropSlot < 3) ? 0 : 3;
-				int16 &sideCount = (dropSlot < 3) ? _leftFilterCount : _rightFilterCount;
+				const bool leftSide = dropSlot < 3;
+				const int16 sideStart = leftSide ? 0 : 3;
+				int16 sideCount = leftSide ? _leftFilterCount : _rightFilterCount;
 				const int16 sideSlot = dropSlot - sideStart;
 				if (sideCount < 3 && sideSlot <= sideCount) {
 					for (int16 slot = sideCount; sideSlot < slot; slot--)
 						_filterSlotRunners[sideStart + slot] = _filterSlotRunners[sideStart + slot - 1];
 					_filterSlotRunners[dropSlot] = _draggedRunner;
 					sideCount += 1;
+					if (leftSide)
+						_leftFilterCount = sideCount;
+					else
+						_rightFilterCount = sideCount;
 
 					ZmbSmokeRunnerState *state = findRunnerState(_draggedRunner);
 					if (state) {
-						if (dropSlot < 3)
+						if (leftSide)
 							state->orientation = ZmbSmokeRunnerState::Orientation::kBaseOneFramed00;
 						else
 							state->orientation = ZmbSmokeRunnerState::Orientation::kBaseThreeFramed02;
 						state->dirtyMode = ZmbSmokeRunnerState::DirtyMode::kRecompose04;
 					}
 
-					const Common::Point *positions = (dropSlot < 3) ? kFilterPositionsA : kFilterPositionsB;
+					const Common::Point *positions = leftSide ? kFilterPositionsA : kFilterPositionsB;
 					for (int16 slot = 0; slot < sideCount; slot++) {
 						ZmbFeature *placedRunner = _filterSlotRunners[sideStart + slot];
 						if (placedRunner)
@@ -3132,7 +3147,7 @@ ZmbEventHandleResult ZoombiniPuzzleSmoke::onLButtonUp(const Common::Point &absPo
 					}
 				}
 
-				if (dropSlot < 3) {
+				if (leftSide) {
 					loadZmbTraitsToCache();
 					cycleZmbTraitDisplay();
 				} else {

@@ -106,6 +106,8 @@ MODULE_OBJS += \
 	zoombini_pages/puzzle_base.o \
 	zoombini_pages/interactive_rodmap.o \
 	zoombini_pages/shelter_picker.o \
+	zoombini_pages/easteregg_sa.o \
+	zoombini_pages/easteregg_sb.o \
 	zoombini_pages/shelter_basecamp1.o \
 	zoombini_pages/shelter_basecamp2.o \
 	zoombini_pages/shelter_town.o \

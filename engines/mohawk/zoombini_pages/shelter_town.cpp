@@ -137,10 +137,10 @@ ZoombiniShelterTown::BuiltinDebugAction ZoombiniShelterTown::parseBuiltinDebugAc
 
 void ZoombiniShelterTown::showBuiltinCheatTextSelection(Common::String &output) {
 	Common::String text;
-	if (_builtinCheatTextIndex == 0)
+	if (_btiDebugCheatTextIdx == 0)
 		text = "Cheat Text OFF";
 	else
-		text = Common::String::format("Cheat Text: %d", _builtinCheatTextIndex);
+		text = Common::String::format("Cheat Text: %d", _btiDebugCheatTextIdx);
 
 	output = text;
 	output += "\n";
@@ -157,28 +157,31 @@ bool ZoombiniShelterTown::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 			_developAnimTimer = 0;
 			return false;
 		}
+
+		int16 fireworksCount = _vm->_btiDbgPageState._townFireworksCount;
 		if (action == BuiltinDebugAction::kFireworksNext) {
-			_builtinFireworksCount += 5;
-			if (100 < _builtinFireworksCount)
-				_builtinFireworksCount = 5;
+			fireworksCount += 5;
+			if (100 < fireworksCount)
+				fireworksCount = 5;
+			_vm->_btiDbgPageState._townFireworksCount = fireworksCount;
 		}
-		_developAnimTimer = _builtinFireworksCount;
-		if (_builtinFireworksCount == 0) {
+		_developAnimTimer = fireworksCount;
+		if (fireworksCount == 0) {
 			waitForBuiltinDebugInput();
 			return false;
 		}
-		const Common::String message = Common::String::format("Fireworks launching:  %d", _builtinFireworksCount);
-		showBuiltinDebugText(message, true);
+		const Common::String message = Common::String::format("Fireworks launching:  %d", fireworksCount);
+		showBuiltinDebugText(message, BuiltinDebugInputMode::kWait);
 		output = message + '\n';
 		return false;
 	}
 	if (action == BuiltinDebugAction::kMemorialPrevious || action == BuiltinDebugAction::kMemorialNext) {
 		if (_vm->_state->getCurrentState()._memorialRoutes[15] != 0) {
 			if (action == BuiltinDebugAction::kMemorialNext)
-				_builtinCheatTextIndex += 1;
+				_btiDebugCheatTextIdx += 1;
 			else
-				_builtinCheatTextIndex -= 1;
-			_builtinCheatTextIndex = CLIP<int16>(_builtinCheatTextIndex, 0, 16);
+				_btiDebugCheatTextIdx -= 1;
+			_btiDebugCheatTextIdx = CLIP<int16>(_btiDebugCheatTextIdx, 0, 16);
 			if (_memorialCardFeature)
 				_memorialCardFeature->requestVisualRematerialization();
 		}
@@ -204,9 +207,10 @@ bool ZoombiniShelterTown::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 		stateFile._memorialYears[emptySlot] = static_cast<uint16>(date.tm_year + 1900);
 		stateFile._memorialMonths[emptySlot] = static_cast<byte>(date.tm_mon + 1);
 		stateFile._memorialDays[emptySlot] = static_cast<byte>(date.tm_mday);
-		stateFile._memorialRoutes[emptySlot] = static_cast<byte>(((_builtinMemorialRouteCounter / 4) & 3) + 1);
-		stateFile._memorialLevels[emptySlot] = static_cast<byte>((_builtinMemorialRouteCounter & 3) + 1);
-		_builtinMemorialRouteCounter += 1;
+		const int16 routeCounter = _vm->_btiDbgPageState._townMemorialRouteCounter;
+		stateFile._memorialRoutes[emptySlot] = static_cast<byte>(((routeCounter / 4) & 3) + 1);
+		stateFile._memorialLevels[emptySlot] = static_cast<byte>((routeCounter & 3) + 1);
+		_vm->_btiDbgPageState._townMemorialRouteCounter = routeCounter + 1;
 		advanceLayerFrameState(stateFile._townScrollCol);
 		_vm->_state->markDebugStateMutation();
 		_vm->_state->markSaveBeforeQuitPending();
@@ -217,7 +221,7 @@ bool ZoombiniShelterTown::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 		ZmbStateFile &stateFile = _vm->_state->getCurrentState();
 		for (uint16 slotIdx = 0; slotIdx < 16; slotIdx++)
 			stateFile._memorialRoutes[slotIdx] = 0;
-		_builtinMemorialRouteCounter = 0;
+		_vm->_btiDbgPageState._townMemorialRouteCounter = 0;
 		_clockTowerHandsEnabled = false;
 		advanceLayerFrameState(stateFile._townScrollCol);
 		_vm->_state->markDebugStateMutation();
@@ -227,7 +231,10 @@ bool ZoombiniShelterTown::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 	}
 	if (action == BuiltinDebugAction::kThresholdUp || action == BuiltinDebugAction::kThresholdDown) {
 		_townPopDensity += action == BuiltinDebugAction::kThresholdUp ? 5 : -5;
-		_townPopDensity = CLIP<int16>(_townPopDensity, 25, 81);
+		if (_townPopDensity < 24)
+			_townPopDensity = 25;
+		else if (81 < _townPopDensity)
+			_townPopDensity = 81;
 		_debugPopulationPreviewActive = true;
 		refreshPopulationOverlay();
 		output = Common::String::format("Town building threshold %d.\n", _townPopDensity);
@@ -239,9 +246,9 @@ bool ZoombiniShelterTown::runBuiltinDebugAction(BuiltinDebugAction action, Commo
 
 ZmbEventHandleResult ZoombiniShelterTown::onDebugKeyDown(const Common::KeyState &kbd) {
 	BuiltinDebugAction action = BuiltinDebugAction::kInvalid;
-	if (kbd.keycode == Common::KEYCODE_UP)
+	if (kbd.hasFlags(0) && kbd.keycode == Common::KEYCODE_UP)
 		action = BuiltinDebugAction::kThresholdUp;
-	else if (kbd.keycode == Common::KEYCODE_DOWN)
+	else if (kbd.hasFlags(0) && kbd.keycode == Common::KEYCODE_DOWN)
 		action = BuiltinDebugAction::kThresholdDown;
 	else if (kbd.hasFlags(0) || kbd.hasFlags(Common::KBD_SHIFT)) {
 		if (kbd.keycode == Common::KEYCODE_SPACE || kbd.ascii == ' ') {
@@ -400,8 +407,6 @@ void ZoombiniShelterTown::initStates() {
 			_activePackCount += 1;
 	}
 	f._zmbStoredTownCount += _activePackCount;
-	if (625 <= f._zmbStoredTownCount)
-		_allZoombinisInTown = true;
 
 	// Transfer active pack Zoombini trait/name data into stored chunk
 	transferActivePackToTownStorage();
@@ -685,14 +690,14 @@ void ZoombiniShelterTown::loadFeatures() {
 	}
 
 	// If all Zoombinis are in town, play victory BGM (3003 is in TOWN.MHK)
-	if (_allZoombinisInTown) {
+	if (areAllZoombinisInTown()) {
 		_entrySoundRes = ZmbResource(ZmbResource::kPage, kResSound3003_BGM);
 		_playEntrySoundImmediately = true;
 	}
 
 	// Town develop level checks
 	_developAnimTimer = 0;
-	if (_allZoombinisInTown) {
+	if (areAllZoombinisInTown()) {
 		_developAnimTimer = 20;
 	} else if (populationBasedCelebrations) {
 		for (int16 tier = 1; tier <= 5; tier++) {
@@ -776,7 +781,7 @@ void ZoombiniShelterTown::onPostRenderFrame() {
 			_ambientSoundDone = false;
 
 			// Full Town schedules another celebration after each ambient sound completes.
-			if (_allZoombinisInTown) {
+			if (areAllZoombinisInTown()) {
 				const ZmbReleaseInfo &relInfo = _vm->getRelInfo();
 				if (relInfo.isFamily(ZmbReleaseInfo::Family::kUsV10) || relInfo.isFamily(ZmbReleaseInfo::Family::kEuropeV1x))
 					_developAnimTimer = 40;
@@ -789,7 +794,7 @@ void ZoombiniShelterTown::onPostRenderFrame() {
 			_ambientSoundLastTime = getCurrentFrameCounter();
 
 			ZmbResource nextSoundResource;
-			if (_ambientSoundFirstPlay && !_allZoombinisInTown) {
+			if (_ambientSoundFirstPlay && !areAllZoombinisInTown()) {
 				// On first play, choose a random voice from SND 20089-20093.
 				// Clear the first-play flag before applying the retry filter.
 				_ambientSoundFirstPlay = false;
@@ -891,6 +896,10 @@ void ZoombiniShelterTown::transferActivePackToTownStorage() {
 			town.increaseStoredCount(1);
 		}
 	}
+}
+
+bool ZoombiniShelterTown::areAllZoombinisInTown() const {
+	return ZmbTrait::SNOID_MAX <= _vm->_state->getCurrentState()._zmbStoredTownCount;
 }
 
 int16 ZoombiniShelterTown::calculatePopulationDensity(int16 population) {
@@ -1489,8 +1498,8 @@ void ZoombiniShelterTown::memorialCard_onPostRender(ZmbFeature *feature) {
 		return;
 
 	int16 memorialDataSlotIdx = _memorialCardSlotIdx;
-	if (_builtinCheatTextIndex != 0)
-		memorialDataSlotIdx = _builtinCheatTextIndex - 1;
+	if (_btiDebugCheatTextIdx != 0)
+		memorialDataSlotIdx = _btiDebugCheatTextIdx - 1;
 	if (memorialDataSlotIdx < 0 || 16 <= memorialDataSlotIdx)
 		return;
 

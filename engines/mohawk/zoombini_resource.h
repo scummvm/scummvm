@@ -311,6 +311,20 @@ enum class ZoombiniPageType : int16 {
 	 * Page archive: MAZE2.MHK
 	 */
 	kMaze = 18,
+	/**
+	 * Easter egg SA
+	 *
+	 * @remarks
+	 * Page archive: PICKER.MHK.
+	 */
+	kEasterEggSA = 19,
+	/**
+	 * Easter egg SB
+	 *
+	 * @remarks
+	 * Page archive: PICKER.MHK.
+	 */
+	kEasterEggSB = 20,
 	// Dialog page IDs are the original dialog kind plus 100.
 	/** Virtual page for an options dialog */
 	kDialogOptions = 101,

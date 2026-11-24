@@ -70,6 +70,20 @@ struct ZmbBuiltinDebugRuntimeState {
 	bool _showDragCoordinates = false;
 };
 
+/** Page debug selections that persists across page instances. */
+struct ZmbBuiltinDebugPageState {
+	/** Last fireworks count selected in Town. */
+	int16 _townFireworksCount = 0;
+	/** Route and level sequence position for the next debug memorial. */
+	int16 _townMemorialRouteCounter = 0;
+	/** Captain animation retained for replay. */
+	int16 _ferryCaptainScrbId = 0;
+	/** Last debug animation selected across the four Tunnels guardians. */
+	int16 _tunnelsScrbId = 0;
+	/** Next Pizza animation offsets in Arno, Willa, and Shyler order. */
+	int16 _pizzaScrbCycle[3] = {};
+};
+
 /**
  * Top-level Zoombini engine coordinator.
  *
@@ -256,7 +270,9 @@ public:
 	 */
 	bool _debugPreserveActivePackOnXferClose = false;
 	/** Shared runtime state for hardcoded and console-invoked built-in debug actions. */
-	ZmbBuiltinDebugRuntimeState _builtinDebug;
+	ZmbBuiltinDebugRuntimeState _btiDbgRtState;
+	/** Session selections for commands whose pages may be entered repeatedly. */
+	ZmbBuiltinDebugPageState _btiDbgPageState;
 
 	/**
 	 * Level 1 Bridge split-count exclusion consumed by Tunnels.
@@ -467,8 +483,18 @@ public:
 	uint16 getBuiltinMidiTestResource() const;
 	/** Run the current or next built-in MIDI-test selector and show its original notification. */
 	uint16 playBuiltinMidiTestResource(bool advance);
-	/** Apply the shared Space branch after page and feature key handlers. */
-	bool handleBuiltinCheatSpace(const Common::KeyState &kbd);
+	/**
+	 * Handle keyboard activation of built-in cheats and MIDI-test playback.
+	 * @param kbd Translated key and modifier state.
+	 * @return Whether the shared handler consumed the key.
+	 */
+	bool handleBuiltinCheatKey(const Common::KeyState &kbd);
+	/**
+	 * Resolve an Easter egg destination for a map click in Practice mode.
+	 * @param destination The page the clicked map icon normally opens.
+	 * @return The Easter egg destination or @ref Mohawk::ZoombiniPageType::kNone.
+	 */
+	ZoombiniPageType getBuiltinCheatMapDest(ZoombiniPageType destination) const;
 	/** Show one original long NotiBox message when no modal dialog owns input. */
 	void showBuiltinNotiBox(const Common::U32String &text, bool persistent);
 	/** Return whether color-blind presentation adjustments are enabled. */
@@ -558,7 +584,7 @@ private:
 	Common::Language _pendingLangSwitch = Common::UNK_LANG;
 	/** Select the resource directory for the effective game language. */
 	void selectArchiveRoot();
-	/** 
+	/**
 	 * Whether the requested language's selected MIDI, system and text archives
 	 * can be opened and parsed before a switch.
 	 */
@@ -604,10 +630,30 @@ private:
 	bool _demoStartupLogoRevealPending = true;
 	/** Whether Picker Help must consume STRL 2900 for the version-update topic. */
 	bool _pickerUpdateHelpPending = false;
+	/**
+	 * Maximum capture length in bytes, rounded up to a power of two.
+	 * The longest supported phrase is "attack the snoids" (17 characters).
+	 */
+	static constexpr uint kMaxCheatPhraseLength = 32;
 	/** Whether Ctrl+A armed collection of one built-in cheat phrase. */
 	bool _builtinCheatCaptureArmed = false;
 	/** Bounded printable phrase collected after Ctrl+A. */
 	Common::String _builtinCheatCapture;
+	/** Commands recognized in the shared cheat input buffer. */
+	enum class BuiltinCheatPhrase {
+		/** No complete phrase was entered. */
+		kNone,
+		/** Enable built-in debugging with "go snoids " (trailing space required). */
+		kDebugMode,
+		/** Toggle the MIDI test with "midi " (trailing space required). */
+		kMidiTest,
+		/** Open SA from the Fleens! map icon with "snoid zapper". */
+		kEasterEggSA,
+		/** Open SB from the Stone Rise map icon with "attack the snoids". */
+		kEasterEggSB,
+	};
+	/** Identify the complete phrase collected since Ctrl+A. */
+	BuiltinCheatPhrase getBuiltinCheatPhrase() const;
 	/** Shared v1.x MIDI resource IDs cycled by the built-in MIDI test. */
 	static constexpr uint16 kBuiltinMidiTestResourceIds[18]{
 		30000,

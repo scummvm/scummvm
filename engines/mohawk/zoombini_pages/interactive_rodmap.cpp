@@ -309,13 +309,15 @@ void ZoombiniInteractiveRodMap::onAnimFrame() {
 }
 
 ZmbEventHandleResult ZoombiniInteractiveRodMap::onKeyDown(const Common::KeyState &kbd, bool kbdRepeat) {
-	if (kbdRepeat || _departPageType != ZoombiniPageType::kNone)
+	if (_departPageType != ZoombiniPageType::kNone)
 		return ZmbEventHandleResult::kConsumed;
 
 	ZmbEventHandleResult result = ZmbEventHandleResult::kConsumed;
-	if ((kbd.flags & Common::KBD_CTRL) != 0) {
+	if (!kbdRepeat && (kbd.flags & Common::KBD_CTRL) != 0) {
 		switch (kbd.keycode) {
 		case Common::KEYCODE_p: // Practice Mode Toggle
+			if (_vm->isBuiltinDebugMode() && _btiDbgXferSelectorArmed)
+				onDebugKeyDown(kbd);
 			// Retail RODMAP.MHK releases provide a full practice toggle.
 			// The classic MAP.MHK route screen only turns practice on here and leaves it when a hub page is selected.
 			// Enhanced shortcuts add a two-way toggle; otherwise keep the original turn-on-only behavior.
@@ -385,11 +387,9 @@ ZoombiniInteractiveRodMap::BuiltinDebugAction ZoombiniInteractiveRodMap::parseBu
 
 bool ZoombiniInteractiveRodMap::runBuiltinDebugAction(BuiltinDebugAction action, char argument, Common::String &output) {
 	if ((action == BuiltinDebugAction::kAdd || action == BuiltinDebugAction::kRemove) && argument == '\0') {
-		if (action == BuiltinDebugAction::kAdd && _builtinPracticePackCount < 16)
-			_builtinPracticePackCount += 1;
-		else if (action == BuiltinDebugAction::kRemove && 1 < _builtinPracticePackCount)
-			_builtinPracticePackCount -= 1;
-		const Common::String message = Common::String::format("Snoids to practice with =  %d", _builtinPracticePackCount);
+		const int16 delta = action == BuiltinDebugAction::kAdd ? 1 : -1;
+		_btiDbgPracticePackCount = CLIP<int16>(_btiDbgPracticePackCount + delta, 1, 16);
+		const Common::String message = Common::String::format("Snoids to practice with =  %d", _btiDbgPracticePackCount);
 		drawBuiltinDebugText(message);
 		output = message + '\n';
 		return false;
@@ -471,29 +471,26 @@ bool ZoombiniInteractiveRodMap::runBuiltinXferSelector(char selector, Common::St
 	_vm->setNextPage(ZoombiniPageType::kXfer);
 	close();
 	const char upperSelector = static_cast<char>(lowerSelector - 'a' + 'A');
-	output = Common::String::format("RodMap practice XFER %c started with %d Zoombinis.\n", upperSelector, _builtinPracticePackCount);
+	output = Common::String::format("RodMap practice XFER %c started with %d Zoombinis.\n", upperSelector, getBtiDbgPracticePackCount());
 	return false;
 }
 
 ZmbEventHandleResult ZoombiniInteractiveRodMap::onDebugKeyDown(const Common::KeyState &kbd) {
-	if (_builtinXferSelectorArmed) {
-		_builtinXferSelectorArmed = false;
+	if (_btiDbgXferSelectorArmed) {
+		_btiDbgXferSelectorArmed = false;
 		addExternalDirtyRect(Common::Rect(0, 0, 310, 16));
-		if (!kbd.hasFlags(0) || kbd.keycode < Common::KEYCODE_a || Common::KEYCODE_p < kbd.keycode)
-			return ZmbEventHandleResult::kPassthrough;
-
-		Common::String output;
-		if (runBuiltinXferSelector(static_cast<char>(kbd.keycode), output))
-			return ZmbEventHandleResult::kPassthrough;
-		else
-			return ZmbEventHandleResult::kConsumed;
+		if ((kbd.hasFlags(0) || kbd.hasFlags(Common::KBD_SHIFT)) && 'a' <= kbd.ascii && kbd.ascii <= 'p') {
+			Common::String output;
+			if (!runBuiltinXferSelector(static_cast<char>(kbd.ascii), output))
+				return ZmbEventHandleResult::kConsumed;
+		}
 	}
 
 	if ((kbd.hasFlags(0) || kbd.hasFlags(Common::KBD_SHIFT)) && kbd.ascii == 'T') {
 		if (!_vm->_state->inPracticeMode())
 			return ZmbEventHandleResult::kPassthrough;
 		drawBuiltinDebugText("Which Transition (a-p):");
-		_builtinXferSelectorArmed = true;
+		_btiDbgXferSelectorArmed = true;
 		return ZmbEventHandleResult::kPassthrough;
 	}
 
@@ -669,7 +666,7 @@ void ZoombiniInteractiveRodMap::generatePracticePack() {
 	// Generate the selected number of practice Snoids with independently randomized hair, eye, nose, and feet traits.
 	// Start from a fresh copy of the user's state without modifying the canonical game state.
 	_vm->_state->beginPracticeState();
-	_vm->_state->generateRandomPack(_builtinPracticePackCount);
+	_vm->_state->generateRandomPack(getBtiDbgPracticePackCount());
 }
 
 void ZoombiniInteractiveRodMap::patchPageShape1000_preRenderShape(ZmbFeature *feature, ZmbHotspotGroup *hsGroup, Common::Array<ZmbHotspot> &hotspots) {
@@ -752,14 +749,26 @@ ZmbEventHandleResult ZoombiniInteractiveRodMap::runPage1000_onLButtonDown(ZmbFea
 	(void)feature;
 	(void)relPos;
 
-	// TODO: Implement the SA/SB minigames and secret warps from hotspots 8/9 to SB/SA (pageType 20/19).
-	// Keep SB's 4/5/6/8/Space controls local to its page.
+	const bool demoPracticeMap = _vm->getRelInfo().hasDemoPracticeMap();
 	for (uint32 i = 0; i < ARRAYSIZE(_pageClickRects); i++) {
-		if (!_pageClickRects[i].contains(absPos) || !isPageHoverable(i))
+		if (!_pageClickRects[i].contains(absPos))
 			continue;
 
-		ZoombiniPageType nextType = _pageClickTypes[i];
-		if (_vm->getRelInfo().hasDemoPracticeMap()) {
+		const bool pageHoverable = isPageHoverable(i);
+		if (!pageHoverable && !demoPracticeMap)
+			continue;
+
+		// Demo maps also check the secret phrases at the unavailable Fleens and Stone Rise nodes.
+		const ZoombiniPageType nextType = _pageClickTypes[i];
+		const ZoombiniPageType cheatDestination = _vm->getBuiltinCheatMapDest(nextType);
+		if (cheatDestination != ZoombiniPageType::kNone) {
+			beginMapDepart(cheatDestination);
+			return ZmbEventHandleResult::kConsumed;
+		}
+		if (!pageHoverable)
+			continue;
+
+		if (demoPracticeMap) {
 			_vm->_state->_practiceLevel = getDemoPracticeLevel(nextType);
 			if (nextType == ZoombiniPageType::kPicker)
 				_vm->_state->beginPracticeState();

@@ -3135,6 +3135,11 @@ void ZmbStateFile::setCurrentPageType(ZoombiniPageType pageType) {
 	case ZoombiniPageType::kMaze:
 		_currentPage = ZmbDestPageKind::kMaze_18;
 		break;
+	case ZoombiniPageType::kEasterEggSA:
+	case ZoombiniPageType::kEasterEggSB:
+		// These map minigames have no resume location in the save format.
+		// Preserve the current page so loading can resume there.
+		return;
 	default:
 		error("state: invalid pageType value: %d", static_cast<int32>(pageType));
 		break;
@@ -3729,11 +3734,11 @@ bool ZoombiniGameState::advanceRouteLevel(ZmbRouteId routeId) {
 
 	const uint routeIndex = static_cast<uint>(routeId);
 	ZmbStateFile &state = getCurrentState();
-	int16 &routeLevel = state._routeLevels[routeIndex];
+	const int16 routeLevel = state._routeLevels[routeIndex];
 	if (3 <= routeLevel)
 		return false;
 
-	routeLevel += 1;
+	state._routeLevels[routeIndex] = routeLevel + 1;
 	if (hasRoutePerfectClearCounters())
 		state._routePerfectCounters[routeIndex] = 0;
 	_routeLevelJustAdvanced = true;
@@ -3747,7 +3752,7 @@ bool ZoombiniGameState::setRouteDifficultyLevel(ZmbRouteId routeId, int16 puzzle
 	// The public puzzle level is one-based, while the stored route level is zero-based.
 	const uint routeIndex = static_cast<uint>(routeId);
 	ZmbStateFile &state = getCurrentState();
-	int16 &routeLevel = state._routeLevels[routeIndex];
+	const int16 routeLevel = state._routeLevels[routeIndex];
 	const int16 targetRouteLevel = puzzleLevel - 1;
 	if (routeLevel == targetRouteLevel)
 		return true;
@@ -3755,12 +3760,12 @@ bool ZoombiniGameState::setRouteDifficultyLevel(ZmbRouteId routeId, int16 puzzle
 	const bool routeLevelDecreased = targetRouteLevel < routeLevel;
 	// Raising a level uses ordinary progression; lowering it assigns directly, then reconciles flags and memorials below.
 	if (routeLevel < targetRouteLevel) {
-		while (routeLevel < targetRouteLevel) {
+		while (state._routeLevels[routeIndex] < targetRouteLevel) {
 			if (!advanceRouteLevel(routeId))
 				return false;
 		}
 	} else {
-		routeLevel = targetRouteLevel;
+		state._routeLevels[routeIndex] = targetRouteLevel;
 	}
 
 	if (hasRoutePerfectClearCounters())

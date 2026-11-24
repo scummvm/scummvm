@@ -614,8 +614,43 @@ public:
 
 	/** Run the complete feature pre-render, sort, draw, and post-render pass. */
 	void renderFeatures();
-	/** Draw a 310 by 16 debug text strip immediately, optionally restoring it on the next render pass. */
-	void drawBuiltinDebugText(const Common::String &text, bool restoreOnNextFrame = false);
+	/** Describe the shared built-in debug actions exposed by the debugger. */
+	Common::String debugGetGlobalDebugCommandHelp() const;
+	/** Run one shared built-in debug action from the debugger console. */
+	bool debugDoGlobalDebugCommand(int argc, const char **argv, Common::String &output);
+	// [*] Notification Box
+	/** Show a short notification that expires after its brief display cycle. */
+	void showNotiBoxShort(const Common::U32String &ustr);
+	/** Hide the short notification immediately. */
+	void hideNotiBoxShort();
+	/** Show a medium notification with caller-supplied text. */
+	void showNotiBoxMedium(const Common::U32String &ustr);
+	/** Show a medium notification that remains until another owner replaces it. */
+	void showNotiBoxMediumPersistent(const Common::U32String &ustr);
+	/** Show a localized notification identified by @p textKey using the release-specific medium or wide layout. */
+	void showNotiBoxLong(ZoombiniText::Key textKey);
+
+	/**
+	 * Input policy chosen by the caller for one built-in debug message.
+	 *
+	 * @ref ZoombiniPage::showBuiltinDebugText() starts the input wait for @c kWait.
+	 * @ref ZoombiniPage::drawBuiltinDebugText() uses the policy to update the
+	 * redraw request for the screen area beneath the strip.
+	 */
+	enum class BuiltinDebugInputMode {
+		kContinue, ///< Continue page progression and let normal redraws cover the strip.
+		kWait      ///< Pause until a key or mouse button press, then restore the covered area.
+	};
+
+	/** Draw a 310 by 16 debug text strip immediately.
+	 * @param text Message to display.
+	 * @param inputMode Schedule a redraw with @c kWait or clear the request with @c kContinue.
+	 */
+	void drawBuiltinDebugText(const Common::String &text, BuiltinDebugInputMode inputMode = BuiltinDebugInputMode::kContinue);
+	/** Draw the small gray status strip used by Lion's Lair and Mirror Machine.
+	 * @param text Status to display.
+	 */
+	void drawBuiltinDebugStatusText(const Common::String &text);
 	/** Pause page progression until the next keyboard or mouse-button input is observed. */
 	void waitForBuiltinDebugInput() { _builtinDebugInputWaitActive = true; }
 	/** Return whether a blocking built-in debug strip owns page progression. */
@@ -1256,6 +1291,22 @@ public:
 
 protected:
 	/**
+	 * Handle a shared built-in debug or MIDI-test key after page shortcuts.
+	 * @param kbd Translated key and modifier state.
+	 */
+	ZmbEventHandleResult onGlobalDebugKeyDown(const Common::KeyState &kbd);
+	/** Refresh a dragged Zoombini's NotiBox after the debug coordinate mode changes. */
+	virtual void updateBuiltinDragNotification() {}
+	/** Return whether a Zoombini is being dragged in this page. */
+	virtual bool isDragging() const { return false; }
+
+	/** Draw one ASCII message in the original 310 by 16 debug strip.
+	 * @param text Message to display.
+	 * @param inputMode Use @c kWait to pause the page until input and redraw the covered area when it resumes.
+	 */
+	void showBuiltinDebugText(const Common::String &text, BuiltinDebugInputMode inputMode = BuiltinDebugInputMode::kContinue);
+
+	/**
 	 * Read the next deterministic body translation without advancing the feature's controller.
 	 * The default queries @ref Mohawk::ZmbSnoid; pages may opt in other runners with a stable body root and known frame deadline.
 	 * @param feature Feature whose authored pose is prepared, such as a walking Snoid or an opted-in Fleen runner.
@@ -1815,6 +1866,106 @@ protected:
 								 Common::Array<uint16> &assignedRunnerIds) const;
 
 private:
+	/** Shared actions accepted by the built-in debug console and keyboard dispatcher. */
+	enum class GlobalDebugAction {
+		kInvalid,
+		kEnable,
+		kDisable,
+		kStepOff,
+		kStep,
+		kResetFidget,
+		kPaths,
+		kSound,
+		kPalette,
+		kMergeRect,
+		kUnlockRoutes,
+		kRunnerRectsAll,
+		kRunnerRectsFiltered,
+		kRunnerIdsAll,
+		kRunnerIdsFiltered,
+		kRunnerDebug,
+		kForceParty,
+		kDragCoords
+	};
+	/** Console-facing names for the shared built-in debug actions. */
+	static constexpr const char *kGlobalDebugActionEnable = "enable";
+	static constexpr const char *kGlobalDebugActionDisable = "disable";
+	static constexpr const char *kGlobalDebugActionStepOff = "step-off";
+	static constexpr const char *kGlobalDebugActionStep = "step";
+	static constexpr const char *kGlobalDebugActionResetFidget = "reset-fidget";
+	static constexpr const char *kGlobalDebugActionPaths = "paths";
+	static constexpr const char *kGlobalDebugActionSound = "sound";
+	static constexpr const char *kGlobalDebugActionPalette = "palette";
+	static constexpr const char *kGlobalDebugActionMergeRect = "merge-rect";
+	static constexpr const char *kGlobalDebugActionUnlockRoutes = "unlock-routes";
+	static constexpr const char *kGlobalDebugActionRunnerRectsAll = "runner-rects-all";
+	static constexpr const char *kGlobalDebugActionRunnerRectsFiltered = "runner-rects-filtered";
+	static constexpr const char *kGlobalDebugActionRunnerIdsAll = "runner-ids-all";
+	static constexpr const char *kGlobalDebugActionRunnerIdsFiltered = "runner-ids-filtered";
+	static constexpr const char *kGlobalDebugActionRunnerDebug = "runner-debug";
+	static constexpr const char *kGlobalDebugActionForceParty = "force-party";
+	static constexpr const char *kGlobalDebugActionDragCoords = "drag-coords";
+	/** Parse one console-facing shared built-in debug action name. */
+	static GlobalDebugAction parseGlobalDebugAction(const Common::String &action);
+	/** Run one typed shared built-in debug action. */
+	bool runGlobalDebugAction(GlobalDebugAction action, Common::String &output);
+
+	// [*] Notification Box
+	/** Number of 60 FPS frames for the long notification box. */
+	constexpr static uint32 NOTIBOX_LONG_SHOW_FRAME_DURATION = 90;
+	/** Notification layouts, indexed in the same order as their background shapes. */
+	enum NotiBoxKind {
+		/** Displays the dragged Zoombini's name or debug coordinates in all releases. */
+		kNotiBox00_Short = 0,
+		/**
+		 * Used in all releases for mouse pointer show/hide messages and custom text, including built-in debug output.
+		 * Also used for other option notifications in v1.0US/ES/PT/IT, v1.1US, v1.11KR and TLC v2.0, including demos.
+		 */
+		kNotiBox01_Medium = 1,
+		/**
+		 * Used for option notifications in v1.0EU/v1.1EU, v1.1FR_2002, v1.0BR Demo and v1.0JP retail/demo.
+		 * Covers sound, music, less/more action, sticky/auto-sticky mouse, transitions and Japanese name generation (Ctrl+M).
+		 * Mouse pointer show/hide messages and custom text use @ref ZoombiniPage::kNotiBox01_Medium instead.
+		 */
+		kNotiBox02_Wide = 2,
+	};
+	/** Show the selected notification layout with the requested lifetime. */
+	void showNotiBox(const Common::U32String &ustr, NotiBoxKind kind, bool persistent);
+	/** Return the active notification's background and text bounds. */
+	const Common::Rect &getNotiBoxRect() const;
+
+	/** Expire the notification and request coordinate-debug redraws without advancing a SCRB timer. */
+	bool notiBox_onPreRender(ZmbFeature *feature);
+	/** Draw the selected notification background through the current dirty clip. */
+	ZmbRenderResult notiBox_onRender(ZmbFeature *feature);
+	/** Draw notification text after the notification-box shape. */
+	void notiBox_onPostRender(ZmbFeature *feature);
+
+	/** Short notification-box rectangle. */
+	const Common::Rect _notiBoxShortRect = Common::Rect(0x0115, 0x01CA, 0x016C, 0x01DD);
+	/** Medium notification-box rectangle. */
+	const Common::Rect _notiBoxMediumRect = Common::Rect(0x0101, 0x01CA, 0x0183, 0x01DD);
+	/** Wide notification-box rectangle for localized European option messages. */
+	const Common::Rect _notiBoxWideRect = Common::Rect(0x00ED, 0x01CA, 0x01B5, 0x01DD);
+	/** Frame at which the current notification expires. */
+	uint32 _notiBoxShowUntilFrame = 0;
+	/** Text currently displayed in the notification box. */
+	Common::U32String _notiBoxText;
+	/** Layout used by the current notification. */
+	NotiBoxKind _notiBoxKind = kNotiBox00_Short;
+	/** Notification-box feature runner. */
+	ZmbFeature *_notiBoxFeature = nullptr;
+
+	/**
+	 * Paint and present a centered debug strip.
+	 * @param text Status to display.
+	 * @param rect Bounds in screen coordinates.
+	 * @param background Palette index for the fill.
+	 * @param foreground Palette index for the text.
+	 * @param inputMode Input policy used to update the pending redraw.
+	 */
+	void drawBuiltinDebugStrip(const Common::String &text, const Common::Rect &rect, uint32 background, uint32 foreground, BuiltinDebugInputMode inputMode);
+
 	/** Restore the threshold on release or page teardown, including an already-disabled value. */
 	void restoreSnoidDragFidgets();
 
@@ -1903,8 +2054,31 @@ private:
 	void runnerOrderErase(ZmbFeature *feature);
 	/** Whether a blocking built-in debug strip is waiting for the next input. */
 	bool _builtinDebugInputWaitActive = false;
-	/** Whether the first render pass after an input wait must restore the built-in debug strip. */
-	bool _builtinDebugTextRestorePending = false;
+
+	/**
+	 * Redraw state retained by the page after the debug strip is drawn.
+	 *
+	 * A draw with @ref ZoombiniPage::BuiltinDebugInputMode::kWait sets @c kPending.
+	 * The request can outlast the input wait.
+	 */
+	enum class BuiltinDebugTextRestore : uint8 {
+		kNone,   ///< No redraw scheduled.
+		kPending ///< Restore the covered area on the next normal page render.
+	};
+
+	/**
+	 * Scheduled redraw of the top-left 310 by 16 pixels after a debug input wait.
+	 *
+	 * The strip is drawn directly to the screen and can remain visible if normal
+	 * page updates leave that area untouched. The request survives
+	 * @ref ZoombiniPage::releaseBuiltinDebugInputWait(). The first normal page
+	 * render after the wait marks the strip's rectangle dirty and clears the request.
+	 *
+	 * Each strip draw replaces the request. A nonblocking draw clears it so that
+	 * a message drawn by the input that ends the wait stays visible until a
+	 * normal page update covers it.
+	 */
+	BuiltinDebugTextRestore _builtinDebugTextRestore = BuiltinDebugTextRestore::kNone;
 
 	/**
 	 * Current global runner-list order.

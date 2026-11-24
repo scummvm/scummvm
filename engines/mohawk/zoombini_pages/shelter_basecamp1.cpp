@@ -712,8 +712,9 @@ ZmbEventHandleResult ZoombiniShelterBasecampOne::easterEggMushroom_onLButtonDown
 	assert(mushroomIdx <= kResScrb1115_EasterEggMushroom5 - kResScrb1111_EasterEggMushroom1);
 
 	const uint16 colorCount = static_cast<uint16>(feature->getMaxFrameIdx() + 1);
-	uint16 &color = _vm->_state->getCurrentState()._bcOneMushroomColors[mushroomIdx];
-	color = (color + 1) % colorCount;
+	ZmbStateFile &state = _vm->_state->getCurrentState();
+	const uint16 color = (state._bcOneMushroomColors[mushroomIdx] + 1) % colorCount;
+	state._bcOneMushroomColors[mushroomIdx] = color;
 
 	// Repaint the new color through the static runner path without starting a SCRB animation.
 	feature->setLastFrameIdx(color);

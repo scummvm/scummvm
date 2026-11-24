@@ -1233,18 +1233,14 @@ public:
 	 * (v1.0BR) 0x0022
 	 * (v1.1US) 0x0022
 	 * (v2.0TLC) 0x0024
-	 * (Unused) Fleens puzzle best score (0-99).
-	 * Tracks the highest number of zoombinis successfully placed in the Fleens minigame.
-	 * ScummVM does not use this serialized field for gameplay.
+	 * Best score in the easter egg SA page (0-99).
 	 */
 	uint16 _fleensHighScore = 0;
 	/**
 	 * (v1.0BR) 0x0024
 	 * (v1.1US) 0x0024
 	 * (v2.0TLC) 0x0026
-	 * (Unused) Mudball Wall puzzle best score (0-999).
-	 * Tracks the highest score achieved across all Mudball Wall sessions.
-	 * ScummVM does not use this serialized field for gameplay.
+	 * Best score in the easter egg SB page (0-999).
 	 */
 	uint16 _mudballHighScore = 0;
 	/**
@@ -1507,7 +1503,11 @@ public:
 	bool hasValidRodMapProgress() const;
 	/** Normalize contradictory RodMap progress values to a bounded route level. */
 	void recoverRodMapProgress();
-	/** Set the current interactive page from a runtime page type. */
+	/**
+	 * Update the saved page location.
+	 * @remark Easter egg pages preserve the current location.
+	 * @param pageType The runtime page type being entered.
+	 */
 	void setCurrentPageType(ZoombiniPageType pageType);
 	/** Set the completion bit for a route at its zero-based difficulty level. */
 	void setRouteCompletionFlag(ZmbRouteId routeId, int16 routeLevel);
@@ -1970,13 +1970,6 @@ public:
 		uint16 _preloadCounter = 0;
 		/** Non-repeat random-pool state indexed by @ref ZoombiniPageType. */
 		uint32 _poolStates[kPoolStateCount] = {};
-
-		/** Return the retained non-repeat pool for @p pageType. */
-		uint32 &getPoolState(ZoombiniPageType pageType) {
-			const uint16 pageIndex = static_cast<uint16>(pageType);
-			assert(pageIndex < kPoolStateCount);
-			return _poolStates[pageIndex];
-		}
 	};
 
 	/**

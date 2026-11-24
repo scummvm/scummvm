@@ -434,7 +434,7 @@ ZoombiniPuzzleBridge::BuiltinDebugAction ZoombiniPuzzleBridge::parseBuiltinDebug
 bool ZoombiniPuzzleBridge::runBuiltinDebugAction(BuiltinDebugAction action, Common::String &output) {
 	if (action == BuiltinDebugAction::kRoute) {
 		const Common::String message = debugGetLastRejectRoute();
-		showBuiltinDebugText(message, true);
+		showBuiltinDebugText(message, BuiltinDebugInputMode::kWait);
 		output = message + '\n';
 	} else {
 		output = debugGetAnswer();

@@ -314,8 +314,17 @@ private:
 	bool CmdSub_StateSet(int argc, const char **argv);
 	/** Top-level command exposing shared built-in debug actions. */
 	static constexpr const char *kCmdBuiltinDebug = "builtin_debug";
-	/** Dispatch a shared built-in debug action to the active interactive page. */
+	/** Enter a hidden SA or SB minigame. */
+	static constexpr const char *kSubCmdBuiltinDebugMinigame = "minigame";
+	/** Dispatch a shared built-in debug action or open a minigame. */
 	bool Cmd_BuiltinDebug(int argc, const char **argv);
+	/**
+	 * Open SA or SB in a practice session.
+	 * @param argc Number of command tokens.
+	 * @param argv Command tokens, including the minigame name.
+	 * @return False to close the debugger after queuing the page.
+	 */
+	bool CmdSub_BuiltinDebugMinigame(int argc, const char **argv);
 	/** Print the state keys available for the active release family. */
 	void printAvailableStateKeys();
 	/** Print the warning and responsibility disclaimer for state-set writes. */

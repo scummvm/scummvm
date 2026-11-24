@@ -629,6 +629,7 @@ bool ZoombiniPuzzleNet::runBuiltinDebugAction(BuiltinDebugAction action, Common:
 ZmbEventHandleResult ZoombiniPuzzleNet::onDebugKeyDown(const Common::KeyState &kbd) {
 	BuiltinDebugAction action = BuiltinDebugAction::kInvalid;
 	if (kbd.hasFlags(0) || kbd.hasFlags(Common::KBD_SHIFT)) {
+		// The original puzzle consumes Space to restore the shot allowance and mud tank before shared MIDI handling.
 		if (kbd.keycode == Common::KEYCODE_SPACE)
 			action = BuiltinDebugAction::kAutoSort;
 		else if (kbd.ascii == 'L' || kbd.ascii == 'l')

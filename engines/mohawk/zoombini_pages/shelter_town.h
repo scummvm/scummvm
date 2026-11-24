@@ -214,6 +214,8 @@ private:
 	const Common::Rect _mapButtonRect = Common::Rect(600, 403, 639, 440);
 	const Common::Rect _helpButtonRect = Common::Rect(600, 441, 639, 478);
 
+	/** Return whether the current Town storage count has reached 625 Zoombinis. */
+	bool areAllZoombinisInTown() const;
 	/** Convert the stored Town population to the authored density range. */
 	static int16 calculatePopulationDensity(int16 population);
 	/** Rebuild population-gated Town overlays after a count change. */
@@ -306,51 +308,38 @@ protected:
 		kResShape1000_ExitGateRightPressed25 = 25,
 	};
 
-	/** Whether all 625 Zoombinis have been stored in town. */
-	bool _allZoombinisInTown = false;
-
 	/** Number of active pack Zoombinis that were moved to town storage on entry. */
 	int16 _activePackCount = 0;
 	/** First empty Town storage slot after the arriving pack is transferred. */
 	int16 _firstEmptyStorageSlot = 0;
-
 	/**
 	 * Calculated town population density, controls how full the town appears.
 	 * Range: 25 ~ 80
 	 */
 	int16 _townPopDensity = 0;
-
 	/**
 	 * Temporary Town population used only by the debugger preview command.
 	 * It never updates the save state or the actual Town arrival count.
 	 */
 	bool _debugPopulationPreviewActive = false;
-
 	/** Exact sound resource to play on Town entry. */
 	ZmbResource _entrySoundRes;
-
 	/** Whether to play the entry sound immediately. */
 	bool _playEntrySoundImmediately = false;
-
 	/**
 	 * Number of pending celebration walkers ("fireworks") to spawn.
 	 * Set from development-level thresholds in @ref ZoombiniShelterTown::loadFeatures().
 	 * Decremented each time a walker is spawned.
 	 */
 	int16 _developAnimTimer = 0;
-
 	/**
 	 * Debug-only accelerated cycle: queue the full-Town entry amount,
 	 * then the ambient-completion refill amount after it drains.
 	 * This is page-local and disappears when Town is destroyed.
 	 */
 	bool _debugFireworksCyclePendingRefill = false;
-	/** Last count selected by the F fireworks debug branch. */
-	int16 _builtinFireworksCount = 0;
 	/** One-based memorial debug-card data selector; zero disables the override. */
-	int16 _builtinCheatTextIndex = 0;
-	/** Route/level pair advanced by each period-key memorial insertion. */
-	int16 _builtinMemorialRouteCounter = 0;
+	int16 _btiDebugCheatTextIdx = 0;
 
 	/**
 	 * Pointers to the four overlay SCRB features, saved for sub-feature linking.
@@ -371,7 +360,6 @@ protected:
 	 * Determined by (storedTownCount - 20) / 37, clamped to [0, 16].
 	 */
 	uint16 _inhabitantCount = 0;
-
 	/** Walking Zoombini snoid count. Up to 20 can be spawned from stored chunk data. */
 	uint16 _walkingZmbCount = 0;
 

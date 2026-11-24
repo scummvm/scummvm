@@ -1064,6 +1064,10 @@ ZmbEventHandleResult ZoombiniTransitionXfer::onKeyDown(const Common::KeyState &k
 		return ZmbEventHandleResult::kConsumed;
 	}
 
+	const ZmbEventHandleResult debugResult = onGlobalDebugKeyDown(kbd);
+	if (debugResult == ZmbEventHandleResult::kConsumed)
+		return debugResult;
+
 	if (shouldIgnorePageSkipKey(kbd))
 		return ZmbEventHandleResult::kPassthrough;
 
