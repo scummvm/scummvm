@@ -3355,7 +3355,13 @@ bool MovieRecord::getField(const Common::String &key) {
 	} else if (key == "Pause") {
 		lua_pushcfunction(L, moviePause);
 	} else if (key == "paused") {
-		lua_pushboolean(L, _isPaused || !_player.isRangePlaying());
+		// Up to Nancy20, a movie that hasn't started yet isn't paused: Dossier1
+		// scene 3010 shows its pillars until a light movie stops on its last frame
+		if (g_nancy->getGameType() < kGameTypeNancyDossier2) {
+			lua_pushboolean(L, _isPaused || _hasCalledOnPause);
+		} else {
+			lua_pushboolean(L, _isPaused || !_player.isRangePlaying());
+		}
 	} else if (key == "pauseOnLastFrame") {
 		lua_pushboolean(L, _pausesOnLastFrame);
 	} else if (key == "visible") {
