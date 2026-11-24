@@ -560,6 +560,8 @@ private:
 	bool _isDirty = true;
 
 	ScriptRect _dest;
+	// How far the text is scrolled up. Scripts use the opposite sign: a
+	// positive offset moves the text down.
 	double _yOffset = 0.0;
 	double _yVelocity = 0.0;	// per second
 

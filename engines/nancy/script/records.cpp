@@ -2812,6 +2812,9 @@ void TextRecord::readTable(int tableIndex) {
 
 	readField(L, tableIndex, "yOffset", _yOffset);
 	readField(L, tableIndex, "yVelocity", _yVelocity);
+	// Scripts use the opposite sign for yOffset and yVelocity
+	_yOffset = -_yOffset;
+	_yVelocity = -_yVelocity;
 	readField(L, tableIndex, "useAutotext", _usesAutotext);
 	readField(L, tableIndex, "revealAll", _revealsAll);
 
@@ -2985,9 +2988,9 @@ bool TextRecord::getField(const Common::String &key) {
 	if (key == "onScreen") {
 		pushRect(L, _dest);
 	} else if (key == "yOffset") {
-		lua_pushnumber(L, _yOffset);
+		lua_pushnumber(L, -_yOffset);
 	} else if (key == "yVelocity") {
-		lua_pushnumber(L, _yVelocity);
+		lua_pushnumber(L, -_yVelocity);
 	} else if (key == "RevealNext") {
 		lua_pushcfunction(L, textRevealNext);
 	} else {
@@ -3006,10 +3009,10 @@ bool TextRecord::setField(const Common::String &key) {
 	} else if (key == "text") {
 		setText(luaL_checkstring(L, 3));
 	} else if (key == "yOffset") {
-		_yOffset = luaL_checknumber(L, 3);
+		_yOffset = -luaL_checknumber(L, 3);
 		_isDirty = true;
 	} else if (key == "yVelocity") {
-		_yVelocity = luaL_checknumber(L, 3);
+		_yVelocity = -luaL_checknumber(L, 3);
 	} else {
 		return false;
 	}
