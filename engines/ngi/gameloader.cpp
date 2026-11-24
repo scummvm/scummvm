@@ -38,6 +38,10 @@ Inventory *getGameLoaderInventory() {
 }
 
 static MotionController *getMotionControllerBySceneId(int16 sceneId) {
+	if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+		Scene *scene = g_nmi->findScene(sceneId);
+		return scene ? scene->_motionController.get() : nullptr;
+	}
 	for (uint i = 0; i < g_nmi->_gameLoader->_sc2array.size(); i++) {
 		if (g_nmi->_gameLoader->_sc2array[i]._sceneId == sceneId) {
 			return g_nmi->_gameLoader->_sc2array[i]._motionController;

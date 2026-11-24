@@ -36,6 +36,7 @@
 #include "ngi/detection.h"
 #include "ngi/messages.h"
 #include "ngi/modal.h"
+#include "ngi/motion.h"
 #include "ngi/ngiarchive.h"
 #include "ngi/objects.h"
 #include "ngi/utils.h"
@@ -225,6 +226,9 @@ private:
 	bool _hasInitialStatics = false;
 	int16 _initialStaticsId = 0;
 	BehaviorAni *_behaviorAni = nullptr;
+	MctlItem *_motionItem = nullptr;
+	MctlGraph *_graph = nullptr;
+	Common::Array<Common::Pair<int, int> > _linkEndpoints;
 
 	Common::Path texturePath(const Common::String &resource, bool localized) const {
 		const Common::String directory = localized ? Common::String::format("data/res_%s", _locale) : "data/res";
@@ -238,6 +242,7 @@ private:
 
 	CUSTOM_XML_PARSER(XMLSceneParser) {
 		XMLKeyLayout *commandLayout;
+		XMLKeyLayout *polygonLayout, *parallelLayout;
 		XML_KEY(SCENE)
 			XML_PROP(id, true)
 			XML_PROP(title, false)
@@ -250,6 +255,56 @@ private:
 			XML_PROP(putPrev, false)
 			XML_PROP(scrollX, false)
 			XML_PROP(scrollY, false)
+			XML_KEY(MCTL_COMPOUND)
+				XML_KEY(MCTL_ITEM)
+					XML_PROP(ofsX, false)
+					XML_PROP(ofsY, false)
+					XML_PROP(ofsZ, false)
+					XML_KEY(REACT_POLYGONAL)
+						polygonLayout = layout.top();
+						XML_PROP(centerX, false)
+						XML_PROP(centerY, false)
+						XML_KEY(REACT_POINT)
+							XML_PROP(x, false)
+							XML_PROP(y, false)
+						KEY_END()
+					KEY_END()
+					XML_KEY(REACT_PARALLEL)
+						parallelLayout = layout.top();
+						XML_PROP(x1, false)
+						XML_PROP(y1, false)
+						XML_PROP(x2, false)
+						XML_PROP(y2, false)
+						XML_PROP(left, false)
+						XML_PROP(right, false)
+					KEY_END()
+					XML_KEY(MCTL_GRAPH)
+						XML_KEY(GRAPH_NODE)
+							XML_PROP(id, true)
+							XML_PROP(x, false)
+							XML_PROP(y, false)
+							XML_PROP(z, false)
+							XML_PROP(flags, false)
+						KEY_END()
+						XMLKeyLayout *nodeLayout = layout.top()->children["GRAPH_NODE"];
+						XML_KEY(GRAPH_LINK)
+							XML_PROP(flags, false)
+							XML_PROP(length, false)
+							XML_PROP(angle, false)
+							XML_PROP(title, false)
+							XML_KEY(MOVE)
+								XML_PROP(id, true)
+								XML_PROP(mirror, false)
+							KEY_END()
+							layout.top()->children["STAT"] = layout.top()->children["MOVE"];
+							layout.top()->children["GRAPH_SRC"] = nodeLayout;
+							layout.top()->children["GRAPH_DST"] = nodeLayout;
+							layout.top()->children["REACT_PARALLEL"] = parallelLayout;
+							layout.top()->children["REACT_POLYGONAL"] = polygonLayout;
+						KEY_END()
+					KEY_END()
+				KEY_END()
+			KEY_END()
 			XML_KEY(ADDANI)
 				XML_PROP(id, true)
 				XML_PROP(scene, true)
@@ -409,6 +464,101 @@ private:
 			!_project._objectIds.findId(node->values["queue"], queue))
 			return parserError("Unknown ID in scene entrance");
 		_scene._entrances.push_back(Entrance{(int32)scene, (int32)id, (int32)queue, 0});
+		return true;
+	}
+
+	static int intProperty(const ParserNode &node, const char *key) {
+		return atoi(node.values.getValOrDefault(key).c_str());
+	}
+
+	bool parserCallback_MCTL_COMPOUND(ParserNode *) {
+		_scene._motionController.reset(new MctlCompound());
+		return true;
+	}
+
+	bool parserCallback_MCTL_ITEM(ParserNode *node) {
+		_motionItem = new MctlItem();
+		_scene._motionController->_motionControllers.push_back(_motionItem);
+		_motionItem->_ofsX = intProperty(*node, "ofsX");
+		_motionItem->_ofsY = intProperty(*node, "ofsY");
+		_motionItem->_ofsZ = intProperty(*node, "ofsZ");
+		return true;
+	}
+
+	bool parserCallback_MCTL_GRAPH(ParserNode *) {
+		_graph = new MctlGraph();
+		_motionItem->_motionControllerObj.reset(_graph);
+		_linkEndpoints.clear();
+		return true;
+	}
+
+	bool parserCallback_GRAPH_NODE(ParserNode *node) {
+		const int id = intProperty(*node, "id");
+		if (node->name == "GRAPH_SRC") {
+			_linkEndpoints.back().first = id;
+		} else if (node->name == "GRAPH_DST") {
+			_linkEndpoints.back().second = id;
+		} else {
+			MovGraphNode *point = new MovGraphNode();
+			_graph->_nodes.push_back(point);
+			point->_id = id;
+			point->_x = intProperty(*node, "x");
+			point->_y = intProperty(*node, "y");
+			point->_z = intProperty(*node, "z");
+			point->_flags = intProperty(*node, "flags");
+		}
+		return true;
+	}
+
+	bool parserCallback_GRAPH_LINK(ParserNode *node) {
+		MovGraphLink *link = new MovGraphLink();
+		_graph->_links.push_back(link);
+		_linkEndpoints.emplace_back(-1, -1);
+		if (node->values.contains("flags"))
+			link->_flags = intProperty(*node, "flags");
+		link->_length = strtof(node->values.getValOrDefault("length").c_str(), nullptr);
+		link->_angle = strtof(node->values.getValOrDefault("angle").c_str(), nullptr);
+		link->_title = node->values.getValOrDefault("title");
+		return true;
+	}
+
+	bool parserCallback_MOVE(ParserNode *node) {
+		uint32 id;
+		if (!readId(node->values["id"], id))
+			return parserError("Unknown ID on motion graph link: " + node->values["id"]);
+		MovGraphLink *link = _graph->_links.back();
+		const bool move = node->name == "MOVE";
+		(move ? link->_movementIds : link->_staticsIds).push_back(id);
+		(move ? link->_movementMirrors : link->_staticsMirrors).push_back(boolProperty(*node, "mirror"));
+		return true;
+	}
+
+	bool parserCallback_REACT_PARALLEL(ParserNode *node) {
+		ReactParallel *region = new ReactParallel(intProperty(*node, "left"), intProperty(*node, "right"));
+		region->setAnchorPoints(intProperty(*node, "x1"), intProperty(*node, "y1"), intProperty(*node, "x2"), intProperty(*node, "y2"));
+		region->create();
+		return setGraphRegion(node, region);
+	}
+
+	bool parserCallback_REACT_POLYGONAL(ParserNode *node) {
+		return setGraphRegion(node, new ReactPolygonal(intProperty(*node, "centerX"), intProperty(*node, "centerY")));
+	}
+
+	bool setGraphRegion(ParserNode *node, MovGraphReact *region) {
+		if (getParentNode(node)->name == "GRAPH_LINK") {
+			MovGraphLink *link = _graph->_links.back();
+			delete link->_movGraphReact;
+			link->_movGraphReact = region;
+		} else {
+			_motionItem->_movGraphReactObj.reset(region);
+		}
+		return true;
+	}
+
+	bool parserCallback_REACT_POINT(ParserNode *node) {
+		MovGraphReact *region = getParentNode(getParentNode(node))->name == "GRAPH_LINK" ?
+				_graph->_links.back()->_movGraphReact : _motionItem->_movGraphReactObj.get();
+		region->_points.push_back(Common::Point(intProperty(*node, "x"), intProperty(*node, "y")));
 		return true;
 	}
 
@@ -689,6 +839,19 @@ private:
 	}
 
 	bool closedKeyCallback(ParserNode *node) override {
+		if (node->name == "MCTL_GRAPH") {
+			// Links can precede their nodes. Only GRAPH_NODE defines the coordinates.
+			uint i = 0;
+			for (MovGraphLink *link : _graph->_links) {
+				const auto &ids = _linkEndpoints[i++];
+				link->_graphSrc = _graph->getNodeById(ids.first);
+				link->_graphDst = _graph->getNodeById(ids.second);
+				if (!link->_graphSrc || !link->_graphDst || !link->_movGraphReact)
+					return parserError("Incomplete Android motion graph link");
+			}
+		}
+		if (node->name == "MCTL_ITEM" && !_motionItem->_motionControllerObj)
+			return parserError("Missing Android motion graph");
 		if (node->name == "MOVEMENT")
 			_scene._aniObjects.back()->_movements.back()->updateCurrDynamicPhase();
 		if (node->name == "OLDANI" && !_scene._aniObjects.back()->_statics)

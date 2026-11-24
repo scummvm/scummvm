@@ -26,6 +26,7 @@
 #include "ngi/ngiarchive.h"
 #include "ngi/statics.h"
 #include "ngi/messages.h"
+#include "ngi/motion.h"
 #include "ngi/gameloader.h"
 
 #include "ngi/constants.h"

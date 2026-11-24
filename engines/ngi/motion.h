@@ -60,6 +60,7 @@ public:
 	virtual bool resetPosition(AniObject *ani, int flag) { return 0; }
 	virtual int checkCurrentPath() { return 0; }
 	virtual bool canDropInventory(AniObject *ani, int x, int y) { return false; }
+	virtual bool checkPoint(int x, int y) { return false; }
 	virtual int getStopStatics() { return -1; }
 	virtual MessageQueue *makeQueue(AniObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) { return 0; }
 
@@ -100,6 +101,7 @@ public:
 	~MctlCompound() override;
 
 	bool load(MfcArchive &file) override;
+	bool checkPoint(int x, int y) override;
 
 	void attachObject(AniObject *obj) override;
 	int detachObject(AniObject *obj) override;
@@ -163,14 +165,15 @@ private:
 
 class MovGraphNode : public CObject {
 public:
+	int _id = 0;
 	int _x;
 	int _y;
 	int _z;
 	int16 _field_10;
-	int _field_14;
+	int _flags;
 
 public:
-	MovGraphNode() : _x(0), _y(0), _z(0), _field_10(0), _field_14(0) { _objtype = kObjTypeMovGraphNode; }
+	MovGraphNode() : _x(0), _y(0), _z(0), _field_10(0), _flags(0) { _objtype = kObjTypeMovGraphNode; }
 	bool load(MfcArchive &file) override;
 };
 
@@ -184,7 +187,7 @@ class ReactParallel : public MovGraphReact {
 	int _right;
 
 public:
-	ReactParallel();
+	ReactParallel(int left = 0, int right = 0);
 	bool load(MfcArchive &file) override;
 
 	void setAnchorPoints(int x1, int y1, int x2, int y2) override;
@@ -197,7 +200,7 @@ class ReactPolygonal : public MovGraphReact {
 	int _centerY;
 
 public:
-	ReactPolygonal();
+	ReactPolygonal(int centerX = 0, int centerY = 0);
 
 	bool load(MfcArchive &file) override;
 
@@ -213,6 +216,9 @@ class MovGraphLink : public CObject {
 	MovGraphNode *_graphDst;
 	DWordArray _movementIds;
 	DWordArray _staticsIds;
+	// XML stores the facing separately from the movement or statics ID.
+	Common::Array<bool> _movementMirrors;
+	Common::Array<bool> _staticsMirrors;
 	uint32 _flags;
 	int _field_38;
 	int _field_3C;
@@ -271,11 +277,13 @@ class MovGraph : public MotionController {
 friend class MctlCompound;
 friend class MctlGraph;
 friend class MotionController;
-private:
+public:
 	typedef ObList<MovGraphNode> NodeList;
 	typedef ObList<MovGraphLink> LinkList;
 	NodeList _nodes;
 	LinkList _links;
+
+private:
 	int _linkItemOffset;
 	Common::Array<NavDatum> _items;
 	GrPathDesc *(*_selFunc)(AniObject *ani, Common::Array<PathDesc *> *items, signed int counter);
@@ -305,6 +313,7 @@ public:
 	void recalcLinkParams();
 	bool getNearestPoint(int unusedArg, Common::Point *p, GrPathDesc *movarr);
 	MovGraphNode *findNearestNode(int ox, int oy);
+	MovGraphNode *getNodeById(int id) const;
 	int getObjectIndex(AniObject *ani);
 	Common::Array<GrPathDesc *> *getHitPoints(int x, int y, int *arrSize, int flag1, int flag2);
 	void findAllPaths(MovGraphLink *lnk, MovGraphLink *lnk2, MovGraphLinkList &tempObList1, MovGraphLinkList &tempObList2);
@@ -371,6 +380,7 @@ public:
 	Common::Array<GmctlAni> _aniData;
 
 public:
+	bool checkPoint(int x, int y) override;
 	void attachObject(AniObject *obj) override;
 	int detachObject(AniObject *obj) override;
 	void detachAllObjects() override;

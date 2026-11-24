@@ -32,6 +32,7 @@ namespace NGI {
 class MessageQueue;
 class GameProject;
 class BehaviorController;
+class MctlCompound;
 
 class Scene : public Background {
  public:
@@ -50,6 +51,7 @@ class Scene : public Background {
 	Common::ScopedPtr<Shadows> _shadows;
 	Common::ScopedPtr<SoundList> _soundList;
 	Common::ScopedPtr<BehaviorController> _behaviorController;
+	Common::ScopedPtr<MctlCompound> _motionController;
 	int16 _sceneId;
 	Common::String _sceneName;
 	int _field_BC;

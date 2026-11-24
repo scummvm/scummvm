@@ -108,6 +108,14 @@ MctlCompound::~MctlCompound() {
 	Common::for_each(_motionControllers.begin(), _motionControllers.end(), Common::DefaultDeleter<MctlItem>());
 }
 
+bool MctlCompound::checkPoint(int x, int y) {
+	for (MctlItem *item : _motionControllers) {
+		if (item->_movGraphReactObj && item->_movGraphReactObj->hitTest(x, y))
+			return item->_motionControllerObj->checkPoint(x, y);
+	}
+	return false;
+}
+
 bool MctlCompound::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "MctlCompound::load()");
 
@@ -781,7 +789,8 @@ GrPathDesc *getPreferredPath(AniObject *ani, Common::Array<PathDesc *> *items, s
 MovGraph::MovGraph() {
 	_selFunc = getPreferredPath;
 	_linkItemOffset = 0;
-	insertMessageHandler(MovGraph::messageHandler, getMessageHandlersCount() - 1, 129);
+	if (g_nmi->getPlatform() != Common::kPlatformAndroid)
+		insertMessageHandler(MovGraph::messageHandler, getMessageHandlersCount() - 1, 129);
 
 	_objtype = kObjTypeMovGraph;
 }
@@ -794,6 +803,14 @@ MovGraph::~MovGraph() {
 		delete *i;
 
 	detachAllObjects();
+}
+
+MovGraphNode *MovGraph::getNodeById(int id) const {
+	for (MovGraphNode *node : _nodes) {
+		if (node->_id == id)
+			return node;
+	}
+	return nullptr;
 }
 
 bool MovGraph::load(MfcArchive &file) {
@@ -2390,6 +2407,10 @@ MessageQueue *MctlGraph::makeQueue(AniObject *obj, int xpos, int ypos, int fuzzy
 	return mq;
 }
 
+bool MctlGraph::checkPoint(int x, int y) {
+	return getHitNode(x, y, 0) || getHitLink(x, y, -1, 0);
+}
+
 MovGraphNode *MctlGraph::getHitNode(int x, int y, int strictMatch) {
 	for (NodeList::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 		assert((*i)->_objtype == kObjTypeMovGraphNode);
@@ -2906,7 +2927,7 @@ void MovGraphLink::recalcLength() {
 bool MovGraphNode::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "MovGraphNode::load()");
 
-	_field_14 = file.readUint32LE();
+	_flags = file.readUint32LE();
 	_x = file.readSint32LE();
 	_y = file.readSint32LE();
 	_z = file.readSint32LE();
@@ -2914,11 +2935,11 @@ bool MovGraphNode::load(MfcArchive &file) {
 	return true;
 }
 
-ReactParallel::ReactParallel() {
+ReactParallel::ReactParallel(int left, int right) {
 	_x1 = 0;
 	_x2 = 0;
-	_right = 0;
-	_left = 0;
+	_right = right;
+	_left = left;
 	_y1 = 0;
 	_y2 = 0;
 }
@@ -2941,21 +2962,25 @@ bool ReactParallel::load(MfcArchive &file) {
 void ReactParallel::create() {
 	_points.resize(4);
 
-	double at = atan2((double)(_y1 - _y2), (double)(_x1 - _x2)) + 1.570796; // pi/2
+	const bool android = g_nmi->getPlatform() == Common::kPlatformAndroid;
+	double angle = android ? atan2f(_y1 - _y2, _x1 - _x2) : atan2((double)(_y1 - _y2), (double)(_x1 - _x2));
+	double at = angle + 1.570796; // pi/2
 	double sn = sin(at);
 	double cs = cos(at);
+	double lx = _left * cs, ly = _left * sn;
+	double rx = _right * cs, ry = _right * sn;
+	if (android) {
+		// The XML engine truncates the offsets before adding them to each endpoint.
+		lx = (int)lx;
+		ly = (int)ly;
+		rx = (int)rx;
+		ry = (int)ry;
+	}
 
-	_points[0].x = _x1 - _left * cs;
-	_points[0].y = _y1 - _left * sn;
-
-	_points[1].x = _x2 - _left * cs;
-	_points[1].y = _y2 - _left * sn;
-
-	_points[2].x = _x2 + _right * cs;
-	_points[2].y = _y2 + _right * sn;
-
-	_points[3].x = _x1 + _right * cs;
-	_points[3].y = _y1 + _right * sn;
+	_points[0] = Common::Point(_x1 - lx, _y1 - ly);
+	_points[1] = Common::Point(_x2 - lx, _y2 - ly);
+	_points[2] = Common::Point(_x2 + rx, _y2 + ry);
+	_points[3] = Common::Point(_x1 + rx, _y1 + ry);
 
 	// GdiObject::Attach(_rgn, CreatePolygonRgn(_points, 4, 2);
 }
@@ -2967,13 +2992,13 @@ void ReactParallel::setAnchorPoints(int x1, int y1, int x2, int y2) {
 	_y2 = y2;
 }
 
-ReactPolygonal::ReactPolygonal() {
+ReactPolygonal::ReactPolygonal(int centerX, int centerY) {
 	// hack for using isValid to avoid creating another state variable for
 	// getBBox
 	_bbox.right = -1;
 
-	_centerX = 0;
-	_centerY = 0;
+	_centerX = centerX;
+	_centerY = centerY;
 }
 
 bool ReactPolygonal::load(MfcArchive &file) {
@@ -3043,6 +3068,21 @@ Common::Rect ReactPolygonal::getBBox() {
 
 
 bool MovGraphReact::hitTest(int x, int y) {
+	if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+		if (_points.size() <= 1)
+			return !_points.empty() && _points[0] == Common::Point(x, y);
+		bool inside = false;
+		Common::Point prev = _points.back();
+		for (const Common::Point &cur : _points) {
+			if ((cur.y < y) != (prev.y < y)) {
+				const int64 cross = (int64)(prev.x - x) * (cur.y - prev.y) - (int64)(prev.y - y) * (cur.x - prev.x);
+				if (cur.y < y ? cross > 0 : cross < 0)
+					inside = !inside;
+			}
+			prev = cur;
+		}
+		return inside;
+	}
 	if (_points.size() < 3) {
 		return false;
 	}
