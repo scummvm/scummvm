@@ -108,6 +108,7 @@ public:
 	Sector *findNamedSector(const Common::String &name, const Math::Vector3d &pos);
 
 	Sector *findPointSector(const Math::Vector3d &p, Sector::SectorType type);
+	Sector *findFloorSector(const Math::Vector3d &p, Sector::SectorType type, const Common::Array<const Sector *> &exclude);
 	Common::Pair<bool, int> findSectorSortOrder(const Math::Vector3d &p, Sector::SectorType type);
 	void findClosestSector(const Math::Vector3d &p, Sector **sect, Math::Vector3d *closestPt);
 	void shrinkBoxes(float radius);
