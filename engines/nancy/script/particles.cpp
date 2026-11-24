@@ -1290,6 +1290,15 @@ void registerParticleAPI(lua_State *L) {
 	registerType(L, kParticleStageType, kParticleStageFunctions);
 }
 
+// The picture of the particles is as large as the viewport and mostly transparent.
+// Only the areas they were in and are in now get drawn again.
+static void showCanvas(RecordGraphic &canvas, const Common::Rect &previousArea, const Common::Rect &drawnArea) {
+	canvas.setVisible(true, false);
+	canvas.addChangedArea(previousArea);
+	canvas.addChangedArea(drawnArea);
+	canvas.setNeedsRedraw(!canvas.getChangedArea().isEmpty());
+}
+
 // The particles are drawn on a picture as large as the viewport, which is
 // started over every frame
 void ParticleRecord::registerGraphics() {
@@ -1301,7 +1310,8 @@ void ParticleRecord::registerGraphics() {
 void ParticleRecord::updateGraphics() {
 	if (!isShown() || _count == 0) {
 		if (_canvas) {
-			_canvas->setVisible(false);
+			_canvas->addChangedArea(_drawnArea);
+			_canvas->setVisible(false, false);
 		}
 
 		return;
@@ -1333,13 +1343,13 @@ void ParticleRecord::updateGraphics() {
 		_canvas->_drawSurface.fillRect(_drawnArea, 0);
 	}
 
+	const Common::Rect previousArea = _drawnArea;
 	_drawnArea = Common::Rect();
 	for (uint i = 0; i < _count; ++i) {
 		drawParticle(_particles[(_first + i) % _particles.size()], transform, _drawnArea);
 	}
 
-	_canvas->setVisible(true);
-	_canvas->setNeedsRedraw(true);
+	showCanvas(*_canvas, previousArea, _drawnArea);
 }
 
 // Where a corner of a particle ends up in the viewport. Returns false when it is
@@ -1681,6 +1691,8 @@ void ParticleEmitterRecord::runStage(const Stage &stage, double sceneTime, doubl
 // What is left over of a particle a frame goes on to the next. A frame makes no
 // more than a tenth of the particles of a second.
 void ParticleEmitterRecord::run(double sceneTime, double elapsedTime) {
+	const uint numParticles = _particles.size();
+
 	if (_frequency > 0.0) {
 		const double due = (elapsedTime + _emitClock) * _frequency;
 		const int count = (int)floor(due);
@@ -1709,7 +1721,10 @@ void ParticleEmitterRecord::run(double sceneTime, double elapsedTime) {
 		++i;
 	}
 
-	_isDirty = true;
+	// Nothing moves while the game is paused
+	if (elapsedTime != 0.0 || _particles.size() != numParticles) {
+		_isDirty = true;
+	}
 }
 
 void ParticleEmitterRecord::onZChanged() {
@@ -1729,7 +1744,8 @@ void ParticleEmitterRecord::registerGraphics() {
 void ParticleEmitterRecord::updateGraphics() {
 	if (!isShown() || _particles.empty()) {
 		if (_canvas) {
-			_canvas->setVisible(false);
+			_canvas->addChangedArea(_drawnArea);
+			_canvas->setVisible(false, false);
 		}
 
 		return;
@@ -1760,6 +1776,7 @@ void ParticleEmitterRecord::updateGraphics() {
 		_canvas->_drawSurface.fillRect(_drawnArea, 0);
 	}
 
+	const Common::Rect previousArea = _drawnArea;
 	_drawnArea = Common::Rect();
 	_canvas->setMasked(isMasked());
 
@@ -1793,8 +1810,7 @@ void ParticleEmitterRecord::updateGraphics() {
 		drawParticleQuad(_canvas->_drawSurface, _image, particle, place * transform, false, _drawnArea);
 	}
 
-	_canvas->setVisible(true);
-	_canvas->setNeedsRedraw(true);
+	showCanvas(*_canvas, previousArea, _drawnArea);
 }
 
 bool ParticleEmitterRecord::getField(const Common::String &key) {

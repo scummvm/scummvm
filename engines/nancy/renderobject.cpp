@@ -164,6 +164,14 @@ void RenderObject::setPalette(const byte *colors, uint paletteStart, uint palett
 	}
 }
 
+void RenderObject::addChangedArea(const Common::Rect &area) {
+	if (_changedArea.isEmpty()) {
+		_changedArea = area;
+	} else if (!area.isEmpty()) {
+		_changedArea.extend(area);
+	}
+}
+
 Common::Rect RenderObject::getScreenPosition() const {
 	return convertPositionToScreen(_screenPosition);
 }

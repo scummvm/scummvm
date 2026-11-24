@@ -86,6 +86,13 @@ public:
 	bool needsRedraw() const { return _needsRedraw; }
 	void setNeedsRedraw(bool needsRedraw) { _needsRedraw = needsRedraw; }
 
+	// The part of the picture that changed, for a large one that is mostly
+	// transparent. Only that part of the screen gets drawn again; when it's
+	// empty, all of the object does.
+	void addChangedArea(const Common::Rect &area);
+	const Common::Rect &getChangedArea() const { return _changedArea; }
+	void clearChangedArea() { _changedArea = Common::Rect(); }
+
 	void setHasMoved(bool hasMoved) { _hasMoved = hasMoved; }
 
 	// Nancy16 scales the game up to fit the screen; these objects get drawn at the
@@ -151,6 +158,7 @@ public:
 
 protected:
 	bool _needsRedraw;
+	Common::Rect _changedArea;
 	bool _isVisible;
 	bool _hasMoved;
 	bool _isNativeResolution = false;
