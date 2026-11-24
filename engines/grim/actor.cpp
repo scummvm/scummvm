@@ -104,6 +104,8 @@ Actor::Actor() :
 	// so Chepito in su.set
 	_turnRate = 100.0f;
 
+	_fov = g_grim->getGameType() == GType_GRIM ? 165 : 120;
+
 	_activeShadowSlot = -1;
 	_shadowArray = new Shadow[MAX_SHADOWS];
 }
@@ -268,6 +270,7 @@ void Actor::saveState(SaveGame *savedState) const {
 
 	savedState->writeBool(_drawnToClean);
 	savedState->writeBool(_fakeUnbound);
+	savedState->writeFloat(_fov.getDegrees());
 }
 
 bool Actor::restoreState(SaveGame *savedState) {
@@ -488,6 +491,9 @@ bool Actor::restoreState(SaveGame *savedState) {
 		// Note: actor will stay invisible until re-bound to set
 		// by game scripts.
 		_fakeUnbound = false;
+	}
+	if (savedState->saveMinorVersion() >= 31) {
+		_fov = savedState->readFloat();
 	}
 
 	return true;
