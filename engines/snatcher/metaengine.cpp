@@ -230,7 +230,7 @@ SnatcherOptionsWidget::SnatcherOptionsWidget(GuiObject *boss, const Common::Stri
 void SnatcherOptionsWidget::load() {
 	_buttonConfPopup->setSelected(ConfMan.hasKey("controller_conf", _domain) ? ConfMan.getInt("controller_conf", _domain) : 0);
 	_enableLightgunBox->setState(ConfMan.hasKey("lightgun_usage", _domain) && ConfMan.getBool("lightgun_usage", _domain));
-	_monoSoundBox->setState(!ConfMan.hasKey("disable_stereo", _domain) || ConfMan.getBool("disable_stereo", _domain));
+	_monoSoundBox->setState(ConfMan.hasKey("disable_stereo", _domain) && ConfMan.getBool("disable_stereo", _domain));
 }
 
 bool SnatcherOptionsWidget::save() {
