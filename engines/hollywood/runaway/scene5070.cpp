@@ -64,6 +64,10 @@ namespace Runaway {
 Scene5070::Scene5070(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game) :
 	RunawayRoomScene(audio, inventory, strings, game) {}
 
+bool Scene5070::loadBackground() {
+	return loadRunawaySurface(_archive, _desert.dynamitePlaced ? 12 : 0, 1372, 600, _background);
+}
+
 bool Scene5070::loadCustomResources() {
 	return _ambientAnimations[0].load(_archive, 5, 896) &&
 		_ambientAnimations[1].load(_archive, 6, 945) &&

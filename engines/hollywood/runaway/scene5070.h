@@ -32,6 +32,7 @@ public:
 	Scene5070(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
 
 private:
+	bool loadBackground() override;
 	bool loadCustomResources() override;
 	void applyCustomHotspotState() override;
 	float actorHeight() const override;

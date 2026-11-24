@@ -663,7 +663,7 @@ void Scene5100::applyCustomHotspotState() {
 			_maps[i] = 0;
 		}
 		byte &id = _maps[256 + i];
-		if ((id == 4 && _desert.guard == 2) || (id == 8 && _desert.footrest != 1)) {
+		if (((id == 4 || id == 12) && _desert.guard == 2) || (id == 8 && _desert.footrest != 1)) {
 			id = 0;
 		}
 		if (id == 3 && _desert.peanutButter == 2) {
@@ -807,9 +807,9 @@ void Scene5100::drawRoomComposite(Graphics::ManagedSurface &viewport) {
 			_studAnimation.draw(viewport, pose, _camera.x, -_camera.y);
 		}
 	}
-	if (_desert.guard || _hangarIntroduction || (frame >= 82 && frame <= 92)) {
+	if (_desert.guard != 2 && (_desert.guard || _hangarIntroduction || (frame >= 82 && frame <= 92))) {
 		_beerAnimation.draw(viewport, 0, _camera.x, -_camera.y);
-	} else if (studSpeaking) {
+	} else if (!_desert.guard && studSpeaking) {
 		// The talking frames contain the can even after Stud has thrown it.
 		const Common::Rect beer(225, 284, 269, 337);
 		viewport.blitFrom(_background, beer, Common::Point(beer.left - _camera.x, beer.top - _camera.y));
@@ -858,7 +858,8 @@ void Scene5100::advanceCustomGameplayLoop(uint32 delta) {
 	}
 	updateStud(delta);
 	const uint frame = studFrame();
-	byte canHotspot = 12;
+	// Stud discards the spiked can before the pill takes effect.
+	byte canHotspot = _desert.guard == 2 ? 0 : 12;
 	if (!_desert.guard && (frame < 82 || frame > 92)) {
 		canHotspot = 14;
 	}
