@@ -792,7 +792,7 @@ bool AniObject::update(int counterdiff) {
 			}
 
 			// Android ends the movement as soon as the next statics takes over.
-			if (!_movement->setNext(_callback1, _callback2) || (android && _movement->_curPhase == _movement->_nextStatic)) {
+			if (!_movement->setNext(_callback1, _callback2, android && (_flags & 8)) || (android && _movement->_curPhase == _movement->_nextStatic)) {
 				stopMovement();
 			} else {
 				setPos(_movement->_x, _movement->_y);
@@ -946,6 +946,8 @@ L8:
 		}
 L11:
 		_statics = _movement->_nextStatic;
+		if (_movement->_mirrorNext)
+			_flags ^= 8;
 L12:
 		point = _statics->getSomeXY();
 
@@ -1236,7 +1238,7 @@ bool AniObject::startAnimEx(int movid, int parId, int flag1, int flag2) {
 	return res;
 }
 
-bool AniObject::startMovement(int movementId, int messageQueueId, int dynPhaseIdx) {
+bool AniObject::startMovement(int movementId, int messageQueueId, int dynPhaseIdx, bool mirror) {
 	if (_flags & 0x80)
 		return false;
 
@@ -1266,8 +1268,17 @@ bool AniObject::startMovement(int movementId, int messageQueueId, int dynPhaseId
 	int newy = _y;
 	Common::Point point;
 
-	if (android && !_movement)
+	if (android && !_movement) {
+		// SetStatic reflects a change of facing about the old texture's center.
+		const bool prevMirror = mirror != mov->_mirrorPrev;
+		if (_statics && prevMirror != ((_flags & 8) != 0)) {
+			const int shift = _statics->getDimensions().x - 2 * _statics->_someX;
+			newx += prevMirror ? shift : -shift;
+		}
 		_statics = mov->_prevStatic;
+	}
+	if (mirror)
+		newx = -newx;
 
 	if (_movement) {
 		point = _movement->getCurrDynamicPhaseXY();
@@ -1277,6 +1288,8 @@ bool AniObject::startMovement(int movementId, int messageQueueId, int dynPhaseId
 
 	} else if (_statics) {
 		point = _statics->getSomeXY();
+		if (mov->_mirrorPrev)
+			point.x = _statics->getDimensions().x - point.x;
 
 		newx -= point.x;
 		newy -= point.y;
@@ -1311,9 +1324,10 @@ bool AniObject::startMovement(int movementId, int messageQueueId, int dynPhaseId
 	}
 
 	point = _movement->getCurrDynamicPhaseXY();
-	setPos(point.x + newx, point.y + newy);
+	newx += point.x;
+	setPos(mirror ? -newx : newx, point.y + newy);
 
-	if (!android && (_movement->_nextStatic->_staticsId & 0x4000))
+	if (mirror || (!android && (_movement->_nextStatic->_staticsId & 0x4000)))
 		_flags |= 8;
 	else
 		_flags &= 0xFFF7;
@@ -1465,6 +1479,8 @@ Movement::~Movement() {
 }
 
 Movement::Movement(Movement *src, AniObject *ani) {
+	_mirrorPrev = src->_mirrorPrev;
+	_mirrorNext = src->_mirrorNext;
 	_lastFrameSpecialFlag = 0;
 	_flipFlag = src->_flipFlag;
 	_updateFlag1 = src->_updateFlag1;
@@ -1499,6 +1515,8 @@ Movement::Movement(Movement *src, AniObject *ani) {
 }
 
 Movement::Movement(Movement *src, int *oldIdxs, int newSize, AniObject *ani) : GameObject(src) {
+	_mirrorPrev = src->_mirrorPrev;
+	_mirrorNext = src->_mirrorNext;
 	_lastFrameSpecialFlag = 0;
 	_updateFlag1 = 1;
 	_prevStatic = nullptr;
@@ -1677,6 +1695,8 @@ bool Movement::load(MfcArchive &file, AniObject *ani) {
 }
 
 Common::Point Movement::getCurrDynamicPhaseXY() const {
+	if (_mirrorNext && _curPhase == _nextStatic)
+		return Common::Point(_curPhase->getDimensions().x - _curPhase->_someX, _curPhase->_someY);
 	return Common::Point(_curPhase->_someX, _curPhase->_someY);
 }
 
@@ -1893,7 +1913,7 @@ void Movement::removeFirstPhase() {
 	_updateFlag1 = 0;
 }
 
-bool Movement::setNext(void (*callback1)(int, Common::Point *point, int, int), void (*callback2)(int *)) {
+bool Movement::setNext(void (*callback1)(int, Common::Point *point, int, int), void (*callback2)(int *), bool mirror) {
 	debugC(8, kDebugAnimation, "Movement::setNext()");
 
 	if (!callback2) {
@@ -1913,6 +1933,7 @@ bool Movement::setNext(void (*callback1)(int, Common::Point *point, int, int), v
 		return true;
 	}
 
+	const int oldX = _x;
 	Common::Point point = getCurrDynamicPhaseXY();
 	_x -= point.x;
 	_y -= point.y;
@@ -2007,6 +2028,8 @@ bool Movement::setNext(void (*callback1)(int, Common::Point *point, int, int), v
 	_x += point.x;
 	_y += point.y;
 
+	if (mirror)
+		_x = oldX - (_x - oldX);
 	_curPhase->_countdown = _curPhase->_delay;
 
 	return result;

@@ -369,7 +369,7 @@ MessageQueue *Scene::findMessageQueue(int messageId) {
 		if (_messageQueues[i]->_queueId == messageId)
 			return _messageQueues[i];
 
-	return nullptr;
+	return _commonQueueScene ? _commonQueueScene->findMessageQueue(messageId) : nullptr;
 }
 
 MessageQueue *Scene::getMessageQueueByName(const Common::String &name) {

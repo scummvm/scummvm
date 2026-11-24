@@ -119,6 +119,8 @@ class Movement : public GameObject {
 	int _updateFlag1;
 	Statics *_prevStatic;
 	Statics *_nextStatic;
+	bool _mirrorPrev = false;
+	bool _mirrorNext = false;
 	int _prevStepX;
 	int _prevStepY;
 	int _nextStepX;
@@ -165,7 +167,7 @@ class Movement : public GameObject {
 	int countPhasesWithFlag(int maxidx, int flag);
 
 	void removeFirstPhase();
-	bool setNext(void (*_callback1)(int, Common::Point *point, int, int), void (*callback2)(int *));
+	bool setNext(void (*_callback1)(int, Common::Point *point, int, int), void (*callback2)(int *), bool mirror = false);
 	bool gotoPrevFrame();
 	void gotoFirstFrame();
 	void setLast();
@@ -239,7 +241,7 @@ public:
 	void setTargetFrame(int val) { _targetFrame = val; }
 	void adjustSomeXY();
 
-	bool startMovement(int movementId, int messageQueueId, int dynPhaseIdx);
+	bool startMovement(int movementId, int messageQueueId, int dynPhaseIdx, bool mirror = false);
 	bool startAnimEx(int movid, int parId, int flag1, int flag2);
 	void startSliding(int movementId, int messageQueueId, int x, int y, const PointList &points, int someDynamicPhaseIndex);
 

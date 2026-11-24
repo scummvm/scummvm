@@ -566,10 +566,7 @@ int global_messageHandler4(Command *cmd) {
 		if (flags <= 0)
 			flags = -1;
 
-		if (cmd->_excFlags & 1)
-			ani->startMovement(cmd->_messageNum, 0, flags);
-		else
-			ani->startMovement(cmd->_messageNum, cmd->_parId, flags);
+		ani->startMovement(cmd->_messageNum, (cmd->_excFlags & 1) ? 0 : cmd->_parId, flags, cmd->_mirror);
 
 		break;
 	}

@@ -224,6 +224,7 @@ private:
 	uint _objectOrder = 0;
 	bool _hasInitialStatics = false;
 	int16 _initialStaticsId = 0;
+	BehaviorAni *_behaviorAni = nullptr;
 
 	Common::Path texturePath(const Common::String &resource, bool localized) const {
 		const Common::String directory = localized ? Common::String::format("data/res_%s", _locale) : "data/res";
@@ -266,6 +267,21 @@ private:
 				XML_PROP(flags, false)
 			KEY_END()
 			XML_KEY(BEHAVIORCONTROLLER)
+				XML_KEY(BHVR_ANI)
+					XML_PROP(id, true)
+					XML_PROP(scene, false)
+					XML_PROP(flags, false)
+					XML_KEY(BHVR_MOVE)
+						XML_PROP(static, true)
+						XML_PROP(id, false)
+						XML_PROP(queue, false)
+						XML_PROP(delay, false)
+						XML_PROP(percent, false)
+						XML_PROP(mirror, false)
+						XML_PROP(enable, false)
+						XML_PROP(reverse, false)
+					KEY_END()
+				KEY_END()
 				XML_KEY(BHVR_SOUND)
 					XML_PROP(id, true)
 					XML_PROP(delay, false)
@@ -455,6 +471,32 @@ private:
 		return true;
 	}
 
+	bool parserCallback_BHVR_ANI(ParserNode *node) {
+		int16 actorId;
+		int16 sceneId = _scene._sceneId;
+		if (!readId(node->values["id"], actorId) ||
+				(node->values.contains("scene") && !readId(node->values["scene"], sceneId)))
+			return parserError("Unknown actor or scene in BHVR_ANI");
+		_behaviorAni = &_scene._behaviorController->addAni(actorId, sceneId, atoi(node->values.getValOrDefault("flags").c_str()));
+		return true;
+	}
+
+	bool parserCallback_BHVR_MOVE(ParserNode *node) {
+		int16 staticsId;
+		if (!readId(node->values["static"], staticsId))
+			return parserError("Unknown statics in BHVR_MOVE");
+		BehaviorMove &move = _behaviorAni->addMove(staticsId);
+		if ((node->values.contains("id") && !readId(node->values["id"], move._movementId)) ||
+				(node->values.contains("queue") && !readId(node->values["queue"], move._queueId)))
+			return parserError("Unknown movement or queue in BHVR_MOVE");
+		move._delay = atoi(node->values.getValOrDefault("delay").c_str());
+		move._percent = atoi(node->values.getValOrDefault("percent").c_str());
+		move._mirror = boolProperty(*node, "mirror");
+		if (node->values.contains("enable") && !boolProperty(*node, "enable"))
+			move._flags |= 1;
+		return true;
+	}
+
 	static bool boolProperty(const ParserNode &node, const char *name) {
 		const Common::String &value = node.values.getValOrDefault(name);
 		return value == "1" || value == "true" || value == "yes";
@@ -487,6 +529,7 @@ private:
 			cmd->_wait = 0;
 		} else if (kind == "START_MOVEMENT" || kind == "3") {
 			cmd->_cmd = 1;
+			cmd->_mirror = boolProperty(*node, "mirror");
 			if (!readId(node->values.getValOrDefault("ani"), cmd->_parentId))
 				return parserError("Unknown animation in START_MOVEMENT");
 			idProperty = "mov";
@@ -605,6 +648,8 @@ private:
 
 		movement->_prevStatic = previous;
 		movement->_nextStatic = next;
+		movement->_mirrorPrev = boolProperty(*node, "mirrorPrev");
+		movement->_mirrorNext = boolProperty(*node, "mirrorNext");
 		movement->_prevStepX = atoi(node->values.getValOrDefault("nPrevStepX").c_str());
 		movement->_prevStepY = atoi(node->values.getValOrDefault("nPrevStepY").c_str());
 		movement->_nextStepX = atoi(node->values.getValOrDefault("nNextStepX").c_str());
@@ -748,6 +793,7 @@ Common::Error NGIEngine::enterAndroidScene1() {
 	Scene *common = findScene(SC_COMMON);
 	if (!room || !common)
 		return Common::Error(Common::kNoGameDataFoundError, "Could not load the first Full Pipe Android room");
+	room->_commonQueueScene = common;
 	for (const PicAniInfo &ref : room->_roamingObjects) {
 		Scene *source = findScene(ref.sceneId);
 		AniObject *actor = source ? source->findAniObjectById(ref.objectId, ref.copyId) : nullptr;
@@ -766,7 +812,7 @@ Common::Error NGIEngine::enterAndroidScene1() {
 	stopAllSounds(Sound::kSpeech);
 	stopAllSounds(Sound::kEffect);
 	if (room->_behaviorController)
-		room->_behaviorController->onShow();
+		room->_behaviorController->onShow(*room);
 	_currSoundListCount = 0;
 	if (room->_soundList)
 		_currSoundList1[_currSoundListCount++] = room->_soundList.get();
@@ -836,6 +882,8 @@ Common::Error NGIEngine::runAndroid() {
 	mapper->setGameKeymapState("ngi-default", true);
 	_gameProject = &project;
 	_currentScene = startScene;
+	if (startScene->_behaviorController)
+		startScene->_behaviorController->onShow(*startScene);
 	addMessageHandlerByIndex(global_messageHandler4, 0, 4);
 	if (intro) {
 		sceneIntro_initMan(*startScene);
@@ -894,7 +942,7 @@ Common::Error NGIEngine::runAndroid() {
 			redraw = true;
 		} else {
 			if (scene->_behaviorController)
-				scene->_behaviorController->updateSounds(elapsed);
+				redraw |= scene->_behaviorController->update(elapsed);
 			for (MessageQueue *queue : *_globalMessageQueueList)
 				redraw |= queue->updatePause(elapsed);
 			processMessages();
@@ -910,7 +958,7 @@ Common::Error NGIEngine::runAndroid() {
 			stopAllSounds(Sound::kSpeech);
 			stopAllSounds(Sound::kEffect);
 			if (_currentScene->_behaviorController)
-				_currentScene->_behaviorController->onShow();
+				_currentScene->_behaviorController->onShow(*_currentScene);
 			debugC(2, kDebugDrawing, "Switched Android scene from %d to %d", scene->_sceneId, _currentScene->_sceneId);
 			redraw = true;
 		}

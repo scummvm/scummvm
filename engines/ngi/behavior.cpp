@@ -52,7 +52,37 @@ void BehaviorController::enableAllMusic() {
 		track._enabled = true;
 }
 
-void BehaviorController::onShow() {
+BehaviorAni &BehaviorController::addAni(int16 objectId, int16 sceneId, int flags) {
+	_behaviors.push_back(BehaviorAni());
+	BehaviorAni &behavior = _behaviors.back();
+	behavior._objectId = objectId;
+	behavior._sourceSceneId = sceneId;
+	behavior._flags = flags;
+	return behavior;
+}
+
+BehaviorMove &BehaviorAni::addMove(int16 staticsId) {
+	// Keep XML order, including repeated groups for the same pose.
+	if (_behaviorAnims.empty() || _behaviorAnims.back()._staticsId != staticsId) {
+		_behaviorAnims.push_back(BehaviorAnim());
+		_behaviorAnims.back()._staticsId = staticsId;
+	}
+	Common::Array<BehaviorMove> &moves = _behaviorAnims.back()._behaviorMoves;
+	moves.push_back(BehaviorMove());
+	return moves.back();
+}
+
+void BehaviorController::onShow(Scene &scene) {
+	for (BehaviorAni &behavior : _behaviors) {
+		AniObject *ani = scene.findAniObjectById(behavior._objectId, 0);
+		if (ani && ani->_sceneId != behavior._sourceSceneId)
+			ani = nullptr;
+		if (behavior._ani != ani) {
+			behavior._ani = ani;
+			behavior._activeMove = nullptr;
+			behavior._elapsed = 0;
+		}
+	}
 	for (int i = 0; i < g_nmi->_currSoundListCount; ++i) {
 		SoundList &list = *g_nmi->_currSoundList1[i];
 		for (int j = 0; j < list.getCount(); ++j) {
@@ -66,6 +96,57 @@ void BehaviorController::onShow() {
 			return;
 		}
 	}
+}
+
+bool BehaviorAni::updateIdle(uint32 elapsed) {
+	if (!_ani)
+		return false;
+	if (_activeMove) {
+		if (_activeMove->_movementId) {
+			if (_ani->_movement && _ani->_movement->_id == _activeMove->_movementId)
+				return false;
+		} else {
+			for (const MessageQueue *queue : *g_nmi->_globalMessageQueueList)
+				if (queue->_queueId == _activeMove->_queueId && !queue->_isFinished)
+					return false;
+		}
+		_activeMove = nullptr;
+		return false;
+	}
+	if (_ani->_movement || !_ani->_statics || !(_ani->_flags & 4) || _ani->_messageQueueId)
+		return false;
+	if (_flags & 1) {
+		for (const MessageQueue *queue : *g_nmi->_globalMessageQueueList)
+			if (!queue->_isFinished && !(queue->_flags & kBehaviorQueue))
+				return false;
+	}
+
+	_elapsed += elapsed;
+	for (const BehaviorAnim &anim : _behaviorAnims) {
+		if (anim._staticsId != _ani->_statics->_staticsId)
+			continue;
+		for (const BehaviorMove &move : anim._behaviorMoves) {
+			if ((move._flags & 1) || move._mirror != ((_ani->_flags & 8) != 0) ||
+					_elapsed < (uint32)move._delay || !move._percent || g_nmi->_rnd.getRandomNumber(99) > move._percent)
+				continue;
+			const bool started = move._movementId ? _ani->startMovement(move._movementId, 0, -1) :
+					runQueueByIdWithAni(_ani, move._queueId, kBehaviorQueue);
+			if (started) {
+				_elapsed = 0;
+				_activeMove = &move;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool BehaviorController::update(uint32 elapsed) {
+	bool changed = false;
+	for (BehaviorAni &behavior : _behaviors)
+		changed |= behavior.updateIdle(elapsed);
+	updateSounds(elapsed);
+	return changed;
 }
 
 bool BehaviorSound::update(uint32 elapsed) {
@@ -273,8 +354,9 @@ BehaviorMove *BehaviorController::getAniQueue(AniObject *ani, int id1, int id2) 
 			for (uint j = 0; j < _behaviors[i]._behaviorAnims.size(); j++) {
 				if (_behaviors[i]._behaviorAnims[j]._staticsId == id1) {
 					for (uint k = 0; k < _behaviors[i]._behaviorAnims[j]._behaviorMoves.size(); k++) {
-						if (_behaviors[i]._behaviorAnims[j]._behaviorMoves[k]._messageQueue->_queueId == id2)
-							return &_behaviors[i]._behaviorAnims[j]._behaviorMoves[k];
+						BehaviorMove &move = _behaviors[i]._behaviorAnims[j]._behaviorMoves[k];
+						if (move._queueId && move._queueId == id2)
+							return &move;
 					}
 				}
 			}
@@ -292,6 +374,8 @@ void BehaviorAni::clear() {
 	_flags = 0;
 	_subIndex = 0;
 	_animsCount = 0;
+	_elapsed = 0;
+	_activeMove = nullptr;
 	_behaviorAnims.clear();
 }
 
@@ -389,11 +473,9 @@ BehaviorAnim::BehaviorAnim(GameVar *var, Scene *sc, AniObject *ani, int *minDela
 }
 
 BehaviorMove::BehaviorMove(GameVar *subvar, Scene *sc, int *delay) {
-	_messageQueue = nullptr;
-	_delay = 0;
-	_percent = 0;
-	_flags = 0;
 	_messageQueue = sc->getMessageQueueByName(subvar->_varName);
+	if (_messageQueue)
+		_queueId = _messageQueue->_queueId;
 
 	GameVar *vart = subvar->getSubVarByName("dwDelay");
 	if (vart)

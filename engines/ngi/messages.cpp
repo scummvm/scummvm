@@ -38,6 +38,7 @@ Command::Command() {
 
 Command::Command(Command *src) : Message(*src) {
 	_messageName = src->_messageName;
+	_mirror = src->_mirror;
 	_field_3C = 1;
 	_messageNum = src->_messageNum;
 	_excFlags = src->_excFlags;

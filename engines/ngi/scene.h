@@ -44,6 +44,8 @@ class Scene : public Background {
 	Common::Array<Entrance> _entrances;
 	int16 _heroId = 0;
 	Common::Array<MessageQueue *> _messageQueues;
+	// XML queue templates are cloned when run and can be shared between scenes.
+	Scene *_commonQueueScene = nullptr;
 	// PtrList _faObjectList; // not used
 	Common::ScopedPtr<Shadows> _shadows;
 	Common::ScopedPtr<SoundList> _soundList;

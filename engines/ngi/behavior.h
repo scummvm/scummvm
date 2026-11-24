@@ -32,11 +32,15 @@ class MessageQueue;
 class Scene;
 
 struct BehaviorMove {
-	MessageQueue *_messageQueue;
-	int _delay;
-	uint32 _percent;
-	int _flags;
+	MessageQueue *_messageQueue = nullptr;
+	int _delay = 0;
+	uint32 _percent = 0;
+	int _flags = 0;
+	int16 _movementId = 0;
+	int16 _queueId = 0;
+	bool _mirror = false;
 
+	BehaviorMove() = default;
 	BehaviorMove(GameVar *subvar, Scene *sc, int *delay);
 };
 
@@ -58,10 +62,16 @@ struct BehaviorAni {
 	int _subIndex;
 	int _animsCount;
 	Common::Array<BehaviorAnim> _behaviorAnims;
+	int16 _objectId = 0;
+	int16 _sourceSceneId = 0;
+	uint32 _elapsed = 0;
+	const BehaviorMove *_activeMove = nullptr;
 
 	BehaviorAni() { clear(); }
 
 	void clear();
+	BehaviorMove &addMove(int16 staticsId);
+	bool updateIdle(uint32 elapsed);
 	void initAmbientBehavior(GameVar *var, Scene *sc);
 	void initObjectBehavior(GameVar *var, Scene *sc, AniObject *ani);
 };
@@ -84,6 +94,7 @@ class BehaviorController : public CObject {
 	Common::Array<BehaviorSound> _music;
 	Scene *_scene;
 	bool _isActive;
+	void updateSounds(uint32 elapsed);
 
   public:
 	BehaviorController();
@@ -96,8 +107,9 @@ class BehaviorController : public CObject {
 	void update();
 	void addSound(const BehaviorSound &sound, bool music);
 	void enableAllMusic();
-	void onShow();
-	void updateSounds(uint32 elapsed);
+	BehaviorAni &addAni(int16 objectId, int16 sceneId, int flags);
+	void onShow(Scene &scene);
+	bool update(uint32 elapsed);
 	void updateBehavior(BehaviorAni &behaviorInfo, BehaviorAnim &entry);
 	void updateStaticAniBehavior(AniObject &ani, int delay, const BehaviorAnim &beh);
 
