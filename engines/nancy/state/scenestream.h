@@ -247,6 +247,8 @@ public:
 
 	// The running stream of that name; null when there is none
 	SceneStream *find(const Common::String &name) const;
+	// Whether a stream of that name ended this frame and hasn't been removed yet
+	bool hasJustEnded(const Common::String &name) const;
 
 	static const char *getMainStreamName();
 	static const char *getUIStreamName();

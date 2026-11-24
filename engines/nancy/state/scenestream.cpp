@@ -506,6 +506,16 @@ SceneStream *SceneStreamManager::find(const Common::String &name) const {
 	return nullptr;
 }
 
+bool SceneStreamManager::hasJustEnded(const Common::String &name) const {
+	for (const SceneStream *stream : _streams) {
+		if (stream && stream->isEnded() && stream->getName().equalsIgnoreCase(name)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void SceneStreamManager::begin(const Common::String &name, const Common::String &sceneName, uint16 frameID, const StreamFlags &flags) {
 	if (find(name)) {
 		// Already running
@@ -642,7 +652,7 @@ void SceneStreamManager::changeScene(const Common::String &name, const SceneChan
 		_running = nullptr;
 		NancySceneState.changeScene(sceneDescription);
 		_running = running;
-	} else {
+	} else if (!hasJustEnded(name)) {
 		warning("Tried to change the scene of stream %s, which is not running", name.c_str());
 	}
 }
@@ -659,7 +669,9 @@ void SceneStreamManager::changeScene(const Common::String &name, const Common::S
 		NancySceneState.changeScene(sceneName, frameID);
 		_running = running;
 #endif
-	} else {
+	} else if (!hasJustEnded(name)) {
+		// A stream can end itself and change its scene in the same frame, like
+		// Dossier1 scene 1003 when its phone message is done
 		warning("Tried to change the scene of stream %s, which is not running", name.c_str());
 	}
 }
