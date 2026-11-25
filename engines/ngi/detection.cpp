@@ -83,7 +83,7 @@ static const PlainGameDescriptor ngiGames[] = {
 	{"luntik12", "Moonzy. Training Memory and Attention"}, // Лунтик. Тренируем память и внимание
 	{"luntik13", "Moonzy. Geography for Kids"}, // Лунтик. География для малышей
 	{"winx2", "Winx Club 2. Stella's Date"}, // Winx Club. Свидание Стеллы
-	{"mm_school_training", "Masha and The Bear. Getting Ready for School"}, // Маша и медведь. Подготовка к школе
+	{"masha01", "Masha and The Bear. Getting Ready for School"}, // Маша и медведь. Подготовка к школе
 	{"trybog", "The Three Bogatyrs and the Shamakhan Queen"}, // 3 богатыря и Шамаханская царица
 	{"winx4", "Winx Club 4. Bloom's Birthday"}, // Winx Club. День рождения Блум
 	{"masha02", "Masha and The Bear. Education Activities for Kids"}, // Маша и медведь. Развивающие задания для малышей
@@ -384,7 +384,7 @@ static const NGIGameDescription gameDescriptions[] = {
 
 	// Маша и медведь. Подготовка к школе
 	// 2010/12. Pipe Studio
-	NGI_STUB("mm_school_training"),
+	NGI_STUB("masha01"),
 
 	// 3 богатыря и Шамаханская царица
 	// 2010/12. Pipe Studio
