@@ -131,8 +131,9 @@ public:
 	int32 getLayer() const { return _layer; }
 	void setLayer(int32 layer);
 
-	// Nancy19 to Nancy20: the z of a record of the scripts, which tells apart the
-	// records the z order can't, e.g. the many farther than the background.
+	// Nancy19 to Nancy25: the z of a record of the scripts, which tells apart the
+	// records the z order can't, e.g. the many farther than the background, or
+	// z values closer together than its steps.
 	// Everything else is farther than all records of its z order.
 	static const double kNoExactZ;
 	double getExactZ() const { return _exactZ; }

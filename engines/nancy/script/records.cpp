@@ -194,7 +194,8 @@ Record *makeRecord(RecordType type, SceneContext &context) {
 static const double kBackgroundScriptZ = -5.0;
 static const int kBackgroundZ = 6;
 
-// Scripts tell apart z values as close as 0.001
+// The steps of the z order. Records closer together than this are told apart
+// by their exact z.
 static const double kStepsPerScriptZ = 1000.0;
 
 // Nancy19 to Nancy20 keep the streams in an order of their own, and draw the
@@ -259,8 +260,13 @@ void RecordGraphic::setScriptZ(double z, const SceneContext &context, uint32 rec
 	}
 
 	setLayer(getScriptLayer(context.getZOffset()));
+	// The games sort the records by their z as a double. Dossier2 scene 3500 puts
+	// the fish at 1e-10, under the floor at 1e-5. Nancy26 gives each record a z
+	// order of its own from that sort, by its rank, so it doesn't need this.
 	if (hasStreamLayers()) {
 		setExactZ(z);
+	} else if (g_nancy->getGameType() < kGameTypeNancy26) {
+		setExactZ(z + context.getZOffset());
 	}
 
 	setZOrder(getScriptZOrder(z, context.getZOffset()));
