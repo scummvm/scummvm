@@ -288,7 +288,8 @@ void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool b
 	// frame 12 in the cabin (0x40d390).
 	const uint revealFrame = _museum ? 15 : 12;
 	if (_pickupItem && !_pickupSoundPlayed && now - _pickupStarted >= revealFrame * 60) {
-		_audio.playEffect(1);
+		// Retail 0x410c40 uses the same distant position as the idle knock.
+		_audio.playEffectAt(1, Common::Point(512, 600));
 		_pickupSoundPlayed = true;
 	}
 	const uint pickupFrames = _museum ? ARRAYSIZE(kMuseumPickupFrames) : 18;

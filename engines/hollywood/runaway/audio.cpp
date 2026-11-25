@@ -284,8 +284,10 @@ void RunawayAudio::playInventoryIdle() {
 	// as chapters one through four and is present on the same retail disc.
 	const Common::String archive = Common::String::format("RESOURCE.S%02u", MIN<byte>(_chapter, 5));
 	_effectVolumeBase[0] = kEffectVolumeBase;
+	// Retail 0x411a10 uses the default sound position (512, 0, 600).
+	const Common::Point position(512, 600);
 	play(archive.c_str(), 5, 1000, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN,
-		Audio::Mixer::kSFXSoundType, _effects[0], mixerVolume(100, _effectVolumeBase[0]), false, 16000);
+		Audio::Mixer::kSFXSoundType, _effects[0], mixerVolume(100, _effectVolumeBase[0]), false, 16000, &position);
 }
 
 void RunawayAudio::playMenuMusic() {
