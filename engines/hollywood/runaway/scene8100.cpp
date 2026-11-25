@@ -143,7 +143,7 @@ void Scene8100::advanceCustomGameplayLoop(uint32 delta) {
 				effect = 74 + _random.getRandomNumber(4);
 			} while (effect == _lastAmbientEffect);
 			_lastAmbientEffect = effect;
-			_audio.playEffect(effect, 3, 2);
+			_audio.playEffect(effect, 1, 2);
 		}
 	}
 	if (_now - _doritaTick < 80) {
@@ -459,7 +459,7 @@ void Scene8100::finishCustomFilm() {
 void Scene8100::startSeance() {
 	typedef RunawaySequence S;
 	static const S::Command commands[] = {
-		{S::kOpen, 4}, {S::kMusic, 30, 96, 1},
+		{S::kOpen, 4}, {S::kMusic, 30, 100, 1},
 		{S::kPlay, 0, 9}, {S::kSpeech, 20, 0, 0, 0, 34}, {S::kPlay, 10, 58}, {S::kWaitSpeech},
 		{S::kTalk, 20, 1, 1, 0, 34},
 		{S::kSpeech, 20, 2, 2}, {S::kPlay, 1128, 1253, S::kLoopDuringSpeech},
@@ -469,9 +469,9 @@ void Scene8100::startSeance() {
 		{S::kSpeech, 20, 5, 5, 0, 14}, {S::kPlay, 589, 708, S::kLoopDuringSpeech},
 		{S::kTalk, 20, 6, 5, 0, 14},
 		{S::kSpeech, 20, 7, 7, 0, 14}, {S::kPlay, 589, 708, S::kLoopDuringSpeech},
-		{S::kMusic, 31, 96}, {S::kPlay, 709, 749},
+		{S::kMusic, 31, 100}, {S::kPlay, 709, 749},
 		{S::kSpeech, 20, 8, 8, 0, 38}, {S::kPlay, 750, 1107}, {S::kWaitSpeech},
-		{S::kMusic, 30, 96, 1},
+		{S::kMusic, 30, 100, 1},
 		{S::kTalk, 20, 9, 5, 0, 14}, {S::kTalk, 20, 10, 3, 0, 38}, {S::kTalk, 20, 11, 5, 0, 14},
 		{S::kSpeech, 20, 12, 12, 0, 38}, {S::kPlay, 1266, 1516, S::kLoopDuringSpeech},
 		{S::kSpeech, 20, 13, 13, 0, 14}, {S::kPlay, 1517, 1557}, {S::kWaitSpeech},

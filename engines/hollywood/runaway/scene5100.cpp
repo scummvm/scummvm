@@ -549,12 +549,12 @@ RunawayRoomScene::ActionResult Scene5100::dispatchCustomSceneAction(uint16 actio
 		break;
 	}
 	case 1450: // Stud follows Lula away from his beer.
-		_audio.playFootstep(2, _random.getRandomBit(), 255, 100);
+		_audio.playFootstep(2, _random.getRandomBit(), 100, 100);
 		_desert.guard = 1;
 		beginRoomAnimation(460, 17, 52, nullptr, 0, false);
 		return kBackgroundChanged;
 	case 1460: // Lula demonstrates her shooting on the first visit.
-		_audio.playFootstep(2, _random.getRandomBit(), 255, 100);
+		_audio.playFootstep(2, _random.getRandomBit(), 100, 100);
 		if (_desert.lulaDistractedGuard) {
 			deferDesertAction(490);
 		} else {
@@ -756,7 +756,7 @@ void Scene5100::handleAnimationFrameHook() {
 		{19, 512}, {30, 500}, {37, 400}, {44, 300}, {51, 200}
 	};
 	if (_roomAction == 328 && _actionStep == 21) {
-		_audio.playEffect(39, 204);
+		_audio.playEffect(39, 80);
 	}
 	if (_roomAction == 450) {
 		playAnimationFootsteps(_actionFrames[_actionStep], 2, lulaSteps, ARRAYSIZE(lulaSteps));
@@ -765,7 +765,7 @@ void Scene5100::handleAnimationFrameHook() {
 	}
 	if ((_roomAction == 329 || _roomAction == 458 || _roomAction == 498 || _roomAction == 610) &&
 			(_actionFrames[_actionStep] == 10 || _actionFrames[_actionStep] == 28)) {
-		const byte volume = CLIP<int>((int)(actorHeight() * 255 / 455), 0, 255);
+		const byte volume = CLIP<int>((int)(actorHeight() * 100 / 455), 0, 100);
 		_audio.playFootstep(2, _random.getRandomBit(), volume, _position.x);
 	}
 	if (_roomAction == 470 || _roomAction == 480 || _roomAction == 558) {
@@ -776,17 +776,17 @@ void Scene5100::handleAnimationFrameHook() {
 	}
 	if (_roomAction == 468) {
 		if (_actionStep == 37) {
-			_audio.playEffect(47, 230);
+			_audio.playEffect(47, 90);
 		}
 		if (_actionStep == 79) {
-			_audio.playEffect(42, 217);
+			_audio.playEffect(42, 85);
 		}
 		if (_actionStep == 100) {
 			_audio.playEffect(45);
 		}
 	}
 	if (_roomAction == 488 && _actionStep == 27) {
-		_audio.playEffect(48, 191);
+		_audio.playEffect(48, 75);
 	}
 }
 

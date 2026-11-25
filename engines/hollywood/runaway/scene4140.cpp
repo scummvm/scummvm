@@ -154,7 +154,7 @@ void Scene4140::finishCustomAnimation(uint16 action) {
 			_museum.keypad = 4;
 			if (museumChapter()) {
 				_audio.playMusic(23, false);
-				_audio.setMusicVolume(255);
+				_audio.setMusicVolume(100);
 			}
 		}
 		leaveMuseumRoom(4063, Common::Point(1153, 297), 7);

@@ -291,9 +291,9 @@ void Scene8200::updateGangster(uint index) {
 	}
 	if (gangster.step != oldStep) {
 		if (!index && (gangster.step == 9 || gangster.step == 82 || gangster.step == 128 || gangster.step == 209)) {
-			_audio.playEffect(53, 178, 1);
+			_audio.playEffect(53, 70, 1);
 		} else if (index && (gangster.step == 124 || gangster.step == 246)) {
-			_audio.playEffect(54, 178, 1);
+			_audio.playEffect(54, 70, 1);
 		}
 	}
 }

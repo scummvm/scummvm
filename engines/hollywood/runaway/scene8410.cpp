@@ -111,7 +111,7 @@ void Scene8410::startInsectRoute(uint route) {
 	_insectFrame = kInsectRoutes[route].first;
 	_insectMoving = true;
 	if (kInsectRoutes[route].sound) {
-		_audio.playEffect(kInsectRoutes[route].sound, 102, 1, true);
+		_audio.playEffect(kInsectRoutes[route].sound, 40, 1, true);
 	}
 }
 

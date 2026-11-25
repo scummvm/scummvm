@@ -216,7 +216,7 @@ void Scene6250::finishCustomFilm() {
 
 void Scene6250::handleAnimationFrameHook() {
 	if (_roomAction == 400 && _actionStep == 7) {
-		_audio.playEffect(45, 153);
+		_audio.playEffect(45, 60);
 	} else if (_roomAction == 402 && _actionStep == 24) {
 		_audio.playEffect(63);
 	} else if (_roomAction == 407 && _actionStep == 23) {

@@ -24,6 +24,14 @@
 
 namespace Hollywood {
 
+byte decibelsToMixerVolume(int volume) {
+	if (volume <= -10000)
+		return 0;
+	if (volume >= 0)
+		return Audio::Mixer::kMaxChannelVolume;
+	return (byte)(Audio::Mixer::kMaxChannelVolume * pow(10.0, volume / 2000.0) + 0.5);
+}
+
 SoundChannel::~SoundChannel() {
 	stop();
 }

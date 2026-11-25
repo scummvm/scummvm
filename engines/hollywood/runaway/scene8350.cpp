@@ -60,7 +60,7 @@ void Scene8350::applyCustomHotspotState() {
 }
 
 void Scene8350::resumeAmbientAudio(bool entering) {
-	resumeFinaleOutdoorAudio(entering, 36, 51);
+	resumeFinaleOutdoorAudio(entering, 36, 20);
 }
 
 void Scene8350::advanceCustomGameplayLoop(uint32 delta) {

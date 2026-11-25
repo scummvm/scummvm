@@ -86,8 +86,8 @@ void Scene8263::runCustomEntrySequence() {
 }
 
 void Scene8263::resumeAmbientAudio(bool entering) {
-	resumeFinaleOutdoorAudio(entering, 36, 51);
-	_audio.playEffect(33, 178, 1, true);
+	resumeFinaleOutdoorAudio(entering, 36, 20);
+	_audio.playEffect(33, 70, 1, true);
 }
 
 void Scene8263::advanceCustomGameplayLoop(uint32 delta) {
@@ -158,9 +158,9 @@ RunawayRoomScene::ActionResult Scene8263::dispatchCustomSceneAction(uint16 actio
 
 void Scene8263::handleAnimationFrameHook() {
 	if (_roomAction == 400 && _actionStep == 13) {
-		_audio.playEffect(21, 204);
+		_audio.playEffect(21, 80);
 	} else if (_roomAction == 302 && _actionStep == 10) {
-		_audio.playEffect(73, 204);
+		_audio.playEffect(73, 80);
 	} else if ((_roomAction == 306 && (_actionStep == 16 || _actionStep == 43)) ||
 			(_roomAction == 401 && _actionStep == 3)) {
 		_audio.playEffect(29);

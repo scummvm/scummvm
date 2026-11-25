@@ -61,8 +61,8 @@ const byte kSpanishDemoResidentSoundResourceEntries[] = {
 };
 
 byte percentToMixerVolume(byte volumePercent) {
-	const uint volume = MIN<uint>(volumePercent, 100);
-	return (byte)((volume * Audio::Mixer::kMaxChannelVolume) / 100);
+	// The original maximum master setting is 200 * 12 - 2500 = -100.
+	return decibelsToMixerVolume(24 * MIN<int>(volumePercent, 100) - 2500);
 }
 
 MusicPlayer::MusicPlayer() :
@@ -139,9 +139,9 @@ bool MusicPlayer::resumeLastCue() {
 	return playMusicCue(_currentCueId, _currentVolumePercent, _currentLoop);
 }
 
-void MusicPlayer::setVolume(byte volumePercent) {
+void MusicPlayer::setVolume(byte volumePercent, int attenuation) {
 	_currentVolumePercent = volumePercent;
-	_musicChannel.setVolume(percentToMixerVolume(volumePercent));
+	_musicChannel.setVolume(decibelsToMixerVolume(24 * MIN<int>(volumePercent, 100) - 2500 + attenuation));
 }
 
 void MusicPlayer::stop() {
@@ -246,7 +246,7 @@ bool SpeechPlayer::playSample(uint16 sampleId, byte volumePercent, bool loop,
 	_lastSampleDurationMillis = (uint32)(((uint64)size * 1000) / (_sampleRate * _bytesPerSample));
 	Audio::AudioStream *playbackStream = loop ? Audio::makeLoopingAudioStream(audioStream, 0) : audioStream;
 	_speechChannel.play(g_system->getMixer(), Audio::Mixer::kSpeechSoundType, playbackStream,
-		percentToMixerVolume(volumePercent), position, listenerX, 0.0f, SoundChannel::kStereoPan);
+		volumePercent ? percentToMixerVolume(volumePercent) : 0, position, listenerX, 0.0f, SoundChannel::kStereoPan);
 
 	debugC(1, kDebugResources,
 		"Started speech %s sample %u: offset=%u size=%u format=%u-bit/%uHz duration=%u ms loop=%u",
@@ -255,8 +255,8 @@ bool SpeechPlayer::playSample(uint16 sampleId, byte volumePercent, bool loop,
 	return true;
 }
 
-void SpeechPlayer::setVolume(byte volumePercent) {
-	_speechChannel.setVolume(percentToMixerVolume(volumePercent));
+void SpeechPlayer::setVolume(byte volumePercent, int attenuation) {
+	_speechChannel.setVolume(decibelsToMixerVolume(24 * MIN<int>(volumePercent, 100) - 2500 + attenuation));
 }
 
 void SpeechPlayer::stop() {
@@ -339,8 +339,11 @@ bool SoundBank0Player::playSample(uint16 sampleId, byte volumePercent, bool loop
 	}
 
 	Audio::AudioStream *playbackStream = loop ? Audio::makeLoopingAudioStream(audioStream, 0) : audioStream;
+	// Values 101..200 select the original quieter 50 dB range.
+	const byte volume = volumePercent > 100 ? decibelsToMixerVolume(49 * (MIN<int>(volumePercent, 200) - 100) - 5000) :
+		volumePercent ? percentToMixerVolume(volumePercent) : 0;
 	_soundChannel.play(g_system->getMixer(), Audio::Mixer::kSFXSoundType, playbackStream,
-		percentToMixerVolume(volumePercent));
+		volume);
 
 	debugC(1, kDebugResources, "Started sound %s sample %u: offset=%u size=%u loop=%u",
 		_archiveName.toString().c_str(), sampleId, start, size, loop ? 1 : 0);
@@ -444,8 +447,9 @@ bool ResidentSoundEffectPlayer::playSample(byte soundEffectId, byte volumePercen
 	}
 
 	stopSample(soundEffectId);
+	// Resident effects, including footsteps, have a fixed native -30 dB base.
 	_soundChannels[soundEffectId - 1].play(g_system->getMixer(), Audio::Mixer::kSFXSoundType,
-		audioStream, percentToMixerVolume(volumePercent), position, listenerX, 0.0f, SoundChannel::kStereoPan);
+		audioStream, decibelsToMixerVolume(25 * MIN<int>(volumePercent, 100) - 5500), position, listenerX, 0.0f, SoundChannel::kStereoPan);
 
 	debugC(1, kDebugResources, "Started resident sound %s effect %u: offset=%u size=%u",
 		kResidentSoundArchiveName, soundEffectId, start, size);

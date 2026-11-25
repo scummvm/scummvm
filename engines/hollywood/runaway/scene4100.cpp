@@ -258,7 +258,7 @@ RunawayRoomScene::ActionResult Scene4100::dispatchCustomSceneAction(uint16 actio
 			say(9);
 		} else {
 			_audio.playMusic(23, false);
-			_audio.setMusicVolume(255);
+			_audio.setMusicVolume(100);
 			say(9, 1);
 			_museum.maskTaken = 1;
 			_inventory.add(11);
@@ -472,16 +472,16 @@ void Scene4100::finishCustomAnimation(uint16 action) {
 
 void Scene4100::handleAnimationFrameHook() {
 	if ((_roomAction == 308 || _roomAction == 340) && _actionStep == 12) {
-		_audio.playEffect(34, 230);
+		_audio.playEffect(34, 90);
 	}
 	if ((_roomAction == 342 && _actionStep == 15) || (_roomAction == 344 && _actionStep == 4)) {
-		_audio.playEffect(37, 204);
+		_audio.playEffect(37, 80);
 	}
 	if (_roomAction == 325) {
 		if (_actionStep == 12) {
 			_audio.playEffect(42);
 		} else if (_actionStep == 20) {
-			_audio.playEffect(41, 255, 1);
+			_audio.playEffect(41, 100, 1);
 		} else if (_actionStep == 105) {
 			_audio.playEffect(43);
 		}
@@ -584,7 +584,7 @@ void Scene4100::animateChamber(bool open) {
 	}
 	_museum.chamberTime = 0;
 	beginRoomAnimationRange(open ? 431 : 430, _museum.maskTaken ? 33 : 32, 36, open ? 0 : 35, open ? 35 : 0, false);
-	_audio.playEffect(33, 191);
+	_audio.playEffect(33, 75);
 }
 
 void Scene4100::startComputerConversation() {

@@ -97,7 +97,7 @@ void Scene6260::runCustomEntrySequence() {
 	} else if (_entryScene == 6262) {
 		// The steam shot is seen outside before returning to the cab.
 		_audio.playMusic(39, false);
-		_audio.setMusicVolume(255);
+		_audio.setMusicVolume(100);
 		beginRoomAnimation(402, 9, 45, nullptr, 0, true, 60);
 		_actionFrames.insert_at(0, 0);
 	} else {
@@ -238,12 +238,12 @@ void Scene6260::handleAnimationFrameHook() {
 	} else if (_roomAction == 401 && _actionStep == 32) {
 		_audio.playEffect(22);
 	} else if (_roomAction == 313 && _actionStep == 37) {
-		_audio.playEffect(21, 178);
+		_audio.playEffect(21, 70);
 	} else if (_roomAction == 402) {
 		if (_actionStep == 3) {
-			_audio.playEffect(56, 230);
+			_audio.playEffect(56, 90);
 		} else if (_actionStep == 17) {
-			_audio.playEffect(57, 255, 1);
+			_audio.playEffect(57, 100, 1);
 		}
 	}
 }

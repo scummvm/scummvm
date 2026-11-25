@@ -117,7 +117,7 @@ void Scene6190::runCustomEntrySequence() {
 
 void Scene6190::handleAnimationFrameHook() {
 	if (_roomAction == 405 && (_actionStep == 4 || _actionStep == 14 || _actionStep == 19 || _actionStep == 22)) {
-		_audio.playFootstep(3, _random.getRandomBit(), 128, 553);
+		_audio.playFootstep(3, _random.getRandomBit(), 50, 553);
 	}
 }
 

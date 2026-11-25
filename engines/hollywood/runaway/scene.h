@@ -150,7 +150,7 @@ protected:
 	enum ObjectState { kUnexamined, kIdentified, kTaken };
 	enum ActionResult { kUnhandled, kHandled, kBackgroundChanged };
 	struct AnimationFootstep {
-		constexpr AnimationFootstep(byte frameNumber, int16 position, byte loudness = 255) :
+		constexpr AnimationFootstep(byte frameNumber, int16 position, byte loudness = 100) :
 			frame(frameNumber), x(position), volume(loudness) {}
 		byte frame;
 		int16 x;

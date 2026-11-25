@@ -41,8 +41,8 @@ const byte kWaveLayers[] = {8, 9, 10, 3, 4, 5, 6, 7};
 
 using S = RunawaySequence;
 const S::Command kTeaserCommands[] = {
-	{S::kOpen, 5}, {S::kMusic, 10, 255}, {S::kDelay, 4000, 1},
-	{S::kPlay, 0, 588}, {S::kFadeMusic, 7500, 255}, {S::kEnd}
+	{S::kOpen, 5}, {S::kMusic, 10, 100}, {S::kDelay, 4000, 1},
+	{S::kPlay, 0, 588}, {S::kFadeMusic, 7500, 100}, {S::kEnd}
 };
 
 const S::Command kSilentTeaserCommands[] = {
@@ -150,8 +150,8 @@ void Scene9030::enter(Step step) {
 		break;
 	case kExclamation: // Finish Brian's explanation over the wide shot.
 		_audio.playMusic(23, false);
-		_audio.setMusicVolume(255);
-		_audio.playMusicEffect(37, 102, 2, true);
+		_audio.setMusicVolume(100);
+		_audio.playMusicEffect(37, 40, 2, true);
 		say(1);
 		break;
 	case kPause: // Hold the beach view before Gina calls out.
@@ -214,7 +214,7 @@ void Scene9030::updateBeach() {
 	while (_now - _ambientTick >= 250) {
 		_ambientTick += 250;
 		if (_cameraY > 100 && !_audio.effectPlaying(1) && !_random.getRandomNumber(9)) {
-			_audio.playEffect(70 + _random.getRandomNumber(2), 153, 1);
+			_audio.playEffect(70 + _random.getRandomNumber(2), 60, 1);
 		}
 	}
 }

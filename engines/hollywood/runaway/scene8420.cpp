@@ -60,7 +60,7 @@ void Scene8420::prepareCustomGameplayLoop() {
 void Scene8420::resumeAmbientAudio(bool entering) {
 	if (entering || !_audio.musicPlaying()) {
 		_audio.playMusic(_entryScene == 8422 ? 25 : 16);
-		_audio.setMusicVolume(255);
+		_audio.setMusicVolume(100);
 	}
 }
 
@@ -121,7 +121,7 @@ void Scene8420::advanceCustomGameplayLoop(uint32 delta) {
 		} else if (_ginaFrame < 61) {
 			++_ginaFrame;
 			if (_ginaFrame == 53) {
-				_audio.playEffect(56, 102);
+				_audio.playEffect(56, 40);
 			}
 			if (_ginaFrame == 61 && !_waitingForGina) {
 				_ginaFrame = 0;
@@ -289,9 +289,9 @@ RunawayRoomScene::ActionResult Scene8420::dispatchCustomSceneAction(uint16 actio
 	case 422: { // Brian's calls interrupt the nightmare movie.
 		typedef RunawaySequence S;
 		static const S::Command nightmare[] = {
-			{S::kOpen, 6}, {S::kMusic, 26, 255},
+			{S::kOpen, 6}, {S::kMusic, 26, 100},
 			{S::kSpeech, 44, 2, 4, 0, 38}, {S::kSpeech, 44, 5, 6}, {S::kPlay, 0, 163}, {S::kWaitSpeech},
-			{S::kMusic, 16, 255, 1}, {S::kEnd}
+			{S::kMusic, 16, 100, 1}, {S::kEnd}
 		};
 		_film = kNightmare;
 		_sequence.start(nightmare, _text, _now, 'H');
@@ -386,20 +386,20 @@ void Scene8420::startConfession() {
 		}
 	}
 	_filmCommands.push_back(S::Command(S::kTalk, 51, 7, 1, 0, 14));
-	_filmCommands.push_back(S::Command(S::kMusic, 33, 255));
+	_filmCommands.push_back(S::Command(S::kMusic, 33, 100));
 	if (!gog) {
 		_filmCommands.push_back(S::Command(S::kPlay, 24, 24));
 	}
 	_filmCommands.push_back(S::Command(S::kSpeech, 51, 8, 8, 0, 14));
 	_filmCommands.push_back(S::Command(S::kPlay, gog ? 0 : 25, gog ? 237 : 261));
-	_filmCommands.push_back(S::Command(S::kMusic, 34, 255, 1));
+	_filmCommands.push_back(S::Command(S::kMusic, 34, 100, 1));
 	_filmCommands.push_back(S::Command(S::kWaitSpeech, 0, 0, 5));
-	_filmCommands.push_back(S::Command(S::kEffect, 57, 26));
+	_filmCommands.push_back(S::Command(S::kEffect, 57, 10));
 	_filmCommands.push_back(S::Command(S::kPlay, gog ? 238 : 282, gog ? 244 : 289));
 	_filmCommands.push_back(S::Command(S::kSpeech, 51, 9, 9, 0, 14));
 	_filmCommands.push_back(S::Command(S::kPlay, gog ? 245 : 290, gog ? 1057 : 1101));
 	_filmCommands.push_back(S::Command(S::kWaitSpeech, 0, 0, 3, 1));
-	_filmCommands.push_back(S::Command(S::kMusic, 16, 255, 1));
+	_filmCommands.push_back(S::Command(S::kMusic, 16, 100, 1));
 	for (uint i = 9; i <= 20; ++i) {
 		if (i != 10 && i != 11) {
 			if (gog) {

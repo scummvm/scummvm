@@ -62,7 +62,7 @@ const uint16 kScene2030SeedsPrice = 0x00fa;
 const uint16 kScene2030MerchantItem2APrice = 0x0352;
 const uint16 kScene2030RightMerchantSaleValueA = 0x02bc;
 const uint16 kScene2030RightMerchantSaleValueB = 0x0190;
-const byte kScene2030MerchantCalloutSpeechVolumePercent = 25;
+const byte kScene2030MerchantCalloutSpeechVolumePercent = 50;
 
 enum Scene2030MerchantState {
 	kScene2030MerchantIdle = 0,

@@ -65,12 +65,12 @@ bool RunawayRoomScene::sayHospitalInventory(const RunawayInventory::Reply &reply
 			say(68, 3, true);
 			_hospital.medicineRead = 1;
 		}
-		_audio.playEffect(35, 179);
+		_audio.playEffect(35, 70);
 		return true;
 	}
 	if ((reply.cue == 69 && reply.variation == 0) || (reply.cue == 73 && reply.variation == 1) ||
 			(reply.cue == 72 && reply.variation == 2)) {
-		_audio.playEffect(reply.cue == 69 ? 36 : reply.cue == 73 ? 37 : 34, 179);
+		_audio.playEffect(reply.cue == 69 ? 36 : reply.cue == 73 ? 37 : 34, 70);
 	}
 	if (reply.cue != 54) {
 		return false;
@@ -120,9 +120,9 @@ void RunawayRoomScene::updateHospitalInventory() {
 		}
 		if (_actionStep == 2 || _actionStep == 4) {
 			// The item appears directly in the open inventory.
-			_audio.playEffect(1, 255, _audio.effectPlaying() ? 1 : 0);
+			_audio.playEffect(1, 100, _audio.effectPlaying() ? 1 : 0);
 		}
-		_audio.playEffect(32, 255, 1);
+		_audio.playEffect(32, 100, 1);
 		_actionStage = 4;
 		break;
 	case 4:

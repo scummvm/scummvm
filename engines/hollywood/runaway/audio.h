@@ -37,20 +37,22 @@ public:
 	void setMuseum(bool museum) { _museum = museum; }
 	void setChapter(byte chapter);
 	void playIntroMusic(uint16 cue = 2);
-	uint32 playMusic(uint16 cue, bool loop = true);
-	void updateBackgroundMusic(uint32 now, Common::RandomSource &random, byte firstCue, byte cueCount, byte volume = 96, int repeatDelay = -1);
+	// Script volumes are native percentages, before the user's mixer settings.
+	uint32 playMusic(uint16 cue, bool loop = true, bool fullVolume = false);
+	void updateBackgroundMusic(uint32 now, Common::RandomSource &random, byte firstCue, byte cueCount, byte volume = 100, int repeatDelay = -1);
 	uint16 musicCue() const { return _musicCue; }
 	bool musicLooping() const { return _musicLooping && musicPlaying(); }
-	void playMusicEffect(uint16 cue, byte volume = Audio::Mixer::kMaxChannelVolume, byte channel = 0, bool loop = false);
-	void setMusicVolume(byte volume);
+	void playMusicEffect(uint16 cue, byte volume = 100, byte channel = 0, bool loop = false);
+	void setMusicVolume(byte volume, int attenuation = 0);
 	void setEffectVolume(byte channel, byte volume);
 	void setListenerPosition(int x);
 	int listenerPosition() const { return _listenerX; }
 	uint32 playSpeech(uint16 sample, bool global = false);
+	void setSpeechVolume(byte volume);
 	void playBackgroundSpeech(uint16 sample, byte channel);
-	void playEffect(uint16 cue, byte volume = Audio::Mixer::kMaxChannelVolume, byte channel = 0, bool loop = false);
-	void playEffectAt(uint16 cue, Common::Point position, byte volume = Audio::Mixer::kMaxChannelVolume, byte channel = 0, bool loop = false);
-	void playFootstep(byte surface, byte variant, byte volume = Audio::Mixer::kMaxChannelVolume, int x = -1);
+	void playEffect(uint16 cue, byte volume = 100, byte channel = 0, bool loop = false);
+	void playEffectAt(uint16 cue, Common::Point position, byte volume = 100, byte channel = 0, bool loop = false);
+	void playFootstep(byte surface, byte variant, byte volume = 100, int x = -1);
 	void playPointer();
 	void playInventoryIdle();
 	void playMenuMusic();
@@ -66,6 +68,14 @@ public:
 	bool effectPlaying(byte channel = 0) const;
 
 private:
+	enum {
+		kMusicVolumeBase = 2800,
+		kAmbientVolumeBase = 3000,
+		kEffectVolumeBase = 3200,
+		kSpeechVolumeBase = 4000,
+		kFootstepVolumeBase = 2400
+	};
+	byte mixerVolume(byte volume, int base, int attenuation = 0) const;
 	void playEffect(uint16 cue, byte volume, byte channel, bool loop, const Common::Point *position);
 	uint32 play(const char *archive, uint16 cue, uint tableCount, bool pairedTables,
 		byte flags, Audio::Mixer::SoundType type, SoundChannel &channel, byte volume, bool loop, uint rate,
@@ -75,6 +85,8 @@ private:
 	Audio::Mixer *_mixer;
 	SoundChannel _music, _speech, _effects[3], _footsteps[14], _pointer;
 	uint16 _musicCue = 0;
+	int _musicVolumeBase = kMusicVolumeBase;
+	int _effectVolumeBase[3] = {kEffectVolumeBase, kEffectVolumeBase, kEffectVolumeBase};
 	bool _musicLooping = false;
 	uint32 _nextMusic = 0;
 	int _listenerX = 512;

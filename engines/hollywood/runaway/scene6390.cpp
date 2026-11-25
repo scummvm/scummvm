@@ -121,7 +121,7 @@ void Scene6390::turnDial(byte direction) {
 		_hand = _hand <= 6 || _hand > 14 ? 14 : _hand - 1;
 		_town.safeDial = (_town.safeDial + 1) % 100;
 	}
-	_audio.playEffect(listening ? 49 : 48, listening ? 255 : 77);
+	_audio.playEffect(listening ? 49 : 48, listening ? 100 : 30);
 	static const byte combination[] = {85, 29, 54};
 	const byte requiredDirection = _town.safeProgress == 1 ? 2 : 1;
 	if (direction != requiredDirection) {

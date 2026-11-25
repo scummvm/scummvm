@@ -259,16 +259,16 @@ void Scene5110::runCustomEntrySequence() {
 
 void Scene5110::handleAnimationFrameHook() {
 	if (_roomAction == 400 && _actionStep == 10) {
-		_audio.playFootstep(3, _random.getRandomBit(), 230, 327);
+		_audio.playFootstep(3, _random.getRandomBit(), 90, 327);
 	} else if (_roomAction == 319 && _actionStep == 28) {
 		_audio.playEffectAt(53, Common::Point(632, 200));
 	} else if (_roomAction == 322 && _actionStep == 22) {
-		_audio.playEffectAt(38, Common::Point(512, 200), 204);
+		_audio.playEffectAt(38, Common::Point(512, 200), 80);
 	} else if (_roomAction == 317 && _actionStep == 10) {
-		_audio.playEffectAt(36, Common::Point(512, 200), 230);
+		_audio.playEffectAt(36, Common::Point(512, 200), 90);
 	} else if (_roomAction == 417) {
 		if (_actionStep == 10) {
-			_audio.playEffectAt(37, Common::Point(512, 200), 204);
+			_audio.playEffectAt(37, Common::Point(512, 200), 80);
 		} else if (_actionStep == 80) {
 			_desert.bucket = 2;
 			updateMaps();

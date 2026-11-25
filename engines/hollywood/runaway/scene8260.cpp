@@ -93,7 +93,7 @@ void Scene8260::runCustomEntrySequence() {
 }
 
 void Scene8260::resumeAmbientAudio(bool entering) {
-	resumeFinaleOutdoorAudio(entering, 36, 51);
+	resumeFinaleOutdoorAudio(entering, 36, 20);
 }
 
 void Scene8260::advanceCustomGameplayLoop(uint32 delta) {
@@ -170,9 +170,9 @@ void Scene8260::handleAnimationFrameHook() {
 		_audio.playEffect(20);
 	} else if (_roomAction == 402) {
 		if (_actionStep == 3) {
-			_audio.playEffect(31, 230);
+			_audio.playEffect(31, 90);
 		} else if (_actionStep == 17) {
-			_audio.playEffect(32, 255, 1);
+			_audio.playEffect(32, 100, 1);
 		}
 	}
 }

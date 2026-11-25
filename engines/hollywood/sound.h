@@ -27,6 +27,9 @@
 
 namespace Hollywood {
 
+// DirectSound volume is expressed in hundredths of a decibel.
+byte decibelsToMixerVolume(int volume);
+
 // Owns a mixer channel. Optional positions describe the horizontal (x, z)
 // sound plane: Point::y is distance in front of the listener, not screen y.
 class SoundChannel {

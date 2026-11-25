@@ -71,7 +71,7 @@ bool Scene7030::loadCustomResources() {
 }
 
 void Scene7030::resumeAmbientAudio(bool entering) {
-	_audio.playEffect(12, 179, 1, true);
+	_audio.playEffect(12, 70, 1, true);
 }
 
 void Scene7030::runCustomEntrySequence() {

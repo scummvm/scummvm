@@ -69,7 +69,8 @@ Scene9130::Scene9130(HollywoodEngine *vm) :
 		_activeSpeechCue(false),
 		_speechFallbackMillis(0),
 		_nextSpeechFrameIndex(0),
-		_clipFrameIndex(0) {
+		_clipFrameIndex(0),
+		_speechAttenuation(0) {
 	_paletteResource.resize(kPaletteSize);
 }
 
@@ -132,6 +133,7 @@ bool Scene9130::load() {
 void Scene9130::runClipAndDialogue() {
 	_nextSpeechFrameIndex = 0;
 	_clipFrameIndex = 1;
+	_speechAttenuation = 0;
 	if (waitForAnimationFrame(kScene9130ClipFrameIntervalMillis, true))
 		return;
 
@@ -156,8 +158,10 @@ void Scene9130::runClipAndDialogue() {
 }
 
 void Scene9130::presentAnimationFrame() {
-	if ((_clipFrameIndex - 1) % 12 == 0)
-		_speech.setVolume(85);
+	if ((_clipFrameIndex - 1) % 12 == 0) {
+		_speechAttenuation = (int)((2400 + _speechAttenuation) * 0.85) - 2400;
+		_speech.setVolume(100, _speechAttenuation);
+	}
 	drawClipFrame(_clipFrameIndex);
 	presentFrame();
 }
@@ -246,6 +250,7 @@ bool Scene9130::startCurrentSpeechSegment() {
 	++_activeContinuationIndex;
 	_speech.stop();
 	const bool started = sampleId != 0 && _speech.playSampleAt(sampleId, style.centerX);
+	_speech.setVolume(100, _speechAttenuation);
 	_speechFallbackMillis = started ? 0 : MAX<uint32>(1200, _subtitle.lines.size() * 1100);
 	return true;
 }

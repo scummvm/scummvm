@@ -27,7 +27,7 @@ namespace Hollywood {
 void RunawayRoomScene::resumeFinaleOutdoorAudio(bool entering, uint16 windCue, byte windVolume) {
 	_finaleAmbientTick = _now;
 	if (!_audio.effectPlaying(2)) {
-		_audio.playEffect(windCue, windVolume, 2, true);
+		_audio.playMusicEffect(windCue, windVolume, 2, true);
 	}
 	if (entering || !_audio.musicPlaying() || _audio.musicLooping()) {
 		_audio.playMusic(12 + _random.getRandomNumber(4), false);
@@ -91,11 +91,11 @@ void RunawayRoomScene::resumeFinaleJailAudio(bool entering) {
 	if (entering || !_audio.musicPlaying()) {
 		_audio.playMusic(18, false);
 	}
-	_audio.setMusicVolume(191);
+	_audio.setMusicVolume(75);
 }
 
 void RunawayRoomScene::updateFinaleJailAudio() {
-	_audio.updateBackgroundMusic(_now, _random, 18, 1, 191);
+	_audio.updateBackgroundMusic(_now, _random, 18, 1, 75);
 }
 
 } // End of namespace Hollywood

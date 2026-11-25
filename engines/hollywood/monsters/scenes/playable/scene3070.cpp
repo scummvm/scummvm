@@ -479,7 +479,7 @@ AmbientAudioProfile Scene3070::ambientAudioProfile() const {
 	profile.checkMillis = 250;
 	profile.soundMode = kAmbientSoundLoop;
 	profile.soundCueId = 0x18;
-	profile.soundVolumePercent = 1; // Legacy 0x78 is about -40 dB.
+	profile.soundVolumePercent = 120;
 	return profile;
 }
 

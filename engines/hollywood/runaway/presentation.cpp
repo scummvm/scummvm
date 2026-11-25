@@ -269,9 +269,9 @@ void RunawayInterrogation::update(uint32 now) {
 			} else if (_frames[i] < idleEnd[i]) {
 				++_frames[i];
 				if (i == 2 && _frames[i] == 9)
-					_audio.playEffect(23, 255, 1);
+					_audio.playEffect(23, 100, 1);
 				if (i == 1 && (_frames[i] == 10 || _frames[i] == 33))
-					_audio.playEffect(_frames[i] == 10 ? 24 : 25, _frames[i] == 10 ? 102 : 255);
+					_audio.playEffect(_frames[i] == 10 ? 24 : 25, _frames[i] == 10 ? 40 : 100);
 			} else if (_random.getRandomNumber(i == 0 ? 1 : 4) == 0) {
 				_idle[i] = true;
 			}
@@ -348,7 +348,7 @@ void RunawayEnding::start(uint32 now) {
 	// The overview's music continues through the screenshots and final card.
 	// Unlike room music it plays once; the native card waits for its tail.
 	_musicUntil = now + _audio.playMusic(21, false);
-	_audio.playEffect(12, 77, 0, true);
+	_audio.playEffect(12, 30, 0, true);
 }
 
 void RunawayEnding::nextSlide(uint32 now) {
@@ -428,7 +428,7 @@ void RunawayEnding::update(uint32 now) {
 		}
 	}
 	if (_stage == kCard && _fadeDuration)
-		_audio.setMusicVolume(96 * (_fadeDuration - (now - _fadeStarted)) / _fadeDuration);
+		_audio.setMusicVolume(100, -5000 * (int)(now - _fadeStarted) / (int)_fadeDuration);
 }
 
 void RunawayEnding::skip(uint32 now) {

@@ -616,7 +616,7 @@ void Scene6090::advanceMechanism(uint32 delta) {
 				if (_speakerMode == 1) {
 					_speakerMode = 2;
 					startRealtimePrimarySpeechLine(15, 27, 0xd2, 0x82,
-						0x20, 0x32, 0, kScene6090KarloffSpeechGroup, kScene6090PrimarySpeechId, 25);
+						0x20, 0x32, 0, kScene6090KarloffSpeechGroup, kScene6090PrimarySpeechId, 50);
 				} else {
 					_speakerMode = 0;
 					karloffLayer.setFrame(0x0c);
@@ -692,7 +692,7 @@ void Scene6090::advanceHannoverPose() {
 			_hannoverPoseMode = 1;
 			_speakerMode = 1;
 			startRealtimePrimarySpeechLine(15, 26, 0xb4, 0x7c,
-				0x28, 0x16, 0x0b, kScene6090HannoverSpeechGroup, kScene6090PrimarySpeechId, 25);
+				0x28, 0x16, 0x0b, kScene6090HannoverSpeechGroup, kScene6090PrimarySpeechId, 50);
 		} else {
 			hannoverLayer.setFrame(hannoverLayer.frameIndex + 1);
 		}

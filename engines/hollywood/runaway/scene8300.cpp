@@ -171,7 +171,7 @@ void Scene8300::advanceSaturn() {
 		if (_saturnStep < last) {
 			++_saturnStep;
 			if (_saturnState == kChiseling && _saturnStep == 20 && _camera.x > 580) {
-				_audio.playEffect(65, 204);
+				_audio.playEffect(65, 80);
 			}
 		} else {
 			_saturnState = kWorking;

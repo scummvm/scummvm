@@ -174,15 +174,14 @@ void RunawayOpening::enter(Step step, uint32 now) {
 		_video.close();
 		_narrating = false;
 		_failed = !_text.loadStage("RESOURCE.003", "Runaway opening", 201);
-		_audio.playMusic(32);
-		_audio.setMusicVolume(204);
+		_audio.playMusicEffect(32, 80, 2, true);
 		break;
 	case kAccident:
 		startMovie("DATAVB04.001", 0, 250);
 		_audio.playEffect(27);
 		break;
 	case kAccidentTitle:
-		_audio.playEffect(28, 255, 1);
+		_audio.playEffect(28, 100, 1);
 		break;
 	case kAccidentEnd:
 		startMovie(nullptr, 261, 312);
@@ -194,8 +193,8 @@ void RunawayOpening::enter(Step step, uint32 now) {
 	case kFilm:
 		startMovie("DATAVB08.001", 0, 2565);
 		if (!_themeStarted) {
-			_audio.playMusic(17, false);
-			_audio.setMusicVolume(255);
+			_audio.playMusic(17, false, true);
+			_audio.setMusicVolume(100);
 			_themeStarted = true;
 		}
 		break;
@@ -439,8 +438,9 @@ void RunawayOpening::update(uint32 now) {
 		const uint fadeTime = 74 * (_step == kTitle ? 40 : 20);
 		if (_step == kAccidentTitle) {
 			if (!(_events & 1) && elapsed >= fadeTime * 2 + 500) {
-				_audio.playMusic(17, false);
-				_audio.setMusicVolume(255);
+				_audio.playMusic(17, false, true);
+				_audio.setMusicVolume(100);
+				_audio.setEffectVolume(2, 40);
 				_themeStarted = true;
 				_events |= 1;
 			}
@@ -473,8 +473,8 @@ void RunawayOpening::update(uint32 now) {
 		const bool ended = updateMovie();
 		// Original frame callbacks (0x576d40), independent of rendering rate.
 		if (!(_events & 1) && _frame >= 2251) {
-			_audio.playMusic(30);
-			_audio.setMusicVolume(179);
+			_audio.setMusicVolume(70);
+			_audio.playMusicEffect(30, 70, 2, true);
 			_audio.playEffect(41);
 			_events |= 1;
 		}
@@ -494,7 +494,8 @@ void RunawayOpening::update(uint32 now) {
 		if (updateMovie()) {
 			advance();
 		} else if (!_events && _frame >= 2734) {
-			_audio.playEffect(43, 230);
+			_audio.setMusicVolume(85);
+			_audio.playEffect(43, 90);
 			_events = 1;
 		}
 		break;

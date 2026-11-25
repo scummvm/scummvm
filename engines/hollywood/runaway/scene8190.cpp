@@ -97,7 +97,7 @@ void Scene8190::runCustomEntrySequence() {
 }
 
 void Scene8190::resumeAmbientAudio(bool entering) {
-	resumeFinaleOutdoorAudio(entering, 36, 51);
+	resumeFinaleOutdoorAudio(entering, 36, 20);
 }
 
 void Scene8190::advanceCustomGameplayLoop(uint32 delta) {

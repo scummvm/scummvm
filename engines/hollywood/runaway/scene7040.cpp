@@ -71,11 +71,11 @@ const byte kInsertKeyFrames[] = {
 
 typedef RunawaySequence S;
 const S::Command kCryptVisit[] = {
-	{S::kOpen, 3}, {S::kEffect, 32, 255}, {S::kPlay, 0, 511},
+	{S::kOpen, 3}, {S::kEffect, 32, 100}, {S::kPlay, 0, 511},
 	// Wupuchim welcomes Brian into the sanctuary.
 	{S::kTalk, 20, 0, 1, 0, 33}, {S::kTalk, 20, 1, 3, 1},
 	{S::kTalk, 20, 2, 3, 0, 33}, {S::kTalk, 20, 3, 3, 1}, {S::kTalk, 20, 4, 3, 0, 33},
-	{S::kEffect, 33, 255}, {S::kPlay, 524, 608},
+	{S::kEffect, 33, 100}, {S::kPlay, 524, 608},
 	{S::kTalk, 20, 5, 5}, {S::kTalk, 20, 6, 5, 1, 33},
 	// Reveal the bottle and explain why Brian must take it away.
 	{S::kPlay, 627, 686}, {S::kSpeech, 20, 7, 7, 0, 11}, {S::kSpeech, 20, 8, 8, 0, 33}, {S::kPlay, 687, 747}, {S::kWaitSpeech},
@@ -87,7 +87,7 @@ const S::Command kCryptVisit[] = {
 	{S::kTalk, 20, 17, 3, 0, 33}, {S::kTalk, 20, 18, 3, 1},
 	{S::kTalk, 20, 19, 3, 0, 33}, {S::kTalk, 20, 20, 7},
 	{S::kTalk, 20, 21, 3, 0, 33}, {S::kTalk, 20, 22, 7},
-	{S::kEffect, 34, 255}, {S::kPlay, 760, 933}, {S::kEnd}
+	{S::kEffect, 34, 100}, {S::kPlay, 760, 933}, {S::kEnd}
 };
 
 const S::Command kExamineBottle[] = {
@@ -210,12 +210,12 @@ void Scene7040::handleAnimationFrameHook() {
 	if (_roomAction == 405 && _actionStep == 4) {
 		_audio.playEffect(23);
 	} else if (_roomAction == 406 && _actionStep == 19) {
-		_audio.playEffect(24, 204);
+		_audio.playEffect(24, 80);
 	} else if (_roomAction == 407 && _actionStep == 22) {
-		_audio.playEffect(22, 204);
+		_audio.playEffect(22, 80);
 	} else if (_roomAction == 410) {
 		if (_actionStep == 22) {
-			_audio.playEffect(25, 204);
+			_audio.playEffect(25, 80);
 		} else if (_actionStep == 42) {
 			_audio.playEffect(28);
 			_doorDirection = 1;

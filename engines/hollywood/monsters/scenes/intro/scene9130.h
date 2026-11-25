@@ -60,6 +60,7 @@ private:
 	uint32 _speechFallbackMillis;
 	byte _nextSpeechFrameIndex;
 	byte _clipFrameIndex;
+	int _speechAttenuation;
 };
 
 } // End of namespace Hollywood

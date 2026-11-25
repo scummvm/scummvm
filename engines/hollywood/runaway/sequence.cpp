@@ -300,11 +300,14 @@ void RunawaySequence::update(uint32 now) {
 				speak(command.a, command.b, command.c, command.d != 0, command.speechColor);
 				break;
 			case kMusic:
-				_audio.playMusic(command.a, command.c != 0);
+				_audio.playMusic(command.a, command.c != 0, command.d != 0);
 				_audio.setMusicVolume(command.b);
 				break;
 			case kEffect:
 				_audio.playEffect(command.a, command.b, command.c, command.d != 0);
+				break;
+			case kMusicEffect:
+				_audio.playMusicEffect(command.a, command.b, command.c, command.d != 0);
 				break;
 			case kPauseEffect:
 				_audio.pauseEffect(command.a, command.b != 0);
@@ -397,7 +400,7 @@ void RunawaySequence::update(uint32 now) {
 			const uint elapsed = now - _started;
 			if (!_skipFilm && elapsed < command.a && _audio.musicPlaying()) {
 				// Native music fades by 50 dB before stopping the channel.
-				_audio.setMusicVolume(command.b * pow(10.0, -2.5 * elapsed / command.a));
+				_audio.setMusicVolume(command.b, -5000 * (int)elapsed / command.a);
 				return;
 			}
 			_audio.stopMusic();

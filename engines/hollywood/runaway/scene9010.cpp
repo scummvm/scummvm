@@ -32,20 +32,20 @@ const uint kDepartureFadeStart = 41 * 80 + 256 * 40 + 3000;
 const uint kDepartureDuration = kDepartureFadeStart + 2000;
 
 const S::Command kFarewellSequence[] = {
-	{S::kOpen, 3}, {S::kPlay, 0, 99}, {S::kEffect, 12, 115, 1, 1},
-	{S::kPlay, 100, 133}, {S::kMusicVolume, 76},
+	{S::kOpen, 3}, {S::kPlay, 0, 99}, {S::kEffect, 12, 45, 1, 1},
+	{S::kPlay, 100, 133}, {S::kMusicVolume, 30},
 	{S::kTalk, 1, 0, 0, 0, 14}, {S::kTalk, 1, 1}, {S::kTalk, 1, 2, 0, 0, 14}, {S::kTalk, 1, 3},
-	{S::kEffect, 13, 128}, {S::kStopEffects, 2}, {S::kPlay, 134, 199},
-	{S::kEffect, 12, 115, 1, 1}, {S::kPlay, 200, 220},
+	{S::kEffect, 13, 50}, {S::kStopEffects, 2}, {S::kPlay, 134, 199},
+	{S::kEffect, 12, 45, 1, 1}, {S::kPlay, 200, 220},
 	{S::kTalk, 1, 4}, {S::kTalk, 1, 5, 0, 0, 14}, {S::kTalk, 1, 6}, {S::kTalk, 1, 7, 0, 0, 14},
-	{S::kEffect, 14, 153}, {S::kStopEffects, 2}, {S::kPlay, 221, 342},
+	{S::kEffect, 14, 60}, {S::kStopEffects, 2}, {S::kPlay, 221, 342},
 	{S::kSpeech, 1, 10, 10}, {S::kPlay, 343, 517},
-	{S::kEffect, 12, 115, 1, 1}, {S::kPlay, 518, 593}, {S::kWaitSpeech},
+	{S::kEffect, 12, 45, 1, 1}, {S::kPlay, 518, 593}, {S::kWaitSpeech},
 	{S::kTalk, 1, 11, 1}, {S::kTalk, 1, 12, 3, 0, 14},
 	{S::kPlay, 606, 649}, {S::kTalk, 1, 13, 3, 0, 14}, {S::kTalk, 1, 14, 1},
 	{S::kTalk, 1, 15, 1, 1, 14}, {S::kTalk, 1, 16, 1}, {S::kTalk, 1, 17, 3, 0, 14},
-	{S::kTalk, 1, 18, 5}, {S::kEffect, 15, 153}, {S::kStopEffects, 2},
-	{S::kPlay, 674, 772}, {S::kSpeech, 1, 19, 19}, {S::kMusicVolume, 255},
+	{S::kTalk, 1, 18, 5}, {S::kEffect, 15, 60}, {S::kStopEffects, 2},
+	{S::kPlay, 674, 772}, {S::kSpeech, 1, 19, 19}, {S::kMusicVolume, 100},
 	{S::kPlay, 773, 875}, {S::kWaitSpeech}, {S::kEnd}
 };
 
@@ -79,8 +79,8 @@ void Scene9010::start(uint32 now) {
 
 void Scene9010::resume() {
 	_audio.playMusic(32);
-	_audio.setMusicVolume(255);
-	_audio.playMusicEffect(35, 255, 2, true);
+	_audio.setMusicVolume(100);
+	_audio.playMusicEffect(35, 100, 2, true);
 	enter(kArrival);
 }
 
@@ -119,8 +119,8 @@ void Scene9010::enter(Step step) {
 	case kFlight: // The plane takes off, followed by the travel montage.
 		_commands.clear();
 		_commands.push_back(S::Command(S::kOpen, 4));
-		_commands.push_back(S::Command(S::kMusic, 27, 255));
-		_commands.push_back(S::Command(S::kEffect, 62, 204));
+		_commands.push_back(S::Command(S::kMusic, 27, 100, 0, 1));
+		_commands.push_back(S::Command(S::kEffect, 62, 80));
 		_commands.push_back(S::Command(S::kPlay, 0, _gog ? 3068 : 3069));
 		_commands.push_back(S::Command(S::kEnd));
 		_sequence.start(_commands.data(), _text, _now, 'I');

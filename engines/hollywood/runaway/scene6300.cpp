@@ -230,7 +230,7 @@ void Scene6300::advanceKevinIdle() {
 	} else if (_kevinFrame < last[_kevinIdle]) {
 		++_kevinFrame;
 		if (_kevinFrame == 9 || _kevinFrame == 41 || _kevinFrame == 65) {
-			_audio.playEffect(16, 204);
+			_audio.playEffectAt(16, Common::Point(520, 200), 80);
 		} else if (_kevinFrame == 25 || _kevinFrame == 52 || _kevinFrame == 79) {
 			_audio.stopEffect(0);
 		}
@@ -258,7 +258,7 @@ void Scene6300::drawKevin(Graphics::ManagedSurface &viewport) {
 }
 
 void Scene6300::drawCatapult(Graphics::ManagedSurface &viewport) {
-	if (_roomAction != 415 || !drawingRoomAnimation()) {
+	if ((_roomAction != 414 && _roomAction != 415) || !drawingRoomAnimation()) {
 		_catapultAnimation.draw(viewport, !_town.catapult ? 41 : _town.catapult == 2 ? 0 : 47, _camera.x, 0);
 	}
 }
@@ -295,7 +295,7 @@ void Scene6300::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport
 
 bool Scene6300::roomAnimationInForeground() const {
 	// Keep the catapult and Saturn at the same depth as their idle frames.
-	return _position.y < (_roomAction == 415 ? 406 : 526);
+	return _position.y < ((_roomAction == 414 || _roomAction == 415) ? 406 : 526);
 }
 
 void Scene6300::drawWorkshopForeground(Graphics::ManagedSurface &viewport) {
@@ -419,7 +419,14 @@ RunawayRoomScene::ActionResult Scene6300::dispatchCustomSceneAction(uint16 actio
 			say(10, 7);
 		} else {
 			say(10, _town.catapult == 2 ? 8 : 0);
-			beginRoomAnimation(414, 26, 20);
+			byte catapult[20], brian[20];
+			// The load starts moving when Brian releases the lever at frame 15.
+			for (uint i = 0; i < ARRAYSIZE(catapult); ++i) {
+				catapult[i] = (i < 15 ? 0 : i - 14) + (_town.catapult ? 0 : 41);
+				brian[i] = i;
+			}
+			beginRoomAnimation(414, 6, 48, catapult, ARRAYSIZE(catapult));
+			setRoomAnimationOverlay(26, 20, brian, ARRAYSIZE(brian));
 		}
 		break;
 	case 319: // Examine Saturn's set of tools.
@@ -557,25 +564,15 @@ RunawayRoomScene::ActionResult Scene6300::dispatchCustomSceneAction(uint16 actio
 		return kBackgroundChanged;
 	case 1410: // Step away from the crane controls.
 		break;
-	case 1414: { // The catapult releases its load.
-		_audio.playEffect(26);
-		Common::Array<byte> frames;
-		if (!_town.catapult) {
-			for (uint i = 41; i <= 46; ++i) {
-				frames.push_back(i);
-			}
-		}
-		for (uint i = _town.catapult ? 0 : 6; i <= 40; ++i) {
-			frames.push_back(i);
-		}
-		beginRoomAnimation(415, 6, 48, frames.data(), frames.size(), false);
+	case 1414: { // Hold Brian's lever pose while the catapult finishes launching.
+		beginRoomAnimationRange(415, 6, 48, 6, 40);
+		static const byte brian[] = {19};
+		setRoomAnimationOverlay(26, 20, brian, ARRAYSIZE(brian));
+		say(10, _town.catapult ? 1 : 10);
+		_actionHoldSpeech = _actionLoopSpeech = true;
 		break;
 	}
 	case 1415: // Follow the projectile to the bank.
-		say(10, _town.catapult ? 1 : 10);
-		deferTownAction(416);
-		break;
-	case 416: // Show the paint bucket or statue hitting the bank.
 		showCatapultImpact();
 		break;
 	case 1416: // Return to the workshop after the impact.
@@ -772,10 +769,16 @@ void Scene6300::handleAnimationFrameHook() {
 	if (_roomAction == 446) {
 		playAnimationFootsteps(_actionFrames[_actionStep], 3, leavingSteps, ARRAYSIZE(leavingSteps));
 		if (_actionFrames[_actionStep] == 38) {
-			_audio.playEffectAt(33, Common::Point(607, 200), 255, 1);
+			_audio.playEffectAt(33, Common::Point(607, 200), 100, 1);
 		}
 	}
-	if (_roomAction == 445 || _roomAction == 449) {
+	if (_roomAction == 414 && _actionStep == 15) {
+		_audio.playEffectAt(26, Common::Point(846, 200), 100, 1);
+	} else if (_roomAction == 415 && _actionStep == _actionFrames.size() - 1) {
+		// Keep the final launch frame until Brian finishes his line.
+		_actionLoopSpeech = false;
+		_actionStarted = _now;
+	} else if (_roomAction == 445 || _roomAction == 449) {
 		if (_actionFrames[_actionStep] == 14) {
 			say(28, _roomAction == 445 ? 9 : 10, false, 1);
 			_actionHoldSpeech = _actionLoopSpeech = true;
@@ -787,7 +790,7 @@ void Scene6300::handleAnimationFrameHook() {
 	} else if (_roomAction == 416 && _actionStep == (_town.catapult == 2 ? 63 : 58)) {
 		_audio.playEffect(_town.catapult == 2 ? 44 : 28);
 	} else if ((_roomAction == 333 || _roomAction == 337) && _actionStep == 25) {
-		_audio.playEffect(_roomAction == 333 ? 18 : 19, 230);
+		_audio.playEffect(_roomAction == 333 ? 18 : 19, 90);
 	}
 }
 

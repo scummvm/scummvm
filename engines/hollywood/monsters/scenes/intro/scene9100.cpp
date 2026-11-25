@@ -44,10 +44,9 @@ const byte kScene9100ForegroundBeatSoundCue = 0x0e;
 const byte kScene9100DelayedSoundCue = 0x0f;
 const byte kScene9100SueEntrySoundCue = 0x10;
 const byte kScene9100AmbientSoundCue = 0x11;
-// Linear mixer levels equivalent to the original DirectSound -25 dB volume curve.
-const byte kScene9100QuietMixerVolume = 12;
-const byte kScene9100MusicMixerVolume = 13;
-const byte kScene9100ClockMixerVolume = 24;
+const byte kScene9100QuietVolumePercent = 25;
+const byte kScene9100MusicVolumePercent = 30;
+const byte kScene9100ClockVolumePercent = 50;
 const uint16 kScene9101CompletionState = 1000;
 const uint kStage910Index = 910;
 const byte kPrimarySpeechTextColor = 0xfb;
@@ -130,7 +129,7 @@ bool Scene9100::play() {
 
 	presentFrame();
 
-	_music.playMusicCue(kScene9100MusicCueId, kScene9100MusicMixerVolume);
+	_music.playMusicCue(kScene9100MusicCueId, kScene9100MusicVolumePercent);
 
 	for (int sweepOffset = 0xdc; sweepOffset >= 0 && !_skipRequested && !Engine::shouldQuit(); sweepOffset -= 0x14) {
 		revealSavedFramebufferBand((uint)sweepOffset, 0x14);
@@ -140,7 +139,7 @@ bool Scene9100::play() {
 	}
 
 	if (!_skipRequested && !Engine::shouldQuit()) {
-		_ambientSound.playSample(kScene9100AmbientSoundCue, kScene9100QuietMixerVolume, true);
+		_ambientSound.playSample(kScene9100AmbientSoundCue, kScene9100QuietVolumePercent, true);
 		expandFillRunsToSavedFramebuffer();
 		drawResourceBlockListToSceneFramebuffer(_resources._chunkOffsets[16]);
 		presentFrame();
@@ -170,7 +169,7 @@ bool Scene9100::playDialogueBranch() {
 
 	copyDefaultPalette();
 	presentFrame();
-	_music.playMusicCue(kScene9100MusicCueId, kScene9100MusicMixerVolume);
+	_music.playMusicCue(kScene9100MusicCueId, kScene9100MusicVolumePercent);
 
 	for (int sweepOffset = 0xdc; sweepOffset >= 0 && !_skipRequested && !Engine::shouldQuit(); sweepOffset -= 0x14) {
 		revealSavedFramebufferBand((uint)sweepOffset, 0x14);
@@ -180,7 +179,7 @@ bool Scene9100::playDialogueBranch() {
 	}
 
 	if (!_skipRequested && !Engine::shouldQuit())
-		_ambientSound.playSample(kScene9100AmbientSoundCue, kScene9100QuietMixerVolume, true);
+		_ambientSound.playSample(kScene9100AmbientSoundCue, kScene9100QuietVolumePercent, true);
 
 	if (!_skipRequested && !Engine::shouldQuit())
 		runDialogueBranchSequence();
@@ -603,13 +602,13 @@ void Scene9100::runOpeningPrelude() {
 		return;
 
 	animateForegroundFrames(11, 14);
-	_effectSound.playSample(kScene9100TransitionEndSoundCue, kScene9100QuietMixerVolume);
+	_effectSound.playSample(kScene9100TransitionEndSoundCue, kScene9100QuietVolumePercent);
 
 	_foregroundTalkBaseFrame = 15;
 	runConversationStep(0, 0, kTalkingOverlayNone, 0, true, true, kDeskPrimaryBlueSpeech);
 
 	animateForegroundFrames(20, 20);
-	_effectSound.playSample(kScene9100TransitionMiddleSoundCue, kScene9100QuietMixerVolume);
+	_effectSound.playSample(kScene9100TransitionMiddleSoundCue, kScene9100QuietVolumePercent);
 	animateForegroundFrames(21, 22);
 	for (uint pulse = 0; pulse < 120 && !_skipRequested && !Engine::shouldQuit(); ++pulse) {
 		if (_random.getRandomNumber(14) == 0) {
@@ -968,7 +967,7 @@ void Scene9100::advanceClockFrame() {
 		}
 	}
 	drawOfficeCompositeLayers();
-	_clockSound.playSample(kScene9100ClockSoundCue, kScene9100ClockMixerVolume);
+	_clockSound.playSample(kScene9100ClockSoundCue, kScene9100ClockVolumePercent);
 }
 
 void Scene9100::restoreClockAreaBackground() {

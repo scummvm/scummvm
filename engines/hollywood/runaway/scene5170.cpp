@@ -102,7 +102,7 @@ void Scene5170::resumeAmbientAudio(bool entering) {
 	if (_audio.musicCue() != 16 || !_audio.musicPlaying()) {
 		_audio.playMusic(16, false);
 	}
-	_audio.setMusicVolume(179);
+	_audio.setMusicVolume(70);
 }
 
 bool Scene5170::applyCustomBackgroundPatches() {
@@ -118,7 +118,7 @@ void Scene5170::advanceCustomGameplayLoop(uint32 delta) {
 		const bool opening = doorClosed();
 		_doorFrame += opening ? 1 : -1;
 		if (_doorFrame == (opening ? 5 : 11)) {
-			_audio.playEffect(opening ? 65 : 64, 255, 1);
+			_audio.playEffect(opening ? 65 : 64, 100, 1);
 		}
 		_doorMoving = _doorFrame != (opening ? 24 : 0);
 	}

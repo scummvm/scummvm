@@ -217,7 +217,7 @@ void Scene4060::runCustomEntrySequence() {
 		}
 	} else if (_entryScene == 4062) {
 		beginRoomAnimationRange(473, 4, 13, 12, 0, false);
-		_audio.playEffectAt(32, Common::Point(1138, 200), 204);
+		_audio.playEffectAt(32, Common::Point(1138, 200), 80);
 	} else if (_entryScene == 4061 && _museum.susan == 2) {
 		say(40);
 		deferMuseumAction(316);
@@ -227,13 +227,13 @@ void Scene4060::runCustomEntrySequence() {
 void Scene4060::advanceCustomGameplayLoop(uint32 delta) {
 	if (_willyWalking) {
 		static const AnimationFootstep steps[] = {
-			{5, 540, 179}, {12, 570, 179}, {16, 600, 179}, {22, 630, 179},
-			{27, 660, 179}, {32, 690, 179}, {37, 720, 179}, {42, 750, 179},
-			{50, 780, 179}, {57, 810, 179}, {62, 840, 179}, {69, 870, 179},
-			{74, 900, 179}, {80, 930, 179}, {85, 960, 179}, {91, 990, 179},
-			{97, 1020, 179}, {102, 1050, 179}, {107, 1080, 179}, {112, 1110, 179},
-			{119, 1140, 179}, {125, 1170, 179}, {131, 1200, 179}, {137, 1230, 179},
-			{142, 1260, 179}, {147, 1290, 179}
+			{5, 540, 70}, {12, 570, 70}, {16, 600, 70}, {22, 630, 70},
+			{27, 660, 70}, {32, 690, 70}, {37, 720, 70}, {42, 750, 70},
+			{50, 780, 70}, {57, 810, 70}, {62, 840, 70}, {69, 870, 70},
+			{74, 900, 70}, {80, 930, 70}, {85, 960, 70}, {91, 990, 70},
+			{97, 1020, 70}, {102, 1050, 70}, {107, 1080, 70}, {112, 1110, 70},
+			{119, 1140, 70}, {125, 1170, 70}, {131, 1200, 70}, {137, 1230, 70},
+			{142, 1260, 70}, {147, 1290, 70}
 		};
 		while (_willyFrame < 150 && _now - _willyWalkStarted >= 60) {
 			_willyWalkStarted += 60;
@@ -496,7 +496,7 @@ void Scene4060::finishCustomAnimation(uint16 action) {
 		break;
 	case 470: // Open the unlocked security door.
 		beginRoomAnimation(471, 4, 13, nullptr, 0, false);
-		_audio.playEffectAt(32, Common::Point(1138, 200), 204);
+		_audio.playEffectAt(32, Common::Point(1138, 200), 80);
 		break;
 	case 471: // Keep the door open while Brian walks through it.
 		_actionAnimation.draw(_background, 12, 0, 0);
@@ -527,7 +527,7 @@ void Scene4060::finishCustomAnimation(uint16 action) {
 		beginRoomAnimationRange(464, 4, 13, 0, 12, false);
 		const byte willy[] = {178};
 		setRoomAnimationOverlay(16, 216, willy, ARRAYSIZE(willy));
-		_audio.playEffect(32, 204);
+		_audio.playEffect(32, 80);
 		break;
 	}
 	case 464: { // Willy enters the analysis laboratory.
@@ -538,7 +538,7 @@ void Scene4060::finishCustomAnimation(uint16 action) {
 	}
 	case 465: // Close the security door behind Willy.
 		beginRoomAnimationRange(466, 4, 13, 12, 0, false);
-		_audio.playEffect(32, 204);
+		_audio.playEffect(32, 80);
 		break;
 	case 466: // React to Willy entering the code.
 		updateCamera();
@@ -554,7 +554,7 @@ void Scene4060::finishCustomAnimation(uint16 action) {
 		say(15, 5);
 		break;
 	case 462: // Hear Willy refill the coffee machine upstairs.
-		_audio.playEffectAt(47, Common::Point(202, 200), 230);
+		_audio.playEffectAt(47, Common::Point(202, 200), 90);
 		_actionStarted = _now;
 		deferMuseumAction(477);
 		break;
@@ -644,7 +644,7 @@ void Scene4060::handleAnimationFrameHook() {
 		}
 		const byte frame = _actionFrames[_actionStep];
 		if (frame == 1 || frame == 3 || frame == 8 || frame == 10 || frame == 14 || frame == 17) {
-			_audio.playFootstep(1, _random.getRandomBit(), 191, 512);
+			_audio.playFootstep(1, _random.getRandomBit(), 75, 512);
 		}
 	}
 	if (_roomAction == 461 && _actionStep == 156) {

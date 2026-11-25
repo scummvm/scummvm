@@ -38,6 +38,17 @@ RunawayAudio::~RunawayAudio() {
 	stopEffect();
 }
 
+byte RunawayAudio::mixerVolume(byte volume, int base, int attenuation) const {
+	// Retail 0x408120 / 0x4091e0: preserve the category balance at native
+	// master volume 100. ScummVM applies the user's volume separately.
+	// The museum demo fixes music at -15.4 dB and effects at -13 dB,
+	// with the earlier Hollywood Monsters 25 dB percentage curve.
+	const int range = _museum ? 2500 : 4000;
+	if (_museum)
+		base = base == kMusicVolumeBase ? 960 : 1200;
+	return decibelsToMixerVolume(base * MIN<int>(volume, 100) / 100 - range + attenuation);
+}
+
 void RunawayAudio::setChapter(byte chapter) {
 	assert(chapter >= 1 && chapter <= 6);
 	if (_chapter == chapter)
@@ -94,14 +105,15 @@ uint32 RunawayAudio::play(const char *archive, uint16 cue, uint tableCount, bool
 
 void RunawayAudio::playIntroMusic(uint16 cue) {
 	stopMusic();
+	_musicVolumeBase = kMusicVolumeBase;
 	// The Pendulo logo uses RESOURCE.002 cue 2 on native channel 7, which
 	// has the same 16 kHz stereo PCM format as the room music channels.
 	// Cue 4 accompanies the retail narrator's montage.
 	play("RESOURCE.002", cue, 100, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO,
-		Audio::Mixer::kMusicSoundType, _music, Audio::Mixer::kMaxChannelVolume, false, 16000);
+		Audio::Mixer::kMusicSoundType, _music, mixerVolume(100, _musicVolumeBase), false, 16000);
 }
 
-uint32 RunawayAudio::playMusic(uint16 cue, bool loop) {
+uint32 RunawayAudio::playMusic(uint16 cue, bool loop, bool fullVolume) {
 	if (_museum) {
 		// The demo loops one track throughout the museum, including its films.
 		cue = 11;
@@ -110,12 +122,13 @@ uint32 RunawayAudio::playMusic(uint16 cue, bool loop) {
 			return 0;
 	}
 	_musicCue = cue;
+	_musicVolumeBase = fullVolume ? kSpeechVolumeBase : kMusicVolumeBase;
 	_musicLooping = loop;
 	_nextMusic = 0;
 	// Retail/cabin PCM is 16 kHz; the old museum demo uses 22.05 kHz music.
 	const Common::String archive = Common::String::format("RESOURCE.M%02u", _museum ? 4 : _chapter);
 	return play(archive.c_str(), cue, 100, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO,
-		Audio::Mixer::kMusicSoundType, _music, 96, loop, _museum ? 22050 : 16000);
+		Audio::Mixer::kMusicSoundType, _music, mixerVolume(100, _musicVolumeBase), loop, _museum ? 22050 : 16000);
 }
 
 void RunawayAudio::updateBackgroundMusic(uint32 now, Common::RandomSource &random, byte firstCue, byte cueCount, byte volume, int repeatDelay) {
@@ -139,8 +152,8 @@ void RunawayAudio::updateBackgroundMusic(uint32 now, Common::RandomSource &rando
 	}
 }
 
-void RunawayAudio::setMusicVolume(byte volume) {
-	_music.setVolume(volume);
+void RunawayAudio::setMusicVolume(byte volume, int attenuation) {
+	_music.setVolume(mixerVolume(volume, _musicVolumeBase, attenuation));
 }
 
 void RunawayAudio::pauseMusic(bool paused) {
@@ -160,10 +173,11 @@ void RunawayAudio::setListenerPosition(int x) {
 
 void RunawayAudio::playMusicEffect(uint16 cue, byte volume, byte channel, bool loop) {
 	assert(channel < ARRAYSIZE(_effects));
+	_effectVolumeBase[channel] = kAmbientVolumeBase;
 	// Notes and some ambient effects are stereo samples in the music archive.
 	const Common::String archive = Common::String::format("RESOURCE.M%02u", _chapter);
 	play(archive.c_str(), cue, 100, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO,
-		Audio::Mixer::kSFXSoundType, _effects[channel], volume, loop, 16000);
+		Audio::Mixer::kSFXSoundType, _effects[channel], mixerVolume(volume, _effectVolumeBase[channel]), loop, 16000);
 }
 
 uint32 RunawayAudio::playSpeech(uint16 sample, bool global) {
@@ -182,9 +196,14 @@ uint32 RunawayAudio::playSpeech(uint16 sample, bool global) {
 
 void RunawayAudio::playBackgroundSpeech(uint16 sample, byte channel) {
 	assert(channel < ARRAYSIZE(_effects));
+	_effectVolumeBase[channel] = kSpeechVolumeBase;
 	const Common::String archive = Common::String::format("DATAACA%u.000", _chapter);
 	play(archive.c_str(), sample, 6000, true, Audio::FLAG_UNSIGNED,
 		Audio::Mixer::kSpeechSoundType, _effects[channel], Audio::Mixer::kMaxChannelVolume, false, 16000);
+}
+
+void RunawayAudio::setSpeechVolume(byte volume) {
+	_speech.setVolume(mixerVolume(volume, kSpeechVolumeBase));
 }
 
 void RunawayAudio::playEffect(uint16 cue, byte volume, byte channel, bool loop) {
@@ -197,6 +216,7 @@ void RunawayAudio::playEffectAt(uint16 cue, Common::Point position, byte volume,
 
 void RunawayAudio::playEffect(uint16 cue, byte volume, byte channel, bool loop, const Common::Point *position) {
 	assert(channel < ARRAYSIZE(_effects));
+	_effectVolumeBase[channel] = kEffectVolumeBase;
 	if (_museum) {
 		// Translate the shared museum scripts' retail cues to the demo archive.
 		if (cue == 58 || cue == 59)
@@ -212,7 +232,8 @@ void RunawayAudio::playEffect(uint16 cue, byte volume, byte channel, bool loop, 
 		flags = Audio::FLAG_UNSIGNED;
 	const Common::String archive = Common::String::format("RESOURCE.S%02u", _museum ? 4 : _chapter);
 	play(archive.c_str(), cue, 1000, false, flags,
-		Audio::Mixer::kSFXSoundType, _effects[channel], volume, loop, _museum ? 11025 : 16000, position);
+		Audio::Mixer::kSFXSoundType, _effects[channel], _museum && !volume ? 0 : mixerVolume(volume, _effectVolumeBase[channel]),
+		loop, _museum ? 11025 : 16000, position);
 }
 
 void RunawayAudio::playFootstep(byte surface, byte variant, byte volume, int x) {
@@ -225,7 +246,7 @@ void RunawayAudio::playFootstep(byte surface, byte variant, byte volume, int x) 
 	const uint footstep = (surface - 1) * 2 + variant;
 	const Common::Point position(x, 200);
 	play("RESOURCE.002", 21 + footstep, 100, false,
-		Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, Audio::Mixer::kSFXSoundType, _footsteps[footstep], volume, false, 16000,
+		Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, Audio::Mixer::kSFXSoundType, _footsteps[footstep], mixerVolume(volume, kFootstepVolumeBase), false, 16000,
 		x >= 0 ? &position : nullptr);
 }
 
@@ -239,7 +260,7 @@ void RunawayAudio::stopMusic() {
 void RunawayAudio::playPointer() {
 	if (_museum)
 		return;
-	// Native 0x405d14 / 0x407530: RESOURCE.000 chunk 150, 16 kHz,
+	// Retail 0x40a490: RESOURCE.000 chunk 150, 16 kHz,
 	// signed 16-bit mono. This short effect accompanies a cursor change.
 	Common::Array<byte> data;
 	if (!readRunawayGlobalChunk(150, data) || data.size() % 2)
@@ -252,7 +273,7 @@ void RunawayAudio::playPointer() {
 	memcpy(samples, data.data(), data.size());
 	_pointer.stop();
 	_pointer.play(_mixer, Audio::Mixer::kSFXSoundType,
-		Audio::makeRawStream(samples, data.size(), 16000, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN), 3);
+		Audio::makeRawStream(samples, data.size(), 16000, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN), decibelsToMixerVolume(-3200));
 }
 
 void RunawayAudio::playInventoryIdle() {
@@ -262,8 +283,9 @@ void RunawayAudio::playInventoryIdle() {
 	// Chapter six omits the shared knock; chapter five has the same sample
 	// as chapters one through four and is present on the same retail disc.
 	const Common::String archive = Common::String::format("RESOURCE.S%02u", MIN<byte>(_chapter, 5));
+	_effectVolumeBase[0] = kEffectVolumeBase;
 	play(archive.c_str(), 5, 1000, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN,
-		Audio::Mixer::kSFXSoundType, _effects[0], 255, false, 16000);
+		Audio::Mixer::kSFXSoundType, _effects[0], mixerVolume(100, _effectVolumeBase[0]), false, 16000);
 }
 
 void RunawayAudio::playMenuMusic() {
@@ -273,15 +295,17 @@ void RunawayAudio::playMenuMusic() {
 	}
 	stopMusic();
 	// Options volume preview and credits use shared music cue 1, channel 7.
+	_musicVolumeBase = kMusicVolumeBase;
 	play("RESOURCE.002", 1, 100, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO,
-		Audio::Mixer::kMusicSoundType, _music, 255, true, 16000);
+		Audio::Mixer::kMusicSoundType, _music, mixerVolume(100, _musicVolumeBase), true, 16000);
 }
 
 void RunawayAudio::playDemoSlideshowMusic() {
 	assert(_museum);
 	stopMusic();
+	_musicVolumeBase = kMusicVolumeBase;
 	play("RESOURCE.M04", 12, 100, false, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO,
-		Audio::Mixer::kMusicSoundType, _music, 255, true, 22050);
+		Audio::Mixer::kMusicSoundType, _music, mixerVolume(100, _musicVolumeBase), true, 22050);
 }
 
 void RunawayAudio::stopSpeech() {
@@ -309,7 +333,7 @@ void RunawayAudio::pauseEffect(byte channel, bool paused) {
 
 void RunawayAudio::setEffectVolume(byte channel, byte volume) {
 	assert(channel < ARRAYSIZE(_effects));
-	_effects[channel].setVolume(volume);
+	_effects[channel].setVolume(mixerVolume(volume, _effectVolumeBase[channel]));
 }
 
 bool RunawayAudio::musicPlaying() const {

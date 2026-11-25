@@ -192,9 +192,9 @@ void Scene8240::advanceCustomGameplayLoop(uint32 delta) {
 			} else {
 				++_rutgerStep;
 				if (_rutgerStep == 1 || _rutgerStep == 8 || _rutgerStep == 12) {
-					_audio.playEffect(23, 153);
+					_audio.playEffect(23, 60);
 				} else if (_rutgerStep == 4 || _rutgerStep == 10 || _rutgerStep == 16) {
-					_audio.playEffect(24, 153);
+					_audio.playEffect(24, 60);
 				}
 			}
 			break;
@@ -413,7 +413,7 @@ RunawayRoomScene::ActionResult Scene8240::dispatchCustomSceneAction(uint16 actio
 void Scene8240::handleAnimationFrameHook() {
 	Scene6240::handleAnimationFrameHook();
 	if (_roomAction == 414 && _actionStep == 37) {
-		_audio.playEffect(42, 230, 1);
+		_audio.playEffect(42, 90, 1);
 	}
 }
 

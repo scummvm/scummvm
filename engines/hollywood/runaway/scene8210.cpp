@@ -125,7 +125,7 @@ RunawayRoomScene::ActionResult Scene8210::dispatchCustomSceneAction(uint16 actio
 		holdRoomAnimation(410, 4, 28, 16);
 		break;
 	case 1410: // Continue searching through the medical tools.
-		_audio.playEffect(26, 204);
+		_audio.playEffect(26, 80);
 		_rummaging = true;
 		_rummageUntil = _now + 2000;
 		holdRoomAnimation(411, 4, 28, 16);

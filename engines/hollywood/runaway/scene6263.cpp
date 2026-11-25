@@ -115,7 +115,7 @@ void Scene6263::prepareCustomGameplayLoop() {
 	_boilerFrame = _town.boiler >= 2 ? 41 : 0;
 	_boilerTick = _now;
 	if (_town.boiler >= 2) {
-		_audio.playEffect(53, 178, 1, true);
+		_audio.playEffect(53, 70, 1, true);
 	}
 	if (!_entering) {
 		return;
@@ -317,9 +317,9 @@ RunawayRoomScene::ActionResult Scene6263::dispatchCustomSceneAction(uint16 actio
 
 void Scene6263::handleAnimationFrameHook() {
 	if (_roomAction == 400 && _actionStep == 13) {
-		_audio.playEffect(23, 204);
+		_audio.playEffect(23, 80);
 	} else if (_roomAction == 302 && _actionStep == 10) {
-		_audio.playEffect(81, 204);
+		_audio.playEffect(81, 80);
 	} else if ((_roomAction == 306 && (_actionStep == 16 || _actionStep == 43)) ||
 			(_roomAction == 401 && _actionStep == 3)) {
 		_audio.playEffect(54);
@@ -333,12 +333,12 @@ void Scene6263::handleAnimationFrameHook() {
 		}
 	} else if (_roomAction == 313) {
 		if (_actionStep == 23) {
-			_audio.playEffect(52, 255, 0, true);
+			_audio.playEffect(52, 100, 0, true);
 		} else if (_actionStep == 35) {
 			_town.boiler = 2;
 			_boilerFrame = 0;
 			_boilerTick = _now;
-			_audio.playEffect(53, 178, 1, true);
+			_audio.playEffect(53, 70, 1, true);
 		} else if (_actionStep == 70) {
 			_audio.stopEffect(0);
 		}

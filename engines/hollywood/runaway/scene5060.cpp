@@ -443,10 +443,10 @@ Common::U32String Scene5060::hotspotName(byte id) const {
 }
 
 void Scene5060::resumeAmbientAudio(bool entering) {
-	if (entering || !_audio.musicPlaying()) {
-		_audio.playMusic(21);
+	_audio.stopMusic();
+	if (entering || !_audio.effectPlaying(2)) {
+		_audio.playMusicEffect(21, 100, 2, true);
 	}
-	_audio.setMusicVolume(255);
 }
 
 bool Scene5060::lulaDancing() const {
@@ -460,7 +460,7 @@ bool Scene5060::lulaDancing() const {
 
 void Scene5060::playLulaFootstep(uint frame) {
 	if (frame == 124 || frame == 128 || frame == 159 || frame == 181 || frame == 191) {
-		_audio.playFootstep(2, _random.getRandomBit(), 153, 160);
+		_audio.playFootstep(2, _random.getRandomBit(), 60, 160);
 	}
 }
 
@@ -508,9 +508,9 @@ void Scene5060::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport
 void Scene5060::handleAnimationFrameHook() {
 	const byte frame = _actionFrames[_actionStep];
 	if (_roomAction == 308 && (frame == 8 || frame == 15 || frame == 21)) {
-		_audio.playFootstep(4, _random.getRandomBit(), 179, _position.x);
+		_audio.playFootstep(4, _random.getRandomBit(), 70, _position.x);
 	} else if (_roomAction == 400 && (frame == 14 || frame == 21 || frame == 25)) {
-		_audio.playFootstep(frame == 14 ? 4 : 2, _random.getRandomBit(), 179, 679);
+		_audio.playFootstep(frame == 14 ? 4 : 2, _random.getRandomBit(), 70, 679);
 	} else if (_roomAction == 404 || _roomAction == 419) {
 		playLulaFootstep(frame);
 	}
@@ -520,17 +520,17 @@ void Scene5060::handleAnimationFrameHook() {
 	}
 	if (_roomAction == 481) {
 		if (_actionStep == 3 || _actionStep == 12 || _actionStep == 17 || _actionStep == 25 || _actionStep == 29) {
-			_audio.playFootstep(4, _random.getRandomBit(), 153);
+			_audio.playFootstep(4, _random.getRandomBit(), 60);
 		}
 		if (_actionStep == 39) {
-			_audio.playFootstep(4, _random.getRandomBit(), 230);
+			_audio.playFootstep(4, _random.getRandomBit(), 90);
 		}
 	}
 	if (_roomAction == 419 && _actionStep == 28) {
-		_audio.playEffect(56, 217, 1, true);
+		_audio.playEffect(56, 85, 1, true);
 	}
 	if (_roomAction == 449 && (_actionStep == 6 || _actionStep == 11 || _actionStep == 51)) {
-		_audio.playFootstep(1, _random.getRandomBit(), 153);
+		_audio.playFootstep(1, _random.getRandomBit(), 60);
 	}
 	if (_roomAction == 449 && _actionStep == 57) {
 		_audio.playFootstep(1, _random.getRandomBit());

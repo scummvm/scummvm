@@ -51,7 +51,7 @@ bool Scene4070::loadCustomResources() {
 
 void Scene4070::runCustomEntrySequence() {
 	_facing = 7;
-	_audio.playEffect(57, 102, 1, true);
+	_audio.playEffect(57, 40, 1, true);
 	beginRoomAnimation(400, 4, 188, kWillyTurnFrames, ARRAYSIZE(kWillyTurnFrames), false, 60);
 }
 
@@ -72,9 +72,9 @@ void Scene4070::handleAnimationFrameHook() {
 	};
 	const byte frame = _actionFrames[_actionStep];
 	if (_roomAction == 400 && frame == 17) {
-		_audio.setEffectVolume(1, 204);
+		_audio.setEffectVolume(1, 80);
 	} else if (_roomAction == 409 && frame == 14) {
-		_audio.setEffectVolume(1, 102);
+		_audio.setEffectVolume(1, 40);
 	} else if (_roomAction == 458) {
 		playAnimationFootsteps(frame, 1, steps, ARRAYSIZE(steps));
 		switch (frame) {
@@ -82,16 +82,16 @@ void Scene4070::handleAnimationFrameHook() {
 			_facing = 6;
 			break;
 		case 44:
-			_audio.setEffectVolume(1, 179);
+			_audio.setEffectVolume(1, 70);
 			break;
 		case 51:
-			_audio.setEffectVolume(1, 128);
+			_audio.setEffectVolume(1, 50);
 			break;
 		case 56:
-			_audio.setEffectVolume(1, 77);
+			_audio.setEffectVolume(1, 30);
 			break;
 		case 62:
-			_audio.setEffectVolume(1, 26);
+			_audio.setEffectVolume(1, 10);
 			break;
 		}
 	}

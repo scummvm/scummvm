@@ -98,11 +98,11 @@ void Scene8130::runCustomEntrySequence() {
 }
 
 void Scene8130::resumeAmbientAudio(bool entering) {
-	resumeFinaleOutdoorAudio(entering, 40, 77);
+	resumeFinaleOutdoorAudio(entering, 40, 30);
 }
 
 void Scene8130::advanceCustomGameplayLoop(uint32 delta) {
-	updateFinaleOutdoorAudio(51);
+	updateFinaleOutdoorAudio(20);
 	if (!_finale.oscarAway && !_departing) {
 		_oscar.update(_now, _random, _audio);
 	}
@@ -119,7 +119,7 @@ bool Scene8130::updateCustomSequence() {
 		++_departureFrame;
 		for (uint i = 0; i < ARRAYSIZE(footsteps); ++i) {
 			if (_departureFrame == footsteps[i]) {
-				_audio.playFootstep(2, _random.getRandomBit(), (65 + i * 5) * 255 / 100, 400 - i * 50);
+				_audio.playFootstep(2, _random.getRandomBit(), (65 + i * 5), 400 - i * 50);
 				break;
 			}
 		}

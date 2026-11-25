@@ -263,7 +263,7 @@ void Scene4050::updateSusanToolSound() {
 		(_susanFrame < 15 || (_susanFrame >= 29 && _susanFrame <= 39));
 	if (working) {
 		if (!_audio.effectPlaying(1)) {
-			_audio.playEffectAt(14, Common::Point(474, 200), 77, 1, true);
+			_audio.playEffectAt(14, Common::Point(474, 200), 30, 1, true);
 		}
 	} else {
 		_audio.stopEffect(1);
@@ -567,7 +567,7 @@ void Scene4050::finishCustomAnimation(uint16 action) {
 		break;
 	case 331: // Susan drinks the coffee.
 		_inventory.remove(15);
-		_audio.playEffect(48, 204);
+		_audio.playEffect(48, 80);
 		beginRoomAnimationRange(454, 15, 170, 117, 143, false);
 		return;
 	case 454: // Finish the exchange with Susan.
@@ -635,13 +635,13 @@ void Scene4050::handleAnimationFrameHook() {
 		playAnimationFootsteps(_actionStep, 1, fromLaser, ARRAYSIZE(fromLaser));
 	}
 	if ((_roomAction == 328 || _roomAction == 428) && (_actionStep == 4 || _actionStep == 2)) {
-		_audio.playEffect(37, 204);
+		_audio.playEffect(37, 80);
 	}
 	if (_roomAction == 333) {
 		if (_actionStep == 15) {
-			_audio.playEffectAt(44, Common::Point(474, 200), 179);
+			_audio.playEffectAt(44, Common::Point(474, 200), 70);
 		} else if (_actionStep == 21) {
-			_audio.playEffectAt(14, Common::Point(474, 200), 128, 0, true);
+			_audio.playEffectAt(14, Common::Point(474, 200), 50, 0, true);
 		} else if (_actionStep == 127) {
 			_audio.stopEffect(0);
 		}

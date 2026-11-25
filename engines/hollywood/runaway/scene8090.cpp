@@ -144,14 +144,14 @@ void Scene8090::resumeAmbientAudio(bool entering) {
 		_audio.stopEffect();
 		return;
 	}
-	resumeFinaleOutdoorAudio(entering, 40, 26);
+	resumeFinaleOutdoorAudio(entering, 40, 10);
 }
 
 void Scene8090::advanceCustomGameplayLoop(uint32 delta) {
 	if (_entryScene == 8092) {
 		return;
 	}
-	updateFinaleOutdoorAudio(102);
+	updateFinaleOutdoorAudio(40);
 	if (!_finale.oscarAway && !_animatesOscar && !_oscarPose) {
 		_oscar.update(_now, _random, _audio);
 	}
@@ -216,12 +216,12 @@ bool Scene8090::drawCustomComposite(Graphics::ManagedSurface &viewport) {
 
 void Scene8090::handleAnimationFrameHook() {
 	if (_roomAction == 402 && _actionStep == 9) {
-		_audio.playFootstep(1, _random.getRandomBit(), 230, 696);
+		_audio.playFootstep(1, _random.getRandomBit(), 90, 696);
 	} else if (_roomAction == 403 && (_actionStep == 5 || _actionStep == 9)) {
-		_audio.playFootstep(2, _random.getRandomBit(), 230, 696);
+		_audio.playFootstep(2, _random.getRandomBit(), 90, 696);
 	}
 	if (_roomAction == 440 && _actionStep == 14) {
-		_audio.playEffect(27, 230);
+		_audio.playEffect(27, 90);
 	}
 }
 

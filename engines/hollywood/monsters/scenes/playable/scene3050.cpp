@@ -393,7 +393,7 @@ void Scene3050::startForegroundActorIdleSpeech(byte frameIndex) {
 		return;
 
 	if (startRealtimePrimarySpeechLine(kScene3050IgorIdleSpeechRow, frameIndex,
-			0x1c0, 0x091, 0x3f, 0x26, 0x38, kScene3050IgorIdleSpeechGroup, kScene3050IgorIdleSpeechId))
+			0x1c0, 0x091, 0x3f, 0x26, 0x38, kScene3050IgorIdleSpeechGroup, kScene3050IgorIdleSpeechId, 50))
 		_foregroundActorIdleSpeechFrame = (frameIndex + 1) % kScene3050IgorIdleSpeechFrameCount;
 }
 

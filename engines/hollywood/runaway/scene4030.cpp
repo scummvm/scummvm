@@ -281,7 +281,7 @@ void Scene4030::handleAnimationFrameHook() {
 			_audio.playEffect(36);
 		}
 		if (_actionStep == 27) {
-			_audio.playEffect(_safeOpen ? 39 : 38, 77);
+			_audio.playEffect(_safeOpen ? 39 : 38, 30);
 		}
 	}
 }

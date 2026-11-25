@@ -132,7 +132,7 @@ void Scene8400::runCustomEntrySequence() {
 }
 
 void Scene8400::resumeAmbientAudio(bool entering) {
-	resumeFinaleOutdoorAudio(entering, 36, 51);
+	resumeFinaleOutdoorAudio(entering, 36, 20);
 }
 
 void Scene8400::panTo(int x, uint step, uint16 action) {
@@ -249,33 +249,34 @@ void Scene8400::withdraw(uint16 action) {
 
 void Scene8400::handleAnimationFrameHook() {
 	if (_roomAction == 306 && _actionStep == 15) {
-		_audio.playEffect(50, 204);
+		_audio.playEffect(50, 80);
 	} else if (_roomAction == 316) {
 		if (_actionStep == 20) {
 			_audio.playEffect(52);
 		} else if (_actionStep == 39) {
-			_audio.playEffect(51, 255, 1);
+			_audio.playEffect(51, 100, 1);
 		} else if (_actionStep == 41 || _actionStep == 42) {
 			_doorFrame = _actionStep - 40;
 		}
 	} else if (_roomAction == 309 && _actionStep == 9) {
-		_audio.playEffect(47, 127);
+		_audio.playEffect(47, 50);
 	} else if (_roomAction == 307) {
 		if (_actionStep == 12 || _actionStep == 19 || _actionStep == 27 || _actionStep == 35) {
-			_audio.playFootstep(5, _random.getRandomBit(), 112, 1065);
+			const byte volume = CLIP<int>((int)(actorHeight() * 100 / 455), 0, 100);
+			_audio.playFootstep(5, _random.getRandomBit(), volume, 1065);
 		}
 	} else if (_roomAction == 410) {
 		if (_actionStep == 7 || _actionStep == 17) {
-			_audio.playFootstep(5, _random.getRandomBit(), 102, 1065);
+			_audio.playFootstep(5, _random.getRandomBit(), 40, 1065);
 		} else if (_actionStep == 25 || _actionStep == 33) {
-			_audio.playFootstep(2, _random.getRandomBit(), 102, 1065);
+			_audio.playFootstep(2, _random.getRandomBit(), 40, 1065);
 		}
 	} else if (_roomAction == 439) {
 		const uint gustav = 43 + _actionStep;
 		const uint feodor = _actionStep >= 5 ? 32 + _actionStep - 5 : 20;
 		if (gustav == 53 || gustav == 84 || gustav == 87 || gustav == 94 || gustav == 98 ||
 				feodor == 85 || feodor == 89 || feodor == 96 || feodor == 103 || feodor == 109 || feodor == 122) {
-			_audio.playFootstep(5, _random.getRandomBit(), 191);
+			_audio.playFootstep(5, _random.getRandomBit(), 75);
 		}
 	}
 }

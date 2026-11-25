@@ -38,7 +38,7 @@ public:
 	bool playIntroMusic();
 	bool playMusicCue(uint16 cueId, byte volumePercent = 100, bool loop = false);
 	bool resumeLastCue();
-	void setVolume(byte volumePercent);
+	void setVolume(byte volumePercent, int attenuation = 0);
 	void stop();
 	bool isPlaying() const;
 
@@ -63,7 +63,7 @@ public:
 		const Common::Point *position = nullptr, int listenerX = 0);
 	bool playSampleAt(uint16 sampleId, int worldX, int viewportX = 0, byte volumePercent = 100);
 	void setViewportPosition(int viewportX);
-	void setVolume(byte volumePercent);
+	void setVolume(byte volumePercent, int attenuation = 0);
 	void stop();
 	bool isPlaying() const;
 	uint32 lastSampleDurationMillis() const { return _lastSampleDurationMillis; }

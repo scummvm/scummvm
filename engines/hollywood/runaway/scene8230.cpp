@@ -423,10 +423,10 @@ RunawayRoomScene::ActionResult Scene8230::dispatchCustomSceneAction(uint16 actio
 
 void Scene8230::handleAnimationFrameHook() {
 	if (_roomAction == 413 && _actionStep == 121 - 59) {
-		_audio.playEffect(34, 230);
+		_audio.playEffect(34, 90);
 	} else if ((_roomAction == 413 && _actionStep == kRutgerPuffStart) ||
 			(_roomAction == 415 && _actionStep == kBrianPuffStart)) {
-		_audio.playEffect(35, 191);
+		_audio.playEffect(35, 75);
 	} else if (_roomAction == 423 && _actionStep == 17) {
 		_audio.playEffect(36);
 		if (!applyPatch(13)) {

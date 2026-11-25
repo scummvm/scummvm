@@ -173,19 +173,19 @@ bool RunawayRoomScene::updateMuseumInventory() {
 	switch (_roomAction) {
 	case 115: // Insert the frozen battery into the recorder.
 		effect = 60;
-		volume = 230;
+		volume = 90;
 		break;
 	case 116: // Put the battery in the ladle.
 		effect = 40;
-		volume = 179;
+		volume = 70;
 		break;
 	case 117: // Pry the ruby out of the mask.
 		effect = 56;
-		volume = 230;
+		volume = 90;
 		break;
 	case 121: // Fill the packet with ground coffee.
 		effect = 45;
-		volume = 255;
+		volume = 100;
 		break;
 	default:
 		return false;
@@ -223,7 +223,7 @@ void RunawayRoomScene::startMuseumFilm(MuseumFilm film) {
 	case kArrivalFilm:
 		// The original blanks the screen during dialing and waits for the
 		// effect, with a limit of 28 quarter-second ticks.
-		_filmCommands = {{S::kMusic, 17, 255}, {S::kOpen, 5}, {S::kEffect, 52, 255},
+		_filmCommands = {{S::kMusic, 17, 100}, {S::kOpen, 5}, {S::kEffect, 52, 100},
 			{S::kPlay, 0, 62}, {S::kSpeech, 40, 0}, {S::kPlay, 63, 889},
 			{S::kStill, (uint16)(gog ? 900 : 890)}, {S::kWaitEffect, 7000, 1}, {S::kTalk, 30, 0, 1, 0, 21}, {S::kDelay, 1000},
 			{S::kTalk, 30, 1, 1, 0, 21}, {S::kPlay, (uint16)(gog ? 912 : 919), (uint16)(gog ? 919 : 930)},
@@ -258,16 +258,16 @@ void RunawayRoomScene::startMuseumFilm(MuseumFilm film) {
 		}
 		break;
 	case kDrillingFilm:
-		_filmCommands = {{S::kOpen, 2}, {S::kEffect, 49, 204}, {S::kPlay, 0, 135}};
+		_filmCommands = {{S::kOpen, 2}, {S::kEffect, 49, 80}, {S::kPlay, 0, 135}};
 		break;
 	case kLaserFilm:
-		_filmCommands = {{S::kOpen, 3}, {S::kMusic, 22, 255}, {S::kEffect, 50, 204}, {S::kPlay, 0, 127},
-			{S::kSpeech, 70, 0, 0, 0, 17}, {S::kPlay, 128, 175}, {S::kMusic, 13, 255}};
+		_filmCommands = {{S::kOpen, 3}, {S::kMusic, 22, 100}, {S::kEffect, 50, 80}, {S::kPlay, 0, 127},
+			{S::kSpeech, 70, 0, 0, 0, 17}, {S::kPlay, 128, 175}, {S::kMusic, 13, 100}};
 		if (demo)
 			_filmCommands = {{S::kOpen, 3}, {S::kPlay, 0, 175}};
 		break;
 	case kRubyFilm:
-		_filmCommands = {{S::kOpen, 4}, {S::kEffect, 51, 230}, {S::kPlay, 0, 75}};
+		_filmCommands = {{S::kOpen, 4}, {S::kEffect, 51, 90}, {S::kPlay, 0, 75}};
 		break;
 	case kCrucifixFilm:
 		_filmCommands = {{S::kImage, 144}, {S::kSpeech, 32, 2, 2}, {S::kWaitSpeech}};
@@ -275,7 +275,7 @@ void RunawayRoomScene::startMuseumFilm(MuseumFilm film) {
 			_filmCommands[0].file = "am_crlim.obt";
 		break;
 	case kMobstersFilm:
-		_filmCommands = {{S::kOpen, 7}, {S::kMusic, 21, 255, 1}, {S::kEffect, 13, 255}, {S::kPlay, 0, (uint16)(demo ? 211 : 213)},
+		_filmCommands = {{S::kOpen, 7}, {S::kMusic, 21, 100, 1}, {S::kEffect, 13, 100}, {S::kPlay, 0, (uint16)(demo ? 211 : 213)},
 			{S::kTalk, 93, 0, 1, 0, 22}, {S::kTalk, 94, 0, 1, 1, 21}, {S::kTalk, 93, 1, 1, 0, 22},
 			{S::kPlay, (uint16)(demo ? 223 : gog ? 214 : 225), (uint16)(demo ? 236 : gog ? 226 : 237)}, {S::kTalk, 94, 1, 3, 0, 21}};
 		if (gog) {
@@ -286,10 +286,10 @@ void RunawayRoomScene::startMuseumFilm(MuseumFilm film) {
 			_filmCommands.push_back(S::Command(S::kStill, 228));
 		}
 		_filmCommands.push_back(S::Command(S::kTalk, 94, 2, 3, 0, 21));
-		_filmCommands.push_back(S::Command(S::kMusic, 13, 255));
+		_filmCommands.push_back(S::Command(S::kMusic, 13, 100));
 		break;
 	case kPhoneFilm:
-		_filmCommands = {{S::kOpen, 8}, {S::kEffect, 57, 153, 1, 1}, {S::kPlay, 0, 31}, {S::kTalk, 91, 0, 1, 0, 19}};
+		_filmCommands = {{S::kOpen, 8}, {S::kEffect, 57, 60, 1, 1}, {S::kPlay, 0, 31}, {S::kTalk, 91, 0, 1, 0, 19}};
 		for (uint i = _museum.phoneUsed ? 7 : 0; i < (_museum.phoneUsed ? 9U : 6U); ++i) {
 			_filmCommands.push_back(S::Command(S::kTalk, 82, i, 1, 1));
 			_filmCommands.push_back(S::Command(S::kTalk, 92, i, 1, 0, 19));
@@ -299,13 +299,13 @@ void RunawayRoomScene::startMuseumFilm(MuseumFilm film) {
 		_filmCommands.push_back(S::Command(S::kPlay, (uint16)(demo ? 54 : gog ? 32 : 43), (uint16)(demo ? 87 : gog ? 62 : 72)));
 		break;
 	case kScannerFilm:
-		_filmCommands = {{S::kOpen, 6}, {S::kMusic, 19, 255}, {S::kEffect, 53, 255}, {S::kPlay, 0, (uint16)(demo ? 694 : 386)}, {S::kMusic, 11, 255}};
+		_filmCommands = {{S::kOpen, 6}, {S::kMusic, 19, 100}, {S::kEffect, 53, 100}, {S::kPlay, 0, (uint16)(demo ? 694 : 386)}, {S::kMusic, 11, 100}};
 		break;
 	case kBetrayalFilm:
-		_filmCommands = {{S::kOpen, 9}, {S::kMusic, 20, 255}, {S::kPlay, 0, 9}, {S::kEffect, 11, 255},
+		_filmCommands = {{S::kOpen, 9}, {S::kMusic, 20, 100}, {S::kPlay, 0, 9}, {S::kEffect, 11, 100},
 			{S::kSpeech, 92, 4, 4, 0, 20}, {S::kPlay, 10, 78}, {S::kWaitSpeech}, {S::kTalk, 92, 2, 1, 0, 20},
 			{S::kPlay, (uint16)(gog ? 79 : 90), (uint16)(gog ? 86 : 90)}, {S::kSpeech, 92, 3, 3, 0, 20},
-			{S::kPlay, (uint16)(gog ? 87 : 91), (uint16)(gog ? 121 : 134)}, {S::kEffect, 12, 255},
+			{S::kPlay, (uint16)(gog ? 87 : 91), (uint16)(gog ? 121 : 134)}, {S::kEffect, 12, 100},
 			{S::kPlay, (uint16)(gog ? 122 : 135), (uint16)(gog ? 124 : 135)}, {S::kWaitSpeech}, {S::kWaitEffect, 5000}};
 		if (demo) {
 			_filmCommands = {{S::kOpen, 9}, {S::kPlay, 0, 79}, {S::kTalk, 92, 2, 1, 0, 20},
@@ -313,8 +313,8 @@ void RunawayRoomScene::startMuseumFilm(MuseumFilm film) {
 		}
 		break;
 	case kMuseumExitFilm:
-		_filmCommands = {{S::kOpen, 10}, {S::kEffect, 57, 153, 1, 1}, {S::kPlay, 0, 12},
-			{S::kTalk, 60, 0, 1, 0, 19}, {S::kMusic, 18, 255}, {S::kEffect, 54, 255},
+		_filmCommands = {{S::kOpen, 10}, {S::kEffect, 57, 60, 1, 1}, {S::kPlay, 0, 12},
+			{S::kTalk, 60, 0, 1, 0, 19}, {S::kMusic, 18, 100}, {S::kEffect, 54, 100},
 			{S::kSpeech, 60, 1, 1, 0, 19}, {S::kPlay, (uint16)(gog ? 13 : 24), (uint16)(gog ? 130 : 141)}, {S::kWaitSpeech}};
 		break;
 	}

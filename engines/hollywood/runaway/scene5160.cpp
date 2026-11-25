@@ -91,7 +91,7 @@ void Scene5160::resumeAmbientAudio(bool entering) {
 	if (_audio.musicCue() != 16 || !_audio.musicPlaying()) {
 		_audio.playMusic(16);
 	}
-	_audio.setMusicVolume(255);
+	_audio.setMusicVolume(100);
 }
 
 bool Scene5160::applyCustomBackgroundPatches() {

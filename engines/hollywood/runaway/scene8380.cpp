@@ -142,7 +142,7 @@ void Scene8380::resumeAmbientAudio(bool entering) {
 	if (entering || !_audio.musicPlaying()) {
 		_audio.playMusic(21);
 	}
-	_audio.setMusicVolume(255);
+	_audio.setMusicVolume(100);
 }
 
 void Scene8380::runCustomEntrySequence() {
@@ -219,7 +219,7 @@ void Scene8380::advanceSushi() {
 	case kTyping:
 		if (_sushiStep < 36) {
 			if (++_sushiStep == 12) {
-				_audio.playEffect(44, 178, 1);
+				_audio.playEffect(44, 70, 1);
 			}
 		} else if (_waitingForSushi) {
 			_sushiState = _sushiGoal == kTalking ? kTurnToBrian : kUseMicrophone;
@@ -382,7 +382,7 @@ void Scene8380::deliverItem(uint16 action) {
 void Scene8380::receiveRecordings() {
 	if (_finale.recordings >= 3) {
 		_audio.playMusic(38, false);
-		_audio.setMusicVolume(255);
+		_audio.setMusicVolume(100);
 	}
 	exchange(83, 0, 0);
 	if (_finale.recordings < 3) {

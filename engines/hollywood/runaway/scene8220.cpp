@@ -98,20 +98,20 @@ void Scene8220::prepareCustomGameplayLoop() {
 }
 
 void Scene8220::resumeAmbientAudio(bool entering) {
-	resumeFinaleOutdoorAudio(false, 36, 51);
+	resumeFinaleOutdoorAudio(false, 36, 20);
 	if (entering && _entryScene == 8220 && (!_finale.streetVisited || !_random.getRandomNumber(5))) {
 		_audio.playMusic(20, false);
 		_finale.streetVisited = 1;
 	} else if (entering && _entryScene == 8223) {
 		_audio.playMusic(12 + _random.getRandomNumber(4), false);
 	}
-	_audio.setMusicVolume(255);
+	_audio.setMusicVolume(100);
 }
 
 void Scene8220::advanceCustomGameplayLoop(uint32 delta) {
 	if (!_departing) {
 		updateFinaleOutdoorAudio();
-		_audio.setMusicVolume(255);
+		_audio.setMusicVolume(100);
 	}
 	if (_finale.oscarAway) {
 		_oscar.update(_now, _random, _audio);
@@ -139,8 +139,8 @@ void Scene8220::runCustomEntrySequence() {
 		_arrivalPhase = kWaitingForCar;
 		_roomAction = 420;
 		_audio.playMusic(38, false);
-		_audio.setMusicVolume(255);
-		_audio.playEffect(67, 178);
+		_audio.setMusicVolume(100);
+		_audio.playEffect(67, 70);
 		return;
 	}
 
@@ -319,7 +319,7 @@ void Scene8220::leaveStreet(uint16 destination, bool advanceResearch) {
 	}
 	if (destination == 8350 && _audio.musicCue() == 20) {
 		_audio.playMusic(12 + _random.getRandomNumber(4), false);
-		_audio.setMusicVolume(255);
+		_audio.setMusicVolume(100);
 	}
 	leaveRoom(destination);
 }
@@ -382,7 +382,7 @@ RunawayRoomScene::ActionResult Scene8220::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 410: // Ask Oscar for the prisoners' car before leaving Douglasville.
 		_audio.playMusic(29, false);
-		_audio.setMusicVolume(255);
+		_audio.setMusicVolume(100);
 		say(14, 9);
 		deferAction(411);
 		break;
@@ -408,7 +408,7 @@ RunawayRoomScene::ActionResult Scene8220::dispatchCustomSceneAction(uint16 actio
 			car[i] = i < 30 ? 58 : i < 132 ? i + 29 : 0;
 			friends[i] = i < 69 ? 0 : i - 68;
 		}
-		_audio.playEffect(69, 178);
+		_audio.playEffect(69, 70);
 		beginRoomAnimation(414, 9, 161, car, ARRAYSIZE(car));
 		setRoomAnimationOverlay(10, 106, friends, ARRAYSIZE(friends));
 		break;

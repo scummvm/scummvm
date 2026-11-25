@@ -417,7 +417,7 @@ void Scene5030::sayInventory(const RunawayInventory::Reply &reply) {
 	const RunawayInventory::Reply speech = reply.action == 1 || reply.action == 5 ? RunawayInventory::randomReply(_random) : reply;
 	stopSpeech();
 	if (speech.cue == 156 && !speech.variation)
-		_audio.playEffect(26, 166);
+		_audio.playEffect(26, 65);
 	uint16 row, sample;
 	byte count;
 	if (!_text.getStaticSpeechCue(speech.cue, speech.variation, row, count, sample))
@@ -473,7 +473,7 @@ void Scene5030::playWalkFootstep() {
 	const byte surface = _maps[1280 + _mask[_position.y * kRoomWidth + _position.x]];
 	const uint volume = CLIP<int>((int)(RunawayActor::perspectiveHeight(_position) * 100 / 455), 0, 100);
 	if (surface >= 1 && surface <= 7) {
-		_audio.playFootstep(surface, _random.getRandomBit(), volume * 255 / 100, _position.x);
+		_audio.playFootstep(surface, _random.getRandomBit(), volume, _position.x);
 	}
 	_lastFootstep = _walkElapsed;
 }
@@ -842,7 +842,7 @@ void Scene5030::startAction(Action action) {
 		break;
 	case kOpenHatch:
 		_audio.playMusic(20, false);
-		_audio.setMusicVolume(255);
+		_audio.setMusicVolume(100);
 		chunk = 36;
 		frames = 47;
 		applyPatch(24);
@@ -1000,7 +1000,7 @@ void Scene5030::updateAction() {
 		// Both demo movies run at 24 fps. Dispatch callbacks on crossing a
 		// frame, including delayed updates, so each effect plays exactly once.
 		if (_action == kIntroVideo && previousStep < 353 && _step >= 353) {
-			_audio.playFootstep(3, _random.getRandomBit(), 255, 512);
+			_audio.playFootstep(3, _random.getRandomBit(), 100, 512);
 		}
 		if (_action == kCleanWindowVideo && previousStep < 56 && _step >= 56)
 			_audio.playEffect(22);
@@ -1019,7 +1019,7 @@ void Scene5030::updateAction() {
 		if (previousStep < 41 && _step >= 41)
 			_audio.playEffect(28);
 		if (previousStep < 44 && _step >= 44) {
-			_audio.playEffect(16, 204, 1);
+			_audio.playEffect(16, 80, 1);
 			applyPatch(11);
 		}
 		if (_step >= 82) {
@@ -1032,7 +1032,7 @@ void Scene5030::updateAction() {
 		case kIntro:
 			length = 19;
 			if (previousStep < 5 && _step >= 5) {
-				_audio.playFootstep(3, _random.getRandomBit(), 179, 512);
+				_audio.playFootstep(3, _random.getRandomBit(), 70, 512);
 			}
 			break;
 		case kOpenLid:
@@ -1040,7 +1040,7 @@ void Scene5030::updateAction() {
 			length = 33;
 			const uint start = _action == kOpenLid ? 18 : 11;
 			if (previousStep < start && _step >= start) {
-				_audio.playEffectAt(80, Common::Point(1238, 200), 153);
+				_audio.playEffectAt(80, Common::Point(1238, 200), 60);
 			}
 			if (previousStep < start + 4 && _step >= start + 4)
 				_audio.stopEffect();
@@ -1084,7 +1084,7 @@ void Scene5030::updateAction() {
 		case kEnterHatch:
 			length = 32;
 			if (previousStep < 24 && _step >= 24) {
-				_audio.playFootstep(3, _random.getRandomBit(), 230, 1238);
+				_audio.playFootstep(3, _random.getRandomBit(), 90, 1238);
 			}
 			break;
 		case kPeekDoor:
@@ -1099,7 +1099,7 @@ void Scene5030::updateAction() {
 		case kStirHelmet:
 			length = 90;
 			if (previousStep < 5 && _step >= 5)
-				_audio.playEffect(71, 191);
+				_audio.playEffect(71, 75);
 			if (previousStep < 81 && _step >= 81)
 				_audio.stopEffect();
 			break;
@@ -1116,7 +1116,7 @@ void Scene5030::update(uint32 now, int scrollDirection, bool inventoryOpen) {
 	const uint elapsed = MIN<uint>(100, now - _lastUpdate);
 	const uint32 pausedTime = now - _lastUpdate;
 	_lastUpdate = now;
-	_audio.updateBackgroundMusic(now, _random, 17, 3, 96, 30000);
+	_audio.updateBackgroundMusic(now, _random, 17, 3, 100, 30000);
 	if (_speechRow && !_audio.speechPlaying() && _speech.finished(now))
 		skipSpeech();
 	if (inventoryOpen && !inventoryPresentation()) {

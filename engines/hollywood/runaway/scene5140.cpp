@@ -190,7 +190,7 @@ void Scene5140::updateIntroduction() {
 			// Brian pauses to think, then announces that he has a plan.
 			typedef RunawaySequence S;
 			static const S::Command film[] = {
-				{S::kOpen, 6}, {S::kPlay, 0, 0}, {S::kMusic, 20, 255},
+				{S::kOpen, 6}, {S::kPlay, 0, 0}, {S::kMusic, 20, 100},
 				{S::kPlay, 1, 186}, {S::kTalk, 1, 31, 1}, {S::kEnd}
 			};
 			intro.phase = BusIntroduction::kFilm;

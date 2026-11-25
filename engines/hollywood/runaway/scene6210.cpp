@@ -67,9 +67,9 @@ const char *Scene6210::actionCaptionVariant(byte id, bool look, byte item) const
 void Scene6210::resumeAmbientAudio(bool entering) {
 	if (!_audio.musicPlaying()) {
 		_audio.playMusic(18, false);
-		_audio.setMusicVolume(191);
+		_audio.setMusicVolume(75);
 	} else if (entering) {
-		_audio.setMusicVolume(191);
+		_audio.setMusicVolume(75);
 	}
 }
 
@@ -184,7 +184,7 @@ RunawayRoomScene::ActionResult Scene6210::dispatchCustomSceneAction(uint16 actio
 
 void Scene6210::handleAnimationFrameHook() {
 	if (_roomAction == 410 && _actionStep == 8) {
-		_audio.playEffect(61, 204);
+		_audio.playEffect(61, 80);
 	}
 }
 

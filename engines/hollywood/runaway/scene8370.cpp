@@ -124,7 +124,7 @@ void Scene8370::prepareCustomGameplayLoop() {
 }
 
 void Scene8370::resumeAmbientAudio(bool entering) {
-	_audio.playEffect(39, 77, 2, true);
+	_audio.playEffect(39, 30, 2, true);
 	if (entering || !_audio.musicPlaying()) {
 		_audio.playMusic(12 + _random.getRandomNumber(4), false);
 	}

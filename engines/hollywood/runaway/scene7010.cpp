@@ -55,9 +55,9 @@ const RunawayItemAction kItemActions[] = {
 
 typedef RunawaySequence S;
 const S::Command kArrival[] = {
-	{S::kOpen, 1}, {S::kMusic, 18, 255, 1}, {S::kStill, 0},
+	{S::kOpen, 1}, {S::kMusic, 18, 100, 1}, {S::kStill, 0},
 	{S::kTalk, 0, 0}, {S::kTalk, 0, 1}, {S::kTalk, 0, 2},
-	{S::kMusic, 19, 255}, {S::kEffect, 31, 255},
+	{S::kMusic, 19, 100}, {S::kEffect, 31, 100},
 	{S::kSpeech, 0, 3, 3}, {S::kPlay, 1, 110}, {S::kWaitSpeech},
 	{S::kSpeech, 0, 4, 4}, {S::kPlay, 111, 249}, {S::kWaitSpeech},
 	{S::kSpeech, 0, 5, 5}, {S::kPlay, 250, 316}, {S::kWaitSpeech},
@@ -127,7 +127,7 @@ void Scene7010::applyCustomHotspotState() {
 }
 
 void Scene7010::resumeAmbientAudio(bool entering) {
-	_audio.playEffect(12, 204, 1, true);
+	_audio.playEffect(12, 80, 1, true);
 }
 
 void Scene7010::advanceCustomGameplayLoop(uint32 delta) {
@@ -228,9 +228,9 @@ void Scene7010::handleAnimationFrameHook() {
 	} else if (_roomAction == 416 && _actionStep == 24) {
 		_audio.playEffect(16);
 	} else if (_roomAction == 417 && _actionStep == 16) {
-		_audio.playEffect(17, 217);
+		_audio.playEffect(17, 85);
 	} else if (_roomAction == 418 && _actionStep == 25) {
-		_audio.playEffect(18, 204);
+		_audio.playEffect(18, 80);
 	} else if (_roomAction == 423) {
 		_camera.y = MIN<uint>(160, _actionStep * 4);
 	}
@@ -272,7 +272,7 @@ RunawayRoomScene::ActionResult Scene7010::dispatchCustomSceneAction(uint16 actio
 	case 405: // Collect the femur.
 		_hopi.femurTaken = 1;
 		_inventory.add(14);
-		_audio.playEffect(13, 230);
+		_audio.playEffect(13, 90);
 		say(4, 2);
 		return kBackgroundChanged;
 	case 307: // Check whether the rock could support the rope.

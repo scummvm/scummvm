@@ -81,7 +81,7 @@ void Scene8226::runCustomEntrySequence() {
 }
 
 void Scene8226::resumeAmbientAudio(bool entering) {
-	resumeFinaleOutdoorAudio(entering, 36, 51);
+	resumeFinaleOutdoorAudio(entering, 36, 20);
 }
 
 void Scene8226::advanceCustomGameplayLoop(uint32 delta) {

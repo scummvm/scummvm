@@ -102,6 +102,7 @@ private:
 	uint32 _idleAccumulator;
 	uint32 _cycleAccumulator;
 	uint32 _musicFadeAccumulator;
+	int _musicAttenuation;
 	uint _chunk3Track;
 	byte _chunk2CycleDirection;
 	byte _lastMouthVariant;

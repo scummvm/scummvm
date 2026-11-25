@@ -385,9 +385,9 @@ void Scene5080::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport
 
 void Scene5080::handleAnimationFrameHook() {
 	if (_roomAction == 313 && _actionFrames[_actionStep] == 21) {
-		_audio.playFootstep(4, _random.getRandomBit(), 255, _position.x);
+		_audio.playFootstep(4, _random.getRandomBit(), 100, _position.x);
 	} else if (_roomAction == 400 && _actionFrames[_actionStep] == 15) {
-		_audio.playFootstep(2, _random.getRandomBit(), 230, 1000);
+		_audio.playFootstep(2, _random.getRandomBit(), 90, 1000);
 	}
 	if (_roomAction == 307 && _actionStep == 13) {
 		_audio.playEffectAt(52, Common::Point(275, 200));

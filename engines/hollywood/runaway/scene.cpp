@@ -179,7 +179,7 @@ void RunawayRoomScene::updateAmbientMusic() {
 		if (_room == 5160 || _room == 5170) {
 			if (!_audio.musicPlaying()) {
 				_audio.playMusic(16);
-				_audio.setMusicVolume(_room == 5170 ? 179 : 255);
+				_audio.setMusicVolume(_room == 5170 ? 70 : 100);
 			}
 		} else if (_game == kRunawayFullGame && _room != 5060 && _room != 5130 && _room != 5140) {
 			// The cabin demos omit the outdoor background tracks.
@@ -189,7 +189,7 @@ void RunawayRoomScene::updateAmbientMusic() {
 		switch (_room) {
 		case 6200:
 		case 6210:
-			_audio.updateBackgroundMusic(_now, _random, 18, 1, 191);
+			_audio.updateBackgroundMusic(_now, _random, 18, 1, 75);
 			break;
 		case 6250:
 			_audio.updateBackgroundMusic(_now, _random, 22, 1);
@@ -855,7 +855,7 @@ void RunawayRoomScene::updateActor(uint elapsed, int scrollDirection, bool inven
 		if (_game != kRunawayMuseumDemo && (!_lastFootstep || _walkElapsed - _lastFootstep >= 360)) {
 			const bool inside = _position.x >= 0 && _position.x < _background.w && _position.y >= 0 && _position.y < _background.h;
 			const byte surface = inside ? _maps[1280 + _mask[_position.y * _background.w + _position.x]] : 0;
-			const byte volume = CLIP<int>((int)(actorHeight() * 255 / 455), 0, 255);
+			const byte volume = CLIP<int>((int)(actorHeight() * 100 / 455), 0, 100);
 			if (surface >= 1 && surface <= 7) {
 				_audio.playFootstep(surface, _random.getRandomBit(), volume, _position.x);
 			}

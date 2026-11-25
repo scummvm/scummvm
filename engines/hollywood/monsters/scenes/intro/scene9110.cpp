@@ -51,6 +51,7 @@ Scene9110::Scene9110(HollywoodEngine *vm) :
 		_idleAccumulator(0),
 		_cycleAccumulator(0),
 		_musicFadeAccumulator(0),
+		_musicAttenuation(0),
 		_chunk3Track(RealtimeAnimationTracks::kInvalidTrack),
 		_chunk2CycleDirection(0),
 		_lastMouthVariant(0xff) {
@@ -144,6 +145,7 @@ void Scene9110::initializeCompositeState() {
 	_idleAccumulator = kScene9110IdleInterval;
 	_cycleAccumulator = kScene9110CycleInterval;
 	_musicFadeAccumulator = kScene9110MusicFadeInterval;
+	_musicAttenuation = 0;
 	_sceneLayers.reset();
 	_realtimeAnimationTracks.reset(_chunk3Track);
 	_realtimeAnimationTracks.prime(_chunk3Track);
@@ -211,8 +213,11 @@ bool Scene9110::advanceAnimationTimers(uint32 millis, SpeechWaitMode waitMode) {
 	bool dirty = false;
 
 	_musicFadeAccumulator += millis;
-	if (_musicFadeAccumulator >= kScene9110MusicFadeInterval)
+	if (_musicFadeAccumulator >= kScene9110MusicFadeInterval) {
+		_musicAttenuation = MAX<int>(-7800, _musicAttenuation - 5 * (int)(_musicFadeAccumulator / kScene9110MusicFadeInterval));
+		_music->setVolume(100, _musicAttenuation);
 		_musicFadeAccumulator %= kScene9110MusicFadeInterval;
+	}
 
 	if (_realtimeAnimationTracks.advance(_chunk3Track, millis, _random))
 		dirty = true;
