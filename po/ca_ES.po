@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-11-25 01:14+0000\n"
-"PO-Revision-Date: 2026-11-11 16:39+0000\n"
+"PO-Revision-Date: 2026-11-25 13:39+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -3119,10 +3119,8 @@ msgstr ""
 
 #. I18N: Spoken by text-to-speech to name an unlabelled radio button
 #: gui/widget.cpp:909
-#, fuzzy
-#| msgid "Directional button:"
 msgid "radio button"
-msgstr "Botó direccional:"
+msgstr "botó d'opció"
 
 #. I18N: Spoken by text-to-speech for the state of a radio button
 #: gui/widget.cpp:911
@@ -8315,9 +8313,8 @@ msgid "Feely phone"
 msgstr ""
 
 #: engines/comfy/metaengine.cpp:110
-#, fuzzy
 msgid "Music"
-msgstr "Volum de música:"
+msgstr "Música"
 
 #: engines/comfy/metaengine.cpp:121
 #, fuzzy
@@ -10878,10 +10875,8 @@ msgid "Skip copy protection"
 msgstr "Protecció contra còpia"
 
 #: engines/igor/metaengine.cpp:51
-#, fuzzy
-#| msgid "Enable copy protection"
 msgid "Skips original copy protection screen."
-msgstr "Habilita la protecció contra còpia"
+msgstr "Omet la pantalla original de protecció de còpia."
 
 #: engines/igor/metaengine.cpp:82
 #, fuzzy
@@ -15216,10 +15211,8 @@ msgid "Mono Sound Mode"
 msgstr "Mode per a daltònics"
 
 #: engines/snatcher/metaengine.cpp:226
-#, fuzzy
-#| msgid "Disable demo mode"
 msgid "Disable stereo sound."
-msgstr "Desactiva el mode de demostració"
+msgstr "Desactiva el so estèreo."
 
 #: engines/snatcher/metaengine.cpp:285
 #, fuzzy
