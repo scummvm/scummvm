@@ -405,6 +405,8 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 			}
 
 			return desc;
+		} else if (header.thumbnail != nullptr) {
+			header.thumbnail->free();
 		}
 	}
 

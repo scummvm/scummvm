@@ -675,6 +675,7 @@ void LoLEngine::gui_toggleButtonDisplayMode(int shapeIndex, int mode) {
 
 	int pageNum = 0;
 
+	assert(shapeIndex - subst >= 0 && shapeIndex - subst < 11);
 	int16 x1 = shapeIndex ? buttonX[shapeIndex - subst] : 0;
 	int16 y1 = shapeIndex ? buttonY[shapeIndex - subst] : 0;
 	int16 x2 = 0;
