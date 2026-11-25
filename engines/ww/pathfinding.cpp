@@ -45,7 +45,9 @@ bool WWEngine::walkAdjustDestPoint(int &x, int &y) {
 					y += incr;
 					return true;
 				}
-			} else if (y - incr >= 0) {
+			}
+			
+			if (y - incr >= 0) {
 				if (walkIsPixelWalkable(x + xc, y - incr)) {
 					x += xc;
 					y -= incr;
@@ -70,7 +72,10 @@ bool WWEngine::walkAdjustDestPoint(int &x, int &y) {
 					y -= yc;
 					return true;
 				}
-			} else if (x + incr >= 0) {
+			}
+			
+			// The original was checking x + incr which is always true, not failing thanks to walkIsPixelWalkable who discarded the incorrect negative values
+			if (x - incr >= 0) {
 				if (walkIsPixelWalkable(x - incr, y + yc)) {
 					x -= incr;
 					y += yc;
