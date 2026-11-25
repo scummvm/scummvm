@@ -470,7 +470,8 @@ void Parallaction_br::changeCharacter(const char *name) {
 
 	const char *charName = _char.getName();
 
-	if (scumm_stricmp(charName, name)) {
+	// the character is freed when a part is loaded
+	if (scumm_stricmp(charName, name) || !_char._ani->gfxobj) {
 		freeCharacter();
 
 		debugC(1, kDebugExec, "changeCharacter(%s)", name);
