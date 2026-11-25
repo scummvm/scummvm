@@ -55,12 +55,14 @@ bool Scene6350::usesAlternateActor() const {
 }
 
 bool Scene6350::applyCustomBackgroundPatches() {
-	return !_town.arrived || (applyPatch(5) && applyPatch(7));
+	return (!_town.arrived || (applyPatch(5) && applyPatch(7))) &&
+		(!_town.houseVisited || applyPatch(6)) &&
+		(!(_town.craterSeen || _town.craterVisited) || applyPatch(3));
 }
 
 void Scene6350::applyCustomHotspotState() {
 	for (uint i = 0; i < 256; ++i) {
-		// The route to the Hopi village has not been discovered yet.
+		// The path to the trailer is unavailable in this chapter.
 		if (_maps[256 + i] == 5) {
 			_maps[256 + i] = 0;
 		}
