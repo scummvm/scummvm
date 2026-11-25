@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-24 09:40+0000\n"
+"POT-Creation-Date: 2026-11-25 01:14+0000\n"
 "PO-Revision-Date: 2026-10-10 14:55+0000\n"
 "Last-Translator: НеСкажу НеСкажувич Нескажувов <j4rik.228@yandex.ru>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -84,7 +84,7 @@ msgstr "Закрыть"
 #: gui/browser.cpp:64 gui/launcher.cpp:277 gui/launcher.cpp:959
 #: backends/platform/sdl/macosx/appmenu_osx.mm:319
 #: engines/access/metaengine.cpp:387 engines/bladerunner/metaengine.cpp:321
-#: engines/ngi/metaengine.cpp:162 engines/supernova/metaengine.cpp:238
+#: engines/ngi/metaengine.cpp:166 engines/supernova/metaengine.cpp:238
 #: engines/tucker/metaengine.cpp:215 engines/zvision/metaengine.cpp:246
 msgid "Help"
 msgstr "Помощь"
@@ -4147,7 +4147,7 @@ msgstr "Правый щелчок"
 #: engines/hypno/metaengine.cpp:456 engines/icb/icb.cpp:137
 #: engines/icb/icb.cpp:203 engines/igor/metaengine.cpp:119
 #: engines/mohawk/myst.cpp:595 engines/mohawk/riven.cpp:876
-#: engines/ngi/metaengine.cpp:136 engines/scumm/insane/mortimer/mortimer.cpp:75
+#: engines/ngi/metaengine.cpp:140 engines/scumm/insane/mortimer/mortimer.cpp:75
 #: engines/sky/metaengine.cpp:126 engines/sludge/keymapper_tables.h:55
 #: engines/sludge/keymapper_tables.h:128 engines/sludge/keymapper_tables.h:190
 #: engines/sludge/keymapper_tables.h:246 engines/sludge/keymapper_tables.h:265
@@ -4458,7 +4458,7 @@ msgid "Display keyboard"
 msgstr "Показать клавиатуру"
 
 #: backends/events/default/default-events.cpp:373
-#: engines/ngi/metaengine.cpp:149
+#: engines/ngi/metaengine.cpp:153
 msgid "Toggle mute"
 msgstr "Вкл/выкл звук"
 
@@ -6587,7 +6587,7 @@ msgstr ""
 #: engines/igor/metaengine.cpp:80 engines/illusions/metaengine.cpp:89
 #: engines/lab/metaengine.cpp:149 engines/lure/metaengine.cpp:168
 #: engines/made/metaengine.cpp:136 engines/mads/metaengine.cpp:264
-#: engines/neverhood/metaengine.cpp:185 engines/ngi/metaengine.cpp:115
+#: engines/neverhood/metaengine.cpp:185 engines/ngi/metaengine.cpp:119
 #: engines/petka/metaengine.cpp:113 engines/prince/metaengine.cpp:227
 #: engines/private/metaengine.cpp:138 engines/queen/metaengine.cpp:146
 #: engines/sherlock/metaengine.cpp:313 engines/stark/metaengine.cpp:184
@@ -8598,7 +8598,7 @@ msgid "Show the original language setup screen every time the game starts"
 msgstr ""
 
 #: engines/comfy/metaengine.cpp:49 engines/hypno/metaengine.cpp:203
-#: engines/lab/metaengine.cpp:209 engines/ngi/metaengine.cpp:168
+#: engines/lab/metaengine.cpp:209 engines/ngi/metaengine.cpp:172
 #: engines/sherlock/metaengine.cpp:872 engines/teenagent/metaengine.cpp:232
 #: engines/toon/metaengine.cpp:98 engines/voyeur/metaengine.cpp:235
 msgid "Skip intro"
@@ -9034,7 +9034,7 @@ msgstr ""
 msgid "Skip intro / Exit map or inventory"
 msgstr "Пропустить вступление / Выйти из карты или инвентаря"
 
-#: engines/draci/metaengine.cpp:218 engines/ngi/metaengine.cpp:191
+#: engines/draci/metaengine.cpp:218 engines/ngi/metaengine.cpp:195
 msgid "Open map"
 msgstr "Открыть карту"
 
@@ -11188,7 +11188,7 @@ msgid "Add additional content that is not enabled the original implementation."
 msgstr "Добавить конент, который был удалён в огининальной игре."
 
 #: engines/hypno/metaengine.cpp:129 engines/lab/metaengine.cpp:154
-#: engines/ngi/metaengine.cpp:117 engines/voyeur/metaengine.cpp:188
+#: engines/ngi/metaengine.cpp:121 engines/voyeur/metaengine.cpp:188
 msgid "Intro keymappings"
 msgstr "Раскладка клавиш вступления"
 
@@ -11788,7 +11788,7 @@ msgstr ""
 msgid "Exit keymappings"
 msgstr "Раскладка клавиш ухода"
 
-#: engines/lab/metaengine.cpp:155 engines/ngi/metaengine.cpp:116
+#: engines/lab/metaengine.cpp:155 engines/ngi/metaengine.cpp:120
 #: engines/sherlock/metaengine.cpp:339 engines/sherlock/metaengine.cpp:782
 msgid "Map keymappings"
 msgstr "Раскладка клавиш карты"
@@ -13028,7 +13028,7 @@ msgstr "Раскладка клавиш меню управления сохра
 msgid "Pause menu keymappings"
 msgstr "Раскладка клавиш меню паузы"
 
-#: engines/neverhood/metaengine.cpp:192 engines/ngi/metaengine.cpp:124
+#: engines/neverhood/metaengine.cpp:192 engines/ngi/metaengine.cpp:128
 #: engines/prince/metaengine.cpp:231 engines/queen/metaengine.cpp:180
 #: engines/sludge/keymapper_tables.h:86 engines/sludge/keymapper_tables.h:135
 #: engines/sludge/keymapper_tables.h:178 engines/sludge/keymapper_tables.h:214
@@ -13058,38 +13058,38 @@ msgstr "Пропустить всю сцену (работает только в
 msgid "Confirm the selected save / new save name"
 msgstr "Подтвердите выбранное имя сохранения"
 
-#: engines/ngi/metaengine.cpp:118
+#: engines/ngi/metaengine.cpp:122
 msgid "Credits keymappings"
 msgstr "Раскладка клавиш титров"
 
 #. I18N: Keymap for various dialogs such as save game dialog.
-#: engines/ngi/metaengine.cpp:120
+#: engines/ngi/metaengine.cpp:124
 msgid "Dialog keymappings"
 msgstr "Раскладка клавиш диалога"
 
-#: engines/ngi/metaengine.cpp:130
+#: engines/ngi/metaengine.cpp:134
 msgid "Deselect item"
 msgstr "Отменить выбор элемента"
 
 #. I18N: Stops all currently playing sounds.
-#: engines/ngi/metaengine.cpp:143
+#: engines/ngi/metaengine.cpp:147
 msgid "Stop sounds"
 msgstr "Остановить звук"
 
-#: engines/ngi/metaengine.cpp:155 engines/teenagent/metaengine.cpp:226
+#: engines/ngi/metaengine.cpp:159 engines/teenagent/metaengine.cpp:226
 msgid "Toggle inventory"
 msgstr "Переключить инвентарь"
 
-#: engines/ngi/metaengine.cpp:176
+#: engines/ngi/metaengine.cpp:180
 msgid "Skip credits"
 msgstr "Пропустить титры"
 
 #. I18N: Closes any open dialogs, such as save game dialog.
-#: engines/ngi/metaengine.cpp:183
+#: engines/ngi/metaengine.cpp:187
 msgid "Close dialog"
 msgstr "Закрыть диалог"
 
-#: engines/ngi/metaengine.cpp:197
+#: engines/ngi/metaengine.cpp:201
 msgid "Close map"
 msgstr "Закрыть карту"
 
