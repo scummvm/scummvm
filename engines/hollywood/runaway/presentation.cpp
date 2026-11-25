@@ -76,21 +76,15 @@ RunawayPresentation::MouseState::~MouseState() {
 Common::Point RunawayPresentation::MouseState::update(bool active) {
 	const Common::Point mouse = g_system->getEventManager()->getMousePos();
 	if (active && !_active) {
-		_position = mouse;
 		_wasVisible = CursorMan.showMouse(false);
-	}
-	if (_active && mouse != _position) {
-		// Warp outside event polling so generated motion cannot prolong the input loop.
-		g_system->warpMouse(_position.x, _position.y);
 	}
 	if (active) {
 		CursorMan.showMouse(false);
 	} else if (_active) {
 		CursorMan.showMouse(_wasVisible);
 	}
-	const Common::Point position = active || _active ? _position : mouse;
 	_active = active;
-	return position;
+	return mouse;
 }
 
 static const uint kInterrogationSpeakerActor[] = {1, 2, 0};

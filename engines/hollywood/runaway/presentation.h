@@ -53,7 +53,6 @@ public:
 		Common::Point update(bool active);
 
 	private:
-		Common::Point _position;
 		bool _active = false, _wasVisible = false;
 	};
 
