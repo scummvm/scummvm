@@ -175,6 +175,14 @@ void Control::setText(const Common::String &text) {
 	}
 }
 
+void Control::fitToPicture() {
+	const Common::Rect &src = _elements[0]._src;
+	if (!src.isEmpty()) {
+		_bounds.setWidth(src.width());
+		_bounds.setHeight(src.height());
+	}
+}
+
 void Control::fitHeightToText() {
 	_bounds.bottom = _bounds.top + MAX(_elements[0].measureTextHeight(_text, getTextWidth()), getMinHeight());
 }

@@ -73,6 +73,9 @@ public:
 	void setEnabled(bool enabled);
 	void setText(const Common::String &text);
 
+	// Makes the control as large as the picture it draws, keeping its top left
+	void fitToPicture();
+
 	const Common::String &getName() const { return _name; }
 	void setName(const Common::String &name) { _name = name; }
 	const Common::String &getTooltip() const { return _tooltip; }

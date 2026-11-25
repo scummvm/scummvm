@@ -488,6 +488,12 @@ static int panelAddBg(lua_State *L) {
 	setEventHandler(L, 2, panel->getBackground());
 
 	panel->place();
+
+	// The panel takes the whole onScreen rect, but its background is drawn at the
+	// size of its picture. Dossier2's hint dialog puts a picture of 452x229 in a
+	// rect of 468x241, and places its buttons on the ones in the picture.
+	panel->getBackground()->fitToPicture();
+
 	panel->registerGraphics();
 	return 0;
 }
