@@ -298,12 +298,6 @@ void lua_Save(SaveGame *savedState) {
 	savedState->writeLESint32(GCthreshold);
 	savedState->writeLESint32(nblocks);
 
-	savedState->writeLESint32(Mbuffsize);
-	savedState->write(Mbuffer, Mbuffsize);
-	int32 MbaseOffset = Mbuffbase - Mbuffer;
-	savedState->writeLESint32(MbaseOffset);
-	savedState->writeLESint32(Mbuffnext);
-
 	savedState->writeLESint32(globalTaskSerialId);
 
 	int32 countStates = 0, currentState = 0;
