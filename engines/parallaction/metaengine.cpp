@@ -97,7 +97,8 @@ bool ParallactionMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSimpleSavesNames) ||
-		(f == kSupportsDeleteSave);
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesUseExtendedFormat);
 }
 
 bool Parallaction::Parallaction::hasFeature(EngineFeature f) const {
@@ -183,6 +184,10 @@ Common::KeymapArray ParallactionMetaEngine::initKeymaps(const char *target) cons
 }
 
 SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
+	// only Big Red Adventure uses the extended saves
+	if (ConfMan.get("gameid", target) == "bra")
+		return MetaEngine::listSaves(target);
+
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 
 	Common::StringArray filenames = saveFileMan->listSavefiles(getSavegameFilePattern(target));

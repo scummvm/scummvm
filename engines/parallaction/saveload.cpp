@@ -327,7 +327,81 @@ void SaveLoad_br::doLoadGame(uint16 slot) {
 }
 
 void SaveLoad_br::doSaveGame(uint16 slot, const char* name) {
-	// TODO: implement savegame
+	Common::Error result = _vm->saveGameState(slot, name);
+	if (result.getCode() != Common::kNoError) {
+		GUI::MessageDialog dialog(result.getDesc());
+		dialog.runModal();
+	}
+}
+
+static const uint32 kSavegameVersion = 1;
+static const int16 kNoFollowerPosition = -1000;
+
+static void writeSaveString(Common::WriteStream *stream, const Common::String &str) {
+	stream->writeString(str);
+	stream->writeByte(0);
+}
+
+// Same data as savegame_ in the original
+Common::Error Parallaction_br::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	// store the flags of the current location first
+	ZoneList::iterator zit = _location._zones.begin();
+	for ( ; zit != _location._zones.end(); ++zit) {
+		restoreOrSaveZoneFlags(*zit, false);
+	}
+	AnimationList::iterator ait = _location._animations.begin();
+	for ( ; ait != _location._animations.end(); ++ait) {
+		restoreOrSaveZoneFlags(*ait, false);
+	}
+
+	stream->writeUint32LE(kSavegameVersion);
+	stream->writeSint32LE(_part);
+	writeSaveString(stream, _locationNames[_currentLocationIndex]);
+	writeSaveString(stream, _char.getName());
+
+	Common::Point foot;
+	_char._ani->getFoot(foot);
+	stream->writeSint16LE(foot.x);
+	stream->writeSint16LE(foot.y);
+	stream->writeSint16LE(_char._ani->getF());
+
+	int16 followerFrame = 0;
+	foot.x = foot.y = kNoFollowerPosition;
+	if (_follower) {
+		_follower->getFoot(foot);
+		followerFrame = _follower->getF();
+	}
+	writeSaveString(stream, _followerName);
+	stream->writeSint16LE(foot.x);
+	stream->writeSint16LE(foot.y);
+	stream->writeSint16LE(followerFrame);
+
+	stream->writeUint32LE(g_globalFlags);
+
+	stream->writeUint16LE(_numLocations);
+	for (uint i = 0; i < _numLocations; i++) {
+		writeSaveString(stream, _locationNames[i]);
+		stream->writeUint32LE(_localFlags[i]);
+	}
+	for (uint i = 0; i < _numLocations; i++) {
+		for (uint j = 0; j < NUM_ZONES; j++)
+			stream->writeUint32LE(_zoneFlags[i][j]);
+	}
+
+	for (uint i = 0; i < ARRAYSIZE(_counters); i++)
+		stream->writeSint32LE(_counters[i]);
+
+	Inventory *inventories[] = { _dinoInventory, _dougInventory, _donnaInventory };
+	for (uint i = 0; i < ARRAYSIZE(inventories); i++) {
+		stream->writeSint16LE(inventories[i]->getNumItems());
+		for (int j = 0; j < inventories[i]->getNumItems(); j++) {
+			const InventoryItem *item = inventories[i]->getItem(j);
+			stream->writeUint32LE(item->_id);
+			stream->writeUint16LE(item->_index);
+		}
+	}
+
+	return stream->err() ? Common::kWritingFailed : Common::kNoError;
 }
 
 void SaveLoad_br::getGamePartProgress(bool *complete, int size) {

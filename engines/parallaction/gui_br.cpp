@@ -431,7 +431,6 @@ public:
 			break;
 
 		case 2:	// save
-			warning("Saving is not supported yet");
 			_vm->_saveLoad->saveGame();
 			break;
 

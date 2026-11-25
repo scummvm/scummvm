@@ -23,6 +23,8 @@
 #include "common/util.h"
 #include "common/textconsole.h"
 
+#include "engines/metaengine.h"
+
 #include "parallaction/parallaction.h"
 #include "parallaction/exec.h"
 #include "parallaction/input.h"
@@ -54,6 +56,22 @@ Parallaction_br::Parallaction_br(OSystem* syst, const PARALLACTIONGameDescriptio
 	_callables = nullptr;
 	_walker = nullptr;
 	_ferrcycleMode = 0;
+}
+
+bool Parallaction_br::hasFeature(EngineFeature f) const {
+	return Parallaction::hasFeature(f) ||
+		(f == kSupportsSavingDuringRuntime);
+}
+
+Common::String Parallaction_br::getSaveStateName(int slot) const {
+	return getMetaEngine()->getSavegameFile(slot, _targetName.c_str());
+}
+
+// When the in-game menu can be opened (see Input::updateGameInput)
+bool Parallaction_br::canSaveGameStateCurrently(Common::U32String *msg) {
+	return !(getFeatures() & GF_DEMO) && _char._ani->gfxobj &&
+		_input->_inputMode == Input::kInputModeGame && _input->isMouseEnabled() &&
+		!(g_engineFlags & (kEngineBlockInput | kEngineWalking | kEngineChangeLocation));
 }
 
 Common::Error Parallaction_br::init() {

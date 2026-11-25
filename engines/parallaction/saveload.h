@@ -70,12 +70,12 @@ public:
 };
 
 class SaveLoad_br : public SaveLoad {
-//	Parallaction_br *_vm;
+	Parallaction_br *_vm;
 	void doLoadGame(uint16 slot) override;
 	void doSaveGame(uint16 slot, const char* name) override;
 
 public:
-	SaveLoad_br(Parallaction_br *vm, Common::SaveFileManager *saveFileMan) : SaveLoad(saveFileMan, "bra") { }
+	SaveLoad_br(Parallaction_br *vm, Common::SaveFileManager *saveFileMan) : SaveLoad(saveFileMan, "bra"), _vm(vm) { }
 
 	void getGamePartProgress(bool *complete, int size) override;
 	void setPartComplete(const char *part) override;
