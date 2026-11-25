@@ -458,7 +458,7 @@ private:
 	}
 
 	bool parserCallback_ENTRANCE(ParserNode *node) {
-		uint32 id, scene, queue;
+		uint32 id = 0, scene = 0, queue = 0;
 		if (!_project._objectIds.findId(node->values["id"], id) ||
 			!_project._objectIds.findId(node->values["scene"], scene) ||
 			!_project._objectIds.findId(node->values["queue"], queue))
@@ -782,8 +782,8 @@ private:
 
 	bool parserCallback_MOVEMENT(ParserNode *node) {
 		AniObject &object = *_scene._aniObjects.back();
-		int16 prevId;
-		int16 nextId;
+		int16 prevId = 0;
+		int16 nextId = 0;
 		if (!readId(node->values["nIdPrev"], prevId) || !readId(node->values["nIdNext"], nextId))
 			return parserError("Unknown statics ID in movement '" + node->values["id"] + "'");
 
