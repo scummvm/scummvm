@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "common/textconsole.h"
@@ -60,6 +61,7 @@ Parallaction_br::Parallaction_br(OSystem* syst, const PARALLACTIONGameDescriptio
 
 bool Parallaction_br::hasFeature(EngineFeature f) const {
 	return Parallaction::hasFeature(f) ||
+		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }
 
@@ -72,6 +74,10 @@ bool Parallaction_br::canSaveGameStateCurrently(Common::U32String *msg) {
 	return !(getFeatures() & GF_DEMO) && _char._ani->gfxobj &&
 		_input->_inputMode == Input::kInputModeGame && _input->isMouseEnabled() &&
 		!(g_engineFlags & (kEngineBlockInput | kEngineWalking | kEngineChangeLocation));
+}
+
+bool Parallaction_br::canLoadGameStateCurrently(Common::U32String *msg) {
+	return canSaveGameStateCurrently(msg);
 }
 
 Common::Error Parallaction_br::init() {
@@ -175,6 +181,7 @@ bool Parallaction_br::processGameEvent(int event) {
 Common::Error Parallaction_br::go() {
 
 	bool splash = true;
+	int saveSlot = ConfMan.getInt("save_slot");
 
 	while (!shouldQuit()) {
 
@@ -182,12 +189,16 @@ Common::Error Parallaction_br::go() {
 			scheduleLocationSwitch("camalb");
 			_nextPart = 1;
 			_input->_inputMode = Input::kInputModeGame;
+		} else if (saveSlot >= 0 && loadGameState(saveSlot).getCode() == Common::kNoError) {
+			_input->_inputMode = Input::kInputModeGame;
+			splash = false;
 		} else {
 			_input->setMenuPointer();
 			startGui(splash);
 			 // don't show splash after first time
 			splash = false;
 		}
+		saveSlot = -1;
 
 //		initCharacter();
 

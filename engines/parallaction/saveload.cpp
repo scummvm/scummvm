@@ -323,7 +323,25 @@ void SaveLoad_ns::renameOldSavefiles() {
 }
 
 void SaveLoad_br::doLoadGame(uint16 slot) {
-	// TODO: implement loadgame
+	_vm->loadGameState(slot);
+}
+
+// The menus stay open if the game was not loaded
+bool SaveLoad_br::loadGame() {
+	Common::String null;
+	int slot = selectSaveFile(null, false);
+	if (slot == -1) {
+		return false;
+	}
+
+	Common::Error result = _vm->loadGameState(slot);
+	if (result.getCode() != Common::kNoError) {
+		GUI::MessageDialog dialog(result.getDesc());
+		dialog.runModal();
+		return false;
+	}
+
+	return true;
 }
 
 void SaveLoad_br::doSaveGame(uint16 slot, const char* name) {
@@ -402,6 +420,71 @@ Common::Error Parallaction_br::saveGameStream(Common::WriteStream *stream, bool 
 	}
 
 	return stream->err() ? Common::kWritingFailed : Common::kNoError;
+}
+
+// As restoregame_ in the original: reload the part, then the saved state
+Common::Error Parallaction_br::loadGameStream(Common::SeekableReadStream *stream) {
+	if (stream->readUint32LE() != kSavegameVersion)
+		return Common::Error(Common::kReadingFailed, "unknown savegame version");
+
+	int part = stream->readSint32LE();
+	Common::String location = stream->readString();
+	Common::String character = stream->readString();
+	if (stream->err() || stream->eos())
+		return Common::kReadingFailed;
+
+	_soundMan->execute(SC_SETMUSICFILE, "");
+	loadPart(part);
+
+	_location._startPosition.x = stream->readSint16LE();
+	_location._startPosition.y = stream->readSint16LE();
+	_location._startFrame = stream->readSint16LE();
+
+	_followerName = stream->readString();
+	_location._followerStartPosition.x = stream->readSint16LE();
+	_location._followerStartPosition.y = stream->readSint16LE();
+	_location._followerStartFrame = stream->readSint16LE();
+
+	g_globalFlags = stream->readUint32LE();
+
+	_numLocations = MIN<uint16>(stream->readUint16LE(), NUM_LOCATIONS);
+	for (uint i = 0; i < _numLocations; i++) {
+		Common::strlcpy(_locationNames[i], stream->readString().c_str(), sizeof(_locationNames[i]));
+		_localFlags[i] = stream->readUint32LE();
+	}
+	for (uint i = 0; i < _numLocations; i++) {
+		for (uint j = 0; j < NUM_ZONES; j++)
+			_zoneFlags[i][j] = stream->readUint32LE();
+	}
+
+	for (uint i = 0; i < ARRAYSIZE(_counters); i++)
+		_counters[i] = stream->readSint32LE();
+
+	Inventory *inventories[] = { _dinoInventory, _dougInventory, _donnaInventory };
+	for (uint i = 0; i < ARRAYSIZE(inventories); i++) {
+		inventories[i]->clear(false);
+		int16 numItems = stream->readSint16LE();
+		for (int j = 0; j < numItems; j++) {
+			uint32 value = stream->readUint32LE();
+			ItemName name = stream->readUint16LE();
+			inventories[i]->addItem(name, value);
+		}
+	}
+
+	changeCharacter(character.c_str());
+
+	// the zones of common.slf stay loaded
+	ZoneList::iterator zit = _location._zones.begin();
+	for ( ; zit != _location._zones.end(); ++zit) {
+		restoreOrSaveZoneFlags(*zit, true);
+	}
+	AnimationList::iterator ait = _location._animations.begin();
+	for ( ; ait != _location._animations.end(); ++ait) {
+		restoreOrSaveZoneFlags(*ait, true);
+	}
+
+	scheduleLocationSwitch(location.c_str());
+	return Common::kNoError;
 }
 
 void SaveLoad_br::getGamePartProgress(bool *complete, int size) {

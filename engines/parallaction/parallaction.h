@@ -597,7 +597,9 @@ public:
 	bool hasFeature(EngineFeature f) const override;
 	Common::String getSaveStateName(int slot) const override;
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
 public:
 	void parseLocation(const char* name) override;

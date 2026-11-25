@@ -77,6 +77,8 @@ class SaveLoad_br : public SaveLoad {
 public:
 	SaveLoad_br(Parallaction_br *vm, Common::SaveFileManager *saveFileMan) : SaveLoad(saveFileMan, "bra"), _vm(vm) { }
 
+	bool loadGame() override;
+
 	void getGamePartProgress(bool *complete, int size) override;
 	void setPartComplete(const char *part) override;
 };
