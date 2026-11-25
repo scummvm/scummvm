@@ -1802,7 +1802,8 @@ void GameLogic::r1_refreshRoomBackground() {
 		} else if (_r1_flags1 & 0x10) {
 			_vm->drawRoomImageToBackground("emptycls.pcx", 179, 67);
 		}
-		if (_r1_flags2 & ((_r1_flags1 & 0x40) + 1) & 0x01) {
+		// The original was adding a "& (_r1_flags1 & 0x40) + 1" to the following test, which is basically a 1. Maybe a compiler glitch.
+		if (_r1_flags2 & 0x01) {
 			if (_r1_flags1 & 0x08) {
 				_vm->drawRoomImageToBackground("gadin10.pcx", 0, 78);
 			} else {
