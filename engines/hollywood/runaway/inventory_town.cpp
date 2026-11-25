@@ -21,6 +21,7 @@
 
 #include "common/util.h"
 #include "hollywood/runaway/inventory.h"
+#include "hollywood/runaway/strings.h"
 
 namespace Hollywood {
 
@@ -134,6 +135,10 @@ RunawayInventory::Reply RunawayInventory::combineTownItems(byte first, byte seco
 	if (first == 8 && second == 31) { // The liniment must be combined with the leaves.
 		return Reply(243);
 	}
+	if (first == 12 && _strings.language() == Common::DE_DEU) {
+		// The German version of cue 230 refuses pouring concentrate.
+		return Reply(230);
+	}
 	// The remaining combinations work in either direction.
 	if (first > second) {
 		SWAP(first, second);
@@ -179,7 +184,7 @@ RunawayInventory::Reply RunawayInventory::combineTownItems(byte first, byte seco
 	if (first == 28 && second == 31) {
 		return Reply(242);
 	}
-	if (first == 11 || second == 11) {
+	if ((first == 11 || second == 11) && _strings.language() != Common::DE_DEU) {
 		return Reply(230);
 	}
 	return Reply::fromAction(1);

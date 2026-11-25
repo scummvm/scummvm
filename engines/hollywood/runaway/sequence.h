@@ -48,11 +48,12 @@ public:
 		kWaitInput,
 		kMusic,       // Cue, volume, loop.
 		kMusicVolume, // Change volume without restarting the current music.
+		kFadeMusic,   // Fade out over milliseconds, starting at the supplied volume.
 		kEffect,      // Cue, volume, channel, loop.
 		kPauseEffect, // Channel, paused.
 		kWaitEffect,  // Maximum wait in milliseconds (channel 0); second argument blanks the screen.
 		kStopEffects, // Optional channel + 1; zero stops all effects.
-		kDelay,       // Milliseconds.
+		kDelay,       // Milliseconds; second argument blanks the screen.
 		kEnd
 	};
 	enum Playback { kOnce, kLoopDuringSpeech, kIdleDuringSpeech, kUntilSpeechEnds, kPortraitDuringSpeech };

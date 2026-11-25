@@ -20,8 +20,11 @@
  */
 
 #include "common/scummsys.h"
+#include "common/debug.h"
+#include "common/file.h"
 #include "common/str-enc.h"
 #include "common/util.h"
+#include "hollywood/debug.h"
 #include "hollywood/runaway/scene9030.h"
 
 namespace Hollywood {
@@ -36,6 +39,26 @@ const byte kBrianFrames[] = {
 
 const byte kWaveLayers[] = {8, 9, 10, 3, 4, 5, 6, 7};
 
+using S = RunawaySequence;
+const S::Command kTeaserCommands[] = {
+	{S::kOpen, 5}, {S::kMusic, 10, 255}, {S::kDelay, 4000, 1},
+	{S::kPlay, 0, 588}, {S::kFadeMusic, 7500, 255}, {S::kEnd}
+};
+
+const S::Command kSilentTeaserCommands[] = {
+	{S::kOpen, 5}, {S::kPlay, 0, 588}, {S::kEnd}
+};
+
+bool hasTeaserMusic() {
+	// The Spanish data also contains the movie, but its music cue is empty.
+	Common::File music;
+	if (!music.open("RESOURCE.M06") || music.size() < 400 || !music.seek(10 * 4))
+		return false;
+	const uint32 start = music.readUint32LE();
+	const uint32 end = music.readUint32LE();
+	return !music.err() && start >= 400 && end > start && end <= music.size() && (end - start) % 4 == 0;
+}
+
 } // End of anonymous namespace
 
 const RunawayRoom kRunawayScene9030 = {
@@ -46,7 +69,7 @@ const RunawayRoom kRunawayScene9030 = {
 namespace Runaway {
 
 Scene9030::Scene9030(RunawayAudio &audio, RunawayInventory &, const RunawayStrings &, RunawayGameType) :
-	_audio(audio), _random("runawayEpilogue"), _speech(audio, _random) {}
+	_audio(audio), _random("runawayEpilogue"), _speech(audio, _random), _teaser(audio) {}
 
 bool Scene9030::load(uint16 entryScene) {
 	_entryScene = entryScene;
@@ -155,7 +178,21 @@ void Scene9030::enter(Step step) {
 	case kMusicTail: // Leave the final view visible until the music ends.
 		_audio.stopEffect(2);
 		break;
-	case kFinished: // End the game after the epilogue.
+	case kTeaser: { // The Special Edition follows the epilogue with a Runaway 2 teaser.
+		_speech.stop();
+		_audio.stopEffect();
+		_audio.stopMusic();
+		const bool video = Common::File::exists("DATAVI05.001");
+		const bool music = video && hasTeaserMusic();
+		if (video && (music || _restoredContent)) {
+			debugC(1, kDebugScene, "Runaway: playing the Runaway 2 teaser%s", music ? "" : " without music");
+			_teaser.start(music ? kTeaserCommands : kSilentTeaserCommands, _text, _now, 'I');
+		} else {
+			enter(kFinished);
+		}
+		break;
+	}
+	case kFinished: // End the game after the epilogue and optional teaser.
 		_speech.stop();
 		_audio.stopEffect();
 		_audio.stopMusic();
@@ -187,7 +224,7 @@ void Scene9030::update(uint32 now, int scrollDirection, bool inventoryOpen) {
 	if (speaking() && _speech.finished(now)) {
 		nextLine();
 	}
-	if (_step >= kExclamation && _step < kFinished) {
+	if (_step >= kExclamation && _step < kTeaser) {
 		updateBeach();
 	}
 	const uint elapsed = now - _started;
@@ -254,6 +291,12 @@ void Scene9030::update(uint32 now, int scrollDirection, bool inventoryOpen) {
 		break;
 	case kMusicTail:
 		if (!_audio.musicPlaying() || elapsed >= 60000) {
+			enter(kTeaser);
+		}
+		break;
+	case kTeaser:
+		_teaser.update(now);
+		if (!_teaser.active()) {
 			enter(kFinished);
 		}
 		break;
@@ -269,10 +312,18 @@ void Scene9030::skipSpeech() {
 }
 
 void Scene9030::skipVideo() {
-	enter(kFinished);
+	if (_step < kTeaser) {
+		enter(kTeaser);
+	} else {
+		_teaser.skip();
+	}
 }
 
 void Scene9030::draw() {
+	if (_step == kTeaser) {
+		_teaser.draw(_screen);
+		return;
+	}
 	_screen.clear();
 	Graphics::ManagedSurface viewport(_screen, Common::Rect(0, kRunawayViewportTop, kRunawayScreenWidth,
 		kRunawayViewportTop + kRunawayViewportHeight));

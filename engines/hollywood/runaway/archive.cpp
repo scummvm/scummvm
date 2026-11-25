@@ -31,11 +31,12 @@ namespace {
 
 class RunawayInstallerArchive : public Common::MemcachingCaseInsensitiveArchive {
 public:
-	RunawayInstallerArchive(Common::Archive *cabinet, const Common::FSNode &text) :
-			MemcachingCaseInsensitiveArchive(128 * 1024 * 1024), _cabinet(cabinet), _text(text) {}
+	RunawayInstallerArchive(Common::Archive *cabinet, const Common::FSNode &text, const Common::FSNode &lipSync) :
+			MemcachingCaseInsensitiveArchive(128 * 1024 * 1024), _cabinet(cabinet), _text(text), _lipSync(lipSync),
+			_hasLipSync(lipSync.exists() && !lipSync.isDirectory()) {}
 
 	bool hasFile(const Common::Path &path) const override {
-		return path.equalsIgnoreCase("RESOURCE.003") || _cabinet->hasFile(path);
+		return path.equalsIgnoreCase("RESOURCE.003") || (_hasLipSync && path.equalsIgnoreCase("RESOURCE.004")) || _cabinet->hasFile(path);
 	}
 
 	int listMembers(Common::ArchiveMemberList &list) const override {
@@ -44,6 +45,10 @@ public:
 		for (const auto &member : members)
 			list.push_back(getMember(member->getPathInArchive()));
 		list.push_back(getMember("RESOURCE.003"));
+		if (_hasLipSync && !_cabinet->hasFile("RESOURCE.004")) {
+			list.push_back(getMember("RESOURCE.004"));
+			return members.size() + 2;
+		}
 		return members.size() + 1;
 	}
 
@@ -53,9 +58,10 @@ public:
 	}
 
 	Common::SharedArchiveContents readContentsForPath(const Common::Path &path) const override {
-		// The installer renames this loose file to RESOURCE.003. It needs no decompression.
-		if (path.equalsIgnoreCase("RESOURCE.003")) {
-			Common::SeekableReadStream *stream = _text.createReadStream();
+		// The installer renames the loose text and optional lip-sync files.
+		const bool lipSync = _hasLipSync && path.equalsIgnoreCase("RESOURCE.004");
+		if (path.equalsIgnoreCase("RESOURCE.003") || lipSync) {
+			Common::SeekableReadStream *stream = (lipSync ? _lipSync : _text).createReadStream();
 			return stream ? Common::SharedArchiveContents::bypass(stream) : Common::SharedArchiveContents();
 		}
 
@@ -75,7 +81,8 @@ public:
 
 private:
 	Common::ScopedPtr<Common::Archive> _cabinet;
-	Common::FSNode _text;
+	Common::FSNode _text, _lipSync;
+	bool _hasLipSync;
 };
 
 } // End of anonymous namespace
@@ -85,7 +92,7 @@ Common::Archive *makeRunawayInstallerArchive(const Common::FSNode &directory) {
 	if (!text.exists() || text.isDirectory())
 		return nullptr;
 	Common::Archive *cabinet = Common::makeInstallShieldArchive(directory.getChild("data1.cab"));
-	return cabinet ? new RunawayInstallerArchive(cabinet, text) : nullptr;
+	return cabinet ? new RunawayInstallerArchive(cabinet, text, directory.getChild("data3.ps")) : nullptr;
 }
 
 } // End of namespace Hollywood

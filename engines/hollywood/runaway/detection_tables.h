@@ -84,6 +84,18 @@
 		ADGF_UNSTABLE,
 		GUIO2(GUIO_NOMIDI, GAMEOPTION_RESTORED_CONTENT)
 	},
+	// German Special Edition DVD, run directly from the disc.
+	{
+		"runaway",
+		"Special Edition",
+		AD_ENTRY3s("data1.hdr", "ef964935b9e6ceeb9215244ba7a6774c", 14478,
+			"data2.ps", "8aa07584175fc9d28c1aff5fa5f93a5f", 7340291,
+			"RESOURCE.B02", "486eace90c76d8772d751a879466cc39", 8352653),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_RESTORED_CONTENT)
+	},
 	// English museum demo (2000), with TM2A movies and text-only dialogue.
 	{
 		"runaway",

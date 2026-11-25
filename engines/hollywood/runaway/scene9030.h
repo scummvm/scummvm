@@ -23,6 +23,7 @@
 #define HOLLYWOOD_RUNAWAY_SCENE9030_H
 
 #include "hollywood/runaway/presentation_scene.h"
+#include "hollywood/runaway/sequence.h"
 
 namespace Hollywood {
 namespace Runaway {
@@ -46,7 +47,7 @@ public:
 private:
 	enum Step {
 		kExplanation, kCloseupExit, kFadeOut, kBeachFadeIn, kExclamation, kPause,
-		kGinaRequest, kReply, kTurnBack, kFarewell, kLastWords, kMusicTail, kFinished
+		kGinaRequest, kReply, kTurnBack, kFarewell, kLastWords, kMusicTail, kTeaser, kFinished
 	};
 	void enter(Step step);
 	void say(byte variation);
@@ -56,6 +57,7 @@ private:
 	RunawayAudio &_audio;
 	Common::RandomSource _random;
 	RunawaySpeech _speech;
+	RunawaySequence _teaser;
 	SceneTextStore _text;
 	SceneSpeechCue _cue;
 	RunawayAnimation _layers[11];

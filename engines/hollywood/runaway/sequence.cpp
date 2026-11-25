@@ -192,6 +192,10 @@ void RunawaySequence::prefetch() {
 }
 
 void RunawaySequence::update(uint32 now) {
+	// Opening a movie can refresh the clock after the caller's frame began.
+	if ((int32)(now - _now) < 0) {
+		now = _now;
+	}
 	_now = now;
 	if (!_skipFilm && !_preparePause.isActive() && (_skipSpeechPending || (!subtitle().empty() && _speech.finished(now)))) {
 		_skipSpeechPending = false;
@@ -200,7 +204,8 @@ void RunawaySequence::update(uint32 now) {
 	while (active()) {
 		const Command &command = _commands[_index];
 		// Preserve the final music cue and normal cleanup when skipping a film.
-		if (_skipFilm && command.operation != kMusic && command.operation != kMusicVolume && command.operation != kEnd) {
+		if (_skipFilm && command.operation != kMusic && command.operation != kMusicVolume &&
+				command.operation != kFadeMusic && command.operation != kEnd) {
 			advance();
 			continue;
 		}
@@ -388,6 +393,16 @@ void RunawaySequence::update(uint32 now) {
 				return;
 			}
 			break;
+		case kFadeMusic: {
+			const uint elapsed = now - _started;
+			if (!_skipFilm && elapsed < command.a && _audio.musicPlaying()) {
+				// Native music fades by 50 dB before stopping the channel.
+				_audio.setMusicVolume(command.b * pow(10.0, -2.5 * elapsed / command.a));
+				return;
+			}
+			_audio.stopMusic();
+			break;
+		}
 		case kWaitEffect:
 			if (_audio.effectPlaying() && now - _started < command.a) {
 				prefetch();
@@ -426,7 +441,7 @@ void RunawaySequence::skip() {
 	_skipFilm = true;
 	// Do not briefly start the music belonging to skipped portions of the film.
 	for (uint i = _index; _commands[i].operation != kEnd; ++i) {
-		if (_commands[i].operation == kMusic) {
+		if (_commands[i].operation == kMusic || _commands[i].operation == kFadeMusic) {
 			_index = i;
 			_entered = false;
 		}
@@ -450,7 +465,7 @@ void RunawaySequence::draw(Graphics::ManagedSurface &screen) {
 		return;
 	}
 	screen.clear();
-	if (_commands[_index].operation == kWaitEffect && _commands[_index].b) {
+	if ((_commands[_index].operation == kWaitEffect || _commands[_index].operation == kDelay) && _commands[_index].b) {
 		return;
 	}
 	const Common::Rect &viewport = _destination;

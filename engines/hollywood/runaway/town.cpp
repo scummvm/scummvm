@@ -62,7 +62,7 @@ bool RunawayRoomScene::sayTownInventory(const RunawayInventory::Reply &reply) {
 		_audio.playEffect(34);
 		say(228, 0, true);
 		return true;
-	case 230: // Refuse to attach the strap to an unsuitable inventory item.
+	case 230: // Refuse attaching the strap, or pouring concentrate in German.
 	case 242: // The prepared tobacco needs no more grinding.
 		if (!_restoredContent) {
 			executeItemAction(1);
