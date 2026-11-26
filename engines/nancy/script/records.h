@@ -486,6 +486,9 @@ private:
 	// Nancy24: "VOICE", "MUSIC" or "EFFECTS", the volume the sound goes by
 	void readChannelType(int index);
 
+	// The names of the sounds at the index, a name or a table of them
+	void readNames(lua_State *L, int index);
+
 #ifdef ENABLE_NANCY_V5
 	// Nancy26 has the UI show what a sound says through messages to "CC": its
 	// text, if the sound has one, and taking it down again once the sound is over

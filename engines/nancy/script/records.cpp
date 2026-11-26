@@ -2488,7 +2488,7 @@ void SoundRecord::readTable(int tableIndex) {
 	}
 
 	if (pushField(L, tableIndex, "sounds")) {
-		readStringList(L, -1, _names);
+		readNames(L, -1);
 		lua_pop(L, 1);
 	}
 
@@ -2497,6 +2497,18 @@ void SoundRecord::readTable(int tableIndex) {
 	}
 
 	pickVariation();
+}
+
+// Up to Nancy25, the names are kept in capitals, and given back that way. The
+// phone game of Dossier2 compares them with names in capitals.
+void SoundRecord::readNames(lua_State *L, int index) {
+	_names.clear();
+	readStringList(L, index, _names);
+	if (g_nancy->getGameType() < kGameTypeNancy26) {
+		for (Common::String &name : _names) {
+			name.toUppercase();
+		}
+	}
 }
 
 SoundRecord::SoundRecord(SceneContext &context) : Record(context, "ND.SoundAR") {
@@ -2762,8 +2774,7 @@ bool SoundRecord::setField(const Common::String &key) {
 	} else if (key == "loop") {
 		_isLooping = lua_toboolean(L, 3) != 0;
 	} else if (key == "sounds") {
-		_names.clear();
-		readStringList(L, 3, _names);
+		readNames(L, 3);
 		if (_names.empty()) {
 			luaL_error(L, "sounds must have one or more fields in its table");
 		}
