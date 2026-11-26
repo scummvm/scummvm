@@ -39,6 +39,8 @@ public:
 	int getCharWidth(uint32 chr) const override;
 	int getKerningOffset(uint32 left, uint32 right) const override;
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
+	void drawMenuString(Graphics::Surface *dst, const Common::U32String &text, int x, int y, int width,
+		uint16 color, Graphics::TextAlign align = Graphics::kTextAlignLeft) const;
 
 private:
 	struct Glyph {

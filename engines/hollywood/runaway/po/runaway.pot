@@ -11780,3 +11780,273 @@ msgstr ""
 msgctxt "item.6.21"
 msgid "Poker"
 msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "interface.high"
+msgid "HIGH"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "interface.low"
+msgid "LOW"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "interface.videoDefinition"
+msgid "VIDEO DEFINITION"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.antialias"
+msgid "SPRITE ANTIALIAS"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.brightness"
+msgid "BRIGHTNESS"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.credits"
+msgid "CREDITS"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.defaultSettings"
+msgid "DEFAULT CONFIGURATION"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.defaultsRestored"
+msgid "DEFAULT CONFIGURATION RESTORED"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.delete"
+msgid "ERASE"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.deleteKey"
+msgid "E"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.enterSaveName"
+msgid "ENTER DESCRIPTION:"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.fast"
+msgid "FAST"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.help.antialiasOff"
+msgid "TURN SPRITE ANTIALIAS OFF (SLOW COMPUTERS)"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.help.antialiasOn"
+msgid "TURN SPRITE ANTIALIAS ON (FAST COMPUTERS)"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.help.chooseDelete"
+msgid "CHOOSE GAME TO ERASE"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.help.chooseLoad"
+msgid "CHOOSE GAME TO LOAD"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.help.credits"
+msgid "SHOW CREDITS"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.help.defaultSettings"
+msgid "RESTORE DEFAULT CONFIGURATION"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.help.delete"
+msgid "ERASE A GAME YOU HAVE SAVED"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.help.dragVolume"
+msgid "MOVE THE MOUSE LEFT AND RIGHT TO ADJUST THE VOLUME"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.help.load"
+msgid "LOAD A GAME YOU HAVE SAVED"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.help.musicOff"
+msgid "TURN MUSIC OFF"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.help.musicOn"
+msgid "TURN MUSIC ON"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.help.pointerOff"
+msgid "TURN ICON SOUND OFF"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.help.pointerOn"
+msgid "TURN ICON SOUND ON"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.help.quit"
+msgid "CLOSE RUNAWAY"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.help.save"
+msgid "SAVE CURRENT GAME OF RUNAWAY"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.help.saveSettings"
+msgid "SAVE CURRENT CONFIGURATION"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.help.scrollFast"
+msgid "SWITCH TO FAST SCROLL"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.help.scrollSlow"
+msgid "SWITCH TO SMOOTH SCROLL"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.help.subtitlesOff"
+msgid "TURN SUBTITLES OFF"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.help.subtitlesOn"
+msgid "TURN SUBTITLES ON"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.help.volume"
+msgid "ADJUST AUDIO VOLUME"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.music"
+msgid "MUSIC"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.noSaves"
+msgid "NO GAMES HAVE BEEN SAVED"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.quit"
+msgid "EXIT"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.quitKey"
+msgid "X"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.saveSettings"
+msgid "SAVE CONFIGURATION"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.scrolling"
+msgid "SCROLL MODE"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.settingsSaved"
+msgid "CURRENT CONFIGURATION SAVED"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.slow"
+msgid "SMOOTH"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.subtitles"
+msgid "SUBTITLES"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.volume"
+msgid "VOLUME"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.resume"
+msgid "CONTINUE PLAYING"
+msgstr ""
+
+#. Original full-game menu text.
+#: engines/hollywood/runaway/menu.cpp
+msgctxt "menu.help.confirmDelete"
+msgid "ERASE GAME"
+msgstr ""

@@ -41,13 +41,14 @@ public:
 		bool operator==(const Settings &other) const;
 		bool operator!=(const Settings &other) const { return !(*this == other); }
 	};
-	enum Command { kNone, kResume, kSettingsChanged, kSaveSettings, kRestoreDefaults, kQuit,
+	enum Command { kNone, kResume, kInventory, kSettingsChanged, kSaveSettings, kRestoreDefaults, kQuit,
 		kBrowseLoad, kBrowseSave, kBrowseDelete, kLoadGame, kSaveGame, kDeleteGame, kStartChapter };
 
 	RunawayMenu(Audio::Mixer *mixer, const RunawayStrings &strings) : _strings(strings), _audio(mixer) {}
 	~RunawayMenu();
 	bool load(RunawayGameType game);
-	void open(const Graphics::ManagedSurface &screen, const Settings &settings, bool canSave = false, bool canLoad = true, byte chapters = 0);
+	void open(const Graphics::ManagedSurface &screen, const Settings &settings, bool canSave = false, bool canLoad = true,
+		byte chapters = 0, bool inventoryOpen = false);
 	void close();
 	Command update(Common::Point mouse);
 	void tick(uint32 now);
@@ -72,13 +73,19 @@ public:
 private:
 	enum Page { kOptions, kSaves, kName, kCredits, kChapters };
 	enum Confirmation { kNoConfirmation, kConfirmExit, kConfirmDelete, kConfirmOverwrite, kConfirmSettings, kConfirmDefaults };
-	enum Control { kNoControl, kPlay, kExit, kLoad, kSave, kDelete,
+	enum Control { kNoControl, kPlay, kExit, kLoad, kSave, kDelete, kOpenInventory,
 		kMusicOn, kMusicOff, kAntialiasOn, kAntialiasOff, kScrollFast, kScrollSlow,
 		kPointerOn, kPointerOff, kSubtitlesOn, kSubtitlesOff, kVolume,
 		kShowCredits, kStoreSettings, kDefaults, kPrevious, kNext, kAcceptName, kYes, kNo };
 	Control controlAt(Common::Point mouse) const;
+	Common::U32String text(RunawayStrings::TextId id) const { return _strings.menuText(id, _fullGame); }
+	Common::U32String caption() const;
+	uint32 shortcut(Control control) const;
+	Common::Rect toggleRect(RunawayStrings::TextId id, int y, bool on) const;
+	RunawayStrings::TextId toggleLabel(RunawayStrings::TextId id, bool on) const;
 	Common::Rect labelRect(RunawayStrings::TextId id, int center, int y) const;
 	Common::U32String confirmation() const;
+	int confirmationY() const { return _page == kSaves ? 740 : 712; }
 	Common::Rect answerRect(bool yes) const;
 	Common::Rect saveRect(uint index) const;
 	Common::Rect chapterRect(uint chapter) const;
@@ -92,13 +99,13 @@ private:
 	void drawLabel(Graphics::ManagedSurface &screen, RunawayStrings::TextId id, int center, int y,
 		bool enabled, Control control = kNoControl);
 	void drawToggle(Graphics::ManagedSurface &screen, RunawayStrings::TextId id, int y,
-		bool selected, Control on, Control off);
+		bool selected, Control on, Control off, bool enabled = true);
 
 	const RunawayStrings &_strings;
 	RunawayAudio _audio;
-	bool _museum = false;
+	bool _museum = false, _fullGame = false, _inventoryOpen = false;
 	RunawayFont _font, _captionFont;
-	Graphics::ManagedSurface _background, _returnButton, _logo, _cursor, _thumbnail;
+	Graphics::ManagedSurface _background, _returnButton, _inventoryButton, _inventoryReturnButton, _logo, _cursor, _thumbnail;
 	Graphics::ManagedSurface _chapters[7][2], _optionsButton;
 	RunawayAnimation _volumeDial;
 	RunawayCredits _credits;
@@ -113,7 +120,7 @@ private:
 	int _dragX = 0, _dragValue = 0, _selectedSlot = -1, _firstSave = 0, _newSlot = -1;
 	int _focusedSave = -1;
 	int _selectedChapter = -1;
-	byte _chapterCount = 0, _optionsFrame = 0;
+	byte _chapterCount = 0, _optionsFrame = 0, _inventoryFrame = 0;
 	uint32 _now = 0;
 	bool _canSave = false, _canLoad = true, _cursorPushed = false;
 };

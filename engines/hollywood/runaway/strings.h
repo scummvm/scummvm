@@ -56,12 +56,15 @@ public:
 		kMakeshiftBullet, kPileOfMakeshiftBullets,
 		kMendedStrap, kBottleWithWater, kBottleWithGasoline, kFilledMeasuringTube,
 		kPolishedStone, kStoneOfLight, kMakeshiftMortar, kSteamOutletLever, kPressureWheel,
-		kMakeshiftMiningTool, kHotScalpel, kOpenPods, kPutPlanIntoAction, kGoTo, kTextCount
+		kMakeshiftMiningTool, kHotScalpel, kOpenPods, kPutPlanIntoAction, kGoTo,
+		kVideoDefinition, kHigh, kLow, kTextCount
 	};
 	explicit RunawayStrings(Common::Language language) : _language(language) {}
 	Common::Language language() const { return _language; }
 	bool load();
 	Common::U32String text(TextId id) const;
+	Common::U32String menuText(TextId id, bool fullGame) const;
+	Common::U32String menuHelp(const char *control) const;
 	Common::U32String itemName(byte chapter, byte item) const;
 	Common::U32String hotspotName(uint16 scene, byte hotspot) const;
 	Common::U32String sceneActionCaption(uint16 scene, byte hotspot, byte item, bool look, const char *variant = nullptr) const;

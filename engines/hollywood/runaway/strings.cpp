@@ -62,7 +62,8 @@ const char *const kTextKeys[] = {
 	"interface.bottleWithGasoline", "interface.filledMeasuringTube", "interface.polishedStone",
 	"interface.stoneOfLight", "interface.makeshiftMortar", "interface.steamOutletLever",
 	"interface.pressureWheel", "interface.makeshiftMiningTool", "interface.hotScalpel",
-	"interface.openPods", "interface.putPlanIntoAction", "interface.goTo"
+	"interface.openPods", "interface.putPlanIntoAction", "interface.goTo",
+	"interface.videoDefinition", "interface.high", "interface.low"
 };
 static_assert(ARRAYSIZE(kTextKeys) == RunawayStrings::kTextCount, "Runaway text keys must match TextId");
 
@@ -133,6 +134,20 @@ Common::U32String RunawayStrings::lookup(const Common::String &key) const {
 Common::U32String RunawayStrings::text(TextId id) const {
 	assert(id < kTextCount);
 	return lookup(kTextKeys[id]);
+}
+
+Common::U32String RunawayStrings::menuText(TextId id, bool fullGame) const {
+	assert(id < kTextCount);
+	if (fullGame) {
+		const Common::U32String label = lookup(Common::String("menu.") + (kTextKeys[id] + 10));
+		if (!label.empty())
+			return label;
+	}
+	return text(id);
+}
+
+Common::U32String RunawayStrings::menuHelp(const char *control) const {
+	return lookup(Common::String("menu.help.") + control);
 }
 
 Common::U32String RunawayStrings::itemName(byte chapter, byte item) const {

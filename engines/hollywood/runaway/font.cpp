@@ -222,4 +222,57 @@ void RunawayFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uin
 	}
 }
 
+void RunawayFont::drawMenuString(Graphics::Surface *dst, const Common::U32String &text, int x, int y, int width,
+		uint16 color, Graphics::TextAlign align) const {
+	if (text.empty() || width <= 0 || dst->format.bytesPerPixel != 2)
+		return;
+	const int textWidth = getStringWidth(text);
+	const int left = MAX(0, x), right = MIN<int>(dst->w, x + width);
+	if (left >= right)
+		return;
+	if (align == Graphics::kTextAlignCenter)
+		x += (width - textWidth) / 2;
+	else if (align == Graphics::kTextAlignRight)
+		x += width - textWidth;
+	Common::Array<byte> coverage;
+	coverage.resize((right - left) * getFontHeight());
+	memset(coverage.data(), 255, coverage.size());
+	uint32 previous = 0;
+	for (uint i = 0; i < text.size(); ++i) {
+		const uint32 chr = text[i];
+		x += getKerningOffset(previous, chr);
+		const uint index = glyphIndex(chr);
+		if (index < _glyphs.size()) {
+			const Glyph &glyph = _glyphs[index];
+			for (uint row = 0; row < glyph.height; ++row) {
+				const int dy = y + glyph.top + row;
+				if (dy < 0 || dy >= dst->h)
+					continue;
+				for (uint column = 0; column < glyph.width; ++column) {
+					const int dx = x + column;
+					const byte level = _pixels[glyph.offset + row * glyph.width + column];
+					if (dx < left || dx >= right || level >= 18)
+						continue;
+					byte &covered = coverage[(glyph.top + row) * (right - left) + dx - left];
+					uint16 &pixel = *(uint16 *)dst->getBasePtr(dx, dy);
+					// Native menu text compares glyph coverage, not the background color.
+					if (level == 17) {
+						if (covered == 255) {
+							pixel = (((pixel >> 11) * 2 / 3) << 11) |
+								((((pixel >> 5) & 63) * 2 / 3) << 5) | ((pixel & 31) * 2 / 3);
+							covered = 17;
+						}
+					} else if (covered >= 17 || level > covered) {
+						pixel = ((((color >> 11) * level + 8) / 16) << 11) |
+							(((((color >> 5) & 63) * level + 8) / 16) << 5) | (((color & 31) * level + 8) / 16);
+						covered = level;
+					}
+				}
+			}
+		}
+		x += getCharWidth(chr);
+		previous = chr;
+	}
+}
+
 } // End of namespace Hollywood
