@@ -412,7 +412,12 @@ RunawayRoomScene::ActionResult Scene6300::dispatchCustomSceneAction(uint16 actio
 		say(8, _town.catapult != 0);
 		break;
 	case 313: // Examine the catapult release lever.
-		say(9, _town.catapult != 0);
+		if (_town.catapult && _town.kevinAway) {
+			// Reuse the catapult description once Saturn's warning no longer applies.
+			say(7, 1);
+		} else {
+			say(9, _town.catapult != 0);
+		}
 		break;
 	case 314: // Fire the paint bucket or the statue.
 		if (_town.catapult == 1 || _town.catapult == 3) {
