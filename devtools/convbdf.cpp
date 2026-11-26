@@ -138,9 +138,18 @@ inline void hexToInt(unsigned char &h) {
 }
 
 int main(int argc, char *argv[]) {
-	if (argc != 3) {
-		printf("Usage: convbdf [input] [fontname]\n");
+	if (argc != 3 && argc != 4) {
+		printf("Usage: convbdf [input] [fontname] [character-count (default: 384)]\n");
 		return 1;
+	}
+
+	int characterCount = 384;
+	if (argc == 4) {
+		char *end;
+		long count = strtol(argv[3], &end, 10);
+		if (end == argv[3] || *end || count <= 0 || count > 0x110000)
+			error("Character count must be between 1 and 1114112");
+		characterCount = count;
 	}
 
 	std::ifstream in(argv[1]);
@@ -188,7 +197,7 @@ int main(int argc, char *argv[]) {
 			if (sscanf(line.c_str(), "CHARS %d", &charsAvailable) != 1)
 				error("Invalid CHARS");
 
-			font.numCharacters = 384;
+			font.numCharacters = characterCount;
 			font.bitmaps = new unsigned char *[font.numCharacters];
 			memset(font.bitmaps, 0, sizeof(unsigned char *) * font.numCharacters);
 			font.advances = new unsigned char[font.numCharacters];
