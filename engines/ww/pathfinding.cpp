@@ -468,13 +468,14 @@ bool WWEngine::walkTo(int actor1_destX, int actor1_destY, int direction, int act
 			}
 		}
 
+		// The 55 ms delay simulates the hardware speed at the time
+		waitMillis(55);
+
 		// The original doesn't add a delay when the inventory is opened. It's a bad idea, walking is SUPER fast in this case.
 		if (_scrollPosition == 0) {
 			debug(5, "scale:%d delay:%d", scale, 55 + 10000 / (scale * scale) * 10);
-			// The original is using the here-under formula without the constant 55.
-			// The original variable part is to make the character move on the screen slower when he's far away
-			// The 55 has been added as a correction to compensate the display hardware performances, based on DosBox experience
-			 waitMillis(55 + 10000 / (scale * scale) * 10);
+			// This variable part is to make the character move on the screen slower when he's far away
+			 waitMillis(10000 / (scale * scale) * 10);
 		}
 
 		if (_scrollRemaining == 0) {

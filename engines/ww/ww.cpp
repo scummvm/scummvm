@@ -150,7 +150,7 @@ Common::Error WWEngine::run() {
 
 	drawInterface(2);
 
-	_gameState = 0; // DEBUG Initial _gameState 0 is set by room event in room 0
+	_gameState = 0;
 	_currentRoomNumber = 0;
 	if (_loadSaveSlot >= 0) {
 		_logic->loadSavegame(_loadSaveSlot);
