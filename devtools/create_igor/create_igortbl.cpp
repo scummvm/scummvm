@@ -225,7 +225,7 @@ static void writeUint32BE(FILE *fp, uint32 value) {
 }
 
 int compareResourceEntry(const void *a, const void *b) {
-	return ((struct ResourceEntry *)a)->id - ((struct ResourceEntry *)b)->id;
+	return ((const struct ResourceEntry *)a)->id - ((const struct ResourceEntry *)b)->id;
 }
 
 // Data that the game keeps outside its resource container (text tables of the
@@ -294,7 +294,7 @@ static void writeSoundEntriesTable(FILE *fp, const uint32 *fsd, int count) {
 }
 
 int compareStringEntry(const void *a, const void *b) {
-	return ((struct StringEntry *)a)->id - ((struct StringEntry *)b)->id;
+	return ((const struct StringEntry *)a)->id - ((const struct StringEntry *)b)->id;
 }
 
 static void writeStringEntriesTable(FILE *fp, struct StringEntry *se, int count) {
