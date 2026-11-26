@@ -106,6 +106,7 @@ void Scene6080::runCustomEntrySequence() {
 		_position = Common::Point(844, 362);
 		_walkPath.reset(_position);
 		_facing = 7;
+		updateCamera();
 		_mineOscarPresent = true;
 		_audio.playMusic(39, false);
 		_audio.setMusicVolume(100);

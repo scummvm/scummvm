@@ -172,8 +172,9 @@ RunawayRoomScene::ActionResult Scene6200::dispatchCustomSceneAction(uint16 actio
 				door[i] = i > 21 ? i - 21 : 0;
 			}
 			say(12);
-			beginRoomAnimation(314, 7, 47, brian, ARRAYSIZE(brian));
-			setRoomAnimationOverlay(6, 26, door, ARRAYSIZE(door));
+			// Brian remains in front of the door while unlocking and opening it.
+			beginRoomAnimation(314, 6, 26, door, ARRAYSIZE(door));
+			setRoomAnimationOverlay(7, 47, brian, ARRAYSIZE(brian));
 			_inventory.select(0);
 		}
 		break;
