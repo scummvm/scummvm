@@ -243,6 +243,12 @@ void Scene6290::findWalkPath(Common::Point target) {
 	walkTown(target);
 }
 
+void Scene6290::setCameraX(int x) {
+	// Native 0x4ec036 locks this sequence to the leftmost 1024 pixels;
+	// Joshua's walk frames are already clipped to that view.
+	RunawayRoomScene::setCameraX(_roomAction >= 442 && _roomAction <= 446 ? 0 : x);
+}
+
 Common::U32String Scene6290::hotspotName(byte id) const {
 	if (_keyboard) {
 		return actionCaption(id, kVerbUse, 0);
@@ -263,7 +269,10 @@ void Scene6290::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport
 }
 
 void Scene6290::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
-	if (!_town.joshuaGone && !_joshuaDown && !(_joshuaAnimating && drawingRoomAnimation())) {
+	// Native 0x4e4ad0 draws Joshua before the machine and its drive belt.
+	if (_joshuaAnimating && !_actionHidesActor && drawingRoomAnimation()) {
+		RunawayRoomScene::drawRoomAnimation(viewport);
+	} else if (!_town.joshuaGone && !_joshuaDown) {
 		_joshuaAnimation.draw(viewport, _joshuaTalking && speaker() ? 6 + speechFrame() % 6 : _joshuaFrame, _camera.x, 0);
 	}
 	const bool running = _town.machinePowered && !_town.joshuaGone;
@@ -303,6 +312,12 @@ void Scene6290::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport
 		_lightsAnimation.draw(viewport, light, _camera.x, 0);
 		_keyboardBrian.draw(viewport, brian, _camera.x, 0);
 		_keyboardButtons.draw(viewport, button, _camera.x, 0);
+	}
+}
+
+void Scene6290::drawRoomAnimation(Graphics::ManagedSurface &viewport) {
+	if (!_joshuaAnimating || _actionHidesActor) {
+		RunawayRoomScene::drawRoomAnimation(viewport);
 	}
 }
 
@@ -698,26 +713,26 @@ RunawayRoomScene::ActionResult Scene6290::dispatchCustomSceneAction(uint16 actio
 		walkTo(Common::Point(607, 549), 7, true);
 		_joshuaAnimating = true;
 		beginRoomAnimation(442, 29, 113, nullptr, 0, false);
+		setCameraX(0);
 		break;
 	case 1442: // Start the motorcycle and engage the machine.
 		setJoshuaAnimation(29, 113);
 		_joshuaFrame = 112;
-		_audio.playEffect(77, 70, 1);
+		_audio.playEffectAt(77, kMotorcycleSoundPosition, 70, 1);
 		beginRoomAnimation(443, 27, 27);
 		break;
 	case 1443: // The repaired communication machine is powered.
 		_town.machinePowered = 1;
 		_audio.playEffectAt(78, kMotorcycleSoundPosition, 70, 1, true);
 		say(25, 10);
+		walkTo(Common::Point(440, 556), 7, true);
 		_joshuaAnimating = true;
-		beginRoomAnimationRange(444, 30, 189, 0, 150, false);
+		beginRoomAnimationRange(444, 30, 189, 0, 149, false);
 		return kBackgroundChanged;
-	case 1444: // Joshua stops to call out to Brian on the way back.
+	case 1444: // Joshua calls out while completing his return gesture.
 		say(25, 11, false, 1);
-		holdRoomAnimation(445, 30, 189, 150, false);
-		break;
-	case 1445: // Joshua returns to his place by the keyboard.
-		beginRoomAnimationRange(446, 30, 189, 151, 188, false);
+		beginRoomAnimationRange(446, 30, 189, 150, 187, false);
+		_actionHoldSpeech = _actionLoopSpeech = true;
 		break;
 	case 1446: // Joshua explains the five-note combination and the rule against repeats.
 		setJoshuaAnimation(10, 131);
@@ -900,6 +915,9 @@ void Scene6290::handleAnimationFrameHook() {
 		if (_actionStep == 11 || _actionStep == 33 || _actionStep == 106) {
 			_audio.playEffect(_actionStep == 11 ? 35 : _actionStep == 33 ? 36 : 37, 80);
 		}
+	} else if (_roomAction == 446 && _actionStep == _actionFrames.size() - 1) {
+		_actionLoopSpeech = false;
+		_actionStarted = _now;
 	} else if (_roomAction == 443 && _actionStep == 16) {
 		_audio.playEffect(38);
 	} else if (_roomAction == 470 && _actionStep == 11) {

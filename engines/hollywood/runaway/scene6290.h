@@ -33,6 +33,7 @@ public:
 
 	void click(Common::Point mouse, RunawayVerb verb, byte item) override;
 	byte hotspotAt(Common::Point mouse) const override;
+	void setCameraX(int x) override;
 	Common::U32String actionCaption(byte id, RunawayVerb verb, byte item) const override;
 	bool canSave() const override;
 	bool busy() const override;
@@ -47,6 +48,7 @@ private:
 	void advanceCustomGameplayLoop(uint32 delta) override;
 	void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) override;
 	void drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) override;
+	void drawRoomAnimation(Graphics::ManagedSurface &viewport) override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 	void handleCustomDialogueChoice(byte effect) override;
 	void resumeAmbientAudio(bool entering) override;
