@@ -326,12 +326,16 @@ public:
 };
 
 class Movement;
+class ObjectIdList;
 
 struct MG2I {
 	int _movementId;
 	Movement *_movement;
-	int _deltaX;
-	int _deltaY;
+	float _deltaX;
+	float _deltaY;
+	bool _mirror;
+
+	bool setMovement(AniObject *ani, int id, const ObjectIdList *ids);
 };
 
 struct MctlAniSub {
@@ -388,8 +392,8 @@ public:
 	MessageQueue *makeQueue(AniObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) override;
 
 	int getObjIndex(int objectId);
-	int getDirByStatics(int index, int staticsId);
-	int getDirByMovement(int index, int movId);
+	int getDirByStatics(int index, int staticsId, bool mirror = false);
+	int getDirByMovement(int index, int movId, bool mirror = false);
 	int getDirByPoint(int idx, AniObject *ani);
 
 	int getDirBySize(MovGraphLink *lnk, int x, int y);

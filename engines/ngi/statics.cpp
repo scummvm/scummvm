@@ -1732,6 +1732,20 @@ Common::Point Movement::getMovementSize(int idx, int dynidx) {
 	return p;
 }
 
+void Movement::getCenterDisplacement(float &dx, float &dy) const {
+	// XML steps move texture origins. The Android motion graph measures center to center.
+	const Dims prev = _prevStatic->getDimensions();
+	const Dims next = _nextStatic->getDimensions();
+	dx = _prevStepX + (next.x - prev.x) * 0.5f;
+	dy = _prevStepY + (next.y - prev.y) * 0.5f;
+	// Starting the movement uses the previous step in place of frame zero's offset.
+	// The last offset in the engine's phase list is the step into the ending statics.
+	for (uint i = 1; i < _framePosOffsets.size(); ++i) {
+		dx += _framePosOffsets[i].x;
+		dy += _framePosOffsets[i].y;
+	}
+}
+
 void Movement::setAlpha(int alpha) {
 	if (_currMovement)
 		for (uint i = 0; i < _currMovement->_phases.size(); i++) {

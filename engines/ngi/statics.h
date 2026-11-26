@@ -154,6 +154,7 @@ class Movement : public GameObject {
 	Dims getPhaseSize(int phaseIndex) const;
 
 	Common::Point getMovementSize(int idx, int dynidx);
+	void getCenterDisplacement(float &dx, float &dy) const;
 
 	void initStatics(AniObject *ani);
 	void updateCurrDynamicPhase();

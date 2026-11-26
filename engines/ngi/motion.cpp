@@ -1683,21 +1683,22 @@ int MctlGraph::getObjIndex(int objectId) {
 	return -1;
 }
 
-int MctlGraph::getDirByStatics(int idx, int staticsId) {
-	for (int i = 0; i < 4; i++)
-		if (_aniData[idx]._directions[i]._prevStaticId == staticsId || _aniData[idx]._directions[i]._nextStaticId == staticsId)
+int MctlGraph::getDirByStatics(int idx, int staticsId, bool mirror) {
+	for (int i = 0; i < 4; i++) {
+		const MctlAniSub &dir = _aniData[idx]._directions[i];
+		if (dir._walk[0]._mirror == mirror && (dir._prevStaticId == staticsId || dir._nextStaticId == staticsId))
 			return i;
-
+	}
 	return -1;
 }
 
-int MctlGraph::getDirByMovement(int idx, int movId) {
-	for (int i = 0; i < 4; i++)
-		if (_aniData[idx]._directions[i]._walk[0]._movementId == movId
-		 || _aniData[idx]._directions[i]._walk[1]._movementId == movId
-		 || _aniData[idx]._directions[i]._walk[2]._movementId == movId)
-			return i;
-
+int MctlGraph::getDirByMovement(int idx, int movId, bool mirror) {
+	for (int i = 0; i < 4; i++) {
+		for (const MG2I &walk : _aniData[idx]._directions[i]._walk) {
+			if (walk._movementId == movId && walk._mirror == mirror)
+				return i;
+		}
+	}
 	return -1;
 }
 
@@ -1722,141 +1723,80 @@ int MctlGraph::getDirByPoint(int index, AniObject *ani) {
 	return -1;
 }
 
+bool MG2I::setMovement(AniObject *ani, int id, const ObjectIdList *ids) {
+	_mirror = false;
+	_deltaX = _deltaY = 0;
+	if (ids && id) {
+		const Common::String name = ids->findName(id);
+		if (name.hasPrefix("r")) {
+			uint32 baseId;
+			if (!ids->findId(name.substr(1), baseId))
+				return false;
+			id = baseId;
+			_mirror = true;
+		}
+	}
+	_movementId = ids ? static_cast<int16>(id) : id;
+	_movement = ani->getMovement(_movementId);
+	if (!_movement)
+		return !ids || !id;
+
+	if (ids) {
+		if (!_movement->getPhase(1))
+			return false;
+		_movement->getCenterDisplacement(_deltaX, _deltaY);
+		if (_mirror)
+			_deltaX = -_deltaX;
+	} else {
+		const Common::Point delta = _movement->getMovementSize(0, -1);
+		_deltaX = delta.x;
+		_deltaY = delta.y;
+	}
+	return true;
+}
+
 bool MctlGraph::fillData(AniObject *obj, GmctlAni &item) {
-	debugC(4, kDebugPathfinding, "MovGraph::fillData(%d, ...)", obj->_id);
+	debugC(4, kDebugPathfinding, "MctlGraph::fillData(%d, ...)", obj->_id);
 
 	item._ani = obj;
 	item._objectId = obj->_id;
 
-	GameVar *var = g_nmi->getGameLoaderGameVar()->getSubVarByName(obj->_title);
-	if (!var)
+	const ObjectIdList *ids = nullptr;
+	GameVar *walkData;
+	if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+		ids = &g_nmi->_gameProject->_objectIds;
+		walkData = g_nmi->_gameProject->_walkData.getSubVarByName(ids->findName(static_cast<uint16>(obj->_id)));
+	} else {
+		GameVar *var = g_nmi->getGameLoaderGameVar()->getSubVarByName(obj->_title);
+		walkData = var ? var->getSubVarByName("Test_walk") : nullptr;
+	}
+	if (!walkData)
 		return false;
 
-	var = var->getSubVarByName("Test_walk");
-
-	if (!var)
-		return false;
-
-	GameVar *varD = nullptr;
-	Common::Point point;
-
-	for (int dir = 0; dir < 4; dir++) {
-		switch (dir) {
-		case 0:
-			varD = var->getSubVarByName("Right");
-			break;
-		case 1:
-			varD = var->getSubVarByName("Left");
-			break;
-		case 2:
-			varD = var->getSubVarByName("Up");
-			break;
-		case 3:
-			varD = var->getSubVarByName("Down");
-			break;
-		default:
-			break;
-		}
-
-		if (!varD)
+	static const char *const directions[] = { "Right", "Left", "Up", "Down" };
+	static const char *const walk[] = { "Start", "Go", "Stop" };
+	static const char *const turn[] = { "TurnR", "TurnL", "TurnU", "TurnD" };
+	static const char *const turnS[] = { "TurnSR", "TurnSL", "TurnSU", "TurnSD" };
+	for (uint dir = 0; dir < ARRAYSIZE(directions); ++dir) {
+		GameVar *var = walkData->getSubVarByName(directions[dir]);
+		if (!var)
 			return false;
 
-		for (int act = 0; act < 3; act++) {
-			int idx = 0;
-
-			switch(act) {
-			case 0:
-				idx = varD->getSubVarAsInt("Start");
-				break;
-			case 1:
-				idx = varD->getSubVarAsInt("Go");
-				break;
-			case 2:
-				idx = varD->getSubVarAsInt("Stop");
-				break;
-			default:
-				break;
-			}
-
-			item._directions[dir]._walk[act]._movementId = idx;
-
-			Movement *mov = obj->getMovement(idx);
-
-			item._directions[dir]._walk[act]._movement = mov;
-			if (mov) {
-				point = mov->getMovementSize(0, -1);
-				item._directions[dir]._walk[act]._deltaX = point.x;
-				item._directions[dir]._walk[act]._deltaY = point.y;
-			}
+		MctlAniSub &data = item._directions[dir];
+		for (uint i = 0; i < ARRAYSIZE(walk); ++i) {
+			if (!data._walk[i].setMovement(obj, var->getSubVarAsInt(walk[i]), ids))
+				return false;
 		}
-
-		for (int act = 0; act < 4; act++) {
-			int idx = 0;
-
-			switch(act) {
-			case 0:
-				idx = varD->getSubVarAsInt("TurnR");
-				break;
-			case 1:
-				idx = varD->getSubVarAsInt("TurnL");
-				break;
-			case 2:
-				idx = varD->getSubVarAsInt("TurnU");
-				break;
-			case 3:
-				idx = varD->getSubVarAsInt("TurnD");
-				break;
-			default:
-				break;
-			}
-
-			item._directions[dir]._turn[act]._movementId = idx;
-
-			Movement *mov = obj->getMovement(idx);
-
-			item._directions[dir]._turn[act]._movement = mov;
-			if (mov) {
-				point = mov->getMovementSize(0, -1);
-				item._directions[dir]._turn[act]._deltaX = point.x;
-				item._directions[dir]._turn[act]._deltaY = point.y;
-			}
+		for (uint i = 0; i < ARRAYSIZE(turn); ++i) {
+			if (!data._turn[i].setMovement(obj, var->getSubVarAsInt(turn[i]), ids) ||
+					!data._turnS[i].setMovement(obj, var->getSubVarAsInt(turnS[i]), ids))
+				return false;
 		}
-
-		for (int act = 0; act < 4; act++) {
-			int idx = 0;
-
-			switch(act) {
-			case 0:
-				idx = varD->getSubVarAsInt("TurnSR");
-				break;
-			case 1:
-				idx = varD->getSubVarAsInt("TurnSL");
-				break;
-			case 2:
-				idx = varD->getSubVarAsInt("TurnSU");
-				break;
-			case 3:
-				idx = varD->getSubVarAsInt("TurnSD");
-				break;
-			default:
-				break;
-			}
-
-			item._directions[dir]._turnS[act]._movementId = idx;
-
-			Movement *mov = obj->getMovement(idx);
-
-			item._directions[dir]._turnS[act]._movement = mov;
-			if (mov) {
-				point = mov->getMovementSize(0, -1);
-				item._directions[dir]._turnS[act]._deltaX = point.x;
-				item._directions[dir]._turnS[act]._deltaY = point.y;
-			}
-		}
-
-		item._directions[dir]._prevStaticId = item._directions[dir]._walk[0]._movement->_prevStatic->_staticsId;
-		item._directions[dir]._nextStaticId = item._directions[dir]._walk[0]._movement->_nextStatic->_staticsId;
-
+		Movement *start = data._walk[0]._movement;
+		if (!start)
+			return false;
+		data._prevStaticId = start->_prevStatic->_staticsId;
+		data._nextStaticId = start->_nextStatic->_staticsId;
 	}
 	return true;
 }
@@ -2191,11 +2131,12 @@ MessageQueue *MctlGraph::makeQueue(AniObject *obj, int xpos, int ypos, int fuzzy
 	obj->getPicAniInfo(picAniInfo);
 
 	int idxsub;
+	const bool mirror = g_nmi->getPlatform() == Common::kPlatformAndroid && (obj->_flags & 8);
 
 	if (obj->_movement)
-		idxsub = getDirByMovement(idx, obj->_movement->_id);
+		idxsub = getDirByMovement(idx, obj->_movement->_id, mirror);
 	else
-		idxsub = getDirByStatics(idx, obj->_statics->_staticsId);
+		idxsub = getDirByStatics(idx, obj->_statics->_staticsId, mirror);
 
 	bool subMgm = false;
 

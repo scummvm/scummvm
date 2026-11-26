@@ -36,24 +36,10 @@ class ObjectIdList {
 public:
 	bool load(const Common::Path &path);
 	bool findId(const Common::String &symbol, uint32 &id) const;
+	Common::String findName(uint32 id) const;
 
 private:
 	Common::HashMap<Common::String, uint32> _ids;
-};
-
-class GameProject : public CObject {
- public:
-	int _field_4;
-	Common::String _headerFilename;
-	Common::ScopedPtr<SceneTagList> _sceneTagList;
-	ObjectIdList _objectIds;
-	Common::HashMap<Common::Path, Common::Point, Common::Path::Hash> _textureSizes;
-	int _field_10;
-
- public:
-	GameProject();
-	bool load(MfcArchive &file) override;
-	Scene *findScene(int sceneId);
 };
 
 struct PicAniInfo {
@@ -111,6 +97,22 @@ class GameVar : public CObject {
 	bool addSubVar(GameVar *subvar);
 	int getSubVarsCount();
 	GameVar *getSubVarByIndex(int idx);
+};
+
+class GameProject : public CObject {
+ public:
+	int _field_4;
+	Common::String _headerFilename;
+	Common::ScopedPtr<SceneTagList> _sceneTagList;
+	ObjectIdList _objectIds;
+	GameVar _walkData;
+	Common::HashMap<Common::Path, Common::Point, Common::Path::Hash> _textureSizes;
+	int _field_10;
+
+ public:
+	GameProject();
+	bool load(MfcArchive &file) override;
+	Scene *findScene(int sceneId);
 };
 
 } // End of namespace NGI

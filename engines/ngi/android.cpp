@@ -81,7 +81,57 @@ bool ObjectIdList::findId(const Common::String &symbol, uint32 &id) const {
 	return true;
 }
 
+Common::String ObjectIdList::findName(uint32 id) const {
+	// CIDList searches its symbol table in name order when IDs have aliases.
+	Common::String name;
+	for (const auto &entry : _ids) {
+		if (entry._value == id && (name.empty() || entry._key < name))
+			name = entry._key;
+	}
+	return name;
+}
+
 namespace {
+
+class XMLWalkParser : public Common::XMLParser {
+public:
+	explicit XMLWalkParser(GameVar &walkData) : _walkData(walkData) {}
+
+private:
+	GameVar &_walkData;
+	GameVar *_object = nullptr;
+
+	CUSTOM_XML_PARSER(XMLWalkParser) {
+		XML_KEY(DATA)
+		KEY_END()
+	} PARSER_END()
+
+	bool parserCallback_DATA(ParserNode *) { return true; }
+
+	bool handleUnknownKey(ParserNode *node) override {
+		const ParserNode *parent = getParentNode(node);
+		if (!parent)
+			return false;
+		node->layout = parent->layout;
+		node->ignore = parent->ignore;
+		if (node->ignore || node->depth == 1)
+			return true;
+
+		if (node->depth == 2 && node->name == "Test_walk") {
+			_object = _walkData.addSubVarAsInt(parent->name, 0);
+			return _object != nullptr;
+		}
+		if (node->depth == 3 && parent->name == "Test_walk") {
+			GameVar *direction = _object->addSubVarAsInt(node->name, 0);
+			if (!direction)
+				return false;
+			for (const auto &attr : node->values)
+				direction->setSubVarAsInt(attr._key, atoi(attr._value.c_str()));
+		}
+		node->ignore = true;
+		return true;
+	}
+};
 
 class XMLProjectParser : public Common::XMLParser {
 public:
@@ -983,6 +1033,10 @@ Common::Error NGIEngine::enterAndroidScene1() {
 		_currSoundList1[_currSoundListCount++] = common->_soundList.get();
 
 	_currentScene = room;
+	if (room->_motionController) {
+		room->_motionController->attachObject(_aniMan);
+		room->_motionController->activate();
+	}
 	addMessageHandlerByIndex(global_messageHandler4, 0, 4);
 	addMessageHandler(sceneHandler01, 2);
 	// CStateManager::SetStartStates starts a new game with the egg uncracked.
@@ -1033,6 +1087,11 @@ Common::Error NGIEngine::runAndroid() {
 	Scene *common = intro ? project.findScene(SC_COMMON) : nullptr;
 	if (intro && !common)
 		return Common::Error(Common::kNoGameDataFoundError, "Could not load the shared Full Pipe Android resources");
+	if (intro) {
+		XMLWalkParser walkParser(project._walkData);
+		if (!walkParser.loadFile("data/data.xml") || !walkParser.parse())
+			return Common::Error(Common::kNoGameDataFoundError, "Could not read the Full Pipe Android walking movements");
+	}
 
 	_isSaveAllowed = false;
 	initGraphics(parser.width(), parser.height(), nullptr);
