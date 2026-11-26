@@ -82,6 +82,10 @@ bool Scene6220::loadCustomResources() {
 	return _sushiAnimation.load(_archive, 7, 170) && _brianAnimation.load(_archive, 8, 45) && _shotAnimation.load(_archive, 9, 60);
 }
 
+bool Scene6220::applyCustomBackgroundPatches() {
+	return _town.sandingBlock != kTaken || applyPatch(11);
+}
+
 void Scene6220::applyCustomHotspotState() {
 	for (uint i = 0; i < 256; ++i) {
 		// The balcony shares this mask but is reached through Kevin's room.

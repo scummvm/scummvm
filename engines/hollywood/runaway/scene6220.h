@@ -34,6 +34,7 @@ public:
 private:
 	const char *actionCaptionVariant(byte id, bool look, byte item) const override;
 	bool loadCustomResources() override;
+	bool applyCustomBackgroundPatches() override;
 	void applyCustomHotspotState() override;
 	void resumeAmbientAudio(bool entering) override;
 	void runCustomEntrySequence() override;
