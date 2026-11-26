@@ -610,7 +610,7 @@ void Lua_V1::IsActorMoving() {
 		return;
 
 	Actor *actor = getactor(actorObj);
-	pushbool(actor->isWalking());
+	pushbool(actor->isPathWalking());
 }
 
 void Lua_V1::IsActorResting() {
@@ -620,7 +620,7 @@ void Lua_V1::IsActorResting() {
 
 	Actor *actor = getactor(actorObj);
 	// FIXME verify if exist one flag for resting mode
-	pushbool(!(actor->isWalking() || actor->isTurning()));
+	pushbool(!(actor->hasWalked() || actor->isTurning()));
 }
 
 /* Get the location of one of the actor's nodes, this is
