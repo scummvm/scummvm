@@ -106,7 +106,8 @@ void MsgScrollNewUI::display_string(const Common::String &str, Font *f, bool inc
 	Common::String s = trailing_whitespace + str;
 	trailing_whitespace.clear();
 
-	uint16 i, pos;
+	int16 pos;
+	uint16 i;
 	for (i = 0, pos = s.size(); pos >= 0; pos--, i++) {
 		char c = s[pos];
 		if (c != '\t' && c != '\n')
