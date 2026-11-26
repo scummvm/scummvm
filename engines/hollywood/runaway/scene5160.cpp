@@ -25,6 +25,26 @@
 namespace Hollywood {
 namespace {
 
+const byte kOpenFridgeFrames[] = {
+	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+	31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46,
+	47, 48, 49, 50, 51, 52, 53, 54
+};
+
+const byte kVacuumFrames[] = {
+	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+	31, 32, 33, 34, 35, 36, 37, 38, 39, 39, 38, 37, 36, 35, 34, 33,
+	32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 21, 22, 23,
+	24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+	39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24,
+	23, 22, 21, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
+	33, 34, 35, 36, 37, 38, 39, 39, 38, 37, 36, 35, 34, 33, 32, 31,
+	30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15,
+	14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
+};
+
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
 	{556, 310, 0, {301, 302}, {0, 1}, {566, 252}, 5}, // 1: Front Of The Bus.
@@ -164,7 +184,7 @@ RunawayRoomScene::ActionResult Scene5160::dispatchCustomSceneAction(uint16 actio
 		if (!_desert.fridgeOpened) {
 			say(17);
 		}
-		beginRoomAnimationRange(action, 15, 73, 0, 54);
+		beginRoomAnimation(action, 15, 73, kOpenFridgeFrames, ARRAYSIZE(kOpenFridgeFrames), true, 60);
 		break;
 	case 1319: // Collect the butter from the refrigerator.
 		if (!_desert.fridgeOpened) {
@@ -181,7 +201,7 @@ RunawayRoomScene::ActionResult Scene5160::dispatchCustomSceneAction(uint16 actio
 			54, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72,
 			26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1
 		};
-		beginRoomAnimation(420, 15, 73, frames, ARRAYSIZE(frames));
+		beginRoomAnimation(420, 15, 73, frames, ARRAYSIZE(frames), true, 60);
 		break;
 	}
 	case 1420: // Finish searching the refrigerator.
@@ -197,7 +217,7 @@ RunawayRoomScene::ActionResult Scene5160::dispatchCustomSceneAction(uint16 actio
 			say(18, 4);
 		} else {
 			say(18, 1);
-			beginRoomAnimation(action, 16, 40);
+			beginRoomAnimation(action, 16, 40, kVacuumFrames, ARRAYSIZE(kVacuumFrames), true, 60);
 		}
 		break;
 	case 1320: // Recover the sleeping pill from the vacuum.
@@ -218,6 +238,15 @@ RunawayRoomScene::ActionResult Scene5160::dispatchCustomSceneAction(uint16 actio
 
 void Scene5160::runCustomEntrySequence() {
 	visitDesertRoom(8, 0);
+}
+
+void Scene5160::handleAnimationFrameHook() {
+	if (_roomAction == 319 && _actionStep == 19)
+		_audio.playEffectAt(66, Common::Point(729, 200), 100, 1);
+	else if (_roomAction == 420 && _actionStep == 12)
+		_audio.playEffectAt(67, Common::Point(729, 200), 100, 1);
+	else if (_roomAction == 320 && _actionStep == 20)
+		_audio.playEffectAt(32, Common::Point(512, 200), 80);
 }
 
 void Scene5160::startCarlaConversation() {

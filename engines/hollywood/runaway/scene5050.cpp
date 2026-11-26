@@ -25,6 +25,27 @@
 namespace Hollywood {
 namespace {
 
+const byte kTryGunFrames[] = {
+	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 14,
+	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 12,
+	11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
+};
+
+const byte kLubricateGunFrames[] = {
+	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 25, 25, 25, 25, 25,
+	26, 27, 28, 29, 30, 31, 32, 33, 33, 33, 33, 33, 33, 34, 35, 36,
+	37, 38, 39, 40, 41, 41, 41, 41, 41, 41, 42, 43, 44, 45, 11, 10,
+	9, 8, 7, 6, 5, 4, 3, 2, 1, 0
+};
+
+const byte kLoadGunFrames[] = {
+	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+	31, 32, 33, 34, 35
+};
+
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
 	{-100, 510, 0, {302, 301}, {0, 1}, {0, 495}, 7}, // 1: Path.
@@ -82,12 +103,17 @@ const char *Scene5050::actionCaptionVariant(byte id, bool look, byte item) const
 
 bool Scene5050::loadCustomResources() {
 	return loadForeground(0, 4) &&
-		loadForeground(1, 5);
+		loadForeground(1, 5) &&
+		_loadedGun.load(_archive, 12, 37);
 }
 
 bool Scene5050::applyCustomBackgroundPatches() {
-	return (!_desert.helmetTaken || applyPatch(6)) && (!_desert.beltTaken || applyPatch(7)) &&
-		(!_desert.gun || applyPatch(8));
+	if ((_desert.helmetTaken && !applyPatch(6)) || (_desert.beltTaken && !applyPatch(7)) ||
+			(_desert.gun && !applyPatch(8)))
+		return false;
+	if (_desert.gun == 2)
+		_loadedGun.draw(_background, 36, 0, 0);
+	return true;
 }
 
 void Scene5050::applyCustomHotspotState() {
@@ -135,7 +161,15 @@ RunawayRoomScene::ActionResult Scene5050::dispatchCustomSceneAction(uint16 actio
 		_desert.gunSeen = 1;
 		break;
 	case 308: // Use the machine gun.
-		say(7, _desert.gun);
+		if (!_desert.gun) {
+			beginRoomAnimation(action, 10, 30, kTryGunFrames, ARRAYSIZE(kTryGunFrames), true, 60);
+		} else {
+			say(7, _desert.gun);
+			_desert.gunSeen = 1;
+		}
+		break;
+	case 1308:
+		say(7);
 		_desert.gunSeen = 1;
 		break;
 	case 315: // Use tanning oil with the machine gun.
@@ -145,14 +179,30 @@ RunawayRoomScene::ActionResult Scene5050::dispatchCustomSceneAction(uint16 actio
 			say(1, 0, true);
 		} else {
 			say(14);
-			beginRoomAnimation(action, 11, 46);
+			beginRoomAnimation(action, 11, 46, kLubricateGunFrames, ARRAYSIZE(kLubricateGunFrames), true, 60);
 		}
 		break;
 	case 1315: // Finish lubricating the machine gun.
-		_desert.gun = 1;
 		say(14, 1);
-		say(14, 3);
+		deferDesertAction(415);
+		break;
+	case 415: { // Test the lubricated gun after Brian's reply.
+		typedef RunawaySequence S;
+		static const S::Command film[] = {
+			{S::kOpen, 5}, {S::kEffect, 75, 100}, {S::kPlay, 0, 220}, {S::kEnd}
+		};
+		_sequence.start(film, _text, _now, 'E');
+		break;
+	}
+	case 416: { // Return from the machine-gun film.
+		static const byte frames[] = {4, 4, 3, 2, 1, 0};
+		_desert.gun = 1;
+		beginRoomAnimation(action, 10, 30, frames, ARRAYSIZE(frames), true, 60);
 		return kBackgroundChanged;
+	}
+	case 1416:
+		say(14, 3);
+		break;
 	case 316: // Use the lipstick with the machine gun.
 		say(15, items.lipstick != 0);
 		break;
@@ -166,7 +216,7 @@ RunawayRoomScene::ActionResult Scene5050::dispatchCustomSceneAction(uint16 actio
 			say(17, 2);
 		} else {
 			say(17, 3);
-			beginRoomAnimation(action, 12, 37);
+			beginRoomAnimation(action, 12, 37, kLoadGunFrames, ARRAYSIZE(kLoadGunFrames), true, 60);
 		}
 		break;
 	case 1318: // Finish loading the machine gun.
@@ -190,6 +240,21 @@ RunawayRoomScene::ActionResult Scene5050::dispatchCustomSceneAction(uint16 actio
 
 void Scene5050::runCustomEntrySequence() {
 	visitDesertRoom(2, 2);
+}
+
+void Scene5050::finishCustomFilm() {
+	execute(416);
+}
+
+void Scene5050::handleAnimationFrameHook() {
+	if (_roomAction == 315) {
+		if (_actionStep == 26 || _actionStep == 52)
+			_audio.playEffectAt(57, Common::Point(321, 200), 55);
+		else if (_actionStep == 39)
+			_audio.playEffectAt(58, Common::Point(321, 200), 55);
+	} else if (_roomAction == 318 && _actionStep == 24) {
+		_audio.playEffectAt(59, Common::Point(321, 200), 75);
+	}
 }
 
 Common::U32String Scene5050::hotspotName(byte id) const {

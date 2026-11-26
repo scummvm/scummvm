@@ -36,7 +36,7 @@ namespace Hollywood {
 class RunawayOpening {
 public:
 	explicit RunawayOpening(RunawayAudio &audio) : _audio(audio), _random("runawayOpening"), _speech(audio, _random) {}
-	bool load(byte chapter = 0);
+	bool load(byte chapter = 0, bool titleMovie = false);
 	bool loadEndingNarration(byte cue);
 	void start(uint32 now);
 	void update(uint32 now);
@@ -53,7 +53,7 @@ private:
 		kSitDown, kIntroduction, kLeanForward, kQuestion, kLeanBack, kBackground,
 		kTurnToScreen, kJourney, kMontage, kTurnBack, kLastNarration,
 		kCity, kTitle, kAccident, kAccidentTitle, kAccidentEnd, kCityExit,
-		kFilm, kStayAway, kApproach, kUnconscious, kTurn, kHospital,
+		kFilmTitle, kFilm, kStayAway, kApproach, kUnconscious, kTurn, kHospital,
 		kHitman, kReply, kFilmEnd, kChapter, kChapterGesture, kChapterExpression, kFinished
 	};
 	void enter(Step step, uint32 now);
@@ -88,6 +88,7 @@ private:
 	byte _narrationCue = 0;
 	byte _speechColor = 11;
 	bool _chapterOnly = false;
+	bool _titleMovie = false;
 	uint16 _row = 0, _lastRow = 0, _sample = 0;
 	bool _narrating = true, _themeStarted = false, _failed = false;
 };

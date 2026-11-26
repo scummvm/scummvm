@@ -21,6 +21,7 @@
 
 #include "common/debug.h"
 #include "common/endian.h"
+#include "common/file.h"
 #include "common/util.h"
 
 #include "hollywood/debug.h"
@@ -44,20 +45,27 @@ const uint kLogoTrackStarts[] = {
 const uint kLogoAnimationDuration = kLogoTrackStarts[2] + (kLogoFrameCounts[2] - 1) * kLogoFrameDelays[2];
 const uint kLogoHoldDuration = 2000;
 const uint kLogoFadeDuration = 1000;
+const uint kPublisherCardFadeDuration = 1000;
+const uint kPublisherCardHoldDuration = 3000;
 const uint kStoryFadeDuration = 500;
 const uint kStoryHoldDuration = 40000;
 
 } // End of anonymous namespace
 
-bool RunawayIntro::load(bool fullGame, byte chapter, Mode mode, bool publisherLogo) {
+bool RunawayIntro::load(bool fullGame, byte chapter, Mode mode, Common::Language language) {
 	_fullGame = fullGame;
 	_chapter = chapter;
 	_mode = mode;
+	const bool titleMovie = language == Common::ES_ESP;
 	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	_screen.create(kRunawayScreenWidth, kRunawayScreenHeight, format);
 	if (chapter || mode == kOpeningOnly) {
-		return _opening.load(chapter);
+		return _opening.load(chapter, titleMovie);
 	}
+	// A01 is the Focus logo in French and English GOG, but a story-opening
+	// title in Spanish. The German executable deliberately skips its copy.
+	const bool publisherLogo = language == Common::FR_FRA ||
+		(_fullGame && language == Common::EN_ANY && Common::File::exists("DATAVC00.000"));
 	if (publisherLogo && !_publisher.load("DATAVA01.001"))
 		return false;
 	ChunkArchive archive;
@@ -67,11 +75,17 @@ bool RunawayIntro::load(bool fullGame, byte chapter, Mode mode, bool publisherLo
 		if (!_logo[i].load(archive, i, kLogoFrameCounts[i]))
 			return false;
 	}
+	// Spanish and English CD display A02's fourth chunk before Pendulo.
+	// German SE contains a leftover Tri Synergy card that it never loads.
+	if (_fullGame && (language == Common::ES_ESP || (language == Common::EN_ANY && !publisherLogo)) && archive.chunkSize(3)) {
+		if (!archive.readVariableChunk(3, _publisherCard) || !applyRunawayPatch(_publisherCard, _screen, kRunawayViewportTop))
+			return false;
+	}
 	if (_mode == kLogoOnly) {
 		return true;
 	}
 	if (_fullGame)
-		return _opening.load();
+		return _opening.load(0, titleMovie);
 
 	// 0x444390 displays X01 chunk 0 before entering scene 5030. The card
 	// already contains the localized story text and the Runaway title.
@@ -93,6 +107,12 @@ bool RunawayIntro::load(bool fullGame, byte chapter, Mode mode, bool publisherLo
 void RunawayIntro::start(uint32 now) {
 	if (_chapter || _mode == kOpeningOnly) {
 		startStory(now);
+		return;
+	}
+	if (!_publisherCard.empty()) {
+		_phase = kPublisherCard;
+		_phaseStarted = now;
+		update(now);
 		return;
 	}
 	if (_publisher.frameCount()) {
@@ -130,7 +150,7 @@ void RunawayIntro::startStory(uint32 now) {
 }
 
 void RunawayIntro::skip(uint32 now) {
-	if (_phase == kPublisher || _phase == kPublisherFade || _phase == kPublisherAudio) {
+	if (_phase == kPublisherCard || _phase == kPublisher || _phase == kPublisherFade || _phase == kPublisherAudio) {
 		_publisher.close();
 		startLogo(now);
 		return;
@@ -155,9 +175,21 @@ void RunawayIntro::update(uint32 now) {
 	for (;;) {
 		const uint32 elapsed = now - _phaseStarted;
 		switch (_phase) {
+		case kPublisherCard: {
+			const uint fadeStart = kPublisherCardFadeDuration + kPublisherCardHoldDuration;
+			if (elapsed >= fadeStart + kPublisherCardFadeDuration) {
+				startLogo(now);
+			} else if (elapsed < kPublisherCardFadeDuration) {
+				_brightness = 255 * elapsed / kPublisherCardFadeDuration;
+			} else {
+				_brightness = elapsed <= fadeStart ? 255 :
+					255 * (kPublisherCardFadeDuration - (elapsed - fadeStart)) / kPublisherCardFadeDuration;
+			}
+			return;
+		}
 		case kPublisher: {
-			// The French intro fades at frame 90 of the 120-frame movie.
-			const uint lastFrame = MIN<uint>(90, _publisher.frameCount() - 1);
+			// Only the French demo fades early; retail plays all 120 frames.
+			const uint lastFrame = _fullGame ? _publisher.frameCount() - 1 : MIN<uint>(90, _publisher.frameCount() - 1);
 			const uint frame = MIN(_publisher.frameAtTime(elapsed), lastFrame);
 			if (!_publisher.decodeToFrame(frame)) {
 				_failed = true;
@@ -166,7 +198,7 @@ void RunawayIntro::update(uint32 now) {
 			}
 			_brightness = 255;
 			if (frame == lastFrame) {
-				_phase = kPublisherFade;
+				_phase = _fullGame ? kPublisherAudio : kPublisherFade;
 				_phaseStarted = now;
 			}
 			return;
@@ -248,8 +280,10 @@ void RunawayIntro::draw() {
 	_screen.fillRect(Common::Rect(_screen.w, _screen.h), 0);
 	if (!_brightness)
 		return;
-	if (_phase == kPublisher || _phase == kPublisherFade) {
-		// French demo 0x455330 displays the publisher movie at its native size.
+	if (_phase == kPublisherCard) {
+		applyRunawayPatch(_publisherCard, _screen, kRunawayViewportTop);
+	} else if (_phase == kPublisher || _phase == kPublisherFade) {
+		// The publisher movie is centered at its native size.
 		_publisher.draw(_screen, Common::Rect(256, 234, 768, 534));
 	} else if (_phase == kLogo) {
 		for (uint i = 0; i < ARRAYSIZE(_logo); ++i) {

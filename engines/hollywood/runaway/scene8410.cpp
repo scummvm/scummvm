@@ -100,7 +100,7 @@ void Scene8410::runCustomEntrySequence() {
 }
 
 void Scene8410::resumeAmbientAudio(bool entering) {
-	_audio.stopEffect(2);
+	_audio.playMusicEffect(42, 100, 2, true);
 	if (entering || !_audio.musicPlaying()) {
 		_audio.playMusic(12 + _random.getRandomNumber(4), false);
 	}

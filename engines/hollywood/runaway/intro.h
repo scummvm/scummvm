@@ -22,6 +22,7 @@
 #ifndef HOLLYWOOD_RUNAWAY_INTRO_H
 #define HOLLYWOOD_RUNAWAY_INTRO_H
 
+#include "common/language.h"
 #include "hollywood/runaway/audio.h"
 #include "hollywood/runaway/graphics.h"
 #include "hollywood/runaway/presentation.h"
@@ -36,7 +37,7 @@ class RunawayIntro : public RunawayPresentation {
 public:
 	enum Mode { kCompleteIntro, kLogoOnly, kOpeningOnly };
 	explicit RunawayIntro(Audio::Mixer *mixer) : _audio(mixer), _opening(_audio) {}
-	bool load(bool fullGame = false, byte chapter = 0, Mode mode = kCompleteIntro, bool publisherLogo = false);
+	bool load(bool fullGame = false, byte chapter = 0, Mode mode = kCompleteIntro, Common::Language language = Common::EN_ANY);
 	void start(uint32 now);
 	void skip(uint32 now);
 	void skipSpeech(uint32 now);
@@ -52,7 +53,7 @@ private:
 	void skipPresentation(uint32 now) override { skip(now); }
 	void skipPresentationSpeech(uint32 now) override { skipSpeech(now); }
 
-	enum Phase { kPublisher, kPublisherFade, kPublisherAudio, kLogo, kLogoAudio, kStoryFadeIn, kStory, kStoryFadeOut, kOpening, kFinished };
+	enum Phase { kPublisherCard, kPublisher, kPublisherFade, kPublisherAudio, kLogo, kLogoAudio, kStoryFadeIn, kStory, kStoryFadeOut, kOpening, kFinished };
 	void startLogo(uint32 now);
 	void startStory(uint32 now);
 
@@ -64,6 +65,7 @@ private:
 	byte _chapter = 0;
 	Mode _mode = kCompleteIntro;
 	RunawayAnimation _logo[3];
+	Common::Array<byte> _publisherCard;
 	Graphics::ManagedSurface _story, _screen;
 	Phase _phase = kFinished;
 	uint32 _phaseStarted = 0;

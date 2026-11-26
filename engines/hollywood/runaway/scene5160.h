@@ -41,6 +41,7 @@ private:
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 	void runCustomEntrySequence() override;
 	void advanceCustomGameplayLoop(uint32 delta) override;
+	void handleAnimationFrameHook() override;
 	void startCarlaConversation();
 	void handleCustomDialogueChoice(byte effect) override;
 	void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) override;

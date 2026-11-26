@@ -299,7 +299,7 @@ Common::Error RunawayEngine::playIntro(RunawayMenu &menu, byte chapter, RunawayI
 	_inPresentation = true;
 	_loadedGame = false;
 	RunawayIntro intro(_mixer);
-	if (!intro.load(_game == kRunawayFullGame, chapter, mode, _game == kRunawayCabinDemo && _language == Common::FR_FRA)) {
+	if (!intro.load(_game == kRunawayFullGame, chapter, mode, _language)) {
 		_inPresentation = false;
 		return Common::Error(Common::kReadingFailed, "Cannot load the Runaway opening resources");
 	}

@@ -37,8 +37,9 @@ const Graphics::PixelFormat kPictureFormat(4, 8, 8, 8, 0, 16, 8, 0, 0);
 
 } // End of anonymous namespace
 
-bool RunawayOpening::load(byte chapter) {
+bool RunawayOpening::load(byte chapter, bool titleMovie) {
 	_failed = false;
+	_titleMovie = titleMovie;
 	_chapterVariation = _narrationCue = 0;
 	_chapterOnly = chapter != 0;
 	_chapter = chapter ? chapter : 1;
@@ -190,6 +191,9 @@ void RunawayOpening::enter(Step step, uint32 now) {
 		_audio.stopEffect();
 		_video.close();
 		break;
+	case kFilmTitle:
+		startMovie("DATAVA01.001", 0, 87);
+		break;
 	case kFilm:
 		startMovie("DATAVB08.001", 0, 2565);
 		if (!_themeStarted) {
@@ -321,6 +325,8 @@ void RunawayOpening::advance() {
 		enter(_chapter == 3 && _chapterVariation == 3 ? kChapterExpression : kChapter, _now);
 	} else if (_step == kChapterExpression) {
 		enter(kChapter, _now);
+	} else if (_step == kCityExit && !_titleMovie) {
+		enter(kFilm, _now);
 	} else {
 		enter((Step)(_step + 1), _now);
 	}
@@ -464,6 +470,7 @@ void RunawayOpening::update(uint32 now) {
 		}
 		break;
 	case kAccidentEnd:
+	case kFilmTitle:
 	case kApproach:
 	case kTurn:
 		if (updateMovie())

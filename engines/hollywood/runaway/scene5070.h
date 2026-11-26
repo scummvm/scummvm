@@ -39,6 +39,8 @@ private:
 	int8 customizeSceneActionApproach(byte id, bool use, byte item, int8 approach) const override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 	void runCustomEntrySequence() override;
+	void finishCustomFilm() override;
+	void handleAnimationFrameHook() override;
 	void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) override;
 
 	RunawayAnimation _ambientAnimations[5];

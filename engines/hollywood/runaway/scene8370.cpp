@@ -87,7 +87,7 @@ int Scene8370::sceneViewportYOffset() const {
 }
 
 bool Scene8370::loadCustomResources() {
-	return _sushi.load(_archive, 4, 94) && _fire.load(_archive, 5, 20) && _monitor.load(_archive, 6, 97);
+	return _sushi.load(_archive, 4, 94) && _fire.load(_archive, 5, 20) && _dish.load(_archive, 6, 97);
 }
 
 bool Scene8370::applyCustomBackgroundPatches() {
@@ -121,10 +121,13 @@ void Scene8370::applyCustomHotspotState() {
 
 void Scene8370::prepareCustomGameplayLoop() {
 	_sushiTick = _now;
+	_dishTick = _now;
 }
 
 void Scene8370::resumeAmbientAudio(bool entering) {
 	_audio.playEffect(39, 30, 2, true);
+	if (_dishMoving)
+		_audio.playEffectAt(55, Common::Point(30, 200), 3, 1, true);
 	if (entering || !_audio.musicPlaying()) {
 		_audio.playMusic(12 + _random.getRandomNumber(4), false);
 	}
@@ -178,6 +181,7 @@ void Scene8370::runCustomEntrySequence() {
 
 void Scene8370::advanceCustomGameplayLoop(uint32 delta) {
 	updateOutdoorMusic(5);
+	updateSatelliteDish();
 	if (_sushiCalling || _sushiAnimating) {
 		_sushiTick = _now;
 		return;
@@ -222,8 +226,28 @@ void Scene8370::advanceCustomGameplayLoop(uint32 delta) {
 	}
 }
 
+void Scene8370::updateSatelliteDish() {
+	// Native 0x55dd50 uses an 80 ms timer and pauses at each end or the midpoint.
+	while (_now - _dishTick >= 80) {
+		_dishTick += 80;
+		if (_dishMoving) {
+			if (_dishFrame == _dishTarget) {
+				_dishMoving = false;
+				_audio.stopEffect(1);
+			} else {
+				_dishFrame += _dishFrame < _dishTarget ? 1 : -1;
+			}
+		} else if (!_random.getRandomNumber(99)) {
+			_dishTarget = _dishFrame == 47 ? (_random.getRandomBit() ? 0 : 96) : 47;
+			_dishFrame += _dishFrame < _dishTarget ? 1 : -1;
+			_dishMoving = true;
+			_audio.playEffectAt(55, Common::Point(30, 200), 3, 1, true);
+		}
+	}
+}
+
 void Scene8370::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
-	_monitor.draw(viewport, (_now / 80) % 97, _camera.x, -_camera.y);
+	_dish.draw(viewport, _dishFrame, _camera.x, -_camera.y);
 	_fire.draw(viewport, (_now / 80) % 20, _camera.x, -_camera.y);
 	if (!_sushiAnimating || !drawingRoomAnimation()) {
 		const uint frame = _sushiCalling ? (speaker() ? speechFrame() % 6 : 0) : kSushiFrames[_sushiStep];

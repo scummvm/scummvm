@@ -25,6 +25,22 @@
 namespace Hollywood {
 namespace {
 
+const byte kGlassesFrames[] = {
+	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 20, 21,
+	22, 23, 24, 25, 26, 27, 28, 20, 21, 22, 23, 24, 25, 26, 27, 28,
+	20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5,
+	4, 3, 2, 1, 0
+};
+
+const byte kDynamiteFrames[] = {
+	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+	31, 32, 33, 34, 35, 36, 37, 36, 35, 34, 33, 32, 31, 30, 29, 30,
+	31, 32, 33, 34, 35, 36, 37, 36, 35, 34, 33, 32, 31, 30, 29, 30,
+	31, 32, 33, 34, 35, 36, 37, 38, 39
+};
+
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
 	{1472, 495, 0, {302, 301}, {0, 1}, {1472, 495}, 5}, // 1: Path.
@@ -118,16 +134,34 @@ RunawayRoomScene::ActionResult Scene5070::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 311: // Place the dynamite at the oil well.
 		say(7);
-		beginRoomAnimation(action, 11, 40);
+		beginRoomAnimation(action, 11, 40, kDynamiteFrames, ARRAYSIZE(kDynamiteFrames), true, 60);
 		break;
-	case 1311: // Finish setting the explosives.
+	case 1311: { // Show Brian setting up the wired detonator.
+		typedef RunawaySequence S;
+		static const S::Command film[] = {
+			{S::kOpen, 4}, {S::kEffect, 76, 100}, {S::kPlay, 0, 139}, {S::kEnd}
+		};
+		_sequence.start(film, _text, _now, 'E');
+		break;
+	}
+	case 412: { // Return beside the placed detonator.
+		static const byte frames[] = {0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 		_desert.dynamitePlaced = 1;
-		items.bombReady = 1;
-		_inventory.remove(5);
+		_position = Common::Point(1122, 509);
+		_walkPath.reset(_position);
+		_facing = 7;
+		updateCamera();
+		beginRoomAnimation(action, 10, 10, frames, ARRAYSIZE(frames), true, 60);
+		_audio.playEffectAt(74, Common::Point(800, 200), 80, 1);
+		return kBackgroundChanged;
+	}
+	case 1412: // Finish setting the explosives.
 		say(7, 1);
 		deferDesertAction(411);
-		return kBackgroundChanged;
+		break;
 	case 411:
+		items.bombReady = 1;
+		_inventory.remove(5);
 		reviewDesertPlan(1);
 		break;
 	case 312: // Use the bucket with the oil well.
@@ -158,7 +192,7 @@ RunawayRoomScene::ActionResult Scene5070::dispatchCustomSceneAction(uint16 actio
 			say(13, items.glasses + 1);
 		} else {
 			say(13);
-			beginRoomAnimation(action, 9, 29);
+			beginRoomAnimation(action, 9, 29, kGlassesFrames, ARRAYSIZE(kGlassesFrames), true, 60);
 		}
 		break;
 	case 1317: // Finish darkening the sunglasses.
@@ -174,6 +208,17 @@ RunawayRoomScene::ActionResult Scene5070::dispatchCustomSceneAction(uint16 actio
 
 void Scene5070::runCustomEntrySequence() {
 	visitDesertRoom(4, 1);
+}
+
+void Scene5070::finishCustomFilm() {
+	execute(412);
+}
+
+void Scene5070::handleAnimationFrameHook() {
+	if (_roomAction == 311 && _actionStep == 27)
+		_audio.playEffectAt(73, Common::Point(300, 200), 80, 1);
+	else if (_roomAction == 317 && _actionStep == 20)
+		_audio.playEffectAt(35, Common::Point(268, 200), 80, 1);
 }
 
 void Scene5070::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {

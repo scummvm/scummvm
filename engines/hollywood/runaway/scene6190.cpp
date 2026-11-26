@@ -116,7 +116,9 @@ void Scene6190::runCustomEntrySequence() {
 }
 
 void Scene6190::handleAnimationFrameHook() {
-	if (_roomAction == 405 && (_actionStep == 4 || _actionStep == 14 || _actionStep == 19 || _actionStep == 22)) {
+	if (_roomAction == 404 && _actionStep == 6) {
+		_audio.playEffectAt(46, Common::Point(548, 200), 60);
+	} else if (_roomAction == 405 && (_actionStep == 4 || _actionStep == 14 || _actionStep == 19 || _actionStep == 22)) {
 		_audio.playFootstep(3, _random.getRandomBit(), 50, 553);
 	}
 }
@@ -157,7 +159,7 @@ RunawayRoomScene::ActionResult Scene6190::dispatchCustomSceneAction(uint16 actio
 			if (!_town.basementVisited) {
 				say(4);
 			}
-			beginRoomAnimation(404, 6, 24);
+			beginRoomAnimation(404, 6, 24, nullptr, 0, true, 60);
 		} else {
 			say(3);
 		}
