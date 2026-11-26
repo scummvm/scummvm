@@ -162,20 +162,23 @@ int SRTEntryComparatorBSearch(const void *item1, const void *item2) {
 
 bool SRTParser::parseFile(const Common::Path &fname) {
 	Common::File f;
-
-	cleanup();
-
 	if (!f.open(fname)) {
+		cleanup();
 		return false;
 	}
+	return parseStream(f, fname);
+}
 
-	byte buf[3];
-	f.read(buf, 3);
+bool SRTParser::parseStream(Common::SeekableReadStream &f, const Common::Path &fname) {
+	cleanup();
+
+	byte buf[3] = {0, 0, 0};
+	const uint32 bytesRead = f.read(buf, 3);
 
 	int line = 0;
 
 	// Skip UTF header if present
-	if (buf[0] != 0xef || buf[1] != 0xbb || buf[2] != 0xbf)
+	if (bytesRead != 3 || buf[0] != 0xef || buf[1] != 0xbb || buf[2] != 0xbf)
 		f.seek(0);
 
 	while (!f.eos()) {
@@ -265,6 +268,8 @@ bool SRTParser::parseFile(const Common::Path &fname) {
 }
 
 const Common::Array<SubtitlePart> *SRTParser::getSubtitleParts(uint32 timestamp) const {
+	if (_entries.empty())
+		return nullptr;
 	SRTEntry test(0, timestamp, 0, "");
 	SRTEntry *testptr = &test;
 

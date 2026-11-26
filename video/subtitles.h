@@ -29,6 +29,10 @@
 
 #include "graphics/surface.h"
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace Graphics {
 class Font;
 }
@@ -67,6 +71,7 @@ public:
 
 	void cleanup();
 	bool parseFile(const Common::Path &fname);
+	bool parseStream(Common::SeekableReadStream &stream, const Common::Path &name);
 	void parseTextAndTags(const Common::String &text, Common::Array<SubtitlePart> &parts) const;
 	const Common::Array<SubtitlePart> *getSubtitleParts(uint32 timestamp) const;
 	bool isSfx() const;
