@@ -546,11 +546,21 @@ RunawayRoomScene::ActionResult Scene6290::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 310: // Try to start the motorcycle, or explain why Brian cannot take it.
 		if (_town.joshuaGone) {
-			if (_town.motorcycleRefilled) {
+			if (!_town.motorcycleRefilled) {
+				say(8, 2);
+			} else if (_restoredContent) {
+				// Keep the Joshua explanation after refilling, without the empty-tank claim.
+				SceneSpeechCue speech = _text.stageCue(8, 2);
+				if (speech.continuationCount > 1) {
+					++speech.textRecordId;
+					if (speech.voiceSampleId)
+						++speech.voiceSampleId;
+					--speech.continuationCount;
+				}
+				say(_text, speech, false);
+			} else {
 				say(20, 0, true);
 				say(14, 0, true);
-			} else {
-				say(8, 2);
 			}
 			deferTownAction(433);
 		} else {
