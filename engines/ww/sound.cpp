@@ -311,11 +311,11 @@ void MusicManager::playMusic(const char *filename, bool loop) {
 	if (size < 4)
 		error("playMusic() wrong music resource size");
 
+	stop();
+
 	delete[] _music;
 	_music = new byte[size];
 	fd.read(_music, size);
-
-	stop();
 
 	const uint32 magic = READ_BE_UINT32(_music);
 	if (magic == MKTAG('F', 'O', 'R', 'M')) {
