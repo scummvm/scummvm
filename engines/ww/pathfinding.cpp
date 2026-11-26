@@ -236,7 +236,7 @@ bool WWEngine::walkFindPoint(int flag, int &sourceX, int &sourceY, int &nextSour
 		if (!walkTestPoint(sourceX, sourceY, scan1X, scan1Y, destX, destY)) {
 			return false;
 		}
-		pointsCount = walkAddWalkLine(flag, sourceX, sourceY, scan1X, scan1Y, pointsCount);
+		walkAddWalkLine(flag, sourceX, sourceY, scan1X, scan1Y, pointsCount);
 		sourceX = scan1X;
 		sourceY = scan1Y;
 	}
@@ -349,7 +349,8 @@ int WWEngine::walkAddWalkLine(int flag, int x1, int y1, int x2, int y2, int poin
 
 	if (x1 == x2) {
 		const int incr = y1 > y2 ? -4 : 4;
-		for (int yc = y1; yc * incr < y2 * incr; yc += incr) {
+		// Check on pointsCount is not in the original, it avoids to write out of bounds in walkPoints
+		for (int yc = y1; yc * incr < y2 * incr && pointsCount < maxPoints; yc += incr) {
 			walkPoints[pointsCount].x = x1;
 			walkPoints[pointsCount].y = yc;
 			walkPoints[pointsCount].direction = newDirection;
@@ -358,7 +359,8 @@ int WWEngine::walkAddWalkLine(int flag, int x1, int y1, int x2, int y2, int poin
 	} else if (ABS(y1 - y2) >= ABS(x1 - x2)) {
 		const float slopeY = float(x1 - x2) / float(y1 - y2);
 		const int incr = y1 > y2 ? -4 : 4;
-		for (int yc = y1; yc * incr < y2 * incr; yc += incr) {
+		// Check on pointsCount is not in the original, it avoids to write out of bounds in walkPoints
+		for (int yc = y1; yc * incr < y2 * incr && pointsCount < maxPoints; yc += incr) {
 			walkPoints[pointsCount].x = x1 + (yc - y1) * slopeY;
 			walkPoints[pointsCount].y = yc;
 			walkPoints[pointsCount].direction = newDirection;
@@ -367,7 +369,8 @@ int WWEngine::walkAddWalkLine(int flag, int x1, int y1, int x2, int y2, int poin
 	} else {
 		const float slopeX = float(y1 - y2) / float(x1 - x2);
 		const int incr = x1 > x2 ? -4 : 4;
-		for (int xc = x1; xc * incr < x2 * incr; xc += incr) {
+		// Check on pointsCount is not in the original, it avoids to write out of bounds in walkPoints
+		for (int xc = x1; xc * incr < x2 * incr && pointsCount < maxPoints; xc += incr) {
 			walkPoints[pointsCount].x = xc;
 			walkPoints[pointsCount].y = y1 + (xc - x1) * slopeX;
 			walkPoints[pointsCount].direction = newDirection;
