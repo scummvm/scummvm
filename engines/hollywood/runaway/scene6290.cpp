@@ -538,11 +538,20 @@ RunawayRoomScene::ActionResult Scene6290::dispatchCustomSceneAction(uint16 actio
 		leaveTownRoom(6350);
 		break;
 	case 309: // Examine the motorcycle before or after the repair.
-		say(7, _town.joshuaGone ? 2 : _town.machinePowered ? 3 : _town.fuelNeeded);
+		if (_town.motorcycleRefilled || (_town.machinePowered && !_town.joshuaGone)) {
+			say(7, 3);
+		} else {
+			say(7, _town.joshuaGone ? 2 : _town.fuelNeeded);
+		}
 		break;
 	case 310: // Try to start the motorcycle, or explain why Brian cannot take it.
 		if (_town.joshuaGone) {
-			say(8, 2);
+			if (_town.motorcycleRefilled) {
+				say(20, 0, true);
+				say(14, 0, true);
+			} else {
+				say(8, 2);
+			}
 			deferTownAction(433);
 		} else {
 			say(8, _town.machinePowered ? 4 : _town.fuelNeeded);

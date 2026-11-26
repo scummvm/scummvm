@@ -865,7 +865,8 @@ void RunawayRoomScene::updateActor(uint elapsed, int scrollDirection, bool inven
 			arrive();
 		}
 	}
-	const bool walking = _walkPath.active();
+	// Dialogue can pause a queued walk, including one scheduled on arrival.
+	const bool walking = _walkPath.active() && !speaking();
 	const bool idle = !walking && !busy() && shouldDrawActor();
 	_idleHead.update(_now, idle && !_idleBody.active(), _random, _game == kRunawayMuseumDemo);
 	const bool bodyIdle = _idleBody.update(_now, idle && _game != kRunawayMuseumDemo,

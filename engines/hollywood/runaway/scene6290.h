@@ -33,6 +33,7 @@ public:
 
 	void click(Common::Point mouse, RunawayVerb verb, byte item) override;
 	byte hotspotAt(Common::Point mouse) const override;
+	bool hasVerbControls() const override { return !_keyboard; }
 	void setCameraX(int x) override;
 	Common::U32String actionCaption(byte id, RunawayVerb verb, byte item) const override;
 	bool canSave() const override;
