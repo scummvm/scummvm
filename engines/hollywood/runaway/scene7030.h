@@ -44,7 +44,7 @@ private:
 	bool shouldPlayGameplayClickPath() const override { return false; }
 	byte initialActorFacing() const override { return 5; }
 	float actorHeight() const override { return 12; }
-	float actorWalkSpeed() const override { return RunawayRoomScene::actorWalkSpeed() * 5; }
+	float actorWalkScale() const override { return RunawayRoomScene::actorWalkScale() * 5; }
 
 	void advanceRoute();
 

@@ -233,7 +233,7 @@ protected:
 	void updateRoomAnimation();
 	void playAnimationFootsteps(uint frame, byte surface, const AnimationFootstep *steps, uint count);
 	virtual float actorHeight() const { return 455; }
-	virtual float actorWalkSpeed() const { return 0.18f * actorHeight() / 455; }
+	virtual float actorWalkScale() const { return actorHeight() / 455; }
 	virtual const RunawayHotspot *hotspot(byte id) const;
 	Common::U32String hotspotName(byte id) const override;
 	virtual const char *actionCaptionVariant(byte id, bool look, byte item) const { return nullptr; }

@@ -1133,18 +1133,18 @@ void Scene5030::update(uint32 now, int scrollDirection, bool inventoryOpen) {
 			return;
 	}
 	if ((_action == kNone || _action == kWalkingAction) && _walkPath.active()) {
-		const uint previousWalkFrame = _walkElapsed / 60;
-		if (_walkPath.advance(elapsed * 0.18f, _position, _facing)) {
+		const uint previousWalkFrame = _walkElapsed / RunawayWalkPath::kFrameDuration;
+		if (_walkPath.advance(elapsed, RunawayActor::perspectiveHeight(_position) / 455, _position, _facing)) {
 			_walkElapsed += elapsed;
 			// Native walking repeats cels 1..12 at 60 ms, with contacts at
 			// 6 and 12. Cels 13..18 belong to stopping/turning, not the gait.
-			for (uint frame = previousWalkFrame + 1; frame <= _walkElapsed / 60; ++frame) {
+			for (uint frame = previousWalkFrame + 1; frame <= _walkElapsed / RunawayWalkPath::kFrameDuration; ++frame) {
 				if ((1 + frame % 12) % 6 == 0)
 					playWalkFootstep();
 			}
 			// The final standing cel (0) is also a contact. Suppress a
 			// duplicate when it immediately follows another footfall.
-			if (!_walkPath.active() && (!_lastFootstep || _walkElapsed - _lastFootstep > 60))
+			if (!_walkPath.active() && (!_lastFootstep || _walkElapsed - _lastFootstep > RunawayWalkPath::kFrameDuration))
 				playWalkFootstep();
 		}
 		if (!_walkPath.active()) {
@@ -1161,7 +1161,7 @@ void Scene5030::update(uint32 now, int scrollDirection, bool inventoryOpen) {
 	const bool bodyIdle = _idleBody.update(now, idle, _idleHead.centered(), _facing, _actor, _random);
 	const int headFrame = walking ? -1 : _speechRow ? speechFrame() : idle ? _idleHead.frame() : -1;
 	if (!bodyIdle)
-		_actor.setFrame(_facing, walking ? 1 + (_walkElapsed / 60) % 12 : 0, headFrame);
+		_actor.setFrame(_facing, walking ? 1 + (_walkElapsed / RunawayWalkPath::kFrameDuration) % 12 : 0, headFrame);
 	if (scrollDirection)
 		_cameraX += scrollDirection * MAX<int>(1, elapsed / (_fastScrolling ? 2 : 4));
 	else if (walking || (_action != kNone && _action != kIntro))

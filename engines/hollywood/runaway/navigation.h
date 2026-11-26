@@ -50,13 +50,15 @@ private:
 
 class RunawayWalkPath {
 public:
+	static const uint kFrameDuration = 60;
 	explicit RunawayWalkPath(Common::Point position = Common::Point()) : _x(position.x), _y(position.y) {}
 	void reset(Common::Point position);
 	void clear() { _points.clear(); _index = 0; _segmentFacing = 0xff; }
 	void findPath(const RunawayWalkMap &map, Common::Point target);
 	void setTarget(Common::Point target);
+	// Scale is the actor's perspective height divided by 455; elapsed is in ms.
 	// Returns whether the fractional position changed, for footstep timing.
-	bool advance(float travel, Common::Point &position, byte &facing);
+	bool advance(uint elapsed, float scale, Common::Point &position, byte &facing, bool museum = false);
 	bool active() const { return _index < _points.size(); }
 
 private:

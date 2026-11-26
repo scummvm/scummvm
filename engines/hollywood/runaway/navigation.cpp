@@ -233,34 +233,44 @@ Common::Point RunawayWalkPath::position() const {
 	return Common::Point((int)roundf(_x), (int)roundf(_y));
 }
 
-bool RunawayWalkPath::advance(float travel, Common::Point &actorPosition, byte &facing) {
+bool RunawayWalkPath::advance(uint elapsed, float scale, Common::Point &actorPosition, byte &facing, bool museum) {
+	// Native strides per animation cel, clockwise from north (full game 0x40eac0).
+	static const byte strides[] = {8, 11, 19, 11, 8, 11, 19, 11};
+	float frames = elapsed * scale / kFrameDuration;
 	const float previousX = _x, previousY = _y;
-	while (travel > 0 && active()) {
+	while (frames > 0 && active()) {
 		const Common::Point target = _points[_index];
 		const float dx = target.x - _x, dy = target.y - _y;
-		const float distance = sqrtf(dx * dx + dy * dy);
-		if (distance > 0) {
-			// Rounding of the remaining distance must not turn Brian mid-segment.
-			if (_segmentFacing == 0xff) {
-				if (ABS(dx) > ABS(dy) * 2)
-					_segmentFacing = dx > 0 ? 2 : 6;
-				else if (ABS(dy) > ABS(dx) * 2)
-					_segmentFacing = dy > 0 ? 4 : 0;
-				else
-					_segmentFacing = dy > 0 ? (dx > 0 ? 3 : 5) : (dx > 0 ? 1 : 7);
-			}
-			facing = _segmentFacing;
+		if (dx == 0 && dy == 0) {
+			++_index;
+			_segmentFacing = 0xff;
+			continue;
 		}
+		// Keep the native 10/50-degree walking sectors fixed for each segment.
+		if (_segmentFacing == 0xff) {
+			if (ABS(dy) < ABS(dx) * 0.176327f)
+				_segmentFacing = dx > 0 ? 2 : 6;
+			else if (ABS(dy) > ABS(dx) * 1.191754f)
+				_segmentFacing = dy > 0 ? 4 : 0;
+			else
+				_segmentFacing = dy > 0 ? (dx > 0 ? 3 : 5) : (dx > 0 ? 1 : 7);
+		}
+		facing = _segmentFacing;
+		// Native 0x42f3d0 measures cardinal walks along their main axis.
+		// The museum demo (0x433930) also measures diagonal walks along X.
+		const float distance = facing == 0 || facing == 4 ? ABS(dy) :
+			museum || facing == 2 || facing == 6 ? ABS(dx) : sqrtf(dx * dx + dy * dy);
+		const float travel = frames * strides[facing];
 		if (distance <= travel) {
 			_x = target.x;
 			_y = target.y;
-			travel -= distance;
+			frames -= distance / strides[facing];
 			++_index;
 			_segmentFacing = 0xff;
 		} else {
 			_x += dx * travel / distance;
 			_y += dy * travel / distance;
-			travel = 0;
+			frames = 0;
 		}
 	}
 	actorPosition = position();
