@@ -80,7 +80,7 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	_helpButton->setVisible(_engine->hasFeature(Engine::kSupportsHelp));
 	_helpButton->setEnabled(_engine->hasFeature(Engine::kSupportsHelp));
 
-	new GUI::ButtonWidget(this, "GlobalMenu.MainHelp", _("~H~elp"), Common::U32String(), kMainHelpCmd);
+	_mainHelpButton = new GUI::ButtonWidget(this, "GlobalMenu.MainHelp", _("~H~elp"), Common::U32String(), kMainHelpCmd);
 
 	new GUI::ButtonWidget(this, "GlobalMenu.About", _("~A~bout"), Common::U32String(), kAboutCmd);
 
@@ -194,6 +194,15 @@ void MainMenuDialog::reflowLayout() {
 #endif
 
 	Dialog::reflowLayout();
+
+	
+
+	if (!_helpButton->isVisible() && _helpButton->getRelY() == _mainHelpButton->getRelY()) {
+		int16 left = MIN(_helpButton->getRelX(), _mainHelpButton->getRelX());
+		int16 right = MAX(_helpButton->getRelX() + _helpButton->getWidth(),
+		                  _mainHelpButton->getRelX() + _mainHelpButton->getWidth());
+		_mainHelpButton->resize(left, _mainHelpButton->getRelY(), right - left, _mainHelpButton->getHeight(), false);
+	}
 }
 
 void MainMenuDialog::save() {
