@@ -164,23 +164,29 @@ public:
 	 *
 	 * @param position The destination position.
 	 * @see stopWalking
-	 * @see isWalking
+	 * @see isPathWalking
 	 */
 	void walkTo(const Math::Vector3d &position);
 	/**
 	 * Stops immediately the actor's walk.
 	 *
 	 * @see walkTo
-	 * @see isWalking
+	 * @see isPathWalking
 	 */
-	void stopWalking() { _walking = false; }
+	void stopWalking() { _pathWalking = false; }
 	/**
 	 * Returns true if the actor is walking to a position.
 	 *
 	 * @see walkTo
 	 * @see stopWalking
 	 */
-	bool isWalking() const;
+	bool isPathWalking() const;
+	/**
+	 * Returns true if the actor moved by walking in this frame or the last one.
+	 *
+	 * @see isPathWalking
+	 */
+	bool hasWalked() const;
 
 	/**
 	 * Sets the rotation of thes actor in the 3D scene.
@@ -645,7 +651,7 @@ private:
 	float _turnRateMultiplier;
 
 	// Variables for walking to a point
-	bool _walking;
+	bool _pathWalking;
 	Math::Vector3d _destPos;
 
 	//chores

@@ -84,7 +84,7 @@ Actor::Actor() :
 		_pitch(0), _yaw(0), _roll(0), _walkRate(0.3f),
 		_turnRateMultiplier(0.f), _talkAnim(0),
 		_reflectionAngle(80), _scale(1.f), _timeScale(1.f),
-		_visible(true), _lipSync(nullptr), _turning(false), _singleTurning(false), _walking(false),
+		_visible(true), _lipSync(nullptr), _turning(false), _singleTurning(false), _pathWalking(false),
 		_walkedLast(false), _walkedCur(false),
 		_collisionMode(CollisionOff), _collisionScale(1.f),
 		_lastTurnDir(0), _currTurnDir(0),
@@ -185,7 +185,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeFloat(_movePitch.getDegrees());
 	savedState->writeFloat(_moveRoll.getDegrees());
 
-	savedState->writeBool(_walking);
+	savedState->writeBool(_pathWalking);
 	savedState->writeVector3d(_destPos);
 
 	_restChore.saveState(savedState);
@@ -362,7 +362,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 		_moveRoll = _roll;
 	}
 
-	_walking = savedState->readBool();
+	_pathWalking = savedState->readBool();
 	_destPos = savedState->readVector3d();
 
 	_restChore.restoreState(savedState, this);
@@ -514,7 +514,7 @@ void Actor::setRot(const Math::Angle &pitchParam, const Math::Angle &yawParam, c
 }
 
 void Actor::setPos(const Math::Vector3d &position) {
-	_walking = false;
+	_pathWalking = false;
 	_pos = position;
 
 	// Don't allow positions outside the sectors.
@@ -602,9 +602,9 @@ void Actor::turnTo(const Math::Angle &pitchParam, const Math::Angle &yawParam, c
 
 void Actor::walkTo(const Math::Vector3d &p) {
 	if (p == _pos)
-		_walking = false;
+		_pathWalking = false;
 	else {
-		_walking = true;
+		_pathWalking = true;
 		_destPos = p;
 		_path.clear();
 
@@ -751,7 +751,7 @@ void Actor::walkTo(const Math::Vector3d &p) {
 			if (!pathFound) {
 				warning("Actor::walkTo(): No path found for %s", _name.c_str());
 				if (g_grim->getGameType() == GType_MONKEY4) {
-					_walking = false;
+					_pathWalking = false;
 					return;
 				}
 			}
@@ -761,8 +761,12 @@ void Actor::walkTo(const Math::Vector3d &p) {
 	}
 }
 
-bool Actor::isWalking() const {
-	return _walkedLast || _walkedCur || _walking;
+bool Actor::isPathWalking() const {
+	return _pathWalking;
+}
+
+bool Actor::hasWalked() const {
+	return _walkedCur || _walkedLast;
 }
 
 bool Actor::isTurning() const {
@@ -887,7 +891,7 @@ void Actor::walkForward() {
 		_walkedCur = true;
 	}
 
-	_walking = false;
+	_pathWalking = false;
 
 	if (!_followBoxes) {
 		Math::Vector3d forwardVec(-_moveYaw.getSine(),
@@ -1154,7 +1158,7 @@ void Actor::stopAllChores(bool ignoreLoopingChores) {
 }
 
 void Actor::turn(int dir) {
-	_walking = false;
+	_pathWalking = false;
 	float delta = g_grim->getPerSecond(_turnRate) * dir * _timeScale;
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		delta = -delta;
@@ -1568,13 +1572,12 @@ void Actor::updateWalk() {
 	Math::Vector3d dir = destPos - _pos;
 	float dist = dir.getMagnitude();
 
-	_walkedCur = true;
 	float walkAmt = g_grim->getPerSecond(_walkRate) * _timeScale;
 	if (walkAmt >= dist) {
 		walkAmt = dist;
 		_path.pop_back();
 		if (_path.empty()) {
-			_walking = false;
+			_pathWalking = false;
 			_pos = destPos;
 			// It seems that we need to allow an already active turning motion to
 			// continue or else turning actors away from barriers won't work right
@@ -1582,6 +1585,7 @@ void Actor::updateWalk() {
 			return;
 		}
 	}
+	_walkedCur = true;
 
 	turnTo(destPos, true);
 
@@ -1604,7 +1608,7 @@ void Actor::update(uint frameTime) {
 	// Snap actor to walkboxes if following them.  This might be
 	// necessary for example after activating/deactivating
 	// walkboxes, etc.
-	if (_followBoxes && !_walking) {
+	if (_followBoxes && !_pathWalking) {
 		set->findClosestSector(_pos, nullptr, &_pos);
 	}
 
@@ -1639,7 +1643,7 @@ void Actor::update(uint frameTime) {
 		}
 	}
 
-	if (_walking) {
+	if (_pathWalking) {
 		updateWalk();
 	}
 
