@@ -336,7 +336,7 @@ int WWEngine::walkAddWalkLine(int flag, int x1, int y1, int x2, int y2, int poin
 	const int maxPoints = kWalkPointsCount - 1; // keep room for the end point
 
 	// debug("walkAddWalkLine() %d, %d, %d, %d", x1, y1, x2, y2);
-	
+
 	if (pointsCount >= maxPoints)
 		return pointsCount;
 
@@ -468,7 +468,8 @@ bool WWEngine::walkTo(int actor1_destX, int actor1_destY, int direction, int act
 			}
 		}
 
-		if (_inventoryItemsCount == 0 && _scrollPosition == 0) {
+		// The original doesn't add a delay when the inventory is opened. It's a bad idea, walking is SUPER fast in this case.
+		if (_scrollPosition == 0) {
 			debug(5, "scale:%d delay:%d", scale, 55 + 10000 / (scale * scale) * 10);
 			// The original is using the here-under formula without the constant 55.
 			// The original variable part is to make the character move on the screen slower when he's far away
