@@ -36,6 +36,7 @@ public:
 	Common::U32String actionCaption(byte id, RunawayVerb verb, byte item) const override;
 	void update(uint32 now, int scrollDirection, bool inventoryOpen) override;
 	bool canSave() const override;
+	bool busy() const override { return _pressedKey != 0 || RunawayRoomScene::busy(); }
 
 private:
 	Common::U32String hotspotName(byte id) const override;

@@ -46,6 +46,18 @@ bool Scene6390::applyCustomBackgroundPatches() {
 	return _entryScene != 6391 || applyPatch(7);
 }
 
+void Scene6390::applyCustomHotspotState() {
+	if (_entryScene != 6391)
+		return;
+	// Listening uses single steps even when clicking the knob's drag areas.
+	for (uint i = 0; i < 256; ++i) {
+		if (_maps[256 + i] == 3)
+			_maps[256 + i] = 1;
+		else if (_maps[256 + i] == 4)
+			_maps[256 + i] = 2;
+	}
+}
+
 void Scene6390::runCustomEntrySequence() {
 	if (_entryScene == 6391) {
 		say(9, 1);

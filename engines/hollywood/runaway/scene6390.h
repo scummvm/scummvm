@@ -34,12 +34,14 @@ public:
 	void click(Common::Point mouse, RunawayVerb verb, byte item) override;
 	Common::U32String actionCaption(byte id, RunawayVerb verb, byte item) const override;
 	bool canSave() const override { return false; }
+	bool hasVerbControls() const override { return false; }
 	bool busy() const override;
 
 private:
 	Common::U32String hotspotName(byte id) const override;
 	bool loadCustomResources() override;
 	bool applyCustomBackgroundPatches() override;
+	void applyCustomHotspotState() override;
 	uint sceneTextNumber() const override { return 625; }
 	void runCustomEntrySequence() override;
 	void advanceCustomGameplayLoop(uint32 delta) override;

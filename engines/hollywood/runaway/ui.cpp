@@ -257,6 +257,7 @@ bool RunawayUI::cancel() {
 void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool blocked, bool speaking,
 		bool inventoryPresentation, byte speechFrame, bool roomHasVerbs, byte actionCursor, bool preferLook, bool walkHotspot,
 		RunawayVerb alternateVerb) {
+	const bool actionFinished = (_blocked || _speaking) && !blocked && !speaking;
 	_now = now;
 	_mouse = mouse;
 	_blocked = blocked;
@@ -316,7 +317,8 @@ void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool b
 		preferLook = false;
 		alternateVerb = kVerbLook;
 	}
-	if (_hovered != hovered || _roomHasVerbs != roomHasVerbs || _actionCursor != actionCursor ||
+	// Room actions restore the hotspot's default verb; inventory descriptions keep it.
+	if ((actionFinished && !_inventoryOpen) || _hovered != hovered || _roomHasVerbs != roomHasVerbs || _actionCursor != actionCursor ||
 			_preferLook != preferLook || _walkHotspot != walkHotspot || _alternateVerb != alternateVerb) {
 		_hovered = hovered;
 		_roomHasVerbs = roomHasVerbs;
@@ -463,8 +465,8 @@ void RunawayUI::updateCursor() {
 	CursorMan.showMouse(!waiting);
 	if (waiting)
 		return;
-	const bool useVerbs = _inventoryOpen || _roomHasVerbs;
-	const byte item = _choices.empty() && useVerbs ? _inventory.selected() : 0;
+	const bool useVerbs = _choices.empty() && (_inventoryOpen || _roomHasVerbs);
+	const byte item = useVerbs ? _inventory.selected() : 0;
 	uint tile = useVerbs ? _cursorType : 0;
 	if (_museum && tile) {
 		tile = tile == 1 ? 6 : tile == 3 ? 8 : 7;
