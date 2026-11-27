@@ -28,6 +28,7 @@
 #include "common/stream.h"
 
 #include "audio/mixer.h"
+#include "audio/midiplayer.h"
 
 class MidiDriver;
 class MidiParser;
@@ -217,15 +218,20 @@ public:
 	 * Create a common Mohawk sound manager.
 	 */
 	explicit Sound(MohawkEngine *vm);
-	~Sound();
+	virtual ~Sound();
 
 	// Generic sound functions
 	Audio::SoundHandle *playSound(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false, CueList *cueList = NULL);
+	Audio::SoundHandle *playSound(uint16 id, Audio::Mixer::SoundType soundType, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false, CueList *cueList = NULL);
 	void stopSound();
 	void stopSound(uint16 id);
 	bool isPlaying(uint16 id);
 	bool isPlaying();
 	uint getNumSamplesPlayed(uint16 id);
+
+protected:
+	/** Play a decoded audio stream and take ownership of it. */
+	Audio::SoundHandle *playSoundStream(Audio::SeekableAudioStream *seekableStream, uint16 id, Audio::Mixer::SoundType soundType, byte volume, bool loop, const MohawkWaveLoopInfo &loopInfo);
 
 private:
 	MohawkEngine *_vm;
@@ -234,8 +240,39 @@ private:
 
 	Common::Array<SndHandle> _handles;
 	SndHandle *getHandle();
-	Audio::SeekableAudioStream *makeAudioStream(uint16 id, CueList *cueList = nullptr,
-			MohawkWaveLoopInfo *loopInfo = nullptr);
+	Audio::SeekableAudioStream *makeAudioStream(uint16 id, CueList *cueList = nullptr, MohawkWaveLoopInfo *loopInfo = nullptr);
+};
+
+class MidiPlayer : public Audio::MidiPlayer {
+public:
+	MidiPlayer(MohawkEngine *vm);
+	~MidiPlayer();
+
+	void pause(bool p);
+	void playMidi(uint16 id);
+
+	// When enabled, a GM reset is sent before each song starts.
+	// Needed for the MIDI tracks without the inline GM/GS setup.
+	// e.g. Zoombini Macintosh MIDI profile
+	void setResetChannelsOnPlay(bool reset) { _resetChannelsOnPlay = reset; }
+
+	void pause() override { Audio::MidiPlayer::pause(); }
+
+	void sendToChannel(byte channel, uint32 b) override;
+	void onTimer() override;
+
+protected:
+	/** Play an already-opened Mohawk tMID stream and take ownership of it. */
+	void playMidiStream(Common::SeekableReadStream *stream, uint16 id);
+
+private:
+	MohawkEngine *_vm;
+	bool _paused;
+	bool _resetChannelsOnPlay;
+
+	static bool extractMohawkMidi(Common::SeekableReadStream *stream, Common::Array<byte> &standardMidi);
+	Common::SeekableReadStream *makeMidiStream(uint16 id);
+	void playMidiStreamLocked(Common::SeekableReadStream *stream, uint16 id);
 };
 
 } // End of namespace Mohawk
