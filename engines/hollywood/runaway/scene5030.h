@@ -147,6 +147,7 @@ private:
 	RunawayVideo _video;
 	Common::Point _position = Common::Point(623, 447);
 	RunawayWalkPath _walkPath;
+	RunawayCamera _cameraFollow;
 	byte _facing = 3, _pendingHotspot = 0;
 	byte _pendingItem = 0;
 	RunawayVerb _pendingVerb = kVerbWalk;

@@ -33,6 +33,7 @@ public:
 
 protected:
 	float actorHeight() const override;
+	int sceneViewportYOffset() const override { return 200; }
 	void setupActorDepth(RunawayActor::RenderParams &params) const override;
 
 private:

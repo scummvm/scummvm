@@ -262,6 +262,7 @@ bool RunawayRoomScene::restoreState(const RunawaySaveState &state, uint32 now, b
 	updateMaps();
 	_position = Common::Point(state.x, state.y);
 	_walkPath.reset(_position);
+	_cameraFollow.reset();
 	_facing = state.facing;
 	_keyCount = entering ? 0 : state.keyCount;
 	_now = _lastUpdate = now;
@@ -741,12 +742,19 @@ void RunawayRoomScene::setCameraX(int x) {
 }
 
 void RunawayRoomScene::updateCamera() {
+	_cameraFollow.reset();
 	setCameraX(_position.x - kRunawayScreenWidth / 2);
 	_camera.y = sceneViewportYOffset();
 }
 
+void RunawayRoomScene::followCamera(Common::Point camera) {
+	setCameraX(camera.x);
+	setCameraY(camera.y);
+}
+
 int RunawayRoomScene::sceneViewportYOffset() const {
-	return CLIP<int>(_position.y - 400, 0, _background.h - kRunawayViewportHeight);
+	return CLIP<int>(_position.y - (int)actorHeight() / 2 - kRunawayViewportHeight / 2,
+		0, _background.h - kRunawayViewportHeight);
 }
 
 void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpen) {
@@ -865,8 +873,18 @@ void RunawayRoomScene::updateActor(uint elapsed, int scrollDirection, bool inven
 		if (_idleBody.update(_now, true, false, _facing, _actor, _random))
 			return;
 	}
+	uint cameraElapsed = elapsed;
 	if (_walkPath.active() && !speaking()) {
-		const uint footsteps = _walkPath.advance(elapsed, _position, _facing);
+		_cameraFollow.reset();
+		uint footsteps = 0;
+		while (cameraElapsed && _walkPath.active()) {
+			const uint step = MIN(cameraElapsed, _walkPath.timeToNextFrame());
+			const Common::Point previous = _position;
+			footsteps += _walkPath.advance(step, _position, _facing);
+			cameraElapsed -= step;
+			if (!scrollDirection && _position != previous && shouldFollowCamera())
+				followCamera(RunawayCamera::followWalk(_camera, previous, _position, (int)actorHeight(), _fastScrolling));
+		}
 		if (_game != kRunawayMuseumDemo && footsteps) {
 			const bool inside = _position.x >= 0 && _position.x < _background.w && _position.y >= 0 && _position.y < _background.h;
 			const byte surface = inside ? _maps[1280 + _mask[_position.y * _background.w + _position.x]] : 0;
@@ -893,10 +911,12 @@ void RunawayRoomScene::updateActor(uint elapsed, int scrollDirection, bool inven
 		_actor.setFrame(_facing, walking ? _walkPath.frame() : 0, headFrame);
 	}
 	if (scrollDirection) {
+		_cameraFollow.reset();
 		setCameraX(_camera.x + scrollDirection * MAX<int>(1, elapsed / (_fastScrolling ? 2 : 4)));
-	} else if (walking) {
-		setCameraX(_camera.x + CLIP<int>(_position.x - kRunawayScreenWidth / 2 - _camera.x,
-			-MIN<int>(_fastScrolling ? 8 : 4, elapsed), MIN<int>(_fastScrolling ? 8 : 4, elapsed)));
+	} else if (!_fastScrolling && !walking && shouldFollowCamera()) {
+		followCamera(_cameraFollow.followIdle(_camera, _position, (int)actorHeight(), cameraElapsed));
+	} else {
+		_cameraFollow.reset();
 	}
 }
 

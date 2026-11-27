@@ -686,6 +686,7 @@ void Scene5030::walkForAction(Common::Point target, byte facing, Action next, bo
 void Scene5030::setPosition(Common::Point position, byte facing) {
 	_position = position;
 	_walkPath.reset(position);
+	_cameraFollow.reset();
 	_facing = facing;
 }
 
@@ -1136,8 +1137,20 @@ void Scene5030::update(uint32 now, int scrollDirection, bool inventoryOpen) {
 		if (_idleBody.update(now, true, false, _facing, _actor, _random))
 			return;
 	}
+	uint cameraElapsed = elapsed;
 	if ((_action == kNone || _action == kWalkingAction) && _walkPath.active()) {
-		const uint footsteps = _walkPath.advance(elapsed, _position, _facing);
+		_cameraFollow.reset();
+		uint footsteps = 0;
+		while (cameraElapsed && _walkPath.active()) {
+			const uint step = MIN(cameraElapsed, _walkPath.timeToNextFrame());
+			const Common::Point previous = _position;
+			footsteps += _walkPath.advance(step, _position, _facing);
+			cameraElapsed -= step;
+			if (!scrollDirection && _position != previous) {
+				const int height = (int)RunawayActor::perspectiveHeight(_position);
+				setCameraX(RunawayCamera::followWalk(Common::Point(_cameraX, 0), previous, _position, height, _fastScrolling).x);
+			}
+		}
 		for (uint i = 0; i < footsteps; ++i)
 			playWalkFootstep();
 		if (!_walkPath.active()) {
@@ -1155,12 +1168,15 @@ void Scene5030::update(uint32 now, int scrollDirection, bool inventoryOpen) {
 	const int headFrame = walking ? -1 : _speechRow ? speechFrame() : idle ? _idleHead.frame() : -1;
 	if (!bodyIdle)
 		_actor.setFrame(_facing, walking ? _walkPath.frame() : 0, headFrame);
-	if (scrollDirection)
-		_cameraX += scrollDirection * MAX<int>(1, elapsed / (_fastScrolling ? 2 : 4));
-	else if (walking || (_action != kNone && _action != kIntro))
-		_cameraX += CLIP<int>(_position.x - kScreenWidth / 2 - _cameraX,
-			-MIN<int>(_fastScrolling ? 8 : 4, elapsed), MIN<int>(_fastScrolling ? 8 : 4, elapsed));
-	setCameraX(_cameraX);
+	if (scrollDirection) {
+		_cameraFollow.reset();
+		setCameraX(_cameraX + scrollDirection * MAX<int>(1, elapsed / (_fastScrolling ? 2 : 4)));
+	} else if (!_fastScrolling && !walking && (_action == kNone || _action == kWaitSpeech)) {
+		const int height = (int)RunawayActor::perspectiveHeight(_position);
+		setCameraX(_cameraFollow.followIdle(Common::Point(_cameraX, 0), _position, height, cameraElapsed).x);
+	} else {
+		_cameraFollow.reset();
+	}
 }
 
 void Scene5030::draw() {

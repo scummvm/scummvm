@@ -57,6 +57,9 @@ private:
 	void drawRoomComposite(Graphics::ManagedSurface &viewport);
 	void drawRoomAnimation(Graphics::ManagedSurface &viewport) override;
 	void advanceCustomGameplayLoop(uint32 delta) override;
+	bool shouldFollowCamera() const override {
+		return !(_roomAction == 468 && drawingRoomAnimation()) && RunawayRoomScene::shouldFollowCamera();
+	}
 	const RunawayHotspot *hotspot(byte id) const override;
 	void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) override;
 	void drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) override;

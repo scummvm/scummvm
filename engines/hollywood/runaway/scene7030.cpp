@@ -126,6 +126,11 @@ void Scene7030::updateActor(uint elapsed, int scrollDirection, bool inventoryOpe
 	_camera.y = MIN<int>(300, camera.y + (_crossing == 1 ? steps : 0));
 }
 
+void Scene7030::setCameraY(int y) {
+	if (!_crossing)
+		_camera.y = CLIP(y, 0, 300);
+}
+
 void Scene7030::advanceRoute() {
 	if (_routeStep < _routeCount) {
 		walkTo(_route[_routeStep++], 0xff, true);

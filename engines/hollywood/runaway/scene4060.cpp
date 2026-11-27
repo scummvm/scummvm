@@ -270,8 +270,6 @@ void Scene4060::updateActor(uint elapsed, int scrollDirection, bool inventoryOpe
 	}
 	if (_roomAction == 480 || (_roomAction >= 483 && _roomAction <= 486)) {
 		_camera = camera;
-	} else if (!inventoryOpen && !_upperFloor && (!_roomAction || _roomAction < 461 || _roomAction > 466)) {
-		_camera.y = CLIP<int>(_position.y - 400, 200, 600);
 	}
 }
 
@@ -739,7 +737,12 @@ bool Scene4060::usesAlternateActor() const {
 }
 
 int Scene4060::sceneViewportYOffset() const {
-	return _upperFloor ? 0 : CLIP<int>(_position.y - 400, 200, _background.h - kRunawayViewportHeight);
+	return _upperFloor ? 0 : MAX(200, RunawayRoomScene::sceneViewportYOffset());
+}
+
+void Scene4060::setCameraY(int y) {
+	if (!_upperFloor && (!_roomAction || _roomAction < 461 || _roomAction > 466))
+		_camera.y = CLIP(y, 200, 600);
 }
 
 } // End of namespace Runaway

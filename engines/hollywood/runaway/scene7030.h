@@ -39,6 +39,7 @@ private:
 	void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) override;
 	void drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) override;
 	void updateActor(uint elapsed, int scrollDirection, bool inventoryOpen) override;
+	void setCameraY(int y) override;
 	void setupActorDepth(RunawayActor::RenderParams &params) const override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 	bool shouldPlayGameplayClickPath() const override { return false; }

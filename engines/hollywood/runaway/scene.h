@@ -188,6 +188,7 @@ protected:
 	virtual void setupActorDepth(RunawayActor::RenderParams &params) const {}
 	virtual bool drawCustomComposite(Graphics::ManagedSurface &viewport) { return false; }
 	virtual bool shouldDrawActor() const { return true; }
+	virtual bool shouldFollowCamera() const { return shouldDrawActor() && (!drawingRoomAnimation() || !_actionHidesActor); }
 	virtual bool roomAnimationInForeground() const { return false; }
 	virtual bool shouldUpdateActor() const { return true; }
 	virtual bool shouldPlayGameplayClickPath() const { return true; }
@@ -222,6 +223,9 @@ protected:
 	void showLine();
 	void changeFloor(bool upper, Common::Point position);
 	void updateCamera();
+	void followCamera(Common::Point camera);
+	// Most rooms lock the vertical view, including during scripted pans.
+	virtual void setCameraY(int y) {}
 	void beginRoomAnimation(uint16 action, uint chunk, uint frames, const byte *order = nullptr, uint count = 0, bool hideActor = true, uint frameDuration = 80);
 	void beginActorAnimation(uint16 action, uint bank, uint frames, uint count = 0, uint frameDuration = 60);
 	void beginAnimation(uint16 action, uint frames, const byte *order, uint count, bool hideActor, uint frameDuration);
@@ -322,6 +326,7 @@ protected:
 	Common::Array<byte> _walkRoutes;
 	Common::Array<Common::Rect> _foreground[5];
 	RunawayWalkPath _walkPath;
+	RunawayCamera _cameraFollow;
 	struct SpeechLine {
 		Common::U32String text;
 		uint16 sample;

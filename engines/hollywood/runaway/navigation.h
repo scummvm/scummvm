@@ -63,6 +63,7 @@ public:
 	uint advance(uint elapsed, Common::Point &position, byte &facing);
 	bool active() const { return _index < _steps.size(); }
 	byte frame() const { return _frame; }
+	uint timeToNextFrame() const { return kFrameDuration - _elapsed; }
 
 private:
 	struct Step {
@@ -78,6 +79,16 @@ private:
 	uint _index = 0, _elapsed = 0;
 	byte _frame = 0;
 	bool _footContact = false;
+};
+
+class RunawayCamera {
+public:
+	void reset() { _elapsed = 0; }
+	static Common::Point followWalk(Common::Point camera, Common::Point previous, Common::Point position, int height, bool fast);
+	Common::Point followIdle(Common::Point camera, Common::Point position, int height, uint elapsed);
+
+private:
+	uint _elapsed = 0;
 };
 
 } // End of namespace Hollywood

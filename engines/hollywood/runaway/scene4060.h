@@ -51,6 +51,7 @@ private:
 	void setupActorDepth(RunawayActor::RenderParams &params) const override;
 	bool usesAlternateActor() const override;
 	int sceneViewportYOffset() const override;
+	void setCameraY(int y) override;
 	byte actorWalkZone() const;
 
 	RunawayAnimation _willyAnimation;

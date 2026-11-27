@@ -362,4 +362,39 @@ uint RunawayWalkPath::advance(uint elapsed, Common::Point &position, byte &facin
 	return footsteps;
 }
 
+static int cameraStep(int height) {
+	return height > 341 ? 4 : height > 227 ? 2 : 1;
+}
+
+Common::Point RunawayCamera::followWalk(Common::Point camera, Common::Point previous, Common::Point position, int height, bool fast) {
+	// Native 0x42fee0 follows each walking cel, outside a nine-pixel center band.
+	const int dx = position.x - previous.x, dy = position.y - previous.y;
+	const int x = position.x - camera.x, y = position.y - height / 2 - camera.y;
+	const int step = cameraStep(height);
+	if ((dx > 0 && x >= 517) || (dx < 0 && x < 508))
+		camera.x += fast ? dx : dx > 0 ? step : -step;
+	if ((dy > 0 && y >= 305) || (dy < 0 && y < 296))
+		camera.y += fast ? dy : dy > 0 ? step : -step;
+	return camera;
+}
+
+Common::Point RunawayCamera::followIdle(Common::Point camera, Common::Point position, int height, uint elapsed) {
+	// Native 0x434c50 continues smooth scrolling every 10 ms after walking stops.
+	_elapsed += elapsed;
+	const int step = MAX(2, cameraStep(height));
+	while (_elapsed >= 10) {
+		_elapsed -= 10;
+		const int x = position.x - camera.x, y = position.y - height / 2 - camera.y;
+		if (x >= 517)
+			camera.x += step;
+		else if (x < 508)
+			camera.x -= step;
+		if (y >= 305)
+			camera.y += step;
+		else if (y < 296)
+			camera.y -= step;
+	}
+	return camera;
+}
+
 } // End of namespace Hollywood
