@@ -336,7 +336,7 @@ Common::Error RunawayEngine::playIntro(RunawayMenu &menu, byte chapter, RunawayI
 	return Common::kNoError;
 }
 
-Common::Error RunawayEngine::startChapter(RunawayMenu &menu, byte chapter) {
+Common::Error RunawayEngine::startChapter(RunawayMenu &menu, byte chapter, bool continuing) {
 	assert(chapter <= 6);
 	const bool fromBeginning = chapter == 0;
 	chapter = MAX<byte>(1, chapter);
@@ -345,13 +345,23 @@ Common::Error RunawayEngine::startChapter(RunawayMenu &menu, byte chapter) {
 	Common::ScopedPtr<RunawayScene> scene(createScene(entry));
 	if (!scene || !scene->load(entry) || !_ui->loadChapter(chapter))
 		return Common::Error(Common::kReadingFailed, "Cannot load Runaway chapter resources");
+	RunawaySaveState state;
+	state.game = _game;
+	state.scene = entry;
+	if (continuing && chapter >= 5) {
+		RunawaySaveState previous = _state;
+		_scene->captureState(previous);
+		scene->captureState(state);
+		// The restored pickup must stay absent when Douglasville is revisited.
+		state.town.wateringCanTaken = previous.town.wateringCanTaken;
+		if (!scene->restoreState(state, getTotalPlayTime(), true))
+			return Common::Error(Common::kReadingFailed, "Cannot prepare Runaway chapter state");
+	}
 	_audio.stopSpeech();
 	_audio.stopEffect();
 	_audio.stopMusic();
 	_audio.setChapter(chapter);
-	_state = RunawaySaveState();
-	_state.game = _game;
-	_state.scene = entry;
+	_state = state;
 	_inventory->startChapter(chapter);
 	_ui->restoreState(_state, getTotalPlayTime());
 	_scene.reset(scene.release());
@@ -598,7 +608,7 @@ Common::Error RunawayEngine::run() {
 		updateSoundListener();
 		if (_scene->transition().scene) {
 			// Brian brings Gina to Oscar before the chapter-six narration (8000).
-			const Common::Error result = _state.scene == 8092 ? startChapter(menu, 6) : changeScene();
+			const Common::Error result = _state.scene == 8092 ? startChapter(menu, 6, true) : changeScene();
 			if (result.getCode() != Common::kNoError)
 				return result;
 			leftPressed = rightPressed = false;
@@ -607,7 +617,7 @@ Common::Error RunawayEngine::run() {
 		if (_scene->escaped()) {
 			if (_game == kRunawayFullGame) {
 				const Common::Error result = _state.chapter() == 6 ?
-					selectChapter(menu) : startChapter(menu, _state.chapter() + 1);
+					selectChapter(menu) : startChapter(menu, _state.chapter() + 1, true);
 				if (result.getCode() != Common::kNoError || shouldQuit())
 					return result;
 				_loadedGame = false;
