@@ -23,6 +23,8 @@ MODULE_OBJS = \
 	saveload.o \
 	scene_view.o \
 	sound.o \
+	subtitle_manager.o \
+	subtitle_renderer.o \
 	title_sequence.o \
 	video_window.o \
 	window.o \
