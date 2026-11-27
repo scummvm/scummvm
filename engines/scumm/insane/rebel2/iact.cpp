@@ -49,7 +49,7 @@ bool readLevel2BackgroundChunkHeader(Common::SeekableReadStream &stream, int64 c
 
 	const int64 dataStart = stream.pos();
 	if ((int64)chunkSize > containerEnd - dataStart) {
-		debugC(DEBUG_INSANE, "loadLevel2Background: Truncated %s chunk 0x%08X at %lld: size=%u, remaining=%lld",
+		debugC(DEBUG_INSANE, "loadLevel2Background: Truncated %s chunk 0x%08X at %ld: size=%u, remaining=%ld",
 			context, tag, headerPos, chunkSize, containerEnd - dataStart);
 		return false;
 	}
@@ -1868,7 +1868,7 @@ bool InsaneRebel2::loadLevel2Background(byte *animData, int32 size, byte *render
 	if ((int64)animSize <= streamEnd - 8) {
 		animEnd = 8 + (int64)animSize;
 	} else {
-		debugC(DEBUG_INSANE, "loadLevel2Background: ANIM truncated: reported size=%u, actual=%lld",
+		debugC(DEBUG_INSANE, "loadLevel2Background: ANIM truncated: reported size=%u, actual=%ld",
 			animSize, streamEnd - 8);
 	}
 	debugC(DEBUG_INSANE, "loadLevel2Background: Found ANIM tag, size=%u", animSize);
@@ -1887,7 +1887,7 @@ bool InsaneRebel2::loadLevel2Background(byte *animData, int32 size, byte *render
 			continue;
 		}
 
-		debugC(DEBUG_INSANE, "loadLevel2Background: Found FRME at %lld, size=%u", stream.pos() - 8, chunkSize);
+		debugC(DEBUG_INSANE, "loadLevel2Background: Found FRME at %ld, size=%u", stream.pos() - 8, chunkSize);
 
 		while (stream.pos() + 8 <= chunkDataEnd && !stream.eos() && !foundBackground) {
 			uint32 subTag;

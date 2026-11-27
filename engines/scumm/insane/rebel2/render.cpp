@@ -215,7 +215,7 @@ bool readEmbeddedSanChunkHeader(Common::SeekableReadStream &stream, int64 contai
 
 	const int64 dataStart = stream.pos();
 	if ((int64)chunkSize > containerEnd - dataStart) {
-		debugC(DEBUG_INSANE, "Truncated embedded SAN %s chunk 0x%08X at %lld: size=%u, remaining=%lld",
+		debugC(DEBUG_INSANE, "Truncated embedded SAN %s chunk 0x%08X at %ld: size=%u, remaining=%ld",
 			context, tag, headerPos, chunkSize, containerEnd - dataStart);
 		return false;
 	}
@@ -327,9 +327,9 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 	if ((int64)animSize <= streamEnd - 8) {
 		animEnd = 8 + (int64)animSize;
 	} else {
-		debugC(DEBUG_INSANE, "Embedded ANIM truncated: reported size=%u, actual=%lld", animSize, streamEnd - 8);
+		debugC(DEBUG_INSANE, "Embedded ANIM truncated: reported size=%u, actual=%ld", animSize, streamEnd - 8);
 	}
-	debugC(DEBUG_INSANE, "Parsing embedded ANIM: userId=%d, reported size=%u, actual=%lld", userId, animSize, streamEnd - 8);
+	debugC(DEBUG_INSANE, "Parsing embedded ANIM: userId=%d, reported size=%u, actual=%ld", userId, animSize, streamEnd - 8);
 
 	while (!stream.eos() && stream.pos() + 8 <= animEnd) {
 		uint32 tag;
