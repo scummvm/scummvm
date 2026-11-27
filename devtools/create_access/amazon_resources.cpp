@@ -20,6 +20,7 @@
  */
 
 #include "amazon_resources.h"
+#include "common/util.h"
 
 namespace Amazon {
 
@@ -450,9 +451,9 @@ const byte FONT6x6_DATA[] = {
 	0x54, 0x49, 0x4f, 0x4e, 0x00, 0x4d, 0x4f, 0x56, 0x49,
 };
 
-const uint FONT2_INDEX_SIZE = sizeof(FONT2_INDEX) / 2;
+const uint FONT2_INDEX_SIZE = ARRAYSIZE(FONT2_INDEX);
 const uint FONT2_DATA_SIZE = sizeof(FONT2_DATA);
-const uint FONT6x6_INDEX_SIZE = sizeof(FONT6x6_INDEX) / 2;
+const uint FONT6x6_INDEX_SIZE = ARRAYSIZE(FONT6x6_INDEX);
 const uint FONT6x6_DATA_SIZE = sizeof(FONT6x6_DATA);
 
 const char *const ROOM_DESCR[64] = {
