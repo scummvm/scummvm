@@ -981,6 +981,9 @@ void Score::updateSprites(RenderMode mode, bool withClean) {
 		Sprite *currentSprite = channel->_sprite;
 		Sprite *nextSprite = _currentFrame->_sprites[i];
 
+		// The sprite is drawn now: Lingo reads its new rect from here on
+		channel->_hasLingoBbox = false;
+
 		// widget content has changed and needs a redraw.
 		// this doesn't include changes in dimension or position!
 		bool widgetRedrawn = channel->updateWidget();
@@ -2349,7 +2352,7 @@ Frame *Score::getFrameData(int frameNum){
 void Score::setSpriteCasts() {
 	// Update sprite cache of cast pointers/info
 	for (uint16 j = 0; j < _currentFrame->_sprites.size(); j++) {
-		_currentFrame->_sprites[j]->setCast(_currentFrame->_sprites[j]->_castId, !_currentFrame->_sprites[j]->_stretch);
+		_currentFrame->_sprites[j]->setCast(_currentFrame->_sprites[j]->_castId);
 
 		debugC(8, kDebugLoading, "Score::setSpriteCasts(): Frame: 0 Channel: %d castId: %s type: %d (%s)",
 			 j, _currentFrame->_sprites[j]->_castId.asString().c_str(), _currentFrame->_sprites[j]->_spriteType,

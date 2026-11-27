@@ -215,6 +215,8 @@ bool Movie::processSysEvent(Common::Event &event) {
 		if (_currentDraggedChannel) {
 			if (_currentDraggedChannel->_sprite->_moveable) {
 				pos = _draggingSpriteOffset + event.mouse;
+				// The edges follow at the next frame or updateStage
+				_currentDraggedChannel->keepLingoBbox();
 				_currentDraggedChannel->setPosition(pos.x, pos.y, true);
 				_currentDraggedChannel->setDirty();
 			} else {

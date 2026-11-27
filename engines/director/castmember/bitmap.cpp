@@ -1107,17 +1107,14 @@ void BitmapCastMember::setField(int field, const Datum &d) {
 			_regX = (_picture->_surface.w + 1) / 2;
 			_regY = (_picture->_surface.h + 1) / 2;
 
-			// The castId is unchanged, so resize the sprites showing this cast.
+			// The castId is unchanged, so redraw the sprites showing this cast.
 			Movie *movie = g_director->getCurrentMovie();
 			Score *score = movie ? movie->getScore() : nullptr;
 			if (score) {
 				for (uint i = 0; i < score->_channels.size(); i++) {
 					Channel *ch = score->_channels[i];
-					if (ch && ch->_sprite && ch->_sprite->_cast == this && !ch->_sprite->_stretch) {
-						ch->_sprite->_width = _initialRect.width();
-						ch->_sprite->_height = _initialRect.height();
+					if (ch && ch->_sprite && ch->_sprite->_cast == this && !ch->_sprite->_stretch)
 						ch->setDirty();
-					}
 				}
 			}
 		} else {

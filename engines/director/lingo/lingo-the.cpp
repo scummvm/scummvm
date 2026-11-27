@@ -1646,7 +1646,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d = (255 - sprite->_blendAmount) * 100 / 255;
 		break;
 	case kTheBottom:
-		d = channel->getBbox().bottom;
+		d = channel->getLingoBbox().bottom;
 		break;
 	case kTheMember:
 		d = sprite->_castId;
@@ -1695,7 +1695,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d = sprite->_ink;
 		break;
 	case kTheLeft:
-		d = channel->getBbox().left;
+		d = channel->getLingoBbox().left;
 		break;
 	case kTheLineSize:
 		d = (sprite->_thickness & kTThickness) - 1;
@@ -1747,7 +1747,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 	case kTheRect:
 		// let compiler to optimize this
 		{
-			Common::Rect bbox = channel->getBbox();
+			Common::Rect bbox = channel->getLingoBbox();
 			d.type = RECT;
 			d.u.farr = new FArray;
 			d.u.farr->arr.push_back(bbox.left);
@@ -1757,7 +1757,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		}
 		break;
 	case kTheRight:
-		d = channel->getBbox().right;
+		d = channel->getLingoBbox().right;
 		break;
 	case kTheScoreColor:
 		//Check the last 3 bits of the _colorcode byte as value lies in 0 to 5
@@ -1792,7 +1792,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d = (sprite->_stretch ? 1 : 0);
 		break;
 	case kTheTop:
-		d = channel->getBbox().top;
+		d = channel->getLingoBbox().top;
 		break;
 	case kTheTrails:
 		d = (sprite->_trails ? 1 : 0);
@@ -1886,6 +1886,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			CastMemberID targetMember = d.asMemberID();
 
 			if (targetMember != sprite->_castId) {
+				channel->keepLingoBbox();
 				channel->setCast(targetMember);
 				// Ensure the new sprite, whether larger or smaller, appears correctly on the screen
 			}
@@ -1921,6 +1922,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			// Since Digital Video dimensions get clarified after loading,
 			// we enforce them here
 			if (castId != sprite->_castId || (castMember && castMember->_type == kCastDigitalVideo)) {
+				if (castId != sprite->_castId)
+					channel->keepLingoBbox();
 				channel->setCast(castId);
 			}
 		}
@@ -1987,7 +1990,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheHeight:
-		if (d.asInt() != channel->getHeight()) {
+		if (d.asInt() != channel->getHeight() || !sprite->_stretch) {
 			channel->setHeight(d.asInt());
 		}
 
@@ -2018,10 +2021,12 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		if (channel->getPosition() != d.asPoint()) {
 			channel->setNeedsDraw();
 		}
+		channel->keepLingoBbox();
 		channel->setPosition(d.asPoint().x, d.asPoint().y);
 		break;
 	case kTheLocH:
 		if (d.asInt() != channel->getPosition().x) {
+			channel->keepLingoBbox();
 			channel->setPosition(d.asInt(), channel->getPosition().y);
 			channel->setNeedsDraw();
 		}
@@ -2032,6 +2037,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheLocV:
 		if (d.asInt() != channel->getPosition().y) {
+			channel->keepLingoBbox();
 			channel->setPosition(channel->getPosition().x, d.asInt());
 			channel->setNeedsDraw();
 		}
@@ -2078,7 +2084,6 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheRect:
 		if (d.type == RECT || (d.type == ARRAY && d.u.farr->arr.size() >= 4)) {
-			score->updateSprites(kRenderForceUpdate);
 			channel->setBbox(
 				d.u.farr->arr[0].u.i, d.u.farr->arr[1].u.i,
 				d.u.farr->arr[2].u.i, d.u.farr->arr[3].u.i
@@ -2141,7 +2146,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_volume = d.asInt();
 		break;
 	case kTheWidth:
-		if (d.asInt() != channel->getWidth()) {
+		if (d.asInt() != channel->getWidth() || !sprite->_stretch) {
 			channel->setWidth(d.asInt());
 		}
 

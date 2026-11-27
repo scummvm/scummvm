@@ -65,6 +65,7 @@ Channel::Channel(Score *sc, Sprite *sp, int priority) {
 	_needsDraw = false;
 	_hideFromStage = false;
 	_lastTrail = false;
+	_hasLingoBbox = false;
 
 	if (sp) {
 		_startFrame = sp->_spriteInfo.startFrame;
@@ -99,6 +100,8 @@ Channel& Channel::operator=(const Channel &channel) {
 	_visible = channel._visible;
 	_widgetDirty = channel._widgetDirty;
 	_hideFromStage = channel._hideFromStage;
+	_hasLingoBbox = channel._hasLingoBbox;
+	_lingoBbox = channel._lingoBbox;
 
 	_startFrame = channel._startFrame;
 	_endFrame = channel._endFrame;
@@ -292,6 +295,47 @@ bool hasTextCastMember(Sprite *sprite) {
 	return false;
 }
 
+// Lingo stores a size. From D3 on this turns the stretch flag on,
+// even if the value is same that the sprite already has, and the
+// sprite will be drawn at the stored size. D2 goes on drawing
+// an unstretched sprite at the size of its member.
+void Channel::setWidth(int w) {
+	keepLingoBbox();
+	_sprite->setWidth(w);
+	if (g_director->getVersion() >= 300)
+		_sprite->_stretch = true;
+	replaceWidget();
+	setNeedsDraw();
+}
+
+void Channel::setHeight(int h) {
+	keepLingoBbox();
+	_sprite->setHeight(h);
+	if (g_director->getVersion() >= 300)
+		_sprite->_stretch = true;
+	replaceWidget();
+	setNeedsDraw();
+}
+
+void Channel::setBbox(int l, int t, int r, int b) {
+	keepLingoBbox();
+	if (g_director->getVersion() >= 300)
+		_sprite->_stretch = true;
+	_sprite->setBbox(l, t, r, b);
+	replaceWidget();
+	setNeedsDraw();
+}
+
+// Lingo is about to move or resize the sprite. The left, top, right and
+// bottom go on returning the rect that was drawn until the sprite is
+// drawn again.
+void Channel::keepLingoBbox() {
+	if (g_director->getVersion() < 600 && !_hasLingoBbox) {
+		_lingoBbox = getBbox();
+		_hasLingoBbox = true;
+	}
+}
+
 bool Channel::isDirty(Sprite *nextSprite) {
 	// When a sprite is puppeted setTheSprite ensures that the dirty flag here is
 	// set. Otherwise, we need to rerender when the position, bounding box, or
@@ -475,13 +519,10 @@ void Channel::setCast(CastMemberID memberID) {
 
 	bool hasChanged = _sprite->_castId != memberID;
 
-	// Replace the cast member in the sprite.
-	// Only change the dimensions if the "stretch" flag is set,
-	// indicating that the sprite has already been warped away from cast
-	// dimensions. In puppet mode Lingo can first change the
-	// dimensions of the sprite, -then- change the cast ID, and expect
-	// those custom dimensions to stick around.
-	_sprite->setCast(memberID, !_sprite->_stretch);
+	// Replace the cast member in the sprite. The stored size stays:
+	// a stretched sprite keeps it, an unstretched one is drawn at the
+	// size of its new member.
+	_sprite->setCast(memberID);
 
 	// Duplicate of the special cases in setClean.
 	// Maybe it makes sense to force setClean to use setCast instead?
@@ -553,19 +594,16 @@ void Channel::setClean(Sprite *nextSprite, bool partial) {
 }
 
 void Channel::setStretch(bool enabled) {
-	if (!enabled) {
-		// when the stretch flag is manually disabled,
-		// revert whatever dimensions the sprite has to
-		// the default in the cast
-		setDirty();
+	if (enabled == _sprite->_stretch)
+		return;
 
-		if (_sprite->_cast) {
-			Common::Rect bbox = _sprite->_cast->getBbox();
-			_sprite->setWidth(bbox.width());
-			_sprite->setHeight(bbox.height());
-		}
-	}
+	// Only the flag changes. It decides whether the sprite is drawn at
+	// the stored size or at the size of its member.
+	keepLingoBbox();
 	_sprite->_stretch = enabled;
+	setDirty();
+	replaceWidget();
+	setNeedsDraw();
 }
 
 // this is used to for setting and updating text castmember
@@ -668,6 +706,7 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 	}
 
 	_sprite->replaceFrom(nextSprite);
+	_hasLingoBbox = false;
 
 	// TODO: auto expand text size is meaning less for us, not all text
 	// since we are using initialRect for the text cast member now, then the sprite size is meaning less for us.

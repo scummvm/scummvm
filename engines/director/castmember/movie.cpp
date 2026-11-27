@@ -165,7 +165,7 @@ void MovieCastMember::load() {
 	for (auto &frame : _score->_scoreCache) {
 		for (auto &sprite : frame->_sprites) {
 			if (sprite && !sprite->_castId.isNull())
-				sprite->setCast(sprite->_castId, false);
+				sprite->setCast(sprite->_castId);
 		}
 	}
 }
