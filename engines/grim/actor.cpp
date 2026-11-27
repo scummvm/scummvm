@@ -789,7 +789,6 @@ void Actor::walkTo(const Math::Vector3d &p) {
 						}
 						bridges.pop_back();
 					}
-					best = handleCollisionTo(node->pos, best);
 
 					PathNode *n = nullptr;
 					for (Common::List<PathNode *>::iterator j = openList.begin(); j != openList.end(); ++j) {
@@ -1652,7 +1651,7 @@ void Actor::updateWalk() {
 		_path.pop_back();
 		if (_path.empty()) {
 			_pathWalking = false;
-			_pos = destPos;
+			walkPathTo(destPos);
 			return;
 		}
 	}
@@ -1671,7 +1670,24 @@ void Actor::updateWalk() {
 
 	dir = destPos - _pos;
 	dir.normalize();
-	_pos += dir * walkAmt;
+	walkPathTo(_pos + dir * walkAmt);
+}
+
+void Actor::walkPathTo(const Math::Vector3d &pos) {
+	if (g_grim->getGameType() == GType_MONKEY4 && _collisionMode == CollisionOff) {
+		_pos = pos;
+		return;
+	}
+
+	Math::Vector3d moveVec = pos - _pos;
+	bool pushed = false;
+	for (Actor *a : g_grim->getActiveActors()) {
+		if (a->_collisionMode == CollisionSphere)
+			pushed |= handleCollisionWith(a, CollisionSphere, &moveVec);
+	}
+	_pos += moveVec;
+	if (pushed && _followBoxes)
+		g_grim->getCurrSet()->findClosestSector(_pos, nullptr, &_pos);
 }
 
 void Actor::updateMovement() {
@@ -2184,61 +2200,6 @@ void Actor::setCollisionScale(float scale) {
 	_collisionScale = scale;
 }
 
-Math::Vector3d Actor::handleCollisionTo(const Math::Vector3d &from, const Math::Vector3d &pos) const {
-	if (_collisionMode == CollisionOff) {
-		return pos;
-	}
-
-	Math::Vector3d p = pos;
-	Math::Vector3d moveVec = pos - _pos;
-	for (Actor *a : Actor::getPool()) {
-		if (a != this && a->isInSet(_setName) && a->isVisible()) {
-			p = a->getTangentPos(from, p);
-			handleCollisionWith(a, _collisionMode, &moveVec);
-		}
-	}
-	return p;
-}
-
-Math::Vector3d Actor::getTangentPos(const Math::Vector3d &pos, const Math::Vector3d &dest) const {
-	if (_collisionMode == CollisionOff) {
-		return dest;
-	}
-	if (pos.getDistanceTo(dest) < Math::epsilon) {
-		return dest;
-	}
-	Math::Vector3d p;
-	float size;
-	if (!getSphereInfo(size, p))
-		return dest;
-	Math::Vector2d p1(pos.x(), pos.y());
-	Math::Vector2d p2(dest.x(), dest.y());
-	if (p1.getDistanceTo(p2) < Math::epsilon) {
-		return dest;
-	}
-	Math::Segment2d segment(p1, p2);
-
-	// TODO: collision with Box
-//	if (_collisionMode == CollisionSphere) {
-	Math::Vector2d center(p.x(), p.y());
-
-	Math::Vector2d inter;
-	float distance = segment.getLine().getDistanceTo(center, &inter);
-
-	if (distance < size && segment.containsPoint(inter)) {
-		Math::Vector2d v(inter - center);
-		v.normalize();
-		v *= size;
-		v += center;
-
-		return Math::Vector3d(v.getX(), v.getY(), dest.z());
-	}
-//	} else {
-//	}
-
-	return dest;
-}
-
 void Actor::setLocalAlpha(unsigned int vertex, float alpha) {
 	if (vertex >= _localAlpha.size()) {
 		_localAlpha.resize(MAX(MAX_LOCAL_ALPHA_VERTICES, vertex + 1));
@@ -2293,8 +2254,8 @@ bool Actor::getSphereInfo(float &size, Math::Vector3d &p) const {
 		EMIModel *model = costume->getEMIModel();
 		assert(model);
 		p = _pos + *(model->_center);
-		// pre-scale factor of 0.8 was guessed by comparing with the original game
-		size = model->_radius * _collisionScale * 0.8f;
+		const Math::Vector3d boxSize = *model->_boxData2 - *model->_boxData;
+		size = sqrtf(boxSize.x() * boxSize.x() + boxSize.z() * boxSize.z()) * 0.5f * _collisionScale;
 	} else {
 		Model *model = getCurrentCostume()->getModel();
 		assert(model);
