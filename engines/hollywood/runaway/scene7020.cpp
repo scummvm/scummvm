@@ -371,17 +371,19 @@ void Scene7020::advanceCustomGameplayLoop(uint32 delta) {
 void Scene7020::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
 	if (_arrivalStage == 1) {
 		_ginaArrival.draw(viewport, 0, _camera.x, -_camera.y);
-	} else if (!_arrivalStage && _roomAction != 432) {
+	} else if (!_arrivalStage && (_roomAction != 432 || !drawingRoomAnimation())) {
 		const uint frame = _ginaPose == kTalking ? 138 + (speaker() == 1 ? speechFrame() : 0) : _ginaFrame;
 		_gina.draw(viewport, frame, _camera.x, -_camera.y);
 	}
-	if (!_arrivalStage && _position.y > 500 && _roomAction != 427) {
+	if (!_arrivalStage && _position.y > 500 &&
+			(_roomAction != 427 || !drawingRoomAnimation())) {
 		_rope.draw(viewport, _hopi.rope ? 31 : 1, _camera.x, -_camera.y);
 	}
 }
 
 void Scene7020::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport) {
-	if (!_arrivalStage && _position.y <= 500 && _roomAction != 427) {
+	if (!_arrivalStage && _position.y <= 500 &&
+			(_roomAction != 427 || !drawingRoomAnimation())) {
 		_rope.draw(viewport, _hopi.rope ? 31 : 1, _camera.x, -_camera.y);
 	}
 }

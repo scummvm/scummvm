@@ -157,10 +157,8 @@ void Scene8100::advanceCustomGameplayLoop(uint32 delta) {
 			_movingDorita = false;
 			_doritaStep = _doritaIdle;
 		}
-	} else if (speaker()) {
+	} else if (speaker() || _blink) {
 		_blink = 0;
-	} else if (_blink) {
-		_blink = _blink == 6 ? 0 : _blink + 1;
 	} else if (!_random.getRandomNumber(14)) {
 		_blink = 1;
 	}
@@ -188,7 +186,7 @@ void Scene8100::draw() {
 void Scene8100::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) {
 	uint step = _doritaStep;
 	if (!_movingDorita) {
-		step += speaker() ? speechFrame() % 6 : _blink ? 5 + _blink : 0;
+		step += speaker() ? speechFrame() : _blink ? 6 : 0;
 	}
 	_dorita.draw(viewport, kDoritaFrames[step], _camera.x, -_camera.y);
 }
