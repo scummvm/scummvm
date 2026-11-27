@@ -115,6 +115,7 @@ void TeenAgentEngine::fnIntro() {
 	playAnimation(851, 0, true);
 	playActorAnimation(934, true);
 	waitAnimation();
+	playMusic(4);
 	loadScene(10, 136, 153, 3);
 }
 
