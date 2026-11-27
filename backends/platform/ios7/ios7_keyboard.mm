@@ -625,65 +625,52 @@
 @end
 
 
-@implementation SoftKeyboard {
-	BOOL _keyboardVisible;
-	CGFloat _inputAccessoryHeight;
-}
+@implementation SoftKeyboard
 
 #if TARGET_OS_IOS
 - (void)resizeParentFrame:(NSNotification*)notification keyboardDidShow:(BOOL)didShow
 {
-	NSDictionary* userInfo = [notification userInfo];
-	CGRect keyboardFrame = [[userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-	keyboardFrame = [self.superview convertRect:keyboardFrame fromView:nil];
+	UIView *parent = self.superview;
+	UIView *container = parent.superview;
+	if (!parent || !container)
+		return;
 
-	// Base the new frame size on the current parent frame size
-	CGRect newFrame = self.superview.frame;
-#ifdef __IPHONE_14_0
-	if (@available(iOS 14.0, tvOS 14.0, *)) {
-		if (GCKeyboard.coalescedKeyboard != nil) {
-			if (didShow) {
-				// The inputAccessoryView is hidden by setting it to nil. Then when
-				// receiving the UIKeyboardDidHideNotification the height will be 0.
-				// Remember the height of the inputAccessoryView when it's presented
-				// so the main frame can be resized back to the proper size.
-				_inputAccessoryHeight = inputView.inputAccessoryView.frame.size.height;
-			}
-			newFrame.size.height += (_inputAccessoryHeight) * (didShow ? -1 : 1);
-		} else {
-			newFrame.size.height += (keyboardFrame.size.height) * (didShow ? -1 : 1);
+	CGRect newFrame = parent.frame;
+	UIView *accessory = inputView.inputAccessoryView;
+
+	if (didShow || accessory) {
+		// Overlap from the keyboard itself
+		NSDictionary* userInfo = [notification userInfo];
+		CGRect keyboardFrame = [[userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+		CGRect overlap = CGRectIntersection(container.bounds, keyboardFrame);
+		CGFloat covered = CGRectIsNull(overlap) ? 0.0f : overlap.size.height;
+
+		// Overlap from the accessory bar, which the reported keyboard frame
+		// may not include (e.g. with a hardware keyboard)
+		if (accessory) {
+			covered += accessory.frame.size.height;
 		}
+		newFrame.size.height = container.bounds.size.height - newFrame.origin.y - covered;
 	} else {
-		newFrame.size.height += (keyboardFrame.size.height) * (didShow ? -1 : 1);
+		newFrame = container.frame;
 	}
-#endif
-	// Resize with a fancy animation
-	NSNumber *rate = notification.userInfo[UIKeyboardAnimationDurationUserInfoKey];
-	[UIView animateWithDuration:rate.floatValue animations:^{
-		self.superview.frame = newFrame;
+
+	if (CGRectEqualToRect(newFrame, parent.frame))
+		return;
+
+	[UIView performWithoutAnimation:^{
+		parent.frame = newFrame;
 	}];
 }
 
 - (void)keyboardDidShow:(NSNotification*)notification
 {
-	// NotificationCenter might notify multiple times
-	// when keyboard did show because the accessoryView
-	// affect the keyboard height. However since we use
-	// UIKeyboardFrameEndUserInfoKey to get the keyboard
-	// it will always have the same value. Make sure to
-	// only handle one notification.
-	if (!_keyboardVisible) {
-		[self resizeParentFrame:notification keyboardDidShow:YES];
-		_keyboardVisible = YES;
-	}
+	[self resizeParentFrame:notification keyboardDidShow:YES];
 }
 
 - (void)keyboardDidHide:(NSNotification*)notification
 {
-	// NotificationCenter will only call this once
-	// when keyboard did hide.
 	[self resizeParentFrame:notification keyboardDidShow:NO];
-	_keyboardVisible = NO;
 }
 
 - (void)keyboardDidConnect:(NSNotification*)notification
@@ -737,8 +724,6 @@
 	inputView.clearsOnBeginEditing = YES;
 	inputView.keyboardType = UIKeyboardTypeDefault;
 	[inputView layoutIfNeeded];
-	_keyboardVisible = NO;
-	_inputAccessoryHeight = 0.0f;
 
 #ifdef __IPHONE_14_0
 	if (@available(iOS 14.0, tvOS 14.0, *)) {
