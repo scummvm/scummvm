@@ -644,6 +644,7 @@ RunawayInventory::Reply RunawayInventory::combineHospitalItems(byte first, byte 
 	case 73: // Put the wig on the model head.
 		_headWig = 1;
 		remove(10);
+		_selected = 0;
 		return Reply(71);
 	case 74: // Write on the blank medical chart.
 		if (_markerInk < 2) {
@@ -697,6 +698,7 @@ RunawayInventory::Reply RunawayInventory::combineMuseumItems(byte first, byte se
 		}
 		_museum.recorderBattery = 3;
 		remove(6);
+		_selected = 0;
 		return Reply(115, 1);
 	}
 	if (first == 6 && second == 18) {
@@ -705,6 +707,7 @@ RunawayInventory::Reply RunawayInventory::combineMuseumItems(byte first, byte se
 		}
 		_museum.batteryInLadle = 1;
 		remove(6);
+		_selected = 0;
 		return Reply(116);
 	}
 	if (first == 8 && second == 11) {
@@ -712,6 +715,7 @@ RunawayInventory::Reply RunawayInventory::combineMuseumItems(byte first, byte se
 			return Reply(117, 2);
 		}
 		_museum.rubyRemoved = 1;
+		_selected = 0;
 		return Reply(117);
 	}
 	if (first == 14 && second == 19) {
@@ -720,6 +724,7 @@ RunawayInventory::Reply RunawayInventory::combineMuseumItems(byte first, byte se
 		}
 		_museum.coffee = 2;
 		_museum.packageFilled = 1;
+		_selected = 0;
 		return Reply(121, 1);
 	}
 	return Reply::fromAction(1);
@@ -751,6 +756,7 @@ RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 				_finale.scalpel = 2;
 				_finale.podsOpened = 1;
 				add(10);
+				_selected = 0;
 				return Reply(313, 4);
 			}
 			const byte variation = _finale.heatNeeded ? 2 : 0;
@@ -765,8 +771,10 @@ RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 	// Chapter 3's item-pair table (retail 0x46d400).
 	if (first == 1 && second == 3) {
 		const byte previous = _clothState;
-		if (!previous)
+		if (!previous) {
 			_clothState = 1;
+			_selected = 0;
+		}
 		return Reply(156, previous);
 	}
 	if (first == 7 && second == 8) {
@@ -780,6 +788,7 @@ RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 			return Reply(14);
 		_desert.helmet = 1;
 		remove(4);
+		_selected = 0;
 		return Reply(178);
 	}
 	if (first == 6 && second == 18) {
@@ -789,6 +798,7 @@ RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 			return Reply(190);
 		_desert.helmet = 2;
 		remove(18);
+		_selected = 0;
 		return Reply(190, 1, 2);
 	}
 	if ((first == 10 || first == 11) && second == 25) {
@@ -798,6 +808,7 @@ RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 			if (_desert.lipstick)
 				return Reply(184, 2);
 			_desert.lipstick = 1;
+			_selected = 0;
 			return Reply(184, 0, 1);
 		}
 		if (_desert.lipsticks)
@@ -806,6 +817,7 @@ RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 		_desert.bucket = 2;
 		const bool hadLipstick = contains(10);
 		remove(10);
+		_selected = 0;
 		return Reply(185, 0, hadLipstick ? 2 : 1);
 	}
 	if ((first == 10 || first == 11) && second == 14) {
@@ -813,18 +825,21 @@ RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 			return Reply(first == 10 ? 186 : 187);
 		_desert.belt = first == 10 ? 1 : 2;
 		remove(first);
+		_selected = 0;
 		return Reply(first == 10 ? 186 : 187, 1, 2);
 	}
 	if (first == 15 && second == 16) {
 		if (_desert.ball)
 			return Reply(188, 2);
 		_desert.ball = 1;
+		_selected = 0;
 		return Reply(188, 0, 1);
 	}
 	if (first == 15 && second == 24) {
 		if (_desert.ball != 1)
 			return Reply(189, _desert.ball ? 3 : 0);
 		_desert.ball = 2;
+		_selected = 0;
 		return Reply(189, 1, 2);
 	}
 	if (first == 4 && second == 18)

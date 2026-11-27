@@ -27,6 +27,7 @@ RunawayInventory::Reply RunawayInventory::combineHopiItems(byte first, byte seco
 	if (first == 10 && second == 11) {
 		remove(10);
 		add(13);
+		_selected = 0;
 		return Reply(261);
 	}
 	if (first == 11 && second == 13) {

@@ -446,7 +446,7 @@ RunawayUI::Command RunawayUI::click(bool right) {
 			_inventory.select(0);
 		} else if (command.item) {
 			command.type = Command::kCombine;
-			_inventory.select(0);
+			// The combination handler decides whether to put the selected item back.
 		} else if (_verb == kVerbLook) {
 			command.type = Command::kExamineItem;
 		} else if (_inventory.isPlan(_hovered)) {

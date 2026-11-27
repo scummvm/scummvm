@@ -52,6 +52,7 @@ bool RunawayRoomScene::sayTownInventory(const RunawayInventory::Reply &reply) {
 			_audio.playEffect(32);
 			_inventory.town().sculpture = 2;
 			_inventory.remove(4);
+			_inventory.select(0);
 			say(219, 4, true);
 		}
 		return true;

@@ -159,6 +159,7 @@ RunawayInventory::Reply RunawayInventory::combineTownItems(byte first, byte seco
 		}
 		remove(27);
 		add(28);
+		_selected = 0;
 		return Reply(225, 1);
 	}
 	if (first == 27 && second == 31) { // Grind the leaves only once the mortar is ready.
@@ -173,6 +174,7 @@ RunawayInventory::Reply RunawayInventory::combineTownItems(byte first, byte seco
 		}
 		_town.mortar = 1;
 		remove(32);
+		_selected = 0;
 		return Reply(241, 1);
 	}
 	if (first == 4 && second == 29) { // The room supplies Saturn's prerequisite for decorating the sculpture.
