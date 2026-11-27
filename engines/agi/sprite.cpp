@@ -222,6 +222,31 @@ void SpritesMgr::drawAllSpriteLists() {
 	drawSprites(_spriteRegularList);
 }
 
+// Black and white Macintosh aligned cel patterns to the cel instead of the screen
+// Pattern row depends on the cel rows left to draw, pattern column restarts with every RLE chunk
+static byte macintoshBWCelPhase(const byte *celRow, int16 celWidth, int16 x, bool mirrored, uint8 rowsLeft) {
+	const int16 maxChunkLength = 15;
+
+	int16 runStart = x, runEnd = x;
+	while (runStart > 0 && celRow[runStart - 1] == celRow[x])
+		runStart--;
+	while (runEnd < celWidth - 1 && celRow[runEnd + 1] == celRow[x])
+		runEnd++;
+
+	int16 columnInChunk = (x - runStart) % maxChunkLength;
+	if (mirrored) {
+		int16 fromRunEnd = runEnd - x;
+		int16 chunkFromRunEnd = fromRunEnd / maxChunkLength;
+		int16 chunkLength = MIN<int16>(maxChunkLength, runEnd - runStart + 1 - chunkFromRunEnd * maxChunkLength);
+		columnInChunk = chunkLength - 1 - fromRunEnd % maxChunkLength;
+	}
+
+	byte phase = MACINTOSH_BW_CEL_PIXEL | ((rowsLeft & 3) << MACINTOSH_BW_CEL_ROW_SHIFT);
+	if (columnInChunk & 1)
+		phase |= MACINTOSH_BW_CEL_ODD_COLUMN;
+	return phase;
+}
+
 void SpritesMgr::drawCel(ScreenObjEntry *screenObj) {
 	int16 curX = screenObj->xPos;
 	int16 baseX = screenObj->xPos;
@@ -235,15 +260,19 @@ void SpritesMgr::drawCel(ScreenObjEntry *screenObj) {
 	byte screenPriority = 0;
 	byte curColor = 0;
 	byte isViewHidden = true;
+	const bool macintoshBW = _vm->_renderMode == Common::kRenderMacintoshBW;
 
 	// Adjust vertical position, given yPos is lower left, but we need upper left
 	curY = curY - celPtr->height + 1;
 
 	while (remainingCelHeight) {
+		const byte *celRowPtr = celDataPtr;
 		for (int16 loopX = 0; loopX < celWidth; loopX++) {
 			curColor = *celDataPtr++;
 
 			if (curColor != celClearKey) {
+				if (macintoshBW)
+					curColor |= macintoshBWCelPhase(celRowPtr, celWidth, loopX, celPtr->mirrored, remainingCelHeight);
 				screenPriority = _gfx->getPriority(curX, curY);
 				if (screenPriority <= 2) {
 					// control data found
