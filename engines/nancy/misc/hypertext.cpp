@@ -252,18 +252,18 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 						break;
 					}
 
-					const uint fontID = atoi(curToken.c_str() + 1);
-					if (!g_nancy->_graphics->getFont(fontID)) {
+					const uint newFontID = atoi(curToken.c_str() + 1);
+					if (!g_nancy->_graphics->getFont(newFontID)) {
 						warning("Text tag <%s> selects a font that doesn't exist", curToken.c_str());
 						continue;
 					}
 
 					// A font set before any text also applies to word wrapping
 					if (numNonSpaceChars == 0) {
-						curFontID = fontID;
+						curFontID = newFontID;
 					}
 
-					metaInfo.push({MetaInfo::kFont, numNonSpaceChars, (byte)fontID});
+					metaInfo.push({MetaInfo::kFont, numNonSpaceChars, (byte)newFontID});
 					continue;
 				}
 				case 'j' : {
