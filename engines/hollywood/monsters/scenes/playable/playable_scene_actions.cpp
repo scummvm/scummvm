@@ -49,13 +49,20 @@ void PlayableScene::handleInventoryItemClick(const GameplayLoopCursorState &stat
 
 	_lastInventoryActionItemId = state.resolvedItem;
 	_lastInventoryPrimaryItemId = state.primaryInventoryItem;
+	_actionCaptionText = state.captionText;
+	_gameplayActionExecuting = true;
 	_vm->cursor()->leaveInteractiveMode();
 	if (_playerDirectedActorPathActive) {
 		cancelConcurrentActorPath();
 		_activeActorCel = 0;
 	}
-	if (!dispatchGenericInventoryAction(state))
+	const bool handled = state.relationModeActive ?
+		dispatchInventoryRelationAction(_vm, this, state) : dispatchInventoryFixedAction(_vm, this, state);
+	if (!handled && !dispatchGenericInventoryAction(state))
 		dispatchSceneAction(state.inventoryActionHandlerId);
+	_gameplayActionExecuting = false;
+	if (!isRealtimeSecondarySpeechActive())
+		_actionCaptionText.clear();
 	if (!Engine::shouldQuit() && !shouldExitGameplayLoop()) {
 		_skipRequested = false;
 		_vm->cursor()->enterInteractiveMode();
@@ -74,12 +81,16 @@ void PlayableScene::runGameplayAction(uint16 handlerId) {
 	if (handlerId == 0)
 		return;
 
+	_gameplayActionExecuting = true;
 	if (_playerDirectedActorPathActive) {
 		cancelConcurrentActorPath();
 		_activeActorCel = 0;
 	}
 	_vm->cursor()->leaveInteractiveMode();
 	dispatchSceneAction(handlerId);
+	_gameplayActionExecuting = false;
+	if (!isRealtimeSecondarySpeechActive())
+		_actionCaptionText.clear();
 	if (!Engine::shouldQuit() && !shouldExitGameplayLoop()) {
 		_skipRequested = false;
 		_vm->cursor()->enterInteractiveMode();
@@ -117,6 +128,7 @@ void PlayableScene::processSceneActionClick(const GameplayLoopCursorState &state
 		debugC(1, kDebugPath, "%s path target adjusted: raw=(%u,%u) adjusted=(%d,%d) adjustedRegion=%u adjustedWalk=%u",
 			sceneDebugName(), state.sceneX, state.sceneY, targetX, targetY,
 			paletteRegionAt(targetX, targetY), walkableMaskAt(targetX, targetY));
+		_actionCaptionText.clear();
 		startPlayerDirectedActorPath(targetX, targetY, kActionInvalidFacing, 0, 0);
 		return;
 	}
@@ -124,6 +136,7 @@ void PlayableScene::processSceneActionClick(const GameplayLoopCursorState &state
 	SceneVerbActionRecord actionRecord = _hotspots.verbActionRecord(itemId, state.currentStrip);
 	if (actionRecord.actionHandlerId == 0)
 		return;
+	_actionCaptionText = state.captionText;
 	_lastSceneActionItemId = itemId;
 	if (!shouldPlayGameplayClickPath()) {
 		runGameplayAction(actionRecord.actionHandlerId);
@@ -171,6 +184,7 @@ void PlayableScene::processSceneRelationClick(const GameplayLoopCursorState &sta
 		_hotspots.relationActionRecord(state.primaryInventoryItem, itemId, state.relationMode);
 	if (actionRecord.actionHandlerId == 0)
 		return;
+	_actionCaptionText = state.captionText;
 	_lastSceneActionItemId = itemId;
 	_lastInventoryActionItemId = 0;
 	_lastInventoryPrimaryItemId = state.primaryInventoryItem;

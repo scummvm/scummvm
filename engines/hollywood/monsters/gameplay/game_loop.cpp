@@ -28,7 +28,6 @@
 #include "hollywood/monsters/game_strings.h"
 #include "hollywood/monsters/gameplay/game_loop.h"
 #include "hollywood/monsters/gameplay/game_state.h"
-#include "hollywood/monsters/gameplay/inventory_actions.h"
 #include "hollywood/monsters/gameplay/options_menu.h"
 
 namespace Hollywood {
@@ -71,7 +70,8 @@ GameplayPanelState::GameplayPanelState() :
 		inventoryPanelVisible(false),
 		currentStrip(kGameplayDefaultStrip),
 		requestedStrip(0),
-		resolvedItem(0) {
+		resolvedItem(0),
+		pressedInventoryArrow(kNoInventoryArrow) {
 }
 
 GameplayLoopDelegate::~GameplayLoopDelegate() {
@@ -365,6 +365,7 @@ void GameplayLoop::handleLeftClick() {
 
 		const byte owner = currentInventoryOwner();
 		const Common::String clickedItemName = _delegate->inventoryItemName(owner, itemId);
+		updateInventoryPanelCaption();
 		if (_relationMode != 0 && _primaryInventoryItem != 0) {
 			const uint16 actionHandlerId =
 				dialogueInventoryRelationHandler(_primaryInventoryItem, itemId, _relationMode);
@@ -375,8 +376,7 @@ void GameplayLoop::handleLeftClick() {
 					inventorySlot, actionHandlerId);
 				GameplayLoopCursorState state = makeInventoryItemState(owner, itemId, actionHandlerId);
 				closeInventoryPanel();
-				if (!dispatchInventoryRelationAction(_vm, _delegate, state))
-					_delegate->handleInventoryItemClick(state);
+				_delegate->handleInventoryItemClick(state);
 				clearButtonLatches();
 				_relationMode = 0;
 				_primaryInventoryItem = 0;
@@ -415,8 +415,7 @@ void GameplayLoop::handleLeftClick() {
 		if (actionHandlerId != 0) {
 			GameplayLoopCursorState state = makeInventoryItemState(owner, itemId, actionHandlerId);
 			closeInventoryPanel();
-			if (!dispatchInventoryFixedAction(_vm, _delegate, state))
-				_delegate->handleInventoryItemClick(state);
+			_delegate->handleInventoryItemClick(state);
 			clearButtonLatches();
 			_relationMode = 0;
 			_primaryInventoryItem = 0;
@@ -437,6 +436,7 @@ void GameplayLoop::handleLeftClick() {
 	if (_panelState.verbPanelVisible)
 		return;
 
+	refreshHoverCaption();
 	_delegate->handleLeftClick(makeCursorState());
 	clearButtonLatches();
 	_relationMode = 0;
@@ -808,6 +808,7 @@ bool GameplayLoop::scrollInventoryPanelPreviousPage() {
 	if (firstVisibleSlot <= GameplayState::kInventoryFirstSlot)
 		return false;
 
+	showPressedInventoryArrow(GameplayPanelState::kPreviousInventoryArrow);
 	firstVisibleSlot = firstVisibleSlot > 8 ? (byte)(firstVisibleSlot - 8) : (byte)GameplayState::kInventoryFirstSlot;
 	gameState.inventoryPanelDirty = true;
 	return true;
@@ -823,9 +824,17 @@ bool GameplayLoop::scrollInventoryPanelNextPage() {
 	if (firstVisibleSlot + GameplayState::kInventoryVisibleSlotCount - 1 >= itemCount)
 		return false;
 
+	showPressedInventoryArrow(GameplayPanelState::kNextInventoryArrow);
 	firstVisibleSlot = (byte)(firstVisibleSlot + 8);
 	gameState.inventoryPanelDirty = true;
 	return true;
+}
+
+void GameplayLoop::showPressedInventoryArrow(GameplayPanelState::InventoryArrow arrow) {
+	_panelState.pressedInventoryArrow = arrow;
+	_delegate->drawGameplayFrame();
+	_delegate->presentGameplayFrame(_hoverCaption, _panelState);
+	_panelState.pressedInventoryArrow = GameplayPanelState::kNoInventoryArrow;
 }
 
 bool GameplayLoop::isInventoryPanelOptionsButton(uint16 cursorX, uint16 cursorY) const {
@@ -904,6 +913,7 @@ GameplayLoopCursorState GameplayLoop::makeCursorState() const {
 	state.primaryInventoryItem = _primaryInventoryItem;
 	state.relationModeActive = _relationMode != 0 && _primaryInventoryItem != 0;
 	state.inventoryItemSelected = false;
+	state.captionText = _hoverCaption.text();
 	return state;
 }
 
@@ -913,6 +923,7 @@ GameplayLoopCursorState GameplayLoop::makeInventoryItemState(byte owner, byte it
 	state.inventoryOwner = owner;
 	state.inventoryActionHandlerId = actionHandlerId;
 	state.inventoryItemSelected = true;
+	state.captionText = _panelState.captionText;
 	return state;
 }
 

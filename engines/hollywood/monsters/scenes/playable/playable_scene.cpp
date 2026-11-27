@@ -195,6 +195,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_playerDirectedActorPathActive(false),
 		_playerDirectedActorPathFootstepPlayed(false),
 		_pendingGameplayActionHandlerId(0),
+		_gameplayActionExecuting(false),
 		_activeActorWorldX(config.defaultActorPose.x),
 		_activeActorWorldY(config.defaultActorPose.y),
 		_activeActorFacing(config.defaultActorPose.facing),
@@ -208,6 +209,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 	_surfaceState.initialize(kPaletteSize, kScenePaletteMapByteCount, kPaletteMaskUsedBytes, kScenePaletteMapPageSize,
 		kScenePaletteRegionCount, kActorPaletteBaseBytes);
 	_speechController.initialize(kDefaultSecondarySpeechTextColor, kDefaultPrimarySpeechTextColor);
+	memset(_captionPalette, 0, sizeof(_captionPalette));
 	_speechController.resetRuntimeState(kInvalidPrimarySpeechAnimationGroup, 7);
 	_activeActorRunStreams.resize(kActorFacingCount * kActiveActorFacingRunStride);
 	_secondaryActorRunStreams.resize(kActorFacingCount * kSecondaryActorFacingRunStride);
@@ -1322,6 +1324,13 @@ bool PlayableScene::loadResource000ActorPalette(const Common::Array<byte> &offse
 		return false;
 	}
 	captureActorPaletteBase();
+	// Caption colors must survive the scene's palette effects.
+	memcpy(_captionPalette, _paletteCurrent.data() + 0x2d6, 3);
+	memcpy(_captionPalette + 3, _paletteCurrent.data() + 0x2eb, 3);
+	if (inventoryOwnerIndex() == 1) {
+		_captionPalette[0] = 0x32;
+		_captionPalette[3] = 0x3f;
+	}
 
 	return true;
 }
@@ -1877,6 +1886,8 @@ bool PlayableScene::playFullscreenDeltaAnimation(const Common::Array<byte> &base
 }
 
 bool PlayableScene::fadePaletteFromBlack() {
+	if (!_actionCaptionText.empty())
+		applySceneCaptionPalette(_paletteCurrent, _captionPalette + 3);
 	const Common::Array<byte> targetPalette = _paletteCurrent;
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 
@@ -1886,7 +1897,7 @@ bool PlayableScene::fadePaletteFromBlack() {
 			if (targetPalette[i] >= threshold)
 				_paletteCurrent[i] = MIN<byte>(targetPalette[i], _paletteCurrent[i] + 3);
 		}
-		presentFrame();
+		presentFrame(nullptr, nullptr, nullptr, false);
 		if (threshold == 0)
 			return false;
 
@@ -1907,7 +1918,7 @@ bool PlayableScene::fadePaletteToBlack() {
 			if (sourcePalette[i] >= threshold)
 				_paletteCurrent[i] = _paletteCurrent[i] >= 3 ? _paletteCurrent[i] - 3 : 0;
 		}
-		presentFrame();
+		presentFrame(nullptr, nullptr, nullptr, false);
 		if (threshold >= 0x3f)
 			return false;
 
@@ -2063,6 +2074,8 @@ uint16 PlayableScene::viewportYOffset() const {
 void PlayableScene::prepareGameplayLoop() {
 	_skipRequested = false;
 	_stepAdvanceRequested = false;
+	_gameplayActionExecuting = false;
+	_actionCaptionText.clear();
 	cancelConcurrentActorPath();
 	stopRealtimeSpeech();
 	_speechController.resetRuntimeState(kInvalidPrimarySpeechAnimationGroup, 7);
@@ -2084,6 +2097,10 @@ void PlayableScene::advanceGameplayLoop(uint32 delta) {
 	advancePrimarySpeechAnimation(delta);
 	advanceAmbientAudio(delta);
 	advanceViewportScroll(delta);
+	if (!_gameplayActionExecuting && _pendingGameplayActionHandlerId == 0 &&
+			!isRealtimeSecondarySpeechActive())
+		_actionCaptionText.clear();
+
 	syncActiveActorPoseToGameState();
 }
 
@@ -3490,9 +3507,7 @@ void PlayableScene::applyGameplayPanelPalette() {
 			setPaletteEntry6Bit(colors[i], colors[i + 1], colors[i + 2], colors[i + 3]);
 	}
 
-	setPaletteEntry6Bit(kPanelTextColor, 0x32,
-		paletteEntryComponent6Bit(kPanelSelectedLineColor, 1),
-		paletteEntryComponent6Bit(kPanelSelectedLineColor, 2));
+	applySceneCaptionPalette(_paletteCurrent, _captionPalette);
 }
 
 void PlayableScene::drawGameplayPanel(Graphics::Surface &surface, const GameplayPanelState &panelState) {
@@ -3513,9 +3528,10 @@ void PlayableScene::drawInventoryPanel(Graphics::Surface &surface, const Gamepla
 }
 
 void PlayableScene::presentFrame(const SceneHoverCaption *hoverCaption, const GameplayPanelState *panelState,
-		const DialogueMenuState *dialogueMenuState) {
-	if (hoverCaption)
-		hoverCaption->applyPalette(_paletteCurrent);
+		const DialogueMenuState *dialogueMenuState, bool applyCaptionPalette) {
+	const bool actionInProgress = !_actionCaptionText.empty();
+	if (applyCaptionPalette && (hoverCaption || actionInProgress))
+		applySceneCaptionPalette(_paletteCurrent, _captionPalette + (actionInProgress ? 3 : 0));
 	if ((panelState && panelState->visible()) || (dialogueMenuState && dialogueMenuState->visible()))
 		applyGameplayPanelPalette();
 	const uint16 xOffset = viewportXOffset();
@@ -3533,8 +3549,10 @@ void PlayableScene::presentFrame(const SceneHoverCaption *hoverCaption, const Ga
 	else if (panelState && panelState->visible())
 		drawGameplayPanel(*screenSurface, *panelState);
 	else if (_vm->font() && _vm->font()->isLoaded()) {
-		if (hoverCaption)
-			hoverCaption->draw(*screenSurface, *_vm->font());
+		if (actionInProgress)
+			drawSceneCaption(*screenSurface, *_vm->font(), _actionCaptionText);
+		else if (hoverCaption)
+			drawSceneCaption(*screenSurface, *_vm->font(), hoverCaption->text());
 	}
 
 	const bool screenChanged = _surfaceState.updatePresentedScreenCache();

@@ -410,7 +410,7 @@ void GameplayPanelArt::drawDialogueInventoryPanel(Graphics::Surface &surface,
 	copySceneCaptionBand(surface, sceneComposite, viewportXOffset, viewportYOffset, kPanelDialogueCaptionY);
 	copyBottomPanelRows(surface, 0, kPanelDialogueContentY,
 		HollywoodEngine::kScreenHeight - kPanelDialogueContentY);
-	applyInventoryArrowState(surface, gameState);
+	applyInventoryArrowState(surface, gameState, panelState);
 	drawInventoryItems(surface, gameState);
 	drawVerbStripLabels(surface, kPanelDialogueContentY, font);
 	applySelectedVerbStrip(surface, kPanelDialogueContentY, panelState.currentStrip);
@@ -484,7 +484,7 @@ void GameplayPanelArt::copySceneCaptionBand(Graphics::Surface &surface,
 }
 
 void GameplayPanelArt::applyInventoryArrowState(Graphics::Surface &surface,
-		const GameplayState &gameState) const {
+		const GameplayState &gameState, const GameplayPanelState &panelState) const {
 	if (surface.format.bytesPerPixel != 1 ||
 			gameState.currentInventoryOwnerIndex >= GameplayState::kInventoryOwnerCount)
 		return;
@@ -501,17 +501,25 @@ void GameplayPanelArt::applyInventoryArrowState(Graphics::Surface &surface,
 	const uint16 sourceRows[] = {
 		kPanelInventoryPreviousArrowRow, kPanelInventoryNextArrowRow
 	};
+	const GameplayPanelState::InventoryArrow arrowIds[] = {
+		GameplayPanelState::kPreviousInventoryArrow, GameplayPanelState::kNextInventoryArrow
+	};
 
 	for (uint arrow = 0; arrow < ARRAYSIZE(sourceRows); ++arrow) {
-		if (arrowEnabled[arrow])
+		const bool pressed = arrowEnabled[arrow] && panelState.pressedInventoryArrow == arrowIds[arrow];
+		if (arrowEnabled[arrow] && !pressed)
 			continue;
 		const uint16 top = kPanelDialogueContentY + sourceRows[arrow];
 		for (uint row = 0; row < kPanelInventoryArrowHeight && top + row < (uint)surface.h; ++row) {
 			byte *pixels = (byte *)surface.getBasePtr(kPanelInventoryArrowLeft, top + row);
 			for (uint column = 0; column < kPanelInventoryArrowWidth &&
 					kPanelInventoryArrowLeft + column < (uint)surface.w; ++column) {
-				if (pixels[column] == kPanelArrowEnabledColor)
+				if (pressed) {
+					if (row + 1 < kPanelInventoryArrowHeight && pixels[column] != 0)
+						pixels[column] += kPanelSelectedColorDelta;
+				} else if (pixels[column] == kPanelArrowEnabledColor) {
 					pixels[column] = kPanelArrowDisabledColor;
+				}
 			}
 		}
 	}

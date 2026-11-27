@@ -40,6 +40,8 @@ class HollywoodFont;
 struct HollywoodGameStrings;
 
 Common::String inventoryActionCaption(const HollywoodGameStrings &strings, byte stripIndex);
+void applySceneCaptionPalette(Common::Array<byte> &palette, const byte *color);
+void drawSceneCaption(Graphics::Surface &surface, HollywoodFont &font, const Common::String &text);
 
 struct SceneVerbActionRecord {
 	uint16 actionHandlerId;
@@ -127,9 +129,6 @@ public:
 	bool advance(uint32 deltaMillis, const SceneHotspotTable &hotspots,
 		const Graphics::Surface &savedFramebuffer, uint16 cursorX, uint16 cursorY,
 		uint16 xOffset, uint16 yOffset);
-
-	void applyPalette(Common::Array<byte> &palette) const;
-	void draw(Graphics::Surface &surface, HollywoodFont &font) const;
 
 	byte currentStrip() const { return _currentStrip; }
 	byte requestedStrip() const { return _requestedStrip; }

@@ -449,23 +449,21 @@ bool SceneHoverCaption::advance(uint32 deltaMillis, const SceneHotspotTable &hot
 	return updateCaption(hotspots, savedFramebuffer, cursorX, cursorY, xOffset, yOffset, false);
 }
 
-void SceneHoverCaption::applyPalette(Common::Array<byte> &palette) const {
-	if (palette.size() <= kBottomCaptionPaletteOffset + 2 || palette.size() <= 0x2d8)
+void applySceneCaptionPalette(Common::Array<byte> &palette, const byte *color) {
+	if (palette.size() <= kBottomCaptionPaletteOffset + 2)
 		return;
 
-	palette[kBottomCaptionPaletteOffset] = 0x32;
-	palette[kBottomCaptionPaletteOffset + 1] = palette[0x2d7];
-	palette[kBottomCaptionPaletteOffset + 2] = palette[0x2d8];
+	memcpy(palette.data() + kBottomCaptionPaletteOffset, color, 3);
 }
 
-void SceneHoverCaption::draw(Graphics::Surface &surface, HollywoodFont &font) const {
-	if (_captionText.empty())
+void drawSceneCaption(Graphics::Surface &surface, HollywoodFont &font, const Common::String &text) {
+	if (text.empty())
 		return;
 
 	font.setShadowColor(0);
-	const int textWidth = font.getStringWidth(_captionText) + 2;
+	const int textWidth = font.getStringWidth(text) + 2;
 	const int x = MAX<int>(0, (HollywoodEngine::kScreenWidth - textWidth) / 2);
-	font.drawString(&surface, _captionText, x, kBottomCaptionTopY, textWidth, kBottomCaptionColorIndex,
+	font.drawString(&surface, text, x, kBottomCaptionTopY, textWidth, kBottomCaptionColorIndex,
 		Graphics::kTextAlignLeft, 0, false, true);
 }
 

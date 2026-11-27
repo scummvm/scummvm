@@ -67,7 +67,8 @@ private:
 		uint16 viewportXOffset, uint16 viewportYOffset, uint16 screenY) const;
 	void copyBottomPanelRows(Graphics::Surface &surface, uint16 sourceRow, uint16 screenY,
 		uint16 rowCount) const;
-	void applyInventoryArrowState(Graphics::Surface &surface, const GameplayState &gameState) const;
+	void applyInventoryArrowState(Graphics::Surface &surface, const GameplayState &gameState,
+		const GameplayPanelState &panelState) const;
 	void drawInventoryItems(Graphics::Surface &surface, const GameplayState &gameState) const;
 	void drawDialogueMenuRows(Graphics::Surface &surface, const DialogueMenuState &menuState,
 		uint16 screenY, HollywoodFont *font) const;

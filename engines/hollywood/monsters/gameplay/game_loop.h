@@ -55,9 +55,16 @@ struct GameplayLoopCursorState {
 	byte primaryInventoryItem;
 	bool relationModeActive;
 	bool inventoryItemSelected;
+	Common::String captionText;
 };
 
 struct GameplayPanelState {
+	enum InventoryArrow {
+		kNoInventoryArrow,
+		kPreviousInventoryArrow,
+		kNextInventoryArrow
+	};
+
 	GameplayPanelState();
 
 	bool visible() const { return verbPanelVisible || inventoryPanelVisible; }
@@ -67,6 +74,7 @@ struct GameplayPanelState {
 	byte currentStrip;
 	byte requestedStrip;
 	byte resolvedItem;
+	InventoryArrow pressedInventoryArrow;
 	Common::String itemName;
 	Common::String captionText;
 };
@@ -158,6 +166,7 @@ private:
 	uint16 dialogueInventoryRelationHandler(byte primaryItemId, byte secondaryItemId, byte relationMode) const;
 	bool scrollInventoryPanelPreviousPage();
 	bool scrollInventoryPanelNextPage();
+	void showPressedInventoryArrow(GameplayPanelState::InventoryArrow arrow);
 	bool isInventoryPanelOptionsButton(uint16 cursorX, uint16 cursorY) const;
 	bool isInventoryPanelPreviousPageArrow(uint16 cursorX, uint16 cursorY) const;
 	bool isInventoryPanelNextPageArrow(uint16 cursorX, uint16 cursorY) const;
