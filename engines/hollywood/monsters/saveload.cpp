@@ -110,7 +110,7 @@ Common::Error HollywoodEngine::loadGameStream(Common::SeekableReadStream *stream
 	}
 
 	normalizeLoadedGameState();
-	syncSoundSettingsFromGameState();
+	syncSoundSettings();
 	_sceneRestartRequested = true;
 	debugC(1, kDebugGeneral, "Loaded gameplay state 0x%04x", _gameState.mainFlowStateId);
 	return Common::kNoError;

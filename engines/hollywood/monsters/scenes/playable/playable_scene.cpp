@@ -3232,6 +3232,9 @@ void PlayableScene::clearAllSpeechOverlays() {
 }
 
 void PlayableScene::drawSpeechOverlay() {
+	if (!_vm->subtitlesEnabled())
+		return;
+
 	drawSpeechOverlayText(_speechOverlay, _vm->font(), *_screen.surfacePtr(), viewportXOffset());
 	drawSpeechOverlayText(_primarySpeechOverlay, _vm->font(), *_screen.surfacePtr(), viewportXOffset());
 }
