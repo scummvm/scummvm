@@ -112,6 +112,7 @@ private:
 	RunawayPresentation::MouseState _presentationMouse;
 	bool _inPresentation = false, _gameStarted = false, _loadedGame = false;
 	bool _pendingDoorClose = false;
+	bool _pendingExitClick = false;
 };
 
 } // End of namespace Hollywood

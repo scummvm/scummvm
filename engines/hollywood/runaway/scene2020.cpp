@@ -31,14 +31,14 @@ namespace {
 // RESOURCE.B02; approach points and action IDs from the retail room at 0x444aa0.
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{1265, 546, 1, {301, 346}, {0, 1}, {1324, 530}, 5}, // 1: Bathroom door.
+	{1265, 546, 1, {301, 346}, {0, 1}, {1324, 530}, 5, false, false, true}, // 1: Bathroom door.
 	{1075, 534, 7, {302, 303}, {0, 0}, {1040, 463}, 3, true}, // 2: Gina.
 	{846, 453, 1, {304, 305}, {1, 1}, {902, 421}}, // 3: Glass.
 	{858, 453, 1, {306, 307}, {1, 1}, {902, 421}}, // 4: Package of pills.
 	{622, 457, 7, {308, 309}, {0, 1}, {620, 436}}, // 5: Sheet.
 	{417, 444, 7, {310, 311}, {0, 0}, {401, 432}}, // 6: Locker.
 	{417, 444, 7, {312, 313}, {0, 1}, {401, 432}}, // 7: Gina's bag.
-	{265, 456, 7, {314, 332}, {1, 1}, {237, 438}, 4, true}, // 8: Window.
+	{265, 456, 7, {314, 332}, {1, 1}, {237, 438}, 4, true, false, true}, // 8: Window.
 	{690, 540, 1, {315, 316}, {1, 1}, {748, 517}}, // 9: Gina's medical chart.
 	{453, 455, 1, {317, 318}, {1, 1}, {650, 420}}, // 10: Chart.
 	{687, 448, 7, {319, 320}, {0, 1}, {650, 420}}, // 11: Fake patient.
@@ -445,7 +445,13 @@ RunawayRoomScene::ActionResult Scene2020::dispatchCustomSceneAction(uint16 actio
 			say(28, 1);
 		}
 		_hospital.window = MIN<int>(2, _hospital.window + 1);
-		beginRoomAnimation(action, 4, 42);
+		if (_skippingExit) {
+			_transition.scene = kHospitalStoreroom;
+			_transition.position = Common::Point(419, 546);
+			_transition.facing = 3;
+		} else {
+			beginRoomAnimation(action, 4, 42);
+		}
 		return kHandled;
 	case 314: // Look out of the window.
 		say(10, _hospital.window >= 2);

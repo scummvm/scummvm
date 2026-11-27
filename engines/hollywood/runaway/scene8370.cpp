@@ -27,16 +27,16 @@ namespace {
 
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{1443, 648, 1, {301, 302}, {0, 3}, {1374, 626}, 5}, // 1: Street.
-	{775, 466, 0, {303, 304}, {0, -1}, {1006, 656}, 4}, // 2: Stairs.
+	{1443, 648, 1, {301, 302}, {0, 3}, {1374, 626}, 5, false, false, true}, // 1: Street.
+	{775, 466, 0, {303, 304}, {0, -1}, {1006, 656}, 4, false, false, true}, // 2: Stairs.
 	{0, 0, 0, {305, 306}, {0, 0}, {828, 695}, 4, true}, // 3: Front desk.
 	{423, 664, 0, {307, 308}, {0, 0}, {424, 653}}, // 4: Fireplace.
 	{0, 0, 0, {309, 310}, {0, 0}, {424, 653}}, // 5: Rifles.
 	{467, 678, 1, {311, 312}, {0, 1}, {504, 645}}, // 6: Poker.
 	{757, 716, 0, {313, 314}, {0, 1}, {757, 716}}, // 7: Bell.
-	{920, 345, 7, {315, 316}, {0, 1}, {0, 0}, 4}, // 8: Sushi's work area.
+	{920, 345, 7, {315, 316}, {0, 1}, {0, 0}, 4, false, false, true}, // 8: Sushi's work area.
 	{1124, 348, 1, {317, 318}, {0, 1}, {1138, 336}}, // 9: Rifle.
-	{0, 0, 0, {319, 320}, {0, -1}, {965, 616}, 6}, // 10: Downstairs.
+	{0, 0, 0, {319, 320}, {0, -1}, {965, 616}, 6, false, false, true}, // 10: Downstairs.
 	{828, 710, 0, {321, 322}, {1, 0}, {828, 695}} // 11: Check-in book.
 };
 
@@ -289,7 +289,8 @@ RunawayRoomScene::ActionResult Scene8370::dispatchCustomSceneAction(uint16 actio
 		leaveRoom(8222);
 		break;
 	case 304: // Climb the stairs to Sushi's work area.
-		walkTo(Common::Point(775, 466), 6, false, true);
+		if (!_skippingExit)
+			walkTo(Common::Point(775, 466), 6, false, true);
 		leaveRoom(8380);
 		break;
 	case 308: // Refuse to warm up in the hot weather.
@@ -337,8 +338,12 @@ RunawayRoomScene::ActionResult Scene8370::dispatchCustomSceneAction(uint16 actio
 		}
 		break;
 	case 320: // Cross to the stairs and descend to the lobby.
-		walkTo(Common::Point(702, 340), 3, false, true);
-		deferAction(415);
+		if (_skippingExit) {
+			changeFloor(false, Common::Point(1150, 648));
+		} else {
+			walkTo(Common::Point(702, 340), 3, false, true);
+			deferAction(415);
+		}
 		break;
 	case 323: // Heat the scalpel after discovering that it cannot cut the pods.
 		if (!_inventory.finale().heatNeeded) {

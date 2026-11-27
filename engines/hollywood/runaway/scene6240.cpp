@@ -31,8 +31,8 @@ namespace {
 
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{0, 453, 5, {301, 302}, {0, 3}, {0, 453}, 7}, // 1: Door.
-	{782, 408, 7, {303, 304}, {0, 1}, {625, 391}, 4}, // 2: Stairs.
+	{0, 453, 5, {301, 302}, {0, 3}, {0, 453}, 7, false, false, true}, // 1: Door.
+	{782, 408, 7, {303, 304}, {0, 1}, {625, 391}, 4, false, false, true}, // 2: Stairs.
 	{504, 452, 1, {305, 306}, {1, 1}, {567, 418}}, // 3: Flower pot.
 	{1286, 435, 0, {307, 308}, {0, 0}, {1286, 405}}, // 4: Watering can.
 	{742, 332, 5, {309, 310}, {0, 0}, {821, 340}}, // 5: Small room.
@@ -205,7 +205,10 @@ RunawayRoomScene::ActionResult Scene6240::dispatchCustomSceneAction(uint16 actio
 		say(2, _town.kevinMet);
 		break;
 	case 304: // Climb the stairs to Kevin's room.
-		beginRoomAnimation(304, 5, 19);
+		if (_skippingExit)
+			leaveTownRoom(6300);
+		else
+			beginRoomAnimation(304, 5, 19);
 		break;
 	case 1304: // Enter Kevin's room after climbing the stairs.
 		leaveTownRoom(6300);

@@ -27,8 +27,8 @@ namespace {
 
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{1379, 491, 0, {301, 302}, {0, 3}, {1379, 491}, 5}, // 1: Street.
-	{285, 501, 0, {303, 305}, {1, 0}, {258, 427}}, // 2: Cell.
+	{1379, 491, 0, {301, 302}, {0, 3}, {1379, 491}, 5, false, false, true}, // 1: Street.
+	{285, 501, 0, {303, 305}, {1, 0}, {258, 427}, 0, false, false, true}, // 2: Cell.
 	{1020, 483, 0, {315, 316}, {0, 1}, {1020, 480}}, // 3: Bag holding the thugs' stuff.
 	{0, 0, 0, {0, 0}, {0, 0}, {536, 425}},
 	{1020, 483, 0, {308, 309}, {0, 0}, {1020, 458}}, // 5: Desk.
@@ -417,7 +417,7 @@ RunawayRoomScene::ActionResult Scene8200::dispatchCustomSceneAction(uint16 actio
 		if (_finale.oscarAway) {
 			say(3);
 		} else {
-			if (findRunawayRoom(8210)) {
+			if (!_skippingExit && findRunawayRoom(8210)) {
 				walkTo(Common::Point(258, 445), 0, true);
 			}
 			leaveRoom(8210);

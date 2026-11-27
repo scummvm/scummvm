@@ -52,6 +52,9 @@ public:
 	virtual void resume() = 0;
 	const Transition &transition() const { return _transition; }
 	virtual void click(Common::Point mouse, RunawayVerb verb, byte item) = 0;
+	virtual bool canSkipExit(byte hotspot) const { return false; }
+	virtual void skipExit(byte hotspot) {}
+	virtual void waitForExitClick(uint32 now) {}
 	virtual void update(uint32 now, int scrollDirection, bool inventoryOpen) = 0;
 	virtual void draw() = 0;
 	virtual void setCameraX(int x) = 0;
@@ -113,6 +116,9 @@ public:
 	void start(uint32 now) override;
 	void resume() override;
 	void click(Common::Point mouse, RunawayVerb verb, byte item) override;
+	bool canSkipExit(byte id) const override;
+	void skipExit(byte id) override;
+	void waitForExitClick(uint32 now) override;
 	void update(uint32 now, int scrollDirection, bool inventoryOpen) override;
 	void draw() override;
 	void setCameraX(int x) override;
@@ -347,6 +353,7 @@ protected:
 	uint32 _now = 0, _lastUpdate = 0;
 	bool _upperFloor = true, _antialias = true, _fastScrolling = true;
 	bool _inventoryOpen = false;
+	bool _skippingExit = false;
 	ObjectState _books = kUnexamined, _recorder = kUnexamined;
 	bool _moneyIdentified = false, _safeOpen = false;
 	bool _varnishTaken = false, _talcTaken = false, _coffeeTaken = false;

@@ -30,12 +30,12 @@ namespace {
 
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{0, 0, 0, {1, 301}, {0, 0}, {0, 0}, 7}, // 1: Entrance to the mine.
-	{0, 0, 0, {1, 302}, {0, 0}, {0, 0}, 5}, // 2: Unknown place.
-	{0, 0, 0, {1, 303}, {0, 0}, {0, 0}, 6}, // 3: Unknown place.
-	{0, 0, 0, {1, 304}, {0, 0}, {0, 0}, 5}, // 4: Unknown place.
-	{0, 0, 0, {1, 305}, {0, 0}, {0, 0}, 4}, // 5: Unknown place.
-	{0, 0, 0, {1, 306}, {0, 0}, {0, 0}, 7} // 6: Locomotive.
+	{0, 0, 0, {1, 301}, {0, 0}, {0, 0}, 7, false, false, true}, // 1: Entrance to the mine.
+	{0, 0, 0, {1, 302}, {0, 0}, {0, 0}, 5, false, false, true}, // 2: Unknown place.
+	{0, 0, 0, {1, 303}, {0, 0}, {0, 0}, 6, false, false, true}, // 3: Unknown place.
+	{0, 0, 0, {1, 304}, {0, 0}, {0, 0}, 5, false, false, true}, // 4: Unknown place.
+	{0, 0, 0, {1, 305}, {0, 0}, {0, 0}, 4, false, false, true}, // 5: Unknown place.
+	{0, 0, 0, {1, 306}, {0, 0}, {0, 0}, 7, false, false, true} // 6: Locomotive.
 };
 
 } // End of anonymous namespace
@@ -133,7 +133,7 @@ RunawayRoomScene::ActionResult Scene6350::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 304: // Go to the crater.
 		_town.craterSeen = 1;
-		leaveTownRoom(6270);
+		leaveTownRoom(_skippingExit && _town.craterVisited ? 6291 : 6270);
 		break;
 	case 306: // Go to the locomotive.
 		leaveTownRoom(6265);

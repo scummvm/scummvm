@@ -457,6 +457,66 @@ void RunawayRoomScene::arrive() {
 		_caption.clear();
 }
 
+bool RunawayRoomScene::canSkipExit(byte id) const {
+	const RunawayHotspot *spot = hotspot(id);
+	if (_game != kRunawayFullGame || !spot || !spot->skipExit)
+		return false;
+	// These exits acquire the native double-click flag as their puzzles progress.
+	switch (_room) {
+	case 2020:
+		return id != 8 || _hospital.window;
+	case 4030:
+		return !_safeOpen;
+	case 4060:
+		return id != 7 || !_inventory.museum().restoredCrucifix;
+	case 5020:
+		return id != 6 || _desert.hatchSeen;
+	case 5080:
+		return id == 1 || _desert.trainEntered;
+	case 6180:
+		return id != 2 || _town.saloonDoorKnown;
+	case 6190:
+		return id != 2 || _town.basementVisited;
+	case 6200:
+		return id != 2 || _town.cellOpen;
+	case 6260:
+		return id != 2 || _town.cabVisited;
+	case 6263:
+		return _town.cabExited;
+	case 8090:
+		if (id == 2)
+			return _finale.oscarAway && (!_finale.recordingPlan || !_finale.recordings || _finale.recordings == 2);
+		return id != 6 || _finale.oscarAway;
+	case 8200:
+		return id != 2 || !_finale.oscarAway;
+	default:
+		return true;
+	}
+}
+
+void RunawayRoomScene::waitForExitClick(uint32 now) {
+	_idleHead.pause(now - _lastUpdate);
+	_idleBody.pause(now - _lastUpdate);
+	_now = _lastUpdate = now;
+}
+
+void RunawayRoomScene::skipExit(byte id) {
+	if (busy() || !canSkipExit(id))
+		return;
+	_walkPath.clear();
+	_arrivalFacing = 0xff;
+	_pendingHotspot = _pendingItem = 0;
+	_idleHead.reset(_now);
+	_idleBody.reset(_now);
+	_actor.setFrame(_facing, 0);
+	_caption = actionCaption(id, kVerbExit, 0);
+	_skippingExit = true;
+	execute(hotspot(id)->action[1]);
+	_skippingExit = false;
+	if (!speaking())
+		_caption.clear();
+}
+
 void RunawayRoomScene::click(Common::Point mouse, RunawayVerb verb, byte item) {
 	if (busy())
 		return;

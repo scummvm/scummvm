@@ -32,7 +32,7 @@ const RunawayHotspot kHotspots[] = {
 	{60, 599, 5, {305, 306}, {0, 0}, {0, 650}, 7}, // 3: Inside of the cave.
 	{356, 501, 7, {307, 308}, {1, 0}, {321, 470}}, // 4: Cross.
 	{664, 536, 1, {309, 310}, {1, 0}, {715, 477}}, // 5: Cross.
-	{467, 445, 1, {311, 312}, {0, 3}, {453, 424}, 5} // 6: Village.
+	{467, 445, 1, {311, 312}, {0, 3}, {453, 424}, 5, false, false, true} // 6: Village.
 };
 
 const RunawayResponse kResponses[] = {

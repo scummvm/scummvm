@@ -45,10 +45,10 @@ const byte kMariolaRestFrames[] = {
 
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{1479, 599, 0, {301, 302}, {0, 1}, {1379, 587}, 6}, // 1: Path.
+	{1479, 599, 0, {301, 302}, {0, 1}, {1379, 587}, 6, false, false, true}, // 1: Path.
 	{349, 442, 7, {303, 304}, {0, 1}, {238, 424}, 3}, // 2: Lula.
 	{878, 477, 0, {305, 306}, {0, 0}, {866, 445}, 3}, // 3: Mariola.
-	{679, 448, 1, {307, 308}, {0, 1}, {710, 431}, 5}, // 4: Inside Of The Bus.
+	{679, 448, 1, {307, 308}, {0, 1}, {710, 431}, 5, false, false, true}, // 4: Inside Of The Bus.
 	{376, 445, 1, {309, 310}, {1, 1}, {413, 417}}, // 5: Trunk.
 	{878, 477, 0, {311, 312}, {1, 1}, {840, 466}}, // 6: Bottle.
 	{383, 446, 5, {313, 314}, {0, 0}, {298, 476}}, // 7: Chair.
@@ -263,7 +263,10 @@ RunawayRoomScene::ActionResult Scene5060::dispatchCustomSceneAction(uint16 actio
 		say(4, _desert.visited[9] != 0);
 		break;
 	case 308: // Enter the bus.
-		beginRoomAnimation(action, 5, 22);
+		if (_skippingExit)
+			leaveDesertRoom(5170);
+		else
+			beginRoomAnimation(action, 5, 22);
 		break;
 	case 1308: // Finish entering the bus.
 		leaveDesertRoom(5170);

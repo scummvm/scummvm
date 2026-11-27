@@ -29,8 +29,8 @@ namespace {
 
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{0, 453, 5, {301, 302}, {0, 3}, {0, 453}, 7}, // 1: Door.
-	{782, 408, 7, {303, 304}, {0, 1}, {625, 391}, 4}, // 2: Stairs.
+	{0, 453, 5, {301, 302}, {0, 3}, {0, 453}, 7, false, false, true}, // 1: Door.
+	{782, 408, 7, {303, 304}, {0, 1}, {625, 391}, 4, false, false, true}, // 2: Stairs.
 	{395, 402, 7, {305, 306}, {0, 3}, {346, 260}, 3}, // 3: Rutger.
 	{1286, 435, 0, {307, 308}, {0, 0}, {1286, 405}}, // 4: Watering can.
 	{742, 332, 5, {309, 310}, {0, 0}, {821, 340}}, // 5: Gardening shed.
@@ -256,7 +256,10 @@ RunawayRoomScene::ActionResult Scene8240::dispatchCustomSceneAction(uint16 actio
 		leaveRoom(8181);
 		break;
 	case 304: // Climb the stairs to Saturn's workshop.
-		beginRoomAnimation(304, 5, 19, nullptr, 0, true, 60);
+		if (_skippingExit)
+			leaveRoom(8300);
+		else
+			beginRoomAnimation(304, 5, 19, nullptr, 0, true, 60);
 		break;
 	case 1304: // Enter the workshop after climbing the stairs.
 		leaveRoom(8300);

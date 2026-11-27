@@ -27,7 +27,7 @@ namespace {
 
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{327, 441, 7, {301, 302}, {0, 1}, {247, 373}, 4}, // 1: Outside Of Train Car.
+	{327, 441, 7, {301, 302}, {0, 1}, {247, 373}, 4, false, false, true}, // 1: Outside Of Train Car.
 	{574, 434, 1, {303, 304}, {1, 0}, {618, 400}}, // 2: Barrels.
 	{801, 441, 3, {305, 306}, {0, 0}, {835, 467}}, // 3: Chain.
 	{517, 374, 0, {307, 308}, {0, 0}, {517, 353}}, // 4: Contraptions.
@@ -120,8 +120,12 @@ RunawayRoomScene::ActionResult Scene5110::dispatchCustomSceneAction(uint16 actio
 		visitDesertRoom(7, 1);
 		break;
 	case 302: // Leave the train car.
-		beginRoomAnimation(action, 6, 12, nullptr, 0, true, 60);
-		_actionFrames.insert_at(0, 0);
+		if (_skippingExit) {
+			leaveDesertRoom(5081);
+		} else {
+			beginRoomAnimation(action, 6, 12, nullptr, 0, true, 60);
+			_actionFrames.insert_at(0, 0);
+		}
 		break;
 	case 1302: // Finish climbing out of the train car.
 		leaveDesertRoom(5081);

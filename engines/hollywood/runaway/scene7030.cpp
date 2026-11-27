@@ -27,8 +27,8 @@ namespace {
 
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{0, 0, 0, {301, 302}, {0, 0}, {0, 0}, 4}, // 1: Hopi village.
-	{0, 0, 0, {303, 304}, {0, 0}, {0, 0}, 6} // 2: Hopi sanctuary.
+	{0, 0, 0, {301, 302}, {0, 0}, {0, 0}, 4, false, false, true}, // 1: Hopi village.
+	{0, 0, 0, {303, 304}, {0, 0}, {0, 0}, 6, false, false, true} // 2: Hopi sanctuary.
 };
 
 const Common::Point kVillageTrail[] = {

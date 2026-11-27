@@ -46,7 +46,7 @@ const byte kGrindCoffee[] = {
 
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{227, 503, 7, {301, 339}, {0, 1}, {192, 484}, 4}, // 1: Door.
+	{227, 503, 7, {301, 339}, {0, 1}, {192, 484}, 4, false, false, true}, // 1: Door.
 	{311, 493, 7, {302, 303}, {0, 0}, {291, 470}}, // 2: Shelves.
 	{382, 529, 1, {304, 305}, {0, 1}, {490, 508}, 3}, // 3: Susan.
 	{395, 529, 1, {306, 307}, {0, 0}, {406, 493}}, // 4: Electric lathe.
@@ -493,7 +493,9 @@ RunawayRoomScene::ActionResult Scene4050::dispatchCustomSceneAction(uint16 actio
 			return kHandled;
 		case 339: // Leave the laboratory.
 			// Alternate actor bank for the northwest-facing door handle gesture.
-			if (_game == kRunawayMuseumDemo) {
+			if (_skippingExit) {
+				finishCustomAnimation(action);
+			} else if (_game == kRunawayMuseumDemo) {
 				deferMuseumAction(339);
 			} else {
 				beginActorAnimation(339, 70, 11, 6);

@@ -42,7 +42,7 @@ const byte kFreezeBatteryFrames[] = {
 
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{141, 468, 7, {301, 302}, {0, 1}, {43, 471}, 4}, // 1: Door.
+	{141, 468, 7, {301, 302}, {0, 1}, {43, 471}, 4, false, false, true}, // 1: Door.
 	{196, 451, 1, {303, 304}, {0, 0}, {220, 420}}, // 2: First aid kit.
 	{310, 457, 0, {305, 306}, {1, 1}, {337, 425}}, // 3: Glass display case.
 	{204, 448, 1, {307, 308}, {1, 1}, {270, 421}}, // 4: Button.
@@ -236,8 +236,12 @@ RunawayRoomScene::ActionResult Scene4100::dispatchCustomSceneAction(uint16 actio
 	}
 	switch (action) {
 	case 302: // Open the security door to return to the hall.
-		beginRoomAnimation(450, 21, 13, nullptr, 0, false);
-		_audio.playEffectAt(32, Common::Point(43, 200));
+		if (_skippingExit) {
+			finishCustomAnimation(451);
+		} else {
+			beginRoomAnimation(450, 21, 13, nullptr, 0, false);
+			_audio.playEffectAt(32, Common::Point(43, 200));
+		}
 		return kHandled;
 	case 305: // Look inside the thermal chamber.
 		say(4, !_museum.cabinetSeen ? 0 : _museum.maskTaken ? 2 : 1);

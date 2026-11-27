@@ -28,7 +28,7 @@ namespace {
 
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{252, 492, 0, {301, 302}, {0, 1}, {233, 165}, 5}, // 1: Window.
+	{252, 492, 0, {301, 302}, {0, 1}, {233, 165}, 5, false, false, true}, // 1: Window.
 	{223, 483, 1, {303, 304}, {0, 0}, {300, 443}}, // 2: Boiler.
 	{287, 505, 1, {305, 306}, {0, 1}, {340, 448}}, // 3: Lever.
 	{287, 505, 1, {307, 308}, {0, 1}, {340, 448}}, // 4: Wheel.
@@ -198,7 +198,10 @@ RunawayRoomScene::ActionResult Scene6263::dispatchCustomSceneAction(uint16 actio
 		if (!_town.cabExited) {
 			say(22);
 		}
-		beginRoomAnimation(302, 25, 29, nullptr, 0, true, 60);
+		if (_skippingExit)
+			leaveTownRoom(6261);
+		else
+			beginRoomAnimation(302, 25, 29, nullptr, 0, true, 60);
 		break;
 	case 1302: // Switch to the exterior view to finish climbing out of the cab.
 		_town.cabExited = 1;

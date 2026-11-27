@@ -27,8 +27,8 @@ namespace {
 
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{1379, 491, 0, {301, 302}, {0, 3}, {1379, 491}, 5}, // 1: Town.
-	{285, 501, 0, {303, 304}, {1, 0}, {258, 427}}, // 2: Cell.
+	{1379, 491, 0, {301, 302}, {0, 3}, {1379, 491}, 5, false, false, true}, // 1: Town.
+	{285, 501, 0, {303, 304}, {1, 0}, {258, 427}, 0, false, false, true}, // 2: Cell.
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
 	{536, 504, 0, {306, 307}, {0, 1}, {536, 425}}, // 4: Firewood.
 	{1020, 483, 0, {308, 309}, {0, 0}, {1020, 458}}, // 5: Desk.
@@ -150,7 +150,8 @@ RunawayRoomScene::ActionResult Scene6200::dispatchCustomSceneAction(uint16 actio
 		}
 		// fall through
 	case 305: // Enter the unlocked cell.
-		walkTo(Common::Point(258, 445), 0, true);
+		if (!_skippingExit)
+			walkTo(Common::Point(258, 445), 0, true);
 		leaveTownRoom(6210);
 		break;
 	case 307: // Take the firewood.

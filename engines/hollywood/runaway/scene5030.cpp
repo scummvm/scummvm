@@ -212,6 +212,7 @@ bool Scene5030::restoreState(const RunawaySaveState &state, uint32 now, bool ent
 	_peeked = state.peeked;
 	_ice = (IceState)state.ice;
 	_hatchState = (HatchState)state.hatch;
+	_hatchExitKnown = state.desert.hatchSeen != 0;
 	for (uint i = 0; i < ARRAYSIZE(_pickedUp); ++i) {
 		_pickedUp[i] = state.pickedUp[i];
 		_examined[i] = state.examined[i];
@@ -485,6 +486,24 @@ void Scene5030::playWalkFootstep() {
 	if (surface >= 1 && surface <= 7) {
 		_audio.playFootstep(surface, _random.getRandomBit(), volume, _position.x);
 	}
+}
+
+bool Scene5030::canSkipExit(byte id) const {
+	return _game == kRunawayFullGame && id == 6 && _hatchState == kOpen && _hatchExitKnown;
+}
+
+void Scene5030::waitForExitClick(uint32 now) {
+	_idleHead.pause(now - _lastUpdate);
+	_idleBody.pause(now - _lastUpdate);
+	_now = _lastUpdate = now;
+}
+
+void Scene5030::skipExit(byte id) {
+	if (busy() || speaking() || !canSkipExit(id))
+		return;
+	cancelWalk();
+	_action = kEscape;
+	finishAction();
 }
 
 void Scene5030::click(Common::Point mouse, RunawayVerb verb, byte item) {

@@ -27,8 +27,8 @@ namespace {
 
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{202, 526, 7, {301, 302}, {0, 3}, {189, 517}, 4}, // 1: Street.
-	{780, 527, 1, {303, 304}, {0, -1}, {1023, 519}, 5}, // 2: Inside the saloon.
+	{202, 526, 7, {301, 302}, {0, 3}, {189, 517}, 4, false, false, true}, // 1: Street.
+	{780, 527, 1, {303, 304}, {0, -1}, {1023, 519}, 5, false, false, true}, // 2: Inside the saloon.
 	{405, 427, 7, {305, 306}, {0, 0}, {375, 402}}, // 3: Trough.
 	{780, 527, 1, {307, 308}, {0, -1}, {1023, 519}}, // 4: Floor board.
 	{643, 457, 1, {309, 310}, {0, 0}, {729, 434}} // 5: Window.
@@ -153,7 +153,7 @@ bool Scene8180::adjustCustomWalkTargetToFloorMask(Common::Point &target) const {
 }
 
 void Scene8180::enterSaloon(uint16 scene) {
-	if (findRunawayRoom(scene)) {
+	if (!_skippingExit && findRunawayRoom(scene)) {
 		walkTo(Common::Point(1023, 519), 1);
 	}
 	leaveRoom(scene);

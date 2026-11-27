@@ -33,9 +33,9 @@ const Common::Point kDoor(1104, 377);
 
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{2591, 229, 0, {301, 302}, {0, 0}, {2662, 186}, 5}, // 1: Path to the trailer.
+	{2591, 229, 0, {301, 302}, {0, 0}, {2662, 186}, 5, false, false, true}, // 1: Path to the trailer.
 	{0, 0, 0, {303, 304}, {0, 0}, {1063, 351}}, // 2: Trailer.
-	{1104, 377, 7, {305, 306}, {0, -1}, {1063, 351}}, // 3: Door.
+	{1104, 377, 7, {305, 306}, {0, -1}, {1063, 351}, 0, false, false, true}, // 3: Door.
 	{1138, 373, 0, {308, 309}, {1, 1}, {1138, 357}}, // 4: Tray.
 	{0, 0, 0, {310, 311}, {0, 0}, {0, 0}} // 5: Wooden bridge.
 };
@@ -237,8 +237,12 @@ const char *Scene8400::actionCaptionVariant(byte id, bool look, byte item) const
 }
 
 void Scene8400::enterTrailer() {
-	walkTo(kDoor, 7, false, true);
-	beginRoomAnimation(307, 5, 37);
+	if (_skippingExit) {
+		leaveRoom(8410);
+	} else {
+		walkTo(kDoor, 7, false, true);
+		beginRoomAnimation(307, 5, 37);
+	}
 }
 
 void Scene8400::withdraw(uint16 action) {
@@ -290,8 +294,12 @@ RunawayRoomScene::ActionResult Scene8400::dispatchCustomSceneAction(uint16 actio
 		}
 		break;
 	case 302: // Walk back to the path toward Douglasville.
-		walkTo(kTrailEnd, 1, false, true);
-		deferAction(401);
+		if (_skippingExit) {
+			leaveRoom(8350);
+		} else {
+			walkTo(kTrailEnd, 1, false, true);
+			deferAction(401);
+		}
 		break;
 	case 401: // Continue beyond the right edge of the scene.
 		walkTo(kTrail, 1, true);

@@ -55,6 +55,9 @@ public:
 	void start(uint32 now) override;
 	void resume() override;
 	void click(Common::Point mouse, RunawayVerb verb, byte item) override;
+	bool canSkipExit(byte hotspot) const override;
+	void skipExit(byte hotspot) override;
+	void waitForExitClick(uint32 now) override;
 	void update(uint32 now, int scrollDirection, bool inventoryOpen) override;
 	void draw() override;
 	void setCameraX(int x) override;
@@ -157,6 +160,7 @@ private:
 	bool _lidOpen = false, _unplugged = false;
 	bool _windowClean = false;
 	bool _coolerMoved = false, _coolerInspected = false, _escaped = false;
+	bool _hatchExitKnown = false;
 	IceState _ice = kFrozen;
 	HatchState _hatchState = kHidden;
 	bool _pickedUp[20] = {};

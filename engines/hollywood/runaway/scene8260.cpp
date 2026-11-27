@@ -28,8 +28,8 @@ namespace {
 
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{0, 510, 5, {301, 302}, {0, 3}, {0, 510}, 7}, // 1: Town.
-	{363, 395, 7, {303, 304}, {0, 1}, {273, 286}, 7}, // 2: Driver's cab.
+	{0, 510, 5, {301, 302}, {0, 3}, {0, 510}, 7, false, false, true}, // 1: Town.
+	{363, 395, 7, {303, 304}, {0, 1}, {273, 286}, 7, false, false, true}, // 2: Driver's cab.
 	{495, 433, 1, {305, 306}, {0, 1}, {582, 344}}, // 3: Smokestack.
 	{432, 411, 0, {307, 308}, {0, 0}, {435, 351}}, // 4: Water tank opening.
 	{413, 485, 7, {309, 310}, {1, 1}, {392, 465}}, // 5: Object.
@@ -120,7 +120,10 @@ RunawayRoomScene::ActionResult Scene8260::dispatchCustomSceneAction(uint16 actio
 		leaveRoom(8225);
 		break;
 	case 304: // Climb through the cab's broken window.
-		beginRoomAnimation(304, 4, 131, nullptr, 0, true, 60);
+		if (_skippingExit)
+			leaveRoom(8263);
+		else
+			beginRoomAnimation(304, 4, 131, nullptr, 0, true, 60);
 		break;
 	case 1304: // Enter the driver's cab after climbing through the window.
 		leaveRoom(8263);

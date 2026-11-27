@@ -37,21 +37,21 @@ const byte kCoffeeCupFrames[] = {
 
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{-25, 319, 7, {301, 302}, {0, 1}, {68, 371}, 7}, // 1: Stairs.
+	{-25, 319, 7, {301, 302}, {0, 1}, {68, 371}, 7, false, false, true}, // 1: Stairs.
 	{218, 379, 7, {321, 322}, {1, 1}, {180, 245}}, // 2: Coffee machines.
-	{607, 323, 7, {311, 312}, {0, 1}, {606, 322}, 4}, // 3: Clive's office door.
+	{607, 323, 7, {311, 312}, {0, 1}, {606, 322}, 4, false, false, true}, // 3: Clive's office door.
 	{696, 319, 7, {332, 333}, {0, 0}, {676, 164}}, // 4: Fire extinguisher.
 	{696, 319, 7, {313, 314}, {1, 1}, {668, 280}}, // 5: Wastepaper basket.
-	{873, 311, 7, {315, 316}, {0, 1}, {872, 310}, 4}, // 6: Door to the restoration laboratory.
-	{1118, 309, 7, {317, 318}, {1, 1}, {1094, 299}}, // 7: Security door.
+	{873, 311, 7, {315, 316}, {0, 1}, {872, 310}, 4, false, false, true}, // 6: Door to the restoration laboratory.
+	{1118, 309, 7, {317, 318}, {1, 1}, {1094, 299}, 0, false, false, true}, // 7: Security door.
 	{1153, 297, 7, {319, 320}, {1, 1}, {1152, 296}}, // 8: Panel.
-	{1220, 280, 7, {301, 303}, {0, 1}, {1279, 290}, 7}, // 9: Stairs.
+	{1220, 280, 7, {301, 303}, {0, 1}, {1279, 290}, 7, false, false, true}, // 9: Stairs.
 	{1473, 312, 7, {324, 325}, {0, 1}, {1440, 188}}, // 10: Telephone.
 	{1596, 351, 1, {326, 327}, {0, 0}, {1694, 186}}, // 11: Display case.
-	{140, 504, 7, {304, 305}, {0, 1}, {206, 618}, 4}, // 12: Stairs.
-	{1085, 411, 7, {304, 306}, {0, 1}, {1140, 446}, 4}, // 13: Stairs.
+	{140, 504, 7, {304, 305}, {0, 1}, {206, 618}, 4, false, false, true}, // 12: Stairs.
+	{1085, 411, 7, {304, 306}, {0, 1}, {1140, 446}, 4, false, false, true}, // 13: Stairs.
 	{921, 813, 7, {307, 308}, {0, 1}, {840, 730}, 3}, // 14: Maintenance worker.
-	{1588, 506, 7, {309, 310}, {0, 1}, {1610, 450}, 5}, // 15: Mayan exhibition.
+	{1588, 506, 7, {309, 310}, {0, 1}, {1610, 450}, 5, false, false, true}, // 15: Mayan exhibition.
 	{711, 797, 7, {328, 329}, {1, 0}, {670, 726}}, // 16: Plaque.
 	{1060, 730, 7, {330, 331}, {1, 0}, {984, 638}}, // 17: Plaque.
 };
@@ -285,10 +285,20 @@ RunawayRoomScene::ActionResult Scene4060::dispatchCustomSceneAction(uint16 actio
 		case 302: // Descend the left stairs.
 		case 303: // Descend the right stairs.
 		case 305: // Ascend the left stairs.
-		case 306: // Ascend the right stairs.
-			_actionStarted = _now;
-			deferMuseumAction(action + (action <= 303 ? 181 : 180));
+		case 306: { // Ascend the right stairs.
+			if (_skippingExit) {
+				const bool upper = action >= 305;
+				const Common::Point ends[] = {{533, 848}, {1169, 643}, {69, 372}, {1290, 300}};
+				if (upper && _museum.willyInLab == 2)
+					_museum.willyInLab = 0;
+				changeFloor(upper, ends[action - (upper ? 303 : 302)]);
+				_facing = action == 303 ? 5 : 3;
+			} else {
+				_actionStarted = _now;
+				deferMuseumAction(action + (action <= 303 ? 181 : 180));
+			}
 			return kHandled;
+		}
 		case 307: // Look at Willy.
 			say(3, _museum.willyMet != 0);
 			return kHandled;
@@ -298,7 +308,9 @@ RunawayRoomScene::ActionResult Scene4060::dispatchCustomSceneAction(uint16 actio
 		case 312: // Open Clive's office door.
 		case 316: // Open the restoration laboratory door.
 			// RESOURCE.001 bank 64: reach for the handle, facing northwest.
-			if (_game == kRunawayMuseumDemo) {
+			if (_skippingExit) {
+				finishCustomAnimation(action);
+			} else if (_game == kRunawayMuseumDemo) {
 				deferMuseumAction(action);
 			} else {
 				beginActorAnimation(action, 64, 11, 6);
@@ -338,6 +350,8 @@ RunawayRoomScene::ActionResult Scene4060::dispatchCustomSceneAction(uint16 actio
 		case 318: { // Enter the code to open the analysis laboratory.
 			if (_museum.keypad != 4) {
 				say(13);
+			} else if (_skippingExit) {
+				finishCustomAnimation(472);
 			} else {
 				static const byte frames[] = {
 					0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,

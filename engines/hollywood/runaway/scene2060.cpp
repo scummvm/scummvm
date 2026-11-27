@@ -29,7 +29,7 @@ namespace {
 // RESOURCE.B06; the storeroom reached across the ledge (native 0x4478e0).
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
-	{419, 546, 7, {301, 302}, {1, 1}, {419, 544}, 4}, // 1: Window.
+	{419, 546, 7, {301, 302}, {1, 1}, {419, 544}, 4, false, false, true}, // 1: Window.
 	{419, 546, 7, {304, 305}, {0, 0}, {419, 544}}, // 2: Radiator.
 	{347, 563, 7, {306, 307}, {1, 1}, {284, 521}}, // 3: Box.
 	{347, 563, 7, {308, 309}, {0, 1}, {292, 521}}, // 4: Spray can.
@@ -138,7 +138,10 @@ RunawayRoomScene::ActionResult Scene2060::dispatchCustomSceneAction(uint16 actio
 		executeItemAction(13);
 		return kHandled;
 	case 302: // Climb back to Gina's room.
-		beginRoomAnimation(action, 4, 44);
+		if (_skippingExit)
+			finishCustomAnimation(action);
+		else
+			beginRoomAnimation(action, 4, 44);
 		return kHandled;
 	case 303: // Return to Gina's room without the climbing animation.
 		_transition.scene = 2022;

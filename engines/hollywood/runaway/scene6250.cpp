@@ -36,7 +36,7 @@ const byte kSafeHandleFrames[] = {
 const RunawayHotspot kHotspots[] = {
 	{0, 0, 0, {0, 0}, {0, 0}, {0, 0}},
 	{516, 314, 1, {301, 302}, {0, 0}, {564, 286}}, // 1: Statue.
-	{516, 314, 1, {305, 306}, {0, 1}, {564, 286}, 5}, // 2: Hole.
+	{516, 314, 1, {305, 306}, {0, 1}, {564, 286}, 5, false, false, true}, // 2: Hole.
 	{462, 312, 7, {303, 304}, {0, 1}, {0, 0}}, // 3: Safe.
 	{0, 0, 4, {307, 307}, {0, 0}, {512, 599}, 0, false, true}, // 4: Rubble.
 	{462, 312, 7, {308, 309}, {0, 1}, {512, 599}} // 5: Combination dial.
@@ -139,7 +139,10 @@ RunawayRoomScene::ActionResult Scene6250::dispatchCustomSceneAction(uint16 actio
 		say(4);
 		break;
 	case 306: // Climb back through the hole to the bank.
-		beginRoomAnimation(406, 5, 61, nullptr, 0, true, 60);
+		if (_skippingExit)
+			leaveTownRoom(6191);
+		else
+			beginRoomAnimation(406, 5, 61, nullptr, 0, true, 60);
 		break;
 	case 1406: // Return upstairs after climbing out of the basement.
 		leaveTownRoom(6191);
