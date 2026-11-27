@@ -65,9 +65,25 @@ void scene01_initObjects(Scene *sc, int entrance, bool eggUncracked) {
 	}
 }
 
+static void scene01_onGuiEvent(Scene &inventory, const Common::String &id, const Common::String &event) {
+	if (event != "unpress")
+		return;
+	if (id == "BTN_SKIP") {
+		GameVar *root = g_nmi->getGameLoaderGameVar();
+		root->setSubVarAsInt("TutorialDisabled", 1);
+		root->setSubVarAsInt("Scene1ExitsDisabled", 0);
+		inventory._guiManager->getElement(id)->hideAndDeactivate();
+	} else {
+		warning("STUB: Inventory::onGuiEvent(%s, %s)", id.c_str(), event.c_str());
+	}
+}
+
 void scene01_initScene(Scene *sc, int entrance) {
 	scene01_initObjects(sc, entrance, g_nmi->getStateId(sO_EggCracker) == g_nmi->getStateValue(sO_EggCracker, sO_DidNotCrackEgg));
 	if (g_nmi->isAndroidFullPipe()) {
+		g_nmi->_inventoryScene = g_nmi->findScene(SC_INV);
+		if (g_nmi->_inventoryScene)
+			g_nmi->_inventoryScene->_guiEventHandler = scene01_onGuiEvent;
 		uint32 buttonId;
 		if (g_nmi->_gameProject->_objectIds.findId("ST_LBN_2N", buttonId))
 			g_nmi->lift_setButton(sO_Level2, buttonId);
@@ -93,6 +109,15 @@ int sceneHandler01(Command *cmd) {
 		if (cmd->_messageName == "MSG_ENABLE_BHV_SOUND") {
 			if (g_nmi->_currentScene->_behaviorController)
 				g_nmi->_currentScene->_behaviorController->enableAllMusic();
+			return 0;
+		}
+		if (cmd->_messageName == "MSG_DISABLE_EXIT_MANAGER") {
+			g_nmi->getGameLoaderGameVar()->setSubVarAsInt("Scene1ExitsDisabled", 1);
+			Scene *inventory = g_nmi->_inventoryScene;
+			if (inventory && inventory->_guiManager) {
+				if (GuiElement *skip = inventory->_guiManager->getElement("BTN_SKIP"))
+					skip->showAndActivate();
+			}
 			return 0;
 		}
 		if (cmd->_messageName == "MSG_DEACT_OBJ_SC1") {

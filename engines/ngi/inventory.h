@@ -94,6 +94,7 @@ class Inventory : public InventoryData {
 	Inventory();
 	~Inventory() override;
 
+	void addPoolItem(const InventoryPoolItem &item) { _itemsPool.push_back(item); }
 	bool loadPartial(MfcArchive &file);
 	bool savePartial(MfcArchive &file);
 	void addItem(int itemId, int count);

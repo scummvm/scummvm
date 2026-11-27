@@ -449,6 +449,7 @@ private:
 				KEY_END()
 			KEY_END()
 			XML_KEY(PICTURE)
+				XML_PROP(hitAlpha, false)
 				XML_PROP(filter, false)
 				XML_PROP(serializable, false)
 				XML_PROP(id, true)
@@ -508,6 +509,13 @@ private:
 				KEY_END()
 			KEY_END()
 		KEY_END()
+		XML_KEY(INVENTORY)
+			XML_PROP(interval, false)
+			XML_PROP(cursorOfs, false)
+			XML_PROP(mode, false)
+			XML_PROP(fitTo, false)
+			XML_PROP(waitscreen, false)
+		KEY_END()
 	} PARSER_END()
 
 	bool parserCallback_SCENE(ParserNode *node) {
@@ -521,6 +529,8 @@ private:
 		_scene._y = strtod(node->values.getValOrDefault("scrollY").c_str(), nullptr);
 		return true;
 	}
+
+	bool parserCallback_INVENTORY(ParserNode *) { return true; }
 
 	bool parserCallback_ADDANI(ParserNode *node) {
 		PicAniInfo ref;
@@ -955,6 +965,18 @@ private:
 		const ParserNode *parent = getParentNode(node);
 		if (!parent)
 			return false;
+		if (parent->name == "INVENTORY") {
+			node->layout = _XMLkeys;
+			if (node->name == "GUIMNGR")
+				return parserCallback_GUIMNGR(node);
+			if (node->name == "PICTURE")
+				return parserCallback_PICTURE(node);
+			if (node->name == "ITEM") {
+				InventoryPoolItem item = {};
+				if (readId(node->values.getValOrDefault("id"), item.id) && readId(node->values.getValOrDefault("vis"), item.pictureObjectNormal))
+					getGameLoaderInventory()->addPoolItem(item);
+			}
+		}
 		if (node->depth == 2 && parent->name == "GUIMNGR" && _scene._guiManager)
 			_scene._guiManager->createElement(node->name, node->values, _project._objectIds);
 		// Scene nodes outside the supported object types are ignored for now.
@@ -991,6 +1013,12 @@ void SceneTag::loadSceneXML(const GameProject &project) {
 	if (!parser.loadStream(SearchMan.createReadStreamForMember(path), path.toString()) || !parser.parse()) {
 		warning("Could not load Full Pipe Android scene %s", _tag.c_str());
 		return;
+	}
+
+	if (_sceneId == SC_INV) {
+		parser.close();
+		if (!parser.loadFile("data/res/inventory.xml") || !parser.parse())
+			return;
 	}
 
 	debugC(1, kDebugXML, "Loaded Full Pipe Android scene %s with %u pictures and %u animations",

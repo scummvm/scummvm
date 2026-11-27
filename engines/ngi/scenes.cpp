@@ -576,6 +576,7 @@ bool NGIEngine::doSetScene(const Entrance &entrance) {
 		return 0;
 
 	if (usesXMLProject()) {
+		_inventoryScene = nullptr;
 		Scene *common = findScene(SC_COMMON);
 		Scene *intro2 = isAndroidFullPipe() && scene->_sceneId == SC_INTRO1 ? findScene(SC_INTRO2) : nullptr;
 		if (isAndroidFullPipe() && scene->_sceneId == SC_INTRO1 && (!common || !intro2))

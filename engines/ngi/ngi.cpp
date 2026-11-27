@@ -303,8 +303,21 @@ bool NGIEngine::handleGuiEvent(const Common::Event &event) {
 			cmd._param = back ? kActionCloseDialog : 0;
 			_modalObject->handleMessage(&cmd);
 		}
-	} else if (_currentScene->_guiManager) {
-		GuiManager &gui = *_currentScene->_guiManager;
+	} else {
+		GuiManager *manager = _currentScene->_guiManager.get();
+		if (_inventoryScene && _inventoryScene->_guiManager && _inventoryScene->_guiManager->hit(event.mouse)) {
+			manager = _inventoryScene->_guiManager.get();
+			for (const MessageQueue *queue : *_globalMessageQueueList) {
+				if (queue->_queueId == QU_SC1_ENTER && !queue->_isFinished) {
+					GuiElement *skip = manager->getElement("BTN_SKIP");
+					if (!skip || !skip->hit(event.mouse))
+						return false;
+				}
+			}
+		}
+		if (!manager)
+			return false;
+		GuiManager &gui = *manager;
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			gui.onKeyDown(event.kbd.keycode);
@@ -643,8 +656,14 @@ Common::Error NGIEngine::updateScreen(uint32 elapsed, byte &brightness, bool red
 			_modalObject->update();
 	} else if (_currentScene && (timedUpdates ? redraw : renderScene)) {
 		_currentScene->render();
-		if (_inventoryScene)
-			_inventory->render();
+		if (_inventoryScene) {
+			if (isAndroidFullPipe()) {
+				if (_inventoryScene->_guiManager)
+					_inventoryScene->_guiManager->render(_backgroundSurface);
+			} else {
+				_inventory->render();
+			}
+		}
 		if (_updateScreenCallback)
 			_updateScreenCallback();
 		if (brightness < 255)
