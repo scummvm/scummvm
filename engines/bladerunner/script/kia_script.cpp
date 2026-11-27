@@ -485,6 +485,11 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorMcCoy, 3600);
 		KIA_Play_Actor_Dialogue(kActorDektora, 550);
 		break;
+	case kClueDektoraConfession: // Restored Content
+		// The voice lines are chosen using kClueGordoConfession as an example.
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 3615);
+		KIA_Play_Actor_Dialogue(kActorDektora, 770);
+		break;
 	case kClueDektorasCard:
 		KIA_Play_Slice_Model(kModelAnimationDektorasCard);
 		break;
@@ -596,6 +601,15 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorCrazylegs, 830);
 		KIA_Play_Actor_Dialogue(kActorCrazylegs, 840);
 		KIA_Play_Actor_Dialogue(kActorCrazylegs, 850);
+		break;
+	case kClueCrazylegsInterview2: // Restored Content
+		// The voice lines are chosen to convey the same type of information
+		// as kClueCrazylegsInterview1 but for a different buyer (Clovis).
+		KIA_Play_Actor_Dialogue(kActorCrazylegs, 900);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 2105);
+		KIA_Play_Actor_Dialogue(kActorCrazylegs, 950);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 2110);
+		KIA_Play_Actor_Dialogue(kActorCrazylegs, 960);
 		break;
 	case kClueLichenDogWrapper:
 		KIA_Play_Slice_Model(kModelAnimationLichenDogWrapper);

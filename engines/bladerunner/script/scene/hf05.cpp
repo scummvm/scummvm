@@ -416,22 +416,26 @@ void SceneScriptHF05::dialogueWithCrazylegs1() {
 		// and McCoy has asked Crazylegs for the CAR REGISTRATION topic already
 		DM_Add_To_List_Never_Repeat_Once_Selected(1190, 2, 7, 4); // WOMAN
 	}
+	bool canAskAboutWomansPhoto;
+	if (_vm->_cutContent) {
+		// Can ask this if Crazy-legs has described the woman who bought the car
+		// and McCoy has a photo of a suspect that matches the description.
+		canAskAboutWomansPhoto = Game_Flag_Query(kFlagMcCoyAskedCrazylegsAboutWoman)
+			&& (Actor_Clue_Query(kActorMcCoy, kClueIzosFriend)
+				|| Actor_Clue_Query(kActorMcCoy, kClueDektorasDressingRoom)
+				|| (Actor_Clue_Query(kActorMcCoy, kClueWomanInAnimoidRow)
+					&& Actor_Clue_Query(kActorMcCoy, kClueDektoraConfession)));
+	} else {
 #if BLADERUNNER_ORIGINAL_BUGS
-	if (Actor_Clue_Query(kActorMcCoy, kClueDektorasDressingRoom)) {
-		DM_Add_To_List_Never_Repeat_Once_Selected(1200, 5, 5, 3); // WOMAN'S PHOTO
-	}
+		canAskAboutWomansPhoto = Actor_Clue_Query(kActorMcCoy, kClueDektorasDressingRoom);
 #else
-	if ((Actor_Clue_Query(kActorMcCoy, kClueDektorasDressingRoom)
-	    && Actor_Clue_Query(kActorMcCoy, kClueCrazylegsInterview1))
-	) {
-		// kClueDektorasDressingRoom is acquired from EarlyQ at his office (nr04)
-		// McCoy should only ask about this if CrazyLegs already told him at least about the sexy blonde (kClueCrazylegsInterview1)
-		// TODO Maybe McCoy can show the kClueWomanInAnimoidRow
-		//      - if he has the kClueChinaBar (where she is with Clovis) too?
-		//      - or if he met Dektora already.
+		canAskAboutWomansPhoto = Actor_Clue_Query(kActorMcCoy, kClueCrazylegsInterview1)
+			&& Actor_Clue_Query(kActorMcCoy, kClueDektorasDressingRoom);
+#endif // BLADERUNNER_ORIGINAL_BUGS
+	}
+	if (canAskAboutWomansPhoto) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1200, 5, 5, 3); // WOMAN'S PHOTO
 	}
-#endif // BLADERUNNER_ORIGINAL_BUGS
 	if (Actor_Clue_Query(kActorMcCoy, kClueLucy)
 	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone
 	) {
@@ -510,6 +514,7 @@ void SceneScriptHF05::dialogueWithCrazylegs1() {
 		break;
 
 	case 1190: // WOMAN
+		Game_Flag_Set(kFlagMcCoyAskedCrazylegsAboutWoman);
 		Actor_Says(kActorMcCoy, 1895, kAnimationModeIdle);
 		Actor_Says(kActorCrazylegs, 620, kAnimationModeTalk);
 		Actor_Says(kActorCrazylegs, 630, 12);
@@ -606,6 +611,9 @@ void SceneScriptHF05::dialogueWithCrazylegs1() {
 			Actor_Says(kActorCrazylegs, 950, 15);
 			Actor_Says(kActorMcCoy, 2110, kAnimationModeIdle);
 			Actor_Says(kActorCrazylegs, 960, 16);
+			if (_vm->_cutContent) {
+				Actor_Clue_Acquire(kActorMcCoy, kClueCrazylegsInterview2, true, kActorCrazylegs);
+			}
 		}
 		break;
 	}
