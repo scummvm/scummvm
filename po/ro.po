@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-25 01:14+0000\n"
+"POT-Creation-Date: 2026-11-27 02:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -3832,7 +3832,7 @@ msgid "Pause"
 msgstr ""
 
 #: engines/metaengine.cpp:120 engines/harvester/metaengine.cpp:93
-#: engines/hollywood/runaway/engine.cpp:846 engines/igor/metaengine.cpp:98
+#: engines/hollywood/runaway/engine.cpp:850 engines/igor/metaengine.cpp:98
 #: engines/parallaction/metaengine.cpp:163
 #: engines/scumm/insane/mortimer/mortimer.cpp:79
 #: engines/ultima/ultima8/metaengine.cpp:47
@@ -3858,7 +3858,7 @@ msgstr ""
 msgid "Skip"
 msgstr ""
 
-#: engines/metaengine.cpp:134 engines/hollywood/runaway/engine.cpp:868
+#: engines/metaengine.cpp:134 engines/hollywood/runaway/engine.cpp:872
 #: engines/sky/metaengine.cpp:121 engines/supernova/metaengine.cpp:315
 msgid "Skip line"
 msgstr ""
@@ -6069,7 +6069,7 @@ msgstr ""
 #: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
 #: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:542
 #: engines/grim/grim.cpp:642 engines/harvester/metaengine.cpp:92
-#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:857
+#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:861
 #: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
 #: engines/icb/icb.cpp:179 engines/macs2/metaengine.cpp:64
 #: engines/petka/metaengine.cpp:173 engines/phoenixvr/metaengine.cpp:82
@@ -9818,32 +9818,32 @@ msgstr ""
 msgid "Pan voices and footsteps according to their positions on screen"
 msgstr ""
 
-#: engines/hollywood/runaway/engine.cpp:814
+#: engines/hollywood/runaway/engine.cpp:818
 msgid "Perform action"
 msgstr ""
 
-#: engines/hollywood/runaway/engine.cpp:820
-#: engines/hollywood/runaway/engine.cpp:863
+#: engines/hollywood/runaway/engine.cpp:824
+#: engines/hollywood/runaway/engine.cpp:867
 msgid "Next action / Cancel"
 msgstr ""
 
-#: engines/hollywood/runaway/engine.cpp:826 engines/sherlock/metaengine.cpp:578
+#: engines/hollywood/runaway/engine.cpp:830 engines/sherlock/metaengine.cpp:578
 msgid "Scroll left"
 msgstr ""
 
-#: engines/hollywood/runaway/engine.cpp:831 engines/sherlock/metaengine.cpp:584
+#: engines/hollywood/runaway/engine.cpp:835 engines/sherlock/metaengine.cpp:584
 msgid "Scroll right"
 msgstr ""
 
-#: engines/hollywood/runaway/engine.cpp:836
+#: engines/hollywood/runaway/engine.cpp:840
 msgid "Scroll to the left edge"
 msgstr ""
 
-#: engines/hollywood/runaway/engine.cpp:841
+#: engines/hollywood/runaway/engine.cpp:845
 msgid "Scroll to the right edge"
 msgstr ""
 
-#: engines/hollywood/runaway/engine.cpp:852
+#: engines/hollywood/runaway/engine.cpp:856
 msgid "Skip cutscene / Cancel action / Menu"
 msgstr ""
 
