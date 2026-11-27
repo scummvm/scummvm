@@ -36,6 +36,8 @@ bool dispatchInventoryRelationAction(HollywoodEngine *vm, GameplayLoopDelegate *
 	const GameplayLoopCursorState &state);
 bool dispatchSharedInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *delegate,
 	uint16 handlerId, byte owner);
+bool dispatchSharedAction(HollywoodEngine *vm, GameplayLoopDelegate *delegate,
+	uint16 handlerId, byte owner);
 
 } // End of namespace Hollywood
 

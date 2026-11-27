@@ -362,18 +362,10 @@ void Scene7010::runSueEntryPath(int startX, int startY, int targetX, int targetY
 
 void Scene7010::runJuniorSpeech() {
 	clearSpeechOverlay();
-	const bool speechStarted = startSecondarySpeechLine(0, 0);
-	if (!_speechOverlay.visible)
-		return;
-
-	const uint32 speechMillis = speechStarted ?
-		MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
-		MAX<uint32>(2800, _speechOverlay.lines.size() * 1500);
+	_speechController.prepareSecondaryActorSpeech();
 	_secondaryActorTimerAccumulator = kScene7010SecondaryActorFrameMillis - kScene7010SpeechPollMillis;
-	waitForSpeechOrDelay(speechMillis, false);
+	beginSecondarySpeechLine(0, 0);
 
-	clearSpeechOverlay();
-	_speech.stop();
 	_secondaryActorFrame = 0;
 	drawPlayableComposite();
 	presentFrame();

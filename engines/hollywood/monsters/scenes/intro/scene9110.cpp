@@ -171,22 +171,28 @@ void Scene9110::runSpeechSequence() {
 
 void Scene9110::runSpeechStep(const SpeechStep &step) {
 	const SceneSpeechCue popup = _text.stageCue(step.rowIndex, step.frameIndex);
-	const uint16 sampleId = popup.voiceSampleId;
+	const uint segmentCount = MAX<uint>(1, popup.continuationCount);
+	for (uint segmentIndex = 0; segmentIndex < segmentCount && !_skipRequested && !Engine::shouldQuit(); ++segmentIndex) {
+		const uint16 sampleId = popup.voiceSampleId == 0 ? 0 : popup.voiceSampleId + segmentIndex;
 
-	beginSubtitle(popup, step.speechTextStyle);
-	presentComposite();
-
-	const bool started = sampleId != 0 && _speech.playSampleAt(sampleId, step.speechTextStyle.centerX);
-	const uint32 fallbackMillis = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) : 1200;
-	waitForSpeechOrDelay(fallbackMillis, step.waitMode);
-	_speech.stop();
-
-	if (step.waitMode == kWaitChunk2MouthMotion)
-		_sceneLayers.setLayerFrame(kMouthLayer, 2);
-
-	clearSubtitle();
-	if (!_skipRequested && !Engine::shouldQuit())
+		beginSubtitle(popup, segmentIndex, step.speechTextStyle);
 		presentComposite();
+
+		const bool started = sampleId != 0 && _speech.playSampleAt(sampleId, step.speechTextStyle.centerX);
+		const uint32 fallbackMillis = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) : 1200;
+		waitForSpeechOrDelay(fallbackMillis, step.waitMode);
+		_speech.stop();
+
+		if (step.waitMode == kWaitChunk2MouthMotion)
+			_sceneLayers.setLayerFrame(kMouthLayer, 2);
+
+		clearSubtitle();
+		if (!_skipRequested && !Engine::shouldQuit()) {
+			presentComposite();
+			if (segmentIndex + 1 < segmentCount && _vm->gameState().actorSpeechTextMode < 2)
+				waitForSpeechOrDelay(3 * kScene9110MouthInterval, kWaitChunk3Animation);
+		}
+	}
 }
 
 void Scene9110::waitForSpeechOrDelay(uint32 fallbackMillis, SpeechWaitMode waitMode) {
@@ -286,13 +292,13 @@ byte Scene9110::nextMouthFrameVariant() {
 	return nextFrame;
 }
 
-void Scene9110::beginSubtitle(const SceneSpeechCue &popup, const SpeechTextStyle &speechTextStyle) {
+void Scene9110::beginSubtitle(const SceneSpeechCue &popup, uint segmentIndex, const SpeechTextStyle &speechTextStyle) {
 	clearSubtitle();
 
-	const Common::String text = _text.largeTextRecord(popup.textRecordId);
+	const Common::String text = _text.largeTextRecord(popup.textRecordId + segmentIndex);
 	if (text.empty()) {
 		debugC(2, kDebugScene, "Skipping empty subtitle text record %u",
-			popup.textRecordId);
+			popup.textRecordId + segmentIndex);
 		return;
 	}
 

@@ -144,41 +144,89 @@ void grantRonItem(GameplayState &gameState, GameplayLoopDelegate *delegate, byte
 	playRonInventoryChange(delegate);
 }
 
-bool beginRonSimpleInventorySpeech(HollywoodEngine *vm, GameplayLoopDelegate *delegate,
+bool dispatchRonSpeechAction(HollywoodEngine *vm, GameplayLoopDelegate *delegate,
 		uint16 handlerId) {
-	const GameplayState &gameState = vm->gameState();
+	GameplayState &gameState = vm->gameState();
 
 	switch (handlerId) {
-	case 2:   // Usar item con item: generic "No funcionaria".
-		beginRonRandomSpeechLine(delegate, 0x01, 2);
+	case 0:
+	case 1:
+	case 23:
+	case 94:
+	case 214:
 		return true;
-	case 20:  // Abrir closed/unsafe item: generic bad idea.
+	case 3:
+	case 6:
+	case 8:
+	case 9:
+	case 11:
+	case 12:
+	case 16:
+	case 19:
+	case 33:
+	case 43:
+	case 47:
+	case 48:
+	case 51:
+	case 52:
+	case 53:
+	case 54:
+		beginRonSpeechLine(delegate, handlerId - 1, 0);
+		return true;
+	case 2:
+	case 4:
+	case 17:
+	case 22:
+	case 29:
+	case 44:
+		beginRonRandomSpeechLine(delegate, handlerId - 1, 2);
+		return true;
+	case 5:
+	{
+		const byte variant = delegate->randomSharedInventorySpeechFrame(3);
+		if (variant < 2)
+			beginRonSpeechLine(delegate, 4, variant);
+		else
+			beginRonSpeechLine(delegate, 3, variant - 1);
+		return true;
+	}
+	case 7:
+	case 10:
+	case 13:
+	case 14:
+	case 15:
+	case 18:
+	case 20:
+	case 24:
+	case 28:
+	case 30:
+	case 31:
+	case 32:
+	case 34:
+	case 35:
+	case 36:
+	case 37:
+	case 38:
+	case 39:
+	case 40:
+	case 41:
+	case 42:
+	case 45:
+	case 46:
+	case 49:
+	case 50:
+		beginRonRandomSpeechLine(delegate, handlerId - 1, 1);
+		return true;
+	case 21:
+	case 25:
+		beginRonRandomSpeechLine(delegate, handlerId - 1, 4);
+		return true;
+	case 26:
+	case 27:
+		beginRonRandomSpeechLine(delegate, handlerId - 1, 3);
+		return true;
 	case 56:  // Usar iman with microphone: generic bad idea.
 		beginRonRandomSpeechLine(delegate, 0x13, 1);
-		return true;
-	case 30:  // Usar algodon as cleaning rag: Ron refuses to clean.
-		beginRonRandomSpeechLine(delegate, 0x1d, 1);
-		return true;
-	case 31:  // Usar serrucho where it cannot be used.
-		beginRonRandomSpeechLine(delegate, 0x1e, 1);
-		return true;
-	case 32:  // Usar bisturi as tool: "I am a journalist, not a surgeon."
-		beginRonRandomSpeechLine(delegate, 0x1f, 1);
-		return true;
-	case 34:  // Usar control remoto violently: Ron avoids violence.
-		beginRonRandomSpeechLine(delegate, 0x21, 1);
-		return true;
-	case 40:  // Usar cuerda on people: Ron refuses to tie people up.
-		beginRonRandomSpeechLine(delegate, 0x27, 1);
-		return true;
-	case 44:  // Usar lupa where not needed.
-		beginRonRandomSpeechLine(delegate, 0x2b, 2);
-		return true;
-	case 52:  // Usar bisturi with madero: too small to sharpen.
-		beginRonSpeechLine(delegate, 0x33, 0);
-		return true;
-	case 53:  // Usar bisturi with poster: Ron would cut it badly.
-		beginRonSpeechLine(delegate, 0x34, 0);
 		return true;
 	case 58:  // Usar flor del Nilo with ponchera/glass: keeps well without water.
 		beginRonSpeechLine(delegate, 0x36, 0);
@@ -599,6 +647,16 @@ bool beginRonSimpleInventorySpeech(HollywoodEngine *vm, GameplayLoopDelegate *de
 	case 222: // Usar candil with oil: Ron does not need to light it yet.
 		beginRonSpeechLine(delegate, 0xcf, 0);
 		return true;
+	case 223:
+		beginRonSpeechLine(delegate, 0xd0, 0);
+		return true;
+	case 224: // That item cannot be used here.
+		beginRonSpeechLine(delegate, 0xd3, 0);
+		return true;
+	case 225:
+		beginRonSpeechLine(delegate, 0xd4, gameState.ronTravelQuipIndex);
+		++gameState.ronTravelQuipIndex;
+		return true;
 	case 226: // Generic use: no need.
 		beginRonRandomSpeechLine(delegate, 0xd5, 1);
 		return true;
@@ -634,46 +692,7 @@ bool beginRonSimpleInventorySpeech(HollywoodEngine *vm, GameplayLoopDelegate *de
 	}
 }
 
-bool isRonInventoryAction(uint16 handlerId) {
-	if (handlerId >= 55 && handlerId <= 73)
-		return true;
-	if (handlerId >= 74 && handlerId <= 213 && handlerId != 94)
-		return true;
-	if (handlerId >= 215 && handlerId <= 222)
-		return true;
-
-	switch (handlerId) {
-	case 2:
-	case 20:
-	case 30:
-	case 31:
-	case 32:
-	case 34:
-	case 40:
-	case 44:
-	case 52:
-	case 53:
-	case 226:
-	case 227:
-	case 228:
-	case 229:
-	case 230:
-	case 231:
-	case 232:
-	case 233:
-	case 234:
-	case 235:
-	case 236:
-	case 237:
-	case 238:
-	case 239:
-		return true;
-	default:
-		return false;
-	}
-}
-
-void dispatchRonInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *delegate,
+bool dispatchRonAction(HollywoodEngine *vm, GameplayLoopDelegate *delegate,
 		uint16 handlerId, byte owner) {
 	GameplayState &gameState = vm->gameState();
 
@@ -972,9 +991,9 @@ void dispatchRonInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *deleg
 		beginRonSpeechLine(delegate, 0xbe, 1);
 		break;
 	default:
-		beginRonSimpleInventorySpeech(vm, delegate, handlerId);
-		break;
+		return dispatchRonSpeechAction(vm, delegate, handlerId);
 	}
+	return true;
 }
 
 bool dispatchInventoryFixedAction(HollywoodEngine *vm, GameplayLoopDelegate *delegate,
@@ -1007,23 +1026,25 @@ bool dispatchInventoryRelationAction(HollywoodEngine *vm, GameplayLoopDelegate *
 
 bool dispatchSharedInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *delegate,
 		uint16 handlerId, byte owner) {
-	// Shared handlers from InstallSceneActionCallbackTable (0x004d6000);
-	// main-scene handlers are dispatched separately.
-	const bool sharedHandler = handlerId <= 71;
-	const bool ronHandler = owner == 0 && isRonInventoryAction(handlerId);
-	if (!sharedHandler && !ronHandler)
+	const bool sharedHandler = owner == 0 ? handlerId <= 239 : owner == 1 && handlerId <= 71;
+	if (!sharedHandler)
 		return false;
 
 	vm->cursor()->leaveInteractiveMode();
-
-	if (ronHandler) {
-		dispatchRonInventoryAction(vm, delegate, handlerId, owner);
-		if (!Engine::shouldQuit() && !delegate->shouldExitGameplayLoop()) {
-			vm->cursor()->enterInteractiveMode();
-			vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
-		}
-		return true;
+	const bool handled = dispatchSharedAction(vm, delegate, handlerId, owner);
+	if (!Engine::shouldQuit() && !delegate->shouldExitGameplayLoop()) {
+		vm->cursor()->enterInteractiveMode();
+		vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
 	}
+	return handled;
+}
+
+bool dispatchSharedAction(HollywoodEngine *vm, GameplayLoopDelegate *delegate,
+		uint16 handlerId, byte owner) {
+	if (owner == 0)
+		return dispatchRonAction(vm, delegate, handlerId, owner);
+	if (owner != 1)
+		return false;
 
 	switch (handlerId) {
 	case 0:
@@ -1329,10 +1350,6 @@ bool dispatchSharedInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *de
 		return false;
 	}
 
-	if (!Engine::shouldQuit() && !delegate->shouldExitGameplayLoop()) {
-		vm->cursor()->enterInteractiveMode();
-		vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
-	}
 	return true;
 }
 

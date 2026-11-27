@@ -74,7 +74,7 @@ private:
 	void presentComposite();
 	byte nextMouthFrameVariant();
 
-	void beginSubtitle(const SceneSpeechCue &popup, const SpeechTextStyle &speechTextStyle);
+	void beginSubtitle(const SceneSpeechCue &popup, uint segmentIndex, const SpeechTextStyle &speechTextStyle);
 
 	void stopAudio() override;
 
