@@ -355,16 +355,17 @@ RunawayRoomScene::ActionResult Scene8090::dispatchCustomSceneAction(uint16 actio
 		_oscar.startIdle();
 		break;
 	case 401: // Oscar opens the curtain for Brian.
+		// The animation supplies the moving curtain over the cleared doorway.
+		_curtainOpen = true;
 		_animatesOscar = true;
 		_audio.stopEffect(1);
 		beginRoomAnimationRange(401, 11, 33, 0, 32, false);
-		break;
+		return kBackgroundChanged;
 	case 1401: // Keep the curtain open while Brian goes inside.
-		_curtainOpen = true;
 		setOscarPose(11, 33, 32);
 		_animatesOscar = false;
 		deferAction(402);
-		return kBackgroundChanged;
+		break;
 	case 402: // Brian steps through the doorway.
 		beginRoomAnimationRange(402, 8, 15, 0, 14);
 		break;
