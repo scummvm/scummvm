@@ -426,8 +426,6 @@ Common::U32String Scene5030::actionCaption(byte id, RunawayVerb verb, byte item)
 void Scene5030::sayInventory(const RunawayInventory::Reply &reply) {
 	const RunawayInventory::Reply speech = reply.action == 1 || reply.action == 5 ? RunawayInventory::randomReply(_random) : reply;
 	stopSpeech();
-	if (speech.cue == 156 && !speech.variation)
-		_audio.playEffect(26, 65);
 	uint16 row, sample;
 	byte count;
 	if (!_text.getStaticSpeechCue(speech.cue, speech.variation, row, count, sample))
@@ -1143,6 +1141,15 @@ void Scene5030::update(uint32 now, int scrollDirection, bool inventoryOpen) {
 	_audio.updateBackgroundMusic(now, _random, 17, 3, 100, 30000);
 	if (_speechRow && !_audio.speechPlaying() && _speech.finished(now))
 		skipSpeech();
+	if (_inventory.handling()) {
+		const RunawayInventory::Reply line = _inventory.updateHandling(now, _audio, speaking());
+		if (line.cue)
+			sayInventory(line);
+		_actionStarted += pausedTime;
+		_idleHead.pause(pausedTime);
+		_idleBody.pause(pausedTime);
+		return;
+	}
 	if (inventoryOpen && !inventoryPresentation()) {
 		_actionStarted += pausedTime;
 		_idleHead.pause(pausedTime);

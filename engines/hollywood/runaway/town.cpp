@@ -42,27 +42,6 @@ bool RunawayRoomScene::sayTownInventory(const RunawayInventory::Reply &reply) {
 		say(219, _inventory.town().sculpture == 2 ? 4 : _inventory.town().sculpture == 1 ?
 			(_town.polishedSculptureRefused ? 3 : 2) : _town.roughSculptureRefused, true);
 		return true;
-	case 224: // Decorate the polished sculpture with Brian's amber.
-		if (!_town.fuelTradeKnown) {
-			say(224, 2, true);
-		} else if (_inventory.town().sculpture != 1 || !_town.polishedSculptureRefused) {
-			say(224, 1, true);
-		} else {
-			say(224, 0, true);
-			_audio.playEffect(32);
-			_inventory.town().sculpture = 2;
-			_inventory.remove(4);
-			_inventory.select(0);
-			say(219, 4, true);
-		}
-		return true;
-	case 228: // Empty a measuring tube back into the concentrate.
-		if (reply.variation) {
-			break;
-		}
-		_audio.playEffect(34);
-		say(228, 0, true);
-		return true;
 	case 230: // Refuse attaching the strap, or pouring concentrate in German.
 	case 242: // The prepared tobacco needs no more grinding.
 		if (!_restoredContent) {
@@ -76,59 +55,10 @@ bool RunawayRoomScene::sayTownInventory(const RunawayInventory::Reply &reply) {
 			return true;
 		}
 		return false;
-	case 234: // Pour concentrate between the measuring tubes.
-	case 236:
-		if (reply.variation != 2) {
-			return false;
-		}
-		_audio.playEffect(34);
-		say(reply.cue, reply.variation, true);
-		return true;
-	case 240: // Polish the rough stone after Saturn explains what is wrong with it.
-		if (_inventory.town().sculpture) {
-			say(240, 3, true);
-		} else if (!_town.fuelTradeKnown || !_town.roughSculptureRefused) {
-			say(240, 0, true);
-		} else {
-			say(240, 1, true);
-			_audio.playEffect(29);
-			_inventory.town().sculpture = 1;
-			_inventory.select(0);
-			say(240, 2, true);
-		}
-		return true;
 	default:
 		break;
 	}
-	// These inventory operations have a spoken lead-in and completion response.
-	uint16 effect = 0;
-	byte first = reply.variation, last = reply.variation;
-	if (reply.cue == 225 && reply.variation == 1) {
-		effect = 65;
-		last = 2;
-	} else if (reply.cue == 227 && reply.variation == 1) {
-		effect = 30;
-		last = 2;
-	} else if (reply.cue == 228 && (reply.variation == 2 || reply.variation == 3)) {
-		effect = 34;
-		first = 1;
-	} else if (reply.cue == 231 && reply.variation == 2) {
-		effect = 19;
-		last = 3;
-	} else if (reply.cue == 237 && reply.variation == 2) {
-		effect = 34;
-		last = 3;
-	} else if (reply.cue == 241 && reply.variation == 1) {
-		last = 2;
-	} else {
-		return false;
-	}
-	say(reply.cue, first, true);
-	if (effect) {
-		_audio.playEffect(effect);
-	}
-	say(reply.cue, last, true);
-	return true;
+	return false;
 }
 
 void RunawayRoomScene::resumeTown() {

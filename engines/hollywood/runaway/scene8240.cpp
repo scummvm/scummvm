@@ -391,19 +391,13 @@ RunawayRoomScene::ActionResult Scene8240::dispatchCustomSceneAction(uint16 actio
 		_sequence.start(commands, _text, _now, 'H');
 		break;
 	}
-	case 432: // Pull the pods off the branch.
-		say(20, 2);
-		deferAction(433);
-		break;
-	case 433: // Collect the pods and try opening them by hand.
-		_audio.playEffect(38);
-		_inventory.add(20);
-		say(20, 3);
+	case 432: // Pull off the pods and try opening them in the inventory.
+		_collectingPods = true;
+		_inventory.collectPods(sceneTextNumber());
 		deferAction(434);
 		break;
 	case 434: // The tough pods establish the need for the doctor's scalpel.
-		_audio.playEffect(41);
-		say(20, 4);
+		_collectingPods = false;
 		_finale.scalpelNeeded = 1;
 		_finale.rutgerPlantHint = 0;
 		break;

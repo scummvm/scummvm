@@ -31,6 +31,7 @@ namespace Runaway {
 class Scene8240 : public Scene6240 {
 public:
 	Scene8240(RunawayAudio &audio, RunawayInventory &inventory, const RunawayStrings &strings, RunawayGameType game);
+	bool inventoryPresentation() const override { return _collectingPods || RunawayRoomScene::inventoryPresentation(); }
 
 private:
 	bool loadCustomResources() override;
@@ -55,7 +56,7 @@ private:
 	Film _film = kNoFilm;
 	uint _rutgerStep = 0;
 	uint32 _rutgerTick = 0;
-	bool _brew = false, _rutgerApproaching = false;
+	bool _brew = false, _rutgerApproaching = false, _collectingPods = false;
 };
 
 } // End of namespace Runaway

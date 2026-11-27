@@ -240,7 +240,7 @@ void RunawayUI::toggleInventory() {
 }
 
 bool RunawayUI::cancel() {
-	if (busy() || _inventoryPresentation || _inventoryFrame != 0xff)
+	if (busy() || _inventory.handling() || _inventoryPresentation || _inventoryFrame != 0xff)
 		return true;
 	if (_inventory.selected()) {
 		_inventory.select(0);
@@ -303,7 +303,7 @@ void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool b
 		_returnAfterPickup = false;
 		setInventoryOpen(false);
 	}
-	if (_inventoryOpen && !busy() && !_speaking && _inventory.selected()) {
+	if (_inventoryOpen && !busy() && !_inventory.handling() && !_speaking && _inventory.selected()) {
 		if (inViewport())
 			_enteredInventory = true;
 		else if (_enteredInventory)

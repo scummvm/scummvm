@@ -154,6 +154,7 @@ MODULE_OBJS = \
 	runaway/hospital.o \
 	runaway/hopi.o \
 	runaway/inventory.o \
+	runaway/inventory_animation.o \
 	runaway/inventory_town.o \
 	runaway/menu.o \
 	runaway/museum.o \

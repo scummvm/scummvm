@@ -55,23 +55,6 @@ void RunawayRoomScene::updateHospital(uint elapsed) {
 }
 
 bool RunawayRoomScene::sayHospitalInventory(const RunawayInventory::Reply &reply) {
-	if (reply.cue == 68) {
-		if (!_hospital.attacked) {
-			say(68, 0, true);
-		} else if (!_inventory.contains(8)) {
-			say(68, 1, true);
-		} else {
-			say(68, 2, true);
-			say(68, 3, true);
-			_hospital.medicineRead = 1;
-		}
-		_audio.playEffect(35, 70);
-		return true;
-	}
-	if ((reply.cue == 69 && reply.variation == 0) || (reply.cue == 73 && reply.variation == 1) ||
-			(reply.cue == 72 && reply.variation == 2)) {
-		_audio.playEffect(reply.cue == 69 ? 36 : reply.cue == 73 ? 37 : 34, 70);
-	}
 	if (reply.cue != 54) {
 		return false;
 	}
@@ -143,6 +126,8 @@ void RunawayRoomScene::updateHospitalInventory() {
 }
 
 byte RunawayRoomScene::inventoryFrame() const {
+	if (_inventory.handling())
+		return _inventory.handlingFrame();
 	if (!hospitalChapter() || _roomAction != 54) {
 		return 0xff;
 	}

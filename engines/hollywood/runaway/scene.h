@@ -133,7 +133,7 @@ public:
 	const Common::U32String &committedCaption() const override { return _caption; }
 	const Common::U32String &subtitle() const override;
 	byte subtitleColor() const override { return _sequence.active() ? _sequence.subtitleColor() : _speech.subtitleColor(); }
-	bool busy() const override { return _sequence.active() || _pendingHotspot != 0 || _transition.scene || _hospitalExit.scene || _arrivalFacing != 0xff || _roomAction || _conversation || _reviewingDesertPlan || speaking(); }
+	bool busy() const override { return _sequence.active() || _inventory.handling() || _pendingHotspot != 0 || _transition.scene || _hospitalExit.scene || _arrivalFacing != 0xff || _roomAction || _conversation || _reviewingDesertPlan || speaking(); }
 	bool inventoryPresentation() const override { return _reviewingDesertPlan; }
 	byte inventoryFrame() const override;
 	byte inventorySpeechPose() const override { return _lineIndex < _lines.size() ? _lines[_lineIndex].inventoryPose : 0; }

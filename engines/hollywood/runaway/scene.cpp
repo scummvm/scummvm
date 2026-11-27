@@ -843,6 +843,17 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 	if (speaking() && _speech.finished(now))
 		skipSpeech();
 	updateAmbientMusic();
+	if (_inventory.handling()) {
+		const RunawayInventory::Reply line = _inventory.updateHandling(now, _audio, speaking());
+		if (line.closeup || line.stage) {
+			sayInventory(line);
+		} else if (line.cue) {
+			say(line.cue, line.variation, true);
+			if (line.cue == 68 && line.variation == 3)
+				_hospital.medicineRead = 1;
+		}
+		return;
+	}
 	if (townChapter() || hopiChapter() || finaleChapter()) {
 		updateGameplay(elapsed);
 		if (_sequence.active() || _transition.scene)

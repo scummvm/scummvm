@@ -71,10 +71,11 @@ public:
 	const Common::U32String &committedCaption() const override { return _committedCaption; }
 	const Common::U32String &subtitle() const override { return _action == kPeekConversation ? _interrogation.subtitle() : _speech.subtitle(); }
 	byte subtitleColor() const override { return _action == kPeekConversation ? _interrogation.subtitleColor() : _speech.subtitleColor(); }
-	bool busy() const override { return _action != kNone || _transition.scene; }
+	bool busy() const override { return _inventory.handling() || _action != kNone || _transition.scene; }
 	bool speaking() const override { return _action == kPeekConversation ? _interrogation.speaking() : _speechRow != 0; }
 	byte speechFrame() const override { return _speech.frame(_now); }
 	byte inventorySpeechPose() const override { return _inventorySpeechPose; }
+	byte inventoryFrame() const override { return _inventory.handlingFrame(); }
 	void skipSpeech() override;
 	bool playingVideo() const override { return _action == kIntroVideo || _action == kCleanWindowVideo; }
 	bool inventoryPresentation() const override { return _action == kIntroInventory; }

@@ -25,7 +25,7 @@
 
 namespace Hollywood {
 
-RunawayInventory::Reply RunawayInventory::combineTownItems(byte first, byte second) {
+RunawayInventory::Reply RunawayInventory::combineTownItems(byte first, byte second, const RunawaySaveState::Town &townState) {
 	// Pouring is directional: the selected item is the source.
 	if ((first == 25 && second == 26) || (first == 26 && second == 25)) {
 		byte &source = first == 25 ? _town.tube30 : _town.tube50;
@@ -164,7 +164,7 @@ RunawayInventory::Reply RunawayInventory::combineTownItems(byte first, byte seco
 	}
 	if (first == 27 && second == 31) { // Grind the leaves only once the mortar is ready.
 		if (_town.mortar && contains(8)) {
-			return combineTownItems(8, 27);
+			return combineTownItems(8, 27, townState);
 		}
 		return Reply(239);
 	}
@@ -177,11 +177,24 @@ RunawayInventory::Reply RunawayInventory::combineTownItems(byte first, byte seco
 		_selected = 0;
 		return Reply(241, 1);
 	}
-	if (first == 4 && second == 29) { // The room supplies Saturn's prerequisite for decorating the sculpture.
+	if (first == 4 && second == 29) { // Decorate the polished sculpture after Saturn rejects it.
+		if (!townState.fuelTradeKnown)
+			return Reply(224, 2);
+		if (_town.sculpture != 1 || !townState.polishedSculptureRefused)
+			return Reply(224, 1);
+		_town.sculpture = 2;
+		remove(4);
+		_selected = 0;
 		return Reply(224);
 	}
-	if (first == 29 && second == 30) { // The room supplies Saturn's prerequisite for sanding the stone.
-		return Reply(240);
+	if (first == 29 && second == 30) { // Sand the stone after Saturn rejects its rough surface.
+		if (_town.sculpture)
+			return Reply(240, 3);
+		if (!townState.fuelTradeKnown || !townState.roughSculptureRefused)
+			return Reply(240);
+		_town.sculpture = 1;
+		_selected = 0;
+		return Reply(240, 1);
 	}
 	if (first == 28 && second == 31) {
 		return Reply(242);

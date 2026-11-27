@@ -74,12 +74,6 @@ bool RunawayRoomScene::sayHopiInventory(const RunawayInventory::Reply &reply) {
 		say(256, 0, true);
 		say(256, 1, true);
 		return true;
-	case 261: // Split the timber with the tomahawk.
-	case 263: // Fit the femur into the mining tool.
-		say(reply.cue, 0, true);
-		_audio.playEffect(reply.cue == 261 ? 20 : 14);
-		say(reply.cue, 1, true);
-		return true;
 	default:
 		return false;
 	}

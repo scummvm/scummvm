@@ -154,14 +154,14 @@ bool RunawayRoomScene::sayMuseumInventory(const RunawayInventory::Reply &reply) 
 		say(52, _random.getRandomNumber(2), true);
 		return true;
 	}
-	if (reply.cue == 115 && reply.variation == 1) {
+	if (_game == kRunawayMuseumDemo && reply.cue == 115 && reply.variation == 1) {
 		// Inserting the battery precedes Brian's response.
 		deferMuseumAction(reply.cue);
 		return true;
 	}
 	say(reply.cue, reply.cue == 112 ? _museum.safeUsed : reply.variation, true);
-	if (((reply.cue == 116 || reply.cue == 117) && !reply.variation) ||
-			(reply.cue == 121 && reply.variation == 1)) {
+	if (_game == kRunawayMuseumDemo && (((reply.cue == 116 || reply.cue == 117) && !reply.variation) ||
+			(reply.cue == 121 && reply.variation == 1))) {
 		deferMuseumAction(reply.cue);
 	}
 	return true;

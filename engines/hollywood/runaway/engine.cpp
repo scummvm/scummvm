@@ -552,7 +552,8 @@ Common::Error RunawayEngine::run() {
 					_scene->sayInventory(_inventory->use(command.target));
 					break;
 				case RunawayUI::Command::kCombine:
-					_scene->sayInventory(_inventory->combine(command.item, command.target));
+					_scene->captureState(_state);
+					_scene->sayInventory(_inventory->combine(command.item, command.target, _state.town));
 					break;
 				case RunawayUI::Command::kSkipSpeech:
 					_scene->skipSpeech();

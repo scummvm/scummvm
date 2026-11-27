@@ -33,6 +33,7 @@ class RandomSource;
 
 namespace Hollywood {
 
+class RunawayAudio;
 class RunawayStrings;
 struct RunawaySaveState;
 
@@ -48,6 +49,7 @@ public:
 		byte nextVariation = 0xff;
 		uint16 action = 0;
 		uint16 stage = 0;
+		bool closeup = false;
 		Reply(uint16 c = 1, byte v = 0, byte last = 0) : cue(c), variation(v), lastVariation(last) {}
 		static Reply fromAction(uint16 action) {
 			Reply reply;
@@ -85,10 +87,14 @@ public:
 	static byte speechPose(uint16 cue, byte variation);
 	uint icon(byte item) const;
 	uint cursor(byte item) const;
-	Reply examine(byte item, const RunawaySaveState &state) const;
+	Reply examine(byte item, const RunawaySaveState &state);
 	Reply use(byte item) const;
 	Reply nextReply(const Reply &reply) const;
-	Reply combine(byte first, byte second);
+	Reply combine(byte first, byte second, const RunawaySaveState::Town &townState);
+	bool handling() const { return !_handlingSteps.empty(); }
+	byte handlingFrame() const { return _handlingFrame; }
+	Reply updateHandling(uint32 now, RunawayAudio &audio, bool speaking);
+	void collectPods(uint16 stage);
 	byte clothState() const { return _clothState; }
 	void soilCloth() { _clothState = 2; }
 	byte water() const { return _water; }
@@ -99,9 +105,33 @@ public:
 	void restoreState(const RunawaySaveState &state);
 
 private:
+	enum HandlingOperation {
+		kHandlingSpeech, // Cue, variation.
+		kHandlingStageSpeech, // Cue, variation, stage.
+		kHandlingCloseup, // Examine cue.
+		kHandlingFrames, // First/last frame, finish on frame zero.
+		kHandlingEffect, // Cue, maximum wait, volume, channel.
+		kHandlingCombine, // Number of item update sounds.
+		kHandlingRemove, // Item to remove after a second handling animation.
+		kHandlingAdd, // Item to add directly to the open inventory.
+		kHandlingMusic // Cue.
+	};
+	struct HandlingStep {
+		HandlingOperation operation;
+		uint16 a, b;
+		uint16 c;
+		byte d;
+		HandlingStep(HandlingOperation op, uint16 first = 0, uint16 second = 0, uint16 third = 0, byte fourth = 0) :
+			operation(op), a(first), b(second), c(third), d(fourth) {}
+	};
+	bool prepareHandling(const Reply &reply);
+	bool prepareExamination(const Reply &reply);
+	void clearHandling();
+	Reply examinationReply(byte item, const RunawaySaveState &state) const;
+	Reply applyCombination(byte first, byte second, const RunawaySaveState::Town &townState);
 	Reply combineHospitalItems(byte first, byte second);
 	Reply combineMuseumItems(byte first, byte second);
-	Reply combineTownItems(byte first, byte second);
+	Reply combineTownItems(byte first, byte second, const RunawaySaveState::Town &townState);
 	Reply combineHopiItems(byte first, byte second);
 	const RunawayStrings &_strings;
 	const bool _museumDemo;
@@ -116,6 +146,12 @@ private:
 	byte _selected = 0, _newItem = 0, _clothState = 0;
 	byte _water = 0;
 	byte _markerInk = 0, _syringeFilled = 0, _chartWritten = 0, _headWig = 0;
+	Common::Array<HandlingStep> _handlingSteps;
+	uint _handlingStep = 0;
+	uint32 _handlingStarted = 0;
+	bool _handlingEntered = false;
+	byte _handlingFrame = 0xff, _handlingFirst = 0, _handlingSecond = 0;
+	RunawaySaveState::Town _handlingTown;
 };
 
 } // End of namespace Hollywood

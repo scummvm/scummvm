@@ -87,6 +87,7 @@ void RunawayInventory::captureState(RunawaySaveState &state) const {
 
 void RunawayInventory::restoreState(const RunawaySaveState &state) {
 	assert(state.valid());
+	clearHandling();
 	_chapter = state.chapter();
 	_items.clear();
 	for (uint i = 0; i < state.itemCount; ++i)
@@ -107,6 +108,7 @@ void RunawayInventory::restoreState(const RunawaySaveState &state) {
 }
 
 void RunawayInventory::startChapter(byte chapter) {
+	clearHandling();
 	_chapter = chapter;
 	_items.clear();
 	_selected = _newItem = 0;
@@ -402,7 +404,7 @@ uint RunawayInventory::cursor(byte item) const {
 	return item <= kItemCount ? kItemCursors[item] : 0;
 }
 
-RunawayInventory::Reply RunawayInventory::examine(byte item, const RunawaySaveState &state) const {
+RunawayInventory::Reply RunawayInventory::examinationReply(byte item, const RunawaySaveState &state) const {
 	if (_chapter == 6) {
 		if (item == 11) {
 			return Reply::fromStage(637, 14);
@@ -488,6 +490,8 @@ RunawayInventory::Reply RunawayInventory::examine(byte item, const RunawaySaveSt
 			return Reply(65, _chartWritten);
 		if (item == 17)
 			return Reply(66, _headWig);
+		if (item == 19)
+			return Reply(68, !state.hospital.attacked ? 0 : contains(8) ? 2 : 1);
 	}
 	if (_chapter == 1 && item == 13)
 		return Reply(62, _water == 1 ? 1 : 0);
@@ -715,6 +719,8 @@ RunawayInventory::Reply RunawayInventory::combineMuseumItems(byte first, byte se
 			return Reply(117, 2);
 		}
 		_museum.rubyRemoved = 1;
+		if (!_museumDemo)
+			add(12, false);
 		_selected = 0;
 		return Reply(117);
 	}
@@ -730,7 +736,7 @@ RunawayInventory::Reply RunawayInventory::combineMuseumItems(byte first, byte se
 	return Reply::fromAction(1);
 }
 
-RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
+RunawayInventory::Reply RunawayInventory::applyCombination(byte first, byte second, const RunawaySaveState::Town &townState) {
 	if (!contains(first) || !contains(second) || first == second)
 		return Reply();
 	if (_chapter == 1) {
@@ -740,7 +746,7 @@ RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 		return combineMuseumItems(first, second);
 	}
 	if (_chapter == 4) {
-		return combineTownItems(first, second);
+		return combineTownItems(first, second, townState);
 	}
 	if (first > second)
 		SWAP(first, second);
@@ -816,7 +822,7 @@ RunawayInventory::Reply RunawayInventory::combine(byte first, byte second) {
 		_desert.lipsticks = 1;
 		_desert.bucket = 2;
 		const bool hadLipstick = contains(10);
-		remove(10);
+		// The single lipstick is put away in a second handling sequence.
 		_selected = 0;
 		return Reply(185, 0, hadLipstick ? 2 : 1);
 	}
