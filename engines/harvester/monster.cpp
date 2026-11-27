@@ -29,8 +29,8 @@ namespace {
 
 struct MonsterAnimationRange {
 	MonsterAnimationRange() {}
-	MonsterAnimationRange(int walkFirstFrame, int walkLastFrame, int idleFrame)
-		: walkFirstFrame(walkFirstFrame), walkLastFrame(walkLastFrame), idleFrame(idleFrame) {}
+	MonsterAnimationRange(int _walkFirstFrame, int _walkLastFrame, int _idleFrame)
+		: walkFirstFrame(_walkFirstFrame), walkLastFrame(_walkLastFrame), idleFrame(_idleFrame) {}
 
 	int walkFirstFrame = 0;
 	int walkLastFrame = 0;

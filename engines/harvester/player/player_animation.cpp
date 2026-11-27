@@ -46,8 +46,8 @@ static int applyEvasiveFrameMovement(Entity &entity, const Common::Rect &previou
 
 struct PlayerTurnAnimationRange {
 	PlayerTurnAnimationRange() {}
-	PlayerTurnAnimationRange(int firstFrame, int lastFrame, bool playBackwards)
-		: firstFrame(firstFrame), lastFrame(lastFrame), playBackwards(playBackwards) {}
+	PlayerTurnAnimationRange(int _firstFrame, int _lastFrame, bool _playBackwards)
+		: firstFrame(_firstFrame), lastFrame(_lastFrame), playBackwards(_playBackwards) {}
 
 	int firstFrame = 0;
 	int lastFrame = 0;

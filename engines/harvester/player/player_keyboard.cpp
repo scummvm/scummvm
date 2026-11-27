@@ -52,8 +52,8 @@ static bool resolveKeyboardWalkInput(RoomPlayerState &playerState, const PlayerA
 }
 
 struct KeyboardWalkStep {
-	KeyboardWalkStep(const MovementPosition &candidate, bool depthBoundaryReached)
-		: candidate(candidate), depthBoundaryReached(depthBoundaryReached) {}
+	KeyboardWalkStep(const MovementPosition &_candidate, bool _depthBoundaryReached)
+		: candidate(_candidate), depthBoundaryReached(_depthBoundaryReached) {}
 
 	MovementPosition candidate;
 	bool depthBoundaryReached;

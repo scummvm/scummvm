@@ -42,8 +42,8 @@ static const int kPlayerHitKnockbackDecayStep = 3;
 
 struct PlayerDeathAnimationRange {
 	PlayerDeathAnimationRange() {}
-	PlayerDeathAnimationRange(int firstFrame, int lastFrame)
-		: firstFrame(firstFrame), lastFrame(lastFrame) {}
+	PlayerDeathAnimationRange(int _firstFrame, int _lastFrame)
+		: firstFrame(_firstFrame), lastFrame(_lastFrame) {}
 
 	int firstFrame = -1;
 	int lastFrame = -1;
@@ -51,8 +51,8 @@ struct PlayerDeathAnimationRange {
 
 struct PlayerHitAnimationRange {
 	PlayerHitAnimationRange() {}
-	PlayerHitAnimationRange(int firstFrame, int lastFrame, int resumeFacing, int knockbackX)
-		: firstFrame(firstFrame), lastFrame(lastFrame), resumeFacing(resumeFacing), knockbackX(knockbackX) {}
+	PlayerHitAnimationRange(int _firstFrame, int _lastFrame, int _resumeFacing, int _knockbackX)
+		: firstFrame(_firstFrame), lastFrame(_lastFrame), resumeFacing(_resumeFacing), knockbackX(_knockbackX) {}
 
 	int firstFrame = -1;
 	int lastFrame = -1;

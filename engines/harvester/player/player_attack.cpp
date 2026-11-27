@@ -43,8 +43,8 @@ static const int kPlayerAttackSoundTriggerFrameOffset = 1;
 
 struct PlayerAttackAnimationRange {
 	PlayerAttackAnimationRange() {}
-	PlayerAttackAnimationRange(int firstFrame, int lastFrame, int resumeFacing)
-		: firstFrame(firstFrame), lastFrame(lastFrame), resumeFacing(resumeFacing) {}
+	PlayerAttackAnimationRange(int _firstFrame, int _lastFrame, int _resumeFacing)
+		: firstFrame(_firstFrame), lastFrame(_lastFrame), resumeFacing(_resumeFacing) {}
 
 	int firstFrame = 0;
 	int lastFrame = 0;

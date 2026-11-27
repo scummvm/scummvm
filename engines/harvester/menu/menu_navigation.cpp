@@ -103,8 +103,8 @@ struct MenuSystem::MenuSelection {
 };
 
 struct MenuSystem::MainMenu {
-	MainMenu(HarvesterEngine &engine, const Art &art, Flow &flow)
-		: art(art), flow(flow), pausedTimers(engine) {}
+	MainMenu(HarvesterEngine &engine, const Art &_art, Flow &_flow)
+		: art(_art), flow(_flow), pausedTimers(engine) {}
 
 	const Art &art;
 	Flow &flow;
@@ -114,8 +114,8 @@ struct MenuSystem::MainMenu {
 };
 
 struct MenuSystem::RoomMenu {
-	RoomMenu(const IndexedBitmap &backdrop, const byte *palette, float paletteBrightness, Flow &flow)
-		: backdrop(backdrop), palette(palette), paletteBrightness(paletteBrightness), flow(flow) {}
+	RoomMenu(const IndexedBitmap &_backdrop, const byte *_palette, float _paletteBrightness, Flow &_flow)
+		: backdrop(_backdrop), palette(_palette), paletteBrightness(_paletteBrightness), flow(_flow) {}
 
 	const IndexedBitmap &backdrop;
 	const byte *palette;

@@ -41,7 +41,7 @@ extern const int kOptionsIndicatorY;
 extern const int kPasswordEntryWidth;
 
 struct TextLayout {
-	TextLayout(int x, int y, int width) : x(x), y(y), width(width) {}
+	TextLayout(int _x, int _y, int _width) : x(_x), y(_y), width(_width) {}
 
 	int x;
 	int y;
@@ -49,16 +49,16 @@ struct TextLayout {
 };
 
 struct FontPair {
-	FontPair(const Graphics::Font &primary, const Graphics::Font &secondary)
-		: primary(primary), secondary(secondary) {}
+	FontPair(const Graphics::Font &_primary, const Graphics::Font &_secondary)
+		: primary(_primary), secondary(_secondary) {}
 
 	const Graphics::Font &primary;
 	const Graphics::Font &secondary;
 };
 
 struct SliderBitmaps {
-	SliderBitmaps(const IndexedBitmap &bar, const IndexedBitmap &indicator)
-		: bar(bar), indicator(indicator) {}
+	SliderBitmaps(const IndexedBitmap &_bar, const IndexedBitmap &_indicator)
+		: bar(_bar), indicator(_indicator) {}
 
 	const IndexedBitmap &bar;
 	const IndexedBitmap &indicator;

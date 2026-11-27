@@ -86,7 +86,7 @@ struct MenuSystem::SaveSlotMenu {
 };
 
 struct MenuSystem::SaveSlotEventResult {
-	explicit SaveSlotEventResult(SaveSlotCommand command = kNoSlotCommand) : command(command) {}
+	explicit SaveSlotEventResult(SaveSlotCommand _command = kNoSlotCommand) : command(_command) {}
 
 	SaveSlotCommand command;
 	bool redrawAfterActivation = false;

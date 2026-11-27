@@ -43,8 +43,8 @@ struct MovementPosition {
 
 struct PlayerAnimationRange {
 	PlayerAnimationRange() {}
-	PlayerAnimationRange(int walkFirstFrame, int walkLastFrame, int idleFrame)
-		: walkFirstFrame(walkFirstFrame), walkLastFrame(walkLastFrame), idleFrame(idleFrame) {}
+	PlayerAnimationRange(int _walkFirstFrame, int _walkLastFrame, int _idleFrame)
+		: walkFirstFrame(_walkFirstFrame), walkLastFrame(_walkLastFrame), idleFrame(_idleFrame) {}
 
 	int walkFirstFrame = 0;
 	int walkLastFrame = 0;

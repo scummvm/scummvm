@@ -65,10 +65,10 @@ static int resolveOptionsSliderIndexFromMouseX(int mouseX) {
 }
 
 struct MenuSystem::OptionsMenu {
-	OptionsMenu(const IndexedBitmap &backdrop, const byte *palette, float paletteBrightness,
-		Flow &flow, Script &script, const MenuTextConfig &config)
-		: backdrop(backdrop), palette(palette), paletteBrightness(paletteBrightness),
-		  flow(flow), script(script), config(config) {}
+	OptionsMenu(const IndexedBitmap &_backdrop, const byte *_palette, float _paletteBrightness,
+		Flow &_flow, Script &_script, const MenuTextConfig &_config)
+		: backdrop(_backdrop), palette(_palette), paletteBrightness(_paletteBrightness),
+		  flow(_flow), script(_script), config(_config) {}
 
 	const IndexedBitmap &backdrop;
 	const byte *palette;

@@ -62,8 +62,8 @@ extern const int kNativeDefaultNpcDeathDamageType;
 
 struct AttackAnimationRange {
 	AttackAnimationRange() {}
-	constexpr AttackAnimationRange(int firstFrame, int lastFrame, int resumeFacing)
-		: firstFrame(firstFrame), lastFrame(lastFrame), resumeFacing(resumeFacing) {}
+	constexpr AttackAnimationRange(int _firstFrame, int _lastFrame, int _resumeFacing)
+		: firstFrame(_firstFrame), lastFrame(_lastFrame), resumeFacing(_resumeFacing) {}
 
 	int firstFrame = 0;
 	int lastFrame = 0;
@@ -72,8 +72,8 @@ struct AttackAnimationRange {
 
 struct DeathAnimationRange {
 	DeathAnimationRange() {}
-	DeathAnimationRange(int firstFrame, int lastFrame)
-		: firstFrame(firstFrame), lastFrame(lastFrame) {}
+	DeathAnimationRange(int _firstFrame, int _lastFrame)
+		: firstFrame(_firstFrame), lastFrame(_lastFrame) {}
 
 	int firstFrame = -1;
 	int lastFrame = -1;
@@ -81,9 +81,9 @@ struct DeathAnimationRange {
 
 struct HitAnimationRange {
 	HitAnimationRange() {}
-	HitAnimationRange(int firstFrame, int lastFrame, int resumeFacing, int knockbackX)
-		: firstFrame(firstFrame), lastFrame(lastFrame), resumeFacing(resumeFacing),
-		  knockbackX(knockbackX) {}
+	HitAnimationRange(int _firstFrame, int _lastFrame, int _resumeFacing, int _knockbackX)
+		: firstFrame(_firstFrame), lastFrame(_lastFrame), resumeFacing(_resumeFacing),
+		  knockbackX(_knockbackX) {}
 
 	int firstFrame = -1;
 	int lastFrame = -1;
