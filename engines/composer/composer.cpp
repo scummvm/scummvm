@@ -119,7 +119,10 @@ Common::Error ComposerEngine::run() {
 
 	setDebugger(new Console(this));
 
-	loadLibrary(0);
+	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+	if (saveSlot < 0 || loadGameState(saveSlot).getCode() != Common::kNoError) {
+		loadLibrary(0);
+	}
 
 	uint fps;
 	if (_bookIni.hasKey("FPS", "Common"))
@@ -136,8 +139,6 @@ Common::Error ComposerEngine::run() {
 	else
 		warning("FPS in book.ini is zero. Defaulting to 8...");
 	uint32 lastDrawTime = 0;
-
-	bool loadFromLauncher = ConfMan.hasKey("save_slot");
 
 	while (!shouldQuit()) {
 		for (uint i = 0; i < _pendingPageChanges.size(); i++) {
@@ -187,11 +188,6 @@ Common::Error ComposerEngine::run() {
 		} else if (_needsUpdate) {
 			redraw();
 		}
-		if (loadFromLauncher) {
-			loadGameState(ConfMan.getInt("save_slot"));
-			loadFromLauncher = false;
-		}
-
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_LBUTTONDOWN:

@@ -99,8 +99,7 @@ Common::Error ComposerMetaEngine::createInstance(OSystem *syst, Engine **engine,
 }
 
 bool ComposerMetaEngine::hasFeature(MetaEngineFeature f) const {
-	// FIXME: Disabled loading from launcher currently due to issues with loading Darby The Dragon (and probably others) savegames. See bug #16432
-	return ((f == kSupportsListSaves) /*|| (f == kSupportsLoadingDuringStartup)*/);
+	return ((f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup));
 }
 
 Common::KeymapArray ComposerMetaEngine::initKeymaps(const char *target) const {
@@ -135,12 +134,15 @@ Common::KeymapArray ComposerMetaEngine::initKeymaps(const char *target) const {
 
 Common::String getSaveName(Common::InSaveFile *in) {
 	Common::Serializer ser(in, nullptr);
-	Common::String name;
-	uint32 tmp;
-	ser.syncAsUint32LE(tmp);
-	ser.syncAsUint32LE(tmp);
-	ser.syncString(name);
-	return name;
+	byte magic[4];
+	ser.syncBytes(magic, 4);
+	if (magic[0] == 'C' && magic[1] == 'M' && magic[2] == 'P' && magic[3] == 'S') {
+		ser.syncVersion(0);
+		Common::String name;
+		ser.syncString(name);
+		return name;
+	}
+	return Common::String();
 }
 int ComposerMetaEngine::getMaximumSaveSlot() const {
 	return 99;
@@ -161,7 +163,8 @@ SaveStateList ComposerMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				saveDesc = getSaveName(in);
-				saveList.push_back(SaveStateDescriptor(this, slotNum, saveDesc));
+				if (!saveDesc.empty())
+					saveList.push_back(SaveStateDescriptor(this, slotNum, saveDesc));
 				delete in;
 			}
 		}

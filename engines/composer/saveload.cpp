@@ -220,7 +220,7 @@ void ComposerEngine::sync<Animation *>(Common::Serializer &ser, Animation *&data
 		animId = data->_id;
 		offset = data->_offset;
 		x = data->_basePos.x;
-		y = data->_basePos.x;
+		y = data->_basePos.y;
 		state = data->_state;
 		param = data->_eventParam;
 		size = data->_size;
@@ -360,13 +360,15 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 	ser.syncAsSint16LE(_currSoundPriority);
 	int32 numSamples = 0;
 	ser.syncAsSint32LE(numSamples);
-	int16 *audioBuffer = (int16 *)malloc(numSamples * 2);
-	for (int32 i = 0; i < numSamples; i++)
-		ser.syncAsSint16LE(audioBuffer[i]);
-	_audioStream = Audio::makeQueuingAudioStream(22050, false);
-	_audioStream->queueBuffer((byte *)audioBuffer, numSamples * 2, DisposeAfterUse::YES, Audio::FLAG_16BITS);
-	if (!_mixer->isSoundHandleActive(_soundHandle))
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
+	if (numSamples > 0 && numSamples <= 22050) {
+		int16 *audioBuffer = (int16 *)malloc(numSamples * 2);
+		for (int32 i = 0; i < numSamples; i++)
+			ser.syncAsSint16LE(audioBuffer[i]);
+		_audioStream = Audio::makeQueuingAudioStream(22050, false);
+		_audioStream->queueBuffer((byte *)audioBuffer, numSamples * 2, DisposeAfterUse::YES, Audio::FLAG_16BITS);
+		if (!_mixer->isSoundHandleActive(_soundHandle))
+			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
+	}
 
 	return Common::kNoError;
 }
@@ -413,8 +415,9 @@ Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc
 
 	ser.syncAsSint16LE(_currSoundPriority);
 	int16 audioBuffer[22050];
-	int32 numSamples = _audioStream->readBuffer(audioBuffer, 22050);
-	if (numSamples  == -1) numSamples = 0;
+	int32 numSamples = _audioStream ? _audioStream->readBuffer(audioBuffer, 22050) : 0;
+	if (numSamples == -1)
+		numSamples = 0;
 	ser.syncAsSint32LE(numSamples);
 	for (int32 i = 0; i < numSamples; i++)
 		ser.syncAsSint16LE(audioBuffer[i]);
