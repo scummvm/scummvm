@@ -34,6 +34,18 @@ class GameProject;
 class BehaviorController;
 class MctlCompound;
 
+struct IntroSkipButton {
+	int16 sceneId = 0, pictureId = 0;
+	uint16 pressSound = 0;
+	Common::Rect bounds;
+	const Texture *texture = nullptr;
+	bool visible = false, active = false;
+
+	bool hit(const Common::Point &pos) const {
+		return visible && active && pos.x > bounds.left && pos.x < bounds.right && pos.y > bounds.top && pos.y < bounds.bottom;
+	}
+};
+
 class Scene : public Background {
  public:
 	/** list items are owned */
@@ -44,6 +56,7 @@ class Scene : public Background {
 	PicAniInfoList _roamingObjects;
 	Common::Array<Entrance> _entrances;
 	int16 _heroId = 0;
+	IntroSkipButton _introSkip;
 	Common::Array<MessageQueue *> _messageQueues;
 	// XML queue templates are cloned when run and can be shared between scenes.
 	Scene *_commonQueueScene = nullptr;

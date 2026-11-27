@@ -62,8 +62,10 @@ bool sceneIntro_updateAndroid(uint32 elapsed, byte &brightness) {
 		fader.update(elapsed);
 		const bool changed = brightness != fader.brightness();
 		brightness = fader.brightness();
-		if (!fader.active())
+		if (!fader.active()) {
+			g_nmi->_currentScene->_introSkip.visible = g_nmi->_currentScene->_introSkip.active = true;
 			runQueue(QU_INTR_STARTINTRO, 0);
+		}
 		return changed;
 	}
 
@@ -98,6 +100,12 @@ void sceneHandlerIntro_part2() {
 	runQueue(QU_IN2_DO, 0);
 }
 
+void sceneIntro_end() {
+	if (g_vars->sceneIntro_playing && g_nmi->getPlatform() == Common::kPlatformAndroid)
+		sceneChapter_show("CHAPTER_1");
+	g_vars->sceneIntro_playing = false;
+}
+
 int sceneHandlerIntro(Command *ex) {
 	if (ex->_cmd != 17)
 		return 0;
@@ -113,9 +121,7 @@ int sceneHandlerIntro(Command *ex) {
 
 	switch (ex->_messageNum) {
 	case MSG_INTR_ENDINTRO:
-		if (g_vars->sceneIntro_playing && g_nmi->getPlatform() == Common::kPlatformAndroid)
-			sceneChapter_show("CHAPTER_1");
-		g_vars->sceneIntro_playing = 0;
+		sceneIntro_end();
 		return 0;
 
 	case MSG_INTR_SWITCHTO1:

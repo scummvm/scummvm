@@ -923,8 +923,20 @@ private:
 	}
 
 	bool handleUnknownKey(ParserNode *node) override {
-		if (!getParentNode(node))
+		const ParserNode *parent = getParentNode(node);
+		if (!parent)
 			return false;
+		if (node->depth == 2 && parent->name == "GUIMNGR" && node->name == "BUTTON" &&
+				((_scene._sceneId == SC_INTRO1 && node->values.getValOrDefault("id") == "BTN_SC_INTRO_SKIP_1") ||
+				 (_scene._sceneId == SC_INTRO2 && node->values.getValOrDefault("id") == "BTN_SC_INTRO_SKIP_2"))) {
+			IntroSkipButton &button = _scene._introSkip;
+			if (!readId(node->values["scene"], button.sceneId) || !readId(node->values["texture"], button.pictureId) ||
+					!readId(node->values["press"], button.pressSound))
+				return parserError("Unknown intro skip button resource");
+			button.bounds.top = atoi(node->values["y"].c_str());
+			button.visible = boolProperty(*node, "visible");
+			button.active = boolProperty(*node, "active");
+		}
 		// Scene nodes outside the supported object types are ignored for now.
 		node->ignore = true;
 		node->layout = _XMLkeys;
@@ -968,6 +980,8 @@ void Scene::drawAndroid(Graphics::ManagedSurface &target) const {
 			phase->blitTo(target, position - anchor, mirror);
 		}
 	}
+	if (_introSkip.visible && _introSkip.texture)
+		_introSkip.texture->blitTo(target, Common::Point(_introSkip.bounds.left, _introSkip.bounds.top));
 }
 
 const char *NGIEngine::getAndroidResourceLocale() const {
@@ -1088,6 +1102,20 @@ Common::Error NGIEngine::runAndroid() {
 	if (intro && !common)
 		return Common::Error(Common::kNoGameDataFoundError, "Could not load the shared Full Pipe Android resources");
 	if (intro) {
+		for (Scene *scene : { startScene, intro2 }) {
+			IntroSkipButton &button = scene->_introSkip;
+			if (!button.pictureId)
+				continue;
+			Scene *source = project.findScene(button.sceneId);
+			PictureObject *pic = source ? source->findPictureObjectById(button.pictureId, 0) : nullptr;
+			if (!pic)
+				return Common::Error(Common::kNoGameDataFoundError, "Missing Full Pipe intro skip button picture");
+			button.texture = pic->_picture;
+			const Dims size = button.texture->getDimensions();
+			button.bounds.right = parser.width();
+			button.bounds.left = button.bounds.right - size.x;
+			button.bounds.bottom = button.bounds.top + size.y;
+		}
 		XMLWalkParser walkParser(project._walkData);
 		if (!walkParser.loadFile("data/data.xml") || !walkParser.parse())
 			return Common::Error(Common::kNoGameDataFoundError, "Could not read the Full Pipe Android walking movements");
@@ -1148,6 +1176,23 @@ Common::Error NGIEngine::runAndroid() {
 					cmd._param = back ? kActionCloseDialog : 0;
 					_modalObject->handleMessage(&cmd);
 				}
+			} else if (intro && g_vars->sceneIntro_playing &&
+					(event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)) {
+				const IntroSkipButton &button = _currentScene->_introSkip;
+				if (button.hit(event.mouse)) {
+					if (event.type == Common::EVENT_LBUTTONDOWN) {
+						playSound(button.pressSound, 0);
+					} else {
+						debugC(2, kDebugEvents, "Skipping Android intro from scene %d", _currentScene->_sceneId);
+						startScene->_introSkip.visible = intro2->_introSkip.visible = false;
+						startScene->_introSkip.active = intro2->_introSkip.active = false;
+						clearGlobalMessageQueueList1();
+						if (_currentScene->_soundList)
+							_currentScene->stopAllSounds();
+						stopAllSounds(Sound::kSpeech);
+						sceneIntro_end();
+					}
+				}
 			}
 		}
 		if (shouldQuit())
@@ -1184,7 +1229,7 @@ Common::Error NGIEngine::runAndroid() {
 			debugC(2, kDebugDrawing, "Switched Android scene from %d to %d", scene->_sceneId, _currentScene->_sceneId);
 			redraw = true;
 		}
-		if (!_modalObject && _currentScene->_sceneId == SC_INTRO1 && !g_vars->sceneIntro_playing) {
+		if (intro && !g_vars->sceneIntro_playing && !_modalObject && (_currentScene == startScene || _currentScene == intro2)) {
 			result = enterAndroidScene1();
 			if (result.getCode() != Common::kNoError)
 				break;
