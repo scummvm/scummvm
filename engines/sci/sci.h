@@ -197,6 +197,7 @@ public:
 	bool isDemo() const;
 	bool isCD() const;
 	bool useHiresGraphics() const;
+	bool useHiresText() const;
 
 	/**
 	 * Returns true if the game's original platform is Macintosh or Amiga.
@@ -418,6 +419,7 @@ private:
 	Common::RandomSource _rng;
 	Common::MacResManager _macExecutable;
 	bool _useHiresGraphics; // user-option for GK1, KQ6, PQ4
+	bool _useHiresText; // user-option for GK1 CD
 	bool _inErrorString; /**< Set while `errorString` is executing */
 };
 
