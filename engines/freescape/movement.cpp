@@ -91,6 +91,19 @@ void FreescapeEngine::initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *
 	act->addDefaultInputMapping("u");
 	engineKeyMap->addAction(act);
 
+	act = new Common::Action("RISE", _("Rise / Fly up"));
+	act->setCustomEngineActionEvent(kActionRiseOrFlyUp);
+	act->addDefaultInputMapping("JOY_B");
+	act->addDefaultInputMapping("r");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("LOWER", _("Lower / Fly down"));
+	act->setCustomEngineActionEvent(kActionLowerOrFlyDown);
+	act->addDefaultInputMapping("JOY_Y");
+	act->addDefaultInputMapping("f");
+	engineKeyMap->addAction(act);
+
+
 	act = new Common::Action("SKIP", _("Skip"));
 	act->setCustomEngineActionEvent(kActionSkip);
 	act->addDefaultInputMapping("SPACE");

@@ -84,8 +84,8 @@ KitEngine::KitEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngi
 	_screenW = 320;
 	_screenH = 200;
 	_fullscreenViewArea = Common::Rect(_screenW, _screenH);
-	_playerHeightNumber = 0;
-	_playerHeightMaxNumber = 0;
+	_playerHeightNumber = 1;
+	_playerHeightMaxNumber = 1;
 	_playerWidth = 12;
 	_playerDepth = 32;
 	_soundIndexShoot = -1;
@@ -509,6 +509,11 @@ void KitEngine::updatePlayerMovement(float deltaTime) {
 		_strafeLeft = false;
 	if (!_eventManager->isActionActive(kActionMoveRight))
 		_strafeRight = false;
+	if (!_eventManager->isActionActive(kActionRiseOrFlyUp))
+		_moveUp = false;
+	if (!_eventManager->isActionActive(kActionLowerOrFlyDown))
+		_moveDown = false;
+
 
 	Math::Vector3d front = _flyMode ? _cameraFront : directionToVector(0, _yaw, false);
 	Math::Vector3d movement;
@@ -520,6 +525,12 @@ void KitEngine::updatePlayerMovement(float deltaTime) {
 		movement += _cameraRight;
 	if (_strafeRight)
 		movement -= _cameraRight;
+	if (_flyMode) {
+		if (_moveUp)
+			movement.y() += 1.0f;
+		if (_moveDown)
+			movement.y() -= 1.0f;
+	}
 	if (movement.length() == 0)
 		return;
 	movement.normalize();
@@ -553,6 +564,13 @@ void KitEngine::updatePlayerMovement(float deltaTime) {
 		_hasFallen = false;
 		_avoidRenderingFrames = 0;
 	}
+}
+
+void KitEngine::changePlayerHeight(int index) {
+	_position.setValue(1, _position.y() - _playerHeight);
+	_playerHeight = (index == 0) ? MIN<uint16>(64, _initialPlayerHeight) : _initialPlayerHeight;
+	assert(_playerHeight > 0);
+	_position.setValue(1, _position.y() + _playerHeight);
 }
 
 bool KitEngine::checkIfGameEnded() {

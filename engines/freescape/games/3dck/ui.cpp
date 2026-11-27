@@ -152,6 +152,8 @@ bool KitEngine::handleInput(const Common::Event &event) {
 		case kActionTurnBack: control = 12; break;
 		case kActionShoot: control = 30; break;
 		case kActionActivate: control = 31; break;
+		case kActionRiseOrFlyUp: control = 4; break;
+		case kActionLowerOrFlyDown: control = 5; break;
 		case kActionInfoMenu:
 			_kitVariables[15] = 'I';
 			return true;
@@ -169,7 +171,8 @@ bool KitEngine::handleInput(const Common::Event &event) {
 		}
 		// Track held movement keys during DELAY; movement itself waits.
 		bool movement = event.customType == kActionMoveUp || event.customType == kActionMoveDown ||
-			event.customType == kActionMoveLeft || event.customType == kActionMoveRight;
+			event.customType == kActionMoveLeft || event.customType == kActionMoveRight ||
+			event.customType == kActionRiseOrFlyUp || event.customType == kActionLowerOrFlyDown;
 		return _scriptFrameActive && !movement;
 	} else if (_scriptFrameActive && event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END &&
 			(event.customType == kActionRiseOrFlyUp || event.customType == kActionLowerOrFlyDown)) {

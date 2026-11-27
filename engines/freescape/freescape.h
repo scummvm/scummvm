@@ -408,7 +408,7 @@ public:
 	void resolveCollisions(Math::Vector3d newPosition);
 	virtual Math::Vector3d clipPosition(const Math::Vector3d &position) const { return position; }
 	virtual void checkIfStillInArea();
-	void changePlayerHeight(int index);
+	virtual void changePlayerHeight(int index);
 	void increaseStepSize();
 	void decreaseStepSize();
 	void changeStepSize();
