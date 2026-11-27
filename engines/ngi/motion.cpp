@@ -1353,12 +1353,28 @@ double MovGraph::putToLink(Common::Point *point, MovGraphLink *link, int fuzzyMa
 	double dist1y = (double)(n1y - point->y);
 	double dist2x = (double)(n2x - n1x);
 	double dist2y = (double)(n1y - n2y);
-	double dist1 = sqrt(dist1x * dist1x + dist1y * dist1y);
-	double dist2 = (dist2y * dist1y + dist2x * dist1x) / link->_length / dist1;
+	const bool android = g_nmi->getPlatform() == Common::kPlatformAndroid;
+	double length = link->_length;
+	double radiusSquared = dist1x * dist1x + dist1y * dist1y;
+	double dist1 = android ? sqrtf(radiusSquared) : sqrt(radiusSquared);
+	double dot = dist2y * dist1y + dist2x * dist1x;
+	if (android) {
+		// The XML length bounds the segment, but PutToLink normalizes by the node separation.
+		length = sqrtf(dist2x * dist2x + dist2y * dist2y);
+		dot = static_cast<float>(dot);
+		if (!length || !dist1)
+			return -1.0;
+	}
+	double dist2 = dot / length / dist1;
 	double distm = dist2 * dist1;
-	double res = sqrt(1.0 - dist2 * dist2) * dist1;
+	double sinSquared = 1.0 - dist2 * dist2;
+	double res = sqrt(android ? fabs(sinSquared) : sinSquared) * dist1;
 
-	if (dist2 <= 0.0 || distm >= link->_length) {
+	// Android accepts the perpendicular through the source within one link length.
+	if (android && dist2 == 0.0 && res <= link->_length)
+		return 0.0;
+
+	if (dist2 <= 0.0 || (android ? distm > link->_length : distm >= link->_length)) {
 		if (fuzzyMatch) {
 			if (dist2 > 0.0) {
 				if (distm >= link->_length) {
@@ -1373,8 +1389,8 @@ double MovGraph::putToLink(Common::Point *point, MovGraphLink *link, int fuzzyMa
 			return -1.0;
 		}
 	} else {
-		point->x = n1x + (int)((double)(n2x - n1x) * distm / link->_length);
-		point->y = n1y + (int)((double)(n2y - n1y) * distm / link->_length);
+		point->x = n1x + (int)((double)(n2x - n1x) * distm / length);
+		point->y = n1y + (int)((double)(n2y - n1y) * distm / length);
 	}
 
 	return res;
@@ -2640,6 +2656,7 @@ MovGraphLink *MctlGraph::getHitLink(int x, int y, int idx, int fuzzyMatch) {
 	debugC(4, kDebugPathfinding, "MctlGraph::getHitLink(...)");
 
 	Common::Point point;
+	const double tolerance = g_nmi->getPlatform() == Common::kPlatformAndroid ? 3.0 : 2.0;
 	MovGraphLink *res = nullptr;
 
 	for (LinkList::iterator i = _links.begin(); i != _links.end(); ++i) {
@@ -2652,7 +2669,7 @@ MovGraphLink *MctlGraph::getHitLink(int x, int y, int idx, int fuzzyMatch) {
 			point.y = y;
 			double dst = putToLink(&point, lnk, 0);
 
-			if (dst >= 0.0 && dst < 2.0)
+			if (dst >= 0.0 && dst < tolerance)
 				return lnk;
 		} else if (!(lnk->_flags & 0x20000000)) {
 			if (lnk->_movGraphReact->hitTest(x, y)) {
@@ -2675,7 +2692,8 @@ MovGraphLink *MctlGraph::getHitLink(int x, int y, int idx, int fuzzyMatch) {
 MovGraphLink *MctlGraph::getNearestLink(int x, int y) {
 	debugC(4, kDebugPathfinding, "MctlGraph::getNearestLink(...)");
 
-	double mindist = 1.0e20;
+	const bool android = g_nmi->getPlatform() == Common::kPlatformAndroid;
+	double mindist = android ? 70.0 : 1.0e20;
 	MovGraphLink *res = nullptr;
 
 	for (LinkList::iterator i = _links.begin(); i != _links.end(); ++i) {
@@ -2690,8 +2708,15 @@ MovGraphLink *MctlGraph::getNearestLink(int x, int y) {
 			double n2y = lnk->_graphDst->_y;
 			double n1dx = x - n1x;
 			double n1dy = n1y - y;
-			double dst1 = sqrt(n1dy * n1dy + n1dx * n1dx);
-			double coeff1 = ((n1y - n2y) * n1dy + (n2x - n1x) * n1dx) / lnk->_length / dst1;
+			double radiusSquared = n1dy * n1dy + n1dx * n1dx;
+			double dst1 = android ? sqrtf(radiusSquared) : sqrt(radiusSquared);
+			double dot = (n1y - n2y) * n1dy + (n2x - n1x) * n1dx;
+			if (android) {
+				dot = static_cast<float>(dot);
+				if (!dst1 || !lnk->_length)
+					continue;
+			}
+			double coeff1 = dot / lnk->_length / dst1;
 			double dst3 = coeff1 * dst1;
 			double dst2 = sqrt(1.0 - coeff1 * coeff1) * dst1;
 
@@ -2710,10 +2735,7 @@ MovGraphLink *MctlGraph::getNearestLink(int x, int y) {
 		}
 	}
 
-	if (mindist < 1.0e20)
-		return res;
-	else
-		return nullptr;
+	return res;
 }
 
 double MctlGraph::iterate(LinkOrNode *linkInfoSource, LinkOrNode *linkInfoDest, MovGraphLinkList *listObj) {
