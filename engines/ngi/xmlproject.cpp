@@ -27,6 +27,7 @@
 #include "common/formats/xmlparser.h"
 
 #include "ngi/ngi.h"
+#include "ngi/objectnames.h"
 #include "ngi/gameloader.h"
 #include "ngi/behavior.h"
 #include "ngi/constants.h"
@@ -123,6 +124,33 @@ private:
 				direction->setSubVarAsInt(attr._key, atoi(attr._value.c_str()));
 		}
 		node->ignore = true;
+		return true;
+	}
+};
+
+class XMLObjectStateParser : public Common::XMLParser {
+public:
+	explicit XMLObjectStateParser(GameVar &states) : _states(states) {}
+
+private:
+	GameVar &_states;
+	GameVar *_values = nullptr;
+	CUSTOM_XML_PARSER(XMLObjectStateParser) {
+		XML_KEY(OBJSTATES)
+		KEY_END()
+	} PARSER_END()
+
+	bool parserCallback_OBJSTATES(ParserNode *) { return true; }
+	bool handleUnknownKey(ParserNode *node) override {
+		node->layout = _XMLkeys;
+		if (node->depth == 1 && node->name == "OBJECT") {
+			GameVar *object = _states.addSubVarAsInt(node->values.getValOrDefault("title"), 0);
+			_values = object ? object->addSubVarAsInt("ENUMSTATES", 0) : nullptr;
+		} else if (node->depth == 2 && node->name == "STATE" && _values) {
+			_values->setSubVarAsInt(node->values.getValOrDefault("title"), atoi(node->values.getValOrDefault("num").c_str()));
+		} else {
+			node->ignore = true;
+		}
 		return true;
 	}
 };
@@ -1005,6 +1033,15 @@ Common::Error GameLoader::loadXML(const Common::Path &projectPath, const SceneTa
 			return Common::Error(Common::kNoGameDataFoundError, "Could not read the Full Pipe Android walking movements");
 	}
 
+	_gameVar = new GameVar();
+	GameVar *states = _gameVar->addSubVarAsInt("OBJSTATES", 0);
+	XMLObjectStateParser stateParser(*states);
+	if (!stateParser.loadFile("data/objstates.xml") || !stateParser.parse())
+		return Common::Error(Common::kNoGameDataFoundError, "Could not read the object states");
+	g_nmi->setState(sO_EggCracker, g_nmi->getStateValue(sO_EggCracker, sO_DidNotCrackEgg));
+	_gameVar->addSubVarAsInt("TASKS", 0);
+	_gameVar->addSubVarAsInt("VISITED", 0);
+	_gameVar->addSubVarAsInt("CHAPTERS", 0);
 	width = parser.width();
 	height = parser.height();
 	return Common::kNoError;

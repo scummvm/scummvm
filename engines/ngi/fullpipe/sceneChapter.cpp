@@ -275,11 +275,15 @@ private:
 } // End of anonymous namespace
 
 void sceneChapter_show(const char *chapterId) {
+	GameVar *shown = g_nmi->getGameLoaderGameVar()->getSubVarByName("CHAPTERS");
+	if (shown->getSubVarAsInt(chapterId))
+		return;
 	Scene *scene = g_nmi->findScene(SC_CHAPTER);
 	if (!scene)
 		return;
 	Common::ScopedPtr<ModalChapter> dialog(new ModalChapter(*scene, chapterId));
 	if (dialog->open()) {
+		shown->setSubVarAsInt(chapterId, 1);
 		dialog->_parentObj = g_nmi->_modalObject;
 		g_nmi->_modalObject = dialog.release();
 	}

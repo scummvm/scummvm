@@ -620,7 +620,7 @@ bool NGIEngine::doSetScene(const Entrance &entrance) {
 			sceneIntro_initMan(*scene);
 			addMessageHandler(sceneHandlerIntro, 2);
 		} else if (isAndroidFullPipe() && scene->_sceneId == SC_1) {
-			scene01_initObjects(scene, entrance._id, true);
+			scene01_initScene(scene, entrance._id);
 			addMessageHandler(sceneHandler01, 2);
 		}
 		return true;
