@@ -324,12 +324,23 @@ float Sector::distanceToPoint(const Math::Vector3d &point) const {
 }
 
 bool Sector::isPointInSector(const Math::Vector3d &point) const {
+	const float defaultHeight = 0.005f;
+	const float edgeMargin = 1e-6f;
+
+	float height = _height;
+	if (height == 0.f)
+		height = defaultHeight;
+
 	// Calculate the distance of the point from the plane of the sector.
 	// Return false if it isn't within a margin.
-	if (_height < 9000.f) { // No need to check when height is 9999.
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		float planeY = (_normal.dotProduct(_vertices[0]) - _normal.x() * point.x() - _normal.z() * point.z()) / _normal.y();
+		if (fabsf(point.y() - planeY) > height)
+			return false;
+	} else {
 		float dist = distanceToPoint(point);
 
-		if (fabsf(dist) > _height + 0.01) // Add an error margin
+		if (fabsf(dist) > height)
 			return false;
 	}
 
@@ -337,8 +348,15 @@ bool Sector::isPointInSector(const Math::Vector3d &point) const {
 	for (int i = 0; i < _numVertices; i++) {
 		Math::Vector3d edge = _vertices[i + 1] - _vertices[i];
 		Math::Vector3d delta = point - _vertices[i];
+		if (g_grim->getGameType() == GType_MONKEY4) {
+			edge.y() = 0;
+			delta.y() = 0;
+		}
 		Math::Vector3d cross = Math::Vector3d::crossProduct(edge, delta);
-		if (cross.dotProduct(_normal) < -0.000001f) // not "< 0.f" here, since the value could be something like -7.45058e-09 and it
+		if (g_grim->getGameType() == GType_MONKEY4) {
+			if (cross.y() / edge.getSquareMagnitude() > edgeMargin)
+				return false;
+		} else if (cross.dotProduct(_normal) < -edgeMargin) // not "< 0.f" here, since the value could be something like -7.45058e-09 and it
 			return false;                        // shuoldn't return. that was causing issue #610 (infinite loop in de.forklift_actor.dismount)
 	}
 	return true;
