@@ -59,6 +59,30 @@ protected:
 
 	Common::Path _imageArchive;
 
+	/** A link of the text, which the keyboard can reach */
+	struct Link {
+		Common::U32String link;   ///< What the link leads to
+		Common::U32String text;   ///< The text of the link
+		Common::Rect bounds;      ///< The area of the text, in the coordinates of the whole text
+	};
+	/** The links of the text, in reading order */
+	Common::Array<Link> _links;
+	/** The link with the keyboard focus, or -1 for the text itself */
+	int _focusedLink = -1;
+	/** The link under the mouse, or -1, so that it is read only once */
+	int _hoveredLink = -1;
+
+	/** List the links of the text afresh, after it has been laid out */
+	void updateLinks();
+	/** Move the keyboard focus to a link, or to the text itself for -1 */
+	void focusLink(int index);
+	/** Scroll so that a link is in view */
+	void scrollToLink(int index);
+	/** Speak a link's text and the kind of control it is */
+	void readLink(int index);
+	/** Scroll the text to the given position */
+	void scrollTo(int position);
+
 public:
 	RichTextWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String());
 	RichTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String());
@@ -74,8 +98,14 @@ public:
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseMoved(int x, int y, int button) override;
+	void handleMouseLeft(int button) override;
 	void handleTickle() override;
 	void handleTooltipUpdate(int x, int y) override;
+	bool handleKeyDown(Common::KeyState state) override;
+	/** Text which scrolls or holds links takes the keyboard focus */
+	bool wantsKeyboardFocus() override;
+	void enterFromKeyboard(int direction) override;
+	Common::U32String getSpokenDescription() const override;
 
 	void cancelDrag() override;
 	void cancelTickle() override;
@@ -94,6 +124,7 @@ protected:
 	void createWidget();
 	void ensureWidget();
 	Widget *findWidget(int x, int y) override;
+	void lostFocusWidget() override;
 };
 
 } // End of namespace GUI

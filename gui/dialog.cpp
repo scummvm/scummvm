@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "common/rect.h"
 
 #include "gui/gui-manager.h"
@@ -125,8 +126,7 @@ void Dialog::lostFocus() {
 }
 
 void Dialog::setFocusWidget(Widget *widget) {
-	// Remember which widget had the focus, as releaseFocus() clears it and we
-	// want to know afterwards whether the focus actually moved.
+	// releaseFocus() clears it, so keep it to tell whether the focus moved
 	Widget *previousWidget = _focusedWidget;
 
 	// The focus will change. Tell the old focused widget (if any)
@@ -137,9 +137,7 @@ void Dialog::setFocusWidget(Widget *widget) {
 	if (widget)
 		widget->receivedFocus();
 
-	// Announce the newly focused widget, so that moving the focus by keyboard
-	// is audible. Only do so once the dialog is on screen, to avoid speaking
-	// while it is still being built.
+	// Announce the focused widget, once the dialog is shown
 	if (widget && widget != previousWidget && isVisible())
 		widget->readDescription();
 
@@ -161,6 +159,92 @@ void Dialog::releaseFocus() {
 		_focusedWidget->lostFocus();
 		_focusedWidget = nullptr;
 	}
+}
+
+static bool isBeforeVertically(const Widget *a, const Widget *b) {
+	if (a->getRelY() != b->getRelY())
+		return a->getRelY() < b->getRelY();
+	return a->getRelX() < b->getRelX();
+}
+
+static bool isBeforeHorizontally(const Widget *a, const Widget *b) {
+	if (a->getRelX() != b->getRelX())
+		return a->getRelX() < b->getRelX();
+	return a->getRelY() < b->getRelY();
+}
+
+void Dialog::collectKeyboardFocusWidgets(Widget *first, Common::Array<Widget *> &widgets) const {
+	// The chain is in reverse order of creation, so order the widgets by
+	// position instead: rows from top to bottom, each from left to right
+	Common::Array<Widget *> siblings;
+	for (Widget *w = first; w; w = w->_next) {
+		if (w->isVisible() && w->getWidth() > 0 && w->getHeight() > 0)
+			siblings.push_back(w);
+	}
+
+	Common::sort(siblings.begin(), siblings.end(), isBeforeVertically);
+
+	// A widget whose vertical centre is within the first widget of a row
+	// belongs to that row
+	uint rowStart = 0;
+	for (uint i = 1; i <= siblings.size(); ++i) {
+		if (i < siblings.size()) {
+			const Widget *rowFirst = siblings[rowStart];
+			const int centre = siblings[i]->getRelY() + siblings[i]->getHeight() / 2;
+			if (centre < rowFirst->getRelY() + rowFirst->getHeight())
+				continue;
+		}
+		Common::sort(siblings.begin() + rowStart, siblings.begin() + i, isBeforeHorizontally);
+		rowStart = i;
+	}
+
+	for (uint i = 0; i < siblings.size(); ++i) {
+		Widget *w = siblings[i];
+		if (w->wantsKeyboardFocus() && w->isEnabled())
+			widgets.push_back(w);
+
+		// Containers may hold widgets accepting the focus, even when they
+		// take it themselves, as tab widgets do
+		collectKeyboardFocusWidgets(w->_firstWidget, widgets);
+	}
+}
+
+void Dialog::scrollIntoView(Widget *widget) {
+	// Let each container up to the dialog scroll the widget into view,
+	// innermost first
+	GuiObject *boss = widget->_boss;
+	while (boss && boss != this) {
+		Widget *container = static_cast<Widget *>(boss);
+		container->scrollChildIntoView(widget);
+		boss = container->_boss;
+	}
+}
+
+void Dialog::moveFocus(int direction) {
+	Common::Array<Widget *> widgets;
+	collectKeyboardFocusWidgets(_firstWidget, widgets);
+	if (widgets.empty())
+		return;
+
+	int current = -1;
+	for (uint i = 0; i < widgets.size(); ++i) {
+		if (widgets[i] == _focusedWidget) {
+			current = i;
+			break;
+		}
+	}
+
+	// With nothing focused, start from the first or the last widget
+	const int count = widgets.size();
+	int next;
+	if (current == -1)
+		next = direction > 0 ? 0 : count - 1;
+	else
+		next = (current + (direction > 0 ? 1 : -1) + count) % count;
+
+	scrollIntoView(widgets[next]);
+	widgets[next]->enterFromKeyboard(direction);
+	setFocusWidget(widgets[next]);
 }
 
 void Dialog::markWidgetsAsDirty() {
@@ -249,6 +333,11 @@ void Dialog::handleMouseDown(int x, int y, int button, int clickCount) {
 	// focused one, change the focus to that widget.
 	if (w && w != _focusedWidget && w->wantsFocus()) {
 		setFocusWidget(w);
+	} else if (_focusedWidget && w != _focusedWidget &&
+			_focusedWidget->wantsKeyboardFocus() && !_focusedWidget->wantsFocus()) {
+		// A widget only taking the focus from the keyboard loses it when
+		// clicking elsewhere
+		releaseFocus();
 	}
 
 	if (_dragHookWidget) {
@@ -351,16 +440,20 @@ void Dialog::handleKeyDown(Common::KeyState state) {
 		close();
 	}
 
-	if (state.keycode == Common::KEYCODE_TAB) {
-		// TODO: Maybe add Tab behaviours for all widgets too.
-		// searches through widgets on screen for tab widget
-		Widget *w = _firstWidget;
-		while (w) {
-			if (w->_type == kTabWidget)
-				if (w->handleKeyDown(state))
-					return;
+	if (state.keycode == Common::KEYCODE_TAB && !(state.flags & (Common::KBD_ALT | Common::KBD_META))) {
+		if (state.hasFlags(Common::KBD_CTRL)) {
+			// Ctrl+Tab and Ctrl+Shift+Tab switch tabs
+			Widget *w = _firstWidget;
+			while (w) {
+				if (w->_type == kTabWidget)
+					if (w->handleKeyDown(state))
+						return;
 
-			w = w->_next;
+				w = w->_next;
+			}
+		} else {
+			// Tab and Shift+Tab move the focus between widgets
+			moveFocus(state.hasFlags(Common::KBD_SHIFT) ? -1 : 1);
 		}
 	}
 }

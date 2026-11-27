@@ -44,6 +44,13 @@ struct SelectedText {
 	}
 };
 
+/** A link of a text, as listed by MacText::getLinks() */
+struct MacTextLink {
+	Common::U32String link;   ///< What the link leads to, as returned by MacText::getMouseLink()
+	Common::U32String text;   ///< The text of the link, as shown
+	Common::Rect bounds;      ///< The area of the text, in the coordinates of the whole text
+};
+
 class MacText : public MacWidget {
 public:
 	MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *font, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 border = 0, uint16 gutter = 0, uint16 boxShadow = 0, uint16 textShadow = 0, bool fixedDims = true, bool scrollBar = false);
@@ -131,6 +138,9 @@ public:
 	int getMouseItem(int x, int y);
 	int getMouseLine(int x, int y);
 	Common::U32String getMouseLink(int x, int y);
+
+	/** List the links of the text in reading order. Links in tables are not listed. */
+	Common::Array<MacTextLink> getLinks();
 
 	bool setImageArchive(const Common::Path &name) { return _canvas._imageArchive.setImageArchive(name); }
 

@@ -42,6 +42,20 @@ protected:
 	Common::HashMap<int, Common::Array<int> >	_itemsInGroup;
 	bool _groupsVisible;
 
+	/** Group whose header is under the keyboard cursor, or -1 when it is on the selection */
+	int _cursorGroupID;
+
+	/** Position of the header of a group in the list, or -1 */
+	int findHeaderPos(int groupID) const;
+	/** Put the keyboard cursor on the header at the given position */
+	void moveCursorToHeader(int pos);
+	/** Speak the header at the given position and its state */
+	void readHeader(int pos);
+	/** Select the item at the given position, leaving any header */
+	void selectFromKeyboard(int pos);
+	/** Fold or unfold a group, keeping the selection on the same item */
+	void toggleGroupKeepingSelection(int groupID);
+
 public:
 	GroupedListWidget(Dialog *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
 	GroupedListWidget(Dialog *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
@@ -63,7 +77,9 @@ public:
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseWheel(int x, int y, int direction) override;
+	bool handleKeyDown(Common::KeyState state) override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	Common::U32String getSpokenDescription() const override;
 
 	void setGroupsVisibility(bool val) { _groupsVisible = val; }
 

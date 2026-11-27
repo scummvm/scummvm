@@ -224,8 +224,9 @@ void PredictiveDialog::handleKeyDown(Common::KeyState state) {
 	_curPressedButton = kNoAct;
 	_needRefresh = false;
 
+	// Keep the keys below from being typed into the text field
 	if (getFocusWidget() == _editText) {
-		setFocusWidget(_button[kAddAct]);
+		releaseFocus();
 	}
 
 	if (_lastButton == kNoAct) {

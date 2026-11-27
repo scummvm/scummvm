@@ -159,9 +159,21 @@ public:
 	/** Redraw the widget if it was marked as dirty, and recursively proceed with its children */
 	virtual void draw();
 
-	void receivedFocus() { _hasFocus = true; receivedFocusWidget(); }
-	void lostFocus() { _hasFocus = false; lostFocusWidget(); }
+	void receivedFocus();
+	void lostFocus();
 	virtual bool wantsFocus() { return false; }
+
+	/** Whether Tab and Shift+Tab can move the focus to this widget */
+	virtual bool wantsKeyboardFocus() { return wantsFocus(); }
+
+	/**
+	 * Called before Tab (direction > 0) or Shift+Tab gives this widget the
+	 * focus, for widgets with several stops of their own
+	 */
+	virtual void enterFromKeyboard(int direction) {}
+
+	/** Whether any visible widget inside this one accepts the keyboard focus */
+	bool hasKeyboardFocusableChild();
 
 	uint32 getType() const { return _type; }
 
@@ -187,54 +199,42 @@ public:
 
 	virtual bool containsWidget(Widget *) const { return false; }
 
+	/** Scroll, if needed, so that the given descendant is visible */
+	virtual void scrollChildIntoView(Widget *child) {}
+
 	void read(const Common::U32String &str);
 
-	/**
-	 * Describe this widget for text-to-speech, for when it gains focus.
-	 *
-	 * The default implementation falls back on the tooltip, so that widgets
-	 * which have not overridden this still say something rather than leaving
-	 * the user with silence. Widgets which carry a label or a value should
-	 * override this to report it.
-	 *
-	 * @return A human readable description, or an empty string if the widget
-	 *         has nothing meaningful to say.
-	 */
+	/** Describe this widget for text-to-speech when it gets the focus. Defaults to the tooltip. */
 	virtual Common::U32String getSpokenDescription() const { return _tooltip; }
 
 	/** Speak this widget's description, if text-to-speech is enabled. */
 	void readDescription();
 
 	/**
-	 * Find the text labelling this widget, for widgets such as popups,
-	 * sliders and text fields, which have no label of their own but a
-	 * separate text widget before them on the same row, as layouts place
-	 * them. A picture with a tooltip serves as a label too.
-	 *
-	 * @return The label, or an empty string if there is none.
+	 * Find the text labelling a widget without a label of its own: the nearest
+	 * text, or picture with a tooltip, before it on the same row
 	 */
 	Common::U32String findSpokenLabel() const;
 
-	/**
-	 * Find the text just after this widget on the same row, such as the
-	 * value shown beside a slider.
-	 *
-	 * @return The text, or an empty string if there is none.
-	 */
+	/** Find the text just after this widget on the same row, such as a slider's value */
 	Common::U32String findSpokenValue() const;
 
-	/**
-	 * Name this widget for speech by the text labelling it, or by its
-	 * tooltip when there is none, or else by the given kind of control, so
-	 * that an unlabelled widget is still audible.
-	 */
-	Common::U32String findSpokenName(const Common::U32String &kind) const;
-
 protected:
-	/** The nearest text before (or after) this widget on the same row, as described in findSpokenLabel() */
+	/**
+	 * Put together a spoken description as screen readers do: the name (the
+	 * label, or else the tooltip), the kind of control, the value or state,
+	 * then the tooltip if it is not the name.
+	 */
+	Common::U32String composeSpokenDescription(const Common::U32String &label, const Common::U32String &kind,
+	                                           const Common::U32String &value = Common::U32String()) const;
+
+	/** The nearest text before (or after) this widget on the same row */
 	Common::U32String findTextBeside(bool before) const;
 
 	void updateState(int oldFlags, int newFlags);
+
+	/** Widgets only taking the focus from the keyboard show it highlighted */
+	bool showsFocusAsHighlight() { return wantsKeyboardFocus() && !wantsFocus(); }
 
 	virtual void drawWidget() = 0;
 
@@ -244,6 +244,7 @@ protected:
 	virtual Widget *findWidget(int x, int y) { return this; }
 
 	void releaseFocus() override { assert(_boss); _boss->releaseFocus(); }
+	Widget *getFocusWidget() override { assert(_boss); return _boss->getFocusWidget(); }
 
 	// Tickles are handled in Dialog
 	void registerTickleWidget(Widget *widget) override { assert(_boss); _boss->registerTickleWidget(widget); }
@@ -307,6 +308,8 @@ public:
 
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
+	bool handleKeyDown(Common::KeyState state) override;
+	bool wantsKeyboardFocus() override { return true; }
 	void handleMouseEntered(int button) override	{ readLabel(); if (_duringPress) { setFlags(WIDGET_PRESSED); } else { setFlags(WIDGET_HILITED); } markAsDirty(); }
 	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED | WIDGET_PRESSED); markAsDirty(); }
 	Common::U32String getSpokenDescription() const override;
@@ -328,6 +331,7 @@ public:
 
 	void handleMouseMoved(int x, int y, int button) override;
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
+	bool handleKeyDown(Common::KeyState state) override;
 	void reflowLayout() override;
 	void getMinSize(int &minWidth, int &minHeight) override;
 
@@ -347,6 +351,8 @@ protected:
 
 	void reset();
 	bool isInDropDown(int x, int y) const;
+	/** Show the list of entries and send the command of the chosen one */
+	void openDropdown(int clickX, int clickY);
 
 	EntryList _entries;
 
@@ -391,6 +397,7 @@ public:
 	CheckboxWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
 
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
+	bool handleKeyDown(Common::KeyState state) override;
 	void handleMouseEntered(int button) override	{ readLabel(); setFlags(WIDGET_HILITED); markAsDirty(); }
 	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
 	Common::U32String getSpokenDescription() const override;
@@ -442,6 +449,7 @@ public:
 	RadiobuttonWidget(GuiObject *boss, const Common::String &name, RadiobuttonGroup *group, int value, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint8 hotkey = 0);
 
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
+	bool handleKeyDown(Common::KeyState state) override;
 	void handleMouseEntered(int button) override	{ readLabel(); setFlags(WIDGET_HILITED); markAsDirty(); }
 	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
 	Common::U32String getSpokenDescription() const override;
@@ -488,6 +496,8 @@ public:
 	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
 	Common::U32String getSpokenDescription() const override;
 	void handleMouseWheel(int x, int y, int direction) override;
+	bool handleKeyDown(Common::KeyState state) override;
+	bool wantsKeyboardFocus() override { return true; }
 
 protected:
 	void drawWidget() override;

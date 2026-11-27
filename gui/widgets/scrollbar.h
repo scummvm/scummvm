@@ -79,6 +79,9 @@ public:
 
 	void checkBounds(int old_pos);
 
+	/** Get the position a scrolling key moves to, or false if the key does not scroll */
+	bool scrollPositionForKey(const Common::KeyState &state, int &position) const;
+
 protected:
 	void drawWidget() override;
 };

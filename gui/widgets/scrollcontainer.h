@@ -58,6 +58,7 @@ public:
 	void reflowLayout() override;
 
 	bool containsWidget(Widget *) const override;
+	void scrollChildIntoView(Widget *child) override;
 
 	void setBackgroundType(ThemeEngine::WidgetBackground backgroundType);
 
@@ -67,6 +68,9 @@ public:
 	void handleMouseMoved(int x, int y, int button) override;
 	void handleTickle() override;
 	bool handleDragHook(Widget *origTarget, int state, int x, int y, int button) override;
+	bool handleKeyDown(Common::KeyState state) override;
+	bool wantsKeyboardFocus() override;
+	Common::U32String getSpokenDescription() const override;
 
 	void cancelDrag() override;
 	void cancelTickle() override;

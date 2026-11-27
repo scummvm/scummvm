@@ -72,10 +72,38 @@ void Widget::clearFlags(int flags) {
 	_flags &= ~flags;
 }
 
+bool Widget::hasKeyboardFocusableChild() {
+	for (Widget *w = _firstWidget; w; w = w->_next) {
+		if (!w->isVisible())
+			continue;
+		if ((w->wantsKeyboardFocus() && w->isEnabled()) || w->hasKeyboardFocusableChild())
+			return true;
+	}
+	return false;
+}
+
+void Widget::receivedFocus() {
+	_hasFocus = true;
+	if (showsFocusAsHighlight()) {
+		updateState(_flags, _flags);
+		markAsDirty();
+	}
+	receivedFocusWidget();
+}
+
+void Widget::lostFocus() {
+	_hasFocus = false;
+	if (showsFocusAsHighlight()) {
+		updateState(_flags, _flags);
+		markAsDirty();
+	}
+	lostFocusWidget();
+}
+
 void Widget::updateState(int oldFlags, int newFlags) {
 	if (newFlags & WIDGET_ENABLED) {
 		_state = ThemeEngine::kStateEnabled;
-		if (newFlags & WIDGET_HILITED)
+		if ((newFlags & WIDGET_HILITED) || (_hasFocus && showsFocusAsHighlight()))
 			_state = ThemeEngine::kStateHighlight;
 		if (newFlags & WIDGET_PRESSED)
 			_state = ThemeEngine::kStatePressed;
@@ -280,11 +308,8 @@ void Widget::readDescription() {
 }
 
 Common::U32String Widget::findTextBeside(bool before) const {
-	// Look among the widgets sharing this widget's parent for text on the
-	// same row, that is spanning this widget's vertical centre, and keep the
-	// nearest one on the wanted side. Positions are in the parent's
-	// coordinates, which RTL layouts mirror when drawn, so "before" holds
-	// there too.
+	// Find the nearest sibling text on the wanted side whose height spans
+	// this widget's vertical centre
 	const int centre = _y + _h / 2;
 	const Widget *best = nullptr;
 	Common::U32String bestText;
@@ -324,11 +349,29 @@ Common::U32String Widget::findSpokenValue() const {
 	return findTextBeside(false);
 }
 
-Common::U32String Widget::findSpokenName(const Common::U32String &kind) const {
-	const Common::U32String label = findSpokenLabel();
+Common::U32String Widget::composeSpokenDescription(const Common::U32String &label, const Common::U32String &kind,
+                                                   const Common::U32String &value) const {
+	Common::U32String description;
 	if (!label.empty())
-		return label;
-	return _tooltip.empty() ? kind : _tooltip;
+		description = label;
+	else if (!_tooltip.empty())
+		description = _tooltip;
+
+	// The kind of control alone names a widget without label or tooltip
+	if (!kind.empty()) {
+		if (!description.empty())
+			description += Common::U32String(", ");
+		description += kind;
+	}
+
+	if (!value.empty())
+		description += Common::U32String(", ") + value;
+
+	// The tooltip says what the widget is for, unless it already named it
+	if (!label.empty() && !_tooltip.empty() && _tooltip != label)
+		description += Common::U32String(", ") + _tooltip;
+
+	return description;
 }
 
 #pragma mark -
@@ -471,25 +514,30 @@ void ButtonWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	setPressedState();
 }
 
+static bool isActivationKey(const Common::KeyState &state, bool allowReturn) {
+	if (state.flags & (Common::KBD_CTRL | Common::KBD_ALT | Common::KBD_META))
+		return false;
+	if (state.keycode == Common::KEYCODE_SPACE)
+		return true;
+	return allowReturn && (state.keycode == Common::KEYCODE_RETURN || state.keycode == Common::KEYCODE_KP_ENTER);
+}
+
+bool ButtonWidget::handleKeyDown(Common::KeyState state) {
+	// The command may close the dialog, so nothing is touched afterwards
+	if (isEnabled() && isActivationKey(state, true)) {
+		sendCommand(_cmd, 0);
+		return true;
+	}
+	return false;
+}
+
 void ButtonWidget::drawWidget() {
 	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), getLabel(), _state, getFlags());
 }
 
-/**
- * Name a widget for text-to-speech by its label, as hovering it reads, or by
- * its tooltip when it has none, as for picture buttons. Name the kind of
- * control only when there is neither, so that an unlabelled widget is still
- * audible.
- */
-static Common::U32String spokenName(const Common::U32String &label, const Common::U32String &tooltip, const Common::U32String &kind) {
-	if (!label.empty())
-		return label;
-	return tooltip.empty() ? kind : tooltip;
-}
-
 Common::U32String ButtonWidget::getSpokenDescription() const {
-	// I18N: Spoken by text-to-speech to name an unlabelled button
-	return spokenName(_label, _tooltip, _("button"));
+	// I18N: Spoken by text-to-speech for the kind of control a button is
+	return composeSpokenDescription(_label, _c("button", "text-to-speech"));
 }
 
 void ButtonWidget::setLabel(const Common::U32String &label) {
@@ -601,26 +649,39 @@ void DropdownButtonWidget::handleMouseMoved(int x, int y, int button) {
 
 void DropdownButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	if (isEnabled() && !_entries.empty() && _duringPress && isInDropDown(x, y)) {
-
-		PopUpDialog popupDialog(this, "DropdownDialog", x + getAbsX(), y + getAbsY());
-		popupDialog.setPosition(getAbsX(), getAbsY() + _h);
-		popupDialog.setLineHeight(_h);
-		popupDialog.setPadding(_dropdownWidth, _dropdownWidth);
-
-		for (uint i = 0; i < _entries.size(); i++) {
-			popupDialog.appendEntry(_entries[i].label);
-		}
-
-		int newSel = popupDialog.runModal();
-		if (newSel != -1) {
-			sendCommand(_entries[newSel].cmd, 0);
-		}
+		openDropdown(x + getAbsX(), y + getAbsY());
 
 		setUnpressedState();
 		_duringPress = false;
 	} else {
 		ButtonWidget::handleMouseUp(x, y, button, clickCount);
 	}
+}
+
+void DropdownButtonWidget::openDropdown(int clickX, int clickY) {
+	PopUpDialog popupDialog(this, "DropdownDialog", clickX, clickY);
+	popupDialog.setPosition(getAbsX(), getAbsY() + _h);
+	popupDialog.setLineHeight(_h);
+	popupDialog.setPadding(_dropdownWidth, _dropdownWidth);
+
+	for (uint i = 0; i < _entries.size(); i++) {
+		popupDialog.appendEntry(_entries[i].label);
+	}
+
+	int newSel = popupDialog.runModal();
+	if (newSel != -1) {
+		sendCommand(_entries[newSel].cmd, 0);
+	}
+}
+
+bool DropdownButtonWidget::handleKeyDown(Common::KeyState state) {
+	// Down opens the list of entries, Space and Return press the button
+	if (isEnabled() && !_entries.empty() && state.keycode == Common::KEYCODE_DOWN &&
+			!(state.flags & (Common::KBD_CTRL | Common::KBD_META))) {
+		openDropdown(-1, -1);
+		return true;
+	}
+	return ButtonWidget::handleKeyDown(state);
 }
 
 void DropdownButtonWidget::reflowLayout() {
@@ -653,8 +714,10 @@ void DropdownButtonWidget::drawWidget() {
 		// Degrade to a regular button
 		g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), getLabel(), _state);
 	} else {
+		// The theme only highlights the part under the mouse
+		const bool inButton = _inButton || (_hasFocus && !_inDropdown);
 		g_gui.theme()->drawDropDownButton(Common::Rect(_x, _y, _x + _w, _y + _h), _dropdownWidth, getLabel(),
-										  _state, _inButton, _inDropdown, (g_gui.useRTL() && _useRTL));
+										  _state, inButton, _inDropdown, (g_gui.useRTL() && _useRTL));
 	}
 }
 
@@ -805,6 +868,19 @@ void CheckboxWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	_duringPress = false;
 }
 
+bool CheckboxWidget::handleKeyDown(Common::KeyState state) {
+	// Return is left to the dialog, which usually confirms with it
+	if (isEnabled() && isActivationKey(state, false)) {
+		// Read first, as the command may rebuild the dialog
+		const bool newState = !_state;
+		// I18N: Spoken by text-to-speech for the state of a checkbox
+		read(newState ? _c("checked", "text-to-speech") : _c("not checked", "text-to-speech"));
+		toggleState();
+		return true;
+	}
+	return false;
+}
+
 void CheckboxWidget::setState(bool state) {
 	if (_state != state) {
 		_state = state;
@@ -818,15 +894,14 @@ void CheckboxWidget::setOverride(bool enable) {
 }
 
 void CheckboxWidget::drawWidget() {
-	g_gui.theme()->drawCheckbox(Common::Rect(_x, _y, _x + _w, _y + _h), _spacing, getLabel(), _state, Widget::_state, _overrideText, (g_gui.useRTL() && _useRTL));
+	g_gui.theme()->drawCheckbox(Common::Rect(_x, _y, _x + _w, _y + _h), _spacing, getLabel(), _state, Widget::_state, _overrideText, (g_gui.useRTL() && _useRTL), _hasFocus);
 }
 
 Common::U32String CheckboxWidget::getSpokenDescription() const {
-	// I18N: Spoken by text-to-speech to name an unlabelled checkbox
-	const Common::U32String name = spokenName(_label, _tooltip, _("checkbox"));
 	// I18N: Spoken by text-to-speech for the state of a checkbox
-	const Common::U32String state = _state ? _("checked") : _("not checked");
-	return name + Common::U32String(", ") + state;
+	const Common::U32String state = _state ? _c("checked", "text-to-speech") : _c("not checked", "text-to-speech");
+	// I18N: Spoken by text-to-speech for the kind of control a checkbox is
+	return composeSpokenDescription(_label, _c("checkbox", "text-to-speech"), state);
 }
 
 #pragma mark -
@@ -887,6 +962,17 @@ void RadiobuttonWidget::handleMouseUp(int x, int y, int button, int clickCount) 
 	_duringPress = false;
 }
 
+bool RadiobuttonWidget::handleKeyDown(Common::KeyState state) {
+	// Space selects the radio button, as a click would
+	if (isEnabled() && isActivationKey(state, false)) {
+		// I18N: Spoken by text-to-speech for the state of a radio button
+		read(_c("selected", "text-to-speech"));
+		setState(true);
+		return true;
+	}
+	return false;
+}
+
 void RadiobuttonWidget::setState(bool state, bool setGroup) {
 	if (setGroup) {
 		_group->setValue(_value);
@@ -901,15 +987,14 @@ void RadiobuttonWidget::setState(bool state, bool setGroup) {
 }
 
 void RadiobuttonWidget::drawWidget() {
-	g_gui.theme()->drawRadiobutton(Common::Rect(_x, _y, _x + _w, _y + _h), _spacing, getLabel(), _state, Widget::_state, (g_gui.useRTL() && _useRTL));
+	g_gui.theme()->drawRadiobutton(Common::Rect(_x, _y, _x + _w, _y + _h), _spacing, getLabel(), _state, Widget::_state, (g_gui.useRTL() && _useRTL), _hasFocus);
 }
 
 Common::U32String RadiobuttonWidget::getSpokenDescription() const {
-	// I18N: Spoken by text-to-speech to name an unlabelled radio button
-	const Common::U32String name = spokenName(_label, _tooltip, _("radio button"));
 	// I18N: Spoken by text-to-speech for the state of a radio button
-	const Common::U32String state = _state ? _("selected") : _("not selected");
-	return name + Common::U32String(", ") + state;
+	const Common::U32String state = _state ? _c("selected", "text-to-speech") : _c("not selected", "text-to-speech");
+	// I18N: Spoken by text-to-speech for the kind of control a radio button is
+	return composeSpokenDescription(_label, _c("radio button", "text-to-speech"), state);
 }
 
 #pragma mark -
@@ -985,21 +1070,66 @@ void SliderWidget::handleMouseWheel(int x, int y, int direction) {
 	}
 }
 
+bool SliderWidget::handleKeyDown(Common::KeyState state) {
+	if (!isEnabled() || _isDragging || (state.flags & (Common::KBD_CTRL | Common::KBD_ALT | Common::KBD_META)))
+		return false;
+
+	// Left and Right follow the direction the slider fills in, reversed in RTL
+	const int pageStep = MAX(1, (_valueMax - _valueMin) / 10);
+	const bool rtl = g_gui.useRTL() && _useRTL;
+	int newValue;
+
+	switch (state.keycode) {
+	case Common::KEYCODE_LEFT:
+		newValue = rtl ? _value + 1 : _value - 1;
+		break;
+	case Common::KEYCODE_RIGHT:
+		newValue = rtl ? _value - 1 : _value + 1;
+		break;
+	case Common::KEYCODE_DOWN:
+		newValue = _value - 1;
+		break;
+	case Common::KEYCODE_UP:
+		newValue = _value + 1;
+		break;
+	case Common::KEYCODE_PAGEDOWN:
+		newValue = _value - pageStep;
+		break;
+	case Common::KEYCODE_PAGEUP:
+		newValue = _value + pageStep;
+		break;
+	case Common::KEYCODE_HOME:
+		newValue = _valueMin;
+		break;
+	case Common::KEYCODE_END:
+		newValue = _valueMax;
+		break;
+	default:
+		return false;
+	}
+
+	newValue = CLIP(newValue, _valueMin, _valueMax);
+	if (newValue != _value) {
+		_value = newValue;
+		markAsDirty();
+		read(Common::U32String(Common::String::format("%d", _value)));
+		sendCommand(_cmd, _value);
+	}
+	return true;
+}
+
 void SliderWidget::drawWidget() {
 	Common::Rect r1(_x, _y, _x + _w, _y + _h);
 	g_gui.theme()->drawSlider(r1, valueToBarWidth(_value), _state, (g_gui.useRTL() && _useRTL));
 }
 
 Common::U32String SliderWidget::getSpokenDescription() const {
-	// Sliders are labelled by the text before them. Follow the name with the
-	// value as shown after the slider, such as a percentage, or failing
-	// that, the slider's own value.
-	// I18N: Spoken by text-to-speech to name an unlabelled slider
-	const Common::U32String name = findSpokenName(_("slider"));
+	// Prefer the value shown after the slider, such as a percentage
 	Common::U32String value = findSpokenValue();
 	if (value.empty())
 		value = Common::U32String(Common::String::format("%d", _value));
-	return name + Common::U32String(", ") + value;
+	// I18N: Spoken by text-to-speech for the kind of control a slider is
+	return composeSpokenDescription(findSpokenLabel(), _c("slider", "text-to-speech"), value);
 }
 
 int SliderWidget::valueToBarWidth(int value) {

@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/algorithm.h"
+#include "common/translation.h"
 #include "common/util.h"
 #include "gui/widgets/scrollcontainer.h"
 #include "gui/gui-manager.h"
@@ -82,6 +84,53 @@ void ScrollContainerWidget::handleMouseMoved(int x, int y, int button) {
 			applyScrollPos();
 		}
 	}
+}
+
+bool ScrollContainerWidget::wantsKeyboardFocus() {
+	// Otherwise, the container scrolls to its widgets as they get the focus
+	return _verticalScroll->isVisible() && !hasKeyboardFocusableChild();
+}
+
+static bool isAbove(const Widget *a, const Widget *b) {
+	if (a->getRelY() != b->getRelY())
+		return a->getRelY() < b->getRelY();
+	return a->getRelX() < b->getRelX();
+}
+
+Common::U32String ScrollContainerWidget::getSpokenDescription() const {
+	// The container only takes the focus when it holds text alone
+	Common::Array<const StaticTextWidget *> texts;
+	for (Widget *w = _firstWidget; w; w = w->next()) {
+		if (w->isVisible() && w->getType() == kStaticTextWidget)
+			texts.push_back(static_cast<const StaticTextWidget *>(w));
+	}
+	Common::sort(texts.begin(), texts.end(), isAbove);
+
+	Common::U32String text;
+	for (uint i = 0; i < texts.size(); ++i) {
+		if (texts[i]->getLabel().empty())
+			continue;
+		if (!text.empty())
+			text += Common::U32String("\n");
+		text += texts[i]->getLabel();
+	}
+
+	// I18N: Spoken by text-to-speech for the kind of control a block of text is
+	return composeSpokenDescription(findSpokenLabel(), _c("text", "text-to-speech"), text);
+}
+
+bool ScrollContainerWidget::handleKeyDown(Common::KeyState state) {
+	if (!isEnabled() || !_verticalScroll->isVisible())
+		return false;
+
+	int position;
+	if (!_verticalScroll->scrollPositionForKey(state, position))
+		return false;
+
+	_fluidScroller->stopAnimation();
+	_scrollPos = _fluidScroller->setPosition((float)position, false);
+	applyScrollPos();
+	return true;
 }
 
 void ScrollContainerWidget::handleTickle() {
@@ -254,7 +303,9 @@ void ScrollContainerWidget::reflowLayout() {
 }
 
 void ScrollContainerWidget::drawWidget() {
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + getHeight()), _backgroundType);
+	// Show the keyboard focus with a frame, as around a list
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + getHeight()),
+	                                    _hasFocus ? ThemeEngine::kWidgetBackgroundBorder : _backgroundType);
 }
 
 void ScrollContainerWidget::draw() {
@@ -277,6 +328,30 @@ bool ScrollContainerWidget::containsWidget(Widget *w) const {
 	if (w == _verticalScroll || _verticalScroll->containsWidget(w))
 		return true;
 	return containsWidgetInChain(_firstWidget, w);
+}
+
+void ScrollContainerWidget::scrollChildIntoView(Widget *child) {
+	if (!_verticalScroll->isVisible())
+		return;
+
+	// Position of the child within the scrolled contents
+	const int top = child->getAbsY() - getChildY();
+	const int bottom = top + child->getHeight();
+
+	int scrollY = _scrolledY;
+	if (top < scrollY)
+		scrollY = top;
+	else if (bottom > scrollY + _limitH)
+		scrollY = bottom - _limitH;
+
+	const int maxScroll = MAX(0, _verticalScroll->_numEntries - (int)_limitH);
+	scrollY = CLIP(scrollY, 0, maxScroll);
+	if (scrollY == _scrolledY)
+		return;
+
+	_fluidScroller->stopAnimation();
+	_scrollPos = _fluidScroller->setPosition((float)scrollY, false);
+	applyScrollPos();
 }
 
 Widget *ScrollContainerWidget::findWidget(int x, int y) {

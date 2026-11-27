@@ -212,7 +212,9 @@ protected:
 	void receivedFocusWidget() override;
 	void lostFocusWidget() override;
 	void checkBounds();
-	void scrollToCurrent();
+	void scrollToCurrent() { scrollToItem(_selectedItem); }
+	/** Scroll, if needed, so that the item at the given position is in view */
+	void scrollToItem(int item);
 
 	/// Find the visual position of a data item
 	int findDataIndex(int dataIndex) const;
