@@ -81,14 +81,13 @@ void GridItemWidget::drawWidget() {
 	int thumbWidth = _grid->getThumbnailWidth();
 	Common::Array<Common::U32String> titleLines;
 	g_gui.getFont().wordWrapText(_activeEntry->title, thumbWidth, titleLines);
-
-	// FIXME/HACK: We reserve 1/3 of the space between two items to draw the
-	//			selection border. This can break when the stroke width of
-	//			the border is comparable to 1/3 of grid item spacing. Also,
-	//			border shadow is not considered.
-	const int kMarginX = _grid->_gridXSpacing / 3;
-	const int kMarginY = _grid->_gridYSpacing / 3;
-
+    
+	//Reserve half the item spacing as margin for the selection border.
+	//     Using 1/3 could clip the border when its stroke width is large 
+	//     relative to the spacing,half the spacing provides enough room.
+     const int kmarginX = _grid->_gridXSpacing / 2;
+	 const int kMarginY = _grid->_gridYSpacing / 2;
+	
 	// Check if this entry is in the selected entries list
 	bool isSelected = _grid->_selectedItems[_activeEntry->entryID];
 
