@@ -23,8 +23,8 @@
  * WMV3 and VC-1 software video decoder.
  *
  * This decoder is a ScummVM port of the FFmpeg WMV3/VC-1 decoder path
- * used by libavcodec revision c23123630e6a7e645c199599b8ade3fe7e9ab3db:
- * https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/c23123630e6a7e645c199599b8ade3fe7e9ab3db
+ * used by libavcodec revision 25bf0776155da64accda16cf3e1834cdaf42f3a4:
+ * https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/25bf0776155da64accda16cf3e1834cdaf42f3a4
  * The original code was Copyright
  * (c) 2005 Anonymous, Alex Beregszaszi and Michael Niedermayer,
  * (c) 2006-2007 Konstantin Shishkov,
@@ -71,8 +71,6 @@ typedef struct WMV3DSP {
 	void (*vc1_inv_trans_8x4_dc)(uint8 *dest, ptrdiff_t stride, int16 *block);
 	void (*vc1_inv_trans_4x8_dc)(uint8 *dest, ptrdiff_t stride, int16 *block);
 	void (*vc1_inv_trans_4x4_dc)(uint8 *dest, ptrdiff_t stride, int16 *block);
-	void (*vc1_v_overlap)(uint8 *src, ptrdiff_t stride);
-	void (*vc1_h_overlap)(uint8 *src, ptrdiff_t stride);
 	void (*vc1_v_s_overlap)(int16 *top, int16 *bottom);
 	void (*vc1_h_s_overlap)(int16 *left, int16 *right, ptrdiff_t left_stride, ptrdiff_t right_stride, int flags);
 	void (*vc1_v_loop_filter4)(uint8 *src, ptrdiff_t stride, int pq);
@@ -616,7 +614,7 @@ struct VC1Context : VC1Header {
 
 	int parse_only; ///< Context is used within parser
 
-	int16 blocks[6][64];
+	int16 blk[64];
 };
 
 void ff_vc1_decode_blocks(VC1Context *v);
@@ -1591,54 +1589,6 @@ static inline uint32 roundAvg32(uint32 a, uint32 b) {
 	return (a | b) - (((a ^ b) & ~0x01010101U) >> 1);
 }
 
-/* Apply overlap transform to horizontal edge */
-// Overlap and loop-filter DSP
-
-static void vc1_v_overlap_c(uint8 *src, ptrdiff_t stride) {
-	int i;
-	int a, b, c, d;
-	int d1, d2;
-	int rnd = 1;
-	for (i = 0; i < 8; i++) {
-		a = src[-2 * stride];
-		b = src[-stride];
-		c = src[0];
-		d = src[stride];
-		d1 = (a - d + 3 + rnd) >> 3;
-		d2 = (a - d + b - c + 4 - rnd) >> 3;
-
-		src[-2 * stride] = a - d1;
-		src[-stride] = clipByte(b - d2);
-		src[0] = clipByte(c + d2);
-		src[stride] = d + d1;
-		src++;
-		rnd = !rnd;
-	}
-}
-
-/* Apply overlap transform to vertical edge */
-static void vc1_h_overlap_c(uint8 *src, ptrdiff_t stride) {
-	int i;
-	int a, b, c, d;
-	int d1, d2;
-	int rnd = 1;
-	for (i = 0; i < 8; i++) {
-		a = src[-2];
-		b = src[-1];
-		c = src[0];
-		d = src[1];
-		d1 = (a - d + 3 + rnd) >> 3;
-		d2 = (a - d + b - c + 4 - rnd) >> 3;
-
-		src[-2] = a - d1;
-		src[-1] = clipByte(b - d2);
-		src[0] = clipByte(c + d2);
-		src[1] = d + d1;
-		src += stride;
-		rnd = !rnd;
-	}
-}
-
 static void vc1_v_s_overlap_c(int16 *top, int16 *bottom) {
 	int i;
 	int a, b, c, d;
@@ -1715,17 +1665,11 @@ static inline int vc1_filter_line(uint8 *src, ptrdiff_t stride, int pq) {
 			clip = ((clip ^ clip_sign) - clip_sign) >> 1;
 			if (clip) {
 				int a3 = MIN(a1, a2);
-				int d = 5 * (a3 - a0);
-				int d_sign = (d >> 31);
+				int d = (5 * (a0 - a3)) >> 3;
 
-				d = ((d ^ d_sign) - d_sign) >> 3;
-				d_sign ^= a0_sign;
-
-				if (d_sign ^ clip_sign)
-					d = 0;
-				else {
+				if (a0_sign ^ clip_sign) {
 					d = MIN(d, clip);
-					d = (d ^ d_sign) - d_sign; /* Restore sign */
+					d = (d ^ clip_sign) - clip_sign;
 					src[-1 * stride] = clipByte(src[-1 * stride] - d);
 					src[0 * stride] = clipByte(src[0 * stride] + d);
 				}
@@ -2391,8 +2335,6 @@ void initWMV3DSP(WMV3DSP *dsp) {
 	dsp->vc1_inv_trans_8x4_dc = vc1_inv_trans_8x4_dc_c;
 	dsp->vc1_inv_trans_4x4_dc = vc1_inv_trans_4x4_dc_c;
 
-	dsp->vc1_h_overlap = vc1_h_overlap_c;
-	dsp->vc1_v_overlap = vc1_v_overlap_c;
 	dsp->vc1_h_s_overlap = vc1_h_s_overlap_c;
 	dsp->vc1_v_s_overlap = vc1_v_s_overlap_c;
 
@@ -3806,7 +3748,7 @@ static void put_pixels8_8_c(uint8 *d, const uint8 *s, ptrdiff_t stride, int h) {
 	}
 }
 
-static void put_pixels8_l2_8(uint8 *d, const uint8 *a, const uint8 *b, int ds, int as, int bs, int h) {
+static void put_pixels8_l2_8(uint8 *d, const uint8 *a, const uint8 *b, ptrdiff_t ds, ptrdiff_t as, ptrdiff_t bs, int h) {
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < 8; ++x) {
 			int val = (a[x] + b[x] + 1) >> 1;
@@ -3818,8 +3760,8 @@ static void put_pixels8_l2_8(uint8 *d, const uint8 *a, const uint8 *b, int ds, i
 	}
 }
 
-static void put_pixels8_l4_8(uint8 *d, const uint8 *a, const uint8 *b, const uint8 *c, const uint8 *e, int ds, int as,
-							 int bs, int cs, int es, int h) {
+static void put_pixels8_l4_8(uint8 *d, const uint8 *a, const uint8 *b, const uint8 *c, const uint8 *e, ptrdiff_t ds, ptrdiff_t as,
+							 ptrdiff_t bs, ptrdiff_t cs, ptrdiff_t es, int h) {
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < 8; ++x) {
 			int val = (a[x] + b[x] + c[x] + e[x] + 2) >> 2;
@@ -3844,7 +3786,7 @@ static void avg_pixels8_8_c(uint8 *d, const uint8 *s, ptrdiff_t stride, int h) {
 	}
 }
 
-static void avg_pixels8_l2_8(uint8 *d, const uint8 *a, const uint8 *b, int ds, int as, int bs, int h) {
+static void avg_pixels8_l2_8(uint8 *d, const uint8 *a, const uint8 *b, ptrdiff_t ds, ptrdiff_t as, ptrdiff_t bs, int h) {
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < 8; ++x) {
 			int val = (a[x] + b[x] + 1) >> 1;
@@ -3856,8 +3798,8 @@ static void avg_pixels8_l2_8(uint8 *d, const uint8 *a, const uint8 *b, int ds, i
 	}
 }
 
-static void avg_pixels8_l4_8(uint8 *d, const uint8 *a, const uint8 *b, const uint8 *c, const uint8 *e, int ds, int as,
-							 int bs, int cs, int es, int h) {
+static void avg_pixels8_l4_8(uint8 *d, const uint8 *a, const uint8 *b, const uint8 *c, const uint8 *e, ptrdiff_t ds, ptrdiff_t as,
+							 ptrdiff_t bs, ptrdiff_t cs, ptrdiff_t es, int h) {
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < 8; ++x) {
 			int val = (a[x] + b[x] + c[x] + e[x] + 2) >> 2;
@@ -3871,7 +3813,7 @@ static void avg_pixels8_l4_8(uint8 *d, const uint8 *a, const uint8 *b, const uin
 	}
 }
 
-static void put_no_rnd_pixels8_l2_8(uint8 *d, const uint8 *a, const uint8 *b, int ds, int as, int bs, int h) {
+static void put_no_rnd_pixels8_l2_8(uint8 *d, const uint8 *a, const uint8 *b, ptrdiff_t ds, ptrdiff_t as, ptrdiff_t bs, int h) {
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < 8; ++x) {
 			int val = (a[x] + b[x] + 0) >> 1;
@@ -3883,8 +3825,8 @@ static void put_no_rnd_pixels8_l2_8(uint8 *d, const uint8 *a, const uint8 *b, in
 	}
 }
 
-static void put_no_rnd_pixels8_l4_8(uint8 *d, const uint8 *a, const uint8 *b, const uint8 *c, const uint8 *e, int ds,
-									int as, int bs, int cs, int es, int h) {
+static void put_no_rnd_pixels8_l4_8(uint8 *d, const uint8 *a, const uint8 *b, const uint8 *c, const uint8 *e, ptrdiff_t ds,
+									ptrdiff_t as, ptrdiff_t bs, ptrdiff_t cs, ptrdiff_t es, int h) {
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < 8; ++x) {
 			int val = (a[x] + b[x] + c[x] + e[x] + 1) >> 2;
@@ -3909,7 +3851,7 @@ static void put_pixels16_8_c(uint8 *d, const uint8 *s, ptrdiff_t stride, int h) 
 	}
 }
 
-static void put_pixels16_l2_8(uint8 *d, const uint8 *a, const uint8 *b, int ds, int as, int bs, int h) {
+static void put_pixels16_l2_8(uint8 *d, const uint8 *a, const uint8 *b, ptrdiff_t ds, ptrdiff_t as, ptrdiff_t bs, int h) {
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < 16; ++x) {
 			int val = (a[x] + b[x] + 1) >> 1;
@@ -3921,8 +3863,8 @@ static void put_pixels16_l2_8(uint8 *d, const uint8 *a, const uint8 *b, int ds, 
 	}
 }
 
-static void put_pixels16_l4_8(uint8 *d, const uint8 *a, const uint8 *b, const uint8 *c, const uint8 *e, int ds, int as,
-							  int bs, int cs, int es, int h) {
+static void put_pixels16_l4_8(uint8 *d, const uint8 *a, const uint8 *b, const uint8 *c, const uint8 *e, ptrdiff_t ds, ptrdiff_t as,
+							  ptrdiff_t bs, ptrdiff_t cs, ptrdiff_t es, int h) {
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < 16; ++x) {
 			int val = (a[x] + b[x] + c[x] + e[x] + 2) >> 2;
@@ -3947,7 +3889,7 @@ static void avg_pixels16_8_c(uint8 *d, const uint8 *s, ptrdiff_t stride, int h) 
 	}
 }
 
-static void avg_pixels16_l2_8(uint8 *d, const uint8 *a, const uint8 *b, int ds, int as, int bs, int h) {
+static void avg_pixels16_l2_8(uint8 *d, const uint8 *a, const uint8 *b, ptrdiff_t ds, ptrdiff_t as, ptrdiff_t bs, int h) {
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < 16; ++x) {
 			int val = (a[x] + b[x] + 1) >> 1;
@@ -3959,8 +3901,8 @@ static void avg_pixels16_l2_8(uint8 *d, const uint8 *a, const uint8 *b, int ds, 
 	}
 }
 
-static void avg_pixels16_l4_8(uint8 *d, const uint8 *a, const uint8 *b, const uint8 *c, const uint8 *e, int ds, int as,
-							  int bs, int cs, int es, int h) {
+static void avg_pixels16_l4_8(uint8 *d, const uint8 *a, const uint8 *b, const uint8 *c, const uint8 *e, ptrdiff_t ds, ptrdiff_t as,
+							  ptrdiff_t bs, ptrdiff_t cs, ptrdiff_t es, int h) {
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < 16; ++x) {
 			int val = (a[x] + b[x] + c[x] + e[x] + 2) >> 2;
@@ -3974,7 +3916,7 @@ static void avg_pixels16_l4_8(uint8 *d, const uint8 *a, const uint8 *b, const ui
 	}
 }
 
-static void put_no_rnd_pixels16_l2_8(uint8 *d, const uint8 *a, const uint8 *b, int ds, int as, int bs, int h) {
+static void put_no_rnd_pixels16_l2_8(uint8 *d, const uint8 *a, const uint8 *b, ptrdiff_t ds, ptrdiff_t as, ptrdiff_t bs, int h) {
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < 16; ++x) {
 			int val = (a[x] + b[x] + 0) >> 1;
@@ -3986,8 +3928,8 @@ static void put_no_rnd_pixels16_l2_8(uint8 *d, const uint8 *a, const uint8 *b, i
 	}
 }
 
-static void put_no_rnd_pixels16_l4_8(uint8 *d, const uint8 *a, const uint8 *b, const uint8 *c, const uint8 *e, int ds,
-									 int as, int bs, int cs, int es, int h) {
+static void put_no_rnd_pixels16_l4_8(uint8 *d, const uint8 *a, const uint8 *b, const uint8 *c, const uint8 *e, ptrdiff_t ds,
+									 ptrdiff_t as, ptrdiff_t bs, ptrdiff_t cs, ptrdiff_t es, int h) {
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < 16; ++x) {
 			int val = (a[x] + b[x] + c[x] + e[x] + 1) >> 2;
@@ -4001,7 +3943,7 @@ static void put_no_rnd_pixels16_l4_8(uint8 *d, const uint8 *a, const uint8 *b, c
 	}
 }
 #define QPEL_MC(r, OPNAME, RND, OP)                                                                                    \
-	static void OPNAME##mpeg4_qpel8_h_lowpass(uint8 *dst, const uint8 *src, int dstStride, int srcStride, int h) {     \
+	static void OPNAME##mpeg4_qpel8_h_lowpass(uint8 *dst, const uint8 *src, ptrdiff_t dstStride, ptrdiff_t srcStride, int h) {     \
 		const Crop cm;                                                                                                 \
 		int i;                                                                                                         \
                                                                                                                        \
@@ -4019,7 +3961,7 @@ static void put_no_rnd_pixels16_l4_8(uint8 *d, const uint8 *a, const uint8 *b, c
 		}                                                                                                              \
 	}                                                                                                                  \
                                                                                                                        \
-	static void OPNAME##mpeg4_qpel8_v_lowpass(uint8 *dst, const uint8 *src, int dstStride, int srcStride) {            \
+	static void OPNAME##mpeg4_qpel8_v_lowpass(uint8 *dst, const uint8 *src, ptrdiff_t dstStride, ptrdiff_t srcStride) {            \
 		const Crop cm;                                                                                                 \
 		const int w = 8;                                                                                               \
 		int i;                                                                                                         \
@@ -4047,7 +3989,7 @@ static void put_no_rnd_pixels16_l4_8(uint8 *d, const uint8 *a, const uint8 *b, c
 		}                                                                                                              \
 	}                                                                                                                  \
                                                                                                                        \
-	static void OPNAME##mpeg4_qpel16_h_lowpass(uint8 *dst, const uint8 *src, int dstStride, int srcStride, int h) {    \
+	static void OPNAME##mpeg4_qpel16_h_lowpass(uint8 *dst, const uint8 *src, ptrdiff_t dstStride, ptrdiff_t srcStride, int h) {    \
 		const Crop cm;                                                                                                 \
 		int i;                                                                                                         \
                                                                                                                        \
@@ -4080,7 +4022,7 @@ static void put_no_rnd_pixels16_l4_8(uint8 *d, const uint8 *a, const uint8 *b, c
 		}                                                                                                              \
 	}                                                                                                                  \
                                                                                                                        \
-	static void OPNAME##mpeg4_qpel16_v_lowpass(uint8 *dst, const uint8 *src, int dstStride, int srcStride) {           \
+	static void OPNAME##mpeg4_qpel16_v_lowpass(uint8 *dst, const uint8 *src, ptrdiff_t dstStride, ptrdiff_t srcStride) {           \
 		const Crop cm;                                                                                                 \
 		const int w = 16;                                                                                              \
 		int i;                                                                                                         \
@@ -7879,9 +7821,7 @@ void ff_vc1_pred_b_mv(VC1Context *v, int dmv_x[2], int dmv_y[2], int direct, int
 	PictureState *s = &v->s;
 	int xy, wrap;
 	int px, py;
-	int sum;
 	int r_x, r_y;
-	const uint8 *is_intra = v->mb_type;
 
 	assert(!v->field_mode);
 
@@ -7964,36 +7904,6 @@ void ff_vc1_pred_b_mv(VC1Context *v, int dmv_x[2], int dmv_y[2], int direct, int
 			if (qy + py > Y)
 				py = Y - qy;
 		}
-		/* Calculate hybrid prediction as specified in 8.3.5.3.5 */
-		if (0 && !s->first_slice_line && s->mb_x) {
-			if (is_intra[xy - wrap])
-				sum = ABS(px) + ABS(py);
-			else
-				sum = ABS(px - A[0]) + ABS(py - A[1]);
-			if (sum > 32) {
-				if (get_bits1(&v->gb)) {
-					px = A[0];
-					py = A[1];
-				} else {
-					px = C[0];
-					py = C[1];
-				}
-			} else {
-				if (is_intra[xy - 2])
-					sum = ABS(px) + ABS(py);
-				else
-					sum = ABS(px - C[0]) + ABS(py - C[1]);
-				if (sum > 32) {
-					if (get_bits1(&v->gb)) {
-						px = A[0];
-						py = A[1];
-					} else {
-						px = C[0];
-						py = C[1];
-					}
-				}
-			}
-		}
 		/* store MV using signed modulus of MV range defined in 4.11 */
 		s->mv[0][0][0] = ((px + dmv_x[0] + r_x) & ((r_x << 1) - 1)) - r_x;
 		s->mv[0][0][1] = ((py + dmv_y[0] + r_y) & ((r_y << 1) - 1)) - r_y;
@@ -8037,36 +7947,6 @@ void ff_vc1_pred_b_mv(VC1Context *v, int dmv_x[2], int dmv_y[2], int direct, int
 				px = X - qx;
 			if (qy + py > Y)
 				py = Y - qy;
-		}
-		/* Calculate hybrid prediction as specified in 8.3.5.3.5 */
-		if (0 && !s->first_slice_line && s->mb_x) {
-			if (is_intra[xy - wrap])
-				sum = ABS(px) + ABS(py);
-			else
-				sum = ABS(px - A[0]) + ABS(py - A[1]);
-			if (sum > 32) {
-				if (get_bits1(&v->gb)) {
-					px = A[0];
-					py = A[1];
-				} else {
-					px = C[0];
-					py = C[1];
-				}
-			} else {
-				if (is_intra[xy - 2])
-					sum = ABS(px) + ABS(py);
-				else
-					sum = ABS(px - C[0]) + ABS(py - C[1]);
-				if (sum > 32) {
-					if (get_bits1(&v->gb)) {
-						px = A[0];
-						py = A[1];
-					} else {
-						px = C[0];
-						py = C[1];
-					}
-				}
-			}
 		}
 		/* store MV using signed modulus of MV range defined in 4.11 */
 
@@ -11544,10 +11424,7 @@ static int vc1_decode_p_mb_intfr(VC1Context *v) {
 	else
 		skipped = v->s.mbskip_table[mb_pos];
 	if (!skipped) {
-		if (v->fourmvswitch)
-			idx_mbmode = get_vlc2(gb, v->mbmode_vlc); // try getting this done
-		else
-			idx_mbmode = get_vlc2(gb, v->mbmode_vlc); // in a single line
+		idx_mbmode = get_vlc2(gb, v->mbmode_vlc);
 		switch (ff_vc1_mbmode_intfrp[v->fourmvswitch][idx_mbmode][0]) {
 		/* store the motion vector type in a flag (useful later) */
 		case MV_PMODE_INTFR_4MV:
@@ -11975,19 +11852,19 @@ static int vc1_decode_b_mb(VC1Context *v) {
 			if (i == 1 || i == 3 || s->mb_x)
 				v->c_avail = v->mb_type[s->block_index[i] - 1];
 
-			ret = vc1_decode_intra_block(v, v->blocks[i], i, val, mquant, (i & 4) ? v->codingset2 : v->codingset);
+			ret = vc1_decode_intra_block(v, v->blk, i, val, mquant, (i & 4) ? v->codingset2 : v->codingset);
 			if (ret < 0)
 				return ret;
 			if (CONFIG_GRAY && (i > 3) && (s->avctx->flags & AV_CODEC_FLAG_GRAY))
 				continue;
-			v->vc1dsp.vc1_inv_trans_8x8(v->blocks[i]);
+			v->vc1dsp.vc1_inv_trans_8x8(v->blk);
 			if (v->rangeredfrm)
 				for (j = 0; j < 64; j++)
-					v->blocks[i][j] *= 2;
-			s->idsp.put_signed_pixels_clamped(v->blocks[i], s->dest[dst_idx] + off,
+					v->blk[j] *= 2;
+			s->idsp.put_signed_pixels_clamped(v->blk, s->dest[dst_idx] + off,
 											  i & 4 ? s->uvlinesize : s->linesize);
 		} else if (val) {
-			int pat = vc1_decode_p_block(v, v->blocks[i], i, mquant, ttmb, first_block, s->dest[dst_idx] + off,
+			int pat = vc1_decode_p_block(v, v->blk, i, mquant, ttmb, first_block, s->dest[dst_idx] + off,
 										 (i & 4) ? s->uvlinesize : s->linesize,
 										 CONFIG_GRAY && (i & 4) && (s->avctx->flags & AV_CODEC_FLAG_GRAY), NULL);
 			if (pat < 0)
@@ -12051,17 +11928,17 @@ static int vc1_decode_b_mb_intfi(VC1Context *v) {
 			if (i == 1 || i == 3 || s->mb_x)
 				v->c_avail = v->mb_type[s->block_index[i] - 1];
 
-			ret = vc1_decode_intra_block(v, v->blocks[i], i, val, mquant, (i & 4) ? v->codingset2 : v->codingset);
+			ret = vc1_decode_intra_block(v, v->blk, i, val, mquant, (i & 4) ? v->codingset2 : v->codingset);
 			if (ret < 0)
 				return ret;
 			if (CONFIG_GRAY && (i > 3) && (s->avctx->flags & AV_CODEC_FLAG_GRAY))
 				continue;
-			v->vc1dsp.vc1_inv_trans_8x8(v->blocks[i]);
+			v->vc1dsp.vc1_inv_trans_8x8(v->blk);
 			if (v->rangeredfrm)
 				for (j = 0; j < 64; j++)
-					v->blocks[i][j] <<= 1;
+					v->blk[j] <<= 1;
 			off = (i & 4) ? 0 : ((i & 1) * 8 + (i & 2) * 4 * s->linesize);
-			s->idsp.put_signed_pixels_clamped(v->blocks[i], s->dest[dst_idx] + off,
+			s->idsp.put_signed_pixels_clamped(v->blk, s->dest[dst_idx] + off,
 											  (i & 4) ? s->uvlinesize : s->linesize);
 		}
 	} else {
@@ -12146,7 +12023,7 @@ static int vc1_decode_b_mb_intfi(VC1Context *v) {
 			val = ((cbp >> (5 - i)) & 1);
 			off = (i & 4) ? 0 : (i & 1) * 8 + (i & 2) * 4 * s->linesize;
 			if (val) {
-				pat = vc1_decode_p_block(v, v->blocks[i], i, mquant, ttmb, first_block, s->dest[dst_idx] + off,
+				pat = vc1_decode_p_block(v, v->blk, i, mquant, ttmb, first_block, s->dest[dst_idx] + off,
 										 (i & 4) ? s->uvlinesize : s->linesize,
 										 CONFIG_GRAY && (i & 4) && (s->avctx->flags & AV_CODEC_FLAG_GRAY), &block_tt);
 				if (pat < 0)
@@ -12242,12 +12119,12 @@ static int vc1_decode_b_mb_intfr(VC1Context *v) {
 			if (i == 1 || i == 3 || s->mb_x)
 				v->c_avail = v->mb_type[s->block_index[i] - 1];
 
-			ret = vc1_decode_intra_block(v, v->blocks[i], i, val, mquant, (i & 4) ? v->codingset2 : v->codingset);
+			ret = vc1_decode_intra_block(v, v->blk, i, val, mquant, (i & 4) ? v->codingset2 : v->codingset);
 			if (ret < 0)
 				return ret;
 			if (CONFIG_GRAY && i > 3 && (s->avctx->flags & AV_CODEC_FLAG_GRAY))
 				continue;
-			v->vc1dsp.vc1_inv_trans_8x8(v->blocks[i]);
+			v->vc1dsp.vc1_inv_trans_8x8(v->blk);
 			if (i < 4) {
 				stride_y = s->linesize << fieldtx;
 				off =
@@ -12256,7 +12133,7 @@ static int vc1_decode_b_mb_intfr(VC1Context *v) {
 				stride_y = s->uvlinesize;
 				off = 0;
 			}
-			s->idsp.put_signed_pixels_clamped(v->blocks[i], s->dest[dst_idx] + off, stride_y);
+			s->idsp.put_signed_pixels_clamped(v->blk, s->dest[dst_idx] + off, stride_y);
 		}
 	} else {
 		s->mb_intra = v->is_intra[s->mb_x] = 0;
@@ -12458,7 +12335,7 @@ static int vc1_decode_b_mb_intfr(VC1Context *v) {
 					off = (i & 4) ? 0 : ((i & 1) * 8 + ((i > 1) * s->linesize));
 				if (val) {
 					pat =
-						vc1_decode_p_block(v, v->blocks[i], i, mquant, ttmb, first_block, s->dest[dst_idx] + off,
+						vc1_decode_p_block(v, v->blk, i, mquant, ttmb, first_block, s->dest[dst_idx] + off,
 										   (i & 4) ? s->uvlinesize : (s->linesize << fieldtx),
 										   CONFIG_GRAY && (i & 4) && (s->avctx->flags & AV_CODEC_FLAG_GRAY), &block_tt);
 					if (pat < 0)
@@ -12619,14 +12496,14 @@ static void vc1_decode_i_blocks(VC1Context *v) {
 				if (v->rangeredfrm)
 					for (k = 0; k < 6; k++)
 						for (j = 0; j < 64; j++)
-							v->block[v->cur_blk_idx][block_map[k]][j] *= 2;
+							v->block[v->cur_blk_idx][k][j] *= 2;
 				vc1_put_blocks_clamped(v, 1);
 			} else {
 				if (v->rangeredfrm)
 					for (k = 0; k < 6; k++)
 						for (j = 0; j < 64; j++)
-							v->block[v->cur_blk_idx][block_map[k]][j] =
-								(v->block[v->cur_blk_idx][block_map[k]][j] - 64) * 2;
+							v->block[v->cur_blk_idx][k][j] =
+								(v->block[v->cur_blk_idx][k][j] - 64) * 2;
 				vc1_put_blocks_clamped(v, 0);
 			}
 
@@ -12822,7 +12699,7 @@ static void vc1_decode_p_blocks(VC1Context *v) {
 			update_block_index(s);
 
 			if (v->fcm == ILACE_FIELD || (v->fcm == PROGRESSIVE && v->mv_type_is_raw) || v->skip_is_raw)
-				if (get_bits_left(&v->gb) <= 1) {
+				if (get_bits_left(&v->gb) < 1) {
 					ff_er_add_slice(&s->er, 0, s->start_mb_y, s->mb_x, s->mb_y, ER_MB_ERROR);
 					return;
 				}
@@ -12898,7 +12775,7 @@ static void vc1_decode_b_blocks(VC1Context *v) {
 			update_block_index(s);
 
 			if (v->fcm == ILACE_FIELD || v->skip_is_raw || v->dmb_is_raw)
-				if (get_bits_left(&v->gb) <= 1) {
+				if (get_bits_left(&v->gb) < 1) {
 					ff_er_add_slice(&s->er, 0, s->start_mb_y, s->mb_x, s->mb_y, ER_MB_ERROR);
 					return;
 				}
@@ -13376,12 +13253,6 @@ static void guess_mv(ERContext *s) {
 	set_mv_strides(s, &mot_step, &mot_stride);
 
 	num_avail = 0;
-	if (s->last_pic.motion_val[0]) {
-		if (false)
-			(void)0;
-		else
-			(void)0;
-	}
 	for (i = 0; i < mb_width * mb_height; i++) {
 		const int mb_xy = s->mb_index2xy[i];
 		int f = 0;
@@ -13884,29 +13755,6 @@ void ff_er_frame_end(ERContext *s, int *decode_error_flags) {
 				end_ok = 0;
 		}
 	}
-	/* handle missing slices */
-	if (1 & AV_EF_EXPLODE) {
-		int end_ok = 1;
-
-		// FIXME + 100 hack
-		for (i = s->mb_num - 2; i >= s->mb_width + 100; i--) {
-			const int mb_xy = s->mb_index2xy[i];
-			int error1 = s->error_status_table[mb_xy];
-			int error2 = s->error_status_table[s->mb_index2xy[i + 1]];
-
-			if (error1 & VP_START)
-				end_ok = 1;
-
-			if (error2 == (VP_START | ER_MB_ERROR | ER_MB_END) && error1 != (VP_START | ER_MB_ERROR | ER_MB_END) &&
-				((error1 & ER_AC_END) || (error1 & ER_DC_END) || (error1 & ER_MV_END))) {
-				// end & uninit
-				end_ok = 0;
-			}
-
-			if (!end_ok)
-				s->error_status_table[mb_xy] |= ER_MB_ERROR;
-		}
-	}
 
 	/* backward mark errors */
 	distance = 9999999;
@@ -13979,7 +13827,7 @@ void ff_er_frame_end(ERContext *s, int *decode_error_flags) {
 	is_intra_likely = is_intra_more_likely(s);
 
 	/* set unknown mb-type to most likely */
-	guessed_mb_type = is_intra_likely ? MB_TYPE_INTRA4x4 : (MB_TYPE_16x16 | (false ? MB_TYPE_L0 : MB_TYPE_FORWARD_MV));
+	guessed_mb_type = is_intra_likely ? MB_TYPE_INTRA4x4 : (MB_TYPE_16x16 | MB_TYPE_FORWARD_MV);
 	for (i = 0; i < s->mb_num; i++) {
 		const int mb_xy = s->mb_index2xy[i];
 		error = s->error_status_table[mb_xy];
@@ -14200,7 +14048,6 @@ void ff_er_frame_end(ERContext *s, int *decode_error_flags) {
 #undef MV_LISTED
 #undef MV_UNCHANGED
 
-enum { FMT_H263 = 2, FMT_H261 = 1, FMT_MPEG1 = 0, CONFIG_SMALL = 0 };
 static inline int ff_h263_round_chroma(int x) {
 	// FIXME static or not?
 	static const uint8 h263_chroma_roundtab[16] = {
@@ -14240,10 +14087,10 @@ static inline int hpel_motion(PictureState *s, uint8 *dest, uint8 *src, int src_
 
 static inline void mpeg_motion_internal(PictureState *s, uint8 *dest_y, uint8 *dest_cb, uint8 *dest_cr, int field_based,
 										int bottom_field, int field_select, uint8 *const *ref_picture,
-										const PixelOp (*pix_op)[4], int motion_x, int motion_y, int h, int is_mpeg12,
+										const PixelOp (*pix_op)[4], int motion_x, int motion_y, int h,
 										int is_16x8, int mb_y) {
 	const uint8 *ptr_y, *ptr_cb, *ptr_cr;
-	int dxy, uvdxy, mx, my, src_x, src_y, uvsrc_x, uvsrc_y, v_edge_pos, block_y_half;
+	int dxy, uvdxy, src_x, src_y, uvsrc_x, uvsrc_y, v_edge_pos, block_y_half;
 	ptrdiff_t uvlinesize, linesize;
 
 	v_edge_pos = s->v_edge_pos >> field_based;
@@ -14255,49 +14102,9 @@ static inline void mpeg_motion_internal(PictureState *s, uint8 *dest_y, uint8 *d
 	src_x = s->mb_x * 16 + (motion_x >> 1);
 	src_y = (mb_y << (4 - block_y_half)) + (motion_y >> 1);
 
-	if (!is_mpeg12) {
-		if ((0) && field_based) {
-			mx = (motion_x >> 1) | (motion_x & 1);
-			my = motion_y >> 1;
-			uvdxy = ((my & 1) << 1) | (mx & 1);
-			uvsrc_x = s->mb_x * 8 + (mx >> 1);
-			uvsrc_y = (mb_y << (3 - block_y_half)) + (my >> 1);
-		} else {
-			uvdxy = dxy | (motion_y & 2) | ((motion_x & 2) >> 1);
-			uvsrc_x = src_x >> 1;
-			uvsrc_y = src_y >> 1;
-		}
-		// Even chroma mv's are full pel in H261
-	} else if ((!CONFIG_SMALL && !is_mpeg12) || (CONFIG_SMALL && FMT_H263 == FMT_H261)) {
-		assert(FMT_H263 == FMT_H261);
-		mx = motion_x / 4;
-		my = motion_y / 4;
-		uvdxy = 0;
-		uvsrc_x = s->mb_x * 8 + mx;
-		uvsrc_y = mb_y * 8 + my;
-	} else {
-		assert(FMT_H263 == FMT_MPEG1);
-		if (1) {
-			mx = motion_x / 2;
-			my = motion_y / 2;
-			uvdxy = ((my & 1) << 1) | (mx & 1);
-			uvsrc_x = s->mb_x * 8 + (mx >> 1);
-			uvsrc_y = (mb_y << (3 - block_y_half)) + (my >> 1);
-		} else {
-			if (s->chroma_x_shift) {
-				// Chroma422
-				mx = motion_x / 2;
-				uvdxy = ((motion_y & 1) << 1) | (mx & 1);
-				uvsrc_x = s->mb_x * 8 + (mx >> 1);
-				uvsrc_y = src_y;
-			} else {
-				// Chroma444
-				uvdxy = dxy;
-				uvsrc_x = src_x;
-				uvsrc_y = src_y;
-			}
-		}
-	}
+	uvdxy = dxy | (motion_y & 2) | ((motion_x & 2) >> 1);
+	uvsrc_x = src_x >> 1;
+	uvsrc_y = src_y >> 1;
 
 	ptr_y = ref_picture[0] + src_y * linesize + src_x;
 	ptr_cb = ref_picture[1] + uvsrc_y * uvlinesize + uvsrc_x;
@@ -14305,10 +14112,6 @@ static inline void mpeg_motion_internal(PictureState *s, uint8 *dest_y, uint8 *d
 
 	if ((unsigned)src_x >= (unsigned)MAX(s->h_edge_pos - (motion_x & 1) - 15, 0) ||
 		(unsigned)src_y >= (unsigned)MAX(v_edge_pos - (motion_y & 1) - h + 1, 0)) {
-		if (is_mpeg12 || (CONFIG_SMALL && (false || false))) {
-
-			return;
-		}
 		src_y = (unsigned)src_y << field_based;
 		s->vdsp.emulated_edge_mc(s->sc.edge_emu_buffer, ptr_y, s->linesize, s->linesize, 17, 17 + field_based, src_x,
 								 src_y, s->h_edge_pos, s->v_edge_pos);
@@ -14316,8 +14119,6 @@ static inline void mpeg_motion_internal(PictureState *s, uint8 *dest_y, uint8 *d
 		if (!CONFIG_GRAY || !(s->avctx->flags & AV_CODEC_FLAG_GRAY)) {
 			uint8 *ubuf = s->sc.edge_emu_buffer + 18 * s->linesize;
 			uint8 *vbuf = ubuf + 10 * s->uvlinesize;
-			if (0)
-				vbuf -= s->uvlinesize;
 			uvsrc_y = (unsigned)uvsrc_y << field_based;
 			s->vdsp.emulated_edge_mc(ubuf, ptr_cb, s->uvlinesize, s->uvlinesize, 9, 9 + field_based, uvsrc_x, uvsrc_y,
 									 s->h_edge_pos >> 1, s->v_edge_pos >> 1);
@@ -14370,13 +14171,6 @@ static inline void qpel_motion(PictureState *s, uint8 *dest_y, uint8 *dest_cb, u
 	if (field_based) {
 		mx = motion_x / 2;
 		my = motion_y >> 1;
-	} else if (0) {
-		static const int rtab[8] = {0, 0, 1, 1, 0, 0, 0, 1};
-		mx = (motion_x >> 1) + rtab[motion_x & 7];
-		my = (motion_y >> 1) + rtab[motion_y & 7];
-	} else if (0) {
-		mx = (motion_x >> 1) | (motion_x & 1);
-		my = (motion_y >> 1) | (motion_y & 1);
 	} else {
 		mx = motion_x / 2;
 		my = motion_y / 2;
@@ -14403,8 +14197,6 @@ static inline void qpel_motion(PictureState *s, uint8 *dest_y, uint8 *dest_cb, u
 		if (!CONFIG_GRAY || !(s->avctx->flags & AV_CODEC_FLAG_GRAY)) {
 			uint8 *ubuf = s->sc.edge_emu_buffer + 18 * s->linesize;
 			uint8 *vbuf = ubuf + 10 * s->uvlinesize;
-			if (0)
-				vbuf -= s->uvlinesize;
 			s->vdsp.emulated_edge_mc(ubuf, ptr_cb, s->uvlinesize, s->uvlinesize, 9, 9 + field_based, uvsrc_x,
 									 uvsrc_y * (1 << field_based), s->h_edge_pos >> 1, s->v_edge_pos >> 1);
 			s->vdsp.emulated_edge_mc(vbuf, ptr_cr, s->uvlinesize, s->uvlinesize, 9, 9 + field_based, uvsrc_x,
@@ -14565,7 +14357,7 @@ static void concealMB(void *opaque, int ref, int dir, int type, int (*mv)[2][4][
 						16);
 		else
 			mpeg_motion_internal(s, dest[0], dest[1], dest[2], 0, 0, 0, p.data, pixels, s->mv[d][0][0], s->mv[d][0][1],
-								 16, 0, 0, y);
+								 16, 0, y);
 		pixels = s->hdsp.avg_pixels_tab;
 		qpel = s->qdsp.avg_qpel_pixels_tab;
 	}
@@ -14833,7 +14625,7 @@ void Decoder::initializeTransforms() {
 	VC1Context *v = _v;
 	PictureState *s = &v->s;
 	v->x8 = new IntraX8Context();
-	initX8(v->x8, v->blocks[0], s->mb_width, s->mb_height);
+	initX8(v->x8, v->blk, s->mb_width, s->mb_height);
 	for (int i = 0; i < 64; ++i) {
 		for (int j = 0; j < 4; ++j) {
 			int x = ff_wmv1_scantable[j][i];
