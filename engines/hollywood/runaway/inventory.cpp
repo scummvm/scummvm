@@ -593,6 +593,15 @@ Common::U32String RunawayInventory::combinationCaption(byte item, byte target) c
 	return RunawayStrings::formatActionCaption(_strings.combinationCaption(_chapter, item, target), name(item), name(target));
 }
 
+byte RunawayInventory::speechPose(uint16 cue, byte variation) {
+	// Retail 0x417af0, 0x417bd0 and 0x41da80 select twelve-frame portrait blocks.
+	if (cue == 17)
+		return 1;
+	if ((cue == 20 && variation == 0) || (cue == 256 && variation == 1))
+		return 2;
+	return 0;
+}
+
 RunawayInventory::Reply RunawayInventory::randomReply(Common::RandomSource &random, bool museumDemo) {
 	// Native 0x410000 selects weighted refusals for unsuitable combinations.
 	// The museum demo has no text for cues 25 and 26.

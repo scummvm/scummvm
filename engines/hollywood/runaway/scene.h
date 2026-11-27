@@ -339,14 +339,13 @@ protected:
 	uint16 _room = 0, _pendingAction = 0;
 	byte _facing = 3, _pendingHotspot = 0, _pendingItem = 0;
 	byte _arrivalFacing = 0xff;
-	uint32 _now = 0, _lastUpdate = 0, _walkElapsed = 0;
+	uint32 _now = 0, _lastUpdate = 0;
 	bool _upperFloor = true, _antialias = true, _fastScrolling = true;
 	bool _inventoryOpen = false;
 	ObjectState _books = kUnexamined, _recorder = kUnexamined;
 	bool _moneyIdentified = false, _safeOpen = false;
 	bool _varnishTaken = false, _talcTaken = false, _coffeeTaken = false;
 	byte _keyCount = 0;
-	uint32 _lastFootstep = 0;
 	RunawaySaveState::Hospital _hospital;
 	RunawaySaveState::Museum _museum;
 	RunawaySaveState::Desert _desert;

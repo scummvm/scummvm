@@ -82,6 +82,7 @@ public:
 	Common::U32String name(byte item) const;
 	Common::U32String combinationCaption(byte item, byte target) const;
 	static Reply randomReply(Common::RandomSource &random, bool museumDemo = false);
+	static byte speechPose(uint16 cue, byte variation);
 	uint icon(byte item) const;
 	uint cursor(byte item) const;
 	Reply examine(byte item, const RunawaySaveState &state) const;

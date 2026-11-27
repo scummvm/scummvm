@@ -266,7 +266,7 @@ void Scene4060::updateActor(uint elapsed, int scrollDirection, bool inventoryOpe
 			((_roomAction == 482 || _roomAction == 487) && actorWalkZone() == 9))) {
 		// Keep the stair-climbing direction on the narrow reserved walk zones.
 		_facing = _roomAction == 479 ? (actorWalkZone() == 8 ? 7 : 6) : 3;
-		_actor.setFrame(_facing, 1 + (_walkElapsed / RunawayWalkPath::kFrameDuration) % 12);
+		_actor.setFrame(_facing, _walkPath.frame());
 	}
 	if (_roomAction == 480 || (_roomAction >= 483 && _roomAction <= 486)) {
 		_camera = camera;

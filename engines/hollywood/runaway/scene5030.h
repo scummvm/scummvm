@@ -71,6 +71,7 @@ public:
 	bool busy() const override { return _action != kNone || _transition.scene; }
 	bool speaking() const override { return _action == kPeekConversation ? _interrogation.speaking() : _speechRow != 0; }
 	byte speechFrame() const override { return _speech.frame(_now); }
+	byte inventorySpeechPose() const override { return _inventorySpeechPose; }
 	void skipSpeech() override;
 	bool playingVideo() const override { return _action == kIntroVideo || _action == kCleanWindowVideo; }
 	bool inventoryPresentation() const override { return _action == kIntroInventory; }
@@ -101,7 +102,8 @@ private:
 	enum HatchState { kHidden, kLocked, kUnlocked, kOpen };
 	bool loadRoomGraphics();
 	void walkTo(Common::Point target, bool scripted = false);
-	void arrive(bool faceHotspot = true);
+	void startWalk(byte facing);
+	void arrive();
 	void say(uint16 row);
 	void sayCue(uint16 cue, byte variation);
 	void pickUp(byte hotspot, byte item, uint patch);
@@ -160,10 +162,10 @@ private:
 	bool _examined[20] = {};
 	bool _globalSpeech = false;
 	uint32 _now = 0, _lastUpdate = 0, _actionStarted = 0;
-	uint32 _walkElapsed = 0, _lastFootstep = 0;
 	uint _step = 0;
 	uint16 _speechRow = 0, _speechEnd = 0;
 	uint16 _speechSample = 0;
+	byte _inventorySpeechPose = 0;
 	RunawayInventory::Reply _nextInventoryReply = RunawayInventory::Reply(0);
 	Common::U32String _committedCaption;
 };

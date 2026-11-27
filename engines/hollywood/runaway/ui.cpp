@@ -567,7 +567,7 @@ void RunawayUI::drawInventory(Graphics::ManagedSurface &screen) {
 		_idlePortrait.draw(screen, _museum ? kMuseumIdleFrames[_idleStep] : _idleStep, 0, kRunawayViewportTop);
 	} else {
 		const bool blinking = (int32)(_blinkUntil - _now) > 0;
-		uint frame = _speaking ? _mouth : blinking ? 6 : 0;
+		uint frame = _speaking ? _inventorySpeechPose * 12 + _mouth : blinking ? 6 : 0;
 		if (_museum) {
 			frame = _speaking ? 3 + _inventorySpeechPose * 5 + _mouth : 3;
 			if (!_speaking && blinking) {

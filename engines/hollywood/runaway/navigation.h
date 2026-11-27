@@ -51,22 +51,33 @@ private:
 class RunawayWalkPath {
 public:
 	static const uint kFrameDuration = 60;
-	explicit RunawayWalkPath(Common::Point position = Common::Point()) : _x(position.x), _y(position.y) {}
+	explicit RunawayWalkPath(Common::Point position = Common::Point()) : _position(position) {}
 	void reset(Common::Point position);
-	void clear() { _points.clear(); _index = 0; _segmentFacing = 0xff; }
+	void clear();
 	void findPath(const RunawayWalkMap &map, Common::Point target);
 	void setTarget(Common::Point target);
-	// Scale is the actor's perspective height divided by 455; elapsed is in ms.
-	// Returns whether the fractional position changed, for footstep timing.
-	bool advance(uint elapsed, float scale, Common::Point &position, byte &facing, bool museum = false);
-	bool active() const { return _index < _points.size(); }
+	const Common::Array<Common::Point> &points() const { return _points; }
+	// Perspective scales at the starting position and each waypoint.
+	void start(byte facing, byte arrivalFacing, const Common::Array<float> &scales, bool museum = false);
+	// Advance the original 60 ms cels and return the number of foot contacts.
+	uint advance(uint elapsed, Common::Point &position, byte &facing);
+	bool active() const { return _index < _steps.size(); }
+	byte frame() const { return _frame; }
 
 private:
-	Common::Point position() const;
+	struct Step {
+		Common::Point position;
+		byte facing, frame;
+		Step(Common::Point p, byte direction, byte cel) : position(p), facing(direction), frame(cel) {}
+	};
+	void appendFrame(Step &step, byte frame);
+	void appendTurn(Step &step, byte facing);
+	Common::Point _position;
 	Common::Array<Common::Point> _points;
-	uint _index = 0;
-	byte _segmentFacing = 0xff;
-	float _x, _y;
+	Common::Array<Step> _steps;
+	uint _index = 0, _elapsed = 0;
+	byte _frame = 0;
+	bool _footContact = false;
 };
 
 } // End of namespace Hollywood

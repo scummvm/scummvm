@@ -680,12 +680,7 @@ void Scene5100::applyCustomHotspotState() {
 
 void Scene5100::walkHangar(Common::Point target, byte facing) {
 	// Scripted entrances cross the floor that is blocked while the guard watches.
-	_walkPath.findPath(RunawayWalkMap(_background.w, _background.h, _mask, _originalMaps, &_walkRoutes), target);
-	_arrivalFacing = facing;
-	_walkElapsed = _lastFootstep = 0;
-	if (!_walkPath.active()) {
-		arrive();
-	}
+	walkTo(target, facing, false, true);
 }
 
 uint Scene5100::studFrame() const {

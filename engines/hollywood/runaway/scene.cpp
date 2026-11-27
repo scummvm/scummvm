@@ -298,7 +298,6 @@ bool RunawayRoomScene::enterRoom(uint16 number, Common::Point position, byte fac
 	_facing = facing;
 	_idleHead.reset(_now);
 	_idleBody.reset(_now);
-	_walkElapsed = 0;
 	_pendingHotspot = _pendingItem = 0;
 	_pendingAction = 0;
 	_lines.clear();
@@ -425,7 +424,16 @@ void RunawayRoomScene::walkTo(Common::Point target, byte facing, bool scripted, 
 		findWalkPath(target);
 	}
 	_arrivalFacing = facing;
-	_walkElapsed = _lastFootstep = 0;
+	Common::Array<float> scales;
+	const Common::Point position = _position;
+	scales.push_back(actorWalkScale());
+	// Sample each waypoint with the room's perspective calculation.
+	for (uint i = 0; i < _walkPath.points().size(); ++i) {
+		_position = _walkPath.points()[i];
+		scales.push_back(actorWalkScale());
+	}
+	_position = position;
+	_walkPath.start(_facing, facing, scales, _game == kRunawayMuseumDemo);
 	if (!_walkPath.active())
 		arrive();
 }
@@ -435,10 +443,7 @@ void RunawayRoomScene::findWalkPath(Common::Point target) {
 }
 
 void RunawayRoomScene::arrive() {
-	if (_arrivalFacing != 0xff) {
-		_facing = _arrivalFacing;
-		_arrivalFacing = 0xff;
-	}
+	_arrivalFacing = 0xff;
 	const byte id = _pendingHotspot;
 	_pendingHotspot = 0;
 	if (id) {
@@ -484,9 +489,16 @@ void RunawayRoomScene::click(Common::Point mouse, RunawayVerb verb, byte item) {
 			const byte facing = approach > 1 ? 0xff : customizeSceneActionFacing(id, spot->facing);
 			walkTo(customizeSceneActionPosition(id, item, position), facing);
 		} else {
-			_arrivalFacing = approach < 0 ? 0xff : runawayFacingTo(_position, sceneActionLookPosition(id));
-			_walkPath.clear();
-			arrive();
+			const byte facing = approach < 0 ? 0xff : runawayFacingTo(_position, sceneActionLookPosition(id));
+			if (shouldUpdateActor() && shouldDrawActor()) {
+				walkTo(_position, facing, true);
+			} else {
+				// Close-ups and overviews have no walking actor.
+				_walkPath.clear();
+				if (facing != 0xff)
+					_facing = facing;
+				arrive();
+			}
 		}
 	} else {
 		if (shouldPlayGameplayClickPath())
@@ -511,6 +523,10 @@ void RunawayRoomScene::say(uint16 cue, byte variation, bool global, byte speaker
 	say(_text, speech, global, speaker, color);
 	if (_game == kRunawayMuseumDemo && global)
 		setMuseumInventorySpeechPoses(cue, variation, firstLine);
+	else if (global) {
+		for (uint i = firstLine; i < _lines.size(); ++i)
+			_lines[i].inventoryPose = RunawayInventory::speechPose(cue, variation);
+	}
 }
 
 void RunawayRoomScene::say(const SceneTextStore &text, const SceneSpeechCue &speech, bool global, byte speaker, byte color) {
@@ -850,16 +866,15 @@ void RunawayRoomScene::updateActor(uint elapsed, int scrollDirection, bool inven
 			return;
 	}
 	if (_walkPath.active() && !speaking()) {
-		_walkPath.advance(elapsed, actorWalkScale(), _position, _facing, _game == kRunawayMuseumDemo);
-		_walkElapsed += elapsed;
-		if (_game != kRunawayMuseumDemo && (!_lastFootstep || _walkElapsed - _lastFootstep >= 360)) {
+		const uint footsteps = _walkPath.advance(elapsed, _position, _facing);
+		if (_game != kRunawayMuseumDemo && footsteps) {
 			const bool inside = _position.x >= 0 && _position.x < _background.w && _position.y >= 0 && _position.y < _background.h;
 			const byte surface = inside ? _maps[1280 + _mask[_position.y * _background.w + _position.x]] : 0;
 			const byte volume = CLIP<int>((int)(actorHeight() * 100 / 455), 0, 100);
 			if (surface >= 1 && surface <= 7) {
-				_audio.playFootstep(surface, _random.getRandomBit(), volume, _position.x);
+				for (uint i = 0; i < footsteps; ++i)
+					_audio.playFootstep(surface, _random.getRandomBit(), volume, _position.x);
 			}
-			_lastFootstep = _walkElapsed;
 		}
 		if (!_walkPath.active()) {
 			arrive();
@@ -875,7 +890,7 @@ void RunawayRoomScene::updateActor(uint elapsed, int scrollDirection, bool inven
 	if (_actionUsesActor && _roomAction && !_actionFrames.empty() && !walking && !speaking()) {
 		_actor.setActionFrame(_actionFrames[_actionStep]);
 	} else if (!bodyIdle) {
-		_actor.setFrame(_facing, walking ? 1 + (_walkElapsed / RunawayWalkPath::kFrameDuration) % 12 : 0, headFrame);
+		_actor.setFrame(_facing, walking ? _walkPath.frame() : 0, headFrame);
 	}
 	if (scrollDirection) {
 		setCameraX(_camera.x + scrollDirection * MAX<int>(1, elapsed / (_fastScrolling ? 2 : 4)));

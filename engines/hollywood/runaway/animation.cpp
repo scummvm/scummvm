@@ -104,34 +104,34 @@ void RunawayLipSync::start(const Common::U32String &text, uint32 now, uint32 dur
 	if (sample && duration && loadRecording(sample)) {
 		// Retail 0x413650 advances recorded mouth shapes every five 10 ms ticks.
 		_frameDuration = 50;
-		return;
-	}
-	_frames.resize(text.size());
-	if (_frames.empty())
-		return;
-	// The native timer advances in 10 ms ticks, rounding up at a fractional
-	// tick of 0.3. Without a voice sample it uses 80 ms per character.
-	_frameDuration = duration ? MAX<uint>(1, (duration / _frames.size() + 7) / 10) * 10 : 80;
-	if (randomMouth) {
-		// Museum demo 0x42a950 picks a different mouth each tick and blinks for one tick.
-		byte previous = 0;
-		for (uint i = 0; i < _frames.size(); ++i) {
-			const bool blink = previous < 6 && !random.getRandomNumber(14);
-			byte mouth;
-			do {
-				mouth = random.getRandomNumber(5);
-			} while (mouth == previous % 6);
-			_frames[i] = previous = mouth + (blink ? 6 : 0);
+	} else {
+		_frames.resize(text.size());
+		if (_frames.empty())
+			return;
+		// The native timer advances in 10 ms ticks, rounding up at a fractional
+		// tick of 0.3. Without a voice sample it uses 80 ms per character.
+		_frameDuration = duration ? MAX<uint>(1, (duration / _frames.size() + 7) / 10) * 10 : 80;
+		if (randomMouth) {
+			// Museum demo 0x42a950 picks a different mouth each tick and blinks for one tick.
+			byte previous = 0;
+			for (uint i = 0; i < _frames.size(); ++i) {
+				const bool blink = previous < 6 && !random.getRandomNumber(14);
+				byte mouth;
+				do {
+					mouth = random.getRandomNumber(5);
+				} while (mouth == previous % 6);
+				_frames[i] = previous = mouth + (blink ? 6 : 0);
+			}
+			return;
 		}
-		return;
+		for (uint i = 0; i < _frames.size(); ++i) {
+			const uint32 c = speechLetter(text[i]);
+			const uint32 next = i + 1 < text.size() ? speechLetter(text[i + 1]) : 0;
+			_frames[i] = speechMouth(c, next, i ? _frames[i - 1] : 0);
+		}
 	}
-	for (uint i = 0; i < _frames.size(); ++i) {
-		const uint32 c = speechLetter(text[i]);
-		const uint32 next = i + 1 < text.size() ? speechLetter(text[i + 1]) : 0;
-		_frames[i] = speechMouth(c, next, i ? _frames[i - 1] : 0);
-	}
-	// Native 0x412680 occasionally selects the closed-eye set (6..11) for
-	// four consecutive characters, then returns to the open-eye set (0..5).
+	// Retail 0x416d00/0x416d90 overlay four-frame blinks on both recorded
+	// and text-derived mouth shapes.
 	bool blink = false;
 	for (uint i = 0; i < _frames.size(); i += 4) {
 		blink = !blink && random.getRandomNumber(4) == 0;

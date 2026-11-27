@@ -59,7 +59,8 @@ void Scene6370::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport
 		if (_sushiPose == 79) {
 			frame += MIN<uint>(8, (_now - _sushiTick) / 80);
 		} else if (_sushiPose == 63 && speaker()) {
-			frame += speechFrame();
+			// Native 0x4fdee0 repeats the six mouths for the closed-eye set.
+			frame += speechFrame() % 6;
 		}
 		_sushiAnimation.draw(viewport, frame, _camera.x, -_camera.y);
 	}

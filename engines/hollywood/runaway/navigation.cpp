@@ -52,10 +52,10 @@ bool RunawayWalkMap::walkable(int x, int y) const {
 
 bool RunawayWalkMap::clearPath(Common::Point start, Common::Point end) const {
 	const int count = MAX(1, MAX(ABS(end.x - start.x), ABS(end.y - start.y)));
-	// Match the rounded actor position in RunawayWalkPath.
+	// Match the integer actor positions in RunawayWalkPath.
 	for (int i = 0; i <= count; ++i) {
-		const int x = (start.x * count + (end.x - start.x) * i + count / 2) / count;
-		const int y = (start.y * count + (end.y - start.y) * i + count / 2) / count;
+		const int x = start.x + (end.x - start.x) * i / count;
+		const int y = start.y + (end.y - start.y) * i / count;
 		if (!walkable(x, y))
 			return false;
 	}
@@ -215,66 +215,151 @@ void RunawayWalkMap::findPath(Common::Point position, Common::Point target, Comm
 
 void RunawayWalkPath::reset(Common::Point position) {
 	clear();
-	_x = position.x;
-	_y = position.y;
+	_position = position;
+}
+
+void RunawayWalkPath::clear() {
+	_points.clear();
+	_steps.clear();
+	_index = _elapsed = _frame = 0;
+	_footContact = false;
 }
 
 void RunawayWalkPath::findPath(const RunawayWalkMap &map, Common::Point target) {
-	clear();
-	map.findPath(position(), target, _points);
+	map.findPath(_position, target, _points);
+	if (_points.empty())
+		_points.push_back(_position);
 }
 
 void RunawayWalkPath::setTarget(Common::Point target) {
-	clear();
+	_points.clear();
 	_points.push_back(target);
 }
 
-Common::Point RunawayWalkPath::position() const {
-	return Common::Point((int)roundf(_x), (int)roundf(_y));
+void RunawayWalkPath::appendFrame(Step &step, byte frame) {
+	step.frame = frame;
+	_steps.push_back(step);
 }
 
-bool RunawayWalkPath::advance(uint elapsed, float scale, Common::Point &actorPosition, byte &facing, bool museum) {
+void RunawayWalkPath::appendTurn(Step &step, byte facing) {
+	// Native 0x5a53f8 takes the shortest turn, clockwise for a half turn.
+	const int direction = (facing + 8 - step.facing) % 8 <= 4 ? 1 : -1;
+	while (step.facing != facing) {
+		step.facing = (step.facing + 8 + direction) % 8;
+		_steps.push_back(step);
+	}
+}
+
+void RunawayWalkPath::start(byte facing, byte arrivalFacing, const Common::Array<float> &scales, bool museum) {
+	assert(facing < 8 && (arrivalFacing < 8 || arrivalFacing == 0xff));
+	assert(scales.size() == _points.size() + 1);
+	_steps.clear();
+	_index = _elapsed = 0;
+	Step step(_position, facing, _frame);
 	// Native strides per animation cel, clockwise from north (full game 0x40eac0).
 	static const byte strides[] = {8, 11, 19, 11, 8, 11, 19, 11};
-	float frames = elapsed * scale / kFrameDuration;
-	const float previousX = _x, previousY = _y;
-	while (frames > 0 && active()) {
-		const Common::Point target = _points[_index];
-		const float dx = target.x - _x, dy = target.y - _y;
-		if (dx == 0 && dy == 0) {
-			++_index;
-			_segmentFacing = 0xff;
-			continue;
+	for (uint i = 0; i < _points.size(); ++i) {
+		const Common::Point from = step.position, target = _points[i];
+		const bool last = i + 1 == _points.size();
+		const float dx = target.x - from.x, dy = target.y - from.y;
+		if (from == target) {
+			if (!last)
+				continue;
+			if (!step.frame) {
+				if (arrivalFacing != 0xff && arrivalFacing != step.facing) {
+					appendFrame(step, 13);
+					appendFrame(step, 14);
+					appendTurn(step, arrivalFacing);
+					appendFrame(step, 0);
+				}
+				continue;
+			}
 		}
 		// Keep the native 10/50-degree walking sectors fixed for each segment.
-		if (_segmentFacing == 0xff) {
-			if (ABS(dy) < ABS(dx) * 0.176327f)
-				_segmentFacing = dx > 0 ? 2 : 6;
-			else if (ABS(dy) > ABS(dx) * 1.191754f)
-				_segmentFacing = dy > 0 ? 4 : 0;
-			else
-				_segmentFacing = dy > 0 ? (dx > 0 ? 3 : 5) : (dx > 0 ? 1 : 7);
+		byte direction = step.facing;
+		if (ABS(dy) < ABS(dx) * 0.176327f)
+			direction = dx > 0 ? 2 : 6;
+		else if (ABS(dy) > ABS(dx) * 1.191754f)
+			direction = dy > 0 ? 4 : 0;
+		else if (dx || dy)
+			direction = dy > 0 ? (dx > 0 ? 3 : 5) : (dx > 0 ? 1 : 7);
+
+		// Native 0x42f4e0 also joins a new path from an interrupted transition.
+		if (!step.frame) {
+			appendFrame(step, 13);
+			appendFrame(step, 14);
+			appendFrame(step, 11);
+		} else if (step.frame == 13 || step.frame == 14) {
+			if (step.frame == 13)
+				appendFrame(step, 14);
+			appendFrame(step, 11);
+		} else if (step.frame == 15 || step.frame == 16) {
+			if (step.frame == 16)
+				appendFrame(step, 15);
+			appendFrame(step, 3);
+		} else if (step.frame == 17 || step.frame == 18) {
+			if (step.frame == 18)
+				appendFrame(step, 17);
+			appendFrame(step, 9);
 		}
-		facing = _segmentFacing;
-		// Native 0x42f3d0 measures cardinal walks along their main axis.
-		// The museum demo (0x433930) also measures diagonal walks along X.
-		const float distance = facing == 0 || facing == 4 ? ABS(dy) :
-			museum || facing == 2 || facing == 6 ? ABS(dx) : sqrtf(dx * dx + dy * dy);
-		const float travel = frames * strides[facing];
-		if (distance <= travel) {
-			_x = target.x;
-			_y = target.y;
-			frames -= distance / strides[facing];
-			++_index;
-			_segmentFacing = 0xff;
-		} else {
-			_x += dx * travel / distance;
-			_y += dy * travel / distance;
-			frames = 0;
+		appendTurn(step, direction);
+		// Native 0x42f3d0 uses the mean perspective height at the endpoints.
+		// The museum demo (0x433930) measures diagonal walks along X.
+		const float distance = direction == 0 || direction == 4 ? ABS(dy) :
+			museum || direction == 2 || direction == 6 ? ABS(dx) : sqrtf(dx * dx + dy * dy);
+		const float scale = MAX<float>(1.0f / 455, (scales[i] + scales[i + 1]) / 2);
+		const float count = distance / (strides[direction] * scale);
+		int frames = (int)count;
+		if (count - frames > 0.5f)
+			++frames;
+		frames = MAX(1, frames);
+		if (last) {
+			// Finish on gait cel 3 or 9, which joins the two stopping poses.
+			const byte endFrame = 1 + (step.frame + frames - 1) % 12;
+			int adjustment = 3 - endFrame % 6;
+			if (frames + adjustment <= 0)
+				adjustment += 6;
+			frames += adjustment;
 		}
+		for (int j = 1; j <= frames; ++j) {
+			step.position = Common::Point(from.x + (int)(dx * j / frames), from.y + (int)(dy * j / frames));
+			appendFrame(step, 1 + step.frame % 12);
+		}
+		if (!last)
+			continue;
+		if (arrivalFacing != 0xff)
+			appendTurn(step, arrivalFacing);
+		const byte stopFrame = step.frame == 3 ? 15 : 17;
+		appendFrame(step, stopFrame);
+		appendFrame(step, stopFrame + 1);
+		if (step.facing == 2 || step.facing == 6)
+			step.facing = step.facing == 2 ? 3 : 5;
+		appendFrame(step, 0);
 	}
-	actorPosition = position();
-	return _x != previousX || _y != previousY;
+	if (_steps.empty())
+		_frame = 0;
+}
+
+uint RunawayWalkPath::advance(uint elapsed, Common::Point &position, byte &facing) {
+	_elapsed += elapsed;
+	uint footsteps = 0;
+	while (_elapsed >= kFrameDuration && active()) {
+		_elapsed -= kFrameDuration;
+		const Step &step = _steps[_index++];
+		if (step.position != _position || step.facing != facing || step.frame != _frame) {
+			// Native 0x431950 sounds cels 6, 12 and 0, suppressing adjacent contacts.
+			if (!_footContact && (step.frame == 6 || step.frame == 12 || step.frame == 0)) {
+				++footsteps;
+				_footContact = true;
+			} else {
+				_footContact = false;
+			}
+		}
+		position = _position = step.position;
+		facing = step.facing;
+		_frame = step.frame;
+	}
+	return footsteps;
 }
 
 } // End of namespace Hollywood
