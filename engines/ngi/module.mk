@@ -9,7 +9,7 @@ MODULE_OBJS = \
 	font.o \
 	gameloader.o \
 	gfx.o \
-	gui.o \
+	guimanager.o \
 	init.o \
 	input.o \
 	interaction.o \

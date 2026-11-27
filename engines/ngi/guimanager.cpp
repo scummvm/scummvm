@@ -19,7 +19,7 @@
  *
  */
 
-#include "ngi/gui.h"
+#include "ngi/guimanager.h"
 #include "ngi/ngi.h"
 #include "ngi/scene.h"
 

@@ -25,7 +25,7 @@
 #include "common/ptr.h"
 #include "ngi/objects.h"
 #include "ngi/gfx.h"
-#include "ngi/gui.h"
+#include "ngi/guimanager.h"
 #include "ngi/interaction.h"
 
 namespace NGI {

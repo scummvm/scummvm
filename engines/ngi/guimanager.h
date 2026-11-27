@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef NGI_GUI_H
-#define NGI_GUI_H
+#ifndef NGI_GUIMANAGER_H
+#define NGI_GUIMANAGER_H
 
 #include "common/array.h"
 #include "common/events.h"
