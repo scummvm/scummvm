@@ -107,6 +107,7 @@ bool VideoPlayer::initialize(const Common::String &filename, const Common::Strin
 
 	_aviDecoder = new Video::AVIDecoder();
 	_aviDecoder->loadStream(file);
+	_aviDecoder->setOutputPixelFormat(_game->_renderer->getPixelFormat(false));
 
 	_subtitler = new VideoSubtitler(_game);
 	_foundSubtitles = _subtitler->loadSubtitles(_filename, subtitleFile);
