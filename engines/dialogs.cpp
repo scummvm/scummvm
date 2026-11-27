@@ -317,6 +317,7 @@ ConfigDialog::ConfigDialog() :
 	}
 
 	if (_engineOptions) {
+		_engineOptions->setHostContext(OptionsContainerWidget::kInGameOptions);
 		_engineOptions->setParentDialog(this);
 	} else {
 		tab->removeTab(tabId);
@@ -391,6 +392,7 @@ ConfigDialog::ConfigDialog() :
 	}
 
 	// Activate the first tab
+	_tabWidget = tab;
 	tab->setActiveTab(0);
 
 	//
@@ -419,6 +421,28 @@ void ConfigDialog::apply() {
 	}
 
 	OptionsDialog::apply();
+}
+
+void ConfigDialog::handleKeyDown(Common::KeyState state) {
+	if (_engineOptions && (state.keycode == Common::KEYCODE_ESCAPE ||
+			_tabWidget->containsWidget(_engineOptions)) &&
+			_engineOptions->handleOptionsKeyDown(state))
+		return;
+	OptionsDialog::handleKeyDown(state);
+}
+
+bool ConfigDialog::validate() {
+	if (_engineOptions && !_engineOptions->validate()) {
+		if (!_tabWidget->containsWidget(_engineOptions)) {
+			Widget *invalid = getFocusWidget();
+			_tabWidget->setActiveTab(0);
+			if (invalid && _tabWidget->containsWidget(invalid))
+				setFocusWidget(invalid);
+		}
+		return false;
+	}
+
+	return OptionsDialog::validate();
 }
 
 ExtraGuiOptionsWidget::ExtraGuiOptionsWidget(GuiObject *containerBoss, const Common::String &name, const Common::String &domain, const ExtraGuiOptions &options) :

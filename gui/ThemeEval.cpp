@@ -40,6 +40,7 @@ void ThemeEval::buildBuiltinVars() {
 
 void ThemeEval::reset() {
 	_vars.clear();
+	_widgetMetricsValid = false;
 	_curDialog.clear();
 	_curLayout.clear();
 
@@ -47,6 +48,18 @@ void ThemeEval::reset() {
 		delete i->_value;
 
 	_layouts.clear();
+}
+
+const ThemeEval::WidgetMetrics &ThemeEval::getWidgetMetrics() {
+	if (!_widgetMetricsValid) {
+		_widgetMetrics.editTextPaddingLeft = getVar("Globals.EditTextWidget.Padding.Left", 0);
+		_widgetMetrics.editTextPaddingRight = getVar("Globals.EditTextWidget.Padding.Right", 0);
+		_widgetMetrics.popUpPaddingLeft = getVar("Globals.PopUpWidget.Padding.Left", 0);
+		_widgetMetrics.popUpPaddingRight = getVar("Globals.PopUpWidget.Padding.Right", 0);
+		_widgetMetrics.popUpHeight = getVar("Globals.PopUp.Height", getVar("Globals.Line.Height", 16));
+		_widgetMetricsValid = true;
+	}
+	return _widgetMetrics;
 }
 
 bool ThemeEval::getWidgetData(const Common::String &widget, int16 &x, int16 &y, int16 &w, int16 &h) {
@@ -85,7 +98,7 @@ Graphics::TextAlign ThemeEval::getWidgetTextHAlign(const Common::String &widget)
 	return _layouts[dialogName]->getWidgetTextHAlign(widgetName);
 }
 
-ThemeEval &ThemeEval::addWidget(const Common::String &name, const Common::String &type, int w, int h, Graphics::TextAlign align, bool useRTL) {
+ThemeEval &ThemeEval::addWidget(const Common::String &name, const Common::String &type, int w, int h, Graphics::TextAlign align, bool useRTL, bool preserveMeasuredSize) {
 	int typeW = -1;
 	int typeH = -1;
 	Graphics::TextAlign typeAlign = Graphics::kTextAlignInvalid;
@@ -94,6 +107,13 @@ ThemeEval &ThemeEval::addWidget(const Common::String &name, const Common::String
 		typeW = getVar("Globals." + type + ".Width", -1);
 		typeH = getVar("Globals." + type + ".Height", -1);
 		typeAlign = (Graphics::TextAlign)getVar("Globals." + type + ".Align", Graphics::kTextAlignInvalid);
+	}
+
+	if (preserveMeasuredSize) {
+		if (w >= 0)
+			typeW = -1;
+		if (h >= 0)
+			typeH = -1;
 	}
 
 	ThemeLayoutWidget *widget;
@@ -116,6 +136,8 @@ ThemeEval &ThemeEval::addWidget(const Common::String &name, const Common::String
 									typeAlign == Graphics::kTextAlignInvalid ? align : typeAlign,
 									useRTL);
 
+	widget->setPreserveMeasuredSize(preserveMeasuredSize && w >= 0,
+		preserveMeasuredSize && h >= 0);
 	_curLayout.top()->addChild(widget);
 
 	return *this;

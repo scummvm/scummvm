@@ -165,6 +165,7 @@ public:
 	* Use graphics styles and mono font for grid windows
     */
 	void refreshStyles();
+	void setSpeechEnabled(bool enabled) { Speech::setSpeechEnabled(enabled); }
 
 	/**
 	 * Get window split size within parent pair window

@@ -135,7 +135,7 @@ Window &Window::operator=(winid_t win) {
 	_win = win;
 
 	// Set the screen colors
-	if (win)
+	if (win && g_vm->h_version == V6)
 		win->_stream->setZColors(g_vm->_defaultForeground, g_vm->_defaultBackground);
 
 	return *this;
@@ -243,13 +243,18 @@ void Window::clear() {
 }
 
 void Window::updateColors() {
-	if (_win)
-		_win->_stream->setZColors(_properties[TRUE_FG_COLOR], _properties[TRUE_BG_COLOR]);
+	if (_win) {
+		const uint fore = g_vm->h_version == V6 ? getProperty(TRUE_FG_COLOR) : _properties[TRUE_FG_COLOR];
+		const uint back = g_vm->h_version == V6 ? getProperty(TRUE_BG_COLOR) : _properties[TRUE_BG_COLOR];
+		_win->_stream->setZColors(fore, back);
+	}
 }
 
 void Window::updateColors(uint fore, uint back) {
-	_properties[TRUE_FG_COLOR] = fore;
-	_properties[TRUE_BG_COLOR] = back;
+	if (fore != zcolor_Current)
+		_properties[TRUE_FG_COLOR] = fore;
+	if (back != zcolor_Current)
+		_properties[TRUE_BG_COLOR] = back;
 	updateColors();
 }
 
@@ -398,7 +403,13 @@ void Window::createGlkWindow() {
 	g_vm->glk_set_window(_win);
 }
 
-const uint &Window::getProperty(WindowProperty propType) {
+uint Window::getProperty(WindowProperty propType) {
+	if (_properties[propType] == zcolor_Default) {
+		if (propType == TRUE_FG_COLOR)
+			return _win && g_vm->h_version != V6 ? _win->getStyles()[style_Normal].fg : g_vm->_defaultForeground;
+		if (propType == TRUE_BG_COLOR)
+			return _win && g_vm->h_version != V6 ? _win->getStyles()[style_Normal].bg : g_vm->_defaultBackground;
+	}
 	if (_win)
 		update();
 
@@ -409,6 +420,8 @@ void Window::setProperty(WindowProperty propType, uint value) {
 	switch (propType) {
 	case TRUE_FG_COLOR:
 	case TRUE_BG_COLOR:
+		if (value == zcolor_Current)
+			break;
 		_properties[propType] = value;
 		updateColors();
 		break;

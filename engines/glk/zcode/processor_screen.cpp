@@ -323,23 +323,21 @@ void Processor::z_set_colour() {
 	if (fg == -1)
 		// Get color at cursor
 		fg = os_peek_color();
+	else if (fg == 0)
+		// keep current colour
+		fg = zcolor_Current;
+	else if (fg == 1)
+		fg = zcolor_Default;
+	else if (fg >= 2 && fg < zcolor_NUMCOLORS)
+		fg = zcolors[fg];
+
 	if (bg == -1)
 		bg = zcolor_Transparent;
-
-	if (fg == 0)
-		// keep current colour
-		fg = _wp[win][TRUE_FG_COLOR];
-	if (bg == 0)
-		bg = _wp[win][TRUE_BG_COLOR];
-
-	if (fg == 1)
-		fg = h_default_foreground;
-	if (bg == 1)
-		bg = h_default_background;
-
-	if (fg >= 0 && fg < zcolor_NUMCOLORS)
-		fg = zcolors[fg];
-	if (bg >= 0 && bg < zcolor_NUMCOLORS)
+	else if (bg == 0)
+		bg = zcolor_Current;
+	else if (bg == 1)
+		bg = zcolor_Default;
+	else if (bg >= 2 && bg < zcolor_NUMCOLORS)
 		bg = zcolors[bg];
 
 	if (h_version == V6 && h_interpreter_number == INTERP_AMIGA) {
