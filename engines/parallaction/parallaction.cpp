@@ -152,6 +152,7 @@ Common::Error Parallaction::init() {
 }
 
 void Parallaction::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
 	if (_soundMan) {
 		_soundMan->execute(SC_PAUSE, (int)pause);
 	}
@@ -706,6 +707,7 @@ bool Parallaction::checkZoneType(ZonePtr z, uint32 type) {
 			if (ACTIONTYPE(z) == kZoneDoor) {
 				return true;
 			}
+			return false;
 		}
 	}
 

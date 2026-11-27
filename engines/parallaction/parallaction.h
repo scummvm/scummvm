@@ -594,9 +594,17 @@ public:
 	Common::Error init() override;
 	Common::Error go() override;
 
+	bool hasFeature(EngineFeature f) const override;
+	Common::String getSaveStateName(int slot) const override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+
 public:
 	void parseLocation(const char* name) override;
 	void changeLocation() override;
+	void loadPart(int part);
 	void changeCharacter(const char *name) override;
 		void callFunction(uint index, void* parm) override;
 	void runPendingZones() override;
@@ -621,6 +629,7 @@ public:
 	void	setCounterValue(const Common::String &name, int value);
 
 	void	setFollower(const Common::String &name);
+	bool	hasFollower() const { return _follower != nullptr; }
 
 	int		getSfxStatus();
 	int		getMusicStatus();

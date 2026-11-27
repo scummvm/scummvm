@@ -437,7 +437,11 @@ DECLARE_LOCATION_PARSER(redundant)  {
 
 DECLARE_LOCATION_PARSER(character)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(character) ");
-	_out->_characterName = _tokens[1];
+
+	// only for 1st visit, before IFCHAR is parsed
+	if ((_vm->getLocationFlags() & kFlagsVisited) == 0) {
+		_vm->changeCharacter(_tokens[1]);
+	}
 }
 
 
@@ -635,7 +639,7 @@ DECLARE_COMMAND_PARSER(zeta)  {
 	ctxt.cmd->_zeta1 = atoi(_tokens[2]);
 	ctxt.nextToken++;
 
-	if (_tokens[3][0] != '\0') {
+	if (Common::isDigit(_tokens[3][0])) {
 		ctxt.cmd->_zeta2 = atoi(_tokens[3]);
 		ctxt.nextToken++;
 	} else {

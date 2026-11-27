@@ -238,7 +238,6 @@ public:
 struct LocationParserOutput_br {
 	BackgroundInfo	*_info;
 
-	Common::String _characterName;
 	Common::String _backgroundName;
 	Common::String _maskName;
 	Common::String _pathName;

@@ -19,9 +19,12 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "common/textconsole.h"
+
+#include "engines/metaengine.h"
 
 #include "parallaction/parallaction.h"
 #include "parallaction/exec.h"
@@ -53,6 +56,28 @@ Parallaction_br::Parallaction_br(OSystem* syst, const PARALLACTIONGameDescriptio
 	_countersNames = nullptr;
 	_callables = nullptr;
 	_walker = nullptr;
+	_ferrcycleMode = 0;
+}
+
+bool Parallaction_br::hasFeature(EngineFeature f) const {
+	return Parallaction::hasFeature(f) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
+}
+
+Common::String Parallaction_br::getSaveStateName(int slot) const {
+	return getMetaEngine()->getSavegameFile(slot, _targetName.c_str());
+}
+
+// When the in-game menu can be opened (see Input::updateGameInput)
+bool Parallaction_br::canSaveGameStateCurrently(Common::U32String *msg) {
+	return !(getFeatures() & GF_DEMO) && _char._ani->gfxobj &&
+		_input->_inputMode == Input::kInputModeGame && _input->isMouseEnabled() &&
+		!(g_engineFlags & (kEngineBlockInput | kEngineWalking | kEngineChangeLocation));
+}
+
+bool Parallaction_br::canLoadGameStateCurrently(Common::U32String *msg) {
+	return canSaveGameStateCurrently(msg);
 }
 
 Common::Error Parallaction_br::init() {
@@ -156,6 +181,7 @@ bool Parallaction_br::processGameEvent(int event) {
 Common::Error Parallaction_br::go() {
 
 	bool splash = true;
+	int saveSlot = ConfMan.getInt("save_slot");
 
 	while (!shouldQuit()) {
 
@@ -163,12 +189,16 @@ Common::Error Parallaction_br::go() {
 			scheduleLocationSwitch("camalb");
 			_nextPart = 1;
 			_input->_inputMode = Input::kInputModeGame;
+		} else if (saveSlot >= 0 && loadGameState(saveSlot).getCode() == Common::kNoError) {
+			_input->_inputMode = Input::kInputModeGame;
+			splash = false;
 		} else {
 			_input->setMenuPointer();
 			startGui(splash);
 			 // don't show splash after first time
 			splash = false;
 		}
+		saveSlot = -1;
 
 //		initCharacter();
 
@@ -277,47 +307,52 @@ void Parallaction_br::cleanupGame() {
 }
 
 
+void Parallaction_br::loadPart(int part) {
+	cleanupGame();
+
+	// more cleanup needed for part changes (see also saveload)
+	g_globalFlags = 0;
+	cleanInventory(true);
+	Common::strcpy_s(_characterName1, "null");
+
+	_part = part;
+
+	if (getFeatures() & GF_DEMO) {
+		assert(_part == 1);
+	} else {
+		assert(_part >= 0 && _part <= 4);
+	}
+
+	_disk->selectArchive(_partNames[_part]);
+
+	memset(_counters, 0, sizeof(_counters));
+
+	_globalFlagsNames = _disk->loadTable("global");
+	_objectsNames = _disk->loadTable("objects");
+	_countersNames = _disk->loadTable("counters");
+
+	// TODO: maybe handle this into Disk
+	delete _objects;
+	if (getPlatform() == Common::kPlatformDOS) {
+		_objects = _disk->loadObjects("icone.ico");
+	} else {
+		_objects = _disk->loadObjects("icons.ico", _part);
+	}
+
+	parseLocation("common.slf");
+}
+
 void Parallaction_br::changeLocation() {
 	if (_newLocationName.empty()) {
 		return;
 	}
 
 	if (_nextPart != -1) {
-		cleanupGame();
-
-		// more cleanup needed for part changes (see also saveload)
-		g_globalFlags = 0;
-		cleanInventory(true);
-		Common::strcpy_s(_characterName1, "null");
-
-		_part = _nextPart;
-
-		if (getFeatures() & GF_DEMO) {
-			assert(_part == 1);
-		} else {
-			assert(_part >= 0 && _part <= 4);
-		}
-
-		_disk->selectArchive(_partNames[_part]);
-
-		memset(_counters, 0, sizeof(_counters));
-
-		_globalFlagsNames = _disk->loadTable("global");
-		_objectsNames = _disk->loadTable("objects");
-		_countersNames = _disk->loadTable("counters");
-
-		// TODO: maybe handle this into Disk
-		delete _objects;
-		if (getPlatform() == Common::kPlatformDOS) {
-			_objects = _disk->loadObjects("icone.ico");
-		} else {
-			_objects = _disk->loadObjects("icons.ico", _part);
-		}
-
-		parseLocation("common.slf");
+		loadPart(_nextPart);
 	}
 
 	freeLocation(false);
+	_zoneTrap.reset();
 	// load new location
 	Common::strlcpy(_location._name, _newLocationName.c_str(), 100);
 	parseLocation(_location._name);
@@ -417,11 +452,6 @@ void Parallaction_br::parseLocation(const char *filename) {
 		}
 	}
 
-	// load the character (must be done before animations are processed)
-	if (!out._characterName.empty()) {
-		changeCharacter(out._characterName.c_str());
-	}
-
 	// process animations
 	AnimationList::iterator ait = _location._animations.begin();
 	for ( ; ait != _location._animations.end(); ++ait) {
@@ -469,7 +499,8 @@ void Parallaction_br::changeCharacter(const char *name) {
 
 	const char *charName = _char.getName();
 
-	if (scumm_stricmp(charName, name)) {
+	// the character is freed when a part is loaded
+	if (scumm_stricmp(charName, name) || !_char._ani->gfxobj) {
 		freeCharacter();
 
 		debugC(1, kDebugExec, "changeCharacter(%s)", name);
@@ -478,8 +509,12 @@ void Parallaction_br::changeCharacter(const char *name) {
 		_char._ani->gfxobj = _gfx->loadCharacterAnim(name);
 		_char._talk = _disk->loadTalk(name);
 
-		_inventory = findInventory(name);
-		_inventoryRenderer->setInventory(_inventory);
+		// characters without an inventory keep the current one
+		Inventory *targetInventory = findInventory(name);
+		if (targetInventory) {
+			_inventory = targetInventory;
+			_inventoryRenderer->setInventory(_inventory);
+		}
 
 		_input->setCharacterPointer(name);
 	}

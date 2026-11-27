@@ -171,6 +171,10 @@ void LocalVariable::setValue(int16 value) {
 	_value = value;
 }
 
+void LocalVariable::forceValue(int16 value) {
+	_value = value;
+}
+
 void LocalVariable::setRange(int16 min, int16 max) {
 	_max = max;
 	_min = min;

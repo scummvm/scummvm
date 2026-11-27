@@ -558,9 +558,9 @@ void PathWalker_BR::checkTrap(const Common::Point &p) {
 		if (z->_flags & kFlagsIsAnimation) {
 			z->_flags |= kFlagsActing;
 		} else {
-			_vm->setLocationFlags(kFlagsExit);
+			_vm->setLocationFlags(kFlagsEnter);
 			_vm->_cmdExec->run(z->_commands, z);
-			_vm->clearLocationFlags(kFlagsExit);
+			_vm->clearLocationFlags(kFlagsEnter);
 		}
 	}
 
@@ -568,9 +568,9 @@ void PathWalker_BR::checkTrap(const Common::Point &p) {
 		if (_vm->_zoneTrap->_flags & kFlagsIsAnimation) {
 			_vm->_zoneTrap->_flags &= ~kFlagsActing;
 		} else {
-			_vm->setLocationFlags(kFlagsEnter);
+			_vm->setLocationFlags(kFlagsExit);
 			_vm->_cmdExec->run(_vm->_zoneTrap->_commands, _vm->_zoneTrap);
-			_vm->clearLocationFlags(kFlagsEnter);
+			_vm->clearLocationFlags(kFlagsExit);
 		}
 	}
 

@@ -517,7 +517,7 @@ DECLARE_INSTRUCTION_PARSER(defLocal)  {
 	}
 
 	ctxt.inst->_opA.setLocal(&ctxt.locals[index]);
-	ctxt.inst->_opB.setImmediate(ctxt.locals[index].getValue());
+	ctxt.inst->_opB.setImmediate(val);
 
 	ctxt.inst->_index = INST_SET;
 }

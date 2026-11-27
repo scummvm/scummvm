@@ -333,6 +333,7 @@ public:
 
 	int16 getValue() const;
 	void setValue(int16 value);
+	void forceValue(int16 value);
 };
 
 
@@ -356,16 +357,33 @@ struct AnimationField {
 protected:
 	Accessor *_accessor;
 	Mutator *_mutator;
+	Animation *_instance;
+	AccessorFunc _accessorFunc;
+	MutatorFunc _mutatorFunc;
 
 public:
-	AnimationField(Animation* instance, AccessorFunc accessor, MutatorFunc mutator) {
+	AnimationField(Animation* instance, AccessorFunc accessor, MutatorFunc mutator) :
+		_instance(instance), _accessorFunc(accessor), _mutatorFunc(mutator) {
 		_accessor = new Accessor(instance, accessor);
 		_mutator = new Mutator(instance, mutator);
 	}
 
-	AnimationField(Animation* instance, AccessorFunc accessor) {
+	AnimationField(Animation* instance, AccessorFunc accessor) :
+		_instance(instance), _accessorFunc(accessor), _mutatorFunc(0) {
 		_accessor = new Accessor(instance, accessor);
 		_mutator = 0;
+	}
+
+	Animation *getInstance() const {
+		return _instance;
+	}
+
+	void setInstance(Animation *newInstance) {
+		delete _accessor;
+		delete _mutator;
+		_instance = newInstance;
+		_accessor = new Accessor(newInstance, _accessorFunc);
+		_mutator = _mutatorFunc ? new Mutator(newInstance, _mutatorFunc) : 0;
 	}
 
 	~AnimationField() {

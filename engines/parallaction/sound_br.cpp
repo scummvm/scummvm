@@ -346,7 +346,8 @@ Audio::AudioStream *DosSoundMan_br::loadChannelData(const char *filename, Channe
 }
 
 void DosSoundMan_br::playSfx(const char *filename, uint channel, bool looping, int volume) {
-	stopSfx(channel);
+	// SBEFF.EXE has a single voice: the channel only names the sample
+	stopSfx(0);
 
 	if (!_sfxEnabled) {
 		return;
@@ -354,7 +355,7 @@ void DosSoundMan_br::playSfx(const char *filename, uint channel, bool looping, i
 
 	debugC(1, kDebugAudio, "DosSoundMan_br::playSfx(%s, %u, %i, %i)", filename, channel, looping, volume);
 
-	Channel *ch = &_channels[channel];
+	Channel *ch = &_channels[0];
 	Audio::AudioStream *input = loadChannelData(filename, ch, looping);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
 }
