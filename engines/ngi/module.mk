@@ -1,7 +1,6 @@
 MODULE := engines/ngi
 
 MODULE_OBJS = \
-	android.o \
 	anihandler.o \
 	behavior.o \
 	console.o \
@@ -27,6 +26,7 @@ MODULE_OBJS = \
 	sound.o \
 	stateloader.o \
 	statesaver.o \
+	xmlproject.o \
 	statics.o \
 	utils.o \
 	fullpipe/sceneChapter.o \

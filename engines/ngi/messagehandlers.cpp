@@ -531,7 +531,7 @@ int global_messageHandler4(Command *cmd) {
 			break;
 		}
 		int parent = cmd->_parId;
-		if (g_nmi->getPlatform() == Common::kPlatformAndroid && !cmd->_wait)
+		if (g_nmi->_gameVersion >= 201509 && !cmd->_wait)
 			parent = 0;
 		MessageQueue *mq = new MessageQueue(source, parent, 0);
 
@@ -686,7 +686,7 @@ int global_messageHandler4(Command *cmd) {
 		if (cmd->_z >= 0)
 			ani->_z = cmd->_z;
 
-		if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+		if (g_nmi->_gameVersion >= 201509) {
 			const bool mirror = cmd->_auxParam < 0 ? (ani->_flags & 8) != 0 : cmd->_auxParam != 0;
 			ani->show1(cmd->_x == -1 ? ani->_x : cmd->_x, cmd->_y == -1 ? ani->_y : cmd->_y, cmd->_messageNum, 0);
 			ani->_flags = (ani->_flags & ~8) | (mirror ? 8 : 0);
@@ -750,7 +750,7 @@ int global_messageHandler4(Command *cmd) {
 		break;
 
 	case 63:
-		if (g_nmi->getPlatform() != Common::kPlatformAndroid)
+		if (g_nmi->_gameVersion < 201509)
 			return 0;
 		warning("Android command %s not implemented", cmd->_messageName.c_str());
 		break;

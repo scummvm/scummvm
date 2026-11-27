@@ -143,7 +143,7 @@ bool PictureObject::load(MfcArchive &file, bool bigPicture) {
 }
 
 void PictureObject::render(Common::Point scroll) {
-	if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+	if (g_nmi->_gameVersion >= 201509) {
 		_picture->blitTo(g_nmi->_backgroundSurface, Common::Point(_x, _y) - scroll);
 		return;
 	}

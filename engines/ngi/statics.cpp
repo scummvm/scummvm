@@ -551,7 +551,7 @@ Statics *AniObject::addReverseStatics(Statics *st) {
 }
 
 void AniObject::render(Common::Point scroll) {
-	if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+	if (g_nmi->_gameVersion >= 201509) {
 		const Phase *phase = _movement ? _movement->_curPhase : _statics;
 		if (phase && (_flags & 4)) {
 			Common::Point anchor = getSomeXY();
@@ -756,8 +756,8 @@ bool AniObject::update(int counterdiff) {
 	if (_movement) {
 		_movement->_counter += counterdiff;
 
-		const bool android = g_nmi->getPlatform() == Common::kPlatformAndroid;
-		if (android) {
+		const bool timedMovement = g_nmi->_gameVersion >= 201509;
+		if (timedMovement) {
 			const Phase &phase = *_movement->_curPhase;
 			const int delay = _movement->_loopDelay * (1 + phase._delayRelative) + phase._delayMs;
 			if (_movement->_counter <= delay)
@@ -776,7 +776,7 @@ bool AniObject::update(int counterdiff) {
 			}
 
 			Phase *dyn = _movement->_curPhase;
-			if (!android && dyn->_delay == dyn->_countdown) {
+			if (!timedMovement && dyn->_delay == dyn->_countdown) {
 
 				ex = dyn->getCommand();
 				if (ex && ex->_cmd != 35) {
@@ -804,13 +804,13 @@ bool AniObject::update(int counterdiff) {
 			}
 
 			// Android ends the movement as soon as the next statics takes over.
-			if (!_movement->setNext(_callback1, _callback2, android && (_flags & 8)) || (android && _movement->_curPhase == _movement->_nextStatic)) {
+			if (!_movement->setNext(_callback1, _callback2, timedMovement && (_flags & 8)) || (timedMovement && _movement->_curPhase == _movement->_nextStatic)) {
 				stopMovement();
 			} else {
 				setPos(_movement->_x, _movement->_y);
 				_counter = _initialCounter;
 
-				if (android) {
+				if (timedMovement) {
 					_movement->_curPhase->enter(_id);
 				} else if (dyn->_delay == dyn->_countdown) {
 					ex = dyn->getCommand();
@@ -966,7 +966,7 @@ L12:
 		_statics->_x = _x - point.x;
 		_statics->_y = _y - point.y;
 		oid = _movement->_id;
-		if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+		if (g_nmi->_gameVersion >= 201509) {
 			_movement->unload();
 			for (int i = 0; i < g_nmi->_currSoundListCount; ++i)
 				g_nmi->_currSoundList1[i]->stopByCreator(_id);
@@ -1261,10 +1261,10 @@ bool AniObject::startMovement(int movementId, int messageQueueId, int dynPhaseId
 		return false;
 	}
 
-	const bool android = g_nmi->getPlatform() == Common::kPlatformAndroid;
+	const bool timedMovement = g_nmi->_gameVersion >= 201509;
 	Movement *mov = getMovement(movementId);
 	// An XML movement without any PHASE elements contains only its end pose.
-	if (!mov || (android && !mov->getPhase(1))) {
+	if (!mov || (timedMovement && !mov->getPhase(1))) {
 		updateGlobalMessageQueue(messageQueueId, _id);
 		return false;
 	}
@@ -1280,7 +1280,7 @@ bool AniObject::startMovement(int movementId, int messageQueueId, int dynPhaseId
 	int newy = _y;
 	Common::Point point;
 
-	if (android && !_movement) {
+	if (timedMovement && !_movement) {
 		// SetStatic reflects a change of facing about the old texture's center.
 		const bool prevMirror = mirror != mov->_mirrorPrev;
 		if (_statics && prevMirror != ((_flags & 8) != 0)) {
@@ -1325,7 +1325,7 @@ bool AniObject::startMovement(int movementId, int messageQueueId, int dynPhaseId
 			_stepArray.gotoNextPoint();
 
 			Command *ex = _movement->_curPhase->getCommand();
-			if (ex && !android) {
+			if (ex && !timedMovement) {
 				if (ex->_cmd == 35) {
 					Command *newex = ex->createClone();
 					newex->_excFlags |= 2;
@@ -1339,7 +1339,7 @@ bool AniObject::startMovement(int movementId, int messageQueueId, int dynPhaseId
 	newx += point.x;
 	setPos(mirror ? -newx : newx, point.y + newy);
 
-	if (mirror || (!android && (_movement->_nextStatic->_staticsId & 0x4000)))
+	if (mirror || (!timedMovement && (_movement->_nextStatic->_staticsId & 0x4000)))
 		_flags |= 8;
 	else
 		_flags &= 0xFFF7;
@@ -1362,7 +1362,7 @@ bool AniObject::startMovement(int movementId, int messageQueueId, int dynPhaseId
 
 	newex->postMessage();
 
-	if (android)
+	if (timedMovement)
 		mov->_curPhase->enter(_id);
 
 	return true;
@@ -1905,7 +1905,7 @@ void Movement::load() {
 }
 
 void Movement::unload() {
-	if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+	if (g_nmi->_gameVersion >= 201509) {
 		// XML movements borrow their last phase from the actor's statics.
 		for (uint i = 0; i + 1 < _phases.size(); ++i)
 			_phases[i]->unload();

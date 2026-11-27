@@ -104,10 +104,10 @@ static const PlainGameDescriptor ngiGames[] = {
 namespace NGI {
 
 // Catalog placeholders until detection signatures are available.
-#define NGI_STUB(id) { \
+#define NGI_STUB(id, version) { \
 	{ id, nullptr, AD_ENTRY1s(id "stub.gam", "00000000000000000000000000000000", 0), \
 	  Common::RU_RUS, Common::kPlatformWindows, ADGF_UNSUPPORTED | ADGF_DROPPLATFORM, GUIO1(GUIO_NOMIDI) }, \
-	0 \
+	0, version \
 }
 
 static const NGIGameDescription gameDescriptions[] = {
@@ -123,7 +123,7 @@ static const NGIGameDescription gameDescriptions[] = {
 			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
-		GID_MDREAM
+		GID_MDREAM, 0
 	},
 
 	// Full Pipe Russian version
@@ -139,7 +139,7 @@ static const NGIGameDescription gameDescriptions[] = {
 			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
-		GID_FULLPIPE
+		GID_FULLPIPE, 200311
 	},
 
 	// Full Pipe German version
@@ -153,7 +153,7 @@ static const NGIGameDescription gameDescriptions[] = {
 			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
-		GID_FULLPIPE
+		GID_FULLPIPE, 200311
 	},
 
 	// Full Pipe Estonian version
@@ -167,7 +167,7 @@ static const NGIGameDescription gameDescriptions[] = {
 			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
-		GID_FULLPIPE
+		GID_FULLPIPE, 200311
 	},
 
 	// Full Pipe Lithuanian version
@@ -181,7 +181,7 @@ static const NGIGameDescription gameDescriptions[] = {
 			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
-		GID_FULLPIPE
+		GID_FULLPIPE, 200311
 	},
 
 	// Full Pipe English version
@@ -195,7 +195,7 @@ static const NGIGameDescription gameDescriptions[] = {
 			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
-		GID_FULLPIPE
+		GID_FULLPIPE, 200311
 	},
 
 	// Full Pipe English Steam version
@@ -209,7 +209,7 @@ static const NGIGameDescription gameDescriptions[] = {
 			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
-		GID_FULLPIPE
+		GID_FULLPIPE, 200311
 	},
 
 	// Full Pipe Russian Demo version
@@ -223,7 +223,7 @@ static const NGIGameDescription gameDescriptions[] = {
 			ADGF_DROPPLATFORM | ADGF_DEMO,
 			GUIO1(GUIO_NOMIDI)
 		},
-		GID_FULLPIPE
+		GID_FULLPIPE, 200311
 	},
 
 	// Full Pipe Russian 1997 Demo version
@@ -238,7 +238,7 @@ static const NGIGameDescription gameDescriptions[] = {
 			ADGF_DROPPLATFORM | ADGF_DEMO,
 			nullptr
 		},
-		GID_FULLPIPE
+		GID_FULLPIPE, 200311
 	},
 
 	// Full Pipe German Demo version
@@ -252,7 +252,7 @@ static const NGIGameDescription gameDescriptions[] = {
 			ADGF_DROPPLATFORM | ADGF_DEMO,
 			GUIO1(GUIO_NOMIDI)
 		},
-		GID_FULLPIPE
+		GID_FULLPIPE, 200311
 	},
 
 	// Full Pipe Android version
@@ -267,7 +267,7 @@ static const NGIGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOMIDI)
 		},
-		GID_FULLPIPE
+		GID_FULLPIPE, 201509
 	},
 
 	// Братья Пилоты. Обратная сторона Земли
@@ -276,67 +276,67 @@ static const NGIGameDescription gameDescriptions[] = {
 
 	// Братья Пилоты. Олимпиада
 	// 2004/08. Pipe Studio
-	NGI_STUB("pilot7"),
+	NGI_STUB("pilot7", 200408),
 
 	// 3 богатыря. Алеша Попович и Тугарин Змей
 	// 2005/02. Pipe Studio
-	NGI_STUB("popovich"),
+	NGI_STUB("popovich", 200502),
 
 	// Братья Пилоты. Загадка атлантической сельди
 	// 2006/01. Pipe Studio
-	NGI_STUB("lostpilots"),
+	NGI_STUB("lostpilots", 200601),
 
 	// 3 богатыря. Добрыня Никитич и Змей Горыныч
 	// 2006/03. Pipe Studio
-	NGI_STUB("dobrynya"),
+	NGI_STUB("dobrynya", 200603),
 
 	// Князь Владимир
 	// 2006/05. Pipe Studio
-	NGI_STUB("vladimir"),
+	NGI_STUB("vladimir", 200605),
 
 	// Лунтик. Подготовка к школе
 	// 2006/11. Pipe Studio
-	NGI_STUB("luntik"),
+	NGI_STUB("luntik", 200611),
 
 	// Лунтик. Математика для малышей
 	// 2007/03. Pipe Studio
-	NGI_STUB("luntik2"),
+	NGI_STUB("luntik2", 200703),
 
 	// Лунтик. Русский язык для малышей
 	// 2007/06. Pipe Studio
-	NGI_STUB("luntik3"),
+	NGI_STUB("luntik3", 200706),
 
 	// Лунтик. Английский язык для малышей
 	// 2007/09. Pipe Studio
-	NGI_STUB("luntik4"),
+	NGI_STUB("luntik4", 200709),
 
 	// 38 попугаев. Подготовка к школе
 	// 2007/09. Pipe Studio
-	NGI_STUB("38_parrots"),
+	NGI_STUB("38_parrots", 200709),
 
 	// Лунтик. Развивающие задания для малышей
 	// 2007/10. Pipe Studio
-	NGI_STUB("luntik5"),
+	NGI_STUB("luntik5", 200710),
 
 	// 38 попугаев. Математика
 	// 2007/11. Pipe Studio
-	NGI_STUB("38_parrots2"),
+	NGI_STUB("38_parrots2", 200711),
 
 	// UmaNetto. Полный превед!
 	// 2007/12. Pipe Studio
-	NGI_STUB("fullkatya"),
+	NGI_STUB("fullkatya", 200712),
 
 	// 3 богатыря. Илья Муромец и Соловей-разбойник
 	// 2007/12. Pipe Studio
-	NGI_STUB("muromets"),
+	NGI_STUB("muromets", 200712),
 
 	// Лунтик учит буквы
 	// 2008/08. Pipe Studio
-	NGI_STUB("luntik6"),
+	NGI_STUB("luntik6", 200808),
 
 	// Лунтик учит цифры
 	// 2008/10. Pipe Studio
-	NGI_STUB("luntik7"),
+	NGI_STUB("luntik7", 200810),
 
 	// Ранетки
 	// 2008/11. Pipe Studio
@@ -348,101 +348,101 @@ static const NGIGameDescription gameDescriptions[] = {
 
 	// Лунтик познает мир
 	// 2009/01. Pipe Studio
-	NGI_STUB("luntik8"),
+	NGI_STUB("luntik8", 200901),
 
 	// Лунтик учится рисовать
 	// 2009/04. Pipe Studio
-	NGI_STUB("luntik9"),
+	NGI_STUB("luntik9", 200904),
 
 	// Лунтик учит правила
 	// 2009/08. Pipe Studio
-	NGI_STUB("luntik10"),
+	NGI_STUB("luntik10", 200908),
 
 	// Книга мастеров
 	// 2009/10. Pipe Studio
-	NGI_STUB("masterbook"),
+	NGI_STUB("masterbook", 200910),
 
 	// 38 попугаев. Звездный десант
 	// 2009/11. Pipe Studio
-	NGI_STUB("38_parrots3"),
+	NGI_STUB("38_parrots3", 200911),
 
 	// Лунтик. Хочу всё знать
 	// 2010/02. Pipe Studio
-	NGI_STUB("luntik11"),
+	NGI_STUB("luntik11", 201002),
 
 	// Лунтик. Тренируем память и внимание
 	// 2010/04. Pipe Studio
-	NGI_STUB("luntik12"),
+	NGI_STUB("luntik12", 201004),
 
 	// Лунтик. География для малышей
 	// 2010/08. Pipe Studio
-	NGI_STUB("luntik13"),
+	NGI_STUB("luntik13", 201008),
 
 	// Winx Club. Свидание Стеллы
 	// 2010/11. Pipe Studio
-	NGI_STUB("winx2"),
+	NGI_STUB("winx2", 201011),
 
 	// Маша и медведь. Подготовка к школе
 	// 2010/12. Pipe Studio
-	NGI_STUB("masha01"),
+	NGI_STUB("masha01", 201012),
 
 	// 3 богатыря и Шамаханская царица
 	// 2010/12. Pipe Studio
-	NGI_STUB("trybog"),
+	NGI_STUB("trybog", 201012),
 
 	// Winx Club. День рождения Блум
 	// 2011/03. Pipe Studio
-	NGI_STUB("winx4"),
+	NGI_STUB("winx4", 201103),
 
 	// Маша и медведь. Развивающие задания для малышей
 	// 2011/04. Pipe Studio
-	NGI_STUB("masha02"),
+	NGI_STUB("masha02", 201104),
 
 	// Winx Club. Флора и ее питомцы
 	// 2011/08. Pipe Studio
-	NGI_STUB("winx_pets"),
+	NGI_STUB("winx_pets", 201108),
 
 	// Winx Club. Переполох в виртуальности
 	// 2011/10. Pipe Studio
-	NGI_STUB("winx_turmoil"),
+	NGI_STUB("winx_turmoil", 201110),
 
 	// Winx Club. Вечеринка
 	// 2011/10. Pipe Studio
-	NGI_STUB("winx_party"),
+	NGI_STUB("winx_party", 201110),
 
 	// Иван Царевич и серый волк
 	// 2011/12. Pipe Studio
-	NGI_STUB("vasilisa"),
+	NGI_STUB("vasilisa", 201112),
 
 	// Иван Царевич. Свадьба Василисы
 	// 2011/12. Pipe Studio
-	NGI_STUB("vasilisa2"),
+	NGI_STUB("vasilisa2", 201112),
 
 	// Барбоскины. Первое знакомство
 	// 2012/05. Pipe Studio
-	NGI_STUB("barboskins_1"),
+	NGI_STUB("barboskins_1", 201205),
 
 	// Маша и медведь. Прятки
 	// 2012/08. Pipe Studio
-	NGI_STUB("masha03"),
+	NGI_STUB("masha03", 201208),
 
 	// Барбоскины. Заметая следы
 	// 2012/10. Pipe Studio
-	NGI_STUB("barboskins_2"),
+	NGI_STUB("barboskins_2", 201210),
 
 	// Маша и медведь. Давайте дружить
 	// 2012/12. Pipe Studio
-	NGI_STUB("masha04"),
+	NGI_STUB("masha04", 201212),
 
 	// Финес и Ферб. Новые изобретения
 	// 2012/12. Pipe Studio
-	NGI_STUB("phineasferb"),
+	NGI_STUB("phineasferb", 201212),
 
 	// Маша и Медведь. Активные игры
 	// 2013/04. Pipe Studio
-	NGI_STUB("masha05"),
+	NGI_STUB("masha05", 201304),
 
-	{ AD_TABLE_END_MARKER, 0 }
+	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
 #undef NGI_STUB

@@ -52,6 +52,7 @@ Vars *g_vars = nullptr;
 NGIEngine::NGIEngine(OSystem *syst, const NGIGameDescription *gameDesc) :
 	Engine(syst),
 	_gameDescription(gameDesc),
+	_gameVersion(gameDesc->gameVersion),
 	_rnd("ngi"),
 	_gameProject(nullptr),
 	_modalObject(nullptr),
@@ -338,13 +339,15 @@ bool NGIEngine::handleGuiEvent(const Common::Event &event) {
 Common::Error NGIEngine::run() {
 	_globalMessageQueueList.reset(new GlobalMessageQueueList);
 	_aniHandler.reset(new AniHandler);
-	const bool android = getPlatform() == Common::kPlatformAndroid;
+	const bool timedUpdates = _gameVersion >= 201509;
 	const SceneTag *start = nullptr;
 	int width = 800, height = 600;
 	Common::Error result = Common::kNoError;
-	if (android) {
+	if (usesXMLProject()) {
+		if (getGameGID() != GID_FULLPIPE)
+			return Common::kUnsupportedGameidError;
 		_gameLoader.reset(new GameLoader());
-		result = _gameLoader->loadXML(start, width, height);
+		result = _gameLoader->loadXML("data/FullPipe.xml", start, width, height);
 		if (result.getCode() != Common::kNoError)
 			return result;
 		_gameProject = _gameLoader->_gameProject.get();
@@ -357,7 +360,7 @@ Common::Error NGIEngine::run() {
 	_backgroundSurface.create(width, height, format);
 	_isSaveAllowed = false;
 
-	if (android) {
+	if (usesXMLProject()) {
 		Common::Keymapper *mapper = _system->getEventManager()->getKeymapper();
 		mapper->disableAllGameKeymaps();
 		mapper->setGameKeymapState("ngi-default", true);
@@ -369,9 +372,9 @@ Common::Error NGIEngine::run() {
 			return result;
 	}
 
-	const bool intro = android && start->_sceneId == SC_INTRO1;
+	const bool intro = start && isAndroidFullPipe() && start->_sceneId == SC_INTRO1;
 	byte brightness = intro ? 0 : 255;
-	if (android) {
+	if (usesXMLProject()) {
 		if (brightness)
 			_currentScene->render();
 		else
@@ -388,17 +391,17 @@ Common::Error NGIEngine::run() {
 			break;
 		const uint32 now = _system->getMillis();
 		const uint32 elapsed = now - lastUpdate;
-		if (android || elapsed >= 33 || !_normalSpeed) {
+		if (timedUpdates || elapsed >= 33 || !_normalSpeed) {
 			lastUpdate = now;
 			// CGame::Update discounts long stalls on Android.
 			uint32 step = 42;
-			if (android)
+			if (timedUpdates)
 				step = elapsed > 350 ? 15 : elapsed;
 			result = updateScreen(step, brightness, redraw);
 			if (result.getCode() != Common::kNoError)
 				break;
 		}
-		if (!android && _needRestart) {
+		if (!timedUpdates && _needRestart) {
 			delete _modalObject;
 			freeGameLoader();
 			_currentScene = nullptr;
@@ -410,10 +413,10 @@ Common::Error NGIEngine::run() {
 		}
 
 		_system->updateScreen();
-		_system->delayMillis(android ? 10 : 5);
+		_system->delayMillis(timedUpdates ? 10 : 5);
 	}
 
-	if (android) {
+	if (usesXMLProject()) {
 		deleteModalObject();
 		clearMessages();
 		clearGlobalMessageQueueList();
@@ -443,7 +446,7 @@ bool NGIEngine::updateEvents() {
 	bool redraw = false;
 
 	while (eventMan->pollEvent(event)) {
-		if (getPlatform() == Common::kPlatformAndroid) {
+		if (_gameVersion >= 201509) {
 			redraw |= handleGuiEvent(event);
 			continue;
 		}
@@ -596,28 +599,28 @@ void NGIEngine::deleteModalObject() {
 }
 
 Common::Error NGIEngine::updateScreen(uint32 elapsed, byte &brightness, bool redraw) {
-	const bool android = getPlatform() == Common::kPlatformAndroid;
+	const bool timedUpdates = _gameVersion >= 201509;
 	_mouseVirtX = _mouseScreenPos.x + _sceneRect.left;
 	_mouseVirtY = _mouseScreenPos.y + _sceneRect.top;
 
 	Scene *scene = _currentScene;
 	const bool hadModal = _modalObject != nullptr;
-	if (!hadModal && (android || _flgGameIsRunning)) {
+	if (!hadModal && (timedUpdates || _flgGameIsRunning)) {
 		redraw |= _gameLoader->updateContent(elapsed);
-		if (android && !_modalObject && scene == _currentScene && scene->_sceneId == SC_INTRO1)
+		if (isAndroidFullPipe() && !_modalObject && scene == _currentScene && scene->_sceneId == SC_INTRO1)
 			redraw |= sceneIntro_updateAndroid(elapsed, brightness);
-		if (android)
+		if (timedUpdates)
 			processMessages();
 	}
 	const bool renderScene = !_modalObject;
-	if (_modalObject && (android || _flgGameIsRunning)) {
+	if (_modalObject && (timedUpdates || _flgGameIsRunning)) {
 		// Android begins updating a newly opened dialog on the following tick.
-		if ((!android || hadModal) && !_modalObject->init(elapsed))
+		if ((!timedUpdates || hadModal) && !_modalObject->init(elapsed))
 			deleteModalObject();
 		redraw = true;
 	}
 
-	if (android && scene != _currentScene) {
+	if (timedUpdates && scene != _currentScene) {
 		if (scene->_guiManager)
 			scene->_guiManager->onHide();
 		stopAllSounds(Sound::kSpeech);
@@ -627,7 +630,7 @@ Common::Error NGIEngine::updateScreen(uint32 elapsed, byte &brightness, bool red
 		debugC(2, kDebugDrawing, "Switched Android scene from %d to %d", scene->_sceneId, _currentScene->_sceneId);
 		redraw = true;
 	}
-	if (android && !_modalObject && _gameLoader->_preloadSceneId) {
+	if (timedUpdates && !_modalObject && _gameLoader->_preloadSceneId) {
 		if (!_gameLoader->setScene(_gameLoader->_preloadSceneId, _gameLoader->_preloadEntranceId))
 			return Common::Error(Common::kNoGameDataFoundError, "Could not enter the requested Android scene");
 		_gameLoader->_preloadSceneId = _gameLoader->_preloadEntranceId = 0;
@@ -636,9 +639,9 @@ Common::Error NGIEngine::updateScreen(uint32 elapsed, byte &brightness, bool red
 	}
 
 	if (_modalObject) {
-		if (android || _flgGameIsRunning)
+		if (timedUpdates || _flgGameIsRunning)
 			_modalObject->update();
-	} else if (_currentScene && (android ? redraw : renderScene)) {
+	} else if (_currentScene && (timedUpdates ? redraw : renderScene)) {
 		_currentScene->render();
 		if (_inventoryScene)
 			_inventory->render();
@@ -648,7 +651,7 @@ Common::Error NGIEngine::updateScreen(uint32 elapsed, byte &brightness, bool red
 			drawAlphaRectangle(0, 0, _backgroundSurface.w, _backgroundSurface.h, brightness);
 	}
 
-	if (android) {
+	if (timedUpdates) {
 		if (redraw)
 			_system->copyRectToScreen(_backgroundSurface.getPixels(), _backgroundSurface.pitch, 0, 0, _backgroundSurface.w, _backgroundSurface.h);
 	} else {

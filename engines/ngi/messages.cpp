@@ -456,7 +456,7 @@ void MessageQueue::next() {
 		ex->_excFlags |= (ex->_wait == 0 ? 1 : 0) | (ex->_field_3C != 0 ? 2 : 0);
 
 		_flags |= 4;
-		if (ex->_cmd == Command::kCmdPause && ex->_wait && g_nmi->getPlatform() == Common::kPlatformAndroid)
+		if (ex->_cmd == Command::kCmdPause && ex->_wait && g_nmi->_gameVersion >= 201509)
 			_pauseCommand.reset(ex);
 		else
 			ex->sendMessage();

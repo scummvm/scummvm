@@ -51,6 +51,10 @@ Common::Language NGIEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
 
+bool NGIEngine::isAndroidFullPipe() const {
+	return getGameGID() == GID_FULLPIPE && getPlatform() == Common::kPlatformAndroid;
+}
+
 Common::Platform NGIEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }

@@ -175,7 +175,7 @@ public:
 	}
 
 	bool open() {
-		const Common::String locale = g_nmi->getAndroidResourceLocale();
+		const Common::String locale = g_nmi->getResourceLocale();
 		const Common::Path directory("data/res_" + locale);
 		const Common::Path fonts = directory.join("Fonts");
 		if (!_settings.load(directory)) {

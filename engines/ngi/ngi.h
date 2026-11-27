@@ -144,10 +144,13 @@ public:
 
 	// Detection related functions
 	const NGIGameDescription *_gameDescription;
+	const uint32 _gameVersion;
+	bool usesXMLProject() const { return _gameVersion >= 200502; }
+	bool isAndroidFullPipe() const;
 	uint32 getFeatures() const;
 	bool isDemo();
 	Common::Language getLanguage() const;
-	const char *getAndroidResourceLocale() const;
+	const char *getResourceLocale() const;
 	Common::Platform getPlatform() const;
 	const char *getGameId() const;
 	int getGameGID() const;
@@ -391,7 +394,7 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &description, bool isAutosave = false) override;
 	Common::String getSaveStateName(int slot) const override;
 
-	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return getPlatform() != Common::kPlatformAndroid; }
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return !usesXMLProject(); }
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return _isSaveAllowed; }
 	bool hasFeature(EngineFeature f) const override;
 

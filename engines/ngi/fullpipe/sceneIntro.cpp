@@ -129,14 +129,14 @@ void sceneHandlerIntro_part1() {
 void sceneHandlerIntro_part2() {
 	g_nmi->_currentScene = g_nmi->findScene(SC_INTRO2);
 	runQueue(QU_IN2_DO, 0);
-	if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+	if (g_nmi->isAndroidFullPipe()) {
 		if (GuiElement *button = skipButton(*g_nmi->_currentScene))
 			button->showAndActivate();
 	}
 }
 
 void sceneIntro_end() {
-	if (g_vars->sceneIntro_playing && g_nmi->getPlatform() == Common::kPlatformAndroid) {
+	if (g_vars->sceneIntro_playing && g_nmi->isAndroidFullPipe()) {
 		g_nmi->_gameLoader->preloadScene(SC_1, TrubaLeft);
 		sceneChapter_show("CHAPTER_1");
 	}
@@ -147,7 +147,7 @@ int sceneHandlerIntro(Command *ex) {
 	if (ex->_cmd != 17)
 		return 0;
 
-	if (g_nmi->getPlatform() == Common::kPlatformAndroid && !ex->_messageName.empty()) {
+	if (g_nmi->isAndroidFullPipe() && !ex->_messageName.empty()) {
 		debugC(3, kDebugEvents, "Android intro message %s", ex->_messageName.c_str());
 		if (ex->_messageName == "MSG_ENABLE_BHV_SOUND") {
 			if (g_nmi->_currentScene->_behaviorController)

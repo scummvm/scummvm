@@ -38,7 +38,7 @@ Inventory *getGameLoaderInventory() {
 }
 
 static MotionController *getMotionControllerBySceneId(int16 sceneId) {
-	if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+	if (g_nmi->_gameVersion >= 201509) {
 		Scene *scene = g_nmi->findScene(sceneId);
 		return scene ? scene->_motionController.get() : nullptr;
 	}
@@ -77,7 +77,7 @@ GameLoader::GameLoader() {
 	_interactionController = new InteractionController();
 	_inputController = new CursorController();
 
-	if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+	if (g_nmi->_gameVersion >= 201509) {
 		addMessageHandlerByIndex(global_messageHandler4, 0, 4);
 	} else {
 		addMessageHandlerByIndex(global_messageHandler2, 0, 0);
@@ -185,10 +185,10 @@ bool GameLoader::loadScene(int sceneId) {
 }
 
 bool GameLoader::setScene(int sceneId, int entranceId) {
-	const bool android = g_nmi->getPlatform() == Common::kPlatformAndroid;
+	const bool xmlEntrances = g_nmi->usesXMLProject();
 	Scene *scene;
 	const Common::Array<Entrance> *entrances;
-	if (android) {
+	if (xmlEntrances) {
 		scene = _gameProject->findScene(sceneId);
 		if (!scene)
 			return false;
@@ -208,10 +208,10 @@ bool GameLoader::setScene(int sceneId, int entranceId) {
 
 	// XML projects may name a start scene without specifying an entrance.
 	const Entrance defaultEntrance = {sceneId, 0, 0, 0};
-	const Entrance *entrance = android && !entranceId ? &defaultEntrance : nullptr;
+	const Entrance *entrance = xmlEntrances && !entranceId ? &defaultEntrance : nullptr;
 	for (const Entrance &entry : *entrances) {
 		// The original desktop workaround uses the first entrance in scene 726.
-		if ((!android && sceneId == 726) || (entry._id == entranceId && (!android || entry._sceneId == sceneId))) {
+		if ((!xmlEntrances && sceneId == 726) || (entry._id == entranceId && (!xmlEntrances || entry._sceneId == sceneId))) {
 			entrance = &entry;
 			break;
 		}
@@ -230,7 +230,7 @@ bool GameLoader::setScene(int sceneId, int entranceId) {
 		return false;
 
 	g_nmi->_currentScene = scene;
-	if (android) {
+	if (xmlEntrances) {
 		if (entrance->_queueId && !runQueue(entrance->_queueId, 0))
 			return false;
 		debugC(1, kDebugSceneLogic, "Entered Android scene %d through entrance %d, queue %d", sceneId, entranceId, entrance->_queueId);
@@ -381,7 +381,7 @@ bool GameLoader::preloadScene(int sceneId, int entranceId) {
 
 	// XML entrances identify their destination directly. The frame loop commits
 	// the pending change once the current dialog has closed.
-	if (g_nmi->getPlatform() == Common::kPlatformAndroid || _preloadSceneId != sceneId || _preloadEntranceId != entranceId) {
+	if (g_nmi->_gameVersion >= 201509 || _preloadSceneId != sceneId || _preloadEntranceId != entranceId) {
 		_preloadSceneId = sceneId;
 		_preloadEntranceId = entranceId;
 		return true;
@@ -584,7 +584,7 @@ PicAniInfoList GameLoader::savePicAniInfos(Scene *sc, int flag1, int flag2) {
 bool GameLoader::updateContent(int counterdiff) {
 	if (g_nmi->_currentScene) {
 		bool changed = g_nmi->_currentScene->update(counterdiff);
-		if (g_nmi->getPlatform() == Common::kPlatformAndroid)
+		if (g_nmi->_gameVersion >= 201509)
 			return changed;
 
 		_exCommand._cmd = 17;

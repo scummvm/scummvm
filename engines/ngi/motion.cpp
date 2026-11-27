@@ -789,7 +789,7 @@ GrPathDesc *getPreferredPath(AniObject *ani, Common::Array<PathDesc *> *items, s
 MovGraph::MovGraph() {
 	_selFunc = getPreferredPath;
 	_linkItemOffset = 0;
-	if (g_nmi->getPlatform() != Common::kPlatformAndroid)
+	if (g_nmi->_gameVersion < 201509)
 		insertMessageHandler(MovGraph::messageHandler, getMessageHandlersCount() - 1, 129);
 
 	_objtype = kObjTypeMovGraph;
@@ -1353,12 +1353,12 @@ double MovGraph::putToLink(Common::Point *point, MovGraphLink *link, int fuzzyMa
 	double dist1y = (double)(n1y - point->y);
 	double dist2x = (double)(n2x - n1x);
 	double dist2y = (double)(n1y - n2y);
-	const bool android = g_nmi->getPlatform() == Common::kPlatformAndroid;
+	const bool revisedGraph = g_nmi->_gameVersion >= 201509;
 	double length = link->_length;
 	double radiusSquared = dist1x * dist1x + dist1y * dist1y;
-	double dist1 = android ? sqrtf(radiusSquared) : sqrt(radiusSquared);
+	double dist1 = revisedGraph ? sqrtf(radiusSquared) : sqrt(radiusSquared);
 	double dot = dist2y * dist1y + dist2x * dist1x;
-	if (android) {
+	if (revisedGraph) {
 		// The XML length bounds the segment, but PutToLink normalizes by the node separation.
 		length = sqrtf(dist2x * dist2x + dist2y * dist2y);
 		dot = static_cast<float>(dot);
@@ -1368,13 +1368,13 @@ double MovGraph::putToLink(Common::Point *point, MovGraphLink *link, int fuzzyMa
 	double dist2 = dot / length / dist1;
 	double distm = dist2 * dist1;
 	double sinSquared = 1.0 - dist2 * dist2;
-	double res = sqrt(android ? fabs(sinSquared) : sinSquared) * dist1;
+	double res = sqrt(revisedGraph ? fabs(sinSquared) : sinSquared) * dist1;
 
 	// Android accepts the perpendicular through the source within one link length.
-	if (android && dist2 == 0.0 && res <= link->_length)
+	if (revisedGraph && dist2 == 0.0 && res <= link->_length)
 		return 0.0;
 
-	if (dist2 <= 0.0 || (android ? distm > link->_length : distm >= link->_length)) {
+	if (dist2 <= 0.0 || (revisedGraph ? distm > link->_length : distm >= link->_length)) {
 		if (fuzzyMatch) {
 			if (dist2 > 0.0) {
 				if (distm >= link->_length) {
@@ -1779,7 +1779,7 @@ bool MctlGraph::fillData(AniObject *obj, GmctlAni &item) {
 
 	const ObjectIdList *ids = nullptr;
 	GameVar *walkData;
-	if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+	if (g_nmi->_gameVersion >= 201509) {
 		ids = &g_nmi->_gameProject->_objectIds;
 		walkData = g_nmi->_gameProject->_walkData.getSubVarByName(ids->findName(static_cast<uint16>(obj->_id)));
 	} else {
@@ -2147,7 +2147,7 @@ MessageQueue *MctlGraph::makeQueue(AniObject *obj, int xpos, int ypos, int fuzzy
 	obj->getPicAniInfo(picAniInfo);
 
 	int idxsub;
-	const bool mirror = g_nmi->getPlatform() == Common::kPlatformAndroid && (obj->_flags & 8);
+	const bool mirror = g_nmi->_gameVersion >= 201509 && (obj->_flags & 8);
 
 	if (obj->_movement)
 		idxsub = getDirByMovement(idx, obj->_movement->_id, mirror);
@@ -2656,7 +2656,7 @@ MovGraphLink *MctlGraph::getHitLink(int x, int y, int idx, int fuzzyMatch) {
 	debugC(4, kDebugPathfinding, "MctlGraph::getHitLink(...)");
 
 	Common::Point point;
-	const double tolerance = g_nmi->getPlatform() == Common::kPlatformAndroid ? 3.0 : 2.0;
+	const double tolerance = g_nmi->_gameVersion >= 201509 ? 3.0 : 2.0;
 	MovGraphLink *res = nullptr;
 
 	for (LinkList::iterator i = _links.begin(); i != _links.end(); ++i) {
@@ -2692,8 +2692,8 @@ MovGraphLink *MctlGraph::getHitLink(int x, int y, int idx, int fuzzyMatch) {
 MovGraphLink *MctlGraph::getNearestLink(int x, int y) {
 	debugC(4, kDebugPathfinding, "MctlGraph::getNearestLink(...)");
 
-	const bool android = g_nmi->getPlatform() == Common::kPlatformAndroid;
-	double mindist = android ? 70.0 : 1.0e20;
+	const bool revisedGraph = g_nmi->_gameVersion >= 201509;
+	double mindist = revisedGraph ? 70.0 : 1.0e20;
 	MovGraphLink *res = nullptr;
 
 	for (LinkList::iterator i = _links.begin(); i != _links.end(); ++i) {
@@ -2709,9 +2709,9 @@ MovGraphLink *MctlGraph::getNearestLink(int x, int y) {
 			double n1dx = x - n1x;
 			double n1dy = n1y - y;
 			double radiusSquared = n1dy * n1dy + n1dx * n1dx;
-			double dst1 = android ? sqrtf(radiusSquared) : sqrt(radiusSquared);
+			double dst1 = revisedGraph ? sqrtf(radiusSquared) : sqrt(radiusSquared);
 			double dot = (n1y - n2y) * n1dy + (n2x - n1x) * n1dx;
-			if (android) {
+			if (revisedGraph) {
 				dot = static_cast<float>(dot);
 				if (!dst1 || !lnk->_length)
 					continue;
@@ -2925,14 +2925,14 @@ bool ReactParallel::load(MfcArchive &file) {
 void ReactParallel::create() {
 	_points.resize(4);
 
-	const bool android = g_nmi->getPlatform() == Common::kPlatformAndroid;
-	double angle = android ? atan2f(_y1 - _y2, _x1 - _x2) : atan2((double)(_y1 - _y2), (double)(_x1 - _x2));
+	const bool revisedGraph = g_nmi->_gameVersion >= 201509;
+	double angle = revisedGraph ? atan2f(_y1 - _y2, _x1 - _x2) : atan2((double)(_y1 - _y2), (double)(_x1 - _x2));
 	double at = angle + 1.570796; // pi/2
 	double sn = sin(at);
 	double cs = cos(at);
 	double lx = _left * cs, ly = _left * sn;
 	double rx = _right * cs, ry = _right * sn;
-	if (android) {
+	if (revisedGraph) {
 		// The XML engine truncates the offsets before adding them to each endpoint.
 		lx = (int)lx;
 		ly = (int)ly;
@@ -3031,7 +3031,7 @@ Common::Rect ReactPolygonal::getBBox() {
 
 
 bool MovGraphReact::hitTest(int x, int y) {
-	if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+	if (g_nmi->_gameVersion >= 201509) {
 		if (_points.size() <= 1)
 			return !_points.empty() && _points[0] == Common::Point(x, y);
 		bool inside = false;

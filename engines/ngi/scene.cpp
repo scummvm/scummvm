@@ -45,7 +45,7 @@ Scene *GameProject::findScene(int sceneId) {
 		if (tag._sceneId != sceneId)
 			continue;
 		if (!tag._scene) {
-			if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+			if (g_nmi->usesXMLProject()) {
 				tag.loadSceneXML(*this);
 				if (tag._scene && tag._scene->_guiManager)
 					tag._scene->_guiManager->load(*this);
@@ -348,7 +348,7 @@ void Scene::stopAllSounds() {
 }
 
 PictureObject *Scene::findPictureObjectById(int objId, int flags) {
-	for (uint i = g_nmi->getPlatform() == Common::kPlatformAndroid ? 0 : 1; i < _pictureObjects.size(); i++) {
+	for (uint i = g_nmi->_gameVersion >= 201509 ? 0 : 1; i < _pictureObjects.size(); i++) {
 		if (_pictureObjects[i]->_id == objId && _pictureObjects[i]->_copyId == flags)
 			return _pictureObjects[i];
 	}
@@ -459,7 +459,7 @@ template<typename T>
 void Scene::sortRenderables(Common::Array<T *> &list, uint startIndex) {
 	// The XML loader saves the declaration order across pictures and animations.
 	// Binary scenes retain their current list order at equal priority.
-	const bool xml = g_nmi->getPlatform() == Common::kPlatformAndroid;
+	const bool xml = g_nmi->_gameVersion >= 201509;
 	for (uint i = startIndex + 1; i < list.size(); ++i) {
 		T *object = list[i];
 		uint j = i;
@@ -476,7 +476,7 @@ void Scene::sortRenderables(Common::Array<T *> &list, uint startIndex) {
 void Scene::render() {
 	debugC(6, kDebugDrawing, ">>>>> Scene::render()");
 	g_nmi->_backgroundSurface.clear(0);
-	if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+	if (g_nmi->_gameVersion >= 201509) {
 		Common::Array<GameObject *> visibleObjects;
 		for (PictureObject *picture : _pictureObjects) {
 			if (picture->_flags & 4)
@@ -650,7 +650,7 @@ bool Scene::update(int counterdiff) {
 	debugC(6, kDebugDrawing, "Scene::update(%d)", counterdiff);
 
 	bool changed = false;
-	if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+	if (g_nmi->_gameVersion >= 201509) {
 		if (_behaviorController)
 			changed |= _behaviorController->update(counterdiff);
 		for (MessageQueue *queue : *g_nmi->_globalMessageQueueList)

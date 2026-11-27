@@ -215,12 +215,12 @@ void BehaviorController::initBehavior(Scene *sc, GameVar *var) {
 bool BehaviorController::update(uint32 elapsed) {
 	if (!_isActive)
 		return false;
-	const bool android = g_nmi->getPlatform() == Common::kPlatformAndroid;
+	const bool timedBehaviors = g_nmi->_gameVersion >= 201509;
 	bool changed = false;
 
 	debugC(6, kDebugBehavior, "BehaviorController::update()");
 	for (BehaviorAni &beh : _behaviors) {
-		if (android) {
+		if (timedBehaviors) {
 			changed |= beh.update(elapsed);
 			continue;
 		}
@@ -259,7 +259,7 @@ bool BehaviorController::update(uint32 elapsed) {
 
 		}
 	}
-	if (android)
+	if (timedBehaviors)
 		updateSounds(elapsed);
 	return changed;
 }

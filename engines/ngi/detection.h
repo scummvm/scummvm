@@ -37,6 +37,7 @@ struct NGIGameDescription {
 	ADGameDescription desc;
 
 	int gameId;
+	uint32 gameVersion; // Engine revision (YYYYMM), or 0 when undated.
 };
 
 } // End of namespace NGI

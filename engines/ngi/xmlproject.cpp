@@ -940,7 +940,7 @@ private:
 
 } // End of anonymous namespace
 
-const char *NGIEngine::getAndroidResourceLocale() const {
+const char *NGIEngine::getResourceLocale() const {
 	Common::Language language = Common::parseLanguage(ConfMan.get("language"));
 	if (language == Common::UNK_LANG)
 		language = Common::parseLanguageFromLocale(g_system->getSystemLanguage().c_str());
@@ -959,7 +959,7 @@ void SceneTag::loadSceneXML(const GameProject &project) {
 	Common::ScopedPtr<Scene> scene(new Scene());
 	scene->_sceneId = _sceneId;
 	const Common::Path path = Common::Path("data/res").join(_tag);
-	XMLSceneParser parser(project, *scene, g_nmi->getAndroidResourceLocale());
+	XMLSceneParser parser(project, *scene, g_nmi->getResourceLocale());
 	if (!parser.loadStream(SearchMan.createReadStreamForMember(path), path.toString()) || !parser.parse()) {
 		warning("Could not load Full Pipe Android scene %s", _tag.c_str());
 		return;
@@ -971,16 +971,18 @@ void SceneTag::loadSceneXML(const GameProject &project) {
 	_scene = scene.release();
 }
 
-Common::Error GameLoader::loadXML(const SceneTag *&start, int &width, int &height) {
-	const auto &files = g_nmi->_gameDescription->desc.filesDescriptions;
-	const Common::FSNode gameDirectory(ConfMan.getPath("path"));
-	Common::ScopedPtr<Common::Archive> apk(Common::makeZipArchive(gameDirectory.getChild(files[0].fileName)));
-	Common::ScopedPtr<Common::Archive> obb(Common::makeZipArchive(gameDirectory.getChild(files[1].fileName)));
-	if (!apk || !obb)
-		return Common::Error(Common::kNoGameDataFoundError, "Could not open the Full Pipe APK and OBB archives");
+Common::Error GameLoader::loadXML(const Common::Path &projectPath, const SceneTag *&start, int &width, int &height) {
+	if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+		const auto &files = g_nmi->_gameDescription->desc.filesDescriptions;
+		const Common::FSNode gameDirectory(ConfMan.getPath("path"));
+		Common::ScopedPtr<Common::Archive> apk(Common::makeZipArchive(gameDirectory.getChild(files[0].fileName)));
+		Common::ScopedPtr<Common::Archive> obb(Common::makeZipArchive(gameDirectory.getChild(files[1].fileName)));
+		if (!apk || !obb)
+			return Common::Error(Common::kNoGameDataFoundError, "Could not open the Full Pipe APK and OBB archives");
 
-	SearchMan.add("ngi-android-obb", obb.release());
-	SearchMan.add("ngi-android-apk", apk.release());
+		SearchMan.add("ngi-android-obb", obb.release());
+		SearchMan.add("ngi-android-apk", apk.release());
+	}
 
 	_gameProject.reset(new GameProject());
 	GameProject &project = *_gameProject;
@@ -988,7 +990,6 @@ Common::Error GameLoader::loadXML(const SceneTag *&start, int &width, int &heigh
 	if (!project._objectIds.load("data/obj.h"))
 		return Common::Error(Common::kNoGameDataFoundError, "Could not read the Full Pipe Android object IDs");
 
-	const Common::Path projectPath("data/FullPipe.xml");
 	XMLProjectParser parser(project);
 	if (!parser.loadStream(SearchMan.createReadStreamForMember(projectPath), projectPath.toString()) || !parser.parse())
 		return Common::Error(Common::kNoGameDataFoundError, "Could not read the Full Pipe Android project");
@@ -998,7 +999,7 @@ Common::Error GameLoader::loadXML(const SceneTag *&start, int &width, int &heigh
 		return Common::Error(Common::kNoGameDataFoundError, "Could not find the Full Pipe Android start scene");
 	debugC(1, kDebugXML, "Loaded Full Pipe Android project, start scene %s (%hu)",
 		start->_tag.c_str(), static_cast<uint16>(start->_sceneId));
-	if (start->_sceneId == SC_INTRO1) {
+	if (g_nmi->isAndroidFullPipe() && start->_sceneId == SC_INTRO1) {
 		XMLWalkParser walkParser(project._walkData);
 		if (!walkParser.loadFile("data/data.xml") || !walkParser.parse())
 			return Common::Error(Common::kNoGameDataFoundError, "Could not read the Full Pipe Android walking movements");

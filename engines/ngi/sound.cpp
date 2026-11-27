@@ -214,8 +214,8 @@ void Sound::play(int loop, int creator) {
 	Audio::SoundHandle *handle = getHandle();
 
 	Audio::RewindableAudioStream *stream = nullptr;
-	const bool android = g_nmi->getPlatform() == Common::kPlatformAndroid;
-	if (android) {
+	const bool streamedSound = g_nmi->_gameVersion >= 201509;
+	if (streamedSound) {
 #ifdef USE_VORBIS
 		Common::SeekableReadStream *data = SearchMan.createReadStreamForMember(_memfilename);
 		if (data)
@@ -232,7 +232,7 @@ void Sound::play(int loop, int creator) {
 	}
 	Audio::AudioStream *audioStream = new Audio::LoopingAudioStream(stream, (loop == 1) ? 0 : 1);
 
-	if (android) {
+	if (streamedSound) {
 		// The last creator stops all instances of a non-looping phase sound.
 		_objectId = loop ? 0 : creator;
 		for (uint i = _overlappingHandles.size(); i > 0; --i) {
@@ -244,7 +244,7 @@ void Sound::play(int loop, int creator) {
 	} else {
 		g_nmi->_mixer->stopHandle(*handle);
 	}
-	const Audio::Mixer::SoundType type = android && _flags == kMusic ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
+	const Audio::Mixer::SoundType type = streamedSound && _flags == kMusic ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
 	g_nmi->_mixer->playStream(type, handle, audioStream);
 	debugC(3, kDebugEvents, "Playing sound %d (%s), loop %d", _id, _memfilename.toString().c_str(), loop);
 }
@@ -520,7 +520,7 @@ void global_messageHandler_handleSound(Command *cmd) {
 		return;
 
 	if (cmd->_z & 1) {
-		if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+		if (g_nmi->_gameVersion >= 201509) {
 			snd->play(cmd->_param);
 			return;
 		}

@@ -575,10 +575,10 @@ bool NGIEngine::doSetScene(const Entrance &entrance) {
 	if (!scene)
 		return 0;
 
-	if (getPlatform() == Common::kPlatformAndroid) {
+	if (usesXMLProject()) {
 		Scene *common = findScene(SC_COMMON);
-		Scene *intro2 = scene->_sceneId == SC_INTRO1 ? findScene(SC_INTRO2) : nullptr;
-		if (scene->_sceneId == SC_INTRO1 && (!common || !intro2))
+		Scene *intro2 = isAndroidFullPipe() && scene->_sceneId == SC_INTRO1 ? findScene(SC_INTRO2) : nullptr;
+		if (isAndroidFullPipe() && scene->_sceneId == SC_INTRO1 && (!common || !intro2))
 			return false;
 		scene->_commonQueueScene = common == scene ? nullptr : common;
 		for (const PicAniInfo &ref : scene->_roamingObjects) {
@@ -619,7 +619,7 @@ bool NGIEngine::doSetScene(const Entrance &entrance) {
 			sceneIntro_initGui(*scene, *intro2, _backgroundSurface.w);
 			sceneIntro_initMan(*scene);
 			addMessageHandler(sceneHandlerIntro, 2);
-		} else if (scene->_sceneId == SC_1) {
+		} else if (isAndroidFullPipe() && scene->_sceneId == SC_1) {
 			scene01_initObjects(scene, entrance._id, true);
 			addMessageHandler(sceneHandler01, 2);
 		}
