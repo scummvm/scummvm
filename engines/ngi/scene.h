@@ -25,6 +25,7 @@
 #include "common/ptr.h"
 #include "ngi/objects.h"
 #include "ngi/gfx.h"
+#include "ngi/gui.h"
 #include "ngi/interaction.h"
 
 namespace NGI {
@@ -33,18 +34,6 @@ class MessageQueue;
 class GameProject;
 class BehaviorController;
 class MctlCompound;
-
-struct IntroSkipButton {
-	int16 sceneId = 0, pictureId = 0;
-	uint16 pressSound = 0;
-	Common::Rect bounds;
-	const Texture *texture = nullptr;
-	bool visible = false, active = false;
-
-	bool hit(const Common::Point &pos) const {
-		return visible && active && pos.x > bounds.left && pos.x < bounds.right && pos.y > bounds.top && pos.y < bounds.bottom;
-	}
-};
 
 class Scene : public Background {
  public:
@@ -56,7 +45,9 @@ class Scene : public Background {
 	PicAniInfoList _roamingObjects;
 	Common::Array<Entrance> _entrances;
 	int16 _heroId = 0;
-	IntroSkipButton _introSkip;
+	Common::ScopedPtr<GuiManager> _guiManager;
+	void (*_guiEventHandler)(Scene &, const Common::String &, const Common::String &) = nullptr;
+	void onGuiEvent(const Common::String &id, const Common::String &event);
 	Common::Array<MessageQueue *> _messageQueues;
 	// XML queue templates are cloned when run and can be shared between scenes.
 	Scene *_commonQueueScene = nullptr;

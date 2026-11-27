@@ -31,6 +31,36 @@
 
 namespace NGI {
 
+static GuiElement *skipButton(Scene &scene) {
+	return scene._guiManager ? scene._guiManager->getElement(scene._sceneId == SC_INTRO1 ? "BTN_SC_INTRO_SKIP_1" : "BTN_SC_INTRO_SKIP_2") : nullptr;
+}
+
+static void sceneIntro_onGuiEvent(Scene &scene, const Common::String &id, const Common::String &event) {
+	if (!g_vars->sceneIntro_playing || event != "unpress" || (id != "BTN_SC_INTRO_SKIP_1" && id != "BTN_SC_INTRO_SKIP_2"))
+		return;
+	debugC(2, kDebugEvents, "Skipping Android intro from scene %d", scene._sceneId);
+	for (int sceneId : {SC_INTRO1, SC_INTRO2}) {
+		if (GuiElement *button = skipButton(*g_nmi->findScene(sceneId)))
+			button->hideAndDeactivate();
+	}
+	clearGlobalMessageQueueList1();
+	if (scene._soundList)
+		scene.stopAllSounds();
+	g_nmi->stopAllSounds(Sound::kSpeech);
+	sceneIntro_end();
+}
+
+void sceneIntro_initGui(Scene &first, Scene &second, int width) {
+	first._guiEventHandler = second._guiEventHandler = sceneIntro_onGuiEvent;
+	GuiElement *button = skipButton(first);
+	if (!button)
+		return;
+	Common::Point pos(width - button->_size.x, button->_pos.y);
+	button->setPos(pos);
+	if (GuiElement *other = skipButton(second))
+		other->setPos(pos);
+}
+
 void sceneIntro_initMan(Scene &scene) {
 	g_vars->sceneIntro_aniin1man = scene.findAniObjectById(ANI_IN1MAN, -1);
 	g_vars->sceneIntro_needSleep = true;
@@ -63,7 +93,8 @@ bool sceneIntro_updateAndroid(uint32 elapsed, byte &brightness) {
 		const bool changed = brightness != fader.brightness();
 		brightness = fader.brightness();
 		if (!fader.active()) {
-			g_nmi->_currentScene->_introSkip.visible = g_nmi->_currentScene->_introSkip.active = true;
+			if (GuiElement *button = skipButton(*g_nmi->_currentScene))
+				button->showAndActivate();
 			runQueue(QU_INTR_STARTINTRO, 0);
 		}
 		return changed;
@@ -98,6 +129,10 @@ void sceneHandlerIntro_part1() {
 void sceneHandlerIntro_part2() {
 	g_nmi->_currentScene = g_nmi->findScene(SC_INTRO2);
 	runQueue(QU_IN2_DO, 0);
+	if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+		if (GuiElement *button = skipButton(*g_nmi->_currentScene))
+			button->showAndActivate();
+	}
 }
 
 void sceneIntro_end() {

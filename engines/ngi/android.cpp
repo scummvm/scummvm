@@ -305,6 +305,8 @@ private:
 			XML_PROP(putPrev, false)
 			XML_PROP(scrollX, false)
 			XML_PROP(scrollY, false)
+			XML_KEY(GUIMNGR)
+			KEY_END()
 			XML_KEY(MCTL_COMPOUND)
 				XML_KEY(MCTL_ITEM)
 					XML_PROP(ofsX, false)
@@ -519,6 +521,11 @@ private:
 
 	static int intProperty(const ParserNode &node, const char *key) {
 		return atoi(node.values.getValOrDefault(key).c_str());
+	}
+
+	bool parserCallback_GUIMNGR(ParserNode *) {
+		_scene._guiManager.reset(new GuiManager(_scene));
+		return true;
 	}
 
 	bool parserCallback_MCTL_COMPOUND(ParserNode *) {
@@ -926,17 +933,8 @@ private:
 		const ParserNode *parent = getParentNode(node);
 		if (!parent)
 			return false;
-		if (node->depth == 2 && parent->name == "GUIMNGR" && node->name == "BUTTON" &&
-				((_scene._sceneId == SC_INTRO1 && node->values.getValOrDefault("id") == "BTN_SC_INTRO_SKIP_1") ||
-				 (_scene._sceneId == SC_INTRO2 && node->values.getValOrDefault("id") == "BTN_SC_INTRO_SKIP_2"))) {
-			IntroSkipButton &button = _scene._introSkip;
-			if (!readId(node->values["scene"], button.sceneId) || !readId(node->values["texture"], button.pictureId) ||
-					!readId(node->values["press"], button.pressSound))
-				return parserError("Unknown intro skip button resource");
-			button.bounds.top = atoi(node->values["y"].c_str());
-			button.visible = boolProperty(*node, "visible");
-			button.active = boolProperty(*node, "active");
-		}
+		if (node->depth == 2 && parent->name == "GUIMNGR" && _scene._guiManager)
+			_scene._guiManager->createElement(node->name, node->values, _project._objectIds);
 		// Scene nodes outside the supported object types are ignored for now.
 		node->ignore = true;
 		node->layout = _XMLkeys;
@@ -980,8 +978,8 @@ void Scene::drawAndroid(Graphics::ManagedSurface &target) const {
 			phase->blitTo(target, position - anchor, mirror);
 		}
 	}
-	if (_introSkip.visible && _introSkip.texture)
-		_introSkip.texture->blitTo(target, Common::Point(_introSkip.bounds.left, _introSkip.bounds.top));
+	if (_guiManager)
+		_guiManager->render(target);
 }
 
 const char *NGIEngine::getAndroidResourceLocale() const {
@@ -1046,6 +1044,8 @@ Common::Error NGIEngine::enterAndroidScene1() {
 	if (common->_soundList)
 		_currSoundList1[_currSoundListCount++] = common->_soundList.get();
 
+	if (_currentScene && _currentScene->_guiManager)
+		_currentScene->_guiManager->onHide();
 	_currentScene = room;
 	if (room->_motionController) {
 		room->_motionController->attachObject(_aniMan);
@@ -1102,20 +1102,6 @@ Common::Error NGIEngine::runAndroid() {
 	if (intro && !common)
 		return Common::Error(Common::kNoGameDataFoundError, "Could not load the shared Full Pipe Android resources");
 	if (intro) {
-		for (Scene *scene : { startScene, intro2 }) {
-			IntroSkipButton &button = scene->_introSkip;
-			if (!button.pictureId)
-				continue;
-			Scene *source = project.findScene(button.sceneId);
-			PictureObject *pic = source ? source->findPictureObjectById(button.pictureId, 0) : nullptr;
-			if (!pic)
-				return Common::Error(Common::kNoGameDataFoundError, "Missing Full Pipe intro skip button picture");
-			button.texture = pic->_picture;
-			const Dims size = button.texture->getDimensions();
-			button.bounds.right = parser.width();
-			button.bounds.left = button.bounds.right - size.x;
-			button.bounds.bottom = button.bounds.top + size.y;
-		}
 		XMLWalkParser walkParser(project._walkData);
 		if (!walkParser.loadFile("data/data.xml") || !walkParser.parse())
 			return Common::Error(Common::kNoGameDataFoundError, "Could not read the Full Pipe Android walking movements");
@@ -1136,6 +1122,7 @@ Common::Error NGIEngine::runAndroid() {
 		startScene->_behaviorController->onShow(*startScene);
 	addMessageHandlerByIndex(global_messageHandler4, 0, 4);
 	if (intro) {
+		sceneIntro_initGui(*startScene, *intro2, parser.width());
 		sceneIntro_initMan(*startScene);
 		addMessageHandler(sceneHandlerIntro, 2);
 	}
@@ -1162,6 +1149,7 @@ Common::Error NGIEngine::runAndroid() {
 	uint32 lastUpdate = _system->getMillis();
 	while (!shouldQuit()) {
 		bool screenChanged = false;
+		bool redraw = false;
 		while (eventManager->pollEvent(event)) {
 			if (event.type == Common::EVENT_SCREEN_CHANGED) {
 				screenChanged = true;
@@ -1176,22 +1164,35 @@ Common::Error NGIEngine::runAndroid() {
 					cmd._param = back ? kActionCloseDialog : 0;
 					_modalObject->handleMessage(&cmd);
 				}
-			} else if (intro && g_vars->sceneIntro_playing &&
-					(event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)) {
-				const IntroSkipButton &button = _currentScene->_introSkip;
-				if (button.hit(event.mouse)) {
-					if (event.type == Common::EVENT_LBUTTONDOWN) {
-						playSound(button.pressSound, 0);
-					} else {
-						debugC(2, kDebugEvents, "Skipping Android intro from scene %d", _currentScene->_sceneId);
-						startScene->_introSkip.visible = intro2->_introSkip.visible = false;
-						startScene->_introSkip.active = intro2->_introSkip.active = false;
-						clearGlobalMessageQueueList1();
-						if (_currentScene->_soundList)
-							_currentScene->stopAllSounds();
-						stopAllSounds(Sound::kSpeech);
-						sceneIntro_end();
-					}
+			} else if (_currentScene->_guiManager) {
+				GuiManager &gui = *_currentScene->_guiManager;
+				switch (event.type) {
+				case Common::EVENT_KEYDOWN:
+					gui.onKeyDown(event.kbd.keycode);
+					if (event.kbd.ascii)
+						gui.onChar(event.kbd.ascii);
+					break;
+				case Common::EVENT_KEYUP:
+					gui.onKeyUp(event.kbd.keycode);
+					break;
+				case Common::EVENT_MOUSEMOVE:
+				case Common::EVENT_LBUTTONDOWN:
+				case Common::EVENT_LBUTTONUP:
+				case Common::EVENT_RBUTTONDOWN:
+				case Common::EVENT_RBUTTONUP:
+					gui.onMouseMove(event.mouse);
+					if (event.type == Common::EVENT_LBUTTONDOWN)
+						gui.onMouseLKeyDown(event.mouse);
+					else if (event.type == Common::EVENT_LBUTTONUP)
+						gui.onMouseLKeyUp(event.mouse);
+					else if (event.type == Common::EVENT_RBUTTONDOWN)
+						gui.onMouseRKeyDown(event.mouse);
+					else if (event.type == Common::EVENT_RBUTTONUP)
+						gui.onMouseRKeyUp(event.mouse);
+					redraw = true;
+					break;
+				default:
+					break;
 				}
 			}
 		}
@@ -1201,7 +1202,6 @@ Common::Error NGIEngine::runAndroid() {
 		const uint32 now = _system->getMillis();
 		const uint32 elapsed = now - lastUpdate;
 		lastUpdate = now;
-		bool redraw = false;
 		Scene *scene = _currentScene;
 		if (_modalObject) {
 			if (!_modalObject->init(elapsed))
@@ -1222,6 +1222,8 @@ Common::Error NGIEngine::runAndroid() {
 		}
 
 		if (scene != _currentScene) {
+			if (scene->_guiManager)
+				scene->_guiManager->onHide();
 			stopAllSounds(Sound::kSpeech);
 			stopAllSounds(Sound::kEffect);
 			if (_currentScene->_behaviorController)

@@ -58,6 +58,7 @@ void sceneIntro_initScene(Scene *sc);
 void sceneIntro_initMan(Scene &scene);
 bool sceneIntro_updateAndroid(uint32 elapsed, byte &brightness);
 void sceneIntro_end();
+void sceneIntro_initGui(Scene &first, Scene &second, int width);
 int sceneHandlerIntro(Command *cmd);
 
 int sceneIntroDemo_updateCursor();

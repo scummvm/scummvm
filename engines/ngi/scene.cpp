@@ -45,10 +45,13 @@ Scene *GameProject::findScene(int sceneId) {
 		if (tag._sceneId != sceneId)
 			continue;
 		if (!tag._scene) {
-			if (g_nmi->getPlatform() == Common::kPlatformAndroid)
+			if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
 				tag.loadSceneXML(*this);
-			else
+				if (tag._scene && tag._scene->_guiManager)
+					tag._scene->_guiManager->load(*this);
+			} else {
 				tag.loadScene();
+			}
 		}
 		return tag._scene;
 	}
@@ -112,7 +115,15 @@ void SceneTag::loadScene() {
 
 Scene::Scene() : _sceneId(0), _field_BC(0) {}
 
+void Scene::onGuiEvent(const Common::String &id, const Common::String &event) {
+	if (_guiEventHandler)
+		_guiEventHandler(*this, id, event);
+}
+
 Scene::~Scene() {
+	if (_guiManager)
+		_guiManager->unload();
+
 	// _faObjlist is not used
 
 	for (uint i = 0; i < _messageQueues.size(); i++)
@@ -653,7 +664,7 @@ int Scene::getPictureObjectIdAtPos(int x, int y) {
 bool Scene::update(int counterdiff) {
 	debugC(6, kDebugDrawing, "Scene::update(%d)", counterdiff);
 
-	bool changed = false;
+	bool changed = _guiManager && _guiManager->update(counterdiff);
 	for (uint i = 0; i < _renderableAnis.size(); i++)
 		changed |= _renderableAnis[i]->update(counterdiff);
 	return changed;
