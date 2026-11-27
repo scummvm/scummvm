@@ -921,7 +921,7 @@ void Set::setupCamera() {
 Sector *Set::findPointSector(const Math::Vector3d &p, Sector::SectorType type) {
 	for (int i = 0; i < _numSectors; i++) {
 		Sector *sector = _sectors[i];
-		if (sector && (sector->getType() & type) && sector->isVisible() && sector->isPointInSector(p))
+		if (sector && (type == Sector::NoneType || (sector->getType() & type)) && sector->isVisible() && sector->isPointInSector(p))
 			return sector;
 	}
 	return nullptr;
