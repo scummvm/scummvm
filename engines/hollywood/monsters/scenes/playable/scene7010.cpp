@@ -255,7 +255,7 @@ void Scene7010::drawCustomForegroundComposite(int activeWorldX, int activeWorldY
 }
 
 bool Scene7010::shouldDrawSecondaryActorInPlayableComposite() const {
-	return _speechOverlay.visible && !_actionOverlayPlayer.replacesActor();
+	return !_actionOverlayPlayer.replacesActor();
 }
 
 void Scene7010::runCustomEntrySequence() {

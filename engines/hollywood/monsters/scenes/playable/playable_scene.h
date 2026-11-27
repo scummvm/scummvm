@@ -427,8 +427,9 @@ protected:
 	void updateAmbientSoundCue(const AmbientAudioProfile &profile);
 	void updateAmbientMusicCue(const AmbientAudioProfile &profile);
 
-	// Speech animation
-	void advanceSecondaryActorSpeechAnimation(uint32 delta);
+	// Actor speech and idle animation
+	bool shouldAnimateSecondaryActorIdle() const;
+	void advanceSecondaryActorFacialAnimation(uint32 delta);
 	void advanceSecondaryActorSpeechFrame();
 	void advancePrimaryLeftSpeechFrame();
 	void advancePrimaryDialogueSpeechFrame(uint32 delta);

@@ -31,7 +31,7 @@
 namespace Hollywood {
 
 /**
- * Owns speech playback, subtitle overlays, and actor speech-animation state.
+ * Owns speech playback, subtitle overlays, and actor speech and idle animation state.
  *
  * PlayableScene supplies elapsed time and draws the result; this helper owns
  * and mutates the playback state but never presents a frame.
@@ -46,8 +46,9 @@ public:
 	void clearPrimaryOverlay();
 	void clearAllOverlays();
 	void prepareSecondaryActorSpeech();
-	void advanceSecondaryActorSpeechAnimation(uint32 delta, Common::RandomSource &random,
-		uint32 frameMillis, byte frameCount);
+	void advanceSecondaryActorFacialAnimation(uint32 delta, Common::RandomSource &random,
+		uint32 frameMillis, byte frameCount, bool idleAllowed);
+	bool secondaryActorIdleActive() const { return _secondaryActorIdleActive; }
 	void advanceSecondaryActorSpeechFrame(Common::RandomSource &random, byte frameCount);
 	byte advancePrimaryLeftSpeechFrame(Common::RandomSource &random);
 	byte advancePrimaryDialogueSpeechFrame(Common::RandomSource &random, byte baseFrame, byte frameCount);
@@ -68,6 +69,7 @@ public:
 	uint32 _primaryLeftSpeechTimerAccumulator;
 	uint32 _primaryDialogueSpeechTimerAccumulator;
 	byte _secondaryActorFrame;
+	bool _secondaryActorIdleActive;
 };
 
 } // End of namespace Hollywood

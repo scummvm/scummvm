@@ -231,7 +231,7 @@ void Scene2080::advanceCustomGameplayLoop(uint32 delta) {
 }
 
 void Scene2080::advanceDialogueMenu(uint32 delta) {
-	advanceSecondaryActorSpeechAnimation(delta);
+	advanceSecondaryActorFacialAnimation(delta);
 	if (_primaryDialogueSpeechActive)
 		advancePrimaryDialogueSpeechFrame(delta);
 	else

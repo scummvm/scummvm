@@ -33,7 +33,8 @@ SpeechController::SpeechController(Common::Language language, bool speechEnabled
 		_secondaryActorTimerAccumulator(0),
 		_primaryLeftSpeechTimerAccumulator(0),
 		_primaryDialogueSpeechTimerAccumulator(0),
-		_secondaryActorFrame(0) {
+		_secondaryActorFrame(0),
+		_secondaryActorIdleActive(false) {
 	initialize(0, 0);
 }
 
@@ -56,10 +57,9 @@ void SpeechController::resetRuntimeState(byte invalidPrimaryGroup, byte defaultP
 	_primaryDialogueSpeechGroup = invalidPrimaryGroup;
 	_primaryLeftSpeechActive = false;
 	_primaryDialogueSpeechActive = false;
-	_secondaryActorTimerAccumulator = 0;
 	_primaryLeftSpeechTimerAccumulator = 0;
 	_primaryDialogueSpeechTimerAccumulator = 0;
-	_secondaryActorFrame = 0;
+	prepareSecondaryActorSpeech();
 	clearAllOverlays();
 }
 
@@ -81,19 +81,31 @@ void SpeechController::clearAllOverlays() {
 void SpeechController::prepareSecondaryActorSpeech() {
 	_secondaryActorFrame = 0;
 	_secondaryActorTimerAccumulator = 0;
+	_secondaryActorIdleActive = false;
 }
 
-void SpeechController::advanceSecondaryActorSpeechAnimation(uint32 delta, Common::RandomSource &random,
-		uint32 frameMillis, byte frameCount) {
-	if (!_secondaryOverlay.visible) {
+void SpeechController::advanceSecondaryActorFacialAnimation(uint32 delta, Common::RandomSource &random,
+		uint32 frameMillis, byte frameCount, bool idleAllowed) {
+	if (!_secondaryOverlay.visible && !idleAllowed) {
 		prepareSecondaryActorSpeech();
 		return;
+	}
+
+	if (_secondaryOverlay.visible) {
+		_secondaryActorIdleActive = false;
+	} else if (!_secondaryActorIdleActive) {
+		_secondaryActorFrame = 0;
 	}
 
 	_secondaryActorTimerAccumulator += delta;
 	while (_secondaryActorTimerAccumulator >= frameMillis) {
 		_secondaryActorTimerAccumulator -= frameMillis;
-		advanceSecondaryActorSpeechFrame(random, frameCount);
+		if (_secondaryOverlay.visible) {
+			advanceSecondaryActorSpeechFrame(random, frameCount);
+		} else {
+			_secondaryActorIdleActive = !_secondaryActorIdleActive && random.getRandomNumber(14) == 0;
+			_secondaryActorFrame = _secondaryActorIdleActive ? 4 : 0;
+		}
 	}
 }
 

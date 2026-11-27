@@ -165,7 +165,7 @@ void Scene7030::prepareCustomComposite(bool drawActors, byte activeFacing,
 }
 
 bool Scene7030::shouldDrawSecondaryActorInPlayableComposite() const {
-	return _speechOverlay.visible && !_actionOverlayPlayer.replacesActor();
+	return !_actionOverlayPlayer.replacesActor();
 }
 
 void Scene7030::runCustomEntrySequence() {

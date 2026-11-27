@@ -749,7 +749,7 @@ void PlayableScene::drawCustomForegroundComposite(int activeWorldX, int activeWo
 }
 
 bool PlayableScene::shouldDrawSecondaryActorInPlayableComposite() const {
-	return _speechOverlay.visible && !_actionOverlayPlayer.isVisible();
+	return !_actionOverlayPlayer.isVisible();
 }
 
 bool PlayableScene::shouldApplyGameplayPanelObjectPalette() const {
@@ -1528,7 +1528,9 @@ void PlayableScene::drawCutsceneComposite(bool drawActiveActor, byte activeFacin
 
 void PlayableScene::drawPlayableComposite() {
 	const bool drawActiveActor = _config.drawDefaultActor && !_hideActiveActor;
-	const bool drawSecondaryActor = shouldDrawSecondaryActorInPlayableComposite();
+	const bool drawSecondaryActor =
+		(_speechOverlay.visible && shouldDrawSecondaryActorInPlayableComposite()) ||
+		(_speechController.secondaryActorIdleActive() && shouldAnimateSecondaryActorIdle());
 	drawCutsceneComposite(drawActiveActor, _activeActorFacing, _activeActorCel, _activeActorWorldX, _activeActorWorldY,
 		drawSecondaryActor, _activeActorFacing, _secondaryActorFrame, _activeActorWorldX, _activeActorWorldY,
 		_activeActorDrawOrderMode);
@@ -2074,7 +2076,7 @@ void PlayableScene::prepareGameplayLoop() {
 }
 
 void PlayableScene::advanceGameplayLoop(uint32 delta) {
-	advanceSecondaryActorSpeechAnimation(delta);
+	advanceSecondaryActorFacialAnimation(delta);
 	advanceConcurrentActorPath(delta);
 	advanceCustomGameplayLoop(delta);
 	advanceRealtimeSpeech(delta);
@@ -3043,9 +3045,17 @@ void PlayableScene::updateAmbientMusicCue(const AmbientAudioProfile &profile) {
 	_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, profile.musicVolumePercent);
 }
 
-void PlayableScene::advanceSecondaryActorSpeechAnimation(uint32 delta) {
-	_speechController.advanceSecondaryActorSpeechAnimation(delta, _random,
-		kSecondaryActorSpeechFrameMillis, kSecondaryActorFramesPerFacing);
+bool PlayableScene::shouldAnimateSecondaryActorIdle() const {
+	return _config.drawDefaultActor && !_hideActiveActor &&
+		!_actorPathPlaybackActive && _activeActorCel == 0 &&
+		!_sceneLayers.hasVisibleLayers(kSceneAnimationActorReplacement) &&
+		shouldDrawSecondaryActorInPlayableComposite();
+}
+
+void PlayableScene::advanceSecondaryActorFacialAnimation(uint32 delta) {
+	_speechController.advanceSecondaryActorFacialAnimation(delta, _random,
+		kSecondaryActorSpeechFrameMillis, kSecondaryActorFramesPerFacing,
+		shouldAnimateSecondaryActorIdle());
 }
 
 void PlayableScene::advanceSecondaryActorSpeechFrame() {
