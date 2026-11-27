@@ -284,7 +284,9 @@ void Scene6300::drawCustomForegroundComposite(Graphics::ManagedSurface &viewport
 		_torchAnimation.draw(viewport, _town.kevinAway && !_town.blowtorchTaken ? 0 : 1, _camera.x, 0);
 		drawKevin(viewport);
 	}
-	if (!_town.statueLowered && !((_roomAction == 448 || _roomAction == 409) && drawingRoomAnimation())) {
+	if (_lookingAtStatue) {
+		_actionAnimation.draw(viewport, 84, _camera.x, 0);
+	} else if (!_town.statueLowered && !((_roomAction == 448 || _roomAction == 409) && drawingRoomAnimation())) {
 		_statueAnimation.draw(viewport, 0, _camera.x, 0);
 	}
 	if (_roomAction == 422 && drawingRoomAnimation() && _actionStep >= 53) {
@@ -551,7 +553,12 @@ RunawayRoomScene::ActionResult Scene6300::dispatchCustomSceneAction(uint16 actio
 		setRoomAnimationOverlay(25, 16, hand, ARRAYSIZE(hand));
 		break;
 	}
-	case 1448: { // Lower the statue onto the catapult.
+	case 1448: // Check the statue's position above the catapult.
+		_lookingAtStatue = true;
+		beginHeadMovement(460, RunawayHeadMovement::kRight, 1);
+		break;
+	case 460: { // Lower the statue onto the catapult.
+		_lookingAtStatue = false;
 		say(4, 9);
 		_audio.playEffect(43);
 		beginRoomAnimation(409, 21, 90);

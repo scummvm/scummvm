@@ -201,8 +201,7 @@ void Scene4060::runCustomEntrySequence() {
 		changeFloor(false, Common::Point(921, 813));
 		if (_museum.willyInLab == 1) {
 			walkTo(Common::Point(1029, 842), 7, true);
-			say(38, 1);
-			deferMuseumAction(460);
+			deferMuseumAction(490);
 		} else {
 			_facing = 6;
 			say(36, 3);
@@ -242,7 +241,11 @@ void Scene4060::advanceCustomGameplayLoop(uint32 delta) {
 	} else {
 		_willyFrame = (_now / 80) % 22;
 	}
-	if (_roomAction == 480) {
+	if (_roomAction == 492) {
+		const uint ticks = (_now - _actionStarted) / 10;
+		_actionStarted += ticks * 10;
+		_camera.y = MAX<int>(0, _camera.y - ticks * 4);
+	} else if (_roomAction == 480) {
 		const uint ticks = (_now - _actionStarted) / 10;
 		_actionStarted += ticks * 10;
 		const int distance = ticks * 2;
@@ -280,6 +283,20 @@ void Scene4060::drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport
 }
 
 RunawayRoomScene::ActionResult Scene4060::dispatchCustomSceneAction(uint16 action) {
+	if (action == 491) {
+		_actionStarted = _now;
+		deferMuseumAction(492);
+		return kHandled;
+	}
+	if (action == 493) {
+		say(38, 1);
+		deferMuseumAction(460);
+		return kHandled;
+	}
+	if (action == 495) {
+		say(6, 1);
+		return kHandled;
+	}
 	if (museumChapter()) {
 		switch (action) {
 		case 302: // Descend the left stairs.
@@ -322,7 +339,7 @@ RunawayRoomScene::ActionResult Scene4060::dispatchCustomSceneAction(uint16 actio
 				if (_game == kRunawayMuseumDemo) {
 					deferMuseumAction(313);
 				} else {
-					say(6, 1);
+					deferMuseumAction(494);
 				}
 				_museum.basketSeen = 1;
 			} else if (_game == kRunawayMuseumDemo) {
@@ -473,6 +490,19 @@ RunawayRoomScene::ActionResult Scene4060::dispatchCustomSceneAction(uint16 actio
 
 void Scene4060::finishCustomAnimation(uint16 action) {
 	switch (action) {
+	case 490: // Look up before watching Willy leave the laboratory.
+		_lookingUp = true;
+		beginHeadMovement(491, RunawayHeadMovement::kUp, RunawayHeadMovement::kHold);
+		break;
+	case 492:
+		if (_camera.y)
+			deferMuseumAction(492);
+		else
+			returnHeadToCenter(493);
+		break;
+	case 494: // Inspect the basket after the first remark.
+		beginHeadMovement(495, RunawayHeadMovement::kDown);
+		break;
 	case 483:
 	case 484:
 	case 485:
@@ -532,6 +562,7 @@ void Scene4060::finishCustomAnimation(uint16 action) {
 		startMuseumFilm(kMuseumExitFilm);
 		break;
 	case 460: // Willy approaches the security door.
+		_lookingUp = false;
 		_camera.y = 0;
 		beginRoomAnimationRange(461, 16, 216, 0, 178, false);
 		break;
@@ -755,7 +786,7 @@ int Scene4060::sceneViewportYOffset() const {
 }
 
 void Scene4060::setCameraY(int y) {
-	if (!_upperFloor && (!_roomAction || _roomAction < 461 || _roomAction > 466))
+	if (!_lookingUp && !_upperFloor && (!_roomAction || _roomAction < 461 || _roomAction > 466))
 		_camera.y = CLIP(y, 200, 600);
 }
 

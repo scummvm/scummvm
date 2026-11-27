@@ -207,9 +207,12 @@ RunawayRoomScene::ActionResult Scene5110::dispatchCustomSceneAction(uint16 actio
 	case 1319: // Collect the peanuts behind the door.
 		_desert.trainDoorOpen = 1;
 		say(18, 1);
+		deferDesertAction(419);
+		return kBackgroundChanged;
+	case 419: // Inspect the peanuts before putting them in the inventory.
 		_inventory.add(18);
 		say(18, 2);
-		return kBackgroundChanged;
+		break;
 	case 320: // Look at the bucket beneath the barrel.
 		say(19, _desert.bucket != 1);
 		break;

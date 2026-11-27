@@ -60,6 +60,28 @@ private:
 	bool _blink = false, _active = false;
 };
 
+class RunawayHeadMovement {
+public:
+	enum Direction { kLeft = 1, kRight, kUp, kDown };
+	enum { kHold = 0xffff };
+	void start(Direction direction, uint16 hold, uint32 now);
+	void returnToCenter(uint32 now);
+	void pause(uint32 elapsed);
+	void update(uint32 now, Common::RandomSource &random);
+	bool active() const { return _phase != kInactive; }
+	bool blocking() const { return active() && !(_phase == kHolding && _hold == kHold); }
+	byte frame() const { return _frame; }
+
+private:
+	enum Phase { kInactive, kTurning, kHolding, kReturning };
+	Phase _phase = kInactive;
+	Direction _direction = kDown;
+	uint32 _tick = 0, _blinkTick = 0;
+	uint16 _hold = 0;
+	byte _step = 6, _frame = 0;
+	bool _blink = false;
+};
+
 class RunawayIdleBody {
 public:
 	void reset(uint32 now);

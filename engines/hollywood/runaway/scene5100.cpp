@@ -391,6 +391,9 @@ RunawayRoomScene::ActionResult Scene5100::dispatchCustomSceneAction(uint16 actio
 	case 1328: // Finish spiking Stud's beer.
 		_inventory.remove(9);
 		say(9, 2);
+		deferDesertAction(578);
+		break;
+	case 578: // Glance at Stud before retreating.
 		say(9, 3);
 		deferDesertAction(428);
 		break;
@@ -863,7 +866,7 @@ void Scene5100::advanceCustomGameplayLoop(uint32 delta) {
 			_maps[256 + i] = canHotspot;
 		}
 	}
-	if (_desert.guard != 1 || _hangarIntroduction || _roomAction || _hospitalExit.scene || speaking() || _inventoryOpen) {
+	if (_desert.guard != 1 || _hangarIntroduction || _roomAction || _hospitalExit.scene || speaking() || _inventoryOpen || _headMovement.active()) {
 		return;
 	}
 	if (!_hangarSpeech.subtitle().empty()) {

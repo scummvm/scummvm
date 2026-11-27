@@ -611,7 +611,30 @@ void Scene5030::useItem(byte item, byte hotspot) {
 	}
 }
 
-void Scene5030::examine(byte id) {
+void Scene5030::beginHeadMovement(Action next, RunawayHeadMovement::Direction direction, uint16 hold) {
+	if (_game != kRunawayFullGame) {
+		startAction(next);
+		return;
+	}
+	startAction(kHeadMovement);
+	_idleHead.reset(_now);
+	_idleBody.reset(_now);
+	_afterHeadMovement = next;
+	_headMovement.start(direction, hold, _now);
+}
+
+void Scene5030::examine(byte id, bool headMoved) {
+	if (_game == kRunawayFullGame && !headMoved) {
+		_headHotspot = id;
+		if (id == 5 || (id == 6 && _hatchState != kOpen) || id == 10 || id == 11) {
+			beginHeadMovement(kExamine);
+			return;
+		}
+		if (id == 8 && !_coolerMoved && _lidOpen) {
+			walkForAction(Common::Point(1062, 473), 1, kInspectCooler, true);
+			return;
+		}
+	}
 	const bool examined = _examined[id];
 	_examined[id] = true;
 	switch (id) {
@@ -773,6 +796,13 @@ void Scene5030::startAction(Action action) {
 	stopSpeech();
 	uint chunk = 0, frames = 0;
 	switch (action) {
+	case kExamine:
+		_action = kNone;
+		examine(_headHotspot, true);
+		break;
+	case kInspectCooler:
+		beginHeadMovement(kExamine);
+		break;
 	case kIntroLookAround:
 		waitForSpeech(0, 1, kIntroInventory);
 		break;
@@ -781,7 +811,13 @@ void Scene5030::startAction(Action action) {
 		sayCue(0, 2);
 		break;
 	case kIntroListen:
-		waitForSpeech(0, 3, kIntroWalkToDoor);
+		waitForSpeech(0, 3, kIntroLookLeft);
+		break;
+	case kIntroLookLeft:
+		beginHeadMovement(kIntroLookRight, RunawayHeadMovement::kLeft, 1);
+		break;
+	case kIntroLookRight:
+		beginHeadMovement(kIntroWalkToDoor, RunawayHeadMovement::kRight, 1);
 		break;
 	case kIntroWalkToDoor:
 		walkForAction(Common::Point(101, 507), 7, kIntroExamineDoor);
@@ -823,6 +859,9 @@ void Scene5030::startAction(Action action) {
 		walkForAction(Common::Point(1062, 473), 1, kFinishMelting);
 		break;
 	case kFinishMelting:
+		beginHeadMovement(kDescribeMeltedIce);
+		break;
+	case kDescribeMeltedIce:
 		_ice = kMelted;
 		_action = kNone;
 		sayCue(13, 5);
@@ -855,6 +894,9 @@ void Scene5030::startAction(Action action) {
 			error("Cannot load Runaway draining animation");
 		break;
 	case kFinishDraining:
+		beginHeadMovement(kDescribeDrainedCooler);
+		break;
+	case kDescribeDrainedCooler:
 		_action = kNone;
 		sayCue(19, 2);
 		break;
@@ -890,6 +932,9 @@ void Scene5030::startAction(Action action) {
 		frames = 69;
 		break;
 	case kPrepareStirringHelmet:
+		beginHeadMovement(kLookAtHelmet);
+		break;
+	case kLookAtHelmet:
 		_facing = 4;
 		waitForSpeech(37, 6, kStirHelmet);
 		break;
@@ -997,6 +1042,12 @@ void Scene5030::skipVideo() {
 }
 
 void Scene5030::updateAction() {
+	if (_action == kHeadMovement) {
+		_headMovement.update(_now, _random);
+		if (!_headMovement.active())
+			startAction(_afterHeadMovement);
+		return;
+	}
 	const uint previousStep = _step;
 	const uint32 elapsed = _now - _actionStarted;
 	if (_action == kWaitSpeech) {
@@ -1154,6 +1205,7 @@ void Scene5030::update(uint32 now, int scrollDirection, bool inventoryOpen) {
 		_actionStarted += pausedTime;
 		_idleHead.pause(pausedTime);
 		_idleBody.pause(pausedTime);
+		_headMovement.pause(pausedTime);
 		return;
 	}
 	updateAction();
@@ -1191,7 +1243,8 @@ void Scene5030::update(uint32 now, int scrollDirection, bool inventoryOpen) {
 	const bool idle = !walking && !_speechRow && _action == kNone;
 	_idleHead.update(now, idle && !_idleBody.active(), _random);
 	const bool bodyIdle = _idleBody.update(now, idle, _idleHead.centered(), _facing, _actor, _random);
-	const int headFrame = walking ? -1 : _speechRow ? speechFrame() : idle ? _idleHead.frame() : -1;
+	const int headFrame = _headMovement.active() ? _headMovement.frame() : walking ? -1 :
+		_speechRow ? speechFrame() : idle ? _idleHead.frame() : -1;
 	if (!bodyIdle)
 		_actor.setFrame(_facing, walking ? _walkPath.frame() : 0, headFrame);
 	if (scrollDirection) {

@@ -104,7 +104,7 @@ void Scene6180::runCustomEntrySequence() {
 			deferTownAction(410);
 		} else if (_town.wrenchThrown == 1 && !_town.wrenchInTroughSeen) {
 			walkTo(Common::Point(586, 534), 7, false, true);
-			deferTownAction(412);
+			deferTownAction(414);
 		} else {
 			walkTo(Common::Point(586, 534), 5, false, true);
 		}
@@ -212,6 +212,12 @@ RunawayRoomScene::ActionResult Scene6180::dispatchCustomSceneAction(uint16 actio
 		_inventory.add(10);
 		say(0, 4);
 		return kBackgroundChanged;
+	case 414: // Look both ways for the wrench thrown out of the saloon.
+		beginHeadMovement(415, RunawayHeadMovement::kLeft, 1);
+		break;
+	case 415:
+		beginHeadMovement(412, RunawayHeadMovement::kRight, 1);
+		break;
 	case 412: // Find the wrench buried in the muddy trough.
 		say(0, 1);
 		walkTo(Common::Point(405, 427), 7, false, true);

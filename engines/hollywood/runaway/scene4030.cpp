@@ -141,11 +141,13 @@ void Scene4030::update(uint32 now, int scrollDirection, bool inventoryOpen) {
 	if (speaking()) {
 		return;
 	}
-	_showKeyhole = false;
+	if (_showKeyhole) {
+		_showKeyhole = false;
+		returnHeadToCenter();
+	}
 	if (_discoveringKeyhole) {
 		_discoveringKeyhole = false;
-		_showKeyhole = true;
-		say(2, 2);
+		beginHeadMovement(400, RunawayHeadMovement::kDown, RunawayHeadMovement::kHold);
 	}
 }
 
@@ -192,6 +194,10 @@ RunawayRoomScene::ActionResult Scene4030::dispatchCustomSceneAction(uint16 actio
 		return kHandled;
 	}
 	switch (action) {
+	case 400: // Look through the crack after moving the books.
+		_showKeyhole = true;
+		say(2, 2);
+		return kHandled;
 	case 302: // Look at the books.
 		say(_books != kUnexamined ? 111 : 1, 0, _books != kUnexamined);
 		_books = MAX(_books, kIdentified);

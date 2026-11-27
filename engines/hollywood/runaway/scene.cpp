@@ -741,7 +741,128 @@ void RunawayRoomScene::executeItemAction(uint16 action) {
 	execute(action);
 }
 
-void RunawayRoomScene::execute(uint16 action) {
+void RunawayRoomScene::beginHeadMovement(uint16 nextAction, RunawayHeadMovement::Direction direction, uint16 hold) {
+	if (_game != kRunawayFullGame) {
+		if (nextAction)
+			execute(nextAction, true);
+		return;
+	}
+	_idleHead.reset(_now);
+	_idleBody.reset(_now);
+	_headMovement.start(direction, hold, _now);
+	_afterHeadMovement = nextAction;
+	_actor.setFrame(_facing, 0, _headMovement.frame());
+}
+
+void RunawayRoomScene::returnHeadToCenter(uint16 nextAction) {
+	_headMovement.returnToCenter(_now);
+	_afterHeadMovement = nextAction;
+}
+
+bool RunawayRoomScene::beginActionHeadMovement(uint16 action) {
+	if (_game != kRunawayFullGame)
+		return false;
+	// Descriptions that call the retail 0x436d40 helper unconditionally.
+	static const struct {
+		uint16 room, action;
+	} down[] = {
+		{2020, 304}, {2020, 306}, {2020, 315}, {2020, 317}, // Glass, pills, charts.
+		{2060, 306}, // Syringes.
+		{4030, 302}, {4030, 306}, {4030, 308}, {4030, 309}, // Books and safe contents.
+		{4050, 312}, {4050, 322}, {4050, 337}, // Wastebasket, briefcase, brush.
+		{4060, 328}, {4100, 313}, // Plaque and strange key.
+		{5060, 309}, {5080, 303}, // Trunk and wooden box.
+		{5100, 315}, {5100, 323}, {5110, 303}, {5110, 311}, // Barrels, bucket, compartment, screw.
+		{5110, 419}, // Peanuts behind the compartment door.
+		{5160, 309}, {5160, 313}, {5170, 313}, // Grating, needle and thread, under the bed.
+		{6180, 413}, {6260, 309}, {6270, 401}, // Buried wrench, locomotive key, crater.
+		{7010, 309}, {7010, 318}, {7010, 320}, // Cliff edge, beam, mining tool.
+		{8100, 427}, // Opening to the séance room.
+		{8260, 309}, {8370, 321}, {8400, 308}, {8410, 305} // Badge, register, papers, trunk.
+	};
+	for (uint i = 0; i < ARRAYSIZE(down); ++i) {
+		if (_room == down[i].room && action == down[i].action) {
+			beginHeadMovement(action, RunawayHeadMovement::kDown);
+			return true;
+		}
+	}
+	RunawayHeadMovement::Direction direction = RunawayHeadMovement::kDown;
+	uint16 hold = 2;
+	bool move = false;
+	switch (_room) {
+	case 4030:
+		move = action == 304;
+		hold = RunawayHeadMovement::kHold;
+		break;
+	case 4060:
+		move = action == 313 && _museum.basketSeen && !_coffeeTaken;
+		break;
+	case 5050:
+		move = action == 401;
+		direction = RunawayHeadMovement::kRight;
+		break;
+	case 5070:
+		move = (action == 315 || action == 316) && !_desert.oilSeen;
+		break;
+	case 5100:
+		move = action == 500 || action == 578;
+		direction = RunawayHeadMovement::kRight;
+		break;
+	case 5110:
+		move = action == 312 && !_desert.screwTaken && !_desert.screwSeen;
+		break;
+	case 5160:
+		move = action == 314 && !_desert.needle;
+		break;
+	case 5170:
+		move = action == 314 && !_desert.vacuum;
+		break;
+	case 6130:
+		move = (action == 307 || action == 308) && !_town.stone;
+		break;
+	case 6210:
+	case 8210:
+		move = ((action == 307 || action == 408) && !_town.bucketSeen) || (action == 313 && !_town.bottleSeen);
+		break;
+	case 6260:
+		move = action == 310 && _town.locomotiveKey == 1;
+		break;
+	case 6280:
+		move = action == 301;
+		direction = RunawayHeadMovement::kUp;
+		break;
+	case 6300:
+	case 8300:
+		move = (action == 307 && !_town.craneKnown) ||
+			(_room == 6300 && (action == 309 || action == 310) && !_town.statueLowered);
+		direction = RunawayHeadMovement::kUp;
+		break;
+	case 7010:
+		move = action == 321 && _hopi.timber == 1;
+		break;
+	case 7050:
+		if (action == 301 || action == 401) {
+			move = true;
+			direction = RunawayHeadMovement::kUp;
+			hold = RunawayHeadMovement::kHold;
+		} else {
+			move = (action == 303 || action == 304) && _hopi.tomahawk == kUnexamined;
+		}
+		break;
+	case 8260:
+		move = action == 310 && _finale.locomotiveBadge == 1;
+		break;
+	default:
+		break;
+	}
+	if (move)
+		beginHeadMovement(action, direction, hold);
+	return move;
+}
+
+void RunawayRoomScene::execute(uint16 action, bool headMoved) {
+	if (!headMoved && beginActionHeadMovement(action))
+		return;
 	const ActionResult result = dispatchCustomSceneAction(action);
 	if (result == kBackgroundChanged) {
 		if (!rebuildBackground())
@@ -822,6 +943,7 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 	if (inventoryOpen || _inventoryOpen) {
 		_idleHead.pause(now - _lastUpdate);
 		_idleBody.pause(now - _lastUpdate);
+		_headMovement.pause(now - _lastUpdate);
 	}
 	_inventoryOpen = inventoryOpen;
 	const uint elapsed = MIN<uint>(100, now - _lastUpdate);
@@ -853,6 +975,17 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 				_hospital.medicineRead = 1;
 		}
 		return;
+	}
+	_headMovement.update(now, _random);
+	if (_headMovement.blocking()) {
+		advanceCustomGameplayLoop(elapsed);
+		updateActor(elapsed, scrollDirection, inventoryOpen);
+		return;
+	}
+	if (_afterHeadMovement) {
+		const uint16 action = _afterHeadMovement;
+		_afterHeadMovement = 0;
+		execute(action, true);
 	}
 	if (townChapter() || hopiChapter() || finaleChapter()) {
 		updateGameplay(elapsed);
@@ -938,14 +1071,14 @@ void RunawayRoomScene::updateActor(uint elapsed, int scrollDirection, bool inven
 		_idleBody.reset(_now);
 		return;
 	}
-	if (_idleBody.active() && _walkPath.active() && !speaking()) {
+	if (_idleBody.active() && _walkPath.active() && !speaking() && !_headMovement.active()) {
 		_idleBody.interact(_now);
 		_idleHead.reset(_now);
 		if (_idleBody.update(_now, true, false, _facing, _actor, _random))
 			return;
 	}
 	uint cameraElapsed = elapsed;
-	if (_walkPath.active() && !speaking()) {
+	if (_walkPath.active() && !speaking() && !_headMovement.active()) {
 		_cameraFollow.reset();
 		uint footsteps = 0;
 		while (cameraElapsed && _walkPath.active()) {
@@ -970,13 +1103,14 @@ void RunawayRoomScene::updateActor(uint elapsed, int scrollDirection, bool inven
 		}
 	}
 	// Dialogue can pause a queued walk, including one scheduled on arrival.
-	const bool walking = _walkPath.active() && !speaking();
+	const bool walking = _walkPath.active() && !speaking() && !_headMovement.active();
 	const bool idle = !walking && !busy() && shouldDrawActor();
 	_idleHead.update(_now, idle && !_idleBody.active(), _random, _game == kRunawayMuseumDemo);
 	const bool bodyIdle = _idleBody.update(_now, idle && _game != kRunawayMuseumDemo,
 		_idleHead.centered(), _facing, _actor, _random);
-	const int headFrame = walking ? -1 : speaking() && !speaker() ? speechFrame() : idle ? _idleHead.frame() : -1;
-	if (_actionUsesActor && _roomAction && !_actionFrames.empty() && !walking && !speaking()) {
+	const int headFrame = _headMovement.active() ? _headMovement.frame() : walking ? -1 :
+		speaking() && !speaker() ? speechFrame() : idle ? _idleHead.frame() : -1;
+	if (!_headMovement.active() && _actionUsesActor && _roomAction && !_actionFrames.empty() && !walking && !speaking()) {
 		_actor.setActionFrame(_actionFrames[_actionStep]);
 	} else if (!bodyIdle) {
 		_actor.setFrame(_facing, walking ? _walkPath.frame() : 0, headFrame);

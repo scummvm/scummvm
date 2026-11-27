@@ -358,12 +358,27 @@ RunawayRoomScene::ActionResult Scene8370::dispatchCustomSceneAction(uint16 actio
 		}
 		break;
 	case 400: // Answer Sushi's invitation to come upstairs.
-		say(0, _upstairsScene == 8384 ? 3 : 1);
+		_lookingUp = true;
+		beginHeadMovement(430, RunawayHeadMovement::kUp, RunawayHeadMovement::kHold);
+		break;
+	case 430: // Pan towards Sushi while Brian keeps looking up.
+		_actionStarted = _now;
+		deferAction(431);
+		break;
+	case 431:
 		_sushiAnimating = true;
 		beginRoomAnimationRange(401, 4, 94, 6, 55, false);
 		break;
-	case 1401: // Follow Sushi after she returns to her computer.
+	case 1401: // Lower Brian's head after Sushi returns to her computer.
 		_sushiCalling = _sushiAnimating = false;
+		returnHeadToCenter(432);
+		break;
+	case 432:
+		say(0, _upstairsScene == 8384 ? 3 : 1);
+		deferAction(433);
+		break;
+	case 433: // Follow Sushi upstairs after answering her.
+		_lookingUp = false;
 		_finale.hotelVisited = 1;
 		walkTo(Common::Point(775, 466), 6, false, true);
 		leaveRoom(_upstairsScene);
@@ -417,6 +432,12 @@ RunawayRoomScene::ActionResult Scene8370::dispatchCustomSceneAction(uint16 actio
 }
 
 bool Scene8370::updateCustomSequence() {
+	if (_roomAction == 431) {
+		const uint ticks = (_now - _actionStarted) / 10;
+		_actionStarted += ticks * 10;
+		_camera.y = MAX<int>(100, _camera.y - ticks * 2);
+		return _camera.y > 100;
+	}
 	if (_heatUntil && _now < _heatUntil) {
 		_actionStarted = _now;
 		return true;

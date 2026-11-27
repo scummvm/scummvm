@@ -43,6 +43,7 @@ private:
 	void drawCustomBackgroundComposite(Graphics::ManagedSurface &viewport) override;
 	float actorHeight() const override;
 	int sceneViewportYOffset() const override;
+	bool shouldFollowCamera() const override { return !_lookingUp && Scene6370::shouldFollowCamera(); }
 	void setupActorDepth(RunawayActor::RenderParams &params) const override;
 	void findWalkPath(Common::Point target) override;
 	bool adjustCustomWalkTargetToFloorMask(Common::Point &target) const override;
@@ -58,6 +59,7 @@ private:
 	uint _sushiStep = 70;
 	byte _sushiState = 1;
 	bool _sushiCalling = false, _sushiAnimating = false;
+	bool _lookingUp = false;
 	uint16 _upstairsScene = 8380;
 };
 

@@ -139,6 +139,13 @@ int8 Scene5050::customizeSceneActionApproach(byte id, bool use, byte item, int8 
 RunawayRoomScene::ActionResult Scene5050::dispatchCustomSceneAction(uint16 action) {
 	RunawaySaveState::DesertItems &items = _inventory.desert();
 	switch (action) {
+	case 400: // Turn towards the wreck before looking around.
+		walkTo(_position, 3);
+		deferDesertAction(401);
+		break;
+	case 401:
+		say(0, 1);
+		break;
 	case 301: // Go to the desert overview.
 		leaveDesertRoom(5010);
 		break;
@@ -239,7 +246,10 @@ RunawayRoomScene::ActionResult Scene5050::dispatchCustomSceneAction(uint16 actio
 }
 
 void Scene5050::runCustomEntrySequence() {
-	visitDesertRoom(2, 2);
+	if (!_desert.visited[2]) {
+		visitDesertRoom(2, 1);
+		deferDesertAction(400);
+	}
 }
 
 void Scene5050::finishCustomFilm() {

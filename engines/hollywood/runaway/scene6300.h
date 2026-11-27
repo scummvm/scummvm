@@ -78,6 +78,7 @@ private:
 	byte _kevinFrame = 0, _kevinTalkFrame = 106;
 	byte _kevinIdle = 0;
 	bool _kevinTalking = false, _kevinAnimating = false, _catapultImpact = false;
+	bool _lookingAtStatue = false;
 };
 
 } // End of namespace Runaway

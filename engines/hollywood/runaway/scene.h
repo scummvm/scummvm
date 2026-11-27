@@ -133,7 +133,7 @@ public:
 	const Common::U32String &committedCaption() const override { return _caption; }
 	const Common::U32String &subtitle() const override;
 	byte subtitleColor() const override { return _sequence.active() ? _sequence.subtitleColor() : _speech.subtitleColor(); }
-	bool busy() const override { return _sequence.active() || _inventory.handling() || _pendingHotspot != 0 || _transition.scene || _hospitalExit.scene || _arrivalFacing != 0xff || _roomAction || _conversation || _reviewingDesertPlan || speaking(); }
+	bool busy() const override { return _sequence.active() || _inventory.handling() || _headMovement.active() || _pendingHotspot != 0 || _transition.scene || _hospitalExit.scene || _arrivalFacing != 0xff || _roomAction || _conversation || _reviewingDesertPlan || speaking(); }
 	bool inventoryPresentation() const override { return _reviewingDesertPlan; }
 	byte inventoryFrame() const override;
 	byte inventorySpeechPose() const override { return _lineIndex < _lines.size() ? _lines[_lineIndex].inventoryPose : 0; }
@@ -220,7 +220,10 @@ protected:
 	void updateMaps();
 	void walkTo(Common::Point target, byte facing = 0xff, bool scripted = false, bool reserved = false);
 	void arrive();
-	void execute(uint16 action);
+	void execute(uint16 action, bool headMoved = false);
+	bool beginActionHeadMovement(uint16 action);
+	void beginHeadMovement(uint16 nextAction, RunawayHeadMovement::Direction direction, uint16 hold = 2);
+	void returnHeadToCenter(uint16 nextAction = 0);
 	void executeItemAction(uint16 action);
 	const RunawayItemAction *restoredItemAction(byte item, byte hotspot) const;
 	void useItem(byte item, byte hotspot);
@@ -321,6 +324,8 @@ protected:
 	Common::RandomSource _random;
 	RunawaySpeech _speech;
 	RunawayIdleHead _idleHead;
+	RunawayHeadMovement _headMovement;
+	uint16 _afterHeadMovement = 0;
 	RunawayIdleBody _idleBody;
 	ChunkArchive _archive;
 	SceneTextStore _text;

@@ -45,7 +45,7 @@ private:
 	void updateActor(uint elapsed, int scrollDirection, bool inventoryOpen) override;
 	ActionResult dispatchCustomSceneAction(uint16 action) override;
 
-	enum Gesture { kNoGesture, kShrug, kLookAround };
+	enum Gesture { kNoGesture, kShrug };
 	Gesture _gesture = kNoGesture;
 	uint32 _gestureStarted = 0;
 };

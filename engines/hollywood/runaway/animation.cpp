@@ -198,6 +198,66 @@ void RunawayIdleHead::update(uint32 now, bool enabled, Common::RandomSource &ran
 	}
 }
 
+void RunawayHeadMovement::start(Direction direction, uint16 hold, uint32 now) {
+	_direction = direction;
+	_hold = hold;
+	_tick = _blinkTick = now;
+	_step = 6;
+	_frame = 0;
+	_blink = false;
+	_phase = kTurning;
+}
+
+void RunawayHeadMovement::returnToCenter(uint32 now) {
+	if (!active())
+		return;
+	_phase = kReturning;
+	_tick = now;
+	if (_blink)
+		--_frame;
+	_blink = false;
+}
+
+void RunawayHeadMovement::pause(uint32 elapsed) {
+	_tick += elapsed;
+	_blinkTick += elapsed;
+}
+
+void RunawayHeadMovement::update(uint32 now, Common::RandomSource &random) {
+	// Retail 0x436d40/0x436e30 use the same 60 ms turn clock as idle heads,
+	// but explicitly hold a direction before returning to the center.
+	static const byte horizontal[] = {24, 23, 22, 21, 20, 19, 0, 12, 13, 14, 15, 16, 17};
+	static const byte vertical[] = {38, 37, 36, 35, 34, 33, 0, 26, 27, 28, 29, 30, 31};
+	const byte *frames = _direction >= kUp ? vertical : horizontal;
+	while (active()) {
+		if (_phase == kHolding) {
+			// The native wait ends when the quarter-second counter exceeds hold.
+			const uint32 duration = (_hold + 1) * 250;
+			if (_hold != kHold && now - _tick >= duration) {
+				returnToCenter(_tick + duration);
+				continue;
+			}
+			while (now - _blinkTick >= 150) {
+				_blinkTick += 150;
+				_blink = !_blink && random.getRandomNumber(14) == 0;
+			}
+			_frame = frames[_step] + (_blink ? 1 : 0);
+			return;
+		}
+		if (now - _tick < 60)
+			return;
+		_tick += 60;
+		const byte target = _phase == kReturning ? 6 : (_direction == kLeft || _direction == kUp) ? 0 : 12;
+		if (_step != target)
+			_step += _step < target ? 1 : -1;
+		_frame = frames[_step];
+		if (_step == target) {
+			_phase = _phase == kReturning ? kInactive : kHolding;
+			_blinkTick = _tick;
+		}
+	}
+}
+
 void RunawayIdleBody::reset(uint32 now) {
 	_kind = kNone;
 	_frames.clear();

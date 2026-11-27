@@ -369,7 +369,7 @@ RunawayRoomScene::ActionResult Scene7010::dispatchCustomSceneAction(uint16 actio
 		return kBackgroundChanged;
 	case 321: // Examine the metal object before picking it up.
 		if (_hopi.timber == 1) {
-			execute(320);
+			execute(320, true);
 		}
 		say(19);
 		deferAction(421);

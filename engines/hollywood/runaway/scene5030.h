@@ -92,15 +92,15 @@ private:
 	Common::U32String hotspotName(byte id) const override;
 	enum Action {
 		kNone, kIntroVideo, kIntro, kIntroLookAround, kIntroInventory,
-		kIntroListen, kIntroWalkToDoor, kIntroExamineDoor,
+		kIntroListen, kIntroLookLeft, kIntroLookRight, kIntroWalkToDoor, kIntroExamineDoor,
 		kOpenLid, kCloseLid, kUnplug,
 		kCleanWindowSpeech, kCleanWindowClimb, kCleanWindowVideo,
-		kWaitSpeech, kWalkingAction, kPickup, kShirt,
-		kMeltIce, kMeltWait, kInspectIce, kFinishMelting,
+		kWaitSpeech, kWalkingAction, kHeadMovement, kExamine, kInspectCooler, kPickup, kShirt,
+		kMeltIce, kMeltWait, kInspectIce, kFinishMelting, kDescribeMeltedIce,
 		kTryMoveCooler, kMoveCooler, kRevealHatch, kFinishMoving, kHatchFound,
-		kDrainCooler, kFinishDraining, kPryHatch, kOpenHatch, kEscape,
+		kDrainCooler, kFinishDraining, kDescribeDrainedCooler, kPryHatch, kOpenHatch, kEscape,
 		kPeekDoor, kPeekConversation, kReturnFromPeek,
-		kHeatHelmet, kPrepareStirringHelmet, kStirHelmet, kEnterHatch
+		kHeatHelmet, kPrepareStirringHelmet, kLookAtHelmet, kStirHelmet, kEnterHatch
 	};
 	enum IceState { kFrozen, kMelted, kDrained };
 	enum HatchState { kHidden, kLocked, kUnlocked, kOpen };
@@ -112,7 +112,8 @@ private:
 	void sayCue(uint16 cue, byte variation);
 	void pickUp(byte hotspot, byte item, uint patch);
 	void useItem(byte item, byte hotspot);
-	void examine(byte hotspot);
+	void examine(byte hotspot, bool headMoved = false);
+	void beginHeadMovement(Action next, RunawayHeadMovement::Direction direction = RunawayHeadMovement::kDown, uint16 hold = 2);
 	void collect(byte hotspot);
 	void waitForSpeech(uint16 cue, byte variation, Action next);
 	void walkForAction(Common::Point target, byte facing, Action next, bool scripted = false);
@@ -146,6 +147,7 @@ private:
 	RunawayActor _actor;
 	RunawaySpeech _speech;
 	RunawayIdleHead _idleHead;
+	RunawayHeadMovement _headMovement;
 	RunawayIdleBody _idleBody;
 	RunawayAnimation _intro, _lidActor, _lid, _unplug, _climb, _actionAnimation, _water, _hatch;
 	RunawayVideo _video;
@@ -157,6 +159,8 @@ private:
 	RunawayVerb _pendingVerb = kVerbWalk;
 	Action _action = kNone;
 	Action _afterSpeech = kNone, _afterWalk = kNone;
+	Action _afterHeadMovement = kNone;
+	byte _headHotspot = 0;
 	byte _actionFacing = 0, _pickupHotspot = 0;
 	bool _lidOpen = false, _unplugged = false;
 	bool _windowClean = false;

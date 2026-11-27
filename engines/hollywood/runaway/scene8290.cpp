@@ -26,9 +26,6 @@ namespace Hollywood {
 namespace {
 
 const uint kGestureFrameDuration = 60;
-const uint kHeadTurnDuration = 6 * kGestureFrameDuration;
-const uint kHeadHoldDuration = 500;
-const uint kHeadLookDuration = 2 * kHeadTurnDuration + kHeadHoldDuration;
 // Clip the original (1839, 442) entry path to the room's right edge.
 const Common::Point kTrail(1739, 451);
 
@@ -84,8 +81,7 @@ bool Scene8290::updateCustomSequence() {
 	if (_gesture == kNoGesture) {
 		return false;
 	}
-	const uint duration = _gesture == kShrug ? 13 * kGestureFrameDuration : 2 * kHeadLookDuration;
-	if (_now - _gestureStarted < duration) {
+	if (_now - _gestureStarted < 13 * kGestureFrameDuration) {
 		return true;
 	}
 	_gesture = kNoGesture;
@@ -95,19 +91,6 @@ bool Scene8290::updateCustomSequence() {
 void Scene8290::updateActor(uint elapsed, int scrollDirection, bool inventoryOpen) {
 	if (_gesture == kShrug) {
 		_actor.setActionFrame(MIN<uint>(12, (_now - _gestureStarted) / kGestureFrameDuration));
-		return;
-	}
-	if (_gesture == kLookAround) {
-		static const byte frames[] = {24, 23, 22, 21, 20, 19, 0, 12, 13, 14, 15, 16, 17};
-		const uint time = (_now - _gestureStarted) % kHeadLookDuration;
-		uint step = 6;
-		if (time < kHeadTurnDuration) {
-			step = time / kGestureFrameDuration;
-		} else if (time >= kHeadTurnDuration + kHeadHoldDuration) {
-			step -= (time - kHeadTurnDuration - kHeadHoldDuration) / kGestureFrameDuration;
-		}
-		const bool right = _now - _gestureStarted < kHeadLookDuration;
-		_actor.setFrame(4, 0, frames[right ? 6 + step : 6 - step]);
 		return;
 	}
 	RunawayRoomScene::updateActor(elapsed, 0, false);
@@ -130,9 +113,10 @@ RunawayRoomScene::ActionResult Scene8290::dispatchCustomSceneAction(uint16 actio
 		deferAction(403);
 		break;
 	case 403: // Look to both sides of the empty campsite.
-		_gesture = kLookAround;
-		_gestureStarted = _now;
-		deferAction(404);
+		beginHeadMovement(406, RunawayHeadMovement::kRight, 1);
+		break;
+	case 406:
+		beginHeadMovement(404, RunawayHeadMovement::kLeft, 1);
 		break;
 	case 404: // Decide to stay away from the crater.
 		say(0, 52);

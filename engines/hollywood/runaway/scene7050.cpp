@@ -182,6 +182,7 @@ RunawayRoomScene::ActionResult Scene7050::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 402: // Return from the close-up after Brian finishes speaking.
 		_showStatue = false;
+		returnHeadToCenter();
 		break;
 	case 303: // Identify the object on the stone as a tomahawk.
 		say(3, _hopi.tomahawk == kUnexamined ? 0 : 1);
