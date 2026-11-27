@@ -115,6 +115,7 @@ class Inventory : public InventoryData {
 	void setIsLocked(bool val) { _isLocked = val; }
 	bool getIsInventoryOut() { return _isInventoryOut; }
 
+	int getCursorPictureId();
 	int getSelectedItemId() { return _selectedId < 0 ? 0 : _selectedId; }
 	int getItemAtPos(Common::Point *point);
 	void slideIn();

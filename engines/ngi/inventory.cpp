@@ -52,15 +52,17 @@ bool InventoryData::load(MfcArchive &file) {
 }
 
 int InventoryData::getInventoryPoolItemIndexById(int itemId) {
-	if (_itemsPool.size() <= 0)
-		return -1;
-
 	for (uint i = 0; i < _itemsPool.size(); i++) {
 		if (_itemsPool[i].id == itemId)
 			return i;
 	}
 
-	return 0;
+	return -1;
+}
+
+int Inventory::getCursorPictureId() {
+	int index = getInventoryPoolItemIndexById(getSelectedItemId());
+	return index >= 0 ? _itemsPool[index].pictureObjectNormal : 0;
 }
 
 bool InventoryData::setItemFlags(int itemId, int flags) {
@@ -128,7 +130,7 @@ void Inventory::addItem2(AniObject *obj) {
 void Inventory::removeItem(int itemId, int count) {
 	debugC(2, kDebugInventory, "Inventory::removeItem(%d, %d)", itemId, count);
 
-	while (count) {
+	while (count > 0) {
 		int i;
 		for (i = _inventoryItems.size() - 1; i >= 0; i--) {
 			InventoryItem &item = _inventoryItems[i];
@@ -138,6 +140,7 @@ void Inventory::removeItem(int itemId, int count) {
 
 				if (item.count > count) {
 					item.count -= count;
+					return;
 				} else {
 					count -= item.count;
 					_inventoryItems.remove_at(i);
@@ -149,6 +152,8 @@ void Inventory::removeItem(int itemId, int count) {
 				break;
 			}
 		}
+		if (i < 0)
+			break;
 	}
 }
 
