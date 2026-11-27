@@ -1023,7 +1023,7 @@ private:
 		if (_renderMode == 1 && _frameCounter <= 10)
 			return;
 
-		if (_motionPtr < 0 || (uint32)_motionPtr + 6 > _data.size())
+		if (_motionPtr + 6 > _data.size())
 			_motionPtr = _l.motionLoop;
 
 		if (READ_BE_UINT32(_data.data() + _motionPtr) == 0xffffffff) {
