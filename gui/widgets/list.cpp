@@ -19,16 +19,16 @@
  *
  */
 
-#include "common/system.h"
 #include "common/frac.h"
+#include "common/system.h"
 #include "common/tokenizer.h"
 #include "common/translation.h"
 
-#include "gui/widgets/list.h"
-#include "gui/widgets/scrollbar.h"
+#include "gui/animation/FluidScroll.h"
 #include "gui/dialog.h"
 #include "gui/gui-manager.h"
-#include "gui/animation/FluidScroll.h"
+#include "gui/widgets/list.h"
+#include "gui/widgets/scrollbar.h"
 
 #include "gui/ThemeEval.h"
 
@@ -168,7 +168,6 @@ void ListWidget::copyListData(const Common::U32StringArray &list) {
 		_cleanedList.push_back(stripped);
 	}
 }
-
 
 bool ListWidget::containsWidget(Widget *w) const {
 	if (w == _scrollBar || _scrollBar->containsWidget(w))
@@ -455,9 +454,9 @@ void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 					sendCommand(kListItemSingleClickedCmd, _selectedItem);
 				}
 
-	// TODO: Determine where inside the string the user clicked and place the
-	// caret accordingly.
-	// See _editScrollOffset and EditTextWidget::handleMouseDown.
+				// TODO: Determine where inside the string the user clicked and place the
+				// caret accordingly.
+				// See _editScrollOffset and EditTextWidget::handleMouseDown.
 				markAsDirty();
 			}
 		}
@@ -522,19 +521,17 @@ void ListWidget::handleMouseMoved(int x, int y, int button) {
 	int item = findItem(x, y);
 
 	if (item != -1) {
-		if(_lastRead != item) {
+		if (_lastRead != item) {
 			read(stripGUIformatting(_list[item]));
 			_lastRead = item;
 		}
-	}
-	else
+	} else
 		_lastRead = -1;
 }
 
 void ListWidget::handleMouseLeft(int button) {
 	_lastRead = -1;
 }
-
 
 int ListWidget::findItem(int x, int y) const {
 	if (y < _topPadding || y >= _h - _bottomPadding)
@@ -579,7 +576,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 	int oldSelectedItem = _selectedItem;
 
 	if (!_editMode && !(state.flags & (Common::KBD_CTRL | Common::KBD_ALT)) &&
-			state.keycode <= Common::KEYCODE_z && Common::isPrint(state.ascii)) {
+		state.keycode <= Common::KEYCODE_z && Common::isPrint(state.ascii)) {
 		// Quick selection mode: Go to first list item starting with this key
 		// (or a substring accumulated from the last couple key presses).
 		// Only works in a useful fashion if the list entries are sorted.
@@ -591,7 +588,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 		} else {
 			_quickSelectStr += (char)state.ascii;
 		}
-		_quickSelectTime = time + 300;	// TODO: Turn this into a proper constant (kQuickSelectDelay ?)
+		_quickSelectTime = time + 300; // TODO: Turn this into a proper constant (kQuickSelectDelay ?)
 
 		if (_quickSelect) {
 			clearSelection();
@@ -632,10 +629,11 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			// Disable activation if multi-select is enabled and multiple items are selected
 			int selectedCount = 0;
 			for (int i = 0; i < (int)_selectedItems.size(); ++i) {
-				if (_selectedItems[i]) selectedCount++;
+				if (_selectedItems[i])
+					selectedCount++;
 			}
 			if (_multiSelectEnabled && selectedCount > 1) {
-					break;
+				break;
 			}
 			if (_selectedItem >= 0) {
 				// override continuous enter keydown
@@ -649,10 +647,10 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			break;
 		}
 
-		// Keypad & special keys
-		//   - if num lock is set, we do not handle the keypress
-		//   - if num lock is not set, we either fall down to the special key case
-		//     or ignore the key press for 0, 4, 5 and 6
+			// Keypad & special keys
+			//   - if num lock is set, we do not handle the keypress
+			//   - if num lock is not set, we either fall down to the special key case
+			//     or ignore the key press for 0, 4, 5 and 6
 
 		case Common::KEYCODE_KP_PERIOD:
 			if (state.flags & Common::KBD_NUM) {
@@ -730,24 +728,23 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 				break;
 			}
 			// fall through
-		case Common::KEYCODE_PAGEDOWN:
-			{
-				int newItem = _selectedItem + _entriesPerPage - 1;
-				if (newItem >= (int)_list.size()) {
-					newItem = _list.size() - 1;
-					scrollTo((int)_list.size() - 1);
-				}
-
-				newItem = findSelectableItem(newItem, -1);
-
-				if (newItem != -1) {
-					clearSelection();
-					_selectedItem = newItem;
-					markSelectedItem(_selectedItem, true);
-					scrollToCurrent();
-				}
-				break;
+		case Common::KEYCODE_PAGEDOWN: {
+			int newItem = _selectedItem + _entriesPerPage - 1;
+			if (newItem >= (int)_list.size()) {
+				newItem = _list.size() - 1;
+				scrollTo((int)_list.size() - 1);
 			}
+
+			newItem = findSelectableItem(newItem, -1);
+
+			if (newItem != -1) {
+				clearSelection();
+				_selectedItem = newItem;
+				markSelectedItem(_selectedItem, true);
+				scrollToCurrent();
+			}
+			break;
+		}
 
 		case Common::KEYCODE_KP7:
 			if (state.flags & Common::KBD_NUM) {
@@ -810,24 +807,23 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 				break;
 			}
 			// fall through
-		case Common::KEYCODE_PAGEUP:
-			{
-				int newItem = _selectedItem - _entriesPerPage + 1;
-				if (newItem < 0) {
-					newItem = 0;
-					scrollTo(0);
-				}
-
-				newItem = findSelectableItem(newItem, 1);
-
-				if (newItem != -1) {
-					clearSelection();
-					_selectedItem = newItem;
-					markSelectedItem(_selectedItem, true);
-					scrollToCurrent();
-				}
-				break;
+		case Common::KEYCODE_PAGEUP: {
+			int newItem = _selectedItem - _entriesPerPage + 1;
+			if (newItem < 0) {
+				newItem = 0;
+				scrollTo(0);
 			}
+
+			newItem = findSelectableItem(newItem, 1);
+
+			if (newItem != -1) {
+				clearSelection();
+				_selectedItem = newItem;
+				markSelectedItem(_selectedItem, true);
+				scrollToCurrent();
+			}
+			break;
+		}
 		default:
 			handled = false;
 		}
@@ -911,7 +907,7 @@ void ListWidget::drawWidget() {
 
 	// Draw a thin frame around the list.
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h),
-	                                    ThemeEngine::kWidgetBackgroundBorder);
+										ThemeEngine::kWidgetBackgroundBorder);
 
 	// Draw the list items
 	const int lineHeight = kLineHeight + _itemSpacing;
@@ -1006,8 +1002,11 @@ Common::Rect ListWidget::getEditRect() const {
 	r.bottom += offset;
 
 	if (_numberingMode != kListNumberingOff) {
-		// FIXME: Assumes that all digits have the same width.
-		Common::String temp = Common::String::format("%2d. ", (_list.size() - 1 + _numberingMode));
+		int itemIndex = _selectedItem;
+		if (itemIndex < 0 || itemIndex >= (int)_list.size()) {
+			itemIndex = (int)_list.size() - 1;
+		}
+		Common::String temp = Common::String::format("%2d. ", (itemIndex + _numberingMode));
 		r.left += g_gui.getStringWidth(temp) + _leftPadding;
 		// Make sure we don't go farther than right
 		if (r.right < r.left) {
@@ -1036,7 +1035,7 @@ void ListWidget::scrollToCurrent() {
 	if (_selectedItem != -1 && _selectedItem < _currentPos) {
 		// it's above our view
 		_currentPos = _selectedItem;
-	} else if (_selectedItem >= _currentPos + _entriesPerPage ) {
+	} else if (_selectedItem >= _currentPos + _entriesPerPage) {
 		// it's below our view
 		_currentPos = _selectedItem - _entriesPerPage + 1;
 	}
@@ -1061,7 +1060,7 @@ void ListWidget::startEditMode() {
 	if (_editable && !_editMode && _selectedItem >= 0) {
 		_editMode = true;
 		setEditString(stripGUIformatting(_list[_selectedItem]));
-		_caretPos = _editString.size();	// Force caret to the *end* of the selection.
+		_caretPos = _editString.size(); // Force caret to the *end* of the selection.
 		_editColor = ThemeEngine::kFontColorNormal;
 		markAsDirty();
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
@@ -1235,11 +1234,11 @@ Common::U32String ListWidget::stripGUIformatting(const Common::U32String &str) {
 
 		s++; // skip \001
 		switch (*s) {
-		case '\001':  // \001\001 -> \001
+		case '\001': // \001\001 -> \001
 			stripped += *s++;
 			break;
 
-		case 'c': // \001cRRGGBB
+		case 'c':   // \001cRRGGBB
 			s += 7; // check length?
 			break;
 
@@ -1271,8 +1270,8 @@ Common::U32String ListWidget::escapeString(const Common::U32String &str) {
 }
 
 void ListWidget::drawFormattedText(const Common::Rect &r, const Common::U32String &str, ThemeEngine::WidgetStateInfo state,
-				Graphics::TextAlign align, ThemeEngine::TextInversionState inverted, int deltax, bool useEllipsis,
-				ThemeEngine::FontColor color) {
+								   Graphics::TextAlign align, ThemeEngine::TextInversionState inverted, int deltax, bool useEllipsis,
+								   ThemeEngine::FontColor color) {
 	Common::U32String chunk;
 	const Common::u32char_type_t *s = str.c_str();
 	ThemeEngine::FontStyle curfont = ThemeEngine::kFontStyleBold;
@@ -1294,11 +1293,11 @@ void ListWidget::drawFormattedText(const Common::Rect &r, const Common::U32Strin
 
 		s++; // skip \001
 		switch (*s) {
-		case '\001':  // \001\001 -> \001
+		case '\001': // \001\001 -> \001
 			chunk += *s++;
 			break;
 
-		case 'c': // \001cRRGGBB
+		case 'c':   // \001cRRGGBB
 			s += 7; // check length?
 			break;
 
@@ -1313,13 +1312,13 @@ void ListWidget::drawFormattedText(const Common::Rect &r, const Common::U32Strin
 			while (*s && *s != '}')
 				tmp += *s++;
 
-			if (*s == '}')	// skip the closing bracket
+			if (*s == '}') // skip the closing bracket
 				s++;
 
 			if (color == ThemeEngine::kFontColorFormatting)
 				curcolor = getThemeColor(tmp);
 			else
-				curcolor = color;	// Ignore color and use the requested one
+				curcolor = color; // Ignore color and use the requested one
 
 			break;
 
