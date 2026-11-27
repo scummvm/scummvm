@@ -66,6 +66,13 @@ Common::Point GuiElement::screenPos() const {
 	return _scrolling ? _pos - Common::Point(_scene._x, _scene._y) : _pos;
 }
 
+class GuiElementStub : public GuiElement {
+public:
+	using GuiElement::GuiElement;
+	void load(GameProject &project) override {}
+	void render(Graphics::ManagedSurface &target) const override {}
+};
+
 class GuiPicture : public GuiElement {
 public:
 	using GuiElement::GuiElement;
@@ -202,7 +209,11 @@ void GuiManager::createElement(const Common::String &type, const Common::StringM
 		addGuiElement(new GuiButton(_scene, attrs, ids));
 	else if (type == "PICTURE")
 		addGuiElement(new GuiPicture(_scene, attrs, ids));
-	else
+	else if (type == "TEXT" || type == "TEXTBUTTON" || type == "SLIDER" ||
+			type == "CHECKBOX" || type == "PROGRESSBAR") {
+		warning("STUB: %s", type.c_str());
+		addGuiElement(new GuiElementStub(_scene, attrs, ids));
+	} else
 		debugC(2, kDebugXML, "GUI element %s (%s) not implemented", type.c_str(), attrs.getValOrDefault("id").c_str());
 }
 
