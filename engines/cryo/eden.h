@@ -51,6 +51,8 @@ public:
 	~EdenGame();
 
 	void run();
+	void playMovieReel();
+	void debugPlayVideo(int16 num);
 	object_t *getObjectPtr(int16 id);
 	void showObjects();
 	void saveFriezes();
@@ -482,6 +484,10 @@ private:
 	void phase528();
 	void phase544();
 	void phase560();
+	void getSaveStateName(char *dest, int size, int16 slot);
+	bool loadGameFromSlot(int16 slot);
+	byte getSaveAreaNum(int16 slot);
+	void displaySaveSlots();
 	void saveGame(char *name);
 	void loadrestart();
 	void loadgame(char *name);
@@ -662,6 +668,9 @@ private:
 
 	bool  _specialTextMode;
 	int   _voiceSamplesSize;   //TODO: perso vox sample data len
+	/** The rate the voice now in the buffer was taken at, which is not the same
+	    for every one of them */
+	int   _voiceSampleRate;
 	int16 _musicRightVol;
 	int16 _musicLeftVol;
 
@@ -681,6 +690,8 @@ private:
 
 	bool  _noPalette;
 	bool  _gameLoaded;
+	/** The slot --save-slot named, or -1. Taken up once, in place of the intro. */
+	int16 _startupSaveSlot;
 #define MAX_TAPES 16
 	tape_t _tapes[MAX_TAPES];
 	byte   _confirmMode;
@@ -714,6 +725,8 @@ private:
 	byte  _cubeTexture[0x4000];
 	int   _cubeFaces;
 	uint32 _cursorOldTick, _cursorNewTick;
+	// How many turns of the cursor cube have been let go by, see enginePC()
+	int _cubeStepDelay;
 	byte *_codePtr;
 
 	uint8 tab_2CB1E[8][4];
