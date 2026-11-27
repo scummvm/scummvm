@@ -171,6 +171,7 @@ private:
 	uint8 _palette[VGA_COLORS * 3];
 	uint32 _currentPalette;
 	bool _paletteDirty;
+	bool _wasUIOpen;
 	uint8 _seqGrid[20 * 12];
 
 	void waitForTick();
