@@ -239,7 +239,7 @@ public:
 
 	void update() override {
 		Graphics::ManagedSurface &frame = g_nmi->_backgroundSurface;
-		_scene.drawAndroid(frame);
+		_scene.render();
 		if (_fader.brightness() < 255)
 			g_nmi->drawAlphaRectangle(0, 0, frame.w, frame.h, _fader.brightness());
 		const BitmapFont &titleFont = _titleFont ? *_titleFont : _font;

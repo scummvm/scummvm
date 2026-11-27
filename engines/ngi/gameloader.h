@@ -91,13 +91,14 @@ class GameLoader : public CObject {
 
 	bool load(MfcArchive &file) override;
 	bool loadScene(int sceneId);
+	Common::Error loadXML(const SceneTag *&start, int &width, int &height);
 	bool setScene(int sceneId, int entranceId);
 	bool preloadScene(int sceneId, int entranceId);
 	bool unloadScene(int sceneId);
 
 	void addPreloadItem(const PreloadItem &item);
 
-	void updateContent(int counterdiff);
+	bool updateContent(int counterdiff);
 
 	int getSceneTagBySceneId(int sceneId, SceneTag **st);
 	void applyPicAniInfos(Scene *sc, const PicAniInfoList &picAniInfo);

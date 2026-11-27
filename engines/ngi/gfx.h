@@ -180,7 +180,7 @@ public:
 	bool load(MfcArchive &file) override { assert(0); return false; } // Disable base class
 
 	Dims getFullSize() const { return _picture->getDimensions(); }
-	void render();
+	void render(Common::Point scroll = Common::Point());
 	void renderAtPos(int x, int y);
 
 	bool setPicAniInfo(const PicAniInfo &picAniInfo);

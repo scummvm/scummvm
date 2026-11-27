@@ -142,7 +142,12 @@ bool PictureObject::load(MfcArchive &file, bool bigPicture) {
 	return true;
 }
 
-void PictureObject::render() {
+void PictureObject::render(Common::Point scroll) {
+	if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+		_picture->blitTo(g_nmi->_backgroundSurface, Common::Point(_x, _y) - scroll);
+		return;
+	}
+
 	if (_flags & 1)
 		_picture->render(_x, _y, 2, 0);
 	else

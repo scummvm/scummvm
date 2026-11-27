@@ -136,8 +136,10 @@ void sceneHandlerIntro_part2() {
 }
 
 void sceneIntro_end() {
-	if (g_vars->sceneIntro_playing && g_nmi->getPlatform() == Common::kPlatformAndroid)
+	if (g_vars->sceneIntro_playing && g_nmi->getPlatform() == Common::kPlatformAndroid) {
+		g_nmi->_gameLoader->preloadScene(SC_1, TrubaLeft);
 		sceneChapter_show("CHAPTER_1");
+	}
 	g_vars->sceneIntro_playing = false;
 }
 

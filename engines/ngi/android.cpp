@@ -19,31 +19,25 @@
  *
  */
 
-#include "common/algorithm.h"
 #include "common/archive.h"
 #include "common/compression/unzip.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/events.h"
 #include "common/file.h"
 #include "common/formats/xmlparser.h"
 
-#include "backends/keymapper/keymapper.h"
-#include "engines/util.h"
 #include "ngi/ngi.h"
+#include "ngi/gameloader.h"
 #include "ngi/behavior.h"
 #include "ngi/constants.h"
 #include "ngi/detection.h"
 #include "ngi/messages.h"
-#include "ngi/modal.h"
 #include "ngi/motion.h"
 #include "ngi/ngiarchive.h"
 #include "ngi/objects.h"
 #include "ngi/utils.h"
 #include "ngi/scene.h"
 #include "ngi/statics.h"
-#include "ngi/anihandler.h"
-#include "ngi/scenes.h"
 
 namespace NGI {
 
@@ -946,42 +940,6 @@ private:
 
 } // End of anonymous namespace
 
-void Scene::drawAndroid(Graphics::ManagedSurface &target) const {
-	Common::Array<const GameObject *> visibleObjects;
-	for (const PictureObject *picture : _pictureObjects) {
-		if (picture->_flags & 4)
-			visibleObjects.push_back(picture);
-	}
-	for (const AniObject *animation : _renderableAnis) {
-		if (animation->_flags & 4)
-			visibleObjects.push_back(animation);
-	}
-
-	// The Android renderer draws higher z values first and preserves XML order at equal z.
-	Common::sort(visibleObjects.begin(), visibleObjects.end(), [](const GameObject *left, const GameObject *right) {
-		if (left->_z == right->_z)
-			return left->_cnum < right->_cnum;
-		return left->_z > right->_z;
-	});
-
-	for (const GameObject *object : visibleObjects) {
-		Common::Point position(object->_x - _x, object->_y - _y);
-		if (object->_objtype == kObjTypePictureObject) {
-			static_cast<const PictureObject *>(object)->_picture->blitTo(target, position);
-		} else {
-			const AniObject &animation = *static_cast<const AniObject *>(object);
-			const Phase *phase = animation._movement ? animation._movement->_curPhase : animation._statics;
-			Common::Point anchor = animation.getSomeXY();
-			const bool mirror = (animation._flags & 8) != 0;
-			if (mirror)
-				anchor.x = phase->getDimensions().x - anchor.x;
-			phase->blitTo(target, position - anchor, mirror);
-		}
-	}
-	if (_guiManager)
-		_guiManager->render(target);
-}
-
 const char *NGIEngine::getAndroidResourceLocale() const {
 	Common::Language language = Common::parseLanguage(ConfMan.get("language"));
 	if (language == Common::UNK_LANG)
@@ -1013,59 +971,8 @@ void SceneTag::loadSceneXML(const GameProject &project) {
 	_scene = scene.release();
 }
 
-Common::Error NGIEngine::enterAndroidScene1() {
-	Scene *room = findScene(SC_1);
-	Scene *common = findScene(SC_COMMON);
-	if (!room || !common)
-		return Common::Error(Common::kNoGameDataFoundError, "Could not load the first Full Pipe Android room");
-	room->_commonQueueScene = common;
-	for (const PicAniInfo &ref : room->_roamingObjects) {
-		Scene *source = findScene(ref.sceneId);
-		AniObject *actor = source ? source->findAniObjectById(ref.objectId, ref.copyId) : nullptr;
-		if (!actor)
-			return Common::Error(Common::kNoGameDataFoundError, "Missing roaming animation for the first Android room");
-		if (!room->findAniObjectById(ref.objectId, ref.copyId))
-			room->_renderableAnis.push_back(actor);
-	}
-	_aniMan = room->findAniObjectById(room->_heroId, 0);
-	_aniMan2 = _aniMan;
-	if (!_aniMan)
-		return Common::Error(Common::kNoGameDataFoundError, "Missing hero for the first Android room");
-
-	clearGlobalMessageQueueList1();
-	clearMessageHandlers();
-	stopAllSounds(Sound::kSpeech);
-	stopAllSounds(Sound::kEffect);
-	if (room->_behaviorController)
-		room->_behaviorController->onShow(*room);
-	_currSoundListCount = 0;
-	if (room->_soundList)
-		_currSoundList1[_currSoundListCount++] = room->_soundList.get();
-	if (common->_soundList)
-		_currSoundList1[_currSoundListCount++] = common->_soundList.get();
-
-	if (_currentScene && _currentScene->_guiManager)
-		_currentScene->_guiManager->onHide();
-	_currentScene = room;
-	if (room->_motionController) {
-		room->_motionController->attachObject(_aniMan);
-		room->_motionController->activate();
-	}
-	addMessageHandlerByIndex(global_messageHandler4, 0, 4);
-	addMessageHandler(sceneHandler01, 2);
-	// CStateManager::SetStartStates starts a new game with the egg uncracked.
-	scene01_initObjects(room, TrubaLeft, true);
-	for (const Entrance &entrance : room->_entrances) {
-		if (entrance._id == TrubaLeft && entrance._sceneId == room->_sceneId && runQueue(entrance._queueId, 0)) {
-			debugC(1, kDebugSceneLogic, "Entered Android scene %d through entrance %d, queue %d", room->_sceneId, entrance._id, entrance._queueId);
-			return Common::kNoError;
-		}
-	}
-	return Common::Error(Common::kNoGameDataFoundError, "Could not start the TrubaLeft entrance queue");
-}
-
-Common::Error NGIEngine::runAndroid() {
-	const auto &files = _gameDescription->desc.filesDescriptions;
+Common::Error GameLoader::loadXML(const SceneTag *&start, int &width, int &height) {
+	const auto &files = g_nmi->_gameDescription->desc.filesDescriptions;
 	const Common::FSNode gameDirectory(ConfMan.getPath("path"));
 	Common::ScopedPtr<Common::Archive> apk(Common::makeZipArchive(gameDirectory.getChild(files[0].fileName)));
 	Common::ScopedPtr<Common::Archive> obb(Common::makeZipArchive(gameDirectory.getChild(files[1].fileName)));
@@ -1075,7 +982,8 @@ Common::Error NGIEngine::runAndroid() {
 	SearchMan.add("ngi-android-obb", obb.release());
 	SearchMan.add("ngi-android-apk", apk.release());
 
-	GameProject project;
+	_gameProject.reset(new GameProject());
+	GameProject &project = *_gameProject;
 	XMLTextureSizeParser(project).loadSizes();
 	if (!project._objectIds.load("data/obj.h"))
 		return Common::Error(Common::kNoGameDataFoundError, "Could not read the Full Pipe Android object IDs");
@@ -1085,188 +993,20 @@ Common::Error NGIEngine::runAndroid() {
 	if (!parser.loadStream(SearchMan.createReadStreamForMember(projectPath), projectPath.toString()) || !parser.parse())
 		return Common::Error(Common::kNoGameDataFoundError, "Could not read the Full Pipe Android project");
 
-	const SceneTag *start = parser.startScene();
+	start = parser.startScene();
 	if (!start)
 		return Common::Error(Common::kNoGameDataFoundError, "Could not find the Full Pipe Android start scene");
 	debugC(1, kDebugXML, "Loaded Full Pipe Android project, start scene %s (%hu)",
 		start->_tag.c_str(), static_cast<uint16>(start->_sceneId));
-	Scene *startScene = project.findScene(start->_sceneId);
-	if (!startScene)
-		return Common::Error(Common::kNoGameDataFoundError, "Could not load the Full Pipe Android start scene");
-
-	const bool intro = start->_sceneId == SC_INTRO1;
-	Scene *intro2 = intro ? project.findScene(SC_INTRO2) : nullptr;
-	if (intro && !intro2)
-		return Common::Error(Common::kNoGameDataFoundError, "Could not load the second Full Pipe Android intro scene");
-	Scene *common = intro ? project.findScene(SC_COMMON) : nullptr;
-	if (intro && !common)
-		return Common::Error(Common::kNoGameDataFoundError, "Could not load the shared Full Pipe Android resources");
-	if (intro) {
+	if (start->_sceneId == SC_INTRO1) {
 		XMLWalkParser walkParser(project._walkData);
 		if (!walkParser.loadFile("data/data.xml") || !walkParser.parse())
 			return Common::Error(Common::kNoGameDataFoundError, "Could not read the Full Pipe Android walking movements");
 	}
 
-	_isSaveAllowed = false;
-	initGraphics(parser.width(), parser.height(), nullptr);
-	const Graphics::PixelFormat format = _system->getScreenFormat();
-	if (format.isCLUT8())
-		return Common::kUnsupportedColorMode;
-
-	Common::Keymapper *mapper = _system->getEventManager()->getKeymapper();
-	mapper->disableAllGameKeymaps();
-	mapper->setGameKeymapState("ngi-default", true);
-	_gameProject = &project;
-	_currentScene = startScene;
-	if (startScene->_behaviorController)
-		startScene->_behaviorController->onShow(*startScene);
-	addMessageHandlerByIndex(global_messageHandler4, 0, 4);
-	if (intro) {
-		sceneIntro_initGui(*startScene, *intro2, parser.width());
-		sceneIntro_initMan(*startScene);
-		addMessageHandler(sceneHandlerIntro, 2);
-	}
-	if (startScene->_soundList)
-		_currSoundList1[_currSoundListCount++] = startScene->_soundList.get();
-	if (intro2 && intro2->_soundList)
-		_currSoundList1[_currSoundListCount++] = intro2->_soundList.get();
-	if (common && common->_soundList)
-		_currSoundList1[_currSoundListCount++] = common->_soundList.get();
-
-	Graphics::ManagedSurface &frame = _backgroundSurface;
-	frame.create(parser.width(), parser.height(), format);
-	byte brightness = intro ? 0 : 255;
-	frame.clear(format.RGBToColor(0, 0, 0));
-	if (brightness)
-		_currentScene->drawAndroid(frame);
-	_system->copyRectToScreen(frame.getPixels(), frame.pitch, 0, 0, frame.w, frame.h);
-	_system->updateScreen();
-	debugC(1, kDebugDrawing, "Presented first Full Pipe Android frame for %s", start->_tag.c_str());
-
-	Common::Event event;
-	Common::EventManager *eventManager = _system->getEventManager();
-	Common::Error result = Common::kNoError;
-	uint32 lastUpdate = _system->getMillis();
-	while (!shouldQuit()) {
-		bool screenChanged = false;
-		bool redraw = false;
-		while (eventManager->pollEvent(event)) {
-			if (event.type == Common::EVENT_SCREEN_CHANGED) {
-				screenChanged = true;
-			} else if (_modalObject) {
-				const bool back = (event.type == Common::EVENT_KEYUP &&
-						(event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_AC_BACK)) ||
-					(event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END && event.customType == kActionCloseDialog);
-				if (event.type == Common::EVENT_LBUTTONUP || back) {
-					Command cmd;
-					cmd._cmd = 17;
-					cmd._messageNum = back ? 37 : 30;
-					cmd._param = back ? kActionCloseDialog : 0;
-					_modalObject->handleMessage(&cmd);
-				}
-			} else if (_currentScene->_guiManager) {
-				GuiManager &gui = *_currentScene->_guiManager;
-				switch (event.type) {
-				case Common::EVENT_KEYDOWN:
-					gui.onKeyDown(event.kbd.keycode);
-					if (event.kbd.ascii)
-						gui.onChar(event.kbd.ascii);
-					break;
-				case Common::EVENT_KEYUP:
-					gui.onKeyUp(event.kbd.keycode);
-					break;
-				case Common::EVENT_MOUSEMOVE:
-				case Common::EVENT_LBUTTONDOWN:
-				case Common::EVENT_LBUTTONUP:
-				case Common::EVENT_RBUTTONDOWN:
-				case Common::EVENT_RBUTTONUP:
-					gui.onMouseMove(event.mouse);
-					if (event.type == Common::EVENT_LBUTTONDOWN)
-						gui.onMouseLKeyDown(event.mouse);
-					else if (event.type == Common::EVENT_LBUTTONUP)
-						gui.onMouseLKeyUp(event.mouse);
-					else if (event.type == Common::EVENT_RBUTTONDOWN)
-						gui.onMouseRKeyDown(event.mouse);
-					else if (event.type == Common::EVENT_RBUTTONUP)
-						gui.onMouseRKeyUp(event.mouse);
-					redraw = true;
-					break;
-				default:
-					break;
-				}
-			}
-		}
-		if (shouldQuit())
-			break;
-
-		const uint32 now = _system->getMillis();
-		const uint32 elapsed = now - lastUpdate;
-		lastUpdate = now;
-		Scene *scene = _currentScene;
-		if (_modalObject) {
-			if (!_modalObject->init(elapsed))
-				deleteModalObject();
-			redraw = true;
-		} else {
-			if (scene->_behaviorController)
-				redraw |= scene->_behaviorController->update(elapsed);
-			for (MessageQueue *queue : *_globalMessageQueueList)
-				redraw |= queue->updatePause(elapsed);
-			processMessages();
-			if (!_modalObject && scene == _currentScene)
-				redraw |= scene->update(elapsed);
-			if (!_modalObject && scene == _currentScene && scene->_sceneId == SC_INTRO1)
-				redraw |= sceneIntro_updateAndroid(elapsed, brightness);
-			processMessages();
-			redraw |= _modalObject != nullptr;
-		}
-
-		if (scene != _currentScene) {
-			if (scene->_guiManager)
-				scene->_guiManager->onHide();
-			stopAllSounds(Sound::kSpeech);
-			stopAllSounds(Sound::kEffect);
-			if (_currentScene->_behaviorController)
-				_currentScene->_behaviorController->onShow(*_currentScene);
-			debugC(2, kDebugDrawing, "Switched Android scene from %d to %d", scene->_sceneId, _currentScene->_sceneId);
-			redraw = true;
-		}
-		if (intro && !g_vars->sceneIntro_playing && !_modalObject && (_currentScene == startScene || _currentScene == intro2)) {
-			result = enterAndroidScene1();
-			if (result.getCode() != Common::kNoError)
-				break;
-			lastUpdate = _system->getMillis();
-			brightness = 255;
-			redraw = true;
-		}
-		if (redraw) {
-			frame.clear(format.RGBToColor(0, 0, 0));
-			if (_modalObject) {
-				_modalObject->update();
-			} else {
-				_currentScene->drawAndroid(frame);
-				if (brightness < 255)
-					drawAlphaRectangle(0, 0, frame.w, frame.h, brightness);
-			}
-		}
-		if (redraw || screenChanged)
-			_system->copyRectToScreen(frame.getPixels(), frame.pitch, 0, 0, frame.w, frame.h);
-		_system->updateScreen();
-		_system->delayMillis(10);
-	}
-	deleteModalObject();
-	clearMessages();
-	clearGlobalMessageQueueList();
-	clearMessageHandlers();
-	while (_currSoundListCount)
-		_currSoundList1[--_currSoundListCount] = nullptr;
-	g_vars->sceneIntro_aniin1man = nullptr;
-	g_vars->scene01_picSc01Osk = nullptr;
-	g_vars->scene01_picSc01Osk2 = nullptr;
-	_aniMan = _aniMan2 = nullptr;
-	_currentScene = nullptr;
-	_gameProject = nullptr;
-	return result;
+	width = parser.width();
+	height = parser.height();
+	return Common::kNoError;
 }
 
 } // End of namespace NGI

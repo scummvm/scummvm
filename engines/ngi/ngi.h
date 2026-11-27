@@ -129,8 +129,8 @@ class NGIEngine : public ::Engine {
 protected:
 
 	Common::Error run() override;
-	Common::Error runAndroid();
-	Common::Error enterAndroidScene1();
+	Common::Error initGame();
+	bool handleGuiEvent(const Common::Event &event);
 
 public:
 	NGIEngine(OSystem *syst, const NGIGameDescription *gameDesc);
@@ -157,7 +157,7 @@ public:
 	Common::KeyCode _keyState;
 	uint16 _buttonState;
 
-	void updateEvents();
+	bool updateEvents();
 
 	Graphics::ManagedSurface _backgroundSurface;
 
@@ -265,7 +265,7 @@ public:
 	void initMap();
 	void updateMap(PreloadItem *pre);
 	void updateMapPiece(int mapId, int update);
-	void updateScreen();
+	Common::Error updateScreen(uint32 elapsed, byte &brightness, bool redraw);
 
 	void freeGameLoader();
 	void cleanup();

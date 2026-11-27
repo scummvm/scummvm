@@ -98,7 +98,11 @@ void BehaviorController::onShow(Scene &scene) {
 	}
 }
 
-bool BehaviorAni::updateIdle(uint32 elapsed) {
+bool BehaviorMove::canStart(uint32 elapsed, uint32 randomMax) const {
+	return !(_flags & 1) && (_delay <= 0 || elapsed >= (uint32)_delay) && _percent && g_nmi->_rnd.getRandomNumber(randomMax) <= _percent;
+}
+
+bool BehaviorAni::update(uint32 elapsed) {
 	if (!_ani)
 		return false;
 	if (_activeMove) {
@@ -126,8 +130,7 @@ bool BehaviorAni::updateIdle(uint32 elapsed) {
 		if (anim._staticsId != _ani->_statics->_staticsId)
 			continue;
 		for (const BehaviorMove &move : anim._behaviorMoves) {
-			if ((move._flags & 1) || move._mirror != ((_ani->_flags & 8) != 0) ||
-					_elapsed < (uint32)move._delay || !move._percent || g_nmi->_rnd.getRandomNumber(99) > move._percent)
+			if (move._mirror != ((_ani->_flags & 8) != 0) || !move.canStart(_elapsed, 99))
 				continue;
 			const bool started = move._movementId ? _ani->startMovement(move._movementId, 0, -1) :
 					runQueueByIdWithAni(_ani, move._queueId, kBehaviorQueue);
@@ -139,14 +142,6 @@ bool BehaviorAni::updateIdle(uint32 elapsed) {
 		}
 	}
 	return false;
-}
-
-bool BehaviorController::update(uint32 elapsed) {
-	bool changed = false;
-	for (BehaviorAni &behavior : _behaviors)
-		changed |= behavior.updateIdle(elapsed);
-	updateSounds(elapsed);
-	return changed;
 }
 
 bool BehaviorSound::update(uint32 elapsed) {
@@ -217,13 +212,18 @@ void BehaviorController::initBehavior(Scene *sc, GameVar *var) {
 	}
 }
 
-void BehaviorController::update() {
+bool BehaviorController::update(uint32 elapsed) {
 	if (!_isActive)
-		return;
+		return false;
+	const bool android = g_nmi->getPlatform() == Common::kPlatformAndroid;
+	bool changed = false;
 
 	debugC(6, kDebugBehavior, "BehaviorController::update()");
-	for (uint i = 0; i < _behaviors.size(); i++) {
-		BehaviorAni &beh = _behaviors[i];
+	for (BehaviorAni &beh : _behaviors) {
+		if (android) {
+			changed |= beh.update(elapsed);
+			continue;
+		}
 
 		if (!beh._ani) {
 			beh._counter++;
@@ -259,6 +259,9 @@ void BehaviorController::update() {
 
 		}
 	}
+	if (android)
+		updateSounds(elapsed);
+	return changed;
 }
 
 void BehaviorController::updateBehavior(BehaviorAni &behaviorInfo, BehaviorAnim &entry) {
@@ -301,14 +304,10 @@ void BehaviorController::updateStaticAniBehavior(AniObject &ani, int delay, cons
 			}
 		}
 	} else {
-		for (uint i = 0; i < beh._behaviorMoves.size(); i++) {
-			if (!(beh._behaviorMoves[i]._flags & 1) && delay >= beh._behaviorMoves[i]._delay) {
-				if (beh._behaviorMoves[i]._percent) {
-					if (g_nmi->_rnd.getRandomNumber(32767) <= beh._behaviorMoves[i]._percent) {
-						mq = new MessageQueue(beh._behaviorMoves[i]._messageQueue, 0, 1);
-						break;
-					}
-				}
+		for (const BehaviorMove &move : beh._behaviorMoves) {
+			if (move.canStart(delay, 32767)) {
+				mq = new MessageQueue(move._messageQueue, 0, 1);
+				break;
 			}
 		}
 	}

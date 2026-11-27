@@ -575,6 +575,57 @@ bool NGIEngine::doSetScene(const Entrance &entrance) {
 	if (!scene)
 		return 0;
 
+	if (getPlatform() == Common::kPlatformAndroid) {
+		Scene *common = findScene(SC_COMMON);
+		Scene *intro2 = scene->_sceneId == SC_INTRO1 ? findScene(SC_INTRO2) : nullptr;
+		if (scene->_sceneId == SC_INTRO1 && (!common || !intro2))
+			return false;
+		scene->_commonQueueScene = common == scene ? nullptr : common;
+		for (const PicAniInfo &ref : scene->_roamingObjects) {
+			Scene *source = findScene(ref.sceneId);
+			AniObject *actor = source ? source->findAniObjectById(ref.objectId, ref.copyId) : nullptr;
+			if (!actor)
+				return false;
+			if (!scene->findAniObjectById(ref.objectId, ref.copyId))
+				scene->_renderableAnis.push_back(actor);
+		}
+		_aniMan = scene->findAniObjectById(scene->_heroId, 0);
+		_aniMan2 = _aniMan;
+		if (scene->_heroId && !_aniMan)
+			return false;
+
+		clearGlobalMessageQueueList1();
+		removeMessageHandler(2, -1);
+		stopAllSounds(Sound::kSpeech);
+		stopAllSounds(Sound::kEffect);
+		if (scene->_behaviorController)
+			scene->_behaviorController->onShow(*scene);
+		_currSoundListCount = 0;
+		if (scene->_soundList)
+			_currSoundList1[_currSoundListCount++] = scene->_soundList.get();
+		if (intro2 && intro2->_soundList)
+			_currSoundList1[_currSoundListCount++] = intro2->_soundList.get();
+		if (scene->_commonQueueScene && common->_soundList)
+			_currSoundList1[_currSoundListCount++] = common->_soundList.get();
+
+		if (_currentScene && _currentScene->_guiManager)
+			_currentScene->_guiManager->onHide();
+		_currentScene = scene;
+		if (_aniMan && scene->_motionController) {
+			scene->_motionController->attachObject(_aniMan);
+			scene->_motionController->activate();
+		}
+		if (intro2) {
+			sceneIntro_initGui(*scene, *intro2, _backgroundSurface.w);
+			sceneIntro_initMan(*scene);
+			addMessageHandler(sceneHandlerIntro, 2);
+		} else if (scene->_sceneId == SC_1) {
+			scene01_initObjects(scene, entrance._id, true);
+			addMessageHandler(sceneHandler01, 2);
+		}
+		return true;
+	}
+
 	sceneDim = scene->_pictureObjects.front()->getFullSize();
 	_sceneWidth = sceneDim.x;
 	_sceneHeight = sceneDim.y;

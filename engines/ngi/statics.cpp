@@ -550,7 +550,19 @@ Statics *AniObject::addReverseStatics(Statics *st) {
 	return res;
 }
 
-void AniObject::render() {
+void AniObject::render(Common::Point scroll) {
+	if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+		const Phase *phase = _movement ? _movement->_curPhase : _statics;
+		if (phase && (_flags & 4)) {
+			Common::Point anchor = getSomeXY();
+			const bool mirror = (_flags & 8) != 0;
+			if (mirror)
+				anchor.x = phase->getDimensions().x - anchor.x;
+			phase->blitTo(g_nmi->_backgroundSurface, Common::Point(_x, _y) - scroll - anchor, mirror);
+		}
+		return;
+	}
+
 	if ((_flags & 4) == 0)
 		return;
 

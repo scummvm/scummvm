@@ -77,9 +77,13 @@ GameLoader::GameLoader() {
 	_interactionController = new InteractionController();
 	_inputController = new CursorController();
 
-	addMessageHandlerByIndex(global_messageHandler2, 0, 0);
-	insertMessageHandler(global_messageHandler3, 0, 128);
-	insertMessageHandler(global_messageHandler4, 0, 1);
+	if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+		addMessageHandlerByIndex(global_messageHandler4, 0, 4);
+	} else {
+		addMessageHandlerByIndex(global_messageHandler2, 0, 0);
+		insertMessageHandler(global_messageHandler3, 0, 128);
+		insertMessageHandler(global_messageHandler4, 0, 1);
+	}
 
 	_heroId = 0;
 	_field_F8 = 0;
@@ -181,46 +185,63 @@ bool GameLoader::loadScene(int sceneId) {
 }
 
 bool GameLoader::setScene(int sceneId, int entranceId) {
-	SceneTag *st;
-
-	int sc2idx = getSceneTagBySceneId(sceneId, &st);
-
-	if (sc2idx < 0)
-		return false;
-
-	if (!_sc2array[sc2idx]._isLoaded)
-		return false;
-
-	if (_sc2array[sc2idx]._entranceData.size() < 1) {
-		g_nmi->_currentScene = st->_scene;
-		return true;
+	const bool android = g_nmi->getPlatform() == Common::kPlatformAndroid;
+	Scene *scene;
+	const Common::Array<Entrance> *entrances;
+	if (android) {
+		scene = _gameProject->findScene(sceneId);
+		if (!scene)
+			return false;
+		entrances = &scene->_entrances;
+	} else {
+		SceneTag *tag;
+		int index = getSceneTagBySceneId(sceneId, &tag);
+		if (index < 0 || !_sc2array[index]._isLoaded)
+			return false;
+		scene = tag->_scene;
+		entrances = &_sc2array[index]._entranceData;
+		if (entrances->empty()) {
+			g_nmi->_currentScene = scene;
+			return true;
+		}
 	}
 
-	if (!_sc2array[sc2idx]._entranceData.size())
-		return false;
-
-	uint entranceIdx = 0;
-	if (sceneId != 726) // WORKAROUND
-		for (entranceIdx = 0; _sc2array[sc2idx]._entranceData[entranceIdx]._id != entranceId; entranceIdx++) {
-			if (entranceIdx >= _sc2array[sc2idx]._entranceData.size())
-				return false;
+	// XML projects may name a start scene without specifying an entrance.
+	const Entrance defaultEntrance = {sceneId, 0, 0, 0};
+	const Entrance *entrance = android && !entranceId ? &defaultEntrance : nullptr;
+	for (const Entrance &entry : *entrances) {
+		// The original desktop workaround uses the first entrance in scene 726.
+		if ((!android && sceneId == 726) || (entry._id == entranceId && (!android || entry._sceneId == sceneId))) {
+			entrance = &entry;
+			break;
 		}
-
-	GameVar *sg = _gameVar->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
-
-	if (sg || (sg = _gameVar->getSubVarByName("OBJSTATES")->addSubVarAsInt("SAVEGAME", 0)) != nullptr)
-		sg->setSubVarAsInt("Entrance", entranceId);
-
-	if (!g_nmi->doSetScene(_sc2array[sc2idx]._entranceData[entranceIdx]))
+	}
+	if (!entrance)
 		return false;
+
+	if (_gameVar) {
+		GameVar *states = _gameVar->getSubVarByName("OBJSTATES");
+		GameVar *sg = states->getSubVarByName("SAVEGAME");
+		if (sg || (sg = states->addSubVarAsInt("SAVEGAME", 0)) != nullptr)
+			sg->setSubVarAsInt("Entrance", entranceId);
+	}
+
+	if (!g_nmi->doSetScene(*entrance))
+		return false;
+
+	g_nmi->_currentScene = scene;
+	if (android) {
+		if (entrance->_queueId && !runQueue(entrance->_queueId, 0))
+			return false;
+		debugC(1, kDebugSceneLogic, "Entered Android scene %d through entrance %d, queue %d", sceneId, entranceId, entrance->_queueId);
+		return true;
+	}
 
 	g_nmi->_msgObjectId2 = 0;
 	g_nmi->_msgY = -1;
 	g_nmi->_msgX = -1;
 
-	g_nmi->_currentScene = st->_scene;
-
-	MessageQueue *mq1 = g_nmi->_currentScene->findMessageQueue(_sc2array[sc2idx]._entranceData[entranceIdx]._queueId);
+	MessageQueue *mq1 = scene->findMessageQueue(entrance->_queueId);
 	if (mq1) {
 		MessageQueue *mq = new MessageQueue(mq1, 0, 0);
 
@@ -358,7 +379,9 @@ void GameLoader::addPreloadItem(const PreloadItem &item) {
 bool GameLoader::preloadScene(int sceneId, int entranceId) {
 	debugC(0, kDebugLoading, "preloadScene(%d, %d), ", sceneId, entranceId);
 
-	if (_preloadSceneId != sceneId || _preloadEntranceId != entranceId) {
+	// XML entrances identify their destination directly. The frame loop commits
+	// the pending change once the current dialog has closed.
+	if (g_nmi->getPlatform() == Common::kPlatformAndroid || _preloadSceneId != sceneId || _preloadEntranceId != entranceId) {
 		_preloadSceneId = sceneId;
 		_preloadEntranceId = entranceId;
 		return true;
@@ -558,9 +581,11 @@ PicAniInfoList GameLoader::savePicAniInfos(Scene *sc, int flag1, int flag2) {
 	return res;
 }
 
-void GameLoader::updateContent(int counterdiff) {
+bool GameLoader::updateContent(int counterdiff) {
 	if (g_nmi->_currentScene) {
-		g_nmi->_currentScene->update(counterdiff);
+		bool changed = g_nmi->_currentScene->update(counterdiff);
+		if (g_nmi->getPlatform() == Common::kPlatformAndroid)
+			return changed;
 
 		_exCommand._cmd = 17;
 		_updateCounter++;
@@ -575,6 +600,7 @@ void GameLoader::updateContent(int counterdiff) {
 		processMessages();
 		preloadScene(_preloadSceneId, _preloadEntranceId);
 	}
+	return true;
 }
 
 Sc2::Sc2() :

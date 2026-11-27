@@ -40,6 +40,7 @@ struct BehaviorMove {
 	int16 _queueId = 0;
 	bool _mirror = false;
 
+	bool canStart(uint32 elapsed, uint32 randomMax) const;
 	BehaviorMove() = default;
 	BehaviorMove(GameVar *subvar, Scene *sc, int *delay);
 };
@@ -71,7 +72,7 @@ struct BehaviorAni {
 
 	void clear();
 	BehaviorMove &addMove(int16 staticsId);
-	bool updateIdle(uint32 elapsed);
+	bool update(uint32 elapsed);
 	void initAmbientBehavior(GameVar *var, Scene *sc);
 	void initObjectBehavior(GameVar *var, Scene *sc, AniObject *ani);
 };
@@ -104,12 +105,11 @@ class BehaviorController : public CObject {
 
 	void initBehavior(Scene *scene, GameVar *var);
 
-	void update();
 	void addSound(const BehaviorSound &sound, bool music);
 	void enableAllMusic();
 	BehaviorAni &addAni(int16 objectId, int16 sceneId, int flags);
 	void onShow(Scene &scene);
-	bool update(uint32 elapsed);
+	bool update(uint32 elapsed = 1);
 	void updateBehavior(BehaviorAni &behaviorInfo, BehaviorAnim &entry);
 	void updateStaticAniBehavior(AniObject &ani, int delay, const BehaviorAnim &beh);
 

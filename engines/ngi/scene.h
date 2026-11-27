@@ -70,7 +70,6 @@ class Scene : public Background {
 	void initStaticANIObjects();
 	void init();
 	void render();
-	void drawAndroid(Graphics::ManagedSurface &target) const;
 	void drawContent(int minPri, int maxPri, bool drawBG);
 	void updateScrolling();
 	void updateScrolling2();
@@ -103,14 +102,8 @@ class Scene : public Background {
 	void stopAllSounds();
 
   private:
-#if 0
-	static bool compareObjPriority(const void *p1, const void *p2);
-	void sortRenderables(Common::Array<AniObject *> &list, bool skipFirst = false);
-	void sortRenderables(Common::Array<PictureObject *> &list, bool skipFirst = false);
-#else
 	template<typename T>
 	void sortRenderables(Common::Array<T*> &list, uint startIndex = 0);
-#endif
 };
 
 class SceneTag : public CObject {

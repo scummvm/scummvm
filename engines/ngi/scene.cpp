@@ -455,72 +455,57 @@ void Scene::initObjectCursors(const char *varname) {
 	}
 }
 
-#if 0
-bool Scene::compareObjPriority(const void *p1, const void *p2) {
-	if (((const GameObject *)p1)->_z > ((const GameObject *)p2)->_z)
-		return true;
-
-	if (((const GameObject *)p1)->_z == ((const GameObject *)p2)->_z)
-		if (((const GameObject *)p1)->_cnum > ((const GameObject *)p2)->_cnum)
-			return true;
-
-	return false;
-}
-
-void Scene::sortRenderables(Common::Array<AniObject *> &list, bool skipFirst) {
-	if (skipFirst) {
-		Common::Array<AniObject *>::iterator s = list.begin();
-
-		++s;
-
-		Common::sort(s, list.end(), Scene::compareObjPriority);
-	} else {
-		Common::sort(list.begin(), list.end(), Scene::compareObjPriority);
-	}
-}
-
-void Scene::sortRenderables(Common::Array<PictureObject *> &list, bool skipFirst) {
-	if (skipFirst) {
-		Common::Array<PictureObject *>::iterator s = list.begin();
-
-		++s;
-
-		Common::sort(s, list.end(), Scene::compareObjPriority);
-	} else {
-		Common::sort(list.begin(), list.end(), Scene::compareObjPriority);
-	}
-}
-#else
 template<typename T>
 void Scene::sortRenderables(Common::Array<T *> &list, uint startIndex) {
-	if (list.size() > startIndex) {
-		int lastIndex = list.size() - 1;
-		bool changed;
-		do {
-			changed = false;
-			T *refElement = list[startIndex];
-			for (int i = startIndex; i < lastIndex; i++) {
-				T *curElement = list[i + 1];
-				if (curElement->_z > refElement->_z) {
-					// Push refElement down the list
-					list.remove_at(i);
-					list.insert_at(i + 1, refElement);
-					changed = true;
-				} else
-					refElement = curElement;
-			}
-			lastIndex--;
-		} while (changed);
+	// The XML loader saves the declaration order across pictures and animations.
+	// Binary scenes retain their current list order at equal priority.
+	const bool xml = g_nmi->getPlatform() == Common::kPlatformAndroid;
+	for (uint i = startIndex + 1; i < list.size(); ++i) {
+		T *object = list[i];
+		uint j = i;
+		while (j > startIndex) {
+			T *previous = list[j - 1];
+			if (previous->_z > object->_z || (previous->_z == object->_z && (!xml || previous->_cnum <= object->_cnum)))
+				break;
+			list[j--] = previous;
+		}
+		list[j] = object;
 	}
 }
-#endif
 
 void Scene::render() {
 	debugC(6, kDebugDrawing, ">>>>> Scene::render()");
-	updateScrolling();
+	g_nmi->_backgroundSurface.clear(0);
+	if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+		Common::Array<GameObject *> visibleObjects;
+		for (PictureObject *picture : _pictureObjects) {
+			if (picture->_flags & 4)
+				visibleObjects.push_back(picture);
+		}
+		for (AniObject *animation : _renderableAnis) {
+			if (animation->_flags & 4)
+				visibleObjects.push_back(animation);
+		}
 
-	// Clean previous stuff
-	g_nmi->_backgroundSurface.fillRect(Common::Rect(0, 0, 800, 600), 0);
+		sortRenderables(visibleObjects);
+
+		bool renderedGui = false;
+		for (GameObject *object : visibleObjects) {
+			if (!renderedGui && _guiManager && object->_z < 0) {
+				_guiManager->render(g_nmi->_backgroundSurface);
+				renderedGui = true;
+			}
+			if (object->_objtype == kObjTypePictureObject)
+				static_cast<PictureObject *>(object)->render(Common::Point(_x, _y));
+			else
+				static_cast<AniObject *>(object)->render(Common::Point(_x, _y));
+		}
+		if (_guiManager && !renderedGui)
+			_guiManager->render(g_nmi->_backgroundSurface);
+		return;
+	}
+
+	updateScrolling();
 
 	drawContent(60000, 0, true);
 
@@ -664,7 +649,18 @@ int Scene::getPictureObjectIdAtPos(int x, int y) {
 bool Scene::update(int counterdiff) {
 	debugC(6, kDebugDrawing, "Scene::update(%d)", counterdiff);
 
-	bool changed = _guiManager && _guiManager->update(counterdiff);
+	bool changed = false;
+	if (g_nmi->getPlatform() == Common::kPlatformAndroid) {
+		if (_behaviorController)
+			changed |= _behaviorController->update(counterdiff);
+		for (MessageQueue *queue : *g_nmi->_globalMessageQueueList)
+			changed |= queue->updatePause(counterdiff);
+		processMessages();
+		if (g_nmi->_modalObject || this != g_nmi->_currentScene)
+			return true;
+	}
+	if (_guiManager)
+		changed |= _guiManager->update(counterdiff);
 	for (uint i = 0; i < _renderableAnis.size(); i++)
 		changed |= _renderableAnis[i]->update(counterdiff);
 	return changed;
@@ -680,13 +676,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 
 	debugC(1, kDebugDrawing, "Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
 
-#if 0
-	if (_pictureObjects.size() > 2) { // We need to z-sort them
-		sortRenderables(_pictureObjects, true);
-	}
-#else
 	sortRenderables(_pictureObjects, 1);
-#endif
 
 	if (minPri == -1 && _pictureObjects.size())
 		minPri = _pictureObjects.back()->_z - 1;

@@ -253,7 +253,7 @@ public:
 	bool update(int counterdiff);
 
 	Statics *addReverseStatics(Statics *ani);
-	void render();
+	void render(Common::Point scroll = Common::Point());
 	void draw2();
 
 	/** ownership of returned object is transferred to caller */
