@@ -2584,7 +2584,7 @@ enum GameModelAnimations {
 	// 838 - 845: Mama Isabella animations
 	kModelIsabellaIdle              = 838,
 	kModelIsabellaPutsSpicesInSoup  = 839,
-	kModelIsabellaGestureGiveOrTake = 840, // untriggered
+	kModelIsabellaGestureGiveOrTake = 840, // Restored Content: used when buying a stew. Original: untriggered.
 	kModelIsabellaCalmTalk          = 841,
 	kModelIsabellaSuggestTalk       = 842,
 	kModelIsabellaProtestTalk       = 843,
