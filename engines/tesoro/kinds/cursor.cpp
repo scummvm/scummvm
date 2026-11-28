@@ -1,0 +1,333 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/textconsole.h"
+
+#include "tesoro/core/camera.h"
+#include "tesoro/core/display.h"
+#include "tesoro/core/level.h"
+#include "tesoro/core/room.h"
+#include "tesoro/kinds/cursor.h"
+#include "tesoro/world.h"
+
+namespace Tesoro {
+
+void Cursor::init() {
+	initPlain();
+	_sortValue = 0;
+	_flags |= kCollidable;
+}
+
+void Cursor::initMain(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, int32 now) {
+	SpriteObject::init(record, roomSortOffset, levelPlayers, now);
+
+	_sortValue = 0;
+	_flags |= kCollidable;
+
+	_companion = new Cursor();
+	_companion->init();
+	_companion->_owner = this;
+}
+
+void Cursor::updateAnimation(int32 now) {
+	if (AnimPlayer *player = currentPlayer())
+		player->advance(now);
+}
+
+void Cursor::onAttach() {
+	// Only the steps' hit rectangles of the main pointer change: they all become points.
+	if (_companion && _anim.bankCount() != 0) {
+		AnimBank *bank = _anim.player(0).bank();
+		for (uint i = 0; i < bank->stepCount(); ++i)
+			bank->clearStepHitRect(i);
+	}
+
+	SpriteObject::onAttach();
+}
+
+void Cursor::draw(const Camera &camera, Display &display) {
+	AnimPlayer &player = _anim.current();
+	const AnimStep &step = player.bank()->step(player.current());
+	if (step.hasImage()) {
+		const int32 x = (int32)((uint32)player.movementX() + (uint32)(int32)step.imageX + (uint32)_x - (uint32)camera.scaledX() + 320);
+		const int32 y = (int32)((uint32)(camera.scaledY() - step.imageY) - (uint32)player.movementY() - (uint32)_y + 240);
+		display.queueImageScaled(x, y, (uint16)_sortValue, player.bank()->image(step.imageIndex), 0x10000, 0x10000, 0);
+	}
+
+	// The name of what is under the pointer, centered above it.
+	if (_label[0]) {
+		const int32 centreX = (int32)((uint32)_x - (uint32)camera.scaledX() + 320);
+		display.queueText((const byte *)_label, _labelColour, centreX, camera.scaledY() - _y + 0xcb, 200, 0, true, 0);
+	}
+}
+
+void Cursor::setLabel(const char *text, int colour) {
+	if (!text) {
+		_label[0] = '\0';
+	} else {
+		const uint length = strlen(text);
+		if (length >= kLabelSize) {
+			warning("Cursor: label of %u characters does not fit", length);
+			memcpy(_label, text, kLabelSize - 1);
+			_label[kLabelSize - 1] = '\0';
+		} else {
+			memcpy(_label, text, length + 1);
+		}
+	}
+
+	if (colour > 0)
+		_labelColour = (uint16)colour;
+}
+
+void Cursor::openSaveLoadMenu() {
+	// The menu does not open on the board game's level.
+	const Cursor::Place place = _world->place();
+	if (place == Cursor::kBoard)
+		return;
+
+	if (_heldItem)
+		_heldItem->setVisible(true);
+	_heldItem = nullptr;
+	_anim.selectBank(0, 0, 0, false, false, _world->now());
+
+	// The save button works in the first levels of the game only; the subtitle switch shows its setting.
+	const bool savable = _world->levelIndex() < 0x17 && place == Cursor::kGame;
+	if (Object *save = _world->interfaceObject("SALVAR"))
+		save->setActive(savable);
+	if (Object *texts = _world->interfaceObject("TEXTOS")) {
+		const int8 page = (int8)_world->subtitleFrame();
+		texts->animation().selectBank(0, (uint16)page, page, false, false, _world->now());
+	}
+
+	_world->jimResumeFacing();
+	setLabel(nullptr, 0);
+
+	// move the pointer and the camera far out of the way to capture the scene for the save thumbnail, then restore them.
+	shiftY(-5000);
+	_level->camera().shift(0, -5000);
+	_world->captureThumbnail();
+	_level->camera().shift(0, 5000);
+	shiftY(5000);
+
+	// The interface slides to the save screen.
+	_level->camera().shift(-645, 0);
+	_world->menuOpened();
+}
+
+int Cursor::update() {
+	// The companion has no step of its own: the main pointer moves it.
+	if (!_companion)
+		return 0;
+
+	if (!_mouse || !_level || !_playerLevel || !_world) {
+		warning("Cursor: no mouse, levels or world to follow");
+		return 0;
+	}
+
+	// The interface is on one of three pages: the action strip (0 to 639), the inventory (beyond 640) and
+	// the saved-game screen (before 0). The menu key and the right button move between them.
+	const int32 page = _level->camera().x();
+	const bool right = (_mouse->buttonState(PointerState::kRight) & (PointerState::kPressed | PointerState::kDoublePress)) != 0;
+
+	if (page >= 0 && page < 640) {
+		if (_world->menuKeyPressed()) {
+			_world->acknowledgeKeys();
+			const Cursor::Place place = _world->place();
+			if (place == Cursor::kMainMenu) {
+				_world->fadeOut(4, 100);
+				_world->clearMainList();
+				return 3;
+			}
+			if (place == Cursor::kNewGameMenu) {
+				_world->enterMainMenu();
+				_world->fadeOut(4, 100);
+				return 1;
+			}
+			openSaveLoadMenu();
+		} else if (right) {
+			showInventory();
+		}
+	} else if (page <= 640) {
+		if (_world->menuKeyPressed()) {
+			_world->acknowledgeKeys();
+			closeSaveLoadMenu();
+		}
+	} else {
+		if (_world->menuKeyPressed()) {
+			_world->acknowledgeKeys();
+			hideInventory();
+			openSaveLoadMenu();
+		}
+		if (right)
+			hideInventory();
+	}
+
+
+	moveTo(_mouse->x + _level->camera().x(), _level->camera().y() - _mouse->y, true);
+
+
+	const Camera &playerCamera = _playerLevel->camera();
+	_companion->_level = _playerLevel;
+	_companion->_room = &_playerLevel->room(0);
+	_companion->moveTo(_mouse->x + playerCamera.x(), playerCamera.y() - _mouse->y, true);
+
+	return 1;
+}
+
+int Cursor::update2() {
+	if (!_companion || !_mouse)
+		return 0;
+
+	const byte left = _mouse->buttonState(PointerState::kLeft);
+	// takes the current animation step as the verb for the click
+	const int verb = _anim.current().current();
+
+	int result = processCandidates(left, verb);
+	clearTouched();
+	if (result != 0) {
+		_companion->clearTouched();
+		return result;
+	}
+
+	result = _companion->processCandidates(left, verb);
+	_companion->clearTouched();
+	if (result == 2 || result == 3)
+		return result;
+
+	// A click on bare ground with the walking pointer sends the player there.
+	if ((left & 8) && result == 0 && verb == 0)
+		_world->walkJimToPointer(_mouse->x, _mouse->y);
+
+	return 1;
+}
+
+int Cursor::onTouched(Object *other, int extra) {
+	_touched.push_back(other);
+	return 1;
+}
+
+void Cursor::setActive(bool active) {
+	Object::setActive(active);
+	if (active)
+		return;
+
+	for (uint i = 0; i < _hovered.size(); ++i)
+		_hovered[i]->clearHoverText();
+	_hovered.clear();
+	setLabel(nullptr, 0);
+}
+
+int Cursor::processCandidates(byte buttons, int verb) {
+	// What was hovered last time becomes the list to compare with.
+	ObjectList previous = _hovered;
+	_hovered.clear();
+
+	int result = 0;
+	for (uint t = 0; t < _touched.size() && result == 0; ++t) {
+		Object *object = _touched[t];
+
+		bool hoveredBefore = false;
+		for (uint i = 0; i < previous.size(); ++i) {
+			if (previous[i]->nameKey() == object->nameKey()) {
+				hoveredBefore = true;
+				break;
+			}
+		}
+		// goes through all touched objects (detected by collision)
+		// until it finds one that returns != 0
+		if (!hoveredBefore) {
+			// if it wasnt hovered in the previous frame, just displays the text
+			if (object->acceptsPointer()) {
+				_hovered.push_back(object);
+				result = object->showHoverText();
+			}
+		} else { // if it was hovered before, it accepts clicks
+			if (buttons & 8)
+				result = object->setVerbAndClick(verb);
+			else if (buttons & 0x10)
+				result = object->doubleClick(verb);
+			else
+				result = object->showHoverText();
+
+			if (result == 3)
+				return 3;
+
+			_hovered.push_back(object);
+			removeFromList(previous, object);
+		}
+	}
+
+	// Whatever was hovered last frame and not seen again loses its label.
+	for (uint i = 0; i < previous.size(); ++i)
+		previous[i]->clearHoverText();
+
+	return result;
+}
+
+/** takes every third pixel of every third row of the frame, used as a thumbnail for the save file */
+void Cursor::sampleScene(const uint16 *frame, uint16 *out) {
+	for (uint y = 0; y < kThumbHeight; ++y) {
+		for (uint x = 0; x < kThumbWidth; ++x)
+			out[y * kThumbWidth + x] = frame[(y * 3) * 640 + x * 3];
+	}
+}
+
+void Cursor::shiftActionStrip(int32 dx) {
+	// The action strip, its highlight square and every verb picture slide with the interface.
+	if (!_actionStrip)
+		return;
+	_actionStrip->shiftX(dx);
+	if (Object *square = _actionStrip->square())
+		square->shiftX(dx);
+	if (Object *group = _actionStrip->group()) {
+		const Common::Array<Object *> &members = static_cast<ObjectGroup *>(group)->members();
+		for (uint i = 0; i < members.size(); ++i) {
+			if (members[i])
+				members[i]->shiftX(dx);
+		}
+	}
+}
+
+void Cursor::hideInventory() {
+	_level->camera().shift(-640, 0);
+	shiftActionStrip(-640);
+	if (_heldItem)
+		_heldItem->setVisible(true);
+}
+
+void Cursor::closeSaveLoadMenu() {
+	_level->camera().shift(645, 0);
+	_world->fadeOut(4, 100);
+}
+
+void Cursor::showInventory() {
+	if (_world->place() != Cursor::kGame)
+		return;
+
+	if (_heldItem)
+		_heldItem->setVisible(false);
+	_world->jimResumeFacing();
+	_level->camera().shift(640, 0);
+	setLabel(nullptr, 0);
+	shiftActionStrip(640);
+}
+
+} // End of namespace Tesoro

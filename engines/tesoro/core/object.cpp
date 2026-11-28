@@ -1,0 +1,162 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+#include "common/endian.h"
+#include "common/textconsole.h"
+
+#include "tesoro/core/display.h"
+#include "tesoro/core/level.h"
+#include "tesoro/core/namekey.h"
+#include "tesoro/core/object.h"
+#include "tesoro/core/room.h"
+
+namespace Tesoro {
+
+void Object::initPlain() {
+	_flags = kActive | kVisible;
+	_sortValue = 5;
+}
+
+void Object::initAnimated(const ObjectRecord &record, int16 roomSortOffset, const Common::Array<AnimPlayer> &levelPlayers, uint16 stateSize) {
+	_flags |= kActive;
+	_x = record.x;
+	_y = record.y;
+	_sortValue = (int16)(record.sortOffset + roomSortOffset + 5);
+	_nameKey = nameKey64(record.name);
+
+	_anim.init(levelPlayers, record.banks.empty() ? nullptr : &record.banks[0], record.banks.size());
+	if (!record.banks.empty())
+		_flags |= kHasAnimation;
+
+	_previousX = _x;
+	_previousY = _y;
+	_stateSize = stateSize;
+	_hasStateBlob = stateSize != 0;
+	_stateBlob.clear();
+	_stateBlob.resize(stateSize);
+}
+
+AnimPlayer *Object::initClickable() {
+	if (_anim.bankCount() == 0)
+		return nullptr;
+	AnimPlayer &player = _anim.current();
+	const bool image = player.bank() && player.bank()->step(player.current()).hasImage();
+	_flags = (_flags & ~kVisible) | (image ? kVisible : 0) | kCollidable | kInRoomList | kHitter;
+	return &player;
+}
+
+void Object::saveState(Common::WriteStream &stream) const {
+	if (_flags & kHasAnimation)
+		_anim.saveState(stream);
+
+	if (_hasStateBlob) {
+		stream.writeUint16LE(_stateSize);
+		stream.write(_stateBlob.data(), MIN<uint>(_stateSize, _stateBlob.size()));
+	}
+}
+
+void Object::loadState(Common::ReadStream &stream) {
+	if (_flags & kHasAnimation)
+		_anim.loadState(stream);
+
+	if (_hasStateBlob) {
+		byte raw[2] = { (byte)_stateSize, (byte)(_stateSize >> 8) };
+		stream.read(raw, 2);
+		_stateSize = READ_LE_UINT16(raw);
+
+		if (_stateSize > _stateBlob.size()) {
+			warning("Object: saved state of %u bytes is larger than the object's %u", _stateSize, _stateBlob.size());
+			_stateBlob.resize(_stateSize);
+		}
+		stream.read(_stateBlob.data(), _stateSize);
+	}
+}
+
+void Object::updateAnimation(int32 now) {
+	if (_flags & kHasAnimation)
+		_anim.tick(now);
+}
+
+void Object::updateBounds(int32 now) {
+	AnimPlayer *current = currentPlayer();
+	if (!current)
+		return;
+
+	AnimPlayer &player = *current;
+	_movedArea.x1 = player.movementX() + _x;
+	_movedArea.y1 = player.movementY() + _y;
+
+	updateAnimation(now);
+
+	// The area the object moved through, from where it was drawn to where it is now.
+	AnimPlayer &after = *currentPlayer();
+	_movedArea.x2 = after.movementX() + _x;
+	_movedArea.y2 = after.movementY() + _y;
+	if (_previousX != _x || _previousY != _y) {
+		_movedArea.x2 = _previousX + after.movementX();
+		_movedArea.y2 = _previousY + after.movementY();
+	}
+
+	const AnimStep &seq = after.bank()->step(after.current());
+	_hitRect.x1 = seq.hitX;
+	_hitRect.x2 = seq.hitW + seq.hitX;
+	_hitRect.y1 = seq.hitY;
+	_hitRect.y2 = seq.hitY - seq.hitH;
+}
+
+void Object::moveTo(int32 x, int32 y, bool setCurrent) {
+	if (setCurrent) {
+		_x = x;
+		_y = y;
+	}
+	_previousX = x;
+	_previousY = y;
+
+	if (_level)
+		_level->objectMoved(this);
+}
+
+void Object::attachToLevel(Level *level) {
+	if (level)
+		_level = level;
+
+	if ((_flags & kInRoomList) && _room)
+		_room->insertSorted(this);
+
+	onAttach();
+}
+
+void Object::drawAnimation(const Camera &camera, Display &display, bool skipPastRight) {
+	AnimPlayer &player = _anim.current();
+	const AnimStep &step = player.bank()->step(player.current());
+	if (!step.hasImage())
+		return;
+
+	const int32 x = (int32)((uint32)(_x - camera.scaledX()) + (uint32)(int32)player.movementX() + 320 + (uint32)(int32)step.imageX);
+	if (skipPastRight && x >= 641)
+		return;
+
+	const int32 y = (int32)((uint32)(camera.scaledY() - _y) - (uint32)(int32)step.imageY - (uint32)(int32)player.movementY() + 240);
+	display.queueImage(x, y, (uint16)_sortValue, player.bank()->image(step.imageIndex), 0);
+}
+
+} // End of namespace Tesoro
