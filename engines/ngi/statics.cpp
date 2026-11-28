@@ -412,6 +412,14 @@ Movement *AniObject::getMovementByName(const Common::String &name) {
 }
 
 bool AniObject::hit(int x, int y) {
+	if (g_nmi->usesXMLProject()) {
+		Phase *phase = _movement ? _movement->_curPhase : _statics;
+		if (!phase)
+			return false;
+		Common::Point anchor = getSomeXY();
+		int localX = (_flags & 8) ? _x - x - 1 + anchor.x : x - _x + anchor.x;
+		return phase->hit(phase->_x + localX, phase->_y + y - _y + anchor.y);
+	}
 	return getPixelAtPos(x, y, nullptr, true);
 }
 
@@ -1161,7 +1169,17 @@ void AniObject::playIdle() {
 		adjustSomeXY();
 }
 
-void AniObject::startSliding(int movementId, int messageQueueId, int x, int y, const PointList &points, int someDynamicPhaseIndex) {
+void AniObject::startSliding(int movementId, int messageQueueId, int x, int y, const PointList &points, int someDynamicPhaseIndex, bool mirror) {
+	if (g_nmi->_gameVersion >= 201509) {
+		if (startMovement(movementId, messageQueueId, someDynamicPhaseIndex, mirror)) {
+			_stepArray.insertPoints(points);
+			const Common::Point offset = _stepArray.getCurrPoint();
+			setPos(_x + offset.x, _y + offset.y);
+			_stepArray.gotoNextPoint();
+		}
+		return;
+	}
+
 	Movement *mov = nullptr;
 
 	if (!(_flags & 0x80)) {

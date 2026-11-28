@@ -1970,6 +1970,7 @@ MessageQueue *MctlGraph::makeWholeQueue(GmctlMqStruct &mctlMQ) {
 				Command *ex = new Command(_aniData[mctlMQ.objectIndex]._objectId, 1, mg2i->_movementId, 0, 0, 0, 1, 0, 0, 0);
 
 				ex->_excFlags |= 2;
+				ex->_mirror = mg2i->_mirror;
 				ex->_param = _aniData[mctlMQ.objectIndex]._ani->_copyId;
 				ex->_wait = 1;
 				ex->_z = -1;
@@ -2318,7 +2319,7 @@ MessageQueue *MctlGraph::makeQueue(AniObject *obj, int xpos, int ypos, int fuzzy
 		mctlMQ1.destDir = getLinkDir(&tempLinkList, tempLinkList.size() - 1, nullptr, nullptr);
 	}
 
-	mctlMQ1.flags = fuzzyMatch != 0;
+	mctlMQ1.flags = fuzzyMatch != 0 || g_nmi->_gameVersion >= 201509;
 
 	if (_aniData[idx]._directions[idxsub]._prevStaticId != obj->_statics->_staticsId)
 		mctlMQ1.flags |= 2;
@@ -2475,7 +2476,10 @@ MessageQueue *MctlGraph::makeLineQueue(GmctlMqStruct *info) {
 	int a2 = 0;
 	int mgmLen;
 
-	point = _aniHandler.getNumCycles(_aniData[info->objectIndex]._directions[info->sourceDir]._walk[1]._movement, x, y, &mgmLen, &a2, info->flags & 1);
+	const MG2I *walk = _aniData[info->objectIndex]._directions[info->sourceDir]._walk;
+	point = _aniHandler.getNumCycles(walk[1]._movement, walk[1]._mirror ? -x : x, y, &mgmLen, &a2, info->flags & 1);
+	if (walk[1]._mirror)
+		point.x = -point.x;
 
 	int x1 = point.x;
 	int y1 = point.y;
@@ -2598,6 +2602,7 @@ MessageQueue *MctlGraph::makeLineQueue(GmctlMqStruct *info) {
 								  x2,
 								  y2,
 								  -1);
+		ex->_mirror = walk[0]._mirror;
 		ex->_parId = mq->_id;
 		ex->_param = _aniData[info->objectIndex]._ani->_copyId;
 	}
@@ -2620,6 +2625,7 @@ MessageQueue *MctlGraph::makeLineQueue(GmctlMqStruct *info) {
 								  x2,
 								  y2,
 								  par);
+		ex->_mirror = walk[1]._mirror;
 		ex->_parId = mq->_id;
 		ex->_param = _aniData[info->objectIndex]._ani->_copyId;
 		mq->addCommandToEnd(ex);
@@ -2634,6 +2640,7 @@ MessageQueue *MctlGraph::makeLineQueue(GmctlMqStruct *info) {
 								  x2,
 								  y2,
 								  -1);
+		ex->_mirror = walk[2]._mirror;
 		ex->_parId = mq->_id;
 		ex->_param = _aniData[info->objectIndex]._ani->_copyId;
 

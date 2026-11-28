@@ -597,9 +597,9 @@ int global_messageHandler4(Command *cmd) {
 			ExCommand2 *cmd2 = static_cast<ExCommand2 *>(cmd);
 
 			if (cmd->_excFlags & 1) {
-				ani->startSliding(cmd->_messageNum, 0, cmd->_x, cmd->_y, cmd2->_points, flags);
+				ani->startSliding(cmd->_messageNum, 0, cmd->_x, cmd->_y, cmd2->_points, flags, cmd->_mirror);
 			} else {
-				ani->startSliding(cmd->_messageNum, cmd->_parId, cmd->_x, cmd->_y, cmd2->_points, flags);
+				ani->startSliding(cmd->_messageNum, cmd->_parId, cmd->_x, cmd->_y, cmd2->_points, flags, cmd->_mirror);
 			}
 		}
 		break;
@@ -688,7 +688,7 @@ int global_messageHandler4(Command *cmd) {
 
 		if (g_nmi->_gameVersion >= 201509) {
 			const bool mirror = cmd->_auxParam < 0 ? (ani->_flags & 8) != 0 : cmd->_auxParam != 0;
-			ani->show1(cmd->_x == -1 ? ani->_x : cmd->_x, cmd->_y == -1 ? ani->_y : cmd->_y, cmd->_messageNum, 0);
+			ani->show1(cmd->_x == -1 ? ani->_x : cmd->_x, cmd->_y == -1 ? ani->_y : cmd->_y, cmd->_messageNum, (cmd->_excFlags & 1) ? 0 : cmd->_parId);
 			ani->_flags = (ani->_flags & ~8) | (mirror ? 8 : 0);
 		} else {
 			ani->show1(cmd->_x, cmd->_y, cmd->_messageNum, cmd->_parId);

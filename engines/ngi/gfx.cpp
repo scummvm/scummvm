@@ -204,6 +204,8 @@ bool PictureObject::isPointInside(int x, int y) {
 }
 
 bool PictureObject::hit(int x, int y) {
+	if (!_hitRegion.isEmpty())
+		return _hitRegion.contains(x - _x, y - _y);
 	int oldx = _picture->_x;
 	int oldy = _picture->_y;
 
@@ -711,6 +713,15 @@ bool Texture::isPointInside(int x, int y) {
 bool Texture::hit(int x, int y) {
 	if (x < _x || y < _y || x >= _x + _width || y >= _y + _height)
 		return false;
+
+	if (g_nmi->usesXMLProject()) {
+		if (!_bitmap || !_bitmap->_surface)
+			return false;
+		const Graphics::ManagedSurface &surface = *_bitmap->_surface;
+		const uint32 color = surface.getPixel(x - _x, y - _y);
+		return (!surface.hasTransparentColor() || color != surface.getTransparentColor()) &&
+			(!surface.format.aBits() || ((color >> surface.format.aShift) & surface.format.aMax()));
+	}
 
 	if (!_bitmap)
 		init();

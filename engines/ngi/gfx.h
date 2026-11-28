@@ -184,6 +184,7 @@ public:
 	void renderAtPos(int x, int y);
 
 	bool setPicAniInfo(const PicAniInfo &picAniInfo);
+	Common::Rect _hitRegion; // XML region in picture coordinates.
 	bool isPointInside(int x, int y);
 	bool hit(int x, int y);
 	void setOXY2();

@@ -244,7 +244,7 @@ public:
 
 	bool startMovement(int movementId, int messageQueueId, int dynPhaseIdx, bool mirror = false);
 	bool startAnimEx(int movid, int parId, int flag1, int flag2);
-	void startSliding(int movementId, int messageQueueId, int x, int y, const PointList &points, int someDynamicPhaseIndex);
+	void startSliding(int movementId, int messageQueueId, int x, int y, const PointList &points, int someDynamicPhaseIndex, bool mirror);
 
 	void hide();
 	void show1(int x, int y, int movementId, int mqId);

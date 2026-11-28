@@ -606,7 +606,7 @@ AniObject *Scene::findAniObjectAtPos(int x, int y) {
 	for (uint i = 0; i < _aniObjects.size(); i++) {
 		AniObject *p = _aniObjects[i];
 
-		if ((p->_objectFlags & 0x100) && (p->_flags & 4) &&
+		if ((p->_objectFlags & (g_nmi->usesXMLProject() ? 2 : 0x100)) && (p->_flags & 4) &&
 				p->hit(x, y) &&
 				(!res || res->_z > p->_z))
 			res = p;
@@ -620,7 +620,7 @@ PictureObject *Scene::findPictureObjectAtPos(int x, int y) {
 
 	for (uint i = 0; i < _pictureObjects.size(); i++) {
 		PictureObject *p = _pictureObjects[i];
-		if ((p->_objectFlags & 0x100) && (p->_flags & 4) &&
+		if ((p->_objectFlags & (g_nmi->usesXMLProject() ? 2 : 0x100)) && (p->_flags & 4) &&
 				p->hit(x, y) &&
 				(!res || res->_z >= p->_z))
 			res = p;
@@ -635,7 +635,7 @@ int Scene::getPictureObjectIdAtPos(int x, int y) {
 
 	for (uint i = 0; i < _pictureObjects.size(); i++) {
 		PictureObject *p = _pictureObjects[i];
-		if ((p->_objectFlags & 0x100) && (p->_flags & 4) &&
+		if ((p->_objectFlags & (g_nmi->usesXMLProject() ? 2 : 0x100)) && (p->_flags & 4) &&
 				p->hit(x, y) &&
 				(!res || resp->_z >= p->_z)) {
 			resp = p;
