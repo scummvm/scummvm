@@ -22,7 +22,7 @@
 #include "access/noctropolis/noctropolis_font.h"
 #include "access/screen.h"
 
-#if DUMP_FONTS
+#ifdef NOCTROPOLIS_DUMP_FONTS
 #include "common/file.h"
 #include "image/png.h"
 #endif
@@ -89,8 +89,7 @@ void NoctropolisFont::makeCharSurface(Graphics::Surface &surface, byte ch, const
 	}
 }
 
-
-#if DUMP_FONTS
+#ifdef NOCTROPOLIS_DUMP_FONTS
 static int dumpno = 0;
 #endif
 
@@ -102,7 +101,7 @@ void NoctropolisFont::load(const uint16 *offsets, const byte *data) {
 		totalw += _chars[ch].w;
 	}
 
-#if DUMP_FONTS
+#ifdef NOCTROPOLIS_DUMP_FONTS
 	Graphics::Surface dump;
 	Common::DumpFile dumpfile;
 	dump.create(totalw, _height, Graphics::PixelFormat::createFormatCLUT8());
