@@ -27,8 +27,8 @@
 namespace MADS {
 namespace Forest {
 
-extern void init_inventory();
-extern void display_inventory();
+void init_inventory();
+void display_inventory();
 
 } // namespace Forest
 } // namespace MADS

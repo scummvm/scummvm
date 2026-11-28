@@ -33,6 +33,7 @@
 #include "mads/forest/sound/digi.h"
 #include "mads/forest/extra.h"
 #include "mads/forest/global.h"
+#include "mads/forest/inventory.h"
 #include "mads/forest/journal.h"
 #include "mads/forest/sound/midi.h"
 

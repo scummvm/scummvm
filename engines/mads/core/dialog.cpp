@@ -2351,7 +2351,6 @@ static void dialog_exec_mouse_list(DialogPtr dialog, ItemPtr item) {
 	int row, col;
 	int buf;
 	int old_pick;
-	int abort;
 	static long mouse_list_timing;
 	static long mouse_drag_timing;
 
@@ -2388,8 +2387,6 @@ static void dialog_exec_mouse_list(DialogPtr dialog, ItemPtr item) {
 					if (list->picked_entry >= list->elements) {
 						list->picked_entry = list->elements - 1;
 					}
-
-					abort = false;
 
 					// Handle double-click if any
 					if (mouse_start_stroke && (old_pick == list->picked_entry)) {

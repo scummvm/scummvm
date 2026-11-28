@@ -402,6 +402,8 @@ void problem() {
 	debug("\nA slight problem . . .\n\n");
 }
 
+// FIXME: Remove unused function...
+#if 0
 static void game_fix_save_name() {
 	char *mark;
 
@@ -411,6 +413,7 @@ static void game_fix_save_name() {
 	if (mark != NULL) *mark = 0;
 	Common::strcat_s(save_game_buf, ".SAV");
 }
+#endif
 
 void game_save_name(int id) {
 	Common::String name = g_engine->getSaveStateName(id);

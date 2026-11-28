@@ -65,7 +65,6 @@ extern void section_5_preload();
 extern void section_9_preload();
 
 extern void room_101_synchronize(Common::Serializer &s);
-extern void room_101_synchronize(Common::Serializer &s);
 extern void room_103_synchronize(Common::Serializer &s);
 extern void room_104_synchronize(Common::Serializer &s);
 extern void room_106_synchronize(Common::Serializer &s);
