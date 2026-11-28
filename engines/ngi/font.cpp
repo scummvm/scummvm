@@ -23,9 +23,71 @@
 #include "ngi/font.h"
 #include "ngi/objects.h"
 #include "ngi/gfx.h"
+#include "common/file.h"
 #include "common/formats/xmlparser.h"
 
 namespace NGI {
+
+class TextContainer::Loader : public Common::XMLParser {
+public:
+	explicit Loader(Common::StringMap &strings) : _strings(strings) {}
+
+private:
+	Common::StringMap &_strings;
+	CUSTOM_XML_PARSER(Loader) {
+		XML_KEY(TEXTCONTAINER)
+			XML_KEY(TEXT)
+				XML_PROP(id, true)
+				XML_PROP(text, true)
+			KEY_END()
+		KEY_END()
+	} PARSER_END()
+	bool handleUnknownKey(ParserNode *node) override {
+		if (!getParentNode(node))
+			return false;
+		node->ignore = true;
+		node->layout = _XMLkeys;
+		return true;
+	}
+	bool parserCallback_TEXTCONTAINER(ParserNode *) { return true; }
+	bool parserCallback_TEXT(ParserNode *node) {
+		_strings[node->values["id"]] = node->values["text"];
+		return true;
+	}
+};
+
+bool TextContainer::load(const Common::Path &directory) {
+	Common::File encoding, texts;
+	if (!encoding.open(directory.join("enc.dat")) || encoding.size() < 2 || (encoding.size() & 1) ||
+			!texts.open(directory.join("texts.xml")) || texts.readUint16LE() != 0xfeff)
+		return false;
+
+	Common::HashMap<uint16, byte> codes;
+	for (int i = 128; encoding.pos() + 2 < encoding.size(); ++i) {
+		const uint16 c = encoding.readUint16LE();
+		if (!codes.contains(c))
+			codes[c] = i;
+	}
+	const uint16 first = encoding.readUint16LE();
+	const int base = codes.size() + 1 - 128 - first;
+	// The UTF-16 resource starts with a code page line and ends with </TEXTCONTAINER>.
+	const int64 size = texts.size();
+	while (texts.pos() + 2 <= size) {
+		if (texts.readUint16LE() == '\n')
+			break;
+	}
+	Common::String xml("<?xml version=\"1.0\"?><TEXTCONTAINER>");
+	while (texts.pos() + 2 <= size) {
+		const uint16 c = texts.readUint16LE();
+		xml += c < 128 ? (byte)c : codes.getValOrDefault(c, (byte)(base + c));
+	}
+	Common::StringMap strings;
+	Loader parser(strings);
+	if (!parser.loadBuffer((const byte *)xml.c_str(), xml.size()) || !parser.parse())
+		return false;
+	_strings = strings;
+	return true;
+}
 
 class BitmapFont::Loader : public Common::XMLParser {
 public:

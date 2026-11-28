@@ -25,12 +25,24 @@
 #include "common/array.h"
 #include "common/hashmap.h"
 #include "common/path.h"
+#include "common/str.h"
+#include "common/hash-str.h"
 #include "common/ptr.h"
 #include "graphics/font.h"
 
 namespace NGI {
 
 class Texture;
+
+class TextContainer {
+public:
+	bool load(const Common::Path &directory);
+	Common::String getText(const Common::String &id) const { return _strings.getValOrDefault(id); }
+
+private:
+	class Loader;
+	Common::StringMap _strings;
+};
 
 class BitmapFont : public Graphics::Font {
 public:
