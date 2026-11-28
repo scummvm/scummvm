@@ -305,6 +305,19 @@ bool NGIEngine::handleGuiEvent(const Common::Event &event) {
 		}
 	} else {
 		GuiManager *manager = _currentScene->_guiManager.get();
+		if (_inventoryScene && (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)) {
+			Common::Point pos = event.mouse;
+			Inventory *inventory = getGameLoaderInventory();
+			const int item = inventory->getItemAtPos(&pos);
+			if (item) {
+				for (const MessageQueue *queue : *_globalMessageQueueList)
+					if (queue->_queueId == QU_SC1_ENTER && !queue->_isFinished)
+						return false;
+				if (event.type == Common::EVENT_LBUTTONDOWN)
+					inventory->putOnCursor(item);
+				return true;
+			}
+		}
 		if (_inventoryScene && _inventoryScene->_guiManager && _inventoryScene->_guiManager->hit(event.mouse)) {
 			manager = _inventoryScene->_guiManager.get();
 			for (const MessageQueue *queue : *_globalMessageQueueList) {
@@ -315,6 +328,9 @@ bool NGIEngine::handleGuiEvent(const Common::Event &event) {
 				}
 			}
 		}
+		if (event.type == Common::EVENT_LBUTTONUP && (!manager || !manager->hit(event.mouse)) &&
+				isAndroidFullPipe() && _currentScene->_sceneId == SC_1)
+			return scene01_click(event.mouse);
 		if (!manager)
 			return false;
 		GuiManager &gui = *manager;
@@ -658,6 +674,7 @@ Common::Error NGIEngine::updateScreen(uint32 elapsed, byte &brightness, bool red
 		_currentScene->render();
 		if (_inventoryScene) {
 			if (isAndroidFullPipe()) {
+				getGameLoaderInventory()->render();
 				if (_inventoryScene->_guiManager)
 					_inventoryScene->_guiManager->render(_backgroundSurface);
 			} else {

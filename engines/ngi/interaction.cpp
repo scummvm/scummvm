@@ -97,6 +97,48 @@ void InteractionController::sortInteractions(int sceneId) {
 }
 
 bool InteractionController::handleInteraction(AniObject *subj, GameObject *obj, int invId) {
+	if (g_nmi->usesXMLProject()) {
+		if (!_enabled || !subj || !obj || subj->_messageQueueId)
+			return false;
+		Interact *action = nullptr;
+		for (Interact *candidate : _interactions) {
+			if (candidate->canRun(subj, obj, invId) && (!action || candidate->_field_28 > action->_field_28))
+				action = candidate;
+		}
+		if (!action)
+			return false;
+		Common::ScopedPtr<MessageQueue> queue;
+		if (action->_heroId) {
+			int x = obj->_x + action->_heroOffsetX;
+			int y = obj->_y + action->_heroOffsetY;
+			if (obj->_objtype == kObjTypeStaticANIObject) {
+				const AniObject *actor = static_cast<AniObject *>(obj);
+				const Dims size = actor->getFullSize();
+				const Common::Point anchor = actor->getSomeXY();
+				x += (actor->_flags & 8 ? -1 : 1) * (size.x / 2 - anchor.x);
+				y += size.y / 2 - anchor.y;
+			}
+			if (x != subj->_x || y != subj->_y) {
+				queue.reset(getCurrSceneSc2MotionController()->makeQueue(subj, x, y, 0, action->_heroStaticId));
+				if (!queue)
+					return false;
+			}
+		}
+		if (!queue)
+			queue.reset(new MessageQueue(0));
+		if (action->_heroId) {
+			Command *mirror = new Command(subj->_id, 34, action->_heroMirror ? 8 : 0, 0, 0, 0, 1, 0, 0, 0);
+			mirror->_z = 8;
+			mirror->_excFlags = 3;
+			queue->addCommandToEnd(mirror);
+		}
+		for (uint i = 0; i < action->_messageQueue->getCount(); ++i)
+			queue->addCommandToEnd(action->_messageQueue->getCommandByIndex(i)->createClone());
+		if (!queue->run(action->_heroId ? subj : nullptr))
+			return false;
+		queue.release();
+		return true;
+	}
 	if (subj) {
 		if (!subj->isIdle() || (subj->_flags & 0x100))
 			return false;

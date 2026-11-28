@@ -89,6 +89,8 @@ class Inventory : public InventoryData {
 	int _topOffset;
 	Scene *_scene;
 	BigPicture *_picture;
+	Common::Rect _itemArea;
+	int _itemInterval = 10;
 
  public:
 	Inventory();
@@ -108,6 +110,7 @@ class Inventory : public InventoryData {
 	int getCountItemsWithId(int itemId);
 	int getItemFlags(int itemId);
 
+	void setItemArea(int16 sceneId, const Common::Rect &area, int interval);
 	void recalcItemPos();
 
 	Scene *getScene() { return _scene; }

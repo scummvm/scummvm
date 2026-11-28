@@ -290,13 +290,26 @@ public:
 		setAllowText();
 	}
 
+	~XMLSceneParser() override {
+		for (Interact *action : _actions)
+			delete action;
+	}
+
+	void registerInteractions() {
+		for (Interact *action : _actions)
+			getGameLoaderInteractionController()->addInteraction(action);
+		_actions.clear();
+	}
+
 private:
+	Common::Array<Interact *> _actions;
 	const GameProject &_project;
 	Scene &_scene;
 	const char *_locale;
 	uint _objectOrder = 0;
 	bool _hasInitialStatics = false;
 	int16 _initialStaticsId = 0;
+	Interact *_interaction = nullptr;
 	BehaviorAni *_behaviorAni = nullptr;
 	MctlItem *_motionItem = nullptr;
 	MctlGraph *_graph = nullptr;
@@ -432,6 +445,10 @@ private:
 				XML_KEY(COMMAND)
 					commandLayout = layout.top();
 					XML_PROP(cmd, true)
+					XML_PROP(interupt, false)
+					XML_PROP(scene, false)
+					XML_PROP(entr, false)
+					XML_PROP(needShow, false)
 					XML_PROP(wait, false)
 					XML_PROP(id, false)
 					XML_PROP(ani, false)
@@ -516,7 +533,13 @@ private:
 				KEY_END()
 			KEY_END()
 		KEY_END()
+		XML_KEY(INTERACTIONS)
+		KEY_END()
 		XML_KEY(INVENTORY)
+			XML_PROP(x, false)
+			XML_PROP(y, false)
+			XML_PROP(w, false)
+			XML_PROP(h, false)
 			XML_PROP(interval, false)
 			XML_PROP(cursorOfs, false)
 			XML_PROP(mode, false)
@@ -537,7 +560,15 @@ private:
 		return true;
 	}
 
-	bool parserCallback_INVENTORY(ParserNode *) { return true; }
+	bool parserCallback_INTERACTIONS(ParserNode *) { return true; }
+
+	bool parserCallback_INVENTORY(ParserNode *node) {
+		Common::Rect area(atoi(node->values.getValOrDefault("w", "1024").c_str()),
+			atoi(node->values.getValOrDefault("h", "100").c_str()));
+		area.translate(intProperty(*node, "x"), intProperty(*node, "y"));
+		getGameLoaderInventory()->setItemArea(_scene._sceneId, area, atoi(node->values.getValOrDefault("interval", "10").c_str()));
+		return true;
+	}
 
 	bool parserCallback_ADDANI(ParserNode *node) {
 		PicAniInfo ref;
@@ -776,6 +807,26 @@ private:
 			cmd->_y = atoi(node->values.getValOrDefault("y", "-1").c_str());
 			cmd->_z = atoi(node->values.getValOrDefault("z", "-1").c_str());
 			cmd->_auxParam = node->values.contains("mirror") ? (int)boolProperty(*node, "mirror") : -1;
+		} else if (kind == "SETSCENE") {
+			cmd->_cmd = Command::kCmdSetScene;
+			if (!readId(node->values.getValOrDefault("scene"), cmd->_parentId))
+				return parserError("Unknown destination scene");
+			idProperty = "entr";
+		} else if (kind == "ADD_INV_ITEM" || kind == "REMOVE_INV_ITEM") {
+			cmd->_cmd = kind == "ADD_INV_ITEM" ? 56 : 57;
+			if (!readId(node->values.getValOrDefault("id"), cmd->_parentId))
+				return parserError("Unknown inventory item");
+		} else if (kind == "USER" && node->values.getValOrDefault("type") == "SET_LOGIC") {
+			cmd->_cmd = Command::kCmdSetLogic;
+			cmd->_messageName = node->values.getValOrDefault("title");
+			cmd->_messageNum = intProperty(*node, "state");
+		} else if (kind == "USER" && node->values.getValOrDefault("type") == "MOVE_TO_STATIC") {
+			cmd->_cmd = 19;
+			cmd->_auxParam = !node->values.contains("needShow") || boolProperty(*node, "needShow");
+			if (!readId(node->values.getValOrDefault("ani"), cmd->_parentId))
+				return parserError("Unknown object in MOVE_TO_STATIC");
+			if (!node->values.getValOrDefault("static").empty())
+				idProperty = "static";
 		} else if (kind == "USER" || kind == "12" || kind == "SET_STATIC" || kind == "25") {
 			cmd->_cmd = 63;
 			cmd->_messageName = node->values.getValOrDefault("type", kind);
@@ -820,7 +871,9 @@ private:
 				return parserError("Unknown " + Common::String(idProperty) + " in " + kind);
 			cmd->_messageNum = id;
 		}
-		if (getParentNode(node)->name == "QUEUE") {
+		if (getParentNode(node)->name == "INTERACTION") {
+			_interaction->_messageQueue->addCommandToEnd(cmd.release());
+		} else if (getParentNode(node)->name == "QUEUE") {
 			_scene._messageQueues.back()->addCommandToEnd(cmd.release());
 		} else {
 			Movement &movement = *_scene._aniObjects.back()->_movements.back();
@@ -980,6 +1033,48 @@ private:
 		const ParserNode *parent = getParentNode(node);
 		if (!parent)
 			return false;
+		if (parent->name == "PICTURE" && node->name == "HITREGION" && node->values.getValOrDefault("type") == "rect") {
+			int16 id;
+			if (!readId(parent->values["id"], id))
+				return parserError("Unknown hit region owner");
+			PictureObject *picture = _scene.findPictureObjectById(id, 0);
+			const Dims size = picture->getFullSize();
+			picture->_hitRegion = Common::Rect(intProperty(*node, "left"), intProperty(*node, "top"),
+				size.x + intProperty(*node, "right"), size.y + intProperty(*node, "bottom"));
+			node->layout = _XMLkeys;
+			return true;
+		}
+		if (parent->name == "INTERACTIONS") {
+			node->layout = _XMLkeys;
+			_interaction = nullptr;
+			int16 sceneId;
+			if (node->name != "INTERACTION" || !readId(node->values.getValOrDefault("scene"), sceneId) || sceneId != _scene._sceneId)
+				return true;
+			Common::ScopedPtr<Interact> action(new Interact());
+			if (!readId(node->values.getValOrDefault("object"), action->_objectId))
+				return parserError("Unknown interaction object");
+			action->_sceneId = sceneId;
+			action->_actionName = node->values.getValOrDefault("id");
+			readId(node->values.getValOrDefault("hero"), action->_heroId);
+			readId(node->values.getValOrDefault("heroStatic"), action->_heroStaticId);
+			action->_heroOffsetX = intProperty(*node, "x");
+			action->_heroOffsetY = intProperty(*node, "y");
+			action->_heroMirror = boolProperty(*node, "heroMirror");
+			action->_field_28 = intProperty(*node, "ves");
+			const Common::String item = node->values.getValOrDefault("curor_obj_id");
+			if (item == "ANY_OBJECT")
+				action->_cursorObjectId = -2;
+			else if (!item.empty() && item != "0")
+				readId(item, action->_cursorObjectId);
+			action->_messageQueue = new MessageQueue();
+			_interaction = action.release();
+			_actions.push_back(_interaction);
+			return true;
+		}
+		if (parent->name == "INTERACTION") {
+			node->layout = _XMLkeys;
+			return !_interaction || node->name != "COMMAND" || parserCallback_COMMAND(node);
+		}
 		if (parent->name == "INVENTORY") {
 			node->layout = _XMLkeys;
 			if (node->name == "GUIMNGR")
@@ -988,6 +1083,7 @@ private:
 				return parserCallback_PICTURE(node);
 			if (node->name == "ITEM") {
 				InventoryPoolItem item = {};
+				readId(node->values.getValOrDefault("visSel"), item.pictureObjectSelected);
 				if (readId(node->values.getValOrDefault("id"), item.id) && readId(node->values.getValOrDefault("vis"), item.pictureObjectNormal))
 					getGameLoaderInventory()->addPoolItem(item);
 			}
@@ -1030,6 +1126,12 @@ void SceneTag::loadSceneXML(const GameProject &project) {
 		return;
 	}
 
+	if (_sceneId == SC_1) {
+		parser.close();
+		if (!parser.loadFile("data/interactions.xml") || !parser.parse())
+			return;
+		parser.registerInteractions();
+	}
 	if (_sceneId == SC_INV) {
 		parser.close();
 		if (!parser.loadFile("data/res/inventory.xml") || !parser.parse())

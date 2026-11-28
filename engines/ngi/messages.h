@@ -59,7 +59,7 @@ class Message : public CObject {
 
 class Command : public Message {
  public:
-	enum { kCmdPause = 64 }; // Timed pause in XML queues.
+	enum { kCmdPause = 64, kCmdSetScene, kCmdSetLogic }; // Timed pause in XML queues.
 	Common::String _messageName;
 	bool _mirror = false;
 	int _messageNum;

@@ -45,6 +45,7 @@ class Interact : public CObject {
 	int _objectState2;
 	int _heroOffsetX;
 	int _heroOffsetY;
+	bool _heroMirror = false;
 	MessageQueue *_messageQueue;
 	int _sceneId;
 	int _field_28;
@@ -77,6 +78,7 @@ public:
 
 	bool load(MfcArchive &file) override;
 
+	void addInteraction(Interact *interaction) { _interactions.push_back(interaction); }
 	void enable() { _enabled = true; }
 	void disable() { _enabled = false; }
 

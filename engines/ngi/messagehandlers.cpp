@@ -633,6 +633,12 @@ int global_messageHandler4(Command *cmd) {
 		if (!ani)
 			break;
 
+		if (g_nmi->usesXMLProject()) {
+			if (cmd->_auxParam)
+				ani->_flags |= 4;
+			if (!cmd->_messageNum)
+				break;
+		}
 		MessageQueue *mq = ani->getMessageQueue();
 		MessageQueue *mq2 = ani->moveToStatic(cmd->_messageNum);
 
@@ -749,6 +755,22 @@ int global_messageHandler4(Command *cmd) {
 		global_messageHandler_handleSound(cmd);
 		break;
 
+	case Command::kCmdSetScene:
+		g_nmi->_gameLoader->preloadScene(cmd->_parentId, cmd->_messageNum);
+		break;
+	case Command::kCmdSetLogic:
+		g_nmi->setState(cmd->_messageName, cmd->_messageNum);
+		break;
+	case 56:
+	case 57:
+		if (!g_nmi->usesXMLProject())
+			return 0;
+		if (cmd->_cmd == 56)
+			getGameLoaderInventory()->addItem(cmd->_parentId, 1);
+		else if (getGameLoaderInventory()->getCountItemsWithId(cmd->_parentId))
+			getGameLoaderInventory()->removeItem(cmd->_parentId, 1);
+		getGameLoaderInventory()->recalcItemPos();
+		break;
 	case 63:
 		if (g_nmi->_gameVersion < 201509)
 			return 0;

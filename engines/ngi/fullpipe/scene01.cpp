@@ -82,8 +82,10 @@ void scene01_initScene(Scene *sc, int entrance) {
 	scene01_initObjects(sc, entrance, g_nmi->getStateId(sO_EggCracker) == g_nmi->getStateValue(sO_EggCracker, sO_DidNotCrackEgg));
 	if (g_nmi->isAndroidFullPipe()) {
 		g_nmi->_inventoryScene = g_nmi->findScene(SC_INV);
-		if (g_nmi->_inventoryScene)
+		if (g_nmi->_inventoryScene) {
 			g_nmi->_inventoryScene->_guiEventHandler = scene01_onGuiEvent;
+			getGameLoaderInventory()->recalcItemPos();
+		}
 		uint32 buttonId;
 		if (g_nmi->_gameProject->_objectIds.findId("ST_LBN_2N", buttonId))
 			g_nmi->lift_setButton(sO_Level2, buttonId);
@@ -97,6 +99,34 @@ void scene01_initScene(Scene *sc, int entrance) {
 	} else {
 		g_nmi->lift_setButton(sO_Level2, ST_LBN_2N);
 	}
+}
+
+bool scene01_click(Common::Point pos) {
+	Scene &scene = *g_nmi->_currentScene;
+	AniObject *hero = g_nmi->_aniMan;
+	if (!hero || hero->_messageQueueId || !scene._motionController)
+		return false;
+	for (const MessageQueue *queue : *g_nmi->_globalMessageQueueList)
+		if (queue->_queueId == QU_SC1_ENTER && !queue->_isFinished)
+			return false;
+	pos += Common::Point(scene._x, scene._y);
+	PictureObject *picture = scene.findPictureObjectAtPos(pos.x, pos.y);
+	AniObject *actor = scene.findAniObjectAtPos(pos.x, pos.y);
+	GameObject *target = picture;
+	if (actor && (!picture || actor->_z < picture->_z))
+		target = actor;
+	if (target) {
+		uint32 upperPipe;
+		if (g_nmi->_gameProject->_objectIds.findId("PIC_SC1_UTRUBA", upperPipe) && upperPipe == (uint16)target->_id)
+			target = scene.findPictureObjectById(PIC_SC1_LADDER, 0);
+		const int item = getGameLoaderInventory()->getCursorPictureId();
+		if (target && canInteractAny(hero, target, item)) {
+			if (target->_objtype == kObjTypePictureObject && g_nmi->getGameLoaderGameVar()->getSubVarAsInt("Scene1ExitsDisabled"))
+				return false;
+			return handleObjectInteraction(hero, target, item);
+		}
+	}
+	return scene._motionController->startMove(hero, pos.x, pos.y, 0, 0) != nullptr;
 }
 
 int sceneHandler01(Command *cmd) {

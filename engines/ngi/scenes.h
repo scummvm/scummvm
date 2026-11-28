@@ -65,6 +65,7 @@ int sceneIntroDemo_updateCursor();
 void sceneIntroDemo_initScene(Scene *sc);
 int sceneHandlerIntroDemo(Command *cmd);
 
+bool scene01_click(Common::Point pos);
 void scene01_fixEntrance();
 void scene01_initScene(Scene *sc, int entrance);
 void scene01_initObjects(Scene *sc, int entrance, bool eggUncracked);
