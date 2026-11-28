@@ -114,22 +114,22 @@ void FanTranslationHandlerDetection::parseTranslations(Common::Platform platform
 	Common::Path fileName = Common::Path("snatcher_translations.dat");
 	Common::File file;
 	if (!file.open(fileName)) {
-
 		// Some lower level magic for the detection/metaengine phase where the normal file search hasn't been initiated yet.
 		const char *keys[] = {"path", "extrapath"};
 		for (int i = 0; i < ARRAYSIZE(keys); ++i) {
 			if (ConfMan.hasKey(keys[i])) {
 				Common::Path filePath(ConfMan.getPath(keys[i]));
 				Common::FSList list;
-				Common::FSNode(filePath).getChildren(list, Common::FSNode::kListFilesOnly);
-				for (Common::FSList::const_iterator it = list.begin(); it != list.end(); ++it) {
-					if (it->getName().equalsIgnoreCase(fileName.toString())) {
-						file.open(*it);
-						break;
+				if (Common::FSNode(filePath).getChildren(list, Common::FSNode::kListFilesOnly)) {
+					for (Common::FSList::const_iterator it = list.begin(); it != list.end(); ++it) {
+						if (it->getName().equalsIgnoreCase(fileName.toString())) {
+							file.open(*it);
+							break;
+						}
 					}
+					if (file.isOpen())
+						break;
 				}
-				if (file.isOpen())
-					break;
 			}
 		}
 
@@ -173,8 +173,11 @@ void FanTranslationHandlerDetection::parseTranslations(Common::Platform platform
 
 	if (fileNumber != -1 && fileOffsetList != nullptr && (uint)fileNumber < 100) {
 		uint32 offs = fileOffsetList[fileNumber];
-		if (offs == 0)	// Many module files do not actually contain any text.
+		if (offs == 0) {	// Many module files do not actually contain any text.
+			delete[] buff;
+			file.close();
 			return;
+		}
 		file.seek(offs);
 		bytesLeft -= offs;
 		fileNo = fileNumber;

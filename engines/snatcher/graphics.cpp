@@ -101,7 +101,7 @@ void GraphicsEngine::runScript(ResourcePointer res, int func) {
 			error("%s(): Unknown opcode 0x%02x", __FUNCTION__, cmd);
 		}
 
-		sc = next;
+		sc = Common::move(next);
 	}
 }
 

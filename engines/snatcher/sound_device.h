@@ -68,9 +68,9 @@ public:
 	virtual void setSoundEffectVolume(int vol) = 0;
 
 protected:
-	SoundDevice() : _musicStartTime(0) {}
+	SoundDevice() {}
 
-	uint32 _musicStartTime;
+	uint32 _musicStartTime = 0;
 
 private:
 	static SoundDevice *createSegaSoundDevice(FIO *fio);

@@ -153,7 +153,7 @@ void CmdQueue::m_initAnimations(const uint16 *&data) {
 		return;
 	}
 
-	_vm->gfx()->initAnimations(in, len, false);
+	_vm->gfx()->initAnimations(Common::move(in), len, false);
 	_progress = -1;
 }
 

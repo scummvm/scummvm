@@ -164,6 +164,8 @@ SaveStateDescriptor SnatcherMetaEngine::querySaveMetaInfos(const char *target, i
 		desc.setPlayTime(header.totalPlayTime * 1000);
 		desc.setSaveDate(header.td.tm_year + 1900, header.td.tm_mon + 1, header.td.tm_mday);
 		desc.setSaveTime(header.td.tm_hour, header.td.tm_min);
+	} else if (header.thumbnail != nullptr) {
+		header.thumbnail->free();
 	}
 
 	// We don't allow the autosave slot to be overwritten.

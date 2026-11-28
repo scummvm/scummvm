@@ -108,16 +108,16 @@ private:
 	void fmUpdateVolumeFader();
 	void fmHandleCmdQueue();
 
-	uint8 *_fmCmdQueue;
-	uint8 _fmCmdQueueWPos;
-	uint8 _fmCmdQueueRPos;
-	uint8 _fmVolume1;
-	uint8 _fmLastVolume1;
-	uint8 _fmVolume2;
-	uint8 _fmLastVolume2;
+	uint8 *_fmCmdQueue = nullptr;
+	uint8 _fmCmdQueueWPos = 0;
+	uint8 _fmCmdQueueRPos = 0;
+	uint8 _fmVolume1 = 0xFF;
+	uint8 _fmLastVolume1 = 0;
+	uint8 _fmVolume2 = 0xFF;
+	uint8 _fmLastVolume2 = 0;
 
 	MessageHandler _driverMsg;
-	KonamiMCDAudioDriver *_fmDriver;
+	KonamiMCDAudioDriver *_fmDriver = nullptr;
 
 private:
 	bool pcmLoadData();
@@ -182,35 +182,29 @@ private:
 	uint8 calcVolume(uint8 unit, PCMSound &s) const;
 	uint8 calcPan(PCMSound &s) const;
 
-	PCMResourceInfo *_pcmResourceInfo;
-	PCMResidentDataInfo *_pcmResidentDataInfo;
-	PCMInstrumentInfo *_pcmInstrumentInfo;
-	PCMSound *_pcmSounds;
+	PCMResourceInfo *_pcmResourceInfo = nullptr;
+	PCMResidentDataInfo *_pcmResidentDataInfo = nullptr;
+	PCMInstrumentInfo *_pcmInstrumentInfo = nullptr;
+	PCMSound *_pcmSounds = nullptr;
 
-	bool _pcmDisableStereo;
-	int16 _pcmResourceNumber;
-	uint8 _pcmState;
-	uint8 _pcmMode;
-	uint8 _faderFlags;
-	uint8 _faderTimer1;
-	uint8 _faderTimer2;
-	bool _reduceVolume2;
-	uint8 *_temp;
+	bool _pcmDisableStereo = false;
+	int16 _pcmResourceNumber = -1;
+	uint8 _pcmState = 0;
+	uint8 _pcmMode = 0;
+	uint8 _faderFlags = 0;
+	uint8 _faderTimer1 = 0;
+	uint8 _faderTimer2 = 0;
+	bool _reduceVolume2 = false;
+	uint8 *_temp = nullptr;
 
 private:
-	int _lastTrack;
-	uint32 _pauseStartTime;
-	FIO *_fio;
-	SegaAudioInterface *_sai;
+	int _lastTrack = -1;
+	uint32 _pauseStartTime = 0;
+	FIO *_fio = nullptr;
+	SegaAudioInterface *_sai = nullptr;
 };
 
 struct SndDriverState {
-	SndDriverState() : flags(0), volume1(0), volume2(0), volUpdate(0), chanUse(0), progress(0), result(0) {
-		msg[0] = msg[1] = msg[2] = 0;
-		sfxId[0] = sfxId[1] = 0;
-		restore[0] = restore[1] = 0;
-	}
-
 	void clear() {
 		flags = 0;
 		volume1 = volume2 = 0;
@@ -237,15 +231,15 @@ struct SndDriverState {
 		kSndBlockChannels =		1		<<		14
 	};
 
-	uint8 volume1, volume2;
-	uint16 flags;
-	uint16 volUpdate;
-	uint16 chanUse;
-	uint8 msg[3];
-	uint8 sfxId[2];
-	uint8 restore[2];
-	uint8 progress;
-	uint8 result;
+	uint8 volume1 = 0, volume2 = 0;
+	uint16 flags = 0;
+	uint16 volUpdate = 0;
+	uint16 chanUse = 0;
+	uint8 msg[3] = { 0 };
+	uint8 sfxId[2] = { 0 };
+	uint8 restore[2] = { 0 };
+	uint8 progress = 0;
+	uint8 result = 0;
 };
 
 class KonamiMCDSndChannel {
@@ -320,20 +314,22 @@ protected:
 		kChRepeatingTheme	=		1		<<		7
 	};
 
-	uint8 _sndId, _prio, _section1RepeatCounter, _section2RepeatCounter, _speed, _ticker, _pitchBendSteps, _pitchBendDuration, _pitchBendDelayTimer, _pitchBendDelay, _vbrDelayTimer, _vbrState,
-		_vbrRate, _vbrDepthModulationRateCounter, _vbrDelay, _vbrDepthModulationRate, _vbrDepth, _velocity, _volSlideDuration, _volSlideDest, _panEffectRateCounter, _panEffectRate, _panPosition,
-		_panEffectType, _panEffectState, _noteTimer, _eventDelay, _noteDuration, _lastNoteDuration, _eventDelayTimer, _pbExtTimer, _pbExtSpeed, _flags, _program, _enableDelayedEffects, _algorithm,
-		_lfoSensitivity, _ampModSensitivity, _lfoSensitivityDelay, _ampModSensitivityDelay, _lfoSensitivityDelayTimer, _ampModSensitivityDelayTimer, _regB4, _resetFlag, _signalNoteOff, _volTotal;
-	uint8 _tl[4];
-	int8 _transposeMSB;
-	int16 _section1VolAdjust, _section2VolAdjust, _section1Transpose, _section2Transpose, _volSlideRate, _pitchBendRate, _pitchBendDist, _vbrDepthRate, _transposeLSB;
-	uint16 _volume, _freqTotal, _pitchBendDest, _vbrDepthCur, _pbExtPos, _pbExtMask, _decayRate, _decayPhase, _freqLast;
-	const uint8 *_returnPos, *_themeStart, *_resumeAfterThemePos, *_sectionMarker1, *_sectionMarker2, *_trackCurPos, *_trackStart, *_dataEnd;
-	const uint8 _id, _num, _part, _regOffs;
-	SegaAudioInterface *_sai;
+	uint8 _sndId = 0, _prio = 0, _section1RepeatCounter = 0, _section2RepeatCounter = 0, _speed = 0, _ticker = 0, _pitchBendSteps = 0, _pitchBendDuration = 0, _pitchBendDelayTimer = 0,
+		_pitchBendDelay = 0, _vbrDelayTimer = 0, _vbrState = 0, _vbrRate = 0, _vbrDepthModulationRateCounter = 0, _vbrDelay = 0, _vbrDepthModulationRate = 0, _vbrDepth = 0, _velocity = 0,
+			_volSlideDuration = 0, _volSlideDest = 0, _panEffectRateCounter = 0, _panEffectRate = 0, _panPosition = 0, _panEffectType = 0, _panEffectState = 0, _noteTimer = 0, _eventDelay = 0,
+				_noteDuration = 0, _lastNoteDuration = 0, _eventDelayTimer = 0, _pbExtTimer = 0, _pbExtSpeed = 0, _flags = 0, _program = 0, _enableDelayedEffects = 0, _algorithm = 0,
+					_lfoSensitivity = 0, _ampModSensitivity = 0, _lfoSensitivityDelay = 0, _ampModSensitivityDelay = 0, _lfoSensitivityDelayTimer = 0, _ampModSensitivityDelayTimer = 0,
+						_regB4 = 0, _resetFlag = 0, _signalNoteOff = 0, _volTotal = 0;
+	uint8 _tl[4] = { 0, 0, 0, 0 };
+	int8 _transposeMSB = 0;
+	int16 _section1VolAdjust = 0, _section2VolAdjust = 0, _section1Transpose = 0, _section2Transpose = 0, _volSlideRate = 0, _pitchBendRate = 0, _pitchBendDist = 0, _vbrDepthRate = 0, _transposeLSB = 0;
+	uint16 _volume = 0, _freqTotal = 0, _pitchBendDest = 0, _vbrDepthCur = 0, _pbExtPos = 0, _pbExtMask = 0, _decayRate = 0, _decayPhase = 0, _freqLast = 0;
+	const uint8 *_returnPos = nullptr, *_themeStart = nullptr, *_resumeAfterThemePos = nullptr, *_sectionMarker1 = nullptr, *_sectionMarker2 = nullptr, *_trackCurPos = nullptr, *_trackStart = nullptr, *_dataEnd = nullptr;
+	const uint8 _id = 0, _num = 0, _part = 0, _regOffs = 0;
+	SegaAudioInterface *_sai = nullptr;
 
-	const uint8 *_instrumentData;
-	uint32 _instrumentDataSize;
+	const uint8 *_instrumentData = nullptr;
+	uint32 _instrumentDataSize = 0;
 
 	SndDriverState &_state;
 
@@ -445,38 +441,29 @@ private:
 
 	SndDriverState _state;
 
-	uint8 _curSfxPrio;
-	uint8 _curTrackPrio;
+	uint8 _curSfxPrio = 0;
+	uint8 _curTrackPrio = 0;
 
-	uint8 _comList[32];
-	uint8 _comListWritePos;
-	uint8 _comListWritePosPrev;
-	uint8 _comListReadPos;
+	uint8 _comList[32] = { 0 };
+	uint8 _comListWritePos = 0;
+	uint8 _comListWritePosPrev = 0;
+	uint8 _comListReadPos = 0;
 
-	MessageHandler *_msg;
+	MessageHandler *_msg = nullptr;
 
-	KonamiMCDSndChannel **_channels;
-	SegaAudioInterface *_sai;
+	KonamiMCDSndChannel **_channels = nullptr;
+	SegaAudioInterface *_sai = nullptr;
 
-	uint8 *_instrumentData;
-	const uint16 _instrumentDataSize;
-	uint8 *_trackData;
-	const uint16 _trackDataSize;
-	uint16 _trackDataSize2;
-	uint8 *_trackDataEnd;
+	uint8 *_instrumentData = nullptr;
+	const uint16 _instrumentDataSize = 7680;
+	uint8 *_trackData = nullptr;
+	const uint16 _trackDataSize = 2630;
+	uint16 _trackDataSize2 = 0;
+	uint8 *_trackDataEnd = nullptr;
 };
 
-KonamiMCDSndChannel::KonamiMCDSndChannel(int id, SegaAudioInterface *sai, SndDriverState &state) : _num(id), _id(id > 7 ? id - 4 : id), _sai(sai), _state(state),
-	_regOffs((id < 7 ? id : id - 1) % 3), _part(id < 3 ? 0 : 1), _prio(0), _freqLast(0), _sndId(0), _section1RepeatCounter(0), _speed(0), _ticker(0),
-	_ampModSensitivity(0), _pitchBendSteps(0), _vbrDepthModulationRate(0), _vbrDepth(0), _velocity(0), _volSlideDuration(0), _panEffectRateCounter(0), _noteTimer(0), _eventDelayTimer(0),
-	_panEffectRate(0), _panPosition(0), _panEffectType(0),	_panEffectState(0), _pbExtSpeed(0), _transposeMSB(0), _flags(0), _program(0), _enableDelayedEffects(0), _algorithm(0),
-	_lfoSensitivityDelay(0), _regB4(0), _resetFlag(0), _section1VolAdjust(0), _section2VolAdjust(0), _section1Transpose(0), _section2Transpose(0), _pitchBendDuration(0), _volume(0),
-	_vbrDepthCur(0), _transposeLSB(0), _decayRate(0), _decayPhase(0), _pbExtTimer(0), _pbExtPos(0), _pbExtMask(0), _themeStart(nullptr), _resumeAfterThemePos(nullptr),
-	_sectionMarker1(nullptr), _sectionMarker2(nullptr), _pitchBendDelay(0), _trackCurPos(nullptr), _volTotal(0), _returnPos(nullptr), _lfoSensitivity(0), _eventDelay(0),
-	_noteDuration(0), _lastNoteDuration(0), _pitchBendDelayTimer(0), _freqTotal(0), _pitchBendRate(0), _pitchBendDest(0), _vbrDelayTimer(0), _vbrDepthModulationRateCounter(0),
-	_vbrState(0), _vbrRate(0), _vbrDepthRate(0), _volSlideRate(0), _pitchBendDist(0), _ampModSensitivityDelay(0), _instrumentData(nullptr), _vbrDelay(0),
-	_lfoSensitivityDelayTimer(0), _ampModSensitivityDelayTimer(0), _signalNoteOff(0), _section2RepeatCounter(0), _instrumentDataSize(0) {
-	_tl[0] = _tl[1] = _tl[2] = _tl[3] = 0;
+KonamiMCDSndChannel::KonamiMCDSndChannel(int id, SegaAudioInterface *sai, SndDriverState &state) :
+	_num(id), _id(id > 7 ? id - 4 : id), _sai(sai), _state(state), _regOffs((id < 7 ? id : id - 1) % 3), _part(id < 3 ? 0 : 1) {
 	makeFunctions();
 }
 
@@ -1423,10 +1410,7 @@ const uint8 KonamiMCDSndChannel::_carrier[8] = {
 	0x80, 0x80, 0x80, 0x80, 0xA0, 0xE0, 0xE0, 0xF0
 };
 
-KonamiMCDAudioDriver::KonamiMCDAudioDriver(Audio::Mixer *mixer, MessageHandler *msg) : SegaAudioPluginDriver(), _msg(msg), _sai(nullptr), _channels(nullptr), _state(),
-	_instrumentData(nullptr), _trackData(nullptr), _curTrackPrio(0), _comListWritePos(0), _comListWritePosPrev(0), _comListReadPos(0), _curSfxPrio(0),
-		_instrumentDataSize(7680), _trackDataSize(2630), _trackDataSize2(0), _trackDataEnd(nullptr) {
-
+KonamiMCDAudioDriver::KonamiMCDAudioDriver(Audio::Mixer *mixer, MessageHandler *msg) : SegaAudioPluginDriver(), _msg(msg) {
 	_sai = new SegaAudioInterface(mixer, this);
 	assert(_sai);
 
@@ -1438,7 +1422,6 @@ KonamiMCDAudioDriver::KonamiMCDAudioDriver(Audio::Mixer *mixer, MessageHandler *
 		_channels[i] = new KonamiMCDSndChannelRtm(i, _sai, _state);
 	for (int i = 8; i < 10; ++i)
 		_channels[i] = new KonamiMCDSndChannelDef(i, _sai, _state);
-	memset(_comList, 0, sizeof(_comList));
 }
 
 KonamiMCDAudioDriver::~KonamiMCDAudioDriver() {
@@ -1740,9 +1723,7 @@ const uint8 *KonamiMCDAudioDriver::getTrack(uint32 index) const {
 	return res;
 }
 
-SegaSoundDevice::SegaSoundDevice(FIO *fio) : _fio(fio), SoundDevice(), _sai(nullptr), _lastTrack(-1), _pauseStartTime(0), _pcmResourceInfo(nullptr), _pcmResidentDataInfo(nullptr), _pcmInstrumentInfo(nullptr),
-	_pcmSounds(nullptr), _pcmDisableStereo(false), _temp(nullptr), _pcmResourceNumber(-1), _pcmState(0), _pcmMode(0), _faderFlags(0), _faderTimer1(0), _faderTimer2(0), _reduceVolume2(false),
-		_fmVolume1(0xFF), _fmLastVolume1(0), _fmVolume2(0xFF), _fmLastVolume2(0), _fmCmdQueue(nullptr), _fmCmdQueueWPos(0), _fmCmdQueueRPos(0), _fmDriver(nullptr), _driverMsg()	{
+SegaSoundDevice::SegaSoundDevice(FIO *fio) : _fio(fio), SoundDevice() {
 	_temp = new uint8[0x8000]();
 	assert(_temp);
 	_pcmSounds = new PCMSound[4]();

@@ -281,7 +281,8 @@ bool SnatcherEngine::start() {
 
 			_gfx->updateText();
 
-			if (numLoops == 2) {
+			// Currently dead code. But I keep it here for a while, until I know for sure it is not needed.
+			/* if (numLoops == 2) {
 				if (_gfx->busy(1)) {
 					--countTo5;
 					numLoops = 1;
@@ -289,7 +290,7 @@ bool SnatcherEngine::start() {
 					countTo5 = 0;
 					_gfx->setVar(10, 1);
 				}
-			}
+			}*/
 		}
 
 		_saveMan->enableSaving(state.phase == 2 && state.modPhaseTop == 5);

@@ -645,7 +645,7 @@ bool UI::waitWithCursorAnim(uint16 inputFlags) {
 	(drw + 2).writeUINT32(frm);
 	(drw + 12).writeUINT32(frm + 4);
 
-	_gfx->enqueueDrawCommands(drw);
+	_gfx->enqueueDrawCommands(Common::move(drw));
 
 	_waitCursorFrame += 2;
 	_waitCursorAnimDelay = s[1];
