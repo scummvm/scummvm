@@ -858,10 +858,10 @@ void Scene2020::finishCustomAnimation(uint16 action) {
 
 void Scene2020::handleAnimationFrameHook() {
 	if ((_roomAction == 335 && _actionStep == 15) || (_roomAction == 339 && _actionStep == 47)) {
-		_audio.playEffect(46);
+		_audio.playEffectAt(46, Common::Point(760, 200));
 	}
 	if (_roomAction == 339 && _actionStep == 16) {
-		_audio.playEffect(45);
+		_audio.playEffectAt(45, Common::Point(760, 200));
 	}
 	if (_roomAction == 339 && _actionStep == 1 && !applyPatch(18)) {
 		error("Cannot clear Runaway hospital chart");

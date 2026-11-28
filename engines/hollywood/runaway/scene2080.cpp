@@ -204,7 +204,7 @@ bool Scene2080::updateCustomSequence() {
 		_actionStep = (_now - _actionStarted) / 80;
 		if (!_actionStage) {
 			if (previous < 12 && _actionStep >= 12) {
-				_audio.playEffect(31);
+				_audio.playEffectAt(31, Common::Point(600, 200));
 			}
 			if (_actionStep >= 19) {
 				_actionStage = 1;
@@ -213,7 +213,7 @@ bool Scene2080::updateCustomSequence() {
 			}
 		} else if (_actionStage == 2) {
 			if (_hospital.markerTaken && previous < 2 && _actionStep >= 2) {
-				_audio.playEffect(30, 80);
+				_audio.playEffectAt(30, Common::Point(600, 200), 80);
 			}
 			const uint duration = _hospital.markerTaken ? 19 : 12;
 			if (_actionStep >= duration) {
@@ -228,7 +228,7 @@ bool Scene2080::updateCustomSequence() {
 		const uint previous = _actionStep;
 		_actionStep = (_now - _actionStarted) / 80;
 		if (previous < 20 && _actionStep >= 20) {
-			_audio.playEffect(38, 80);
+			_audio.playEffectAt(38, Common::Point(600, 200), 80);
 		}
 		if (_actionStep >= ARRAYSIZE(kFillGlassFrames)) {
 			_roomAction = 0;
