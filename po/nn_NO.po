@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-11-27 02:03+0000\n"
+"POT-Creation-Date: 2026-11-28 02:52+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -4091,7 +4091,7 @@ msgid "Pause"
 msgstr "Pause"
 
 #: engines/metaengine.cpp:120 engines/harvester/metaengine.cpp:93
-#: engines/hollywood/runaway/engine.cpp:850 engines/igor/metaengine.cpp:98
+#: engines/hollywood/runaway/engine.cpp:897 engines/igor/metaengine.cpp:98
 #: engines/parallaction/metaengine.cpp:163
 #: engines/scumm/insane/mortimer/mortimer.cpp:79
 #: engines/ultima/ultima8/metaengine.cpp:47
@@ -4118,7 +4118,7 @@ msgstr "Spelmeny"
 msgid "Skip"
 msgstr "Hopp over"
 
-#: engines/metaengine.cpp:134 engines/hollywood/runaway/engine.cpp:872
+#: engines/metaengine.cpp:134 engines/hollywood/runaway/engine.cpp:919
 #: engines/sky/metaengine.cpp:121 engines/supernova/metaengine.cpp:315
 msgid "Skip line"
 msgstr "Hopp over linje"
@@ -6486,7 +6486,7 @@ msgstr "Ta av (klede)"
 #: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
 #: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:542
 #: engines/grim/grim.cpp:642 engines/harvester/metaengine.cpp:92
-#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:861
+#: engines/hdb/metaengine.cpp:251 engines/hollywood/runaway/engine.cpp:908
 #: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
 #: engines/icb/icb.cpp:179 engines/macs2/metaengine.cpp:64
 #: engines/petka/metaengine.cpp:173 engines/phoenixvr/metaengine.cpp:82
@@ -10786,40 +10786,40 @@ msgstr "Aktiver studiopublikum"
 msgid "Pan voices and footsteps according to their positions on screen"
 msgstr ""
 
-#: engines/hollywood/runaway/engine.cpp:818
+#: engines/hollywood/runaway/engine.cpp:865
 #, fuzzy
 #| msgid "Look at"
 msgid "Perform action"
 msgstr "Se på"
 
-#: engines/hollywood/runaway/engine.cpp:824
-#: engines/hollywood/runaway/engine.cpp:867
+#: engines/hollywood/runaway/engine.cpp:871
+#: engines/hollywood/runaway/engine.cpp:914
 #, fuzzy
 msgid "Next action / Cancel"
 msgstr "~F~orrige"
 
-#: engines/hollywood/runaway/engine.cpp:830 engines/sherlock/metaengine.cpp:578
+#: engines/hollywood/runaway/engine.cpp:877 engines/sherlock/metaengine.cpp:578
 #, fuzzy
 msgid "Scroll left"
 msgstr "Skli til Venstre"
 
-#: engines/hollywood/runaway/engine.cpp:835 engines/sherlock/metaengine.cpp:584
+#: engines/hollywood/runaway/engine.cpp:882 engines/sherlock/metaengine.cpp:584
 #, fuzzy
 msgid "Scroll right"
 msgstr "Skli til Høyre"
 
-#: engines/hollywood/runaway/engine.cpp:840
+#: engines/hollywood/runaway/engine.cpp:887
 #, fuzzy
 #| msgid "Scroll list up"
 msgid "Scroll to the left edge"
 msgstr "Bla liste opp"
 
-#: engines/hollywood/runaway/engine.cpp:845
+#: engines/hollywood/runaway/engine.cpp:892
 #, fuzzy
 msgid "Scroll to the right edge"
 msgstr "Skli til Venstre"
 
-#: engines/hollywood/runaway/engine.cpp:856
+#: engines/hollywood/runaway/engine.cpp:903
 #, fuzzy
 #| msgid "Skip cutscene"
 msgid "Skip cutscene / Cancel action / Menu"
