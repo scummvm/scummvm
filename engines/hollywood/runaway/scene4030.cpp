@@ -271,21 +271,28 @@ RunawayRoomScene::ActionResult Scene4030::dispatchCustomSceneAction(uint16 actio
 void Scene4030::finishCustomAnimation(uint16 action) {
 	if (action == 321) {
 		_safeOpen = !_safeOpen;
+		refreshMuseum();
 		if (_safeOpen && !_museum.safeUsed) {
 			_museum.safeUsed = 1;
-			say(20, 1);
+			walkTo(Common::Point(550, 647), 7, false, true);
+			deferMuseumAction(401);
 		}
-		refreshMuseum();
+	} else if (action == 401) {
+		say(20, 1);
 	}
 }
 
 void Scene4030::handleAnimationFrameHook() {
 	if (_roomAction == 321) {
 		if (_actionStep == 21) {
-			_audio.playEffect(36);
+			_audio.playEffectAt(36, Common::Point(433, 200), 100, 0);
 		}
 		if (_actionStep == 27) {
-			_audio.playEffect(_safeOpen ? 39 : 38, 30);
+			_audio.playEffectAt(39, Common::Point(470, 200), 30, 1);
+		}
+		if (_actionStep == 38) {
+			// The safe's secondary animation reaches step 12 here.
+			_audio.stopEffect(1);
 		}
 	}
 }
