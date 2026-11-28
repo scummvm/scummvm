@@ -1,0 +1,342 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/events.h"
+#include "common/file.h"
+
+#include "common/memstream.h"
+
+#include "base/plugins.h"
+#include "base/version.h"
+
+#include "audio/mixer.h"
+#include "audio/decoders/raw.h"
+
+#include "graphics/paletteman.h"
+
+#include "prisoner/prisoner.h"
+#include "prisoner/muxplayer.h"
+
+namespace Prisoner {
+
+class MemoryBitReadStream : public Common::MemoryReadStream {
+public:
+	MemoryBitReadStream(const byte *dataPtr, uint32 dataSize, int bitSize)
+		: MemoryReadStream(dataPtr, dataSize),
+		_bitsLeft(0), _bitSize(bitSize), _bitBuf(0) {};
+	int readBit();
+protected:
+	uint32 _bitBuf;
+	int _bitsLeft, _bitSize;
+};
+
+int MemoryBitReadStream::readBit() {
+	if (_bitsLeft == 0) {
+		_bitBuf = readUint32LE();
+		_bitsLeft = _bitSize;
+	}
+	int theBit = _bitBuf & 0x80000000;
+	_bitBuf <<= 1;
+	_bitsLeft--;
+	return theBit;
+}
+
+MuxPlayer::MuxPlayer(PrisonerEngine *vm) : _vm(vm), _opened(false) {
+}
+
+MuxPlayer::~MuxPlayer() {
+}
+
+bool MuxPlayer::open(const char *filename) {
+	close();
+
+	if (!_fd.open(filename))
+		return false;
+
+	_header.id = _fd.readUint32LE();
+	_header.startOfs = _fd.readUint16LE();
+	_header.frameCount = _fd.readUint32LE();
+	_header.u3 = _fd.readUint16LE();
+	_header.u4 = _fd.readUint16LE();
+	_header.soundFreq = _fd.readUint16LE();
+	_header.u5 = _fd.readUint32LE();
+	_header.soundBufSize = _fd.readUint16LE();
+	_header.u6 = _fd.readUint16LE();
+	_header.u7 = _fd.readUint16LE();
+	_header.u8 = _fd.readUint16LE();
+	_header.width = _fd.readUint16LE();
+	_header.height = _fd.readUint16LE();
+
+	debug(3, "width = %d; height = %d", _header.width, _header.height);
+	debug(3, "u3 = %d; u4 = %d; u5 = %d; u6 = %d; u7 = %d; u8 = %d", _header.u3, _header.u4, _header.u5, _header.u6, _header.u7, _header.u8);
+
+	_frameBuffer = new byte[_header.width * _header.height];
+
+	_chunkTableCount = (_header.startOfs - 32) / 4;
+	_chunkTable = new uint32[_chunkTableCount];
+
+	for (int i = 0; i < _chunkTableCount; i++)
+		_chunkTable[i] = _fd.readUint32LE() & 0x3FFFFFFF;
+
+	_stream = Audio::makeQueuingAudioStream(_header.soundFreq, false);
+
+	_opened = true;
+
+	return true;
+}
+
+void MuxPlayer::close() {
+	if (_opened) {
+		if (_vm->_mixer->isSoundHandleActive(_sound)) {
+			_vm->_mixer->stopHandle(_sound);
+		}
+		delete[] _chunkTable;
+		delete[] _frameBuffer;
+		_fd.close();
+		_opened = false;
+	}
+}
+
+bool MuxPlayer::play() {
+	uint32 startTick;
+	bool aborted = false;
+
+	if (!_opened)
+		return true;
+
+	startTick = _vm->_system->getMillis();
+
+	// One audio chunk of soundBufSize samples is stored every 4 frames, so the
+	// frame rate is 4 * soundFreq / soundBufSize (5 to 12 fps in the game's videos)
+	uint32 frameRateNum = 12;
+	uint32 frameRateDen = 1;
+	if (_header.soundFreq != 0 && _header.soundBufSize != 0) {
+		frameRateNum = 4 * _header.soundFreq;
+		frameRateDen = _header.soundBufSize;
+	}
+
+	_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_sound, _stream);
+
+	for (uint curFrame = 0; curFrame < _header.frameCount && !aborted; curFrame++) {
+
+		if (_chunkTable[curFrame] != 0x3FFFFFFF) {
+			_fd.seek(_chunkTable[curFrame]);
+			handleFrame();
+		}
+
+		// TODO: Implement frame skipping?
+
+		while (!aborted) {
+			uint32 elapsedTime;
+
+			if (_vm->_mixer->isSoundHandleActive(_sound)) {
+				elapsedTime = _vm->_mixer->getSoundElapsedTime(_sound);
+			} else {
+				elapsedTime = _vm->_system->getMillis() - startTick;
+			}
+
+			if ((uint64)elapsedTime * frameRateNum >= (uint64)curFrame * 1000 * frameRateDen)
+				break;
+
+			aborted = _vm->handleMuxInput();
+			if (!aborted)
+				_vm->_system->delayMillis(10);
+		}
+	}
+
+	debug(3, "Mux playback done.");
+
+	return !aborted;
+}
+
+void MuxPlayer::handleFrame() {
+	uint16 chunkType;
+	uint32 chunkSize;
+
+	do {
+		chunkType = _fd.readUint16LE();
+		chunkSize = _fd.readUint32LE();
+
+		debug(3, "chunkType = %04X; chunkSize = %d (%08X); ofs = %08X", chunkType, chunkSize, chunkSize, _fd.pos());
+
+		switch (chunkType) {
+		case kEndOfChunk:
+			handleEndOfChunk(chunkSize);
+			break;
+		case kAudio1:
+		case kAudio2:
+			handleAudio(chunkSize);
+			break;
+		case kVideo:
+			handleVideo(chunkSize);
+			break;
+		case kPalette:
+			handlePalette(chunkSize);
+			break;
+		case kEndOfFile:
+			// Nothing (handled in while condition)
+			break;
+		default:
+			debug(3, "skipping unknown chunk %02X", chunkType);
+			_fd.seek(chunkSize, SEEK_CUR);
+		}
+	} while (chunkType != kEndOfChunk && chunkType != kEndOfFile);
+}
+
+void MuxPlayer::handleEndOfChunk(uint32 chunkSize) {
+	_fd.seek(chunkSize, SEEK_CUR);
+	_vm->_system->copyRectToScreen(_frameBuffer, _header.width, 0, 0, _header.width, _header.height);
+	_vm->_system->updateScreen();
+}
+
+void MuxPlayer::handleAudio(uint32 chunkSize) {
+	if (_stream) {
+		byte *data = new byte[chunkSize];
+		_fd.read(data, chunkSize);
+		_stream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+	} else {
+		_fd.seek(chunkSize, SEEK_CUR);
+	}
+}
+
+void MuxPlayer::handleVideo(uint32 chunkSize) {
+	byte flags;
+	uint32 bufSize1, bufSize2;
+	byte *buffer;
+
+	chunkSize -= 13;
+
+	flags = _fd.readByte();
+
+	debug(3, "flags = %02X", flags);
+
+	_fd.readUint32LE();
+	bufSize1 = _fd.readUint32LE();
+	bufSize2 = _fd.readUint32LE();
+
+	debug(3, "chunkSize = %d; bufSize1 = %d; bufSize2 = %d", chunkSize, bufSize1, bufSize2);
+
+	buffer = new byte[chunkSize];
+	_fd.read(buffer, chunkSize);
+
+	if (flags & 4) {
+		byte *compBuffer = buffer;
+		buffer = new byte[bufSize1 + bufSize2];
+		debug(3, "decompress...");
+		decompress(compBuffer, buffer, chunkSize, bufSize1 + bufSize2);
+		debug(3, "decompress ok");
+		delete[] compBuffer;
+	}
+
+	debug(3, "decodeFrame...");
+	decodeFrame(buffer, buffer + bufSize1, _frameBuffer, bufSize1, bufSize2, !(flags & 2));
+	debug(3, "decodeFrame ok");
+
+	delete[] buffer;
+}
+
+void MuxPlayer::handlePalette(uint32 chunkSize) {
+	_fd.read(_palette, 768);
+	_vm->_system->getPaletteManager()->setPalette(_palette, 0, 256);
+}
+
+void MuxPlayer::decompress(byte *source, byte *dest, uint32 sourceSize, uint32 destSize) {
+	MemoryBitReadStream src(source, sourceSize, 31);
+	byte *dst = dest, *dstEnd = dest + destSize;
+	byte ofs = 0, bitCounter = 1, lengthTmp = 0, length = 0, tmp;
+	while (dst < dstEnd) {
+		if (src.readBit() == 0) {
+			ofs = src.readByte();
+			if (bitCounter & 1) {
+				lengthTmp = src.readByte();
+				length = ((lengthTmp >> 4) & 0x0F) + 2;
+			} else {
+				length = (lengthTmp & 0x0F) + 2;
+			}
+			bitCounter ^= 1;
+			while (length-- && dst < dstEnd) {
+				tmp = *(dst - ofs);
+				*dst++ = tmp;
+			}
+		} else {
+			if (bitCounter & 1) {
+				lengthTmp = src.readByte();
+				length = ((lengthTmp >> 4) & 0x0F) + 1;
+			} else {
+				length = (lengthTmp & 0x0F) + 1;
+			}
+			bitCounter ^= 1;
+			while (length-- && dst < dstEnd)
+				*dst++ = src.readByte();
+		}
+	}
+}
+
+void MuxPlayer::decodeFrame(byte *buf1, byte *buf2, byte *dest, uint32 bufSize1, uint32 bufSize2,
+	bool isKeyframe) {
+
+	MemoryBitReadStream src(buf1, bufSize1, 32);
+	byte *dst = dest;
+	byte *buf2p = buf2, *buf2e = buf2 + bufSize2;
+	bool whichNibble = true;
+	uint16 copyLen, copyLenTmp = 0;
+
+	while (buf2p < buf2e) {
+		if (src.readBit() == 0) {
+			*dst++ = *buf2p++;
+		} else if (src.readBit() == 0) {
+			if (whichNibble) {
+				copyLenTmp = src.readByte();
+				copyLen = (copyLenTmp >> 4) & 0x0F;
+			} else {
+				copyLen = copyLenTmp & 0x0F;
+			}
+			if (copyLen == 0) {
+				copyLen = src.readByte() + 20;
+			} else {
+				copyLen += 4;
+			}
+			memset(dst, *buf2p, copyLen);
+			dst += copyLen;
+			buf2p++;
+			whichNibble = !whichNibble;
+		} else if (src.readBit() == 0) {
+			*dst++ = *buf2p;
+			*dst++ = *buf2p;
+			buf2p++;
+		} else if (src.readBit() == 0) {
+			*dst++ = *buf2p;
+			*dst++ = *buf2p;
+			*dst++ = *buf2p;
+			buf2p++;
+		} else if (isKeyframe || src.readBit() == 0) {
+			*dst++ = *buf2p;
+			*dst++ = *buf2p;
+			*dst++ = *buf2p;
+			*dst++ = *buf2p;
+			buf2p++;
+		} else {
+			dst += src.readByte();
+		}
+	}
+}
+
+} // End of namespace Prisoner

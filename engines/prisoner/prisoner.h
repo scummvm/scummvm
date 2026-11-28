@@ -1,0 +1,1334 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef PRISONER_H
+#define PRISONER_H
+
+#include "common/scummsys.h"
+#include "common/events.h"
+#include "common/keyboard.h"
+#include "common/random.h"
+#include "common/savefile.h"
+#include "common/serializer.h"
+#include "common/system.h"
+#include "common/util.h"
+
+#include "audio/mixer.h"
+
+#include "graphics/surface.h"
+
+#include "engines/engine.h"
+
+#include "prisoner/detection.h"
+#include "prisoner/objectstorage.h"
+#include "prisoner/menumgr.h"
+
+namespace Prisoner {
+
+class PrisonerResourceLoader;
+class Screen;
+class ResourceManager;
+class AnimationResource;
+struct AnimationFrameList;
+struct AnimationCel;
+class FontResource;
+class PictureResource;
+class ScriptResource;
+class TextResource;
+struct TextItem;
+class ScriptOpcodes;
+class MidiPlayer;
+class PathSystem;
+class PrisonerEngine;
+
+/* Script */
+
+const int16 kSceneScriptProgram = 0;
+const int16 kModuleScriptProgram = 1;
+const int16 kMaxScripts = 50;
+
+enum {
+	kScriptStatusPaused		= 0,
+	kScriptStatusRunCode	= 1,
+	kScriptStatusSleeping	= 2,
+	kScriptStatusSync		= 3,
+	kScriptStatusAnimation	= 4,
+	kScriptStatusText		= 5,
+	kScriptStatusDialog		= 6,
+	kScriptStatusWalking	= 7,
+	kScriptStatusSyncResume	= 8,
+	kScriptStatusActorZone	= 9,
+	kScriptStatus10			= 10,
+	kScriptStatusSound		= 11,
+	kScriptStatus12			= 12,
+	kScriptStatus13			= 13
+};
+
+struct Script {
+	byte status;
+	byte *ip, *code;
+	int16 soundIndex;
+	int16 zoneIndex;
+	bool zoneEnterLeaveFlag;
+	int16 screenTextIndex;
+	int32 sleepCounter;
+	int16 syncScriptNumber;
+	int16 actorIndex;
+	int16 actorIndex2;
+	int16 altAnimationIndex;
+	int16 frameIndex;
+	Script() { clear(); }
+	byte readByte();
+	int16 readInt16();
+	Common::String readString();
+	void clear() {
+		status = kScriptStatusPaused;
+		ip = nullptr;
+		code = nullptr;
+		soundIndex = -1;
+		zoneIndex = -1;
+		zoneEnterLeaveFlag = false;
+		screenTextIndex = -1;
+		sleepCounter = 0;
+		syncScriptNumber = -1;
+		actorIndex = -1;
+		actorIndex2 = -1;
+		altAnimationIndex = -1;
+		frameIndex = -1;
+	}
+};
+
+struct ScriptProgram {
+	int16 resourceCacheSlot;
+	ScriptResource *scriptResource;
+	int16 scriptCount;
+	Script scripts[kMaxScripts];
+	ScriptProgram() : resourceCacheSlot(-1), scriptCount(0), scriptResource(nullptr) {}
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
+};
+
+/* Zones */
+
+struct Zone {
+	byte used;
+	int16 x1, y1, x2, y2;
+	int8 type;
+	int16 actorIndex;
+	int16 mouseCursor;
+	byte hasText;
+	int16 resourceCacheSlot;
+	uint textIndex;
+	Common::String identifier;
+	bool isEmpty() const { return used == 0; }
+	void clear() { used = 0; }
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
+};
+
+struct ZoneAction {
+	int16 used = 0;
+	int16 zoneActionIndex = -1;
+	int16 zoneIndex = -1;
+	int16 type = 0;
+	int16 inventoryItemIndex = -1;
+	int16 pathNodeIndex = -1;
+	int16 scriptIndex1 = -1;
+	int16 scriptProgIndex = -1;
+	int16 scriptIndex2 = -1;
+	int16 moduleIndex = -1;
+	int16 sceneIndex = -1;
+	bool isEmpty() const { return used == 0; }
+	void clear() { used = 0; }
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
+};
+
+const int16 kMaxZones = 50;
+const int16 kMaxZoneActions = 70;
+
+/* Dialog */
+
+struct DialogKeyword {
+	Common::String _keyword;
+	byte _used;
+	DialogKeyword() : _used(0) {}
+	DialogKeyword(const Common::String &keyword) : _keyword(keyword), _used(0) {
+		debug(1, "keyword = [%s]", keyword.c_str());
+	}
+};
+
+struct Dialog {
+	byte used;
+	Common::String pakName;
+	int16 pakSlot;
+	Common::Array<DialogKeyword> keywords;
+	bool isEmpty() const { return used == 0; }
+	void clear() { used = 0; }
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
+};
+
+const int16 kMaxDialogs = 3;
+
+/* Inventory */
+
+struct InventoryItem {
+	int16 resourceCacheSlot;
+	int16 id;
+	int8 status;
+	Common::String name;
+	int16 combinationIndex;
+	bool isEmpty() const { return resourceCacheSlot == -1; }
+	void clear() {
+		resourceCacheSlot = -1;
+		id = -1;
+		status = 0;
+		name.clear();
+		combinationIndex = -1;
+	}
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
+};
+
+struct InventoryItemCombination {
+	byte used;
+	int16 inventoryItem1, inventoryItem2;
+	int16 scriptIndex;
+	bool isEmpty() const { return used == 0; }
+	void clear() { used = 0; }
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
+};
+
+const int16 kMaxInventoryItems = 50;
+const int16 kMaxInventoryItemCombinations = 10;
+
+/* Actor */
+
+struct ActorSprite {
+	byte used;
+	int16 actorIndex;
+	int16 x, y;
+	int16 xsub, ysub;
+	int16 xadd, yadd;
+	int16 xoffs, yoffs;
+	int16 scale;
+	int16 boundsX1, boundsY1;
+	int16 boundsX2, boundsY2;
+	int16 zoneX1, zoneY1, zoneX2, zoneY2;
+	byte flag;
+	AnimationResource *animationResource;
+	int16 elementIndex;
+	int16 prevFrameIndex, frameIndex, frameCount;
+	int16 ticks;
+	int16 frameListIndex, frameListCount;
+	AnimationFrameList *frameList;
+	void clear() { used = 0; }
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
+};
+
+struct CompareActorSpriteByY {
+	bool operator()(const ActorSprite *left, const ActorSprite *right) const {
+		return left->y < right->y;
+	}
+};
+
+struct PathResult;
+
+const int16 kMaxActors = 20;
+
+struct Actor {
+	int16 resourceCacheSlot;
+	int16 altAnimationIndex;
+	int16 status;
+	int16 pathWalkerIndex;
+	int16 pathResultIndex;
+	PathResult *pathWalker1;
+	int16 pathResultCount;
+	PathResult *pathWalker2;
+	int16 pathNodeIndex;
+	int16 pathEdgeIndex;
+	int16 pathPolyIndex;
+	int16 firstFrameListIndex, lastFrameListIndex;
+	int16 minTicks, maxTicks;
+	int32 ticks;
+	byte ticksFlag;
+	Common::String pakName;
+	int16 pakSlot;
+	int16 frameListIndex;
+	int16 walkDestX, walkDestY;
+	int16 x2, y2;
+	int16 textFontNumber;
+	int16 fontOutlineColor, fontInkColor;
+	ActorSprite *actorSprite;
+	int16 x, y;
+	bool isEmpty() const { return resourceCacheSlot == -1; }
+	void clear() { resourceCacheSlot = -1; }
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
+};
+
+const int16 kMaxAltActorAnimations = 5;
+
+struct AltActorAnimation {
+	int16 resourceCacheSlot;
+	byte value;
+	bool isEmpty() const { return resourceCacheSlot == -1; }
+	void clear() { resourceCacheSlot = -1; }
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
+};
+
+/* BackgroundObject */
+
+struct BackgroundObject {
+	byte used;
+	int16 x, y;
+	byte va2Command;
+	int16 celIndex;
+	int16 boundsX1, boundsY1, boundsX2, boundsY2;
+	int16 x1, y1, x2, y2;
+	AnimationResource *animationResource;
+	bool isEmpty() const { return used == 0; }
+	void clear() { used = 0; }
+};
+
+struct CompareBackgroundObjectByY {
+	bool operator()(const BackgroundObject *left, const BackgroundObject *right) const {
+		return left->y < right->y;
+	}
+};
+
+const int16 kMaxBackgroundObjects = 20;
+
+struct PathResult {
+	int16 x, y;
+	int16 edgeIndex;
+	int16 nodeIndex;
+	int16 polyIndex;
+	int16 direction;
+	int16 scale;
+};
+
+const int16 kMaxPathWalkers = 10;
+
+struct PathWalker {
+	byte used;
+	PathResult items[452];
+	bool isEmpty() const { return used == 0; }
+	void clear() { used = 0; }
+};
+
+
+/* Scene items */
+
+struct SceneItem {
+	int16 actorIndex;
+	int16 inventoryItemIndex;
+	bool isEmpty() const { return actorIndex == -1; }
+	void clear() {
+		actorIndex = -1;
+		inventoryItemIndex = -1;
+	}
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
+};
+
+const int16 kMaxSceneItems = 10;
+
+/* ActorFrameSounds */
+
+struct ActorFrameSound {
+	int16 actorIndex;
+	int16 soundIndex;
+	int16 frameListIndex;
+	int16 frameIndex;
+	int16 volume;
+	bool flag;
+	bool isEmpty() const { return actorIndex == -1; }
+	void clear() { actorIndex = -1; }
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
+};
+
+const int16 kMaxActorFrameSounds = 30;
+
+/* Fonts */
+
+struct FontColorDef {
+	byte inkColor, outlineColor;
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
+};
+
+struct Font {
+	int16 resourceCacheSlot;
+	FontResource *fontResource;
+	int16 unk1;
+	int16 height;
+	int16 unk2;
+	int16 interletter;
+	int16 outlineColorIdx;
+	int16 inkColorIdx;
+	int16 outlineColor;
+	int16 inkColor;
+	bool isEmpty() const { return resourceCacheSlot == -1; }
+	void clear() { resourceCacheSlot = -1; }
+};
+
+/* Screen text */
+
+struct ScreenText {
+	byte used;
+	bool screenText;
+	Common::String identifier;
+	int16 x0, y0;
+	bool screenCenter;
+	int16 resourceCacheSlot;
+	int16 actorIndex;
+	uint32 finishedTime;
+	int16 speechPakSlot;
+	int16 chunkCount;
+	int16 chunkIndex;
+	bool inventoryActive;
+	int16 textIndex;
+	int16 fontIndex;
+	int16 fontOutlineColor;
+	int16 fontInkColor;
+	int16 x, y;
+	int16 lineCount;
+	int16 width, height;
+	int16 fontHeight;
+	bool isEmpty() const { return used == 0; }
+	void clear() { used = 0; }
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
+};
+
+const int16 kMaxScreenTexts = 3;
+
+/* LipSync */
+
+struct LipSyncChannelStatus {
+	int16 ticks;
+	int16 index;
+	LipSyncChannelStatus() : ticks(-1), index(0) {}
+};
+
+/* Mouse cursors */
+
+struct MouseCursor {
+	Common::String key;
+	int16 pakSlot;
+	int16 resourceCacheSlot;
+	int16 frameListIndex;
+};
+
+const int16 kMouseCursors = 14;
+
+enum {
+	kCursorDefault		= 0,
+	kCursorLook			= 1,
+	kCursorMove			= 2,
+	kCursorDoor			= 3,
+	kCursorRead			= 4,
+	kCursorAct			= 5,
+	kCursorTalk			= 6,
+	kCursorDisk			= 7,
+	kCursorDialog		= 8,
+	kCursorAutomatic	= 9,
+	// 10 and 11 are not used
+	kCursorItem			= 12,
+	kCursorMenu			= 13
+};
+
+/* ClickBox */
+
+struct ClickBox {
+	byte used;
+	byte flag1;
+	byte flag2;
+	int16 x1, y1, x2, y2;
+	int16 tag;
+	int32 unk1;
+	int16 unk2;
+	bool isEmpty() const { return used == 0; }
+	void clear() { used = 0; }
+};
+
+const int16 kMaxClickBoxes = 110;
+
+/* Palette task */
+
+struct PaletteTask {
+	bool active = false;
+	int16 value1 = -1;
+	int16 value2 = 0;
+	int16 value3 = 0;
+	int16 positionIncr = 0;
+	int16 updateTicks = 0;
+	void sync(PrisonerEngine *vm, Common::Serializer &s);
+};
+
+const int16 kMaxPaletteTasks = 5;
+
+// getTicks() counts in 1/100 seconds
+const int32 kTicksPerMinute = 6000;
+
+/* Globals */
+extern const byte constPalette1[768];
+
+/* Sounds */
+
+// Scripts use volumes from 0 to 100, the mixer uses 0 to kMaxChannelVolume
+inline byte toMixerVolume(uint volume) {
+	return MIN<uint>(volume, 100) * Audio::Mixer::kMaxChannelVolume / 100;
+}
+
+struct SoundSlot {
+	Audio::SoundHandle handle;
+	int16 resourceCacheSlot;
+	bool volumeFlag;
+	uint volume;
+	bool shouldResume;
+	bool moduleWide;
+	bool isEmpty() const { return resourceCacheSlot == -1; }
+	void clear() { resourceCacheSlot = -1; }
+};
+
+const int16 kMaxSounds = 25;
+
+/* Musics */
+
+struct MusicSlot {
+	int16 resourceCacheSlot;
+	bool volumeFlag;
+	uint volume;
+	bool isPlaying;
+	bool shouldResume;
+	bool moduleWide;
+	bool isDigital;
+	bool loop;
+	int16 loopCount;
+	Audio::SoundHandle handle;
+	bool isEmpty() const { return resourceCacheSlot == -1; }
+	void clear() { resourceCacheSlot = -1; isPlaying = false; isDigital = false; loop = false; loopCount = 0; }
+};
+
+const int16 kMaxMusics = 3;
+
+/* Input low-level */
+
+enum {
+	kLeftButton			= 1 << 0,
+	kRightButton		= 1 << 1,
+	kLeftButtonDbl		= 1 << 2,
+	kRightButtonDbl		= 1 << 3
+};
+
+
+struct EasterEggVideo {
+	const char *filename;
+	Common::KeyCode key;
+};
+
+
+/* PrisonerEngine */
+
+class PrisonerEngine : public ::Engine {
+protected:
+
+	Common::Error run();
+
+public:
+	PrisonerEngine(OSystem *syst, const ADGameDescription *gameDesc);
+	virtual ~PrisonerEngine();
+
+	// Detection related functions
+	const ADGameDescription *_gameDescription;
+	const char *getGameId() const;
+	uint32 getFeatures() const;
+	uint16 getVersion() const;
+	Common::Platform getPlatform() const;
+	bool hasFeature(EngineFeature f) const override;
+	void syncSoundSettings() override;
+	void pauseEngineIntern(bool pause) override;
+
+	Common::RandomSource *_rnd;
+
+	Screen *_screen;
+	PrisonerResourceLoader *_resLoader;
+	ResourceManager *_res;
+
+	int _mouseX = 0, _mouseY = 0;
+
+	Common::KeyCode _keyState;
+	// The character of the pressed key, for typing save descriptions
+	uint16 _keyAscii = 0;
+	uint16 _buttonState;
+	bool _keyReleasePending;
+	uint16 _buttonReleasePending;
+
+	char _languageChar;
+	int16 _animationSpeed;
+	int16 _lockUserInputRefCounter;
+	bool _clearBackgroundFlag;
+	bool _sceneFlag;
+	bool _mainMenuRequested;
+	bool _inGame;
+	bool _mainLoopDone;
+	int8 _currMenuIndex;
+	int8 _selectedMenuIndex;
+	int8 _currOptionsMenuIndex;
+	bool _optionsOpenedFromGame;
+
+	/* Display settings screen, edited copies of the settings */
+	bool _displayScrolling = false;
+	int16 _displayStandbyMinutes = 0;
+	int16 _displaySpeedIndex = 0;
+	int8 _displayRow = 0;
+
+
+	Common::String _muxFilename;
+	bool _muxClearScreenAfter, _muxClearScreenBefore;
+	Common::KeyCode _muxEasterEggKey = Common::KEYCODE_INVALID;
+	uint _muxEasterEggCount;
+
+	int16 _textFont, _menuFont;
+
+	int16 _inventoryItemCursor;
+	int16 _currInventoryItemCursor;
+
+	int16 _currMouseCursor;
+
+	bool _menuMouseCursorActive;
+	int16 _menuMouseCursor;
+
+	bool _updateDirtyRectsFlag;
+
+	// Set from ScummVM's subtitle/speech settings in syncSoundSettings()
+	bool _talkieEnabled;
+	bool _speechMuted;
+
+	bool _loadingSavegame;
+
+	PauseToken _pauseToken;
+	// The original keeps the music and sounds playing in the main menu during the game
+	bool _keepSoundsOnPause;
+
+	/* AutoSave */
+	bool _autoSaveRequested;
+	Common::String _autoSavePakName, _autoSaveIdentifier;
+	int16 _autoSavePakSlot = 0;
+
+	int16 _globalTextResourceCacheSlot;
+
+	/* Screensaver */
+	bool _screensaverRunning;
+	bool _screensaverAborted;
+	bool _bootMenuShowing;
+	int32 _screensaverTime;
+	int32 _lastInputTicks = 0;
+
+	/* Frame time */
+	uint32 _lastFrameTime = 0;
+	int16 _frameTicks = 0;
+	bool _animationFrameTimeFlag;
+	int16 _animationFrameTicks = 0;
+
+	/* Input low-level */
+	bool _inpMouseWaitRelease, _inpMousePulseRelease;
+	uint32 _inpMousePulseTime = 0;
+	int16 _inpMousePulseTicks = 0;
+	bool _inpKeybWaitRelease, _inpKeybPulseRelease;
+	uint32 _inpKeybPulseTime = 0;
+	uint16 _inpKeybPulseTicks = 0;
+
+	/* Input */
+	int16 _optionsTextTicksCounter = -1;
+	uint32 _optionsTextTicks = 0;
+	bool _inputFlag = false;
+	// Shift+arrow walking (original: the key fields next to the input flag). The key stays set
+	// until the walk it starts has been given; the first press starts a new walk.
+	Common::KeyCode _walkKey;
+	bool _walkKeyFirstPress;
+
+	/* Scene control */
+	int16 _currModuleIndex, _currSceneIndex;
+	int16 _newModuleIndex, _newSceneIndex;
+	int16 _prevModuleIndex = -1, _prevSceneIndex = -1;
+	int16 _enterSceneScriptProgramIndex, _enterSceneScriptIndex;
+	int16 _leaveSceneScriptProgramIndex, _leaveSceneScriptIndex;
+	bool _inScene;
+
+	/* Script */
+	ScriptProgram _scriptPrograms[2];
+	ScriptOpcodes *_scriptOpcodes;
+	int16 _currScriptProgramIndex = 0;
+	Script *_currScript = nullptr;
+	int16 _currScriptIndex = 0;
+	bool _scriptContinueFlag = false;
+	bool _needToPlayMux;
+	bool _moduleScriptCalled;
+	int16 _globalScriptVars[250];
+	int16 _moduleScriptVars[300];
+
+	/* Background */
+	int16 _backgroundResourceCacheSlot;
+	PictureResource *_backgroundResource;
+	int16 _backgroundWidth, _backgroundHeight;
+	bool _backgroundNoScrollFlag1, _backgroundNoScrollFlag2;
+	int16 _backgroundDrawX = 0, _backgroundDrawY = 0;
+	int16 _backgroundDrawWidth = 0, _backgroundDrawHeight = 0;
+	// The "Scrolling" display option: the camera jumps by half screens when true (the
+	// default), and follows the actor smoothly when false
+	bool _halfScreenScrolling;
+	int16 _cameraX, _cameraY;
+	int16 _cameraDeltaX = 0, _cameraDeltaY = 0;
+	bool _cameraFocusActor;
+	int16 _cameraFollowsActorIndex;
+	bool _backgroundCameraLocked = false;
+	int16 _backgroundFlag = 0;
+
+	/* Palette */
+	bool _needToUpdatePalette;
+	bool _scenePaletteOk, _effectPaletteOk;
+	byte _effectPalette[768], _scenePalette[768];
+
+	Graphics::Surface *_screenBackupSurface;
+	// The game screen behind the main menu, redrawn before each menu frame
+	Graphics::Surface *_menuBackgroundSurface;
+	bool _menuBackgroundSaved;
+	bool _screenBackedup;
+
+	/* Actors */
+	ObjectStorage<Actor, kMaxActors> _actors;
+	ObjectStorage<ActorSprite, kMaxActors> _actorSprites;
+	ObjectStorage<AltActorAnimation, kMaxAltActorAnimations> _altActorAnimations;
+	int16 _mainActorIndex = -1;
+	bool _mainActorValid = false;
+	bool _actorsCleared = false;
+
+	bool _actorPathFlag = false;
+	ZoneAction _zoneActionItem;
+	int16 _actorPathX = 0, _actorPathY = 0;
+	int16 _actorPathDeltaX = 0, _actorPathDeltaY = 0;
+
+	/* BackgroundObject */
+	int16 _backgroundObjectsResourceCacheSlot;
+	ObjectStorage<BackgroundObject, kMaxBackgroundObjects> _backgroundObjects;
+	Common::Array<BackgroundObject *> _backgroundObjectsDrawQueue;
+	Common::Array<ActorSprite *> _actorSpriteDrawQueue;
+
+	/* Path */
+	PathSystem *_pathSystem;
+	ObjectStorage<PathWalker, kMaxPathWalkers> _pathWalkers;
+
+	/* Scene items */
+	ObjectStorage<SceneItem, kMaxSceneItems> _sceneItems;
+
+	/* Zones */
+	ObjectStorage<Zone, kMaxZones> _zones;
+	bool _zoneTextActive = false;
+	bool _zoneMouseCursorActive;
+	int16 _zoneMouseCursor = -1;
+	bool _exitZoneActionFlag = false;
+
+	/* ZoneActions */
+	ObjectStorage<ZoneAction, kMaxZoneActions> _zoneActions;
+	int16 _currZoneActionIndex = -1;
+	int16 _inventoryItemIndex2 = -1;
+	int16 _zoneIndexAtMouse = -1;
+	ZoneAction _queuedZoneAction;
+
+	/* Dialog */
+	ObjectStorage<Dialog, kMaxDialogs> _dialogs;
+	int16 _currDialogIndex = -1;
+	int16 _selectedDialogIndex; // UNUSED?
+	int16 _dialogXAdd = 0, _dialogYAdd = 0;
+	int16 _dialogRectX1 = 0, _dialogRectY1 = 0, _dialogRectX2 = 0, _dialogRectY2 = 0;
+	int16 _dialogPanelResourceCacheSlot;
+
+	/* Active dialog */
+	int16 _currDialogKeywordIndices[50] = {};
+	int16 _dialogActiveKeywordsCount = 0;
+	int16 _dialogMaxKeywordTextWidth = 0;
+	int16 _dialogFontHeight = 0;
+	bool _dialogRunning;
+	int16 _selectedDialogKeywordIndex = -1;
+	bool _dialogFlag = false;
+
+	/* ActorFrameSounds */
+	int16 _actorFrameSoundItemsCount = 0;
+	ObjectStorage<ActorFrameSound, kMaxActorFrameSounds> _actorFrameSounds;
+
+	/* Inventory */
+	ObjectStorage<InventoryItem, kMaxInventoryItems> _inventoryItems;
+	ObjectStorage<InventoryItemCombination, kMaxInventoryItemCombinations> _inventoryItemCombinations;
+	int16 _inventoryItemsCount = 0;
+	int16 _inventoryItemSlotBaseIndex = 0;
+	int16 _inventoryItemsResourceCacheIndex;
+
+	/* Inventory bar */
+	bool _inventoryBarEnabled, _inventoryBarFlag;
+	bool _buildInventoryClickBoxes = false;
+	bool _inventoryWarpMouse;
+	int16 _selectedInventoryItemIndex = 0;
+	int16 _inventoryClickBoxIndex = 0;
+	int16 _currInventoryItemSlotBaseIndex = 0;
+	bool _inventoryActive = false;
+	int16 _inventoryBoxResourceCacheSlot;
+
+	/* Fonts */
+	ObjectStorage<Font, 4> _fonts;
+	int16 _activeFontIndex = 0;
+
+	/* Screen text */
+	ObjectStorage<ScreenText, kMaxScreenTexts> _screenTexts;
+	bool _screenTextShowing;
+	bool _screenTextHasSpeech = false;
+	bool _autoAdvanceScreenTexts;
+	bool _screenTextActive = false;
+
+	/* Talkie */
+	bool _talkieSpeechActive;
+	Audio::SoundHandle _talkieSoundHandle;
+	int16 _talkieDataResourceCacheSlot;
+	bool _talkieSpeechPlayNow;
+	Audio::AudioStream *_talkieSpeechAudioStream = nullptr;
+	void setVoicesMuted(bool muted);
+
+	/* LipSync */
+	int16 _lipSyncScriptNumber;
+	int16 _lipSyncResourceCacheSlot;
+	int16 _lipSyncX = 0, _lipSyncY = 0;
+	int16 _lipSyncActorIndex;
+	uint32 _lipSyncTicks = 0;
+	int16 _lipSyncTime = 0;
+	AnimationResource *_lipSyncAnimationResource = nullptr;
+	Common::Array<LipSyncChannelStatus> _lipSyncChannelStatus;
+	bool _lipSyncChannelStatusRestored;
+
+	/* Mouse cursors */
+	MouseCursor _mouseCursors[kMouseCursors];
+	int16 _mouseCursorAnimationResourceCacheSlot = -1;
+	int16 _mouseCursorAnimationFrameListIndex = 0;
+	int16 _currAnimatedMouseCursor;
+	int16 _mouseCursorAnimationFrameCount = 0;
+	int16 _mouseCursorAnimationCurrFrame = 0;
+	uint32 _mouseCursorAnimationLastUpdate = 0;
+	int16 _mouseCursorAnimationUpdateTicks = 0;
+
+	/* ClickBox */
+	ObjectStorage<ClickBox, kMaxClickBoxes> _clickBoxes;
+
+	/* Palette task */
+	PaletteTask _paletteTasks[kMaxPaletteTasks];
+	int16 _fadeInOutColorUpdateTicks = 0, _fadeInOutColorPosition = 0;
+	int16 _alarmPaletteSub, _alarmPaletteSubDelta;
+
+	/* Music */
+	MidiPlayer *_midi;
+	// Play the digital ("W" pak) music like the original's digital music mode
+	bool _digitalMusic;
+
+	/* Font colors */
+	FontColorDef _dialogFontColor, _dialogHoverFontColor, _inventoryFontColor,
+		_zoneFontColor, _screenTextFontColor, _inventoryScreenTextFontColor;
+
+	/* Menu */
+	int16 _menuPanelResourceCacheSlots[MenuPanel::kMenuPanelCount];
+	Common::StringArray _menuItems;
+	Common::Array<bool> _activeMenuItems;
+	Common::StringArray _optionsMenuItems;
+	Common::StringArray _displayMenuItems;
+
+	/* Text and music settings screen, edited copies of the settings */
+	Common::StringArray _textMusicMenuItems;
+	int8 _textMusicRow = 0;
+	int16 _textMusicDialogType = 0;
+	bool _textMusicAutoEnd = false;
+	bool _textMusicDigital = false;
+	/* "End of dialogs" setting : spoken text ends by itself */
+	bool _dialogAutoEnd;
+
+	/* Sound volume settings screen: sound effects, music and voices, 0 to 100 */
+	Common::StringArray _volumeMenuItems;
+	int8 _volumeRow = 0;
+	int16 _volumeValues[3] = {};
+	bool _volumeEnabled[3] = {};
+	int16 _volumeTestSlots[3] = {};
+	Audio::SoundHandle _volumeTestHandles[3];
+	typedef void (PrisonerEngine::*MenuFunction)(int16, int16);
+	MenuFunction _menuFunctionArray[MenuPanel::kMenuPanelCount];
+
+	/* Dialog */
+	Common::String _dialogTitle;
+	Common::StringArray _dialogLines;
+	Common::StringArray _dialogButtonLabels;
+	MenuPanel _dialogPanelIndex;
+	AnimationResource *_dialogPanel = nullptr;
+	bool _isDialogMenuShowing;
+	int8 _dialogMenuFocus = 0;
+	typedef void (PrisonerEngine::*DialogAction)();
+	PrisonerEngine::DialogAction _dialogActionCallback = nullptr;
+
+	/* Original save/load screens */
+	struct SaveLoadEntry {
+		int slot;
+		Common::String description;
+		Common::String saveDate;
+		Common::String saveTime;
+	};
+	Common::Array<SaveLoadEntry> _saveLoadEntries;
+	Common::StringArray _saveLoadMenuItems;
+	bool _saveLoadSaving = false;
+	// Opened with F2/F3 in the game, which closes the menu when leaving the screen
+	bool _saveLoadFromGame = false;
+	int16 _saveLoadSelected = 0;
+	int16 _saveLoadTop = 0;
+	bool _saveLoadEditing = false;
+	Common::String _saveLoadEditText;
+	// First shown character of the selected description, for descriptions wider than the line
+	int16 _saveLoadTextScroll = 0;
+	int16 _saveLoadCursorTimer = 0;
+	bool _saveLoadCursorShown = false;
+	int16 _saveLoadThumbnailEntry = -1;
+	Common::Array<byte> _saveLoadThumbnail;
+	uint32 _saveLoadLastClickTicks = 0;
+	int16 _saveLoadLastClickRow = -1;
+
+
+public:
+	int16 loadTextResource(Common::String &pakName, int16 pakSlot);
+	void makeLanguageString(Common::String &value);
+	void resetGlobalScriptVars();
+	int16 getGlobalScriptVar(int16 varIndex);
+	void setGlobalScriptVar(int16 varIndex, int16 value);
+	int16 getModuleScriptVar(int16 varIndex);
+	void setModuleScriptVar(int16 varIndex, int16 value);
+	int16 getSysVar(int16 varIndex);
+
+	void playIntroVideos();
+	void runScreensaver();
+	void death();
+	bool waitForInput();
+
+	const Common::String getGlobalText(Common::String &identifier);
+	void checkScreensaver();
+	void mainLoop();
+
+	/* Frame time */
+	void resetFrameValues();
+	void initFrameTime();
+	void updateFrameTime();
+	void resetAnimationFrameTicks();
+	void updateAnimationFrameTicks();
+
+	/* Input low-level */
+	void initInput();
+	void getInputStatus(Common::KeyCode &keyState, uint16 &buttonState);
+	void inpSetWaitRelease(bool value);
+	void inpMouseSetWaitRelease(bool value);
+	void inpKeybSetWaitRelease(bool value);
+
+	/* Input */
+	int16 handleInput(int16 x, int16 y);
+	void setUserInput(bool enabled);
+
+	/* Scene control */
+	void setEnterSceneScript(int16 programIndex, int16 scriptIndex);
+	void setLeaveSceneScript(int16 programIndex, int16 scriptIndex);
+	bool isEnterSceneScriptFinished();
+	bool isLeaveSceneScriptFinished();
+	void startModuleScript(Common::String &pakName, int16 pakSlot);
+	void stopModuleScript();
+	void updateModuleScript();
+	void checkForSceneChange();
+	void enterScene(int16 moduleIndex, int16 sceneIndex);
+	void leaveScene();
+	void gotoScene(int16 moduleIndex, int16 sceneIndex);
+	void actorEntersScene(int16 prevModuleIndex, int16 prevSceneIndex, int16 nodeIndex,
+		Common::String &pakName, int16 pakSlot, int16 frameListIndex, int16 scriptIndex);
+
+	/* Script */
+	void clearScriptPrograms();
+	void loadScriptProgram(Common::String &pakName, int16 pakSlot, int16 programIndex);
+	void clearScriptProgram(int16 programIndex);
+	void unloadScriptProgram(int16 programIndex);
+	void startScript(int16 programIndex, int16 scriptIndex);
+	void stopScript(int16 programIndex, int16 scriptIndex);
+	void stopScriptProgram(int16 programIndex);
+	void runCurrentScript();
+	void runInitScript(int16 programIndex);
+	void runScripts(int16 programIndex);
+	void startLocalScript(int16 scriptIndex);
+	void stopLocalScript(int16 scriptIndex);
+
+	/* Background */
+	void loadBackground(Common::String &pakName, int16 pakSlot);
+	void unloadBackground();
+	void setBackground(Common::String &pakName, int16 pakSlot, int16 backgroundFlag);
+	void clearBackground(int16 backgroundFlag);
+	void initBackgroundDrawDimensions();
+	void updateCameraPosition(int16 x, int16 y);
+	void setBackgroundCameraLocked(bool value);
+	void updateBackground(bool fullRedraw);
+	void resetBackgroundValues();
+	void updateCameraFollowing();
+	void setCameraFollowsActor(int16 actorIndex);
+	void updateScreen(bool fullRedraw, int16 x, int16 y);
+	void updateCurrZone(int16 x, int16 y);
+
+	/* Palette */
+	void setPalette(Common::String &pakName, int16 pakSlot);
+	void fadeInOutColor(byte *source, int16 fadeDirection, int16 fadeR, int16 fadeG, int16 fadeB, int16 fadePosition);
+	void alarmPalette(byte *source);
+
+	bool backupScreen();
+	void restoreScreen(bool keepBackup);
+
+	/* Actors */
+	int16 addActor(Common::String &pakName, int16 pakSlot, int16 frameListIndex, int16 nodeIndex,
+		int16 x, int16 y);
+	void clearActor(int16 actorIndex);
+	void clearActors();
+	void unloadActors();
+	void restoreActorSprites();
+	void setActorFontColors(int16 actorIndex, int16 outlineColor, int16 inkColor);
+	void setMainActor(int16 actorIndex);
+	void actorAssignPathWalker(int16 actorIndex);
+	void actorWalkToPoint(int16 actorIndex, int16 x, int16 y);
+	bool walkMainActorWithKey(Common::KeyCode key);
+	void actorWalkToPathNode(int16 actorIndex, int16 nodeIndex);
+	void resetActorPathWalk(int16 actorIndex);
+	void actor21C78();
+	void actor21C89();
+	void setActorDirection(int16 actorIndex, int16 direction);
+	void setActorLookInDirection(int16 actorIndex);
+	bool isLeftButtonKey(Common::KeyCode keyCode) const;
+	bool isRightButtonKey(Common::KeyCode keyCode) const;
+	int16 getActorX(int16 actorIndex);
+	int16 getActorY(int16 actorIndex);
+	void actorPutAtPos(int16 actorIndex, int16 x, int16 y);
+	void actorPutAtPathNode(int16 actorIndex, int16 nodeIndex);
+	void actorAnimation218A1(int16 actorIndex, Common::String &pakName, int16 pakSlot,
+		int16 firstFrameListIndex, int16 lastFrameListIndex, int16 minTicks, int16 maxTicks);
+	void setActorRandomFrameListIndex(Actor *actor);
+	void setActorAnimation(int16 actorIndex, Common::String &pakName, int16 pakSlot,
+		int16 frameListIndex, int16 nodeIndex);
+	void setActorAnimationAtPos(int16 actorIndex, Common::String &pakName, int16 pakSlot,
+		int16 frameListIndex, int16 x, int16 y);
+	void setActorSpriteFrameListIndexIfIdle(int16 actorIndex, int16 frameListIndex);
+	void updateActors();
+	void resetPathWalker(int16 pathWalkerIndex);
+	bool updateActorSpriteWalking(int16 actorIndex, int16 prevX, int16 prevY, int16 newX, int16 newY);
+	void backupActorAnimation(int16 actorIndex);
+	void restoreActorAnimation(int16 actorIndex);
+
+	/* Actor sprites */
+	void assignActorSprite(int16 actorIndex, ActorSprite &actorSprite);
+	void setActorSpriteFrameListIndex(ActorSprite *actorSprite, int16 frameListIndex, bool firstFrame);
+	void calcAnimationFrameBounds(AnimationResource *animationResource, int16 elementIndex,
+		int16 &boundsX1, int16 &boundsY1, int16 &boundsX2, int16 &boundsY2);
+	void clearActorSprites();
+	bool updateActorSpriteAnimation(int16 actorIndex);
+	bool updateActorSpriteWalkingPosition(ActorSprite *actorSprite, int16 prevX, int16 prevY, int16 x, int16 y);
+	void resetActorSpriteAnimationTicks(ActorSprite *actorSprite);
+
+	/* Actor alt animations */
+	int16 addActorAltAnimation(Common::String &pakName, int16 pakSlot);
+	void unloadActorAltAnimation(int16 altActorAnimationIndex);
+	void setActorAltAnimationAtPos(int16 actorIndex, int16 altAnimationIndex, int16 frameListIndex, int16 x, int16 y);
+	void setActorAltAnimationAtNode(int16 actorIndex, int16 altAnimationIndex, int16 frameListIndex, int16 nodeIndex);
+
+	/* BackgroundObject */
+	void setBackgroundObjects(Common::String &pakName, int16 pakSlot);
+	void unloadBackgroundObjects();
+
+	void drawSprites(int16 xOffs, int16 yOffs);
+	void buildActorSpriteDrawQueue();
+	void drawBackgroundObject(int16 xOffs, int16 yOffs, BackgroundObject *backgroundObject);
+	void drawActorSprite(int16 xOffs, int16 yOffs, ActorSprite *actorSprite);
+
+	/* Path */
+	int16 calcDirection(int16 x1, int16 y1, int16 x2, int16 y2);
+
+	/* Scene items */
+	int16 addSceneItem(int16 inventoryItemIndex, int16 pathNodeIndex);
+	void removeSceneItem(int16 inventoryItemIndex);
+	// NOTE: clearSceneItems() -> _sceneItems.clear();
+	void clearSceneItemActors();
+
+	/* Zones */
+	void clearActorZone(int16 actorIndex);
+	void clearZone(int16 zoneIndex);
+	void removeZone(int16 zoneIndex);
+	void clearZones();
+	int16 getFreeZoneIndex();
+	int16 addZone(int16 x1, int16 y1, int16 x2, int16 y2, int16 mouseCursor, Common::String *pakName,
+		int16 pakSlot, Common::String *identifier);
+	int16 addActorZone(int16 actorIndex, int16 mouseCursor, Common::String &pakName,
+		int16 pakSlot, Common::String &identifier);
+	int16 addItemZone(int16 sceneItemIndex, int16 mouseCursor, Common::String &pakName,
+		int16 pakSlot, Common::String &identifier);
+	void drawZoneDescription(int16 zoneIndex);
+	void updateZones(int16 x, int16 y);
+	void checkQueuedZoneAction();
+	bool isPointInZone(int16 x, int16 y, int16 zoneIndex);
+
+	/* ZoneActions */
+	int16 updateZoneActions(int16 zoneActionType);
+	int16 addZoneAction(int16 zoneIndex, int16 type, int16 pathNodeIndex, int16 scriptIndex,
+		int16 scriptProgIndex, int16 moduleIndex, int16 sceneIndex, int16 inventoryItemIndex);
+	void clearZoneZoneActions(int16 zoneIndex);
+	void clearZoneAction(int16 zoneActionIndex);
+	void clearZoneActions();
+	void setZoneActionScript(int16 zoneActionIndex, int16 scriptIndex);
+	void initZonesAndZoneActions();
+	int16 checkZoneAction(int16 zoneActionType);
+
+	/* Dialog */
+	void loadDialogKeywords(Common::String &pakName, int16 pakSlot, Dialog *dialog, bool init);
+	int16 loadDialog(Common::String &pakName, int16 pakSlot);
+	void unloadDialog(int16 dialogIndex);
+	void refreshDialogKeywords(int16 dialogIndex);
+	void resetDialogValues();
+	void enableDialogKeyword(int16 dialogIndex, int16 keywordIndex);
+	void disableDialogKeyword(int16 dialogIndex, int16 keywordIndex);
+	void startDialog(int16 dialogIndex);
+	void initDialog();
+	void unloadDialogPanel();
+	void updateDialog(int16 x, int16 y);
+	bool isPointInDialogRect(int16 x, int16 y);
+
+	/* ActorFrameSounds */
+	void updateActorFrameSounds();
+	int16 addActorFrameSound(int16 actorIndex, int16 soundIndex, int16 volume, int16 frameListIndex, int16 frameIndex);
+	void removeActorFrameSound(int16 actorFrameSoundIndex);
+	void clearActorFrameSoundsBySoundIndex(int16 soundIndex);
+	void clearActorFrameSoundsByActorIndex(int16 actorIndex);
+	void setActorFrameSound(int16 actorFrameSoundIndex, int16 soundIndex, int16 volume);
+	void clearActorFrameSounds();
+
+	/* Inventory */
+	int16 registerInventoryItem(Common::String &pakName, int16 pakSlot, int16 id);
+	void loadInventoryItemText(int16 inventoryItemIndex);
+	int16 addInventoryItemCombination(int16 inventoryItem1, int16 inventoryItem2, int16 scriptIndex);
+	void removeInventoryItemCombination(int16 combinationIndex);
+	int16 getInventoryItemCombinationScript(int16 inventoryItem1, int16 inventoryItem2);
+	void addItemToInventory(int16 inventoryItemIndex);
+	void removeItemFromInventory(int16 inventoryItemIndex);
+	void clearInventoryItems();
+	void unloadInventoryItems();
+
+	/* Inventory bar */
+	void loadInventoryItemsAnimation(Common::String &pakName, int16 pakSlot, int16 slotBaseIndex);
+	void updateInventoryItems();
+	void handleInventoryInput();
+	void movePointerWithKey(Common::KeyCode key);
+
+	/* Fonts */
+	int16 addFont(Common::String &pakName, int16 pakSlot, int16 outlineIndex, int16 inkIndex);
+	void unloadFont(int16 fontIndex);
+	void unloadFonts();
+	void clearFonts();
+	void getFontColors(int16 fontIndex, int16 &outlineColor, int16 &inkColor);
+	void setFontColors(int16 fontIndex, int16 outlineColor, int16 inkColor);
+	void setFontInterletter(int16 fontIndex, int16 interletter);
+	void setActiveFont(int16 fontIndex);
+	// These work with the active font
+	void drawText(int16 x, int16 y, const Common::String &text);
+	void drawTextEx(int16 x1, int16 x2, int16 y1, int16 y2, const Common::String &text);
+	int16 getTextWidth(const Common::String &text);
+	int16 getActiveFontUnk1();
+	int16 getActiveFontUnk2();
+	int16 getActiveFontHeight();
+
+	/* Screen text items */
+	void setupScreenText(ScreenText *screenText, TextResource *textResource, int16 chunkIndex);
+	void addScreenText(ScreenText *screenText, int16 resourceCacheSlot, Common::String &identifier);
+	void unloadScreenText(int16 screenTextIndex);
+	void unloadScreenTexts();
+	int16 addActorScreenText(int16 actorIndex, int16 resourceCacheSlot, Common::String &identifier);
+	int16 addLooseScreenText(int16 x, int16 y, int16 resourceCacheSlot, Common::String &identifier);
+	int16 addCenteredScreenText(int16 resourceCacheSlot, Common::String &identifier);
+	void updateScreenTexts();
+	void advanceScreenTexts();
+	bool isScreenTextShowing() const { return _screenTextShowing; }
+
+	/* Talkie */
+	void startTalkieSpeech(int16 pakSlot, uint32 &finishedTime, int16 resourceCacheSlot);
+	void stopTalkieSpeech();
+	void updateTalkieSpeech(int16 &pakSlot, uint32 &finishedTime, int16 resourceCacheSlot);
+	void startLipSync(Common::String &pakName, int16 pakSlot, int16 scriptIndex, int16 actorIndex,
+		int16 lipSyncX, int16 lipSyncY);
+	void stopLipSync();
+	void drawLipSyncFrame(int16 frameListIndex);
+	bool isSoundEnabled() const { return true; } // Just a placeholder for now
+
+	/* Mouse cursors */
+	void loadMouseCursors();
+	Graphics::Surface *decompressAnimationCel(AnimationCel *animationCel);
+	void setMouseCursor(int16 elementIndex, AnimationResource *animationResource);
+	void updateMouseCursor();
+	void updateMouseCursorAnimation();
+	void resetMouseCursorValues();
+
+	/* ClickBox */
+	int16 addClickBox(int16 x1, int16 y1, int16 x2, int16 y2, int16 tag);
+	int16 findClickBoxAtPos(int16 x, int16 y, int16 tag);
+	bool isPointInClickBox(int16 clickBoxIndex, int16 x, int16 y);
+	int16 getClickBoxTag(int16 clickBoxIndex);
+
+	/* Palette task */
+	void startPaletteTask(int16 type, int16 value1, int16 value2, int16 value3);
+	void updatePaletteTasks();
+	void clearPaletteTasks();
+	void restorePaletteTasks();
+	void restartPaletteTasks();
+
+	void playMux(Common::String filename);
+	bool handleMuxInput();
+	void playMuxSoon(Common::String &filename, bool clearScreenAfter, bool clearScreenBefore);
+
+	void requestAutoSave(Common::String &pakName, int16 pakSlot, Common::String &identifier);
+	void performAutoSave();
+
+	void getInteractMessage(Common::String &pakName, int16 pakSlot, Common::String &identifier,
+		int16 &outResourceCacheSlot, Common::String &outIdentifier);
+
+	void updateEvents();
+	void runPauseScreen();
+	uint32 getTicks();
+
+	/* Sounds */
+	ObjectStorage<SoundSlot, kMaxSounds> _sounds;
+	void playSound(int16 soundIndex);
+	void playLoopingSound(int16 soundIndex, int16 loops);
+	void stopSound(int16 soundIndex);
+	bool isSoundPlaying(int16 soundIndex);
+	void setSoundVolume(int16 soundIndex, uint volume);
+	int16 loadSound(Common::String &pakName, int16 pakSlot, bool moduleWide);
+	void unloadSound(int16 soundIndex);
+	void unloadSounds(bool all);
+	void suspendSounds();
+	void resumeSounds();
+
+	/* Music */
+	void initializeMidi();
+	void shutdownMidi();
+
+	ObjectStorage<MusicSlot, kMaxMusics> _musics;
+	void playMusic(int16 musicIndex, bool loop = false, int16 loopCount = 0);
+	void stopMusic(int16 musicIndex);
+	void stopMusics();
+	bool isMusicPlaying(int16 musicIndex);
+	void setMusicVolume(int16 musicIndex, uint volume);
+	int16 loadMusic(Common::String &pakName, int16 pakSlot, bool moduleWide);
+	void unloadMusic(int16 musicIndex);
+	void unloadMusics(bool all);
+	void suspendMusics();
+	void resumeMusics();
+
+	/* Original save/load screens */
+	void openSaveLoadScreen(bool saving);
+	void loadSaveLoadEntries();
+	void closeSaveLoadScreen();
+	void updateSaveLoadThumbnail();
+	void confirmSaveLoadEntry();
+	void dialogActionDeleteSave();
+	void moveSaveLoadSelection(int16 delta);
+	int16 getSaveLoadTextWidth();
+	void handleSaveLoadInput();
+	void updateSaveLoadMenu(int16 x, int16 y);
+
+
+	/* Font colors */
+	void setDefaultTextDisplayColors();
+	void setTextDisplayColor(int16 textDisplayNum, int16 outlineColor, int16 inkColor);
+
+	void pauseGame();
+	void resumeGame();
+
+	/* Menu */
+	void displayDialog(DialogType type, Common::String &titleStrId, Common::String &actionStrId, DialogAction dlgAction);
+	void loadDialogData();
+	void loadMenuPanels();
+	const PakMenuDirectoryEntry &getMenuPanelData(MenuPanel panel) const;
+	void loadOptionsMenu(bool fromGame);
+	void openMainMenu();
+	void openOptionsMenuFromGame();
+	void handleOptionsMenuInput();
+	void doOptionsMenuAction(int8 itemIndex);
+	void closeOptionsMenu();
+	void openConfigDialog();
+	void loadDisplaySettings();
+	void loadTextMusicSettings();
+	void loadTextMusicMenu();
+	void closeTextMusicMenu(bool apply);
+	void changeTextMusicSetting(int16 delta);
+	void handleTextMusicInput();
+	void drawTextMusicChoice(AnimationResource *panel, int16 x, int16 y, int16 box, bool chosen);
+	void updateTextMusicMenu(int16 x, int16 y);
+	void switchMusicType(bool digital);
+	void loadVolumeMenu();
+	void closeVolumeMenu(bool apply);
+	void changeVolumeSetting(int16 row, int16 volume);
+	void applyVolumeSettings();
+	void startVolumeTestSounds();
+	void stopVolumeTestSounds();
+	void handleVolumeInput();
+	void updateVolumeMenu(int16 x, int16 y);
+	void loadDisplaySettingsMenu();
+	void closeDisplaySettingsMenu(bool apply);
+	void changeDisplaySetting(int16 delta);
+	void handleDisplaySettingsInput();
+	void updateDisplaySettingsMenu(int16 x, int16 y);
+	void loadOnscreenMenuText();
+	void runMainMenu_initMessages();
+	void runMainMenu_addClickBoxes(int16 x, int16 y);
+	void updateActiveMenuItems();
+	void handleMainMenuInput();
+	void drawClickBoxLabels();
+	void updateMainMenu(int16 x, int16 y);
+	void updateOptionsMenu(int16 x, int16 y);
+	void doMenuAction(uint8 clickBoxIndex);
+
+	/* Dialog */
+	void updateDialogMenu(int16 x, int16 y);
+	void handleDialogMenuInput();
+	void closeDialogMenu(bool confirmed);
+	void dialogActionNewGame();
+	void dialogActionExit();
+
+	/* Save/load */
+
+	// Set while a video plays or the inventory runs its own input loop, when the ScummVM
+	// menu can still be opened but saving or loading would leave the engine in a bad state
+	bool _isPlayingMux;
+	bool _inventoryInputRunning;
+
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	// Both the game's own autosaves and ScummVM's periodic autosave use ScummVM's default slot 0
+	int getAutosaveSlot() const override { return 0; }
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	void syncGameState(Common::Serializer &s);
+	void getSavegameThumbnail(Graphics::Surface &thumb);
+
+public:
+
+};
+
+} // End of namespace Prisoner
+
+#endif /* PRISONER_H */
