@@ -69,7 +69,7 @@ class Scene : public Background {
 
 	void initStaticANIObjects();
 	void init();
-	void render();
+	void render(bool clear = true);
 	void drawContent(int minPri, int maxPri, bool drawBG);
 	void updateScrolling();
 	void updateScrolling2();

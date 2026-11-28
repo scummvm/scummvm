@@ -473,9 +473,10 @@ void Scene::sortRenderables(Common::Array<T *> &list, uint startIndex) {
 	}
 }
 
-void Scene::render() {
+void Scene::render(bool clear) {
 	debugC(6, kDebugDrawing, ">>>>> Scene::render()");
-	g_nmi->_backgroundSurface.clear(0);
+	if (clear)
+		g_nmi->_backgroundSurface.clear(0);
 	if (g_nmi->_gameVersion >= 201509) {
 		Common::Array<GameObject *> visibleObjects;
 		for (PictureObject *picture : _pictureObjects) {

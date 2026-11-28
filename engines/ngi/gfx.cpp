@@ -33,6 +33,7 @@
 #include "graphics/managed_surface.h"
 
 #include "image/png.h"
+#include "graphics/transform_struct.h"
 
 namespace NGI {
 
@@ -453,10 +454,17 @@ void Texture::loadPNG(const Common::Path &path, const Dims &sizeHint) {
 	debugC(2, kDebugLoading, "Loaded scene texture %s (%d x %d)", path.toString().c_str(), _width, _height);
 }
 
-void Texture::blitTo(Graphics::ManagedSurface &target, const Common::Point &position, bool mirror) const {
+void Texture::blitTo(Graphics::ManagedSurface &target, const Common::Point &position, bool mirror, int angle) const {
 	if (!_bitmap || !_bitmap->_surface)
 		return;
-	if (mirror)
+	if (angle) {
+		const Graphics::ManagedSurface &surface = *_bitmap->_surface;
+		Graphics::TransformStruct transform;
+		transform._angle = angle;
+		transform._hotspot = Common::Point(surface.w / 2, surface.h / 2);
+		Common::ScopedPtr<Graphics::ManagedSurface> rotated(surface.rotoscale(transform));
+		target.blitFrom(*rotated, position + transform._hotspot - Common::Point(rotated->w / 2, rotated->h / 2));
+	} else if (mirror)
 		target.simpleBlitFrom(*_bitmap->_surface, position, Graphics::FLIP_H, true);
 	else
 		target.blitFrom(*_bitmap->_surface, position);

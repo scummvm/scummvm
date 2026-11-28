@@ -566,7 +566,7 @@ void AniObject::render(Common::Point scroll) {
 			const bool mirror = (_flags & 8) != 0;
 			if (mirror)
 				anchor.x = phase->getDimensions().x - anchor.x;
-			phase->blitTo(g_nmi->_backgroundSurface, Common::Point(_x, _y) - scroll - anchor, mirror);
+			phase->blitTo(g_nmi->_backgroundSurface, Common::Point(_x, _y) - scroll - anchor, mirror, _encodedRotation);
 		}
 		return;
 	}

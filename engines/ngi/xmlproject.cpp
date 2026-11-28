@@ -449,6 +449,7 @@ private:
 					XML_PROP(scene, false)
 					XML_PROP(entr, false)
 					XML_PROP(needShow, false)
+					XML_PROP(reverse, false)
 					XML_PROP(wait, false)
 					XML_PROP(id, false)
 					XML_PROP(ani, false)
@@ -484,6 +485,7 @@ private:
 				XML_PROP(locale, false)
 			KEY_END()
 			XML_KEY(OLDANI)
+				XML_PROP(filter, false)
 				XML_PROP(mirror, false)
 				XML_PROP(serializable, false)
 				XML_PROP(id, true)
@@ -532,6 +534,7 @@ private:
 					KEY_END()
 				KEY_END()
 			KEY_END()
+			layout.top()->children["ANI"] = layout.top()->children["OLDANI"];
 		KEY_END()
 		XML_KEY(INTERACTIONS)
 		KEY_END()
@@ -703,7 +706,7 @@ private:
 
 		picture->_picture = new Texture();
 		const Common::String resource = Common::String::format("%08hu/%08hu",
-			static_cast<uint16>(_scene._sceneId), static_cast<uint16>(picture->_id));
+			getParentNode(node)->name == "INVENTORY" ? 0 : static_cast<uint16>(_scene._sceneId), static_cast<uint16>(picture->_id));
 		loadTexture(*picture->_picture, resource, isLocalized(*node));
 		picture->setOXY2();
 		_scene.addPicture(picture.release());

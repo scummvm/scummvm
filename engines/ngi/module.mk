@@ -29,6 +29,7 @@ MODULE_OBJS = \
 	xmlproject.o \
 	statics.o \
 	utils.o \
+	fullpipe/sceneTutorial.o \
 	fullpipe/sceneChapter.o \
 	fullpipe/sceneIntro.o \
 	fullpipe/sceneIntroDemo.o \

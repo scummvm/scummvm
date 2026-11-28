@@ -300,6 +300,8 @@ bool NGIEngine::handleGuiEvent(const Common::Event &event) {
 			Command cmd;
 			cmd._cmd = 17;
 			cmd._messageNum = back ? 37 : 30;
+			cmd._x = event.mouse.x;
+			cmd._y = event.mouse.y;
 			cmd._param = back ? kActionCloseDialog : 0;
 			_modalObject->handleMessage(&cmd);
 		}
@@ -640,6 +642,8 @@ Common::Error NGIEngine::updateScreen(uint32 elapsed, byte &brightness, bool red
 			redraw |= sceneIntro_updateAndroid(elapsed, brightness);
 		if (timedUpdates)
 			processMessages();
+		if (isAndroidFullPipe() && !_modalObject && !_gameLoader->_preloadSceneId)
+			sceneTutorial_check();
 	}
 	const bool renderScene = !_modalObject;
 	if (_modalObject && (timedUpdates || _flgGameIsRunning)) {

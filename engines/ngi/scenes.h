@@ -51,6 +51,8 @@ private:
 };
 
 int defaultUpdateCursor();
+void sceneTutorial_check();
+void sceneNotebook_show();
 void sceneChapter_show(const char *chapterId);
 
 int sceneIntro_updateCursor();

@@ -73,6 +73,8 @@ static void scene01_onGuiEvent(Scene &inventory, const Common::String &id, const
 		root->setSubVarAsInt("TutorialDisabled", 1);
 		root->setSubVarAsInt("Scene1ExitsDisabled", 0);
 		inventory._guiManager->getElement(id)->hideAndDeactivate();
+	} else if (id == "PIC_INV_TASK") {
+		sceneNotebook_show();
 	} else {
 		warning("STUB: Inventory::onGuiEvent(%s, %s)", id.c_str(), event.c_str());
 	}
