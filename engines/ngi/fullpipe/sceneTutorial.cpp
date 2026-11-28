@@ -117,6 +117,9 @@ public:
 		_man->_statics = _man->getStatic(resourceId("ST_SC_TUTORIAL_BEARDED_UP"));
 		_man->_flags = 4 | (_layout._mirror ? 8 : 0);
 		_man->startMovement(resourceId("MOV_SC_TUTORIAL_BEARDED_FALL"), 0, -1, _layout._mirror);
+		g_nmi->_currentScene->setExitState(0, 0);
+		if (_step == kUseTransition)
+			g_nmi->_currentScene->setExitState(resourceId("PIC_SC1_RTRUBA"), 1);
 		debugC(1, kDebugSceneLogic, "Started %s", tutorialIds[_step]);
 		return true;
 	}
@@ -214,6 +217,7 @@ public:
 			}
 		}
 		root->setSubVarAsInt("TutorialStep", _step + 1);
+		g_nmi->_currentScene->setExitState(0, 1);
 		_finished = true;
 		debugC(1, kDebugSceneLogic, "Finished %s", tutorialIds[_step]);
 		return true;

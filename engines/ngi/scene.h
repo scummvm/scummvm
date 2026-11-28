@@ -22,6 +22,8 @@
 #ifndef NGI_SCENE_H
 #define NGI_SCENE_H
 
+#include "common/events.h"
+
 #include "common/ptr.h"
 #include "ngi/objects.h"
 #include "ngi/gfx.h"
@@ -35,6 +37,16 @@ class GameProject;
 class BehaviorController;
 class MctlCompound;
 
+struct Exit {
+	PictureObject *destination = nullptr;
+	AniObject *arrow = nullptr;
+	PictureObject *pressed = nullptr;
+	Common::Point offset;
+	int angle = 0, state = 1, releaseTime = -1;
+	int movementId = 0;
+	void setState(int newState);
+};
+
 class Scene : public Background {
  public:
 	/** list items are owned */
@@ -44,6 +56,10 @@ class Scene : public Background {
 	Common::Array<AniObject *> _renderableAnis;
 	PicAniInfoList _roamingObjects;
 	Common::Array<Entrance> _entrances;
+	Common::Array<Exit> _exits;
+	void initExits(Scene &common);
+	void setExitState(int pictureId, int state);
+	void updateExitInput(Common::Point pos, Common::EventType type);
 	int16 _heroId = 0;
 	Common::ScopedPtr<GuiManager> _guiManager;
 	void (*_guiEventHandler)(Scene &, const Common::String &, const Common::String &) = nullptr;

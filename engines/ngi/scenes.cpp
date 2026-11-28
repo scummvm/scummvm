@@ -641,6 +641,8 @@ bool NGIEngine::doSetScene(const Entrance &entrance) {
 			scene->_motionController->attachObject(_aniMan);
 			scene->_motionController->activate();
 		}
+		if (common && !scene->_exits.empty())
+			scene->initExits(*common);
 		if (intro2) {
 			sceneIntro_initGui(*scene, *intro2, _backgroundSurface.w);
 			sceneIntro_initMan(*scene);

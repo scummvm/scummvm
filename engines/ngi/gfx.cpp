@@ -105,6 +105,9 @@ PictureObject::PictureObject() {
 
 PictureObject::PictureObject(PictureObject *src) : GameObject(src) {
 	_picture = src->_picture;
+	_ownsTexture = false;
+	_hitRegion = src->_hitRegion;
+	_angle = src->_angle;
 	_ox2 = _x;
 	_oy2 = _y;
 	_pictureObject2List = src->_pictureObject2List;
@@ -112,7 +115,8 @@ PictureObject::PictureObject(PictureObject *src) : GameObject(src) {
 }
 
 PictureObject::~PictureObject() {
-	delete _picture;
+	if (_ownsTexture)
+		delete _picture;
 }
 
 bool PictureObject::load(MfcArchive &file, bool bigPicture) {
@@ -145,7 +149,7 @@ bool PictureObject::load(MfcArchive &file, bool bigPicture) {
 
 void PictureObject::render(Common::Point scroll) {
 	if (g_nmi->_gameVersion >= 201509) {
-		_picture->blitTo(g_nmi->_backgroundSurface, Common::Point(_x, _y) - scroll);
+		_picture->blitTo(g_nmi->_backgroundSurface, Common::Point(_x, _y) - scroll, false, _angle);
 		return;
 	}
 

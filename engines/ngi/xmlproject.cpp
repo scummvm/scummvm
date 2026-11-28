@@ -536,6 +536,8 @@ private:
 			KEY_END()
 			layout.top()->children["ANI"] = layout.top()->children["OLDANI"];
 		KEY_END()
+		XML_KEY(EXITMANAGER)
+		KEY_END()
 		XML_KEY(INTERACTIONS)
 		KEY_END()
 		XML_KEY(INVENTORY)
@@ -562,6 +564,8 @@ private:
 		_scene._y = strtod(node->values.getValOrDefault("scrollY").c_str(), nullptr);
 		return true;
 	}
+
+	bool parserCallback_EXITMANAGER(ParserNode *) { return true; }
 
 	bool parserCallback_INTERACTIONS(ParserNode *) { return true; }
 
@@ -1047,6 +1051,21 @@ private:
 			node->layout = _XMLkeys;
 			return true;
 		}
+		if (parent->name == "EXITMANAGER") {
+			node->layout = _XMLkeys;
+			int16 id;
+			if (node->name == "EXIT" && readId(node->values.getValOrDefault("vis_dst"), id)) {
+				if (PictureObject *object = _scene.findPictureObjectById(id, 0)) {
+					Exit exit;
+					exit.destination = object;
+					exit.angle = intProperty(*node, "angle");
+					exit.offset = Common::Point(intProperty(*node, "offsetX"), intProperty(*node, "offsetY"));
+					exit.state = atoi(node->values.getValOrDefault("state", "1").c_str());
+					_scene._exits.push_back(exit);
+				}
+			}
+			return true;
+		}
 		if (parent->name == "INTERACTIONS") {
 			node->layout = _XMLkeys;
 			_interaction = nullptr;
@@ -1129,6 +1148,11 @@ void SceneTag::loadSceneXML(const GameProject &project) {
 		return;
 	}
 
+	if (g_nmi->isAndroidFullPipe() && (_sceneId == SC_1 || _sceneId == SC_2 || _sceneId == SC_3)) {
+		parser.close();
+		if (!parser.loadFile("data/exits.xml") || !parser.parse())
+			return;
+	}
 	if (_sceneId == SC_1) {
 		parser.close();
 		if (!parser.loadFile("data/interactions.xml") || !parser.parse())

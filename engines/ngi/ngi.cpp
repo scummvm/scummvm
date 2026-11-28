@@ -306,6 +306,8 @@ bool NGIEngine::handleGuiEvent(const Common::Event &event) {
 			_modalObject->handleMessage(&cmd);
 		}
 	} else {
+		if (event.type == Common::EVENT_LBUTTONUP || event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_MOUSEMOVE)
+			_currentScene->updateExitInput(event.mouse, event.type);
 		GuiManager *manager = _currentScene->_guiManager.get();
 		if (_inventoryScene && (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)) {
 			Common::Point pos = event.mouse;

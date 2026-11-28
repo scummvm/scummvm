@@ -72,6 +72,7 @@ static void scene01_onGuiEvent(Scene &inventory, const Common::String &id, const
 		GameVar *root = g_nmi->getGameLoaderGameVar();
 		root->setSubVarAsInt("TutorialDisabled", 1);
 		root->setSubVarAsInt("Scene1ExitsDisabled", 0);
+		g_nmi->_currentScene->setExitState(0, 1);
 		inventory._guiManager->getElement(id)->hideAndDeactivate();
 	} else if (id == "PIC_INV_TASK") {
 		sceneNotebook_show();
@@ -145,6 +146,7 @@ int sceneHandler01(Command *cmd) {
 		}
 		if (cmd->_messageName == "MSG_DISABLE_EXIT_MANAGER") {
 			g_nmi->getGameLoaderGameVar()->setSubVarAsInt("Scene1ExitsDisabled", 1);
+			g_nmi->_currentScene->setExitState(0, 0);
 			Scene *inventory = g_nmi->_inventoryScene;
 			if (inventory && inventory->_guiManager) {
 				if (GuiElement *skip = inventory->_guiManager->getElement("BTN_SKIP"))

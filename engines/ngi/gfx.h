@@ -184,6 +184,7 @@ public:
 	void renderAtPos(int x, int y);
 
 	bool setPicAniInfo(const PicAniInfo &picAniInfo);
+	int _angle = 0;
 	Common::Rect _hitRegion; // XML region in picture coordinates.
 	bool isPointInside(int x, int y);
 	bool hit(int x, int y);
@@ -192,6 +193,7 @@ public:
 	Texture *_picture;
 
 private:
+	bool _ownsTexture = true;
 	Common::Array<GameObject> _pictureObject2List;
 	int _ox2;
 	int _oy2;

@@ -115,6 +115,78 @@ void SceneTag::loadScene() {
 
 Scene::Scene() : _sceneId(0), _field_BC(0) {}
 
+void Exit::setState(int newState) {
+	state = newState;
+	releaseTime = -1;
+	if (!arrow)
+		return;
+	if (state == 1) {
+		arrow->_flags |= 4;
+		pressed->_flags &= ~4;
+		if (!arrow->_movement)
+			arrow->startMovement(movementId, 0, -1);
+	} else {
+		arrow->_flags &= ~4;
+		if (state == 2)
+			pressed->_flags |= 4;
+		else
+			pressed->_flags &= ~4;
+	}
+}
+
+void Scene::initExits(Scene &common) {
+	for (Exit &exit : _exits) {
+		if (!exit.arrow) {
+			AniObject *animation = common.findAniObjectById(23234, 0); // ANI_ARROW
+			PictureObject *picture = common.findPictureObjectById(23237, 0); // PIC_ARROW_RED
+			if (!animation || !picture) {
+				warning("Missing Full Pipe exit artwork");
+				continue;
+			}
+			exit.arrow = new AniObject(animation);
+			addAni(exit.arrow, true);
+			exit.arrow->_statics = exit.arrow->getStatic(animation->_statics->_staticsId);
+			exit.pressed = new PictureObject(picture);
+			addPicture(exit.pressed);
+			exit.movementId = 23236; // MOV_ARROW_UP
+			const Dims size = exit.destination->getFullSize();
+			Common::Rect area = exit.destination->_hitRegion;
+			if (area.isEmpty())
+				area = Common::Rect(size.x, size.y);
+			const Common::Point center = area.center() + exit.offset + Common::Point(exit.destination->_x, exit.destination->_y);
+			const Dims pressedSize = exit.pressed->getFullSize();
+			const Dims arrowSize = exit.arrow->getFullSize();
+			exit.arrow->setPos(center.x - arrowSize.x / 2, center.y - arrowSize.y / 2);
+			exit.pressed->setPos(center.x - pressedSize.x / 2, center.y - pressedSize.y / 2);
+			exit.arrow->_encodedRotation = exit.pressed->_angle = exit.angle;
+			exit.arrow->_objectFlags = exit.pressed->_objectFlags = 0;
+		}
+		exit.setState(exit.state);
+	}
+}
+
+void Scene::setExitState(int pictureId, int state) {
+	for (Exit &exit : _exits)
+		if (!pictureId || exit.destination->_id == pictureId)
+			exit.setState(state);
+}
+
+void Scene::updateExitInput(Common::Point pos, Common::EventType type) {
+	for (Exit &exit : _exits) {
+		if (!exit.arrow || !exit.state)
+			continue;
+		const bool hit = exit.destination->hit(pos.x + _x, pos.y + _y);
+		if (type == Common::EVENT_LBUTTONUP && exit.state == 2)
+			exit.releaseTime = 0;
+		else if (hit && (type == Common::EVENT_LBUTTONDOWN || type == Common::EVENT_MOUSEMOVE)) {
+			exit.setState(2);
+			if (type == Common::EVENT_LBUTTONDOWN)
+				g_nmi->playSound(0x5ac6, 0);
+		} else if (!hit && type == Common::EVENT_MOUSEMOVE && exit.state == 2)
+			exit.setState(1);
+	}
+}
+
 void Scene::onGuiEvent(const Common::String &id, const Common::String &event) {
 	if (_guiEventHandler)
 		_guiEventHandler(*this, id, event);
@@ -652,6 +724,16 @@ bool Scene::update(int counterdiff) {
 
 	bool changed = false;
 	if (g_nmi->_gameVersion >= 201509) {
+		for (Exit &exit : _exits) {
+			if (!exit.arrow)
+				continue;
+			if (exit.releaseTime >= 0 && (exit.releaseTime += counterdiff) > 82)
+				exit.setState(1);
+			if (exit.state == 1 && !exit.arrow->_movement)
+				exit.arrow->startMovement(exit.movementId, 0, -1);
+			const int z = g_nmi->_aniMan ? g_nmi->_aniMan->_z + 1 : exit.destination->_z - 1;
+			exit.arrow->_z = exit.pressed->_z = z;
+		}
 		if (_behaviorController)
 			changed |= _behaviorController->update(counterdiff);
 		for (MessageQueue *queue : *g_nmi->_globalMessageQueueList)
