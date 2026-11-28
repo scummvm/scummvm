@@ -171,6 +171,7 @@ RunawayRoomScene::ActionResult Scene2080::dispatchCustomSceneAction(uint16 actio
 	case 320: // Use the toilet.
 		say(action == 311 ? 6 : 15);
 		_roomAction = action;
+		_actionStage = 0;
 		return kHandled;
 	default:
 		return kUnhandled;
@@ -235,10 +236,14 @@ bool Scene2080::updateCustomSequence() {
 			_inventory.remove(13);
 			pickUp(13, 4);
 		}
-	} else if ((_roomAction == 311 || _roomAction == 320) && !speaking()) {
-		_facing = 4;
-		say(_roomAction == 311 ? 6 : 15, 1);
-		_roomAction = 0;
+	} else if ((_roomAction == 311 || _roomAction == 320) && !speaking() && !_walkPath.active()) {
+		if (!_actionStage) {
+			_actionStage = 1;
+			walkTo(_position, 4, true);
+		} else {
+			say(_roomAction == 311 ? 6 : 15, 1);
+			_roomAction = 0;
+		}
 	}
 	return true;
 }

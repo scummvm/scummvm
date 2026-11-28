@@ -346,7 +346,10 @@ RunawayRoomScene::ActionResult Scene8400::dispatchCustomSceneAction(uint16 actio
 		_finale.trailerDoor = 1;
 		_doorFrame = 2;
 		updateMaps();
-		_facing = 0;
+		walkTo(_position, 0, true);
+		deferAction(406);
+		break;
+	case 406: // Comment after turning, then enter the trailer.
 		say(10, 1);
 		deferAction(307);
 		break;
