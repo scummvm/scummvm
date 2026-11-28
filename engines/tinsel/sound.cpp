@@ -527,8 +527,10 @@ void SoundManager::openSampleFiles() {
 
 		f.close();
 
-		// Detect format of soundfile by looking at 1st sample-index
-		switch (TO_BE_32(_sampleIndex[0])) {
+		// Detect format of soundfile by looking at 1st sample-index.
+		// The tag was read as little-endian (big-endian on Saturn).
+		const uint32 formatTag = TinselV1Saturn ? _sampleIndex[0] : SWAP_BYTES_32(_sampleIndex[0]);
+		switch (formatTag) {
 		case MKTAG('M','P','3',' '):
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected MP3 sound-data");
 			_soundMode = kMP3Mode;
