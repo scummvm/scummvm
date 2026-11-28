@@ -59,7 +59,7 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	  _countdown(0), _timerStarted(false), _score(0), _bonus(0), _lives(0),
 	  _defaultCursor(""), _defaultCursorIdx(0),  _skipDefeatVideo(false),
 	  _background(nullptr), _masks(nullptr), _useSubtitles(false),
-	  _additionalVideo(nullptr), _ammo(0), _maxAmmo(0), _skipNextVideo(false),
+	  _additionalVideo(nullptr), _ammo(0), _maxAmmo(0), _sound9Rate(0), _soundARate(0), _skipNextVideo(false),
 	  _screenW(0), _screenH(0), // Every games initializes its own resolution
 	  _keepTimerDuringScenes(false), _subtitles(nullptr) {
 	_rnd = new Common::RandomSource("hypno");

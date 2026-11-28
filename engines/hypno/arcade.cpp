@@ -343,6 +343,10 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_shootSound = arc->shootSound;
 	_hitSound = arc->hitSound;
 	_additionalSound = arc->additionalSound;
+	_sound9 = arc->sound9;
+	_sound9Rate = arc->sound9Rate;
+	_soundA = arc->soundA;
+	_soundARate = arc->soundARate;
 	debugC(1, kHypnoDebugArcade, "Starting segment of type %x of size %d", segments[_segmentIdx].type, segments[_segmentIdx].size);
 	_shoots.clear();
 	_skipLevel = false;

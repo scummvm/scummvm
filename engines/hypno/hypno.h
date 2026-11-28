@@ -405,6 +405,10 @@ public:
 	Filename _shootSound;
 	Filename _hitSound;
 	Filename _additionalSound;
+	Filename _sound9;
+	Filename _soundA;
+	uint32 _sound9Rate;
+	uint32 _soundARate;
 	Shoots _shoots;
 	Frames _playerFrames;
 	int _playerFrameIdx;
