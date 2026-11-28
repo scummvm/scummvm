@@ -748,6 +748,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed13", "SD/1.2",
 		WME_ENTRY1s("data.dcp", "d7b6aaa1643fec62645b176fe890fe1f", 774409229), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_3),
 
+	// Carol Reed 13 - The Birdwatcher (HD) (MDNA Games) (Wildtangent) trac #17416
+	WME_WINENTRY("carolreed13", "HD",
+		WME_ENTRY1s("data.dcp", "122b477ccd2b36b65656a36af284bdda", 1267524545), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_3),
+
 	// Carol Reed 13 - The Birdwatcher (HD) (Russian)
 	WME_WINENTRY("carolreed13", "HD",
 		WME_ENTRY1s("data.dcp", "495c87fcfcfa365f3239172acd362a46", 1361946376), Common::RU_RUS, ADGF_NO_FLAGS, WME_1_9_3),
