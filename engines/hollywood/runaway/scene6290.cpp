@@ -514,10 +514,9 @@ RunawayRoomScene::ActionResult Scene6290::dispatchCustomSceneAction(uint16 actio
 	case 1470: // Find the mining light and rope in the tent.
 		if (!_town.campingGearTaken) {
 			say(10, 2);
-			_inventory.add(18);
-			_inventory.add(19);
+			addInventoryItem(18);
+			pickUp(19, 10, 3);
 			_town.campingGearTaken = 1;
-			say(10, 3);
 		} else {
 			say(10, 5);
 		}

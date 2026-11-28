@@ -245,9 +245,8 @@ void Scene4070::handleCustomDialogueChoice(byte effect) {
 }
 
 void Scene4070::runCustomDialogueIntro() {
-	_inventory.add(13);
+	pickUp(13, 50);
 	_inventory.museum().businessCardExamined = 1;
-	say(50);
 	say(80, 4);
 }
 

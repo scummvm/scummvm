@@ -254,9 +254,8 @@ RunawayRoomScene::ActionResult Scene5100::dispatchCustomSceneAction(uint16 actio
 		deferDesertAction(406);
 		break;
 	case 406: // Collect the jar and attract Stud's attention.
-		_inventory.add(19);
+		pickUp(19, 11, 1);
 		_desert.peanutButter = 2;
-		say(11, 1);
 		say(12, 0, false, 1);
 		deferDesertAction(416);
 		return kBackgroundChanged;
@@ -308,9 +307,8 @@ RunawayRoomScene::ActionResult Scene5100::dispatchCustomSceneAction(uint16 actio
 		if (!_desert.footrestSeen) {
 			dispatchCustomSceneAction(313);
 		}
-		_inventory.add(21);
+		pickUp(21, 18, 0, true);
 		_desert.footrest = 2;
-		say(18, 0, true);
 		return kBackgroundChanged;
 	case 315: // Look at the left barrel.
 		say(21, _random.getRandomBit());

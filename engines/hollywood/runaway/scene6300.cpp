@@ -647,8 +647,7 @@ RunawayRoomScene::ActionResult Scene6300::dispatchCustomSceneAction(uint16 actio
 		return kBackgroundChanged;
 	case 430: // Collect the blowtorch.
 		_town.blowtorchTaken = 1;
-		_inventory.add(15);
-		say(23, 1);
+		pickUp(15, 23, 1);
 		return kBackgroundChanged;
 	case 1333: // The oil can is filled with water.
 		_inventory.town().oilCanFull = 1;
@@ -750,13 +749,11 @@ RunawayRoomScene::ActionResult Scene6300::dispatchCustomSceneAction(uint16 actio
 		deferTownAction(440);
 		return kBackgroundChanged;
 	case 440: // Collect the concentrate, one-liter bottle, and measuring tubes.
-		_inventory.add(12);
-		say(29, 33);
+		pickUp(12, 29, 33);
 		say(29, 34);
-		_inventory.add(25);
-		_inventory.add(26);
-		_inventory.add(24);
-		say(29, 35);
+		addInventoryItem(25);
+		addInventoryItem(26);
+		pickUp(24, 29, 35);
 		_kevinTalking = false;
 		break;
 	default:

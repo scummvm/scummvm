@@ -116,8 +116,7 @@ RunawayRoomScene::ActionResult Scene6280::dispatchCustomSceneAction(uint16 actio
 		_audio.playMusicEffect(39);
 		_facing = 4;
 		_town.helmetTaken = 1;
-		_inventory.add(13);
-		say(3, 1);
+		pickUp(13, 3, 1);
 		return kBackgroundChanged;
 	case 400: // First descent to the crater floor.
 		say(0);

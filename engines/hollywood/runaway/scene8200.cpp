@@ -436,8 +436,7 @@ RunawayRoomScene::ActionResult Scene8200::dispatchCustomSceneAction(uint16 actio
 	case 416: // Collect the bag from the cabinet.
 		_facing = 4;
 		_finale.gangsterBag = 3;
-		_inventory.add(13);
-		say(21, 1);
+		pickUp(13, 21, 1);
 		return kBackgroundChanged;
 	case 317: // Use the MP3 recorder on Gustav and Feodor.
 		if (_finale.recordings & 2) {

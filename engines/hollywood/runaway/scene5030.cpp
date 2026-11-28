@@ -540,14 +540,13 @@ void Scene5030::click(Common::Point mouse, RunawayVerb verb, byte item) {
 }
 
 void Scene5030::pickUp(byte hotspot, byte item, uint patch) {
-	if (!_inventory.add(item))
+	if (_inventory.contains(item))
 		return;
 	_pickedUp[hotspot] = true;
 	drawPatch(_pickupPatches[patch]);
-	if (hotspot == 14 || hotspot == 17)
-		sayCue(hotspot == 14 ? 26 : 31, 0);
-	else
-		sayInventory(RunawayInventory::Reply(18, _random.getRandomNumber(2)));
+	_inventory.beginPickup(item);
+	_pickupHotspot = hotspot;
+	startAction(kPickupInventory);
 }
 
 void Scene5030::useItem(byte item, byte hotspot) {
@@ -848,6 +847,12 @@ void Scene5030::startAction(Action action) {
 			break;
 		}
 		break;
+	case kPickupReply:
+		if (_pickupHotspot == 14 || _pickupHotspot == 17)
+			sayCue(_pickupHotspot == 14 ? 26 : 31, 0);
+		else
+			sayInventory(RunawayInventory::Reply(18, _random.getRandomNumber(2)));
+		break;
 	case kShirt:
 		_action = kNone;
 		sayCue(28, 0);
@@ -1053,6 +1058,12 @@ void Scene5030::updateAction() {
 	if (_action == kWaitSpeech) {
 		if (!speaking())
 			startAction(_afterSpeech);
+	} else if (_action == kPickupInventory) {
+		if (!_inventory.pickingUp())
+			startAction(kPickupReply);
+	} else if (_action == kPickupReply) {
+		if (!speaking())
+			_action = kNone;
 	} else if (_action == kIntroInventory) {
 		if (!speaking())
 			startAction(kIntroListen);

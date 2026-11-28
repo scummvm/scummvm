@@ -141,8 +141,7 @@ RunawayRoomScene::ActionResult Scene6130::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 408: // Collect the stone with the hole.
 		_town.stone = 2;
-		_inventory.add(29);
-		say(6, 1);
+		pickUp(29, 6, 1);
 		return kBackgroundChanged;
 	case 400: // First visit: go and introduce Brian to Oscar.
 		walkTo(Common::Point(402, 374), 1);

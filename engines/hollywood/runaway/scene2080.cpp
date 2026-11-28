@@ -150,8 +150,7 @@ RunawayRoomScene::ActionResult Scene2080::dispatchCustomSceneAction(uint16 actio
 		return kHandled;
 	case 306: // Take the alcohol bottle.
 		_hospital.alcohol = 1;
-		_inventory.add(12);
-		say(18, _random.getRandomNumber(2), true);
+		pickUp(12, 18, _random.getRandomNumber(2), true);
 		return kBackgroundChanged;
 	case 307: // Fill the glass at the faucet.
 		if (_inventory.water() == 1) {
@@ -220,8 +219,7 @@ bool Scene2080::updateCustomSequence() {
 				_roomAction = 0;
 				if (!_hospital.markerTaken) {
 					_hospital.markerTaken = 1;
-					_inventory.add(11);
-					say(1, 1);
+					pickUp(11, 1, 1);
 				}
 			}
 		}
@@ -235,8 +233,7 @@ bool Scene2080::updateCustomSequence() {
 			_roomAction = 0;
 			_inventory.setWater(1);
 			_inventory.remove(13);
-			_inventory.add(13);
-			say(4);
+			pickUp(13, 4);
 		}
 	} else if ((_roomAction == 311 || _roomAction == 320) && !speaking()) {
 		_facing = 4;

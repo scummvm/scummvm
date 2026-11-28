@@ -253,7 +253,7 @@ void Scene7040::finishCustomFilm() {
 		return;
 	}
 	_inventory.remove(4);
-	_inventory.add(9);
+	pickUp(9, 0, 1);
 	_position = Common::Point(446, 486);
 	_walkPath.reset(_position);
 	_facing = 5;
@@ -262,7 +262,6 @@ void Scene7040::finishCustomFilm() {
 	_doorTick = _now;
 	_audio.playEffect(29);
 	_audio.playMusic(11, false);
-	say(0, 1);
 	deferAction(420);
 }
 
@@ -324,8 +323,7 @@ RunawayRoomScene::ActionResult Scene7040::dispatchCustomSceneAction(uint16 actio
 		beginRoomAnimation(405, 5, 19);
 		break;
 	case 1405: // Keep the branch and notice its pods.
-		_inventory.add(8);
-		say(9, 2);
+		pickUp(8, 9, 2);
 		break;
 	case 311: // Clear the sand with the branch.
 		if (_hopi.cryptDoor != kBlocked) {

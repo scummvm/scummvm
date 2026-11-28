@@ -157,14 +157,12 @@ RunawayRoomScene::ActionResult Scene2060::dispatchCustomSceneAction(uint16 actio
 			say(3, 3);
 		} else {
 			say(3, 2);
-			_inventory.add(15);
-			say(64, 0, true);
+			pickUp(15, 64, 0, true);
 		}
 		return kHandled;
 	case 309: // Take the spray can.
 		_hospital.sprayTaken = 1;
-		_inventory.add(18);
-		say(18, _random.getRandomNumber(2), true);
+		pickUp(18, 18, _random.getRandomNumber(2), true);
 		return kBackgroundChanged;
 	case 310: // Look at the medical reference book.
 		say(5, _hospital.book != 0);
@@ -172,8 +170,7 @@ RunawayRoomScene::ActionResult Scene2060::dispatchCustomSceneAction(uint16 actio
 		return kHandled;
 	case 311: // Take the medical reference book.
 		_hospital.book = 2;
-		_inventory.add(19);
-		say(18, _random.getRandomNumber(2), true);
+		pickUp(19, 18, _random.getRandomNumber(2), true);
 		return kBackgroundChanged;
 	case 312: // Look at the blank medical chart.
 		say(6, _hospital.blankChart != 0);
@@ -181,8 +178,7 @@ RunawayRoomScene::ActionResult Scene2060::dispatchCustomSceneAction(uint16 actio
 		return kHandled;
 	case 313: // Take the blank medical chart.
 		_hospital.blankChart = 2;
-		_inventory.add(16);
-		say(65, 0, true);
+		pickUp(16, 65, 0, true);
 		return kBackgroundChanged;
 	case 314: // Look at the anatomical model.
 		say(7, _hospital.headTaken ? 2 : _random.getRandomBit());
@@ -194,14 +190,12 @@ RunawayRoomScene::ActionResult Scene2060::dispatchCustomSceneAction(uint16 actio
 		}
 		say(7, 3);
 		_hospital.headTaken = 1;
-		_inventory.add(17);
-		say(66, 0, true);
+		pickUp(17, 66, 0, true);
 		return kBackgroundChanged;
 	case 328: // Take the pillows.
 		say(15, 1);
 		_hospital.pillowsTaken = 1;
-		_inventory.add(14);
-		say(63, 0, true);
+		pickUp(14, 63, 0, true);
 		return kBackgroundChanged;
 	default:
 		return kUnhandled;

@@ -88,6 +88,7 @@ void RunawayInventory::captureState(RunawaySaveState &state) const {
 void RunawayInventory::restoreState(const RunawaySaveState &state) {
 	assert(state.valid());
 	clearHandling();
+	finishPickup();
 	_chapter = state.chapter();
 	_items.clear();
 	for (uint i = 0; i < state.itemCount; ++i)
@@ -109,6 +110,7 @@ void RunawayInventory::restoreState(const RunawaySaveState &state) {
 
 void RunawayInventory::startChapter(byte chapter) {
 	clearHandling();
+	finishPickup();
 	_chapter = chapter;
 	_items.clear();
 	_selected = _newItem = 0;
@@ -169,6 +171,12 @@ bool RunawayInventory::add(byte item, bool animate) {
 		_newItem = item;
 	}
 	return true;
+}
+
+void RunawayInventory::beginPickup(byte item, uint16 effect) {
+	assert(!pickingUp());
+	_pickupItem = _newItem = item;
+	_pickupEffect = effect;
 }
 
 void RunawayInventory::remove(byte item) {

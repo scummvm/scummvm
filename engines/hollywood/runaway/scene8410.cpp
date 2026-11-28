@@ -243,8 +243,7 @@ RunawayRoomScene::ActionResult Scene8410::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 402: // Remove the garment from the room and add it to the inventory.
 		_finale.nunsHabit = 2;
-		_inventory.add(15);
-		say(3, 2);
+		pickUp(15, 3, 2);
 		return kBackgroundChanged;
 	default:
 		return kUnhandled;

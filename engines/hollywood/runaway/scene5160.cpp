@@ -173,9 +173,8 @@ RunawayRoomScene::ActionResult Scene5160::dispatchCustomSceneAction(uint16 actio
 			dispatchCustomSceneAction(313);
 		}
 		say(12);
-		_inventory.add(16);
+		pickUp(16, 12, 1);
 		_desert.needle = 2;
-		say(12, 1);
 		return kBackgroundChanged;
 	case 315: // Look at the bull.
 		say(13, _random.getRandomNumber(1));
@@ -189,8 +188,7 @@ RunawayRoomScene::ActionResult Scene5160::dispatchCustomSceneAction(uint16 actio
 	case 1319: // Collect the butter from the refrigerator.
 		if (!_desert.fridgeOpened) {
 			say(17, 1);
-			_inventory.add(4);
-			say(17, 2);
+			pickUp(4, 17, 2);
 		} else {
 			say(17, 4);
 		}
@@ -221,11 +219,9 @@ RunawayRoomScene::ActionResult Scene5160::dispatchCustomSceneAction(uint16 actio
 		}
 		break;
 	case 1320: // Recover the sleeping pill from the vacuum.
-		say(18, 2);
-		_inventory.add(9);
+		pickUp(9, 18, 3, false, 2, 33);
 		_inventory.desert().pill = 1;
 		_desert.ventCleaned = 1;
-		say(18, 3);
 		break;
 	case 322: // Give the refrigerator key to Carla.
 		say(20, _desert.fridgeOpened);

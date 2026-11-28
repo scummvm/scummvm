@@ -78,7 +78,7 @@ public:
 	byte inventoryFrame() const override { return _inventory.handlingFrame(); }
 	void skipSpeech() override;
 	bool playingVideo() const override { return _action == kIntroVideo || _action == kCleanWindowVideo; }
-	bool inventoryPresentation() const override { return _action == kIntroInventory; }
+	bool inventoryPresentation() const override { return _action == kIntroInventory || _action == kPickupInventory || _action == kPickupReply; }
 	void skipVideo() override;
 	void cancelWalk();
 	void sayInventory(const RunawayInventory::Reply &reply) override;
@@ -95,7 +95,7 @@ private:
 		kIntroListen, kIntroLookLeft, kIntroLookRight, kIntroWalkToDoor, kIntroExamineDoor,
 		kOpenLid, kCloseLid, kUnplug,
 		kCleanWindowSpeech, kCleanWindowClimb, kCleanWindowVideo,
-		kWaitSpeech, kWalkingAction, kHeadMovement, kExamine, kInspectCooler, kPickup, kShirt,
+		kWaitSpeech, kWalkingAction, kHeadMovement, kExamine, kInspectCooler, kPickup, kPickupInventory, kPickupReply, kShirt,
 		kMeltIce, kMeltWait, kInspectIce, kFinishMelting, kDescribeMeltedIce,
 		kTryMoveCooler, kMoveCooler, kRevealHatch, kFinishMoving, kHatchFound,
 		kDrainCooler, kFinishDraining, kDescribeDrainedCooler, kPryHatch, kOpenHatch, kEscape,

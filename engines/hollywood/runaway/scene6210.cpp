@@ -118,8 +118,7 @@ RunawayRoomScene::ActionResult Scene6210::dispatchCustomSceneAction(uint16 actio
 	case 1410: // Only take medical tools once their purpose is known.
 		if (_town.safeSeen && !_town.stethoscopeTaken) {
 			_town.stethoscopeTaken = 1;
-			_inventory.add(7);
-			say(3, 3);
+			pickUp(7, 3, 3);
 			if (_town.oscarTobacco && !_town.linimentTaken) {
 				deferTownAction(411);
 			}
@@ -132,8 +131,7 @@ RunawayRoomScene::ActionResult Scene6210::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 411: // Take the mint liniment for the chewing tobacco.
 		_town.linimentTaken = 1;
-		_inventory.add(8);
-		say(3, 4);
+		pickUp(8, 3, 4);
 		break;
 	case 1412: // Close the bag after an unsuccessful search.
 		beginRoomAnimationRange(413, 4, 28, 16, 27);

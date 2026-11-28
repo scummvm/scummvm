@@ -203,8 +203,7 @@ RunawayRoomScene::ActionResult Scene7050::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 406: // Remove the tomahawk from the stone and reveal its pipe.
 		_hopi.tomahawk = kTaken;
-		_inventory.add(11);
-		say(4, 1);
+		pickUp(11, 4, 1);
 		return kBackgroundChanged;
 	case 307: { // Examine the left cross and compare it with the right one.
 		const byte variation = _hopi.rightCrossSeen ? (_hopi.leftCrossSeen ? 2 : 1) : 0;

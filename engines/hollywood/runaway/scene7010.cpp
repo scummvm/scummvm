@@ -271,9 +271,8 @@ RunawayRoomScene::ActionResult Scene7010::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 405: // Collect the femur.
 		_hopi.femurTaken = 1;
-		_inventory.add(14);
+		pickUp(14, 4, 2);
 		_audio.playEffect(13, 90);
-		say(4, 2);
 		return kBackgroundChanged;
 	case 307: // Check whether the rock could support the rope.
 		say(7, _hopi.rockTried);
@@ -307,8 +306,7 @@ RunawayRoomScene::ActionResult Scene7010::dispatchCustomSceneAction(uint16 actio
 		beginRoomAnimation(415, 6, 45);
 		return kBackgroundChanged;
 	case 1415: // Put the extracted nail in the inventory.
-		_inventory.add(16);
-		say(13, 2);
+		pickUp(16, 13, 2);
 		break;
 	case 316: // Prepare to drive the nail into the cliff.
 		say(14);
@@ -358,9 +356,8 @@ RunawayRoomScene::ActionResult Scene7010::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 419: // Collect the beam.
 		_hopi.timber = 1;
-		_inventory.add(10);
+		pickUp(10, 17, 1);
 		_audio.playEffect(11);
-		say(17, 1);
 		return kBackgroundChanged;
 	case 320: // Identify the exposed object as a mining tool.
 		_facing = 4;
@@ -376,8 +373,7 @@ RunawayRoomScene::ActionResult Scene7010::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 421: // Collect the mining tool.
 		_hopi.timber = 3;
-		_inventory.add(15);
-		say(19, 1);
+		pickUp(15, 19, 1);
 		return kBackgroundChanged;
 	case 322: // Try tying the rope around the rock.
 		say(20, _hopi.rockTried);

@@ -101,9 +101,11 @@ private:
 	byte _inventorySpeechPose = 0;
 	bool _inventoryOpen = false, _enteredInventory = false, _returnAfterPickup = false;
 	bool _inventoryPresentation = false;
+	bool _returnAfterPresentation = false;
 	bool _roomHasVerbs = true;
 	bool _pointerSound = true;
 	bool _pickupSoundPlayed = false;
+	bool _pickupEffectPlayed = false;
 	bool _blocked = false, _speaking = false, _cursorPushed = false;
 	uint32 _now = 0, _buttonTick = 0, _verbStarted = 0, _portraitTick = 0;
 	uint32 _mouthTick = 0;

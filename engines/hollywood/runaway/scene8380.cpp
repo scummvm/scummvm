@@ -468,8 +468,7 @@ RunawayRoomScene::ActionResult Scene8380::dispatchCustomSceneAction(uint16 actio
 	case 1412: // Start the recording task and remove the recorder from the desk.
 		_recorderOnDesk = false;
 		_finale.recordingPlan = 1;
-		_inventory.add(16);
-		say(80, 38);
+		pickUp(16, 80, 38);
 		return kBackgroundChanged;
 	case 420: // Sushi demonstrates her completed voice filter.
 		exchange(83, 5, 5);

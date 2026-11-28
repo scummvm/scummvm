@@ -145,8 +145,7 @@ RunawayRoomScene::ActionResult Scene8260::dispatchCustomSceneAction(uint16 actio
 	case 410: // Collect the sheriff's badge.
 		_facing = 4;
 		_finale.locomotiveBadge = 3;
-		_inventory.add(12);
-		say(15, 1);
+		pickUp(12, 15, 1);
 		return kBackgroundChanged;
 	case 316: // Leave through the outskirts to the town overview.
 		leaveRoom(8350);

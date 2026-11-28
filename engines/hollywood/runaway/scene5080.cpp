@@ -176,8 +176,7 @@ RunawayRoomScene::ActionResult Scene5080::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 309: // Take the dynamite.
 		_desert.dynamite = 2;
-		_inventory.add(5);
-		say(8);
+		pickUp(5, 8);
 		return kBackgroundChanged;
 	case 313: // Enter the train car.
 		if (!_desert.trainEntered) {

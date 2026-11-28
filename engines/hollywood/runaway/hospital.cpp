@@ -45,7 +45,7 @@ void RunawayRoomScene::updateHospital(uint elapsed) {
 	if (!updateCustomSequence()) {
 		updateRoomAnimation();
 	}
-	if (_sequence.active() || _transition.scene) {
+	if (_sequence.active() || _transition.scene || presentingPickup()) {
 		return;
 	}
 	updateHospitalAudio();

@@ -282,9 +282,8 @@ RunawayRoomScene::ActionResult Scene5060::dispatchCustomSceneAction(uint16 actio
 		if (_desert.ballTaken) {
 			say(6, 3);
 		} else {
-			_inventory.add(15);
+			pickUp(15, 6, 1);
 			_desert.ballTaken = 1;
-			say(6, 1);
 			holdRoomAnimation(410, 10, 28, 14);
 		}
 		break;
@@ -322,8 +321,7 @@ RunawayRoomScene::ActionResult Scene5060::dispatchCustomSceneAction(uint16 actio
 		beginRoomAnimation(432, 7, 201, kMariolaRestFrames, ARRAYSIZE(kMariolaRestFrames), false);
 		if (_desert.mariolaHelped) {
 			_desert.tanningOil = 2;
-			_inventory.add(12);
-			say(8, 2);
+			pickUp(12, 8, 2);
 		}
 		return kBackgroundChanged;
 	case 1432: // Finish asking for the tanning oil.

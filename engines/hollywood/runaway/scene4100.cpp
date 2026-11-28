@@ -265,8 +265,7 @@ RunawayRoomScene::ActionResult Scene4100::dispatchCustomSceneAction(uint16 actio
 			_audio.setMusicVolume(100);
 			say(9, 1);
 			_museum.maskTaken = 1;
-			_inventory.add(11);
-			say(9, 2);
+			pickUp(11, 9, 2);
 			deferMuseumAction(432);
 		}
 		return kBackgroundChanged;
@@ -283,8 +282,7 @@ RunawayRoomScene::ActionResult Scene4100::dispatchCustomSceneAction(uint16 actio
 			say(12);
 		}
 		_museum.keySeen = _museum.keyTaken = 1;
-		_inventory.add(17);
-		say(13);
+		pickUp(17, 13);
 		say(13, 1);
 		say(13, 2);
 		return kBackgroundChanged;
@@ -328,8 +326,7 @@ RunawayRoomScene::ActionResult Scene4100::dispatchCustomSceneAction(uint16 actio
 		return kHandled;
 	case 329: // Take the ladle.
 		_museum.ladleTaken = 1;
-		_inventory.add(18);
-		say(113, 0, true);
+		pickUp(18, 113, 0, true);
 		return kBackgroundChanged;
 	case 330: // Put the battery directly in the liquid nitrogen.
 		say(27, _inventory.museum().frozenBattery);
@@ -380,8 +377,7 @@ void Scene4100::finishCustomAnimation(uint16 action) {
 			say(20, 4);
 			say(20, 5);
 			_inventory.museum().recorderBattery = 2;
-			_inventory.add(6);
-			say(20, 6);
+			pickUp(6, 20, 6);
 		} else {
 			beginRoomAnimation(345, 10, 7, nullptr, 0, false);
 		}
@@ -392,9 +388,7 @@ void Scene4100::finishCustomAnimation(uint16 action) {
 	case 325: // Retrieve the frozen battery from the ladle.
 		_inventory.museum().batteryInLadle = 0;
 		_inventory.museum().frozenBattery = 1;
-		_inventory.add(6);
-		say(23, 2);
-		say(23, 3);
+		pickUp(6, 23, 3, false, 2);
 		break;
 	case 308: // Try identifying Brian to the voice lock.
 		startComputerConversation();

@@ -186,8 +186,7 @@ RunawayRoomScene::ActionResult Scene6080::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 406: // Collect the oil can.
 		_town.oilCan = 2;
-		_inventory.add(23);
-		say(5);
+		pickUp(23, 5);
 		return kBackgroundChanged;
 	case 307: // Examine the rock blocking the mine.
 		say(6, _town.rockMoved ? 1 : _town.sushiMet ? 2 : 0);

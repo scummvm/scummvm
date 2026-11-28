@@ -110,9 +110,8 @@ RunawayRoomScene::ActionResult Scene4090::dispatchCustomSceneAction(uint16 actio
 			say(action == 307 ? 5 : 6, action == 307 ? 2 : 3);
 		} else if (_museum.susan == 1 && _museum.coffeeSeen) {
 			say(6, 1);
-			_inventory.add(14);
+			pickUp(14, 6, 2);
 			_museum.coffeeBeansTaken = 1;
-			say(6, 2);
 			return kBackgroundChanged;
 		} else {
 			say(action == 307 ? 5 : 6, action == 307 ? _museum.mayanObjectsSeen : 0);

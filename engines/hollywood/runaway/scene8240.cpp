@@ -288,8 +288,7 @@ RunawayRoomScene::ActionResult Scene8240::dispatchCustomSceneAction(uint16 actio
 		walkTo(Common::Point(855, 347), 3, false, true);
 		break;
 	case 422: // Take the dried tobacco leaves.
-		_inventory.add(22);
-		say(8, 3);
+		pickUp(22, 8, 3);
 		deferAction(421);
 		break;
 	case 311: // Recognize the artichoke carved into the column.

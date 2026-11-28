@@ -207,8 +207,7 @@ RunawayRoomScene::ActionResult Scene4030::dispatchCustomSceneAction(uint16 actio
 			say(1);
 		}
 		_books = kTaken;
-		_inventory.add(16);
-		say(2);
+		pickUp(16, 2);
 		say(2, 1);
 		_discoveringKeyhole = true;
 		return kBackgroundChanged;
@@ -229,9 +228,8 @@ RunawayRoomScene::ActionResult Scene4030::dispatchCustomSceneAction(uint16 actio
 			say(9);
 		}
 		_recorder = kTaken;
-		_inventory.add(5);
 		say(10);
-		say(10, 1);
+		pickUp(5, 10, 1);
 		return kBackgroundChanged;
 	case 311: // Look at the right shelves.
 		say(11, _museum.shelfBooksSeen ? _random.getRandomBit() : 0);

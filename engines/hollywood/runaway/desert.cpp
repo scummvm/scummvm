@@ -61,6 +61,8 @@ void RunawayRoomScene::updateDesert(uint elapsed) {
 		return;
 	}
 	updateRoomAnimation();
+	if (presentingPickup())
+		return;
 	updateConversation();
 	advanceCustomGameplayLoop(elapsed);
 	if (_roomAction && _actionFrames.empty() && !speaking() && !_walkPath.active()) {
@@ -68,7 +70,7 @@ void RunawayRoomScene::updateDesert(uint elapsed) {
 		_roomAction = 0;
 		execute(action);
 	}
-	if (_hospitalExit.scene && !speaking() && !_roomAction && !_walkPath.active()) {
+	if (_hospitalExit.scene && !speaking() && !presentingPickup() && !_roomAction && !_walkPath.active()) {
 		_transition = _hospitalExit;
 	}
 }
@@ -92,7 +94,7 @@ void RunawayRoomScene::deferDesertAction(uint16 action) {
 
 void RunawayRoomScene::reviewDesertPlan(byte variation) {
 	_desert.planKnown = 1;
-	_inventory.add(23);
+	pickUp(23);
 	_reviewingDesertPlan = true;
 	say(174, 0, true);
 	if (variation) {

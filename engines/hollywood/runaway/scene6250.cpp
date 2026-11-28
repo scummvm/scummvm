@@ -200,9 +200,8 @@ RunawayRoomScene::ActionResult Scene6250::dispatchCustomSceneAction(uint16 actio
 	case 1403: // Keep the map and read the route to the Hopi village.
 		_safeAnimating = false;
 		_town.safeOpened = 1;
-		_inventory.add(17);
+		pickUp(17, 9, 9);
 		_audio.playMusicEffect(39);
-		say(9, 9);
 		holdRoomAnimation(408, 10, 112, 64);
 		break;
 	case 1408: { // Show the map and read the route to the Hopi village.

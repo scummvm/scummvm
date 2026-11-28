@@ -219,8 +219,7 @@ RunawayRoomScene::ActionResult Scene6240::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 406: // Collect the flower pot.
 		_town.flowerPotTaken = 1;
-		_inventory.add(21);
-		say(4, 1);
+		pickUp(21, 4, 1);
 		return kBackgroundChanged;
 	case 308: // Optionally collect the unused watering-can inventory item.
 		if (_town.wateringCanTaken) {
@@ -235,7 +234,7 @@ RunawayRoomScene::ActionResult Scene6240::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 408:
 		_town.wateringCanTaken = 1;
-		_inventory.add(16);
+		pickUp(16);
 		return kBackgroundChanged;
 	case 309: // Identify the gardening shed.
 	case 310: // Search the shed for useful items.
@@ -283,8 +282,7 @@ RunawayRoomScene::ActionResult Scene6240::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 421: // Collect the pruning shears.
 		_town.gardeningShed = 2;
-		_inventory.add(22);
-		say(8, 1);
+		pickUp(22, 8, 1);
 		if (_town.oscarTobacco == 1 && !_town.tobaccoLeavesTaken) {
 			say(8, 2);
 			deferTownAction(422);
@@ -294,8 +292,7 @@ RunawayRoomScene::ActionResult Scene6240::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 422: // Collect the tobacco leaves.
 		_town.tobaccoLeavesTaken = 1;
-		_inventory.add(27);
-		say(8, 3);
+		pickUp(27, 8, 3);
 		deferTownAction(423);
 		break;
 	case 423: // Step back out of the shed.

@@ -397,8 +397,7 @@ RunawayRoomScene::ActionResult Scene8370::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 414: // Add the poker and remove it from the room.
 		_finale.pokerTaken = 1;
-		_inventory.add(21);
-		say(10, 1);
+		pickUp(21, 10, 1);
 		return kBackgroundChanged;
 	case 415: // Resume walking downstairs after the stair transition.
 		changeFloor(false, Common::Point(775, 466));
@@ -422,8 +421,7 @@ RunawayRoomScene::ActionResult Scene8370::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 420: // Remove the rifle from the room and keep it in the inventory.
 		_finale.rifle = 2;
-		_inventory.add(11);
-		say(15, 2);
+		pickUp(11, 15, 2);
 		return kBackgroundChanged;
 	default:
 		return kUnhandled;

@@ -203,6 +203,7 @@ void RunawayUI::restoreState(const RunawaySaveState &state, uint32 now) {
 	_idleStep = 0;
 	_pickupItem = _hovered = _buttonFrame = _optionsFrame = _mouth = 0;
 	_blocked = _speaking = _inventoryPresentation = _returnAfterPickup = _pickupSoundPlayed = false;
+	_returnAfterPresentation = _pickupEffectPlayed = false;
 	_inventoryFrame = 0xff;
 	_inventorySpeechPose = 0;
 	_inventoryOpen = state.inventoryOpen;
@@ -275,7 +276,12 @@ void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool b
 	}
 	if (_inventoryPresentation != inventoryPresentation) {
 		_inventoryPresentation = inventoryPresentation;
-		setInventoryOpen(inventoryPresentation);
+		if (inventoryPresentation) {
+			_returnAfterPresentation = !_inventoryOpen;
+			setInventoryOpen(true);
+		} else if (_returnAfterPresentation) {
+			setInventoryOpen(false);
+		}
 	}
 	const byte added = _inventory.takeNewItem();
 	if (added) {
@@ -284,18 +290,26 @@ void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool b
 		_pickupItem = added;
 		_pickupStarted = now;
 		_pickupSoundPlayed = false;
+		_pickupEffectPlayed = false;
+	}
+	if (_pickupItem && !_pickupEffectPlayed && now - _pickupStarted >= 8 * 60) {
+		if (_inventory.pickupEffect())
+			_audio.playEffectAt(_inventory.pickupEffect(), Common::Point(512, 600));
+		_pickupEffectPlayed = true;
 	}
 	// Cue 1 accompanies the item reveal: frame 15 in the museum (0x427020),
 	// frame 12 in the cabin (0x40d390).
 	const uint revealFrame = _museum ? 15 : 12;
 	if (_pickupItem && !_pickupSoundPlayed && now - _pickupStarted >= revealFrame * 60) {
+		_inventory.add(_pickupItem, false);
 		// Retail 0x410c40 uses the same distant position as the idle knock.
-		_audio.playEffectAt(1, Common::Point(512, 600));
+		_audio.playEffectAt(1, Common::Point(512, 600), 100, _audio.effectPlaying() ? 1 : 0);
 		_pickupSoundPlayed = true;
 	}
-	const uint pickupFrames = _museum ? ARRAYSIZE(kMuseumPickupFrames) : 18;
+	const uint pickupFrames = _museum ? ARRAYSIZE(kMuseumPickupFrames) : 19;
 	if (_pickupItem && now - _pickupStarted >= pickupFrames * 60) {
 		_pickupItem = 0;
+		_inventory.finishPickup();
 		if (_returnAfterPickup && !_speaking)
 			setInventoryOpen(false);
 	}
@@ -303,7 +317,7 @@ void RunawayUI::update(uint32 now, Common::Point mouse, byte roomHotspot, bool b
 		_returnAfterPickup = false;
 		setInventoryOpen(false);
 	}
-	if (_inventoryOpen && !busy() && !_inventory.handling() && !_speaking && _inventory.selected()) {
+	if (_inventoryOpen && !_inventoryPresentation && !busy() && !_inventory.handling() && !_speaking && _inventory.selected()) {
 		if (inViewport())
 			_enteredInventory = true;
 		else if (_enteredInventory)
@@ -559,7 +573,8 @@ void RunawayUI::drawInventory(Graphics::ManagedSurface &screen) {
 			const uint frame = MIN<uint>(ARRAYSIZE(kMuseumPickupFrames) - 1, (_now - _pickupStarted) / 60);
 			_portrait.draw(screen, kMuseumPickupFrames[frame], 0, kRunawayViewportTop);
 		} else {
-			_portrait.draw(screen, 64 + MIN<uint>(17, (_now - _pickupStarted) / 60), 0, kRunawayViewportTop);
+			const uint step = MIN<uint>(18, (_now - _pickupStarted) / 60);
+			_portrait.draw(screen, step ? 63 + step : 0, 0, kRunawayViewportTop);
 		}
 	} else if (_inventoryFrame != 0xff) {
 		_portrait.draw(screen, _inventoryFrame, 0, kRunawayViewportTop);

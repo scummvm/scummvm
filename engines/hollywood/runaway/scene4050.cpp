@@ -517,9 +517,8 @@ RunawayRoomScene::ActionResult Scene4050::dispatchCustomSceneAction(uint16 actio
 		}
 		_museum.varnishSeen = 1;
 		_varnishTaken = true;
-		_inventory.add(9);
 		say(19);
-		say(19, 1);
+		pickUp(9, 19, 1);
 		return kHandled;
 	case 338: // Take the talcum powder.
 		if (!museumChapter() || !_museum.talcSeen) {
@@ -527,10 +526,7 @@ RunawayRoomScene::ActionResult Scene4050::dispatchCustomSceneAction(uint16 actio
 		}
 		_museum.talcSeen = 1;
 		_talcTaken = true;
-		_inventory.add(10);
-		if (museumChapter()) {
-			say(18, _random.getRandomNumber(2), true);
-		}
+		pickUp(10, museumChapter() ? 18 : 0xffff, _random.getRandomNumber(2), true);
 		return kBackgroundChanged;
 	default:
 		break;
@@ -546,9 +542,8 @@ void Scene4050::finishCustomAnimation(uint16 action) {
 		break;
 	case 326: // Leave the crucifix and collect the Mayan object.
 		_inventory.remove(7);
-		_inventory.add(8);
+		pickUp(8, 22, 1);
 		_museum.restoration = 1;
-		say(22, 1);
 		break;
 	case 328: // Ask Susan to say her name.
 		say(24);
@@ -591,7 +586,10 @@ void Scene4050::finishCustomAnimation(uint16 action) {
 		beginRoomAnimation(450, 23, 95, nullptr, 0, false);
 		return;
 	case 405: // Collect the restored crucifix.
-		_inventory.add(7);
+		pickUp(7);
+		deferMuseumAction(406);
+		return;
+	case 406:
 		startMuseumFilm(kCrucifixFilm);
 		return;
 	case 456: // Finish installing the ruby and approach Susan.

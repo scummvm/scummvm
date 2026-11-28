@@ -133,8 +133,8 @@ public:
 	const Common::U32String &committedCaption() const override { return _caption; }
 	const Common::U32String &subtitle() const override;
 	byte subtitleColor() const override { return _sequence.active() ? _sequence.subtitleColor() : _speech.subtitleColor(); }
-	bool busy() const override { return _sequence.active() || _inventory.handling() || _headMovement.active() || _pendingHotspot != 0 || _transition.scene || _hospitalExit.scene || _arrivalFacing != 0xff || _roomAction || _conversation || _reviewingDesertPlan || speaking(); }
-	bool inventoryPresentation() const override { return _reviewingDesertPlan; }
+	bool busy() const override { return _sequence.active() || _inventory.handling() || presentingPickup() || _headMovement.active() || _pendingHotspot != 0 || _transition.scene || _hospitalExit.scene || _arrivalFacing != 0xff || _roomAction || _conversation || _reviewingDesertPlan || speaking(); }
+	bool inventoryPresentation() const override { return _reviewingDesertPlan || presentingPickup(); }
 	byte inventoryFrame() const override;
 	byte inventorySpeechPose() const override { return _lineIndex < _lines.size() ? _lines[_lineIndex].inventoryPose : 0; }
 	bool speaking() const override { return _sequence.active() ? !_sequence.subtitle().empty() : !_speech.subtitle().empty(); }
@@ -230,6 +230,10 @@ protected:
 	void say(uint16 cue, byte variation = 0, bool global = false, byte speaker = 0, byte color = 0);
 	void say(const SceneTextStore &text, const SceneSpeechCue &speech, bool global, byte speaker = 0, byte color = 0);
 	void showLine();
+	void advanceLine();
+	void pickUp(byte item, uint16 cue = 0xffff, byte variation = 0, bool global = false, byte before = 0xff, uint16 effect = 0);
+	void addInventoryItem(byte item);
+	bool presentingPickup() const { return _lineIndex < _lines.size() && _lines[_lineIndex].inventory; }
 	void changeFloor(bool upper, Common::Point position);
 	void updateCamera();
 	void followCamera(Common::Point camera);
@@ -340,10 +344,14 @@ protected:
 	RunawayCamera _cameraFollow;
 	struct SpeechLine {
 		Common::U32String text;
-		uint16 sample;
-		bool global;
-		byte speaker, color;
+		uint16 sample = 0;
+		bool global = false;
+		byte speaker = 0, color = 11;
 		byte inventoryPose = 0;
+		bool inventory = false;
+		byte pickup = 0;
+		bool animatePickup = true;
+		uint16 pickupEffect = 0;
 	};
 	Common::Array<SpeechLine> _lines;
 	// Local animation speaker IDs map to the original font palette.

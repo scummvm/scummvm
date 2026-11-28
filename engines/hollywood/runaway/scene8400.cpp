@@ -370,8 +370,7 @@ RunawayRoomScene::ActionResult Scene8400::dispatchCustomSceneAction(uint16 actio
 	case 1403: // Put the brochure in the inventory.
 		if (!_finale.bankBrochureTaken) {
 			_finale.bankBrochureTaken = 1;
-			_inventory.add(14);
-			say(7, 2);
+			pickUp(14, 7, 2);
 		}
 		holdRoomAnimation(405, 14, 42, 22);
 		break;

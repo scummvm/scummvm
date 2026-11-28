@@ -138,8 +138,7 @@ RunawayRoomScene::ActionResult Scene5020::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 313: // Take the bucket.
 		_desert.bucketTaken = 1;
-		_inventory.add(25);
-		say(12);
+		pickUp(25, 12);
 		return kBackgroundChanged;
 	case 400: // Check that everyone is in position for the rescue.
 		say(50);

@@ -69,7 +69,7 @@ void RunawayRoomScene::leaveMuseumRoom(uint16 scene, Common::Point position, byt
 void RunawayRoomScene::updateMuseum(uint elapsed) {
 	advanceCustomGameplayLoop(elapsed);
 	updateRoomAnimation();
-	if (_sequence.active() || _transition.scene) {
+	if (_sequence.active() || _transition.scene || presentingPickup()) {
 		return;
 	}
 	updateConversation();
@@ -203,9 +203,10 @@ bool RunawayRoomScene::updateMuseumInventory() {
 	const uint16 cue = _roomAction;
 	_roomAction = 0;
 	if (cue == 117) {
-		_inventory.add(12);
+		pickUp(12, cue, 1, true);
+	} else {
+		say(cue, cue == 121 ? 2 : 1, true);
 	}
-	say(cue, cue == 121 ? 2 : 1, true);
 	return true;
 }
 

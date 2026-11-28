@@ -199,8 +199,7 @@ RunawayRoomScene::ActionResult Scene6190::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 411: // Collect the ancient stapler.
 		_town.bankShelves = 2;
-		_inventory.add(20);
-		say(10, 1);
+		pickUp(20, 10, 1);
 		return kBackgroundChanged;
 	case 313: // Search the desk and take the bank stamp.
 		if (_town.bankStampTaken) {
@@ -214,8 +213,7 @@ RunawayRoomScene::ActionResult Scene6190::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 413: // Collect the bank stamp after searching the desk.
 		_town.bankStampTaken = 1;
-		_inventory.add(32);
-		say(12, 1);
+		pickUp(32, 12, 1);
 		return kBackgroundChanged;
 	case 400: // First visit: inspect the damage from the locomotive.
 		say(0);

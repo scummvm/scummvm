@@ -636,8 +636,7 @@ RunawayRoomScene::ActionResult Scene7020::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 430: // Pick up the rope for the splint.
 		_hopi.rope = 2;
-		_inventory.add(12);
-		say(14, 4);
+		pickUp(12, 14, 4);
 		return kBackgroundChanged;
 	case 431: // Tell Gina to keep still while Brian makes the splint.
 		say(16, 1);

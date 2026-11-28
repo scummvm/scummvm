@@ -162,8 +162,7 @@ RunawayRoomScene::ActionResult Scene6226::dispatchCustomSceneAction(uint16 actio
 	case 410: // Put the sanding block in Brian's inventory.
 		_facing = 4;
 		_town.sandingBlock = kTaken;
-		_inventory.add(30);
-		say(26, 1);
+		pickUp(30, 26, 1);
 		return kBackgroundChanged;
 	default:
 		return kUnhandled;

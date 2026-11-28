@@ -163,8 +163,7 @@ RunawayRoomScene::ActionResult Scene6260::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 410: // Collect the sheriff's key.
 		_town.locomotiveKey = 3;
-		_inventory.add(9);
-		say(9);
+		pickUp(9, 9);
 		return kBackgroundChanged;
 	case 313: // Fill the tank, one oil can at a time.
 		if (!_inventory.town().oilCanFull) {

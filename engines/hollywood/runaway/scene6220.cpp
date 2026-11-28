@@ -240,8 +240,7 @@ RunawayRoomScene::ActionResult Scene6220::dispatchCustomSceneAction(uint16 actio
 	case 1417: // Collect the cut strap.
 		_town.strapSeen = 2;
 		_inventory.select(0);
-		_inventory.add(11);
-		say(11, 1);
+		pickUp(11, 11, 1);
 		break;
 	case 400: // First arrival in Douglasville.
 		say(0);

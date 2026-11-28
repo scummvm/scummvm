@@ -111,7 +111,7 @@ void RunawayRoomScene::chooseDialogue(uint choice) {
 }
 
 void RunawayRoomScene::updateConversation() {
-	if (!_conversation || _roomAction || speaking() || !_choices.empty()) {
+	if (!_conversation || _roomAction || speaking() || presentingPickup() || !_choices.empty()) {
 		return;
 	}
 	if (_dialogueIntro) {

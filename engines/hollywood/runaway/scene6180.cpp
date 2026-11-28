@@ -209,8 +209,7 @@ RunawayRoomScene::ActionResult Scene6180::dispatchCustomSceneAction(uint16 actio
 	case 411: // Pick up the number-ten wrench for Joshua.
 		_facing = 4;
 		_town.wrenchFound = 2;
-		_inventory.add(10);
-		say(0, 4);
+		pickUp(10, 0, 4);
 		return kBackgroundChanged;
 	case 414: // Look both ways for the wrench thrown out of the saloon.
 		beginHeadMovement(415, RunawayHeadMovement::kLeft, 1);

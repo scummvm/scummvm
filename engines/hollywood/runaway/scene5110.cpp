@@ -157,9 +157,8 @@ RunawayRoomScene::ActionResult Scene5110::dispatchCustomSceneAction(uint16 actio
 				dispatchCustomSceneAction(311);
 			}
 			say(11);
-			_inventory.add(7);
+			pickUp(7, 11, 1);
 			_desert.screwTaken = 1;
-			say(11, 1);
 		}
 		break;
 	case 316: // Use the screw with the barrel.
@@ -210,8 +209,7 @@ RunawayRoomScene::ActionResult Scene5110::dispatchCustomSceneAction(uint16 actio
 		deferDesertAction(419);
 		return kBackgroundChanged;
 	case 419: // Inspect the peanuts before putting them in the inventory.
-		_inventory.add(18);
-		say(18, 2);
+		pickUp(18, 18, 2);
 		break;
 	case 320: // Look at the bucket beneath the barrel.
 		say(19, _desert.bucket != 1);
@@ -222,8 +220,7 @@ RunawayRoomScene::ActionResult Scene5110::dispatchCustomSceneAction(uint16 actio
 		} else {
 			_desert.bucket = 3;
 			items.bucket = 1;
-			_inventory.add(25);
-			say(20, 1);
+			pickUp(25, 20, 1);
 			return kBackgroundChanged;
 		}
 		break;

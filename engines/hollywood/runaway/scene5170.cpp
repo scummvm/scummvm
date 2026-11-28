@@ -205,17 +205,15 @@ RunawayRoomScene::ActionResult Scene5170::dispatchCustomSceneAction(uint16 actio
 	case 306: // Take lipstick from the shelf.
 		if (_desert.lipstickShelf < 2) {
 			say(5);
-			_inventory.add(10);
+			pickUp(10, 5, 1);
 			_desert.lipstickShelf = 2;
-			say(5, 1);
 		} else if (_desert.lipstickShelf == 2) {
 			if (!_inventory.desert().lipstick) {
 				say(5, 2);
 			} else {
 				say(5, 3);
-				_inventory.add(11);
+				pickUp(11, 5, 4);
 				_desert.lipstickShelf = 3;
-				say(5, 4);
 			}
 		} else {
 			say(5, 5);
@@ -253,21 +251,19 @@ RunawayRoomScene::ActionResult Scene5170::dispatchCustomSceneAction(uint16 actio
 			say(9, 2);
 		} else {
 			say(9);
-			_inventory.add(26);
 			_desert.keyTaken = 1;
 			if (_desert.fridgeSeen) {
-				say(9, 1);
+				pickUp(26, 9, 0xff, false, 1);
 			} else {
-				say(18, _random.getRandomNumber(2), true);
+				pickUp(26, 18, _random.getRandomNumber(2), true);
 			}
 			walkTo(Common::Point(340, 511), 3, true);
 		}
 		break;
 	case 312: // Take the sunglasses.
 		say(11);
-		_inventory.add(20);
+		pickUp(20, 11, 1);
 		_desert.glassesTaken = 1;
-		say(11, 1);
 		return kBackgroundChanged;
 	case 313: // Look at the object under the bed.
 		say(12, _desert.vacuum != 0);
@@ -279,9 +275,8 @@ RunawayRoomScene::ActionResult Scene5170::dispatchCustomSceneAction(uint16 actio
 		if (!_desert.vacuum) {
 			say(12);
 		}
-		_inventory.add(22);
+		pickUp(22, 13);
 		_desert.vacuum = 2;
-		say(13);
 		return kBackgroundChanged;
 	case 315: // Look at the necklaces.
 		say(14, _desert.necklacesSeen);

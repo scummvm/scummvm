@@ -160,8 +160,7 @@ RunawayRoomScene::ActionResult Scene6200::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 407: // Collect the firewood.
 		_town.firewoodTaken = 1;
-		_inventory.add(14);
-		say(5, 1);
+		pickUp(14, 5, 1);
 		return kBackgroundChanged;
 	case 314: // Unlock the cell.
 		if (_town.cellOpen) {

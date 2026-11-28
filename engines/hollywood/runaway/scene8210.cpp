@@ -132,8 +132,7 @@ RunawayRoomScene::ActionResult Scene8210::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 1411: // Take the scalpel only after discovering the hard pods.
 		if (_finale.scalpelNeeded && !_inventory.contains(19)) {
-			_inventory.add(19);
-			say(3, 5);
+			pickUp(19, 3, 5);
 		} else {
 			say(3, 2);
 			holdRoomAnimation(412, 4, 28, 16);

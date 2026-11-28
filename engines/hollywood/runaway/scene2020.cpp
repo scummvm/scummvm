@@ -411,23 +411,19 @@ RunawayRoomScene::ActionResult Scene2020::dispatchCustomSceneAction(uint16 actio
 		return kHandled;
 	case 305: // Take the glass.
 		_hospital.glassTaken = 1;
-		_inventory.add(13);
-		say(62, 0, true);
+		pickUp(13, 62, 0, true);
 		return kBackgroundChanged;
 	case 307: // Take the sleeping pills.
 		_hospital.pillsTaken = 1;
-		_inventory.add(8);
-		say(57, 0, true);
+		pickUp(8, 57, 0, true);
 		return kBackgroundChanged;
 	case 309: // Take the sheet.
 		_hospital.sheetTaken = 1;
-		_inventory.add(7);
-		say(18, _random.getRandomNumber(2), true);
+		pickUp(7, 18, _random.getRandomNumber(2), true);
 		return kBackgroundChanged;
 	case 313: // Take Gina's bag.
 		_hospital.bagTaken = 1;
-		_inventory.add(5);
-		say(9, 1);
+		pickUp(5, 9, 1);
 		return kBackgroundChanged;
 	case 330: // Read the emergency exit map.
 		if (!_hospital.exitMapRead) {
@@ -845,8 +841,7 @@ void Scene2020::finishCustomAnimation(uint16 action) {
 	case 339: // Finish replacing Gina's chart.
 		_hospital.chartReplaced = 1;
 		_inventory.remove(16);
-		_inventory.add(6);
-		say(35);
+		pickUp(6, 35);
 		break;
 	case 351: // Return from peeking through the hallway door.
 		walkTo(Common::Point(313, 532), 4, true);

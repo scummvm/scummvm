@@ -81,6 +81,10 @@ public:
 	void select(byte item) { _selected = contains(item) ? item : 0; }
 	bool isPlan(byte item) const { return _chapter == 3 && item == 23; }
 	byte takeNewItem() { const byte item = _newItem; _newItem = 0; return item; }
+	void beginPickup(byte item, uint16 effect = 0);
+	bool pickingUp() const { return _pickupItem != 0; }
+	uint16 pickupEffect() const { return _pickupEffect; }
+	void finishPickup() { _pickupItem = 0; _pickupEffect = 0; }
 	Common::U32String name(byte item) const;
 	Common::U32String combinationCaption(byte item, byte target) const;
 	static Reply randomReply(Common::RandomSource &random, bool museumDemo = false);
@@ -144,6 +148,8 @@ private:
 	RunawaySaveState::FinaleItems _finale;
 	Common::Array<byte> _items;
 	byte _selected = 0, _newItem = 0, _clothState = 0;
+	byte _pickupItem = 0;
+	uint16 _pickupEffect = 0;
 	byte _water = 0;
 	byte _markerInk = 0, _syringeFilled = 0, _chartWritten = 0, _headWig = 0;
 	Common::Array<HandlingStep> _handlingSteps;

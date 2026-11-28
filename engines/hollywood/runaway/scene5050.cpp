@@ -151,8 +151,7 @@ RunawayRoomScene::ActionResult Scene5050::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 304: // Take the helmet.
 		_desert.helmetTaken = 1;
-		_inventory.add(6);
-		say(3);
+		pickUp(6, 3);
 		return kBackgroundChanged;
 	case 305: // Look at the ammunition belt.
 		say(4, _desert.beltSeen != 0);
@@ -160,8 +159,7 @@ RunawayRoomScene::ActionResult Scene5050::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 306: // Take the ammunition belt.
 		_desert.beltTaken = 1;
-		_inventory.add(14);
-		say(5);
+		pickUp(14, 5);
 		return kBackgroundChanged;
 	case 307: // Look at the machine gun.
 		say(6, _desert.gun);

@@ -207,8 +207,7 @@ RunawayRoomScene::ActionResult Scene6090::dispatchCustomSceneAction(uint16 actio
 		break;
 	case 413: // Collect the clay vessel.
 		_town.vessel = 2;
-		_inventory.add(31);
-		say(11, 1);
+		pickUp(31, 11, 1);
 		return kBackgroundChanged;
 	case 314: // Oscar chews tobacco; he does not smoke the untreated leaves.
 		_oscar.setTalking(true);

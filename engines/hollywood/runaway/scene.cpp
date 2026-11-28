@@ -568,10 +568,51 @@ void RunawayRoomScene::click(Common::Point mouse, RunawayVerb verb, byte item) {
 }
 
 void RunawayRoomScene::showLine() {
+	while (_lineIndex < _lines.size() && _lines[_lineIndex].pickup && !_lines[_lineIndex].animatePickup) {
+		_inventory.add(_lines[_lineIndex].pickup, false);
+		++_lineIndex;
+	}
+	if (_lineIndex == _lines.size()) {
+		_lines.clear();
+		_lineIndex = 0;
+		_caption.clear();
+		return;
+	}
 	const SpeechLine &line = _lines[_lineIndex];
-	_speech.start(line.text, line.sample, line.global, _now, line.color);
+	if (line.pickup)
+		_inventory.beginPickup(line.pickup, line.pickupEffect);
+	else
+		_speech.start(line.text, line.sample, line.global, _now, line.color);
 	_idleHead.reset(_now);
 	_idleBody.reset(_now);
+}
+
+void RunawayRoomScene::pickUp(byte item, uint16 cue, byte variation, bool global, byte before, uint16 effect) {
+	const uint firstLine = _lines.size();
+	if (before != 0xff)
+		say(cue, before, global);
+	if (!_inventory.contains(item)) {
+		SpeechLine line;
+		line.inventory = true;
+		line.pickup = item;
+		line.pickupEffect = effect;
+		_lines.push_back(line);
+		if (_lineIndex == _lines.size() - 1)
+			showLine();
+	}
+	if (cue != 0xffff && variation != 0xff)
+		say(cue, variation, global);
+	for (uint i = firstLine; i < _lines.size(); ++i)
+		_lines[i].inventory = true;
+}
+
+void RunawayRoomScene::addInventoryItem(byte item) {
+	SpeechLine line;
+	line.pickup = item;
+	line.animatePickup = false;
+	_lines.push_back(line);
+	if (_lineIndex == _lines.size() - 1)
+		showLine();
 }
 
 void RunawayRoomScene::say(uint16 cue, byte variation, bool global, byte speaker, byte color) {
@@ -605,7 +646,7 @@ void RunawayRoomScene::say(const SceneTextStore &text, const SceneSpeechCue &spe
 		if (!line.text.empty())
 			_lines.push_back(line);
 	}
-	if (!speaking() && _lineIndex < _lines.size())
+	if (!speaking() && !_inventory.pickingUp() && _lineIndex < _lines.size())
 		showLine();
 }
 
@@ -650,6 +691,10 @@ void RunawayRoomScene::skipSpeech() {
 	if (!speaking())
 		return;
 	_speech.stop();
+	advanceLine();
+}
+
+void RunawayRoomScene::advanceLine() {
 	if (++_lineIndex < _lines.size()) {
 		showLine();
 	} else {
@@ -964,7 +1009,13 @@ void RunawayRoomScene::update(uint32 now, int scrollDirection, bool inventoryOpe
 	}
 	if (speaking() && _speech.finished(now))
 		skipSpeech();
+	if (_lineIndex < _lines.size() && _lines[_lineIndex].pickup && !_inventory.pickingUp())
+		advanceLine();
 	updateAmbientMusic();
+	if (presentingPickup()) {
+		_actionStarted = now;
+		return;
+	}
 	if (_inventory.handling()) {
 		const RunawayInventory::Reply line = _inventory.updateHandling(now, _audio, speaking());
 		if (line.closeup || line.stage) {
@@ -1014,7 +1065,7 @@ void RunawayRoomScene::updateGameplay(uint32 delta) {
 		return;
 	}
 	updateRoomAnimation();
-	if (_sequence.active() || _transition.scene) {
+	if (_sequence.active() || _transition.scene || presentingPickup()) {
 		return;
 	}
 	updateConversation();
@@ -1023,7 +1074,7 @@ void RunawayRoomScene::updateGameplay(uint32 delta) {
 		_roomAction = 0;
 		execute(action);
 	}
-	if (_hospitalExit.scene && !speaking() && !_roomAction && !_walkPath.active()) {
+	if (_hospitalExit.scene && !speaking() && !presentingPickup() && !_roomAction && !_walkPath.active()) {
 		_transition = _hospitalExit;
 	}
 }
@@ -1064,7 +1115,7 @@ void RunawayRoomScene::leaveRoom(uint16 scene) {
 }
 
 void RunawayRoomScene::updateActor(uint elapsed, int scrollDirection, bool inventoryOpen) {
-	if (inventoryOpen)
+	if (inventoryOpen || presentingPickup())
 		return;
 	if (!shouldUpdateActor()) {
 		_idleHead.reset(_now);

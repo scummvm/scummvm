@@ -356,8 +356,7 @@ RunawayRoomScene::ActionResult Scene4060::dispatchCustomSceneAction(uint16 actio
 			} else {
 				_coffeeTaken = true;
 				say(7, 2);
-				_inventory.add(19);
-				say(114, 0, true);
+				pickUp(19, 114, 0, true);
 			}
 			return kHandled;
 		case 317: // Look at the security door.
@@ -482,8 +481,7 @@ RunawayRoomScene::ActionResult Scene4060::dispatchCustomSceneAction(uint16 actio
 		return kHandled;
 	}
 	_coffeeTaken = true;
-	_inventory.add(19);
-	say(6);
+	pickUp(19, 6);
 	say(6, 1);
 	return kHandled;
 }
@@ -530,8 +528,7 @@ void Scene4060::finishCustomAnimation(uint16 action) {
 		break;
 	case 313: // Collect the demo's coffee package after examining the basket.
 		_coffeeTaken = true;
-		_inventory.add(19);
-		say(6, 1);
+		pickUp(19, 6, 1);
 		break;
 	case 316: // Enter the restoration laboratory after opening the door.
 		leaveMuseumRoom(4050, Common::Point(382, 529), 3, true);
@@ -652,8 +649,7 @@ void Scene4060::finishCustomAnimation(uint16 action) {
 		break;
 	case 322: // Collect the cup of coffee.
 		_museum.coffeeMachine = 2;
-		_inventory.add(15);
-		say(12, 2);
+		pickUp(15, 12, 2);
 		break;
 	case 325: // Start the telephone conversation.
 		startMuseumFilm(kPhoneFilm);
