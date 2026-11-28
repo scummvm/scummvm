@@ -584,11 +584,36 @@ bool NGIEngine::doSetScene(const Entrance &entrance) {
 		scene->_commonQueueScene = common == scene ? nullptr : common;
 		for (const PicAniInfo &ref : scene->_roamingObjects) {
 			Scene *source = findScene(ref.sceneId);
-			AniObject *actor = source ? source->findAniObjectById(ref.objectId, ref.copyId) : nullptr;
+			if (!source)
+				return false;
+			AniObject *actor = nullptr;
+			for (AniObject *owned : source->_aniObjects) {
+				if (owned->_id == ref.objectId && owned->_copyId == ref.copyId)
+					actor = owned;
+			}
+			if (!actor && ref.copyId) {
+				AniObject *original = source->findAniObjectById(ref.objectId, 0);
+				if (original) {
+					actor = new AniObject(original);
+					source->addAni(actor, false);
+					actor->_copyId = ref.copyId;
+				}
+			}
 			if (!actor)
 				return false;
 			if (!scene->findAniObjectById(ref.objectId, ref.copyId))
 				scene->_renderableAnis.push_back(actor);
+			if (ref.staticsId)
+				actor->_statics = actor->getStatic(ref.staticsId);
+			actor->setPos(ref.ox == -1 ? actor->_x : ref.ox, ref.oy == -1 ? actor->_y : ref.oy);
+			if (ref.priority != -1)
+				actor->_z = ref.priority;
+			if (ref.objectFlags != -1) {
+				actor->_objectFlags = ref.objectFlags;
+				actor->_flags = (actor->_flags & ~4) | ((ref.objectFlags & 1) << 2);
+			}
+			if (ref.flags != -1)
+				actor->_flags = (actor->_flags & ~8) | (ref.flags ? 8 : 0);
 		}
 		_aniMan = scene->findAniObjectById(scene->_heroId, 0);
 		_aniMan2 = _aniMan;

@@ -380,6 +380,12 @@ private:
 				KEY_END()
 			KEY_END()
 			XML_KEY(ADDANI)
+				XML_PROP(static, false)
+				XML_PROP(x, false)
+				XML_PROP(y, false)
+				XML_PROP(z, false)
+				XML_PROP(flags, false)
+				XML_PROP(mirror, false)
 				XML_PROP(id, true)
 				XML_PROP(scene, true)
 				XML_PROP(copy, false)
@@ -472,6 +478,7 @@ private:
 				XML_PROP(locale, false)
 				XML_PROP(static, false)
 				XML_KEY(STATICS)
+					XML_PROP(delayRelative, false)
 					XML_PROP(id, true)
 					XML_PROP(title, false)
 					XML_PROP(x, false)
@@ -537,6 +544,13 @@ private:
 		if (!readId(node->values["id"], ref.objectId) || !readId(node->values["scene"], ref.sceneId))
 			return parserError("Unknown roaming animation or scene");
 		ref.copyId = atoi(node->values.getValOrDefault("copy").c_str());
+		ref.ox = atoi(node->values.getValOrDefault("x", "-1").c_str());
+		ref.oy = atoi(node->values.getValOrDefault("y", "-1").c_str());
+		ref.priority = atoi(node->values.getValOrDefault("z", "-1").c_str());
+		ref.objectFlags = atoi(node->values.getValOrDefault("flags", "-1").c_str());
+		ref.flags = node->values.contains("mirror") ? boolProperty(*node, "mirror") : -1;
+		if (node->values.contains("static") && !readId(node->values["static"], ref.staticsId))
+			return parserError("Unknown roaming static");
 		_scene._roamingObjects.push_back(ref);
 		return true;
 	}
@@ -853,6 +867,7 @@ private:
 		if (!readId(node->values["id"], pose->_staticsId))
 			return parserError("Unknown statics ID '" + node->values["id"] + "'");
 
+		pose->_delayRelative = intProperty(*node, "delayRelative");
 		pose->_staticsName = node->values.getValOrDefault("title");
 		// AniObject subtracts the anchor when drawing a pose. XML stores the texture offset.
 		pose->_someX = -strtod(node->values.getValOrDefault("x").c_str(), nullptr);
