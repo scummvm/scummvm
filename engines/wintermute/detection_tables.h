@@ -712,6 +712,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed12", "HD",
 		WME_ENTRY1s("data.dcp", "edc1e69dc52ec2a65fa431a51c783c2e", 944403699), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
+	// Carol Reed 12 - Profound Red (HD) (MDNA Games) (Wildtangent) trac #17415
+	WME_WINENTRY("carolreed12", "HD",
+		WME_ENTRY1s("data.dcp", "3b28d59b061e82d13d69194bafba0f6e", 944333700), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Carol Reed 12 - Profound Red (SD) (MDNA Games)
 	WME_WINENTRY("carolreed12", "SD",
 		WME_ENTRY1s("data.dcp", "84d296ab65b89e87f6d56accb9360f19", 627095895), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
