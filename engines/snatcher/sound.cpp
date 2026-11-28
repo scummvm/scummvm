@@ -57,6 +57,7 @@ bool SoundEngine::init(Audio::Mixer *mixer) {
 }
 
 void SoundEngine::cdaPlay(int track) {
+	track -= 1;
 	if (!_dev->cdaPlay(track)) {
 		::GUI::displayErrorDialog(Common::U32String::format(errMsg[3], track));
 		error(errMsg[3], track);

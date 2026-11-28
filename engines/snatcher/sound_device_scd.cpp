@@ -1773,7 +1773,7 @@ bool SegaSoundDevice::cdaPlay(int track, uint32 bcdTime) {
 	if (bcdTime != 0)
 		frm = Util::decodeBCDTimeStamp(bcdTime, Util::kBCD_MMSSFR) / (1000 / 75);
 
-	if (!g_system->getAudioCDManager()->play(track - 1, 1, frm, 0)) {
+	if (!g_system->getAudioCDManager()->play(track, 1, frm, 0)) {
 		_lastTrack = -1;
 		return false;
 	}
@@ -1884,7 +1884,7 @@ void SegaSoundDevice::pause(bool toggle) {
 	} else {
 		if (_pauseStartTime != 0) {
 			if (_lastTrack != -1)
-				g_system->getAudioCDManager()->play(_lastTrack - 1, 1, (_pauseStartTime - _musicStartTime) / (1000 / 75), 0);
+				g_system->getAudioCDManager()->play(_lastTrack, 1, (_pauseStartTime - _musicStartTime) / (1000 / 75), 0);
 			int pauseDuration = g_system->getMillis() - _pauseStartTime;
 			_musicStartTime += (pauseDuration - (pauseDuration % (1000 / 75)));
 			_pauseStartTime = 0;
