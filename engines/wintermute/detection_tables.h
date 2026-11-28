@@ -680,6 +680,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed11", "HD/1.1",
 		WME_ENTRY1s("data.dcp", "7ca1e654e293cb84312a56c6be4ada24", 853204303), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
+	// Carol Reed 11 - Shades Of Black (HD) (MDNA Games) (Wildtangent) trac #17415
+	WME_WINENTRY("carolreed11", "HD",
+		WME_ENTRY1s("data.dcp", "9e6e31ffe94cd0049f0cc6dd6c369a71", 853204303), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Carol Reed 11 - Shades Of Black (SD) (MDNA Games) (v1.1)
 	WME_WINENTRY("carolreed11", "SD/1.1",
 		WME_ENTRY1s("data.dcp", "47ab078a83a1ccc76a6446b2e8055857", 525450074), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
