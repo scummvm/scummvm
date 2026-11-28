@@ -19,10 +19,10 @@
  *
  */
 
-#ifndef WAYNESWORLD_OBJECTIDS_H
-#define WAYNESWORLD_OBJECTIDS_H
+#ifndef WW_OBJECTIDS_H
+#define WW_OBJECTIDS_H
 
-namespace WaynesWorld {
+namespace WW {
 
 enum {
 	kObjectIdNa = 0,
@@ -431,6 +431,6 @@ enum {
 	kObjectIdExit = 403
 };
 
-} // End of namespace WaynesWorld
+} // End of namespace WW
 
-#endif // WAYNESWORLD_OBJECTIDS_H
+#endif // WW_OBJECTIDS_H

@@ -19,7 +19,8 @@
  *
  */
 
-#include "waynesworld/waynesworld.h"
+#include "ww/detection.h"
+#include "ww/ww.h"
 
 #include "engines/advancedDetector.h"
 
@@ -27,9 +28,7 @@
 #include "common/system.h"
 #include "common/translation.h"
 
-#include "waynesworld/detection.h"
-
-namespace WaynesWorld {
+namespace WW {
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_ORIGINAL_SAVELOAD,
@@ -46,25 +45,32 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-} // namespace WaynesWorld
+uint32 WWEngine::getFeatures() const {
+	return _gameDescription->desc.flags;
+}
 
-class WaynesWorldMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
+int WWEngine::getGameId() const {
+	return _gameDescription->gameID;
+}
+} // namespace WW
+
+class WWMetaEngine : public AdvancedMetaEngine<WW::WWGameDescription> {
 public:
 	const char *getName() const override {
-		return "waynesworld";
+		return "ww";
 	}
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
-		return WaynesWorld::optionsList;
+		return WW::optionsList;
 	}
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const WW::WWGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	int getMaximumSaveSlot() const override { return 99; }
 };
 
-bool WaynesWorldMetaEngine::hasFeature(MetaEngineFeature f) const {
+bool WWMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return (f == kSupportsListSaves) ||
 		   (f == kSupportsLoadingDuringStartup) ||
 		   (f == kSavesSupportMetaInfo) ||
@@ -73,12 +79,13 @@ bool WaynesWorldMetaEngine::hasFeature(MetaEngineFeature f) const {
 		   (f == kSavesSupportPlayTime);
 }
 
-Common::Error WaynesWorldMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new WaynesWorld::WaynesWorldEngine(syst,desc);
+Common::Error WWMetaEngine::createInstance(OSystem *syst, Engine **engine, const WW::WWGameDescription *desc) const {
+	*engine = new WW::WWEngine(syst, desc);
+
 	return Common::kNoError;
 }
 
-SaveStateList WaynesWorldMetaEngine::listSaves(const char *target) const {
+SaveStateList WWMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	const Common::String pattern = "ww##.sav";
 	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
@@ -93,7 +100,7 @@ SaveStateList WaynesWorldMetaEngine::listSaves(const char *target) const {
 
 			Common::InSaveFile *file = saveFileMan->openForLoading(filename);
 			if (file) {
-				WaynesWorld::SavegameHeader header;
+				WW::SavegameHeader header;
 
 				// Check to see if it's a ScummVM savegame or an original format savegame
 				char buffer[kWWSavegameStrSize + 1];
@@ -103,9 +110,9 @@ SaveStateList WaynesWorldMetaEngine::listSaves(const char *target) const {
 					file->seek(1135);
 					file->read(buffer, kWWSavegameStrSize + 1);
 
-					if (!strncmp(buffer, WaynesWorld::savegameStr, kWWSavegameStrSize + 1)) {
+					if (!strncmp(buffer, WW::savegameStr, kWWSavegameStrSize + 1)) {
 						// Valid savegame
-						if (WaynesWorld::WaynesWorldEngine::readSavegameHeader(file, header)) {
+						if (WW::WWEngine::readSavegameHeader(file, header)) {
 							saveList.push_back(SaveStateDescriptor(this, slotNum, header.saveName));
 						}
 					} else {
@@ -122,12 +129,12 @@ SaveStateList WaynesWorldMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-SaveStateDescriptor WaynesWorldMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor WWMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("ww%02d.sav", slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
 
 	if (f) {
-		WaynesWorld::SavegameHeader header;
+		WW::SavegameHeader header;
 
 		// Check to see if it's a ScummVM savegame or not
 		char buffer[kWWSavegameStrSize + 1];
@@ -138,8 +145,8 @@ SaveStateDescriptor WaynesWorldMetaEngine::querySaveMetaInfos(const char *target
 			f->read(buffer, kWWSavegameStrSize + 1);
 		}
 
-		bool hasHeader = !strncmp(buffer, WaynesWorld::savegameStr, kWWSavegameStrSize + 1) &&
-						 WaynesWorld::WaynesWorldEngine::readSavegameHeader(f, header, false);
+		bool hasHeader = !strncmp(buffer, WW::savegameStr, kWWSavegameStrSize + 1) &&
+						 WW::WWEngine::readSavegameHeader(f, header, false);
 		delete f;
 
 		if (!hasHeader) {
@@ -164,8 +171,8 @@ SaveStateDescriptor WaynesWorldMetaEngine::querySaveMetaInfos(const char *target
 	return SaveStateDescriptor();
 }
 
-#if PLUGIN_ENABLED_DYNAMIC(WAYNESWORLD)
-	REGISTER_PLUGIN_DYNAMIC(WAYNESWORLD, PLUGIN_TYPE_ENGINE, WaynesWorldMetaEngine);
+#if PLUGIN_ENABLED_DYNAMIC(WW)
+	REGISTER_PLUGIN_DYNAMIC(WW, PLUGIN_TYPE_ENGINE, WWMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(WAYNESWORLD, PLUGIN_TYPE_ENGINE, WaynesWorldMetaEngine);
+	REGISTER_PLUGIN_STATIC(WW, PLUGIN_TYPE_ENGINE, WWMetaEngine);
 #endif

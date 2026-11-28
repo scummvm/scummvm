@@ -19,43 +19,43 @@
  *
  */
 
-#include "base/plugins.h"
+#include "ww/detection_tables.h"
+#include "ww/detection.h"
 
+#include "base/plugins.h"
 #include "engines/advancedDetector.h"
 
-static const PlainGameDescriptor waynesworldGames[] = {
+static const PlainGameDescriptor WWGames[] = {
 	{ "waynesworld", "Wayne's World" },
+	{"darkhalf", "The Dark Half"},
 	{ nullptr, nullptr }
 };
 
-#include "waynesworld/detection_tables.h"
-#include "waynesworld/detection.h"
-
 static const DebugChannelDef debugFlagList[] = {
-	{ WaynesWorld::kDebugLogic, "logic", "Logic debug level" },
-	{ WaynesWorld::kDebugMessages, "messages", "Messages debug level" },
-	{ WaynesWorld::kDebugCore, "core", "Core debug level" },
+	{ WW::kDebugLogic, "logic", "Logic debug level" },
+	{ WW::kDebugMessages, "messages", "Messages debug level" },
+	{ WW::kDebugCore, "core", "Core debug level" },
 	DEBUG_CHANNEL_END
 };
 
 static const char *const DIRECTORY_GLOBS[] = { "vnm", "m01", nullptr };
 
-class WaynesWorldMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
+class WWMetaEngineDetection : public AdvancedMetaEngineDetection<WW::WWGameDescription> {
 public:
-	WaynesWorldMetaEngineDetection() : AdvancedMetaEngineDetection(WaynesWorld::gameDescriptions, waynesworldGames) {
+	WWMetaEngineDetection() : AdvancedMetaEngineDetection(WW::gameDescriptions, WWGames) {
 		_maxScanDepth = 3;
 		_directoryGlobs = DIRECTORY_GLOBS;
 		_flags = kADFlagMatchFullPaths;
 	}
 
-	~WaynesWorldMetaEngineDetection() override {}
+	~WWMetaEngineDetection() override {}
 
 	const char *getName() const override {
-		return "waynesworld";
+		return "ww";
 	}
 
 	const char *getEngineName() const override {
-		return "Wayne's World";
+		return "WW engine";
 	}
 
 	const char *getOriginalCopyright() const override {
@@ -67,4 +67,4 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(WAYNESWORLD_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, WaynesWorldMetaEngineDetection);
+REGISTER_PLUGIN_STATIC(WW_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, WWMetaEngineDetection);

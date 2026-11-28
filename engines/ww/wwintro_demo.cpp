@@ -19,16 +19,16 @@
  *
  */
 
-#include "waynesworld/wwintro.h"
-#include "waynesworld/waynesworld.h"
-#include "waynesworld/graphics.h"
-#include "waynesworld/gxlarchive.h"
+#include "ww/wwintro.h"
+#include "ww/ww.h"
+#include "ww/graphics.h"
+#include "ww/gxlarchive.h"
 
 #include "audio/audiostream.h"
 
-namespace WaynesWorld {
+namespace WW {
 
-WWIntro_demo1::WWIntro_demo1(WaynesWorldEngine *vm) : WWIntro(vm) {
+WWIntro_demo1::WWIntro_demo1(WWEngine *vm) : WWIntro(vm) {
 }
 
 WWIntro_demo1::~WWIntro_demo1() {
@@ -268,7 +268,7 @@ bool WWIntro_demo1::introPt3() {
 	wwEffect(1, 0);
 	_vm->paletteFadeIn(0, 256, 6);
 
-	_vm->playSound("theme1.snd", 0);
+	_vm->playSound("theme1.snd", false);
 
 	wwEffect(1, 1);
 	wwEffect(1, 2);
@@ -1234,4 +1234,4 @@ bool WWIntro_demo1::introPreviewRoom01() {
 	return true;
 }
 
-} // End of namespace WaynesWorld
+} // End of namespace WW

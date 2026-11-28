@@ -338,7 +338,7 @@ echo_n "Checking missing/extra POTFILES..."
 git grep -l "common/translation\.h" | grep -v devtools/create_engine | grep -v devtools/release-checks.sh | \
     grep -v devtools/generate-android-i18n-strings.py | grep -v engines/gob/detection/tables.h | \
     grep -v avfaudio-text-to-speech.mm | grep -v engines/m4/subtitles.cpp | \
-    grep -v testbed/metaengine.cpp | grep -v waynesworld/waynesworld.cpp| sort > $TMP
+    grep -v testbed/metaengine.cpp | grep -v ww/ww.cpp| sort > $TMP
 
 res=`diff -  $TMP <<< "$list"`
 

@@ -19,16 +19,16 @@
  *
  */
 
-#ifndef WAYNESWORLD_WWINTRO_H
-#define WAYNESWORLD_WWINTRO_H
+#ifndef WW_WWINTRO_H
+#define WW_WWINTRO_H
 
 #include "common/scummsys.h"
 
 #define MAX_SOUNDS 20
 
-namespace WaynesWorld {
+namespace WW {
 
-class WaynesWorldEngine;
+class WWEngine;
 class GxlArchive;
 class WWSurface;
 
@@ -39,10 +39,19 @@ struct Frame {
 	int delay;
 };
 
-class WWIntro {
+class Intro {
 protected:
-	WaynesWorldEngine *_vm;
+	WWEngine *_vm;
 
+public:
+	Intro(WWEngine *vm);
+	virtual ~Intro() {}
+
+	virtual void runIntro() = 0;
+};
+
+class WWIntro : public Intro {
+protected:
 	WWSurface *_outlineSurface = nullptr;
 	WWSurface *_logoSurface = nullptr;
 	WWSurface *_backg2Surface = nullptr;
@@ -59,10 +68,9 @@ protected:
 	int _oldGHead1Index = -1;
 
 public:
-	WWIntro(WaynesWorldEngine *vm);
-	virtual ~WWIntro() {}
+	WWIntro(WWEngine *vm);
+	virtual ~WWIntro() override {}
 
-	virtual void runIntro() = 0;
 	WWSurface *_demoPt2Surface = nullptr;
 
 protected:
@@ -97,7 +105,7 @@ private:
 
 class WWIntro_full : public WWIntro {
 public:
-	WWIntro_full(WaynesWorldEngine *vm);
+	WWIntro_full(WWEngine *vm);
 	~WWIntro_full() override;
 
 	void runIntro() override;
@@ -119,7 +127,7 @@ protected:
 
 class WWIntro_demo1 : public WWIntro {
 public:
-	WWIntro_demo1(WaynesWorldEngine *vm);
+	WWIntro_demo1(WWEngine *vm);
 	~WWIntro_demo1() override;
 
 	void runIntro() override;
@@ -152,6 +160,26 @@ protected:
 	bool introPt4_caller3() override;
 	bool introPt4_caller4() override;
 };
-} // End of namespace WaynesWorld
 
-#endif /* WAYNESWORLD_WWINTRO_H*/
+class DHIntro : public Intro {
+public:
+	DHIntro(WWEngine *vm);
+	virtual ~DHIntro() override {}
+
+	void runIntro() override;
+
+protected:
+	bool init();
+	bool introPt1();
+	bool introPt2();
+	bool introPt3();
+	bool introPt4();
+	bool introPt5();
+	bool introPt6();
+	bool intro_credits();
+	bool introPt8();
+	bool introPt9();
+};
+} // End of namespace WW
+
+#endif /* WW_WWINTRO_H*/

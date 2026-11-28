@@ -19,13 +19,13 @@
  *
  */
 
-#ifndef WAYNESWORLD_GRAPHICS_H
-#define WAYNESWORLD_GRAPHICS_H
+#ifndef WW_GRAPHICS_H
+#define WW_GRAPHICS_H
 
-#include "waynesworld/waynesworld.h"
+#include "ww/ww.h"
 #include "graphics/surface.h"
 
-namespace WaynesWorld {
+namespace WW {
 
 class WWSurface : public Graphics::Surface {
 public:
@@ -88,12 +88,15 @@ protected:
 
 class ScreenEffect {
 public:
-	ScreenEffect(WaynesWorldEngine *vm, Graphics::Surface *surface, int x, int y, int grainWidth, int grainHeight);
+	ScreenEffect(WWEngine *vm, Graphics::Surface *surface, int x, int y, int grainWidth, int grainHeight);
 
 	void drawSpiralEffect();
 	void drawRandomEffect();
+	void drawWeaveEffect();
+	void drawSlideEffect();
+
 protected:
-	WaynesWorldEngine *_vm;
+	WWEngine *_vm;
 	Graphics::Surface *_surface;
 	int _x, _y;
 	int _grainWidth, _grainHeight;
@@ -103,10 +106,11 @@ protected:
 	uint32 _totalSliceTicks = 0;
 	int _blocksPerSlice;
 	void drawBlock(int blockX, int blockY);
+	void drawBlockAt(int srcX, int srcY, int destX, int destY);
 	static uint getBitCount(int value);
 	uint getSeed(uint bitCount) const;
 };
 
-} // End of namespace WaynesWorld
+} // End of namespace WW
 
-#endif // WAYNESWORLD_GRAPHICS_H
+#endif // WW_GRAPHICS_H

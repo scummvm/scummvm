@@ -19,12 +19,12 @@
  *
  */
 
-#include "waynesworld/graphics.h"
+#include "ww/graphics.h"
 #include "common/file.h"
 #include "common/rect.h"
 #include "common/system.h"
 
-namespace WaynesWorld {
+namespace WW {
 
 void drawSurfaceIntern(Graphics::Surface *destSurface, const Graphics::Surface *surface, int x, int y, bool transparent) {
 	int skipX = 0, skipY = 0;
@@ -201,13 +201,13 @@ void GFTFont::drawWrappedText(Graphics::Surface *surface, const char *text, int 
 		if (textP > text && textP[-1] == 32)
 			lastSpaceP = textP - 1;
 		const int charWidth = getCharWidth(*textP);
-		if (lineWidth + charWidth > maxWidth) {
+		if (lineWidth + charWidth > maxWidth && textP > lineStartP) {
 			const char *lineEndP = lastSpaceP ? lastSpaceP : textP + 1;
+
 			for (const char *p = lineStartP; p < lineEndP; p++) {
 				x += drawChar(surface, (byte)*p, x, y, color);
 			}
-			lineStartP = lastSpaceP + 1;
-			textP = lastSpaceP + 1;
+			lineStartP = textP = lineEndP + 1;
 			lineWidth = 0;
 			x = textX;
 			y += _formHeight;
@@ -352,7 +352,7 @@ void Screen::saveScreenshot() {
 
 // ScreenEffect
 
-ScreenEffect::ScreenEffect(WaynesWorldEngine *vm, Graphics::Surface *surface, int x, int y, int grainWidth, int grainHeight)
+ScreenEffect::ScreenEffect(WWEngine *vm, Graphics::Surface *surface, int x, int y, int grainWidth, int grainHeight)
 	: _vm(vm), _surface(surface), _x(x), _y(y), _grainWidth(grainWidth), _grainHeight(grainHeight), _blockCtr(0) {
 	_blockCountW = _surface->w / _grainWidth + (_surface->w % _grainWidth > 0 ? 1 : 0);
 	_blockCountH = _surface->h / _grainHeight + (_surface->h % _grainHeight > 0 ? 1 : 0);
@@ -422,6 +422,67 @@ void ScreenEffect::drawRandomEffect() {
 	_vm->_screen->endUpdate();
 }
 
+void ScreenEffect::drawWeaveEffect() {
+	_totalSliceTicks = g_system->getMillis();
+	_vm->_screen->beginUpdate();
+
+	// Iterate through columns from 0 to the maximum width
+	for (int x = 0; x < _blockCountW; ++x) {
+		if (_vm->shouldQuit())
+			break;
+
+		for (int y = 0; y < _blockCountH; ++y) {
+			if (y % 2 != 0) {
+				// ODD ROWS: Display from Left to Right
+				drawBlock(x, y);
+			} else {
+				// EVEN ROWS: Display from Right to Left
+				int reverseX = (_blockCountW - 1) - x;
+				drawBlock(reverseX, y);
+			}
+		}
+	}
+
+	_vm->_screen->endUpdate();
+}
+
+void ScreenEffect::drawSlideEffect() {
+	_totalSliceTicks = g_system->getMillis();
+
+	// offsetY is how much of the image is still "hidden" below the screen
+	for (int offsetY = _blockCountH; offsetY >= 0; offsetY--) {
+		if (_vm->shouldQuit())
+			break;
+
+		_vm->_screen->beginUpdate();
+
+		for (int y = 0; y < _blockCountH; y++) {
+			// Calculate where this row of the image should appear on screen
+			int screenY = y - offsetY;
+
+			// Only draw if the row is actually visible on the screen
+			if (screenY >= 0 && screenY < _blockCountH) {
+				for (int x = 0; x < _blockCountW; x++) {
+					drawBlockAt(x, screenY, x, y);
+				}
+			}
+		}
+
+		_vm->_screen->endUpdate();
+
+		// Add delay
+		const uint32 currTicks = g_system->getMillis();
+
+		_totalSliceTicks += _timePerSlice;
+		if (currTicks < _totalSliceTicks) {
+			const uint32 waitTicks = _totalSliceTicks - currTicks;
+			_vm->waitMillis(waitTicks);
+		} else {
+			_vm->updateEvents();
+		}
+	}
+}
+
 void ScreenEffect::drawBlock(int blockX, int blockY) {
 	if (blockX < _blockCountW && blockY < _blockCountH) {
 		const int sourceLeft = blockX * _grainWidth;
@@ -450,6 +511,17 @@ void ScreenEffect::drawBlock(int blockX, int blockY) {
 	}
 }
 
+void ScreenEffect::drawBlockAt(int srcX, int srcY, int destX, int destY) {
+	const int sourceLeft = srcX * _grainWidth;
+	const int sourceTop = srcY * _grainHeight;
+	Common::Rect r(sourceLeft, sourceTop,
+				   MIN<int>(_surface->w, sourceLeft + _grainWidth),
+				   MIN<int>(_surface->h, sourceTop + _grainHeight));
+
+	Graphics::Surface blockSurface = _surface->getSubArea(r);
+	_vm->_screen->drawSurface(&blockSurface, _x + (destX * _grainWidth), _y + (destY * _grainHeight));
+}
+
 uint ScreenEffect::getBitCount(int value) {
 	int bitCount = 0;
 	while ((value >> bitCount) != 0) {
@@ -472,4 +544,4 @@ uint ScreenEffect::getSeed(uint bitCount) const {
 	}
 }
 
-} // End of namespace WaynesWorld
+} // End of namespace WW

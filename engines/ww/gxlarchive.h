@@ -19,17 +19,17 @@
  *
  */
 
-#ifndef WAYNESWORLD_GXLARCHIVE_H
-#define WAYNESWORLD_GXLARCHIVE_H
+#ifndef WW_GXLARCHIVE_H
+#define WW_GXLARCHIVE_H
 
 #include "common/archive.h"
-#include "waynesworld/gamelogic.h"
+#include "ww/gamelogic.h"
 
 namespace Common {
 class File;
 }
 
-namespace WaynesWorld {
+namespace WW {
 
 #define GXL_FILENAME_MAX 13
 
@@ -62,6 +62,6 @@ public:
 	WWSurface *loadSurface(const char *filename);
 };
 
-} // End of namespace WaynesWorld
+} // End of namespace WW
 
-#endif
+#endif // end of WW_GXLARCHIVE_H

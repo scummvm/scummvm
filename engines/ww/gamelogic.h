@@ -19,17 +19,17 @@
  *
  */
 
-#ifndef WAYNESWORLD_GAMELOGIC_H
-#define WAYNESWORLD_GAMELOGIC_H
+#ifndef WW_GAMELOGIC_H
+#define WW_GAMELOGIC_H
 
 #include "common/serializer.h"
-#include "waynesworld/waynesworld.h"
+#include "ww/ww.h"
 
-namespace WaynesWorld {
+namespace WW {
 
 class GameLogic {
 public:
-	GameLogic(WaynesWorldEngine *vm);
+	GameLogic(WWEngine *vm);
 	~GameLogic();
 	void initVariables();
 	int handleVerbPickUp();
@@ -122,7 +122,7 @@ public:
 
 	// protected:
 public://DEBUG So logic functions can be called from the engine class for testing
-	WaynesWorldEngine *_vm;
+	WWEngine *_vm;
 
 	void displayExtremeCloseupOfPizzathonList();
 	void displayExtremeCloseupOfSign15();
@@ -478,6 +478,6 @@ public://DEBUG So logic functions can be called from the engine class for testin
 	void closeQuitMenu();
 };
 
-} // End of namespace WaynesWorld
+} // End of namespace WW
 
-#endif // WAYNESWORLD_GAMELOGIC_H
+#endif // WW_GAMELOGIC_H

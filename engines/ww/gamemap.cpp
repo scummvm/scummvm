@@ -20,10 +20,10 @@
  */
 
 #include "gamelogic.h"
-#include "waynesworld/waynesworld.h"
-#include "waynesworld/graphics.h"
+#include "ww/ww.h"
+#include "ww/graphics.h"
 
-namespace WaynesWorld {
+namespace WW {
 
 struct MapItem9 {
 	int roomNumber;
@@ -91,7 +91,7 @@ static const MapItem17 kMapItem17s[] = {
 	{ "gil", 224, 106, 14, 195, 141, 229, 138 }
 };
 
-void WaynesWorldEngine::gameMapOpen() {
+void WWEngine::gameMapOpen() {
 	_gameMapRoomNumber = _currentRoomNumber;
 	_gameMapWayneSpriteX = _wayneSpriteX;
 	_gameMapGarthSpriteX = _garthSpriteX;
@@ -131,7 +131,7 @@ void WaynesWorldEngine::gameMapOpen() {
 	// sysMouseDriver(1);
 }
 
-void WaynesWorldEngine::gameMapFinish() {
+void WWEngine::gameMapFinish() {
 	_gameState = 0;
 	gameMapPaletteHandlerStop();
 	paletteFadeOut(0, 256, 16);
@@ -143,7 +143,7 @@ void WaynesWorldEngine::gameMapFinish() {
 	paletteFadeIn(0, 256, 16);
 }
 
-void WaynesWorldEngine::gameMapHandleMouseMove(int objectNumber) {
+void WWEngine::gameMapHandleMouseMove(int objectNumber) {
 	if (_hoverObjectNumber == objectNumber)
 		return;
 
@@ -192,7 +192,7 @@ void WaynesWorldEngine::gameMapHandleMouseMove(int objectNumber) {
 	}
 }
 
-void WaynesWorldEngine::gameMapHandleMouseClick() {
+void WWEngine::gameMapHandleMouseClick() {
 	bool isDone = false;
 
 	if (_hoverObjectNumber == 6) {
@@ -226,7 +226,7 @@ void WaynesWorldEngine::gameMapHandleMouseClick() {
 	}
 }
 
-void WaynesWorldEngine::gameMapSelectItem(const char *prefix, int animX, int animY) {
+void WWEngine::gameMapSelectItem(const char *prefix, int animX, int animY) {
 	// sysMouseDriver(2);
 	for (int frameNum = 0; frameNum < 12; frameNum++) {
 		Common::String filename = Common::String::format("%s_zm%d.pcx", prefix, frameNum);
@@ -241,16 +241,16 @@ void WaynesWorldEngine::gameMapSelectItem(const char *prefix, int animX, int ani
 	_gameMapFlag = true;
 }
 
-void WaynesWorldEngine::gameMapPaletteHandlerStart() {
+void WWEngine::gameMapPaletteHandlerStart() {
 	_gameMapHasPaletteHandler = true;
 	_gameMapCtr = 0;
 	// Original also sets a hook on INT 1Ch for a check 18.2 times a second
 }
 
-void WaynesWorldEngine::gameMapPaletteHandlerStop() {
+void WWEngine::gameMapPaletteHandlerStop() {
 	_gameMapHasPaletteHandler = false;
 	_gameMapCtr = 0;
 	// Original also restored the original INT 1Ch
 }
 
-} // End of namespace WaynesWorld
+} // End of namespace WW

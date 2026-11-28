@@ -19,18 +19,18 @@
  *
  */
 
-#include "waynesworld/gamelogic.h"
+#include "ww/gamelogic.h"
 
 #include "common/memstream.h"
-#include "waynesworld/detection.h"
-#include "waynesworld/graphics.h"
-#include "waynesworld/gxlarchive.h"
-#include "waynesworld/objectids.h"
+#include "ww/detection.h"
+#include "ww/graphics.h"
+#include "ww/gxlarchive.h"
+#include "ww/objectids.h"
 #include "common/savefile.h"
 #include "common/str.h"
 #include "graphics/cursorman.h"
 
-namespace WaynesWorld {
+namespace WW {
 
 static const int kMazeInfos[77][7] = {
 	{ -5, -1, 14, -1, 23, -1, -1 },
@@ -131,7 +131,7 @@ static const int kRoom37CorrectSafeCombination[] = { 3, 5, 4, 8, 1, 8 };
 
 // GameLogic
 
-GameLogic::GameLogic(WaynesWorldEngine *vm) : _vm(vm) {
+GameLogic::GameLogic(WWEngine *vm) : _vm(vm) {
 	initVariables();
 }
 
@@ -920,11 +920,17 @@ void GameLogic::handleRoomEvent(int eventNum) {
 		break;
 	case 24:
 		if (eventNum == 1) {
+			// Right ladder
 			r24_handleRoomEvent(92, 72, -43, 90, 38, 0);
 			_vm->drawActors(0, 1, 1, 0, 65, 136, 145, 136);
 		} else {
+			// Left ladder
 			r24_handleRoomEvent(203, 183, -43, 90, 38, 1);
-			_vm->drawActors(0, 1, 1, 0, 167, 136, 250, 136);
+			// Original bug fixed:
+			// The original uses x = 167 for Wayne, which makes him jump 9 pixels to the left
+			// at the end of the animation. 176 matches the last frame, as on the left ladder.
+			// It's likely the devs made a typo between 167 and 176.
+			_vm->drawActors(0, 1, 1, 0, 176, 136, 250, 136);
 		}
 		break;
 	case 28:
@@ -1139,7 +1145,7 @@ void GameLogic::displayExtremeCloseupOfPizzathonList() {
 	_vm->paletteFadeOut(0, 256, 16);
 	// sysMouseDriver(2);
 	_vm->drawImageToScreen(lib, "list.pcx", 0, 0);
-	_vm->playSound("sv14.snd", 1);
+	_vm->playSound("sv14.snd", true);
 	if (_pizzathonListFlags1 & 0x08) {
 		_vm->drawImageToScreen(lib, "adline.pcx", 72, 22);
 	}
@@ -1179,7 +1185,7 @@ void GameLogic::displayExtremeCloseupOfSign15() {
 	_vm->_gameState = 5;
 	// sysMouseDriver(2);
 	_vm->paletteFadeOut(0, 256, 16);
-	_vm->playSound("sv14.snd", 1);
+	_vm->playSound("sv14.snd", true);
 	_vm->drawRoomImageToScreen("sign.pcx", 0, 0);
 	_vm->paletteFadeIn(0, 256, 16);
 	// sysMouseDriver(1);
@@ -1190,7 +1196,7 @@ void GameLogic::displayExtremeCloseupOfObjectPictures22() {
 	_vm->_gameState = 5;
 	// sysMouseDriver(2);
 	_vm->paletteFadeOut(0, 256, 16);
-	_vm->playSound("sv14.snd", 1);
+	_vm->playSound("sv14.snd", true);
 	_vm->drawImageToScreen(_vm->_m05Gxl, "oldmap.pcx", 0, 0);
 	_vm->paletteFadeIn(0, 256, 16);
 	// sysMouseDriver(1);
@@ -1201,7 +1207,7 @@ void GameLogic::displayExtremeCloseupOfMemo() {
 	_vm->_gameState = 5;
 	// sysMouseDriver(2);
 	_vm->paletteFadeOut(0, 256, 16);
-	_vm->playSound("sv14.snd", 1);
+	_vm->playSound("sv14.snd", true);
 	_vm->drawImageToScreen(_vm->_m05Gxl, "memo.pcx", 0, 0);
 	_vm->paletteFadeIn(0, 256, 16);
 	// sysMouseDriver(1);
@@ -1212,7 +1218,7 @@ void GameLogic::displayExtremeCloseupOfSewerMap() {
 	_vm->_gameState = 5;
 	// sysMouseDriver(2);
 	_vm->paletteFadeOut(0, 256, 16);
-	_vm->playSound("sv14.snd", 1);
+	_vm->playSound("sv14.snd", true);
 	_vm->drawImageToScreen(_vm->_m05Gxl, "sewermap.pcx", 0, 0);
 	_vm->paletteFadeIn(0, 256, 16);
 	// sysMouseDriver(1);
@@ -1223,7 +1229,7 @@ void GameLogic::displayExtremeCloseupOfBillboard1() {
 	_vm->_gameState = 5;
 	// sysMouseDriver(2);
 	_vm->paletteFadeOut(0, 256, 16);
-	_vm->playSound("sv14.snd", 1);
+	_vm->playSound("sv14.snd", true);
 	_vm->_screen->clear(0);
 	_vm->drawImageToScreen(_vm->_m05Gxl, "fboard.pcx", 51, 18);
 	_vm->paletteFadeIn(0, 256, 16);
@@ -1235,7 +1241,7 @@ void GameLogic::displayExtremeCloseupOfBillboard2() {
 	_vm->_gameState = 5;
 	// sysMouseDriver(2);
 	_vm->paletteFadeOut(0, 256, 16);
-	_vm->playSound("sv14.snd", 1);
+	_vm->playSound("sv14.snd", true);
 	_vm->_screen->clear(0);
 	_vm->drawImageToScreen(_vm->_m05Gxl, "pboard.pcx", 51, 18);
 	_vm->paletteFadeIn(0, 256, 16);
@@ -1796,7 +1802,8 @@ void GameLogic::r1_refreshRoomBackground() {
 		} else if (_r1_flags1 & 0x10) {
 			_vm->drawRoomImageToBackground("emptycls.pcx", 179, 67);
 		}
-		if (_r1_flags2 & ((_r1_flags1 & 0x40) + 1) & 0x01) {
+		// The original was adding a "& (_r1_flags1 & 0x40) + 1" to the following test, which is basically a 1. Maybe a compiler glitch.
+		if (_r1_flags2 & 0x01) {
 			if (_r1_flags1 & 0x08) {
 				_vm->drawRoomImageToBackground("gadin10.pcx", 0, 78);
 			} else {
@@ -3301,7 +3308,7 @@ void GameLogic::r6_handleRoomEvent2() {
 
 void GameLogic::r6_handleRoomEvent3() {
 	_vm->waitSeconds(1);
-	_vm->playSound("ss10.snd", 1);
+	_vm->playSound("ss10.snd", true);
 	_vm->walkTo(110, 107, 4, 135, 107);
 	_vm->playAnimation("dad", 0, 3, 119, 79, 0, 100);
 	if ((_r6_flags & 0x40) && !(_r6_flags & 0x20)) {
@@ -4888,7 +4895,7 @@ void GameLogic::r11_pickUpExtensionCord() {
 void GameLogic::r11_useSuckCutWithFountain() {
 	r11_uninitRoomAnimations();
 	_vm->playAnimation("suckwt", 0, 5, 45, 92, 0, 200);
-	_vm->playSound("ss40.snd", 0);
+	_vm->playSound("ss40.snd", false);
 	for (int i = 5; i < 15; i++) {
 		_vm->playAnimation("elec", i - 5, 1, 176, 61, 0, 1);
 		_vm->playAnimation("suckwt", i, 1, 45, 92, 0, 150);
@@ -5754,13 +5761,13 @@ void GameLogic::r17_handleRoomEvent1() {
 
 void GameLogic::r17_handleRoomEvent2() {
 	_vm->walkTo(71, 117, 0, 90, 117);
-	_vm->playSound("ss13.snd", 0);
+	_vm->playSound("ss13.snd", false);
 	_vm->playAnimation("beam", 0, 13, 62, 51, 0, 150);
 	_vm->changeRoom(37);
 }
 
 void GameLogic::r17_handleRoomEvent3() {
-	_vm->playSound("ss13.snd", 0);
+	_vm->playSound("ss13.snd", false);
 	_vm->playAnimation("beam", 12, -13, 62, 51, 0, 150);
 	_r37_flags &= ~0x20;
 	_vm->setWaynePosition(71, 117);
@@ -6054,7 +6061,7 @@ void GameLogic::r20_refreshRoomBackground() {
 void GameLogic::r20_handleRoomEvent() {
 	_vm->waitSeconds(1);
 	_vm->playAnimation("expl", 0, 36, 40, 32, 0, 150);
-	_vm->playSound("ss17.snd", 0);
+	_vm->playSound("ss17.snd", false);
 	_vm->playAnimation("expl", 37, 66 - 37, 40, 32, 0, 150);
 	_r19_flags &= ~0x01;
 	_r19_flags |= 0x08;
@@ -6369,7 +6376,7 @@ void GameLogic::r24_handleRoomEvent(int wayneLadderX, int wayneX, int wayneLadde
 		} else {
 			workBackground->drawSurfaceTransparent(getladSprites[40 - climbCtr], wayneX, ladderBottomY);
 		}
-		workBackground->drawSurfaceTransparent(ceilingSprite, ceilingX, 0);
+		workBackground->drawSurface(ceilingSprite, ceilingX, 0);
 		_vm->_screen->drawSurface(workBackground, 0, 0);
 		_vm->waitMillis(200);
 		climbCtr++;
@@ -6554,9 +6561,9 @@ void GameLogic::r28_handleRoomEvent1() {
 		_vm->refreshActors();
 	}
 	_vm->playAnimation("scepter", 1, 4, 26, 42, 0, 150);
-	_vm->playSound("ss13.snd", 0);
+	_vm->playSound("ss13.snd", false);
 	_vm->playAnimation("zapwg", 0, 11, 107, 53, 0, 70);
-	_vm->playSound("sv08.snd", 1);
+	_vm->playSound("sv08.snd", true);
 	_vm->playAnimation("scepter", 3, -4, 26, 42, 0, 150);
 	_vm->displayText("c04r", 30, 0, 150, 10, 0);
 	_vm->playAnimation("reptalk", 0, 6, 26, 51, 0, 150);
@@ -6581,11 +6588,11 @@ void GameLogic::r28_handleRoomEvent1() {
 }
 
 void GameLogic::r28_handleRoomEvent2() {
-	_vm->playSound("ss12.snd", 0);
+	_vm->playSound("ss12.snd", false);
 	_vm->playAnimation("scepter", 1, 4, 26, 42, 0, 150);
 	_vm->playAnimation("repxit", 0, 11, 0, 33, 0, 100);
 	_vm->waitSeconds(2);
-	_vm->playSound("ss12.snd", 0);
+	_vm->playSound("ss12.snd", false);
 	_vm->playAnimation("repxit", 10, -11, 0, 33, 0, 100);
 	_vm->playAnimation("scepter", 3, -4, 26, 42, 0, 150);
 	_vm->displayText("c04r", 38, 0, 150, 10, 0);
@@ -6593,7 +6600,7 @@ void GameLogic::r28_handleRoomEvent2() {
 	_vm->waitSeconds(2);
 	_vm->_isTextVisible = false;
 	_vm->refreshActors();
-	_vm->playSound("ss12.snd", 0);
+	_vm->playSound("ss12.snd", false);
 	_vm->playAnimation("scepter", 1, 4, 26, 42, 0, 150);
 	_vm->playAnimation("repxit", 0, 11, 0, 33, 0, 100);
 	_vm->waitSeconds(2);
@@ -6901,7 +6908,7 @@ void GameLogic::r30_runLudwigCutscene() {
 	_vm->playAnimation("ludwig", 42, 20, 185, 34, 0, 150);
 	_vm->displayTextLines("lws", 27, 50, 10, 1);
 	_vm->playAnimation("ludwig", 62, 4, 185, 34, 0, 150);
-	_vm->playSound("ss17.snd", 0);
+	_vm->playSound("ss17.snd", false);
 	_vm->playAnimation("ludwig", 66, 4, 186, 22, 0, 150);
 	_vm->playAnimation("ludwig", 70, 3, 185, 34, 0, 150);
 	_vm->displayTextLines("lws", 28, 50, 10, 5);
@@ -7163,7 +7170,7 @@ void GameLogic::r31_playTalkAnim(int talkerIndex) {
 
 void GameLogic::r31_useBuzzer() {
 	_vm->drawRoomImageToScreen("buzzer.pcx", 131, 106);
-	_vm->playSound("ss04.snd", 1);
+	_vm->playSound("ss04.snd", true);
 	_vm->_screen->drawSurface(_vm->_backgroundSurface, 0, 0);
 	if (!(_r31_flags & 0x01)) {
 		r31_handleRoomEvent3();
@@ -8673,9 +8680,9 @@ void GameLogic::showEnding() {
 	delete zoomSurface;
 	zoomSurface = nullptr;
 
-	_vm->playSound("sv42.snd", 1);
+	_vm->playSound("sv42.snd", true);
 	_vm->waitMillis(100);
-	_vm->playSound("sv34.snd", 1);
+	_vm->playSound("sv34.snd", true);
 	_vm->waitSeconds(5);
 
 	_vm->paletteFadeOut(0, 256, 4);
@@ -8918,7 +8925,7 @@ void GameLogic::synchronize(Common::Serializer &s) {
 
 	byte dummy = 0;
 	for (int i = 0; i < 404; ++i) {
-		s.syncAsByte(_vm->_roomObjects[i].roomNumber);
+		s.syncAsSByte(_vm->_roomObjects[i].roomNumber);
 		// For some mysterious reason, the original reads the first letter of the object name as well and overwrite it... 404 bytes wasted per savegame :/
 		s.syncAsByte(dummy);
 	}
@@ -8986,7 +8993,7 @@ bool GameLogic::loadSavegame(int slot, bool rstSave) {
 	if (rstSave) {
 		Common::File fd;
 		if (!fd.open(Common::Path("ww.rst")))
-			error("WaynesWorldEngine::loadSavegame() Could not open ww.rst");
+			error("WWEngine::loadSavegame() Could not open ww.rst");
 		const int size = fd.size();
 		buffer = new byte[size];
 		fd.read(buffer, size);
@@ -9043,6 +9050,8 @@ void GameLogic::menuExit() {
 	_vm->_gameState = _menuGameState;
 	_menuIsSaveLoad = 0;
 	_vm->setMouseBounds(0, 319, 0, 199);
+
+	_vm->_isRestoringRoom = true;
 	_vm->changeRoom(_vm->_currentRoomNumber);
 }
 
@@ -9150,4 +9159,4 @@ void GameLogic::closeQuitMenu() {
 	delete m04Gxl;
 }
 
-} // End of namespace WaynesWorld
+} // End of namespace WW

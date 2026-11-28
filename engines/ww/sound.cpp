@@ -29,12 +29,12 @@
 
 // Miles Audio
 #include "audio/miles.h"
-#include "waynesworld/waynesworld.h"
-#include "waynesworld/sound.h"
+#include "ww/ww.h"
+#include "ww/sound.h"
 
-namespace WaynesWorld {
+namespace WW {
 
-SoundManager::SoundManager(WaynesWorldEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
+SoundManager::SoundManager(WWEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_effectsHandle = new Audio::SoundHandle();
 	_stream = nullptr;
 }
@@ -130,7 +130,7 @@ byte *SoundManager::abtDecomp(Common::File *fd, int *size, int *freq) {
 		} else if (ctrl & 0x40) { // Mode 2: RLE Fill
 			uint16 run = ctrl & 0x3F;
 			memset(destBuffer, last_out, run);
-			*destBuffer += run;
+			destBuffer += run;
 			cx -= run;
 		} else { // Mode 3: Delta Unpacking
 			int16 mode_type = (ctrl >> 4);
@@ -165,7 +165,7 @@ byte *SoundManager::abtDecomp(Common::File *fd, int *size, int *freq) {
 	return headPtr;
 }
 
-void SoundManager::playSound(const char *filename, bool flag) {
+void SoundManager::playSound(const char *filename, bool flag, int defaultFreq) {
 	while (isSFXPlaying())
 		_vm->waitMillis(10);
 
@@ -190,7 +190,7 @@ void SoundManager::playSound(const char *filename, bool flag) {
 #endif
 	} else {
 		size = fd.size();
-		freq = 9000;
+		freq = defaultFreq;
 		buffer = new byte[size];
 		fd.read(buffer, size);
 	}
@@ -224,13 +224,15 @@ void SoundManager::stopSound() {
 
 /******************************************************************************************/
 
-MusicManager::MusicManager(WaynesWorldEngine *vm)/* : _vm(vm) */{
+MusicManager::MusicManager(WWEngine *vm)/* : _vm(vm) */{
 	_music = nullptr;
 	_isLooping = false;
 	_driver = nullptr;
 
 	const MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
 	MusicType musicType = MidiDriver::getMusicType(dev);
+
+	musicType = MT_MT32;
 
 	switch (musicType) {
 	case MT_ADLIB: {
@@ -309,11 +311,11 @@ void MusicManager::playMusic(const char *filename, bool loop) {
 	if (size < 4)
 		error("playMusic() wrong music resource size");
 
+	stop();
+
 	delete[] _music;
 	_music = new byte[size];
 	fd.read(_music, size);
-
-	stop();
 
 	const uint32 magic = READ_BE_UINT32(_music);
 	if (magic == MKTAG('F', 'O', 'R', 'M')) {
@@ -343,4 +345,4 @@ void MusicManager::setLoop(bool loop) {
 	if (_parser)
 		_parser->property(MidiParser::mpAutoLoop, _isLooping);
 }
-} // End of namespace WaynesWorld
+} // End of namespace WW

@@ -19,17 +19,17 @@
  *
  */
 
-#include "waynesworld/waynesworld.h"
+#include "ww/ww.h"
 
-namespace WaynesWorld {
+namespace WW {
 
-bool WaynesWorldEngine::walkIsPixelWalkable(int x, int y) {
+bool WWEngine::walkIsPixelWalkable(int x, int y) {
 	if (x < 0 || y < 0 || x >= 320 || y >= 150)
 		return false;
 	return (_walkMap[(y * 40) + (x / 8)] & (0x80 >> (x % 8))) != 0;
 }
 
-bool WaynesWorldEngine::walkAdjustDestPoint(int &x, int &y) {
+bool WWEngine::walkAdjustDestPoint(int &x, int &y) {
 	if (walkIsPixelWalkable(x, y))
 		return true;
 	for (int incr = 1; incr < 200; incr++) {
@@ -45,7 +45,9 @@ bool WaynesWorldEngine::walkAdjustDestPoint(int &x, int &y) {
 					y += incr;
 					return true;
 				}
-			} else if (y - incr >= 0) {
+			}
+			
+			if (y - incr >= 0) {
 				if (walkIsPixelWalkable(x + xc, y - incr)) {
 					x += xc;
 					y -= incr;
@@ -70,7 +72,10 @@ bool WaynesWorldEngine::walkAdjustDestPoint(int &x, int &y) {
 					y -= yc;
 					return true;
 				}
-			} else if (x + incr >= 0) {
+			}
+			
+			// The original was checking x + incr which is always true, not failing thanks to walkIsPixelWalkable who discarded the incorrect negative values
+			if (x - incr >= 0) {
 				if (walkIsPixelWalkable(x - incr, y + yc)) {
 					x -= incr;
 					y += yc;
@@ -87,7 +92,7 @@ bool WaynesWorldEngine::walkAdjustDestPoint(int &x, int &y) {
 	return false;
 }
 
-void WaynesWorldEngine::walkCalcOtherActorDest(int flag, int &x, int &y) {
+void WWEngine::walkCalcOtherActorDest(int flag, int &x, int &y) {
 	int direction;
 	if (flag == 1) {
 		direction = walkCalcDirection(x - _garthSpriteX, y - _garthSpriteY);
@@ -132,9 +137,9 @@ void WaynesWorldEngine::walkCalcOtherActorDest(int flag, int &x, int &y) {
 	walkAdjustDestPoint(x, y);
 }
 
-int WaynesWorldEngine::walkCalcPath(int flag, int sourceX, int sourceY, int destX, int destY, int pointsCount) {
-	if (pointsCount >= 300)
-		return 299;
+int WWEngine::walkCalcPath(int flag, int sourceX, int sourceY, int destX, int destY, int pointsCount) {
+	if (pointsCount >= kWalkPointsCount)
+		return kWalkPointsCount - 1;
 
 	if (walkIsLineWalkable(sourceX, sourceY, destX, destY))
 		return walkAddWalkLine(flag, sourceX, sourceY, destX, destY, pointsCount);
@@ -161,7 +166,7 @@ int WaynesWorldEngine::walkCalcPath(int flag, int sourceX, int sourceY, int dest
 	return pointsCount;
 }
 
-bool WaynesWorldEngine::walkFindPoint(int flag, int &sourceX, int &sourceY, int &nextSourceX, int &nextSourceY, int destX, int destY, int pointsCount) {
+bool WWEngine::walkFindPoint(int flag, int &sourceX, int &sourceY, int &nextSourceX, int &nextSourceY, int destX, int destY, int pointsCount) {
 	bool walkable = false;
 
 	if (walkIsLineWalkable(sourceX, sourceY, nextSourceX, nextSourceY))
@@ -231,7 +236,7 @@ bool WaynesWorldEngine::walkFindPoint(int flag, int &sourceX, int &sourceY, int 
 		if (!walkTestPoint(sourceX, sourceY, scan1X, scan1Y, destX, destY)) {
 			return false;
 		}
-		pointsCount = walkAddWalkLine(flag, sourceX, sourceY, scan1X, scan1Y, pointsCount);
+		walkAddWalkLine(flag, sourceX, sourceY, scan1X, scan1Y, pointsCount);
 		sourceX = scan1X;
 		sourceY = scan1Y;
 	}
@@ -242,11 +247,11 @@ bool WaynesWorldEngine::walkFindPoint(int flag, int &sourceX, int &sourceY, int 
 	return true;
 }
 
-bool WaynesWorldEngine::walkTestPoint(int sourceX, int sourceY, int nextSourceX, int nextSourceY, int destX, int destY) {
+bool WWEngine::walkTestPoint(int sourceX, int sourceY, int nextSourceX, int nextSourceY, int destX, int destY) {
 	return ABS(destY - nextSourceY) < ABS(destY - sourceY) || ABS(destX - nextSourceX) < ABS(destX - sourceX);
 }
 
-bool WaynesWorldEngine::walkIsLineWalkable(int sourceX, int sourceY, int destX, int destY) {
+bool WWEngine::walkIsLineWalkable(int sourceX, int sourceY, int destX, int destY) {
 	bool walkable = true;
 	if (sourceX == destX) {
 		const int incr = sourceY > destY ? -4 : 4;
@@ -278,12 +283,12 @@ bool WaynesWorldEngine::walkIsLineWalkable(int sourceX, int sourceY, int destX, 
 	return walkable;
 }
 
-void WaynesWorldEngine::walkGetNextPoint(int sourceX, int sourceY, int destX, int destY, int &nextX, int &nextY) {
+void WWEngine::walkGetNextPoint(int sourceX, int sourceY, int destX, int destY, int &nextX, int &nextY) {
 	nextX = (sourceX + destX) / 2;
 	nextY = (sourceY + destY) / 2;
 }
 
-int WaynesWorldEngine::walkCalcDirection(int deltaX, int deltaY) {
+int WWEngine::walkCalcDirection(int deltaX, int deltaY) {
 	int direction = 0;
 	if (deltaY < 0) {
 		if (deltaX < 0) {
@@ -325,10 +330,15 @@ int WaynesWorldEngine::walkCalcDirection(int deltaX, int deltaY) {
 	return direction;
 }
 
-int WaynesWorldEngine::walkAddWalkLine(int flag, int x1, int y1, int x2, int y2, int pointsCount) {
+int WWEngine::walkAddWalkLine(int flag, int x1, int y1, int x2, int y2, int pointsCount) {
 	WalkPoint *walkPoints = flag == 0 ? _wayneWalkPoints : _garthWalkPoints;
 	const int newDirection = walkCalcDirection(x1 - x2, y1 - y2);
+	const int maxPoints = kWalkPointsCount - 1; // keep room for the end point
+
 	// debug("walkAddWalkLine() %d, %d, %d, %d", x1, y1, x2, y2);
+
+	if (pointsCount >= maxPoints)
+		return pointsCount;
 
 	if (pointsCount == 0 || walkPoints[pointsCount - 1].x != x1 || walkPoints[pointsCount - 1].y != y1) {
 		walkPoints[pointsCount].x = x1;
@@ -339,7 +349,8 @@ int WaynesWorldEngine::walkAddWalkLine(int flag, int x1, int y1, int x2, int y2,
 
 	if (x1 == x2) {
 		const int incr = y1 > y2 ? -4 : 4;
-		for (int yc = y1; yc * incr < y2 * incr; yc += incr) {
+		// Check on pointsCount is not in the original, it avoids to write out of bounds in walkPoints
+		for (int yc = y1; yc * incr < y2 * incr && pointsCount < maxPoints; yc += incr) {
 			walkPoints[pointsCount].x = x1;
 			walkPoints[pointsCount].y = yc;
 			walkPoints[pointsCount].direction = newDirection;
@@ -348,7 +359,8 @@ int WaynesWorldEngine::walkAddWalkLine(int flag, int x1, int y1, int x2, int y2,
 	} else if (ABS(y1 - y2) >= ABS(x1 - x2)) {
 		const float slopeY = float(x1 - x2) / float(y1 - y2);
 		const int incr = y1 > y2 ? -4 : 4;
-		for (int yc = y1; yc * incr < y2 * incr; yc += incr) {
+		// Check on pointsCount is not in the original, it avoids to write out of bounds in walkPoints
+		for (int yc = y1; yc * incr < y2 * incr && pointsCount < maxPoints; yc += incr) {
 			walkPoints[pointsCount].x = x1 + (yc - y1) * slopeY;
 			walkPoints[pointsCount].y = yc;
 			walkPoints[pointsCount].direction = newDirection;
@@ -357,7 +369,8 @@ int WaynesWorldEngine::walkAddWalkLine(int flag, int x1, int y1, int x2, int y2,
 	} else {
 		const float slopeX = float(y1 - y2) / float(x1 - x2);
 		const int incr = x1 > x2 ? -4 : 4;
-		for (int xc = x1; xc * incr < x2 * incr; xc += incr) {
+		// Check on pointsCount is not in the original, it avoids to write out of bounds in walkPoints
+		for (int xc = x1; xc * incr < x2 * incr && pointsCount < maxPoints; xc += incr) {
 			walkPoints[pointsCount].x = xc;
 			walkPoints[pointsCount].y = y1 + (xc - x1) * slopeX;
 			walkPoints[pointsCount].direction = newDirection;
@@ -373,7 +386,7 @@ int WaynesWorldEngine::walkAddWalkLine(int flag, int x1, int y1, int x2, int y2,
 	return pointsCount;
 }
 
-bool WaynesWorldEngine::walkTo(int actor1_destX, int actor1_destY, int direction, int actor2_destX, int actor2_destY) {
+bool WWEngine::walkTo(int actor1_destX, int actor1_destY, int direction, int actor2_destX, int actor2_destY) {
 	WalkPoint *actor1Points, *actor2Points;
 	int flag1, flag2;
 	int actor1X, actor1Y, actor2X, actor2Y;
@@ -432,9 +445,7 @@ bool WaynesWorldEngine::walkTo(int actor1_destX, int actor1_destY, int direction
 		actor2PointsCount = walkCalcPath(flag2, actor2X, actor2Y, actor2WalkDestX, actor2WalkDestY, 0);
 	}
 
-	if (actor1PointsCount + 20 < actor2PointsCount) {
-		actor2PointsCount = actor1PointsCount + 20;
-	}
+	actor2PointsCount = MIN(actor2PointsCount, actor1PointsCount + 20);
 
 	for (int pointIndex = 0, walkIncr = 0; pointIndex < actor1PointsCount || pointIndex < actor2PointsCount; pointIndex += 2, walkIncr += 2) {
 		int scale;
@@ -456,17 +467,20 @@ bool WaynesWorldEngine::walkTo(int actor1_destX, int actor1_destY, int direction
 				scale = drawActors(actor2Points[pointIndex].direction, 1, 0, (walkIncr % 8) / 2, _wayneSpriteX, _wayneSpriteY, _garthWalkPoints[pointIndex].x - _scrollPosition, _garthWalkPoints[pointIndex].y);
 			}
 		}
-		debug(5, "scale:%d", scale);
-		// if (_inventoryItemsCount == 0 && _scrollPosition == 0) {
-		//	 waitMillis(10000 / (scale * scale) * 10);
-		// }
-		waitMillis(100); // TODO Fix this
-		if (_scrollRemaining > 0) {
-			warning("STUB - Missing scrolling in WalkTo");
-			// TODO
-			// if (updateGame()) {
-			//	 return true;
-			// }
+
+		// The 55 ms delay simulates the hardware speed at the time
+		waitMillis(55);
+
+		// The original doesn't add a delay when the inventory is opened. It's a bad idea, walking is SUPER fast in this case.
+		if (_scrollPosition == 0) {
+			debug(5, "scale:%d delay:%d", scale, 55 + 10000 / (scale * scale) * 10);
+			// This variable part is to make the character move on the screen slower when he's far away
+			 waitMillis(10000 / (scale * scale) * 10);
+		}
+
+		if (_scrollRemaining == 0) {
+			if (updateGame())
+				return true;
 		}
 	}
 
@@ -493,4 +507,4 @@ bool WaynesWorldEngine::walkTo(int actor1_destX, int actor1_destY, int direction
 
 	return true;
 }
-} // End of namespace WaynesWorld
+} // End of namespace WW

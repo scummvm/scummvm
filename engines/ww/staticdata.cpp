@@ -19,11 +19,11 @@
  *
  */
 
-#include "waynesworld/waynesworld.h"
+#include "ww/ww.h"
 
-namespace WaynesWorld {
+namespace WW {
 
-const RoomObject WaynesWorldEngine::kRoomObjects[kRoomObjectsCount] = {
+const RoomObject WWEngine::kRoomObjects[kRoomObjectsCount] = {
 	{ 100, "na", 66, 21, 105, 48, 0, 0, 0 },
 	{ 100, "wa", 21, 82, 65, 113, 0, 0, 0 },
 	{ 100, "but", 219, 22, 256, 51, 0, 0, 0 },
@@ -430,7 +430,7 @@ const RoomObject WaynesWorldEngine::kRoomObjects[kRoomObjectsCount] = {
 	{ -2, "exit", 124, 47, 179, 118, 4, 154, 125 }
 };
 
-const StaticRoomObjectMapEntry WaynesWorldEngine::kStaticRoomObjectsMap[kStaticRoomObjectsMapCount] = {
+const StaticRoomObjectMapEntry WWEngine::kStaticRoomObjectsMap[kStaticRoomObjectsMapCount] = {
 	{ 0, 3 },
 	{ 3, 2 },
 	{ 5, 3 },
@@ -473,7 +473,7 @@ const StaticRoomObjectMapEntry WaynesWorldEngine::kStaticRoomObjectsMap[kStaticR
 	{ 58, 0 }
 };
 
-const StaticRoomObject WaynesWorldEngine::kStaticRoomObjects[kStaticRoomObjectsCount] = {
+const StaticRoomObject WWEngine::kStaticRoomObjects[kStaticRoomObjectsCount] = {
 	{ "speaker", 39, 125, 81, 136 },
 	{ "camera", 176, 86, 248, 121 },
 	{ "cuecard", 214, 26, 290, 121 },
@@ -534,4 +534,4 @@ const StaticRoomObject WaynesWorldEngine::kStaticRoomObjects[kStaticRoomObjectsC
 	{ "casspc2", -1, 94, 179, 139 }
 };
 
-} // End of namespace WaynesWorld
+} // End of namespace WW

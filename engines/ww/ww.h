@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef WAYNESWORLD_H
-#define WAYNESWORLD_H
+#ifndef WW_H
+#define WW_H
 
 #include "common/events.h"
 #include "common/file.h"
@@ -32,14 +32,15 @@
 
 #include "image/pcx.h"
 
-#include "waynesworld/sound.h"
-#include "wwintro.h"
+#include "ww/detection.h"
+#include "ww/sound.h"
+#include "ww/wwintro.h"
 
 #define kWWSavegameVersion 1
 #define kWWSavegameStrSize 14
 #define kWWSavegameStr "SCUMMVM_WAYNES"
 
-namespace WaynesWorld {
+namespace WW {
 class GxlArchive;
 
 enum {
@@ -101,7 +102,7 @@ const uint kWalkMapSize = (320 * 150) / 8;
 const uint kRoomAnimationsCount = 20;
 const uint kStaticRoomObjectsMapCount = 40;
 const uint kStaticRoomObjectsCount = 58;
-const uint kStaticRoomObjectSpritesCount = 4;
+const uint kStaticRoomObjectSpritesCount = 6;
 const uint kAnimationTimersCount = 4;
 const int kInventorySize = 50;
 const int kFirstInventoryObjectId = 28;
@@ -109,14 +110,14 @@ const int kLastInventoryObjectId = 77;
 
 extern const char *savegameStr;
 
-class WaynesWorldEngine : public Engine {
+class WWEngine : public Engine {
 protected:
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
 
 public:
-	WaynesWorldEngine(OSystem *syst, const ADGameDescription *gd);
-	~WaynesWorldEngine() override;
+	WWEngine(OSystem *syst, const WWGameDescription *gd);
+	~WWEngine() override;
 	const Common::String getTargetName() { return _targetName; }
 	static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail = true);
 
@@ -131,7 +132,10 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error loadGameState(int slot) override;
 
-	const ADGameDescription *_gameDescription;
+	const WWGameDescription *_gameDescription;
+	uint32 getFeatures() const;
+	int getGameId() const;
+
 	bool _isSoundEnabled = true;
 	bool _isMusicEnabled = true;
 
@@ -213,6 +217,7 @@ public:
 	int _roomEventNum;
 	int _animationsCtr;
 	bool _animationsRedrawBackground;
+	bool _isRestoringRoom;
 
 	// Actors
 	int _wayneSpriteX, _wayneSpriteY, _wayneKind, _wayneActorScale;
@@ -245,7 +250,7 @@ public:
 	static const StaticRoomObject kStaticRoomObjects[kStaticRoomObjectsCount];
 	// _staticRoomObjects is a writable copy of kStaticRoomObjects
 	StaticRoomObject _staticRoomObjects[kStaticRoomObjectsCount];
-	WWSurface *_staticRoomObjectSprites[kStaticRoomObjectSpritesCount];
+	WWSurface *_staticRoomObjectSprites[kStaticRoomObjectSpritesCount] = {nullptr};
 
 	// Game map
 	int _gameMapRoomNumber;
@@ -258,7 +263,7 @@ public:
 	uint32 _gameMapLastTicks = 0;
 
 	// Intro
-	WWIntro *intro = nullptr;
+	Intro *intro = nullptr;
 
 	// Utils
 	int getRandom(int max);
@@ -273,6 +278,7 @@ public:
 	void handleMouseClick();
 	void handleMouseLeftClick();
 	void handleMouseRightClick();
+	uint updateGame();
 
 	// Palette loading
 	void loadPalette(GxlArchive *lib, const char *filename);
@@ -285,7 +291,7 @@ public:
 	// Image drawing
 	void drawImageToSurfaceIntern(GxlArchive *lib, const char *filename, WWSurface *destSurface, int x, int y, bool transparent);
 	void drawImageToScreenIntern(GxlArchive *lib, const char *filename, int x, int y, bool transparent);
-	void drawImageToScreen(GxlArchive *lib, const char *filename, int x, int y);
+	void drawImageToScreen(GxlArchive *lib, const char *filename, int x, int y, bool transparent = false);
 	void drawImageToSurface(GxlArchive *lib, const char *filename, WWSurface *destSurface, int x, int y);
 	void drawRoomImageToBackground(const char *filename, int x, int y);
 	void drawRoomImageToBackgroundTransparent(const char *filename, int x, int y);
@@ -294,6 +300,8 @@ public:
 
 	void drawSpiralEffect(Graphics::Surface *surface, int x, int y, int grainWidth, int grainHeight);
 	void drawRandomEffect(Graphics::Surface *surface, int x, int y, int grainWidth, int grainHeight);
+	void drawWeaveEffect(Graphics::Surface *surface, int x, int y, int grainWidth, int grainHeight, int delay);
+	void drawSlideEffect(Graphics::Surface *surface, int x, int y, int grainWidth, int grainHeight, int delay);
 
 	// Text
 	Common::String loadString(const char *filename, int index, int flag);
@@ -303,8 +311,9 @@ public:
 	void displayTextLines(const char *filename, int baseIndex, int x, int y, int count);
 
 	// Audio
-	void playSound(const char *filename, int flag);
+	void playSound(const char *filename, bool flag, int freq = 9000); // various freq are used in DH, in WW it's always 9000. Only used for SND (RAW) files.
 	void changeMusic();
+	void changeMusic(const char* filename);
 	void stopMusic();
 
 	// Interface
@@ -357,6 +366,7 @@ public:
 
 	void gxCloseLib(GxlArchive *lib);
 	void setMouseBounds(int x1, int x2, int y1, int y2);
+
 	// Room
 	void openRoomLibrary(int roomNum);
 	void openAlternateRoomLibrary(const char *name);
@@ -460,6 +470,6 @@ public:
 
 };
 
-} // End of namespace WaynesWorld
+} // End of namespace WW
 
-#endif // WAYNESWORLD_H
+#endif // WW_H

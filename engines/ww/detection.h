@@ -19,19 +19,33 @@
  *
  */
 
-#ifndef WAYNESWORLD_DETECTION_H
-#define WAYNESWORLD_DETECTION_H
+#ifndef WW_DETECTION_H
+#define WW_DETECTION_H
 
-namespace WaynesWorld {
+#include "engines/advancedDetector.h"
 
-enum WaynesWorldDebugChannels {
+namespace WW {
+
+enum WWDebugChannels {
 	kDebugLogic = 1,
 	kDebugMessages,
 	kDebugCore
 };
 
+enum {
+	GType_Waynesworld = 0,
+	GType_DarkHalf = 1
+};
+
+struct WWGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
+	ADGameDescription desc;
+
+	int gameID;
+};
 #define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
 
-} // End of namespace WaynesWorld
+} // End of namespace WW
 
-#endif // WAYNESWORLD_DETECTION_H
+#endif // WW_DETECTION_H

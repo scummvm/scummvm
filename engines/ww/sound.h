@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef WAYNESWORLD_SOUND_H
-#define WAYNESWORLD_SOUND_H
+#ifndef WW_SOUND_H
+#define WW_SOUND_H
 
 #include "common/scummsys.h"
 #include "audio/midiplayer.h"
@@ -32,16 +32,16 @@ class AudioStream;
 class SoundHandle;
 }
 
-namespace WaynesWorld {
+namespace WW {
 
-class WaynesWorldEngine;
+class WWEngine;
 
 class SoundManager {
 	Audio::AudioStream *_stream;
 	Common::String _filename;
 
 private:
-	WaynesWorldEngine *_vm;
+	WWEngine *_vm;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle *_effectsHandle;
 	char _abtLookupTable[256] = {0};
@@ -53,10 +53,10 @@ private:
 	byte* abtDecomp(Common::File *fd, int *size, int *freq);
 
 public:
-	SoundManager(WaynesWorldEngine *vm, Audio::Mixer *mixer);
+	SoundManager(WWEngine *vm, Audio::Mixer *mixer);
 	~SoundManager();
 
-	void playSound(const char *filename, bool flag);
+	void playSound(const char *filename, bool flag, int defaultFreq = 9000);
 	bool isSFXPlaying();
 
 	void syncVolume();
@@ -66,14 +66,14 @@ public:
 
 class MusicManager : public Audio::MidiPlayer {
 private:
-	//WaynesWorldEngine *_vm;
+	//WWEngine *_vm;
 	byte *_music;
 
 	// MidiDriver_BASE interface implementation
 	void send(uint32 b) override;
 
 public:
-	MusicManager(WaynesWorldEngine *vm);
+	MusicManager(WWEngine *vm);
 	~MusicManager() override;
 
 	bool checkMidiDone();
@@ -85,6 +85,6 @@ public:
 
 	void setLoop(bool loop);
 };
-} // End of namespace WaynesWorld
+} // End of namespace WW
 
-#endif /* WAYNESWORLD_SOUND_H*/
+#endif /* WW_SOUND_H*/
